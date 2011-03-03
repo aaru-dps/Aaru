@@ -1,0 +1,401 @@
+using System;
+using System.IO;
+using System.Text;
+using FileSystemIDandChk;
+
+// Information from Inside Macintosh
+
+namespace FileSystemIDandChk.Plugins
+{
+	class AppleHFS : Plugin
+	{
+		private DateTime HFSDateDelta = new DateTime(1904, 01, 01, 00, 00, 00);
+		
+		public AppleHFS(PluginBase Core)
+        {
+            base.Name = "Apple Hierarchical File System";
+            base.PluginUUID = new Guid("8f4ee9d5-6820-4d7a-ae6b-3a4a49e7a88f");
+        }
+		
+		public override bool Identify(FileStream stream, long offset)
+		{
+			byte[] signature = new byte[2];
+			ushort drSigWord;
+			
+			stream.Seek(0x400 + offset, SeekOrigin.Begin);
+			
+			stream.Read(signature, 0, 2);
+			signature = Swapping.SwapTwoBytes(signature);
+			
+			drSigWord = BitConverter.ToUInt16(signature, 0);
+			
+			if(drSigWord == 0x4244)
+				return true;
+			else
+				return false;
+		}
+		
+		public override void GetInformation (FileStream stream, long offset, out string information)
+		{
+			information = "";
+			
+			StringBuilder sb = new StringBuilder();
+			
+			HFS_MasterDirectoryBlock MDB = new HFS_MasterDirectoryBlock();
+			HFS_BootBlock BB = new HFS_BootBlock();
+			
+			byte[] sixteen_bit = new byte[2];
+			byte[] thirtytwo_bit = new byte[4];
+			byte[] fifthteen_bytes = new byte[15];
+			
+			stream.Seek(0x400 + offset, SeekOrigin.Begin);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
+			if(MDB.drSigWord != 0x4244)
+				return;
+			
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drCrDate = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drLsMod = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drAtrb = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drNmFls = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drVBMSt = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drAllocPtr = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drNmAlBlks = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drAlBlkSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drAlBlSt = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drNxtCNID = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drFreeBks = BitConverter.ToUInt16(sixteen_bit, 0);
+			MDB.drVN = new byte[28];
+			stream.Read(MDB.drVN, 0, 28);
+			
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drVolBkUp = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drVSeqNum = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drWrCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drXTClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drCTClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drNmRtDirs = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFilCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drDirCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
+
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo0 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo1 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo2 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo3 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo4 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo5 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo6 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drFndrInfo7 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.drEmbedSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.xdrStABNt = BitConverter.ToUInt16(sixteen_bit, 0);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			MDB.xdrNumABlks = BitConverter.ToUInt16(sixteen_bit, 0);
+			
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drXTFlSize = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Seek(12, SeekOrigin.Current);
+			stream.Read(thirtytwo_bit, 0, 4);
+			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+			MDB.drCTFlSize = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			stream.Seek(12, SeekOrigin.Current);
+			
+			stream.Seek(0 + offset, SeekOrigin.Begin);
+			stream.Read(sixteen_bit, 0, 2);
+			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			BB.signature = BitConverter.ToUInt16(sixteen_bit, 0);
+			
+			if(BB.signature == 0x4C4B)
+			{
+				stream.Read(thirtytwo_bit, 0, 4);
+				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+				BB.branch = BitConverter.ToUInt32(thirtytwo_bit, 0);
+				BB.boot_flags = (byte)stream.ReadByte();
+				BB.boot_version = (byte)stream.ReadByte();
+				
+				stream.Read(sixteen_bit, 0, 2);
+				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+				BB.sec_sv_pages = BitConverter.ToInt16(sixteen_bit, 0);
+				
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.system_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.finder_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.debug_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.disasm_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.stupscr_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.bootup_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				stream.Seek(1, SeekOrigin.Current);
+				stream.Read(fifthteen_bytes, 0, 15);
+				BB.clipbrd_name = Encoding.ASCII.GetString(fifthteen_bytes);
+				
+				stream.Read(sixteen_bit, 0, 2);
+				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+				BB.max_files = BitConverter.ToUInt16(sixteen_bit, 0);
+				stream.Read(sixteen_bit, 0, 2);
+				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+				BB.queue_size = BitConverter.ToUInt16(sixteen_bit, 0);
+				stream.Read(thirtytwo_bit, 0, 4);
+				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+				BB.heap_128k = BitConverter.ToUInt32(thirtytwo_bit, 0);
+				stream.Read(thirtytwo_bit, 0, 4);
+				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+				BB.heap_256k = BitConverter.ToUInt32(thirtytwo_bit, 0);
+				stream.Read(thirtytwo_bit, 0, 4);
+				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
+				BB.heap_512k = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			}
+			else
+				BB.signature = 0x0000;
+			
+			sb.AppendLine("Apple Hierarchical File System");
+			sb.AppendLine();
+			sb.AppendLine("Master Directory Block:");
+			sb.AppendFormat("Creation date: {0}", HFSDateDelta.AddTicks((long)(MDB.drCrDate*10000000))).AppendLine();
+			sb.AppendFormat("Last modification date: {0}", HFSDateDelta.AddTicks((long)(MDB.drLsMod*10000000))).AppendLine();
+			sb.AppendFormat("Last backup date: {0}", HFSDateDelta.AddTicks((long)(MDB.drVolBkUp*10000000))).AppendLine();
+			sb.AppendFormat("Backup sequence number: {0}", MDB.drVSeqNum).AppendLine();
+			
+			if((MDB.drAtrb & 0x80) == 0x80)
+				sb.AppendLine("Volume is locked by hardware.");
+			if((MDB.drAtrb & 0x100) == 0x100)
+				sb.AppendLine("Volume was unmonted.");
+			else
+				sb.AppendLine("Volume is mounted.");
+			if((MDB.drAtrb & 0x200) == 0x200)
+				sb.AppendLine("Volume has spared bad blocks.");
+			if((MDB.drAtrb & 0x400) == 0x400)
+				sb.AppendLine("Volume does not need cache.");
+			if((MDB.drAtrb & 0x800) == 0x800)
+				sb.AppendLine("Boot volume is inconsistent.");
+			if((MDB.drAtrb & 0x1000) == 0x1000)
+				sb.AppendLine("There are reused CNIDs.");
+			if((MDB.drAtrb & 0x2000) == 0x2000)
+				sb.AppendLine("Volume is journaled.");
+			if((MDB.drAtrb & 0x4000) == 0x4000)
+				sb.AppendLine("Volume is seriously inconsistent.");
+			if((MDB.drAtrb & 0x8000) == 0x8000)
+				sb.AppendLine("Volume is locked by software.");
+			
+			sb.AppendFormat("{0} files on root directory", MDB.drNmFls).AppendLine();
+			sb.AppendFormat("{0} directories on root directory", MDB.drNmRtDirs).AppendLine();
+			sb.AppendFormat("{0} files on volume", MDB.drFilCnt).AppendLine();
+			sb.AppendFormat("{0} directories on volume", MDB.drDirCnt).AppendLine();
+			sb.AppendFormat("Volume write count: {0}", MDB.drWrCnt).AppendLine();
+			
+			sb.AppendFormat("Volume bitmap starting sector (in 512-bytes): {0}", MDB.drVBMSt).AppendLine();
+			sb.AppendFormat("Next allocation block: {0}.", MDB.drAllocPtr).AppendLine();
+			sb.AppendFormat("{0} volume allocation blocks.", MDB.drNmAlBlks).AppendLine();
+			sb.AppendFormat("{0} bytes per allocation block.", MDB.drAlBlkSiz).AppendLine();
+			sb.AppendFormat("{0} bytes to allocate when extending a file.", MDB.drClpSiz).AppendLine();
+			sb.AppendFormat("{0} bytes to allocate when extending a Extents B-Tree.", MDB.drXTClpSiz).AppendLine();
+			sb.AppendFormat("{0} bytes to allocate when extending a Catalog B-Tree.", MDB.drCTClpSiz).AppendLine();
+			sb.AppendFormat("Sector of first allocation block: {0}", MDB.drAlBlSt).AppendLine();
+			sb.AppendFormat("Next unused CNID: {0}", MDB.drNxtCNID).AppendLine();
+			sb.AppendFormat("{0} unused allocation blocks.", MDB.drFreeBks).AppendLine();
+			
+			sb.AppendFormat("{0} bytes in the Extents B-Tree", MDB.drXTFlSize).AppendLine();
+			sb.AppendFormat("{0} bytes in the Catalog B-Tree", MDB.drCTFlSize).AppendLine();
+			
+			StringBuilder volumeName = new StringBuilder();
+			for(int i = 1; i < 28; i++)
+			{
+				if(MDB.drVN[i] == 0)
+					break;
+				
+				volumeName.Append(Encoding.ASCII.GetString(MDB.drVN, i, 1));
+			}
+			sb.AppendFormat("Volume name: {0}", volumeName.ToString()).AppendLine();
+			
+			sb.AppendLine("Finder info:");
+			sb.AppendFormat("CNID of bootable system's directory: {0}", MDB.drFndrInfo0).AppendLine();
+			sb.AppendFormat("CNID of first-run application's directory: {0}", MDB.drFndrInfo1).AppendLine();
+			sb.AppendFormat("CNID of previously opened directory: {0}", MDB.drFndrInfo2).AppendLine();
+			sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", MDB.drFndrInfo3).AppendLine();
+			sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", MDB.drFndrInfo5).AppendLine();
+			sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7).AppendLine();
+			
+			if(MDB.drEmbedSigWord == 0x482B)
+			{
+				sb.AppendLine("Volume wraps a HFS+ volume.");
+				sb.AppendFormat("Starting block of the HFS+ volume: {0}", MDB.xdrStABNt).AppendLine();
+				sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", MDB.xdrNumABlks).AppendLine();
+			}
+			
+			if(BB.signature == 0x4C4B)
+			{
+				sb.AppendLine("Volume is bootable.");
+				sb.AppendLine();
+				sb.AppendLine("Boot Block:");
+				if((BB.boot_flags & 0x40) == 0x40)
+					sb.AppendLine("Boot block should be executed.");
+				if((BB.boot_flags & 0x80) == 0x80)
+				{
+					sb.AppendLine("Boot block is in new unknown format.");
+				}
+				else
+				{
+					if(BB.sec_sv_pages > 0)
+						sb.AppendLine("Allocate secondary sound buffer at boot.");
+					else if(BB.sec_sv_pages < 0)
+						sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+					
+					sb.AppendFormat("System filename: {0}", BB.system_name).AppendLine();
+					sb.AppendFormat("Finder filename: {0}", BB.finder_name).AppendLine();
+					sb.AppendFormat("Debugger filename: {0}", BB.debug_name).AppendLine();
+					sb.AppendFormat("Disassembler filename: {0}", BB.disasm_name).AppendLine();
+					sb.AppendFormat("Startup screen filename: {0}", BB.stupscr_name).AppendLine();
+					sb.AppendFormat("First program to execute at boot: {0}", BB.bootup_name).AppendLine();
+					sb.AppendFormat("Clipboard filename: {0}", BB.clipbrd_name).AppendLine();
+					sb.AppendFormat("Maximum opened files: {0}", BB.max_files*4).AppendLine();
+					sb.AppendFormat("Event queue size: {0}", BB.queue_size).AppendLine();
+					sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", BB.heap_128k).AppendLine();
+					sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", BB.heap_256k).AppendLine();
+					sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", BB.heap_512k).AppendLine();
+				}
+			}
+			else
+				sb.AppendLine("Volume is not bootable.");
+			
+			information = sb.ToString();
+			
+			return;
+		}
+		
+		private struct HFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
+		{
+			public UInt16 drSigWord;      // Signature, 0x4244
+			public UInt32  drCrDate;       // Volume creation date
+			public UInt32  drLsMod;        // Volume last modification date
+			public UInt16 drAtrb;         // Volume attributes
+			public UInt16 drNmFls;        // Files in root directory
+			public UInt16 drVBMSt;        // Start 512-byte sector of volume bitmap
+			public UInt16 drAllocPtr;     // Allocation block to begin next allocation
+			public UInt16 drNmAlBlks;     // Allocation blocks
+			public UInt32  drAlBlkSiz;     // Bytes per allocation block
+			public UInt32  drClpSiz;       // Bytes to allocate when extending a file
+			public UInt16 drAlBlSt;       // Start 512-byte sector of first allocation block
+			public UInt32  drNxtCNID;      // CNID for next file
+			public UInt16 drFreeBks;      // Free allocation blocks
+			public byte[] drVN;           // Volume name (28 bytes)
+			public UInt32  drVolBkUp;      // Volume last backup time
+			public UInt16 drVSeqNum;      // Volume backup sequence number
+			public UInt32  drWrCnt;        // Filesystem write count
+			public UInt32  drXTClpSiz;     // Bytes to allocate when extending the extents B-Tree
+			public UInt32  drCTClpSiz;     // Bytes to allocate when extending the catalog B-Tree
+			public UInt16 drNmRtDirs;     // Number of directories in root directory
+			public UInt32  drFilCnt;       // Number of files in the volume
+			public UInt32  drDirCnt;       // Number of directories in the volume
+			public UInt32  drFndrInfo0;    // finderInfo[0], CNID for bootable system's directory
+			public UInt32  drFndrInfo1;    // finderInfo[1], CNID of the directory containing the boot application
+			public UInt32  drFndrInfo2;    // finderInfo[2], CNID of the directory that should be opened on boot
+			public UInt32  drFndrInfo3;    // finderInfo[3], CNID for Mac OS 8 or 9 directory
+			public UInt32  drFndrInfo4;    // finderInfo[4], Reserved
+			public UInt32  drFndrInfo5;    // finderInfo[5], CNID for Mac OS X directory
+			public UInt32  drFndrInfo6;    // finderInfo[6], first part of Mac OS X volume ID
+			public UInt32  drFndrInfo7;    // finderInfo[7], second part of Mac OS X volume ID
+			public UInt16 drEmbedSigWord; // Embedded volume signature, "H+" if HFS+ is embedded ignore following two fields if not
+			public UInt16 xdrStABNt;      // Starting block number of embedded HFS+ volume
+			public UInt16 xdrNumABlks;    // Allocation blocks used by embedded volume
+			public UInt32  drXTFlSize;     // Bytes in the extents B-Tree
+			// 3 HFS extents following, 32 bits each
+			public UInt32  drCTFlSize;     // Bytes in the catalog B-Tree
+			// 3 HFS extents following, 32 bits each
+		}
+		
+		private struct HFS_BootBlock // Should be offset 0x0000 bytes in volume
+		{
+			public UInt16 signature;    // Signature, 0x4C4B if bootable
+			public UInt32  branch;       // Branch
+			public byte   boot_flags;   // Boot block flags
+			public byte   boot_version; // Boot block version
+			public Int16  sec_sv_pages; // Allocate secondary buffers
+			public string system_name;  // System file name (10 bytes)
+			public string finder_name;  // Finder file name (10 bytes)
+			public string debug_name;   // Debugger file name (10 bytes)
+			public string disasm_name;  // Disassembler file name (10 bytes)
+			public string stupscr_name; // Startup screen file name (10 bytes)
+			public string bootup_name;  // First program to execute on boot (10 bytes)
+			public string clipbrd_name; // Clipboard file name (10 bytes)
+			public UInt16 max_files;    // 1/4 of maximum opened at a time files
+			public UInt16 queue_size;   // Event queue size
+			public UInt32  heap_128k;    // Heap size on a Mac with 128KiB of RAM
+			public UInt32  heap_256k;    // Heap size on a Mac with 256KiB of RAM
+			public UInt32  heap_512k;    // Heap size on a Mac with 512KiB of RAM or more
+		} // Follows boot code
+	}
+}
+

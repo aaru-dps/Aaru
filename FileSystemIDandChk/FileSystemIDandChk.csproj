@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FileSystemIDandChk</RootNamespace>
+    <AssemblyName>FileSystemIDandChk</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Plugins\AppleMFS.cs" />
+    <Compile Include="Swapping.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins.cs" />
+    <Compile Include="Plugins\ISO9660.cs" />
+    <Compile Include="Plugins\PCEngine.cs" />
+    <Compile Include="Plugins\Opera.cs" />
+    <Compile Include="Plugins\AppleHFS.cs" />
+    <Compile Include="Plugins\FAT.cs" />
+    <Compile Include="PartPlugins\PartPlugin.cs" />
+    <Compile Include="PartPlugins\AppleMap.cs" />
+    <Compile Include="CToString.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Plugins\" />
+    <Folder Include="PartPlugins\" />
+  </ItemGroup>
+</Project>

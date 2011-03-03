@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystemIDandChk", "FileSystemIDandChk\FileSystemIDandChk.csproj", "{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}"
+EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Packages", "Packages.mdproj", "{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.ActiveCfg = Debug|x86
+		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.Build.0 = Debug|x86
+		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Release|x86.ActiveCfg = Release|x86
+		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Release|x86.Build.0 = Release|x86
+		{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = FileSystemIDandChk\FileSystemIDandChk.csproj
+	EndGlobalSection
+EndGlobal
