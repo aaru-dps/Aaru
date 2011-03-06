@@ -33,14 +33,17 @@ namespace FileSystemIDandChk.PartPlugins
 			sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
 			APMB.signature = BitConverter.ToUInt16(sixteen_bits, 0);
 			
-			if(APMB.signature != 0x4552)
-				return false; // Not an Apple Partition Map
+			if(APMB.signature == 0x4552)
+			{
+				stream.Read(sixteen_bits, 0, 2);
+				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
+				APMB.sector_size = BitConverter.ToUInt16(sixteen_bits, 0);
+			}
+			else
+				APMB.sector_size = 512; // Some disks omit the boot entry
 			
-			stream.Read(sixteen_bits, 0, 2);
-			sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-			APMB.sector_size = BitConverter.ToUInt16(sixteen_bits, 0);
-			
-			stream.Seek(APMB.sector_size, SeekOrigin.Begin); // Seek to first entry
+//			stream.Seek(APMB.sector_size, SeekOrigin.Begin); // Seek to first entry
+			stream.Seek(0x200, SeekOrigin.Begin); // Seek to first entry
 			stream.Read(sixteen_bits, 0, 2);
 			sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
 			APMEntry.signature = BitConverter.ToUInt16(sixteen_bits, 0);
@@ -54,22 +57,23 @@ namespace FileSystemIDandChk.PartPlugins
 			if(APMEntry.entries <= 1) // It should have more than one entry
 				return false;
 			
-			stream.Seek(4, SeekOrigin.Current); // Skip start, we don't need it
-			stream.Seek(4, SeekOrigin.Current); // Skip sectors, we don't need it
-			stream.Seek(32, SeekOrigin.Current); // Skip name, we don't ned it
+//			stream.Seek(4, SeekOrigin.Current); // Skip start, we don't need it
+//			stream.Seek(4, SeekOrigin.Current); // Skip sectors, we don't need it
+//			stream.Seek(32, SeekOrigin.Current); // Skip name, we don't ned it
 			
-			stream.Read(thirtytwo_bytes, 0, 32);
-			APMEntry.type = StringHandlers.CToString(thirtytwo_bytes);
-			if(APMEntry.type != "Apple_partition_map") // APM self-describes, if not, this is incorrect
-				return false;
+//			stream.Read(thirtytwo_bytes, 0, 32);
+//			APMEntry.type = StringHandlers.CToString(thirtytwo_bytes);
+//			if(APMEntry.type != "Apple_partition_map") // APM self-describes, if not, this is incorrect
+//				return false;
 			
 			apm_entries = APMEntry.entries;
 			
-			for(ulong i = 2; i <= apm_entries; i++) // For each partition
+			for(ulong i = 1; i <= apm_entries; i++) // For each partition
 			{
 				APMEntry = new AppleMapPartitionEntry();
 				
-				stream.Seek((long)(APMB.sector_size*i), SeekOrigin.Begin); // Seek to partition descriptor
+				//stream.Seek((long)(APMB.sector_size*i), SeekOrigin.Begin); // Seek to partition descriptor
+				stream.Seek((long)(0x200*i), SeekOrigin.Begin); // Seek to partition descriptor
 				
 				stream.Read(sixteen_bits, 0, 2);
 				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
@@ -124,8 +128,10 @@ namespace FileSystemIDandChk.PartPlugins
 					_partition.PartitionSequence = i;
 					_partition.PartitionType = APMEntry.type;
 					_partition.PartitionName = APMEntry.name;
-					_partition.PartitionStart = APMEntry.start * APMB.sector_size;
-					_partition.PartitionLength = APMEntry.sectors * APMB.sector_size;
+					_partition.PartitionStart = APMEntry.start * 0x200; // This seems to be hardcoded
+//					_partition.PartitionStart = APMEntry.start * APMB.sector_size;
+					_partition.PartitionLength = APMEntry.sectors * 0x200; // This seems to be hardcoded
+//					_partition.PartitionLength = APMEntry.sectors * APMB.sector_size;
 					
 					sb.AppendLine("Partition flags:");
 					if((APMEntry.status & 0x01) == 0x01)
@@ -156,7 +162,8 @@ namespace FileSystemIDandChk.PartPlugins
 					_partition.PartitionDescription = sb.ToString();
 					
 					if((APMEntry.status & 0x01) == 0x01)
-						partitions.Add(_partition);
+						if(APMEntry.type != "Apple_partition_map")
+							partitions.Add(_partition);
 				}
 			}
 			

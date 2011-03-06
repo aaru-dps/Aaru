@@ -30,7 +30,17 @@ namespace FileSystemIDandChk.Plugins
 			drSigWord = BitConverter.ToUInt16(signature, 0);
 			
 			if(drSigWord == 0x4244)
-				return true;
+			{
+				stream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
+				stream.Read(signature, 0, 2);
+				signature = Swapping.SwapTwoBytes(signature);
+				drSigWord = BitConverter.ToUInt16(signature, 0);
+				
+				if(drSigWord == 0x482B) // "H+"
+					return false;
+				else
+					return true;
+			}
 			else
 				return false;
 		}
@@ -338,8 +348,8 @@ namespace FileSystemIDandChk.Plugins
 		private struct HFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
 		{
 			public UInt16 drSigWord;      // Signature, 0x4244
-			public UInt32  drCrDate;       // Volume creation date
-			public UInt32  drLsMod;        // Volume last modification date
+			public ulong  drCrDate;       // Volume creation date
+			public ulong  drLsMod;        // Volume last modification date
 			public UInt16 drAtrb;         // Volume attributes
 			public UInt16 drNmFls;        // Files in root directory
 			public UInt16 drVBMSt;        // Start 512-byte sector of volume bitmap
@@ -351,7 +361,7 @@ namespace FileSystemIDandChk.Plugins
 			public UInt32  drNxtCNID;      // CNID for next file
 			public UInt16 drFreeBks;      // Free allocation blocks
 			public byte[] drVN;           // Volume name (28 bytes)
-			public UInt32  drVolBkUp;      // Volume last backup time
+			public ulong  drVolBkUp;      // Volume last backup time
 			public UInt16 drVSeqNum;      // Volume backup sequence number
 			public UInt32  drWrCnt;        // Filesystem write count
 			public UInt32  drXTClpSiz;     // Bytes to allocate when extending the extents B-Tree

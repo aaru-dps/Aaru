@@ -49,6 +49,8 @@
     <Compile Include="PartPlugins\PartPlugin.cs" />
     <Compile Include="PartPlugins\AppleMap.cs" />
     <Compile Include="CToString.cs" />
+    <Compile Include="Plugins\FFS.cs" />
+    <Compile Include="Plugins\AppleHFSPlus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

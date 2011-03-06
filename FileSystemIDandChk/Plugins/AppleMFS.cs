@@ -218,8 +218,8 @@ namespace FileSystemIDandChk.Plugins
 		private struct MFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
 		{
 			public UInt16 drSigWord;  // Signature, 0xD2D7
-			public UInt32 drCrDate;   // Volume creation date
-			public UInt32 drLsBkUp;   // Volume last backup date
+			public ulong drCrDate;   // Volume creation date
+			public ulong drLsBkUp;   // Volume last backup date
 			public UInt16 drAtrb;     // Volume attributes
 			public UInt16 drNmFls;    // Volume number of files
 			public UInt16 drDirSt;    // First directory block
