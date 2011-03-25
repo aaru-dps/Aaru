@@ -540,7 +540,11 @@ namespace FileSystemIDandChk.PartPlugins
 				}
 			}
 			
-			return true;
+			// An empty MBR may exist, NeXT creates one and then hardcodes its disklabel
+			if(partitions.Count==0)
+				return false;
+			else	
+				return true;
 		}
 		
 		private string decodeBSDType(byte type)
