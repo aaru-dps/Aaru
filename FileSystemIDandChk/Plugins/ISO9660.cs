@@ -44,7 +44,7 @@ namespace FileSystemIDandChk.Plugins
                 return false;
 			
 			// Seek to Volume Descriptor
-            fileStream.Seek(32768 + offset, SeekOrigin.Begin);
+            fileStream.Seek(32768, SeekOrigin.Begin);
 
             VDType = (byte)fileStream.ReadByte();
 			byte[] VDMagic = new byte[5];
@@ -99,7 +99,7 @@ namespace FileSystemIDandChk.Plugins
             byte[] VDPathTableStart = new byte[4];
             byte[] RootDirectoryLocation = new byte[4];
 
-            fileStream.Seek(0 + offset, SeekOrigin.Begin);
+            fileStream.Seek(0, SeekOrigin.Begin);
 
             // ISO9660 Primary Volume Descriptor starts at 32768, so that's minimal size.
             if (fileStream.Length < 32768)
@@ -110,7 +110,7 @@ namespace FileSystemIDandChk.Plugins
             while (true)
             {
                 // Seek to Volume Descriptor
-                fileStream.Seek(32768+(2048*counter) + offset, SeekOrigin.Begin);
+                fileStream.Seek(32768+(2048*counter), SeekOrigin.Begin);
 
                 VDType = (byte)fileStream.ReadByte();
 
@@ -143,7 +143,7 @@ namespace FileSystemIDandChk.Plugins
                             BootSpec = "Unknown";
 
                             // Seek to boot system identifier
-                            fileStream.Seek(32775 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32775 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(BootSysId, 0, 32) != 32)
                                 break; // Something bad happened
@@ -156,7 +156,7 @@ namespace FileSystemIDandChk.Plugins
                     case 1:
                         {
                             // Seek to first identifiers
-                            fileStream.Seek(32776 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32776 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(VDSysId, 0, 32) != 32)
                                 break; // Something bad happened
@@ -164,13 +164,13 @@ namespace FileSystemIDandChk.Plugins
                                 break; // Something bad happened
 
                             // Get path table start
-                            fileStream.Seek(32908 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32908 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(VDPathTableStart, 0, 4) != 4)
                                 break; // Something bad happened
 
                             // Seek to next identifiers
-                            fileStream.Seek(32958 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32958 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(VDVolSetId, 0, 128) != 128)
                                 break; // Something bad happened
@@ -182,7 +182,7 @@ namespace FileSystemIDandChk.Plugins
                                 break; // Something bad happened
 
                             // Seek to dates
-                            fileStream.Seek(33581 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(33581 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(VCTime, 0, 17) != 17)
                                 break; // Something bad happened
@@ -198,7 +198,7 @@ namespace FileSystemIDandChk.Plugins
                     case 2:
                         {
                             // Check if this is Joliet
-                            fileStream.Seek(32856 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32856 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(JolietMagic, 0, 3) != 3)
                             {
@@ -220,7 +220,7 @@ namespace FileSystemIDandChk.Plugins
                                 break;
 
                             // Seek to first identifiers
-                            fileStream.Seek(32776 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32776 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(JolietSysId, 0, 32) != 32)
                                 break; // Something bad happened
@@ -228,7 +228,7 @@ namespace FileSystemIDandChk.Plugins
                                 break; // Something bad happened
 
                             // Seek to next identifiers
-                            fileStream.Seek(32958 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(32958 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(JolietVolSetId, 0, 128) != 128)
                                 break; // Something bad happened
@@ -240,7 +240,7 @@ namespace FileSystemIDandChk.Plugins
                                 break; // Something bad happened
 
                             // Seek to dates
-                            fileStream.Seek(33581 + (2048 * counter) + offset, SeekOrigin.Begin);
+                            fileStream.Seek(33581 + (2048 * counter), SeekOrigin.Begin);
 
                             if (fileStream.Read(JolietCTime, 0, 17) != 17)
                                 break; // Something bad happened
@@ -266,12 +266,12 @@ namespace FileSystemIDandChk.Plugins
 
             int i = BitConverter.ToInt32(VDPathTableStart, 0);
 
-            fileStream.Seek((i * 2048)+2 + offset, SeekOrigin.Begin); // Seek to first path table location field
+            fileStream.Seek((i * 2048)+2, SeekOrigin.Begin); // Seek to first path table location field
 
             // Check for Rock Ridge
             if (fileStream.Read(RootDirectoryLocation, 0, 4) == 4)
             {
-                fileStream.Seek((BitConverter.ToInt32(RootDirectoryLocation,0) * 2048)+34 + offset, SeekOrigin.Begin); // Seek to root directory, first entry, system use field
+                fileStream.Seek((BitConverter.ToInt32(RootDirectoryLocation,0) * 2048)+34, SeekOrigin.Begin); // Seek to root directory, first entry, system use field
 
                 byte[] SUSPMagic = new byte[2];
                 byte[] RRMagic = new byte[2];
@@ -296,7 +296,7 @@ namespace FileSystemIDandChk.Plugins
             StringBuilder IPBinInformation = new StringBuilder();
 
             byte[] SegaHardwareID = new byte[16];
-            fileStream.Seek(0 + offset, SeekOrigin.Begin); // Seek to start (again)
+            fileStream.Seek(0, SeekOrigin.Begin); // Seek to start (again)
             fileStream.Read(SegaHardwareID, 0, 16);
 
             switch (Encoding.ASCII.GetString(SegaHardwareID))
