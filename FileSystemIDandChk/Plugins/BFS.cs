@@ -30,7 +30,18 @@ namespace FileSystemIDandChk.Plugins
 			else if(magic == 0x31534642) // Big-endian BFS
 				return true;
 			else
-				return false;
+			{
+				br.BaseStream.Seek(32 + 512 + offset, SeekOrigin.Begin); // Seek to magic, skip boot
+
+				magic = br.ReadUInt32();
+			
+				if(magic == 0x42465331) // Little-endian BFS
+					return true;
+				else if(magic == 0x31534642) // Big-endian BFS
+					return true;
+				else
+					return false;
+			}
 		}
 		
 		public override void GetInformation (FileStream stream, long offset, out string information)
@@ -43,7 +54,22 @@ namespace FileSystemIDandChk.Plugins
 			BeSuperBlock besb = new BeSuperBlock();
 			
 			BinaryReader br = new BinaryReader(stream);
-			br.BaseStream.Seek(offset, SeekOrigin.Begin);
+			
+			br.BaseStream.Seek(32 + offset, SeekOrigin.Begin); // Seek to magic
+			besb.magic1 = br.ReadUInt32();
+			if(besb.magic1 == 0x42465331 || besb.magic1 == 0x31534642) // Magic is at offset
+				br.BaseStream.Seek(offset, SeekOrigin.Begin);
+			else
+			{
+				br.BaseStream.Seek(32 + 512 + offset, SeekOrigin.Begin); // Seek to magic
+				besb.magic1 = br.ReadUInt32();
+				
+				if(besb.magic1 == 0x42465331 || besb.magic1 == 0x31534642) // There is a boot sector
+					br.BaseStream.Seek(offset + 512, SeekOrigin.Begin);
+				else
+					return;
+			}
+			
 			name_bytes = br.ReadBytes(32);
 			
 			besb.name = StringHandlers.CToString(name_bytes);
