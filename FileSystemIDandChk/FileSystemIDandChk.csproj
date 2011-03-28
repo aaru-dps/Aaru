@@ -53,6 +53,7 @@
     <Compile Include="Plugins\AppleHFSPlus.cs" />
     <Compile Include="PartPlugins\MBR.cs" />
     <Compile Include="PartPlugins\NeXT.cs" />
+    <Compile Include="Plugins\BFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
