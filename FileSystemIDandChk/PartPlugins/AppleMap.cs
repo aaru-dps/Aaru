@@ -11,7 +11,7 @@ namespace FileSystemIDandChk.PartPlugins
 		public AppleMap (PluginBase Core)
 		{
             base.Name = "Apple Partition Map";
-            base.PluginUUID = new Guid("ffe4b4e9-82ed-4761-af49-8bade4081d10");
+			base.PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
 		}
 		
 		public override bool GetInformation (FileStream stream, out List<Partition> partitions)

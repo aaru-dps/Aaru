@@ -14,7 +14,7 @@ namespace FileSystemIDandChk.Plugins
 		public AppleHFS(PluginBase Core)
         {
             base.Name = "Apple Hierarchical File System";
-            base.PluginUUID = new Guid("8f4ee9d5-6820-4d7a-ae6b-3a4a49e7a88f");
+			base.PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
         }
 		
 		public override bool Identify(FileStream stream, long offset)

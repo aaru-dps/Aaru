@@ -12,7 +12,7 @@ namespace FileSystemIDandChk.Plugins
 		public FAT(PluginBase Core)
         {
             base.Name = "Microsoft File Allocation Table";
-            base.PluginUUID = new Guid("67591456-90fa-49bd-ac89-14ef750b8af3");
+			base.PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         }
 		
 		public override bool Identify(FileStream stream, long offset)

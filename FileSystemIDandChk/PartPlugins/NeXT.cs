@@ -11,7 +11,7 @@ namespace FileSystemIDandChk.PartPlugins
 		public NeXTDisklabel (PluginBase Core)
 		{
             base.Name = "NeXT Disklabel";
-            base.PluginUUID = new Guid("460840f4-23f7-1fbe-6f28-50815e871853");
+			base.PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 		}
 		
 		public override bool GetInformation (FileStream stream, out List<Partition> partitions)

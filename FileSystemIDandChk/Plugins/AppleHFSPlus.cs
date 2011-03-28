@@ -14,7 +14,7 @@ namespace FileSystemIDandChk.Plugins
 		public AppleHFSPlus(PluginBase Core)
         {
             base.Name = "Apple HFS+ filesystem";
-            base.PluginUUID = new Guid("b4ef5baf-0ebe-41cd-866c-1a4bb2b75fd5");
+			base.PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
         }
 		
 		public override bool Identify(FileStream stream, long offset)

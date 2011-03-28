@@ -11,7 +11,7 @@ namespace FileSystemIDandChk.PartPlugins
 		public MBR (PluginBase Core)
 		{
             base.Name = "Master Boot Record";
-            base.PluginUUID = new Guid("630ddb30-433e-44ea-9541-52d36dea504a");
+			base.PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
 		}
 		
 		public override bool GetInformation (FileStream stream, out List<Partition> partitions)

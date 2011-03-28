@@ -14,7 +14,7 @@ namespace FileSystemIDandChk.Plugins
 		public AppleMFS(PluginBase Core)
         {
             base.Name = "Apple Macintosh File System";
-            base.PluginUUID = new Guid("67591456-90fa-49bd-ac89-14ef750b8af3");
+			base.PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         }
 		
 		public override bool Identify(FileStream stream, long offset)
