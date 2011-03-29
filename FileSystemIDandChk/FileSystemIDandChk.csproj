@@ -55,6 +55,7 @@
     <Compile Include="PartPlugins\NeXT.cs" />
     <Compile Include="Plugins\BFS.cs" />
     <Compile Include="Plugins\HPFS.cs" />
+    <Compile Include="Plugins\NTFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
