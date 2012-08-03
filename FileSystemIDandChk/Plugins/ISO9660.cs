@@ -38,7 +38,7 @@ namespace FileSystemIDandChk.Plugins
         public override bool Identify(FileStream fileStream, long offset)
         {
 			byte VDType;
-			
+
 			// ISO9660 Primary Volume Descriptor starts at 32768, so that's minimal size.
             if (fileStream.Length < 32768)
                 return false;
@@ -49,6 +49,7 @@ namespace FileSystemIDandChk.Plugins
             VDType = (byte)fileStream.ReadByte();
 			byte[] VDMagic = new byte[5];
 
+			// Wrong, VDs can be any order!
             if (VDType == 255) // Supposedly we are in the PVD.
 	            return false;
 
@@ -258,11 +259,13 @@ namespace FileSystemIDandChk.Plugins
                 counter++;
             }
 
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
-            if(!Joliet)
-                decodedVD = DecodeVolumeDescriptor(VDSysId, VDVolId, VDVolSetId, VDPubId, VDDataPrepId, VDAppId, VCTime, VMTime, VXTime, VETime);
-            else
-                decodedVD = DecodeJolietDescriptor(JolietSysId, JolietVolId, JolietVolSetId, JolietPubId, JolietDataPrepId, JolietAppId, JolietCTime, JolietMTime, JolietXTime, JolietETime);
+			DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
+			DecodedVolumeDescriptor decodedJolietVD = new DecodedVolumeDescriptor();
+
+				decodedVD = DecodeVolumeDescriptor(VDSysId, VDVolId, VDVolSetId, VDPubId, VDDataPrepId, VDAppId, VCTime, VMTime, VXTime, VETime);
+			if(Joliet)
+				decodedJolietVD = DecodeJolietDescriptor(JolietSysId, JolietVolId, JolietVolSetId, JolietPubId, JolietDataPrepId, JolietAppId, JolietCTime, JolietMTime, JolietXTime, JolietETime);
+
 
             int i = BitConverter.ToInt32(VDPathTableStart, 0);
 
@@ -784,6 +787,32 @@ namespace FileSystemIDandChk.Plugins
             else
                 ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
 
+			if(Joliet)
+			{
+				ISOMetadata.AppendLine("---------------------------------------");
+				ISOMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
+				ISOMetadata.AppendLine("---------------------------------------");
+				ISOMetadata.AppendFormat("System identifier: {0}", decodedJolietVD.SystemIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVD.VolumeIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVD.VolumeSetIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVD.PublisherIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVD.DataPreparerIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Application identifier: {0}", decodedJolietVD.ApplicationIdentifier).AppendLine();
+				ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime.ToString()).AppendLine();
+				if (decodedJolietVD.HasModificationTime)
+					ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime.ToString()).AppendLine();
+				else
+					ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
+				if (decodedJolietVD.HasExpirationTime)
+					ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime.ToString()).AppendLine();
+				else
+					ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
+				if (decodedJolietVD.HasEffectiveTime)
+					ISOMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVD.EffectiveTime.ToString()).AppendLine();
+				else
+					ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
+			}
+
             information = ISOMetadata.ToString();
         }
 
@@ -835,7 +864,7 @@ namespace FileSystemIDandChk.Plugins
             return decodedVD;
         }
 
-        private DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
+		private DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 

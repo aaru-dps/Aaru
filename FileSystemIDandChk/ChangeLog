@@ -1,5 +1,11 @@
 2012-08-03  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/ISO9660.cs:
+	  When Joliet is present, show both Joliet and Primary volume
+	  descriptors, as they may not be in sync
+
+2012-08-03  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/ODS.cs:
 	* Plugins/HPFS.cs:
 	* Plugins/ISO9660.cs:
