@@ -130,11 +130,11 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})", homeblock.ownername, homeblock.volowner).AppendLine();
 			sb.AppendFormat("Volume label: \"{0}\"", homeblock.volname).AppendLine();
 			sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
-			sb.AppendFormat("Volume was created on {0}", VMSDateToDateTime(homeblock.credate).ToString()).AppendLine();
+			sb.AppendFormat("Volume was created on {0}", DateHandlers.VMSToDateTime(homeblock.credate).ToString()).AppendLine();
 			if(homeblock.revdate > 0)
-				sb.AppendFormat("Volume was last modified on {0}", VMSDateToDateTime(homeblock.revdate).ToString()).AppendLine();
+				sb.AppendFormat("Volume was last modified on {0}", DateHandlers.VMSToDateTime(homeblock.revdate).ToString()).AppendLine();
 			if(homeblock.copydate > 0)
-				sb.AppendFormat("Volume copied on {0}", VMSDateToDateTime(homeblock.copydate).ToString()).AppendLine();
+				sb.AppendFormat("Volume copied on {0}", DateHandlers.VMSToDateTime(homeblock.copydate).ToString()).AppendLine();
 			sb.AppendFormat("Checksums: 0x{0:X4} and 0x{1:X4}", homeblock.checksum1, homeblock.checksum2).AppendLine();
 			sb.AppendLine("Flags:");
 			sb.AppendFormat("Window: {0}", homeblock.window).AppendLine();
@@ -279,15 +279,6 @@ namespace FileSystemIDandChk.Plugins
 			public string format;       // ODS-2 defines it as "DECFILE11B", 12 bytes
 			public UInt16 reserved2;    // Reserved
 			public UInt16 checksum2;    // Checksum of preceding 255 words (16 bit units)
-		}
-		
-		// C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC
-		private DateTime VMSDateToDateTime(UInt64 vmsDate)
-		{
-			DateTime date = new DateTime(1858, 11, 17, 0, 0, 0); // Epoch, day 0 of Julian Date system
-			double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
-			date = date.AddMilliseconds(delta);
-			return date;
 		}
 	}
 }

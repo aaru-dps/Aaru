@@ -9,8 +9,6 @@ namespace FileSystemIDandChk.Plugins
 {
 	class AppleHFSPlus : Plugin
 	{
-		private DateTime HFSDateDelta = new DateTime(1904, 01, 01, 00, 00, 00);
-		
 		public AppleHFSPlus(PluginBase Core)
         {
             base.Name = "Apple HFS+ filesystem";
@@ -291,10 +289,10 @@ namespace FileSystemIDandChk.Plugins
 					sb.AppendFormat("Implementation that last mounted the volume: \"{0}\".", HPVH.lastMountedVersion).AppendLine();
 					if((HPVH.attributes & 0x2000) == 0x2000)
 						sb.AppendFormat("Journal starts at allocation block {0}.", HPVH.journalInfoBlock).AppendLine();
-					sb.AppendFormat("Creation date: {0}", HFSDateDelta.AddTicks((long)(HPVH.createDate*10000000))).AppendLine();
-					sb.AppendFormat("Last modification date: {0}", HFSDateDelta.AddTicks((long)(HPVH.modifyDate*10000000))).AppendLine();
-					sb.AppendFormat("Last backup date: {0}", HFSDateDelta.AddTicks((long)(HPVH.backupDate*10000000))).AppendLine();
-					sb.AppendFormat("Last check date: {0}", HFSDateDelta.AddTicks((long)(HPVH.checkedDate*10000000))).AppendLine();
+					sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(HPVH.createDate)).AppendLine();
+					sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(HPVH.modifyDate)).AppendLine();
+					sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(HPVH.backupDate)).AppendLine();
+					sb.AppendFormat("Last check date: {0}", DateHandlers.MacToDateTime(HPVH.checkedDate)).AppendLine();
 					sb.AppendFormat("{0} files on volume.", HPVH.fileCount).AppendLine();
 					sb.AppendFormat("{0} folders on volume.", HPVH.folderCount).AppendLine();
 					sb.AppendFormat("{0} bytes per allocation block.", HPVH.blockSize).AppendLine();

@@ -1,0 +1,33 @@
+2012-08-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins/ODS.cs:
+	* Plugins/HPFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/AppleMFS.cs:
+	* Plugins/AppleHFS.cs:
+	* Plugins/AppleHFSPlus.cs:
+	  Moved datetime conversion to DateHandlers class.
+
+	* Plugins/Symbian.cs:
+	  Identifies .SIS files. Yes I know it's not a filesystem but
+	  I needed it so.
+
+	* Main.cs:
+	  Corrected typo
+
+	* FileSystemIDandChk.csproj:
+	  Added datetime conversion handling class, Symbian .SIS
+	  installers, ext filesystem and ext2/3/4 filesystems.
+
+	* Plugins/ext2FS.cs:
+	  Detects ext2, ext3 and ext4 filesystems up to Linux 3.1
+	  kernel.
+
+	* Plugins/extFS.cs:
+	  Detects ext filesystems. Untested as no Linux 2.0 was
+	  available at time :p
+
+	* DateHandlers.cs:
+	  Moved all datetime convertions from plugins to central
+	  class.
+

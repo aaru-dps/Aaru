@@ -25,6 +25,9 @@ namespace FileSystemIDandChk.Plugins
 			br.BaseStream.Seek(offset + 3 + 8, SeekOrigin.Begin); // Seek to bps
 			bps = br.ReadUInt16();
 			
+			if(br.BaseStream.Length < offset + (16 * bps))
+				return false;
+			
 			br.BaseStream.Seek(offset + (16 * bps), SeekOrigin.Begin); // Seek to superblock, on logical sector 16
 			magic1 = br.ReadUInt32();
 			magic2 = br.ReadUInt32();
@@ -150,8 +153,8 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendFormat("Volume label: {0}", hpfs_bpb.volume_label).AppendLine();
 //			sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 			
-			DateTime last_chk = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(hpfs_sb.last_chkdsk);
-			DateTime last_optim = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(hpfs_sb.last_optim);
+			DateTime last_chk = DateHandlers.UNIXToDateTime(hpfs_sb.last_chkdsk);
+			DateTime last_optim = DateHandlers.UNIXToDateTime(hpfs_sb.last_optim);
 			
 			sb.AppendFormat("HPFS version: {0}", hpfs_sb.version).AppendLine();
 			sb.AppendFormat("Functional version: {0}", hpfs_sb.func_version).AppendLine();

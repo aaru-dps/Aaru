@@ -800,7 +800,7 @@ namespace FileSystemIDandChk.Plugins
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime = DecodeVDDateTime(VCTime);
+                decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
 
             if (VMTime[0] == '0' || VMTime[0] == 0x00)
             {
@@ -809,7 +809,7 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DecodeVDDateTime(VMTime);
+				decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
             }
 
             if (VXTime[0] == '0' || VXTime[0] == 0x00)
@@ -819,7 +819,7 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DecodeVDDateTime(VXTime);
+				decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
             }
 
             if (VETime[0] == '0' || VETime[0] == 0x00)
@@ -829,7 +829,7 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DecodeVDDateTime(VETime);
+				decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
             }
 
             return decodedVD;
@@ -848,7 +848,7 @@ namespace FileSystemIDandChk.Plugins
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime = DecodeVDDateTime(VCTime);
+				decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
 
             if (VMTime[0] == '0' || VMTime[0] == 0x00)
             {
@@ -857,7 +857,7 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime = DecodeVDDateTime(VMTime);
+				decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
             }
 
             if (VXTime[0] == '0' || VXTime[0] == 0x00)
@@ -867,7 +867,7 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime = DecodeVDDateTime(VXTime);
+				decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
             }
 
             if (VETime[0] == '0' || VETime[0] == 0x00)
@@ -877,51 +877,10 @@ namespace FileSystemIDandChk.Plugins
             else
             {
                 decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime = DecodeVDDateTime(VETime);
+				decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
             }
 
             return decodedVD;
-        }
-
-        private DateTime DecodeVDDateTime(byte[] VDDateTime)
-        {
-            int year, month, day, hour, minute, second, hundredths;
-            byte[] twocharvalue = new byte[2];
-            byte[] fourcharvalue = new byte[4];
-
-            fourcharvalue[0] = VDDateTime[0];
-            fourcharvalue[1] = VDDateTime[1];
-            fourcharvalue[2] = VDDateTime[2];
-            fourcharvalue[3] = VDDateTime[3];
-            year = Convert.ToInt32(Encoding.ASCII.GetString(fourcharvalue));
-
-            twocharvalue[0] = VDDateTime[4];
-            twocharvalue[1] = VDDateTime[5];
-            month = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            twocharvalue[0] = VDDateTime[6];
-            twocharvalue[1] = VDDateTime[7];
-            day = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            twocharvalue[0] = VDDateTime[8];
-            twocharvalue[1] = VDDateTime[9];
-            hour = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            twocharvalue[0] = VDDateTime[10];
-            twocharvalue[1] = VDDateTime[11];
-            minute = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            twocharvalue[0] = VDDateTime[12];
-            twocharvalue[1] = VDDateTime[13];
-            second = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            twocharvalue[0] = VDDateTime[14];
-            twocharvalue[1] = VDDateTime[15];
-            hundredths = Convert.ToInt32(Encoding.ASCII.GetString(twocharvalue));
-
-            DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);
-
-            return decodedDT;
         }
     }
 }

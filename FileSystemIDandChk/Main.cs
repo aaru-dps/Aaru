@@ -21,7 +21,7 @@ namespace FileSystemIDandChk
 			chkFilesystems = true;
 			isDebug = true;
 			
-			Console.WriteLine ("Filesystem Identificator and Checker");
+			Console.WriteLine ("Filesystem Identifier and Checker");
 			Console.WriteLine ("Copyright (C) Natalia Portillo, All Rights Reserved");
 			
 			if(args.Length==0)

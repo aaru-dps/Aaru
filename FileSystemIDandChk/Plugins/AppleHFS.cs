@@ -9,8 +9,6 @@ namespace FileSystemIDandChk.Plugins
 {
 	class AppleHFS : Plugin
 	{
-		private DateTime HFSDateDelta = new DateTime(1904, 01, 01, 00, 00, 00);
-		
 		public AppleHFS(PluginBase Core)
         {
             base.Name = "Apple Hierarchical File System";
@@ -234,9 +232,9 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendLine("Apple Hierarchical File System");
 			sb.AppendLine();
 			sb.AppendLine("Master Directory Block:");
-			sb.AppendFormat("Creation date: {0}", HFSDateDelta.AddTicks((long)(MDB.drCrDate*10000000))).AppendLine();
-			sb.AppendFormat("Last modification date: {0}", HFSDateDelta.AddTicks((long)(MDB.drLsMod*10000000))).AppendLine();
-			sb.AppendFormat("Last backup date: {0}", HFSDateDelta.AddTicks((long)(MDB.drVolBkUp*10000000))).AppendLine();
+			sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
+			sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(MDB.drLsMod)).AppendLine();
+			sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drVolBkUp)).AppendLine();
 			sb.AppendFormat("Backup sequence number: {0}", MDB.drVSeqNum).AppendLine();
 			
 			if((MDB.drAtrb & 0x80) == 0x80)

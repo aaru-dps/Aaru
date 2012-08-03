@@ -9,8 +9,6 @@ namespace FileSystemIDandChk.Plugins
 {
 	class AppleMFS : Plugin
 	{
-		private DateTime MFSDateDelta = new DateTime(1904, 01, 01, 00, 00, 00);
-		
 		public AppleMFS(PluginBase Core)
         {
             base.Name = "Apple Macintosh File System";
@@ -158,8 +156,8 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendLine("Apple Macintosh File System");
 			sb.AppendLine();
 			sb.AppendLine("Master Directory Block:");
-			sb.AppendFormat("Creation date: {0}", MFSDateDelta.AddTicks((long)(MDB.drCrDate*10000000))).AppendLine();
-			sb.AppendFormat("Last backup date: {0}", MFSDateDelta.AddTicks((long)(MDB.drLsBkUp*10000000))).AppendLine();
+			sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
+			sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drLsBkUp)).AppendLine();
 			if((MDB.drAtrb & 0x80) == 0x80)
 				sb.AppendLine("Volume is locked by hardware.");
 			if((MDB.drAtrb & 0x8000) == 0x8000)
