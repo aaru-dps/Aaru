@@ -1,3 +1,20 @@
+2012-08-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins/FFS.cs:
+	  Added code for detecting 42BSD, 43BSD, 44BSD, SunOS,
+	  SunOS/x86, UFS and UFS2 filesystems. Block size is incorrect
+	  on NeXTStep's CD UFSs, but there is no way to check for it.
+
+	* Main.cs:
+	  Disable debug by default
+
+	* FileSystemIDandChk.csproj:
+	  Moved to .NET 4 and added EndianAwareBinaryReader class
+
+	* EndianAwareBinaryReader.cs:
+	  Override of BinaryReader class with the ability to
+	  automatically swap endianness
+
 2012-08-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/ISO9660.cs:

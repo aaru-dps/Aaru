@@ -19,7 +19,7 @@ namespace FileSystemIDandChk
 			
 			chkPartitions = true;
 			chkFilesystems = true;
-			isDebug = true;
+			isDebug = false;
 			
 			Console.WriteLine ("Filesystem Identifier and Checker");
 			Console.WriteLine ("Copyright (C) Natalia Portillo, All Rights Reserved");
