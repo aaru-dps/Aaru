@@ -19,6 +19,20 @@ namespace FileSystemIDandChk
 			
 			return sb.ToString();
 		}
+
+		public static string PascalToString (byte[] PascalString)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			byte length = PascalString[0];
+
+			for(int i = 1; i < length+1; i++)
+			{
+				sb.Append(Encoding.ASCII.GetString (PascalString, i, 1));
+			}
+
+			return sb.ToString();
+		}
 	}
 }
 

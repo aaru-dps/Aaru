@@ -9,6 +9,10 @@ namespace FileSystemIDandChk.Plugins
 {
 	class AppleHFS : Plugin
 	{
+		private const UInt16 HFS_MAGIC   = 0x4244; // "BD"
+		private const UInt16 HFSP_MAGIC  = 0x482B; // "H+"
+		private const UInt16 HFSBB_MAGIC = 0x4C4B; // "LK"
+
 		public AppleHFS(PluginBase Core)
         {
             base.Name = "Apple Hierarchical File System";
@@ -18,23 +22,19 @@ namespace FileSystemIDandChk.Plugins
 		public override bool Identify(FileStream stream, long offset)
 		{
 			byte[] signature = new byte[2];
-			ushort drSigWord;
+			UInt16 drSigWord;
+
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
+			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
 			
-			stream.Seek(0x400 + offset, SeekOrigin.Begin);
+			drSigWord = eabr.ReadUInt16();
 			
-			stream.Read(signature, 0, 2);
-			signature = Swapping.SwapTwoBytes(signature);
-			
-			drSigWord = BitConverter.ToUInt16(signature, 0);
-			
-			if(drSigWord == 0x4244)
+			if(drSigWord == HFS_MAGIC)
 			{
-				stream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
-				stream.Read(signature, 0, 2);
-				signature = Swapping.SwapTwoBytes(signature);
-				drSigWord = BitConverter.ToUInt16(signature, 0);
+				eabr.BaseStream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
+				drSigWord = eabr.ReadUInt16();
 				
-				if(drSigWord == 0x482B) // "H+"
+				if(drSigWord == HFSP_MAGIC) // "H+"
 					return false;
 				else
 					return true;
@@ -51,180 +51,88 @@ namespace FileSystemIDandChk.Plugins
 			
 			HFS_MasterDirectoryBlock MDB = new HFS_MasterDirectoryBlock();
 			HFS_BootBlock BB = new HFS_BootBlock();
-			
-			byte[] sixteen_bit = new byte[2];
-			byte[] thirtytwo_bit = new byte[4];
-			byte[] fifthteen_bytes = new byte[15];
-			
-			stream.Seek(0x400 + offset, SeekOrigin.Begin);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
-			if(MDB.drSigWord != 0x4244)
+
+			byte[] pString;
+
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
+			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
+			MDB.drSigWord = eabr.ReadUInt16();
+			if(MDB.drSigWord != HFS_MAGIC)
 				return;
 			
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drCrDate = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drLsMod = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drAtrb = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drNmFls = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drVBMSt = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drAllocPtr = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drNmAlBlks = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drAlBlkSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drAlBlSt = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drNxtCNID = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drFreeBks = BitConverter.ToUInt16(sixteen_bit, 0);
-			MDB.drVN = new byte[28];
-			stream.Read(MDB.drVN, 0, 28);
+			MDB.drCrDate = eabr.ReadUInt32();
+			MDB.drLsMod = eabr.ReadUInt32();
+			MDB.drAtrb = eabr.ReadUInt16();
+			MDB.drNmFls = eabr.ReadUInt16();
+			MDB.drVBMSt = eabr.ReadUInt16();
+			MDB.drAllocPtr = eabr.ReadUInt16();
+			MDB.drNmAlBlks = eabr.ReadUInt16();
+			MDB.drAlBlkSiz = eabr.ReadUInt32();
+			MDB.drClpSiz = eabr.ReadUInt32();
+			MDB.drAlBlSt = eabr.ReadUInt16();
+			MDB.drNxtCNID = eabr.ReadUInt32();
+			MDB.drFreeBks = eabr.ReadUInt16();
+			pString = eabr.ReadBytes(28);
+			MDB.drVN = StringHandlers.PascalToString(pString);
 			
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drVolBkUp = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drVSeqNum = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drWrCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drXTClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drCTClpSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drNmRtDirs = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFilCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drDirCnt = BitConverter.ToUInt32(thirtytwo_bit, 0);
-
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo0 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo1 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo2 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo3 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo4 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo5 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo6 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drFndrInfo7 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+			MDB.drVolBkUp = eabr.ReadUInt32();
+			MDB.drVSeqNum = eabr.ReadUInt16();
+			MDB.drWrCnt = eabr.ReadUInt32();
+			MDB.drXTClpSiz = eabr.ReadUInt32();
+			MDB.drCTClpSiz = eabr.ReadUInt32();
+			MDB.drNmRtDirs = eabr.ReadUInt16();
+			MDB.drFilCnt = eabr.ReadUInt32();
+			MDB.drDirCnt = eabr.ReadUInt32();
 			
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.drEmbedSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.xdrStABNt = BitConverter.ToUInt16(sixteen_bit, 0);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			MDB.xdrNumABlks = BitConverter.ToUInt16(sixteen_bit, 0);
+			MDB.drFndrInfo0 = eabr.ReadUInt32();
+			MDB.drFndrInfo1 = eabr.ReadUInt32();
+			MDB.drFndrInfo2 = eabr.ReadUInt32();
+			MDB.drFndrInfo3 = eabr.ReadUInt32();
+			MDB.drFndrInfo4 = eabr.ReadUInt32();
+			MDB.drFndrInfo5 = eabr.ReadUInt32();
+			MDB.drFndrInfo6 = eabr.ReadUInt32();
+			MDB.drFndrInfo7 = eabr.ReadUInt32();
 			
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drXTFlSize = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Seek(12, SeekOrigin.Current);
-			stream.Read(thirtytwo_bit, 0, 4);
-			thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-			MDB.drCTFlSize = BitConverter.ToUInt32(thirtytwo_bit, 0);
-			stream.Seek(12, SeekOrigin.Current);
+			MDB.drEmbedSigWord = eabr.ReadUInt16();
+			MDB.xdrStABNt = eabr.ReadUInt16();
+			MDB.xdrNumABlks = eabr.ReadUInt16();
 			
-			stream.Seek(0 + offset, SeekOrigin.Begin);
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			BB.signature = BitConverter.ToUInt16(sixteen_bit, 0);
+			MDB.drXTFlSize = eabr.ReadUInt32();
+			eabr.BaseStream.Seek(12, SeekOrigin.Current);
+			MDB.drCTFlSize = eabr.ReadUInt32();
+			eabr.BaseStream.Seek(12, SeekOrigin.Current);
 			
-			if(BB.signature == 0x4C4B)
+			eabr.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
+			BB.signature = eabr.ReadUInt16();
+			
+			if(BB.signature == HFSBB_MAGIC)
 			{
-				stream.Read(thirtytwo_bit, 0, 4);
-				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-				BB.branch = BitConverter.ToUInt32(thirtytwo_bit, 0);
-				BB.boot_flags = (byte)stream.ReadByte();
-				BB.boot_version = (byte)stream.ReadByte();
+				BB.branch = eabr.ReadUInt32();
+				BB.boot_flags = eabr.ReadByte();
+				BB.boot_version = eabr.ReadByte();
 				
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				BB.sec_sv_pages = BitConverter.ToInt16(sixteen_bit, 0);
+				BB.sec_sv_pages = eabr.ReadInt16();
+
+				pString = eabr.ReadBytes(16);
+				BB.system_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.finder_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.debug_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.disasm_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.stupscr_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.bootup_name = StringHandlers.PascalToString(pString);
+				pString = eabr.ReadBytes(16);
+				BB.clipbrd_name = StringHandlers.PascalToString(pString);
 				
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.system_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.finder_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.debug_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.disasm_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.stupscr_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.bootup_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				stream.Seek(1, SeekOrigin.Current);
-				stream.Read(fifthteen_bytes, 0, 15);
-				BB.clipbrd_name = Encoding.ASCII.GetString(fifthteen_bytes);
-				
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				BB.max_files = BitConverter.ToUInt16(sixteen_bit, 0);
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				BB.queue_size = BitConverter.ToUInt16(sixteen_bit, 0);
-				stream.Read(thirtytwo_bit, 0, 4);
-				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-				BB.heap_128k = BitConverter.ToUInt32(thirtytwo_bit, 0);
-				stream.Read(thirtytwo_bit, 0, 4);
-				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-				BB.heap_256k = BitConverter.ToUInt32(thirtytwo_bit, 0);
-				stream.Read(thirtytwo_bit, 0, 4);
-				thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-				BB.heap_512k = BitConverter.ToUInt32(thirtytwo_bit, 0);
+				BB.max_files = eabr.ReadUInt16();
+				BB.queue_size = eabr.ReadUInt16();
+				BB.heap_128k = eabr.ReadUInt32();
+				BB.heap_256k = eabr.ReadUInt32();
+				BB.heap_512k = eabr.ReadUInt32();
 			}
 			else
 				BB.signature = 0x0000;
@@ -277,16 +185,8 @@ namespace FileSystemIDandChk.Plugins
 			
 			sb.AppendFormat("{0} bytes in the Extents B-Tree", MDB.drXTFlSize).AppendLine();
 			sb.AppendFormat("{0} bytes in the Catalog B-Tree", MDB.drCTFlSize).AppendLine();
-			
-			StringBuilder volumeName = new StringBuilder();
-			for(int i = 1; i < 28; i++)
-			{
-				if(MDB.drVN[i] == 0)
-					break;
-				
-				volumeName.Append(Encoding.ASCII.GetString(MDB.drVN, i, 1));
-			}
-			sb.AppendFormat("Volume name: {0}", volumeName.ToString()).AppendLine();
+
+			sb.AppendFormat("Volume name: {0}", MDB.drVN).AppendLine();
 			
 			sb.AppendLine("Finder info:");
 			sb.AppendFormat("CNID of bootable system's directory: {0}", MDB.drFndrInfo0).AppendLine();
@@ -358,7 +258,7 @@ namespace FileSystemIDandChk.Plugins
 			public UInt16 drAlBlSt;       // Start 512-byte sector of first allocation block
 			public UInt32  drNxtCNID;      // CNID for next file
 			public UInt16 drFreeBks;      // Free allocation blocks
-			public byte[] drVN;           // Volume name (28 bytes)
+			public string drVN;           // Volume name (28 bytes)
 			public ulong  drVolBkUp;      // Volume last backup time
 			public UInt16 drVSeqNum;      // Volume backup sequence number
 			public UInt32  drWrCnt;        // Filesystem write count
