@@ -1,5 +1,11 @@
 2012-08-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/MinixFS.cs:
+	* FileSystemIDandChk.csproj:
+	  Added Minix V1, V2 and V3 filesystems.
+
+2012-08-05  Natalia Portillo  <claunia@claunia.com>
+
 	* DateHandlers.cs:
 	  Added debug information and prevent malformed datetime
 	  strings crash ISO9660ToDateTime class

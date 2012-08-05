@@ -63,6 +63,7 @@
     <Compile Include="DateHandlers.cs" />
     <Compile Include="EndianAwareBinaryReader.cs" />
     <Compile Include="StringHandlers.cs" />
+    <Compile Include="Plugins\MinixFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
