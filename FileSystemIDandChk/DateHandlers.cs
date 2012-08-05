@@ -33,33 +33,62 @@ namespace FileSystemIDandChk
 			fourcharvalue[1] = VDDateTime[1];
 			fourcharvalue[2] = VDDateTime[2];
 			fourcharvalue[3] = VDDateTime[3];
-			year = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(fourcharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: year = \"{0}\"",StringHandlers.CToString(fourcharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(fourcharvalue), out year))
+				year = 0;
+//			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue));
 			
 			twocharvalue[0] = VDDateTime[4];
 			twocharvalue[1] = VDDateTime[5];
-			month = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: month = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out month))
+				month = 0;
+//			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 			
 			twocharvalue[0] = VDDateTime[6];
 			twocharvalue[1] = VDDateTime[7];
-			day = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: day = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out day))
+				day = 0;
+//			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 			
 			twocharvalue[0] = VDDateTime[8];
 			twocharvalue[1] = VDDateTime[9];
-			hour = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: hour = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hour))
+				hour = 0;
+//			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 			
 			twocharvalue[0] = VDDateTime[10];
 			twocharvalue[1] = VDDateTime[11];
-			minute = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: minute = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out minute))
+				minute = 0;
+//			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 			
 			twocharvalue[0] = VDDateTime[12];
 			twocharvalue[1] = VDDateTime[13];
-			second = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: second = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out second))
+				second = 0;
+//			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 			
 			twocharvalue[0] = VDDateTime[14];
 			twocharvalue[1] = VDDateTime[15];
-			hundredths = Convert.ToInt32(System.Text.Encoding.ASCII.GetString(twocharvalue));
-			
-			DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: hundredths = \"{0}\"",StringHandlers.CToString(twocharvalue));
+			if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hundredths))
+				hundredths = 0;
+//			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+
+			if(MainClass.isDebug)
+				Console.WriteLine("ISO9600ToDateTime: decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);", year, month, day, hour, minute, second, hundredths *10);		DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);
 			
 			return decodedDT;
 		}

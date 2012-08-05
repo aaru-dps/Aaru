@@ -1,5 +1,11 @@
 2012-08-05  Natalia Portillo  <claunia@claunia.com>
 
+	* DateHandlers.cs:
+	  Added debug information and prevent malformed datetime
+	  strings crash ISO9660ToDateTime class
+
+2012-08-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/ISO9660.cs:
 	  Added code preventing it to be run on each partition,
 	  because this filesystem will be once and only. Now it runs
