@@ -9,6 +9,20 @@ namespace FileSystemIDandChk.Plugins
 {
 	class BeFS : Plugin
 	{
+		// Little endian constants (that is, as read by .NET :p)
+		private const UInt32 BEFS_MAGIC1 = 0x42465331;
+		private const UInt32 BEFS_MAGIC2 = 0xDD121031;
+		private const UInt32 BEFS_MAGIC3 = 0x15B6830E;
+		private const UInt32 BEFS_ENDIAN = 0x42494745;
+
+		// Big endian constants
+		private const UInt32 BEFS_CIGAM1 = 0x31534642;
+		private const UInt32 BEFS_NAIDNE = 0x45474942;
+
+		// Common constants
+		private const UInt32 BEFS_CLEAN  = 0x434C454E;
+		private const UInt32 BEFS_DIRTY  = 0x44495254;
+
 		public BeFS(PluginBase Core)
         {
             base.Name = "Be Filesystem";
@@ -25,9 +39,9 @@ namespace FileSystemIDandChk.Plugins
 			
 			magic = br.ReadUInt32();
 			
-			if(magic == 0x42465331) // Little-endian BFS
+			if(magic == BEFS_MAGIC1) // Little-endian BFS
 				return true;
-			else if(magic == 0x31534642) // Big-endian BFS
+			else if(magic == BEFS_CIGAM1) // Big-endian BFS
 				return true;
 			else
 			{
@@ -35,9 +49,9 @@ namespace FileSystemIDandChk.Plugins
 
 				magic = br.ReadUInt32();
 			
-				if(magic == 0x42465331) // Little-endian BFS
+				if(magic == BEFS_MAGIC1) // Little-endian BFS
 					return true;
-				else if(magic == 0x31534642) // Big-endian BFS
+				else if(magic == BEFS_CIGAM1) // Big-endian BFS
 					return true;
 				else
 					return false;
@@ -48,6 +62,7 @@ namespace FileSystemIDandChk.Plugins
 		{
 			information = "";
 			byte[] name_bytes = new byte[32];
+			bool littleendian = true;
 			
 			StringBuilder sb = new StringBuilder();
 			
@@ -57,134 +72,63 @@ namespace FileSystemIDandChk.Plugins
 			
 			br.BaseStream.Seek(32 + offset, SeekOrigin.Begin); // Seek to magic
 			besb.magic1 = br.ReadUInt32();
-			if(besb.magic1 == 0x42465331 || besb.magic1 == 0x31534642) // Magic is at offset
+			if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
+			{
 				br.BaseStream.Seek(offset, SeekOrigin.Begin);
+				if(besb.magic1 == BEFS_CIGAM1)
+					littleendian = false;
+			}
 			else
 			{
 				br.BaseStream.Seek(32 + 512 + offset, SeekOrigin.Begin); // Seek to magic
 				besb.magic1 = br.ReadUInt32();
 				
-				if(besb.magic1 == 0x42465331 || besb.magic1 == 0x31534642) // There is a boot sector
+				if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+				{
 					br.BaseStream.Seek(offset + 512, SeekOrigin.Begin);
+					if(besb.magic1 == BEFS_CIGAM1)
+						littleendian = false;
+				}
 				else
 					return;
 			}
-			
-			name_bytes = br.ReadBytes(32);
+
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, littleendian);
+			name_bytes = eabr.ReadBytes(32);
 			
 			besb.name = StringHandlers.CToString(name_bytes);
-			besb.magic1 = br.ReadUInt32();
-			besb.fs_byte_order = br.ReadUInt32();
-			besb.block_size = br.ReadUInt32();
-			besb.block_shift = br.ReadUInt32();
-			besb.num_blocks = br.ReadInt64();
-			besb.used_blocks = br.ReadInt64();
-			besb.inode_size = br.ReadInt32();
-			besb.magic2 = br.ReadUInt32();
-			besb.blocks_per_ag = br.ReadInt32();
-			besb.ag_shift = br.ReadInt32();
-			besb.num_ags = br.ReadInt32();
-			besb.flags = br.ReadUInt32();
-			besb.log_blocks_ag = br.ReadInt32();
-			besb.log_blocks_start = br.ReadUInt16();
-			besb.log_blocks_len = br.ReadUInt16();
-			besb.log_start = br.ReadInt64();
-			besb.log_end = br.ReadInt64();
-			besb.magic3 = br.ReadUInt32();
-			besb.root_dir_ag = br.ReadInt32();
-			besb.root_dir_start = br.ReadUInt16();
-			besb.root_dir_len = br.ReadUInt16();
-			besb.indices_ag = br.ReadInt32();
-			besb.indices_start = br.ReadUInt16();
-			besb.indices_len = br.ReadUInt16();
+			besb.magic1 = eabr.ReadUInt32();
+			besb.fs_byte_order = eabr.ReadUInt32();
+			besb.block_size = eabr.ReadUInt32();
+			besb.block_shift = eabr.ReadUInt32();
+			besb.num_blocks = eabr.ReadInt64();
+			besb.used_blocks = eabr.ReadInt64();
+			besb.inode_size = eabr.ReadInt32();
+			besb.magic2 = eabr.ReadUInt32();
+			besb.blocks_per_ag = eabr.ReadInt32();
+			besb.ag_shift = eabr.ReadInt32();
+			besb.num_ags = eabr.ReadInt32();
+			besb.flags = eabr.ReadUInt32();
+			besb.log_blocks_ag = eabr.ReadInt32();
+			besb.log_blocks_start = eabr.ReadUInt16();
+			besb.log_blocks_len = eabr.ReadUInt16();
+			besb.log_start = eabr.ReadInt64();
+			besb.log_end = eabr.ReadInt64();
+			besb.magic3 = eabr.ReadUInt32();
+			besb.root_dir_ag = eabr.ReadInt32();
+			besb.root_dir_start = eabr.ReadUInt16();
+			besb.root_dir_len = eabr.ReadUInt16();
+			besb.indices_ag = eabr.ReadInt32();
+			besb.indices_start = eabr.ReadUInt16();
+			besb.indices_len = eabr.ReadUInt16();
 			
-			if(besb.magic1 == 0x31534642 && besb.fs_byte_order == 0x45474942) // Big-endian filesystem
-			{
+			if(littleendian) // Big-endian filesystem
 				sb.AppendLine("Big-endian BeFS");
-				
-				// Swap everything in the super block
-				byte[] sixteen_bits = new byte[2];
-				byte[] thirtytwo_bits = new byte[4];
-				byte[] sixtyfour_bits = new byte[8];
-				
-				thirtytwo_bits = BitConverter.GetBytes(besb.magic1);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.magic1 = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.fs_byte_order);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.fs_byte_order = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.block_size);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.block_size = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.block_shift);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.block_shift = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				sixtyfour_bits = BitConverter.GetBytes(besb.num_blocks);
-				sixtyfour_bits = Swapping.SwapEightBytes(sixtyfour_bits);
-				besb.num_blocks = BitConverter.ToInt64(sixtyfour_bits, 0);
-				sixtyfour_bits = BitConverter.GetBytes(besb.used_blocks);
-				sixtyfour_bits = Swapping.SwapEightBytes(sixtyfour_bits);
-				besb.used_blocks = BitConverter.ToInt64(sixtyfour_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.inode_size);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.inode_size = BitConverter.ToInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.magic2);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.magic2 = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.blocks_per_ag);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.blocks_per_ag = BitConverter.ToInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.ag_shift);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.ag_shift = BitConverter.ToInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.num_ags);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.num_ags = BitConverter.ToInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.flags);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.flags = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.log_blocks_ag);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.log_blocks_ag = BitConverter.ToInt32(thirtytwo_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.log_blocks_start);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.log_blocks_start = BitConverter.ToUInt16(sixteen_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.log_blocks_len);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.log_blocks_len = BitConverter.ToUInt16(sixteen_bits, 0);
-				sixtyfour_bits = BitConverter.GetBytes(besb.log_start);
-				sixtyfour_bits = Swapping.SwapEightBytes(sixtyfour_bits);
-				besb.log_start = BitConverter.ToInt64(sixtyfour_bits, 0);
-				sixtyfour_bits = BitConverter.GetBytes(besb.log_end);
-				sixtyfour_bits = Swapping.SwapEightBytes(sixtyfour_bits);
-				besb.log_end = BitConverter.ToInt64(sixtyfour_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.magic3);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.magic3 = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.root_dir_ag);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.root_dir_ag = BitConverter.ToInt32(thirtytwo_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.root_dir_start);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.root_dir_start = BitConverter.ToUInt16(sixteen_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.root_dir_len);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.root_dir_len = BitConverter.ToUInt16(sixteen_bits, 0);
-				thirtytwo_bits = BitConverter.GetBytes(besb.indices_ag);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				besb.indices_ag = BitConverter.ToInt32(thirtytwo_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.indices_start);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.indices_start = BitConverter.ToUInt16(sixteen_bits, 0);
-				sixteen_bits = BitConverter.GetBytes(besb.indices_len);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				besb.indices_len = BitConverter.ToUInt16(sixteen_bits, 0);
-			}
 			else
 				sb.AppendLine("Little-endian BeFS");
 			
-			if(besb.magic1 != 0x42465331 || besb.fs_byte_order != 0x42494745 ||
-			   besb.magic2 != 0xDD121031 || besb.magic3 != 0x15B6830E ||
+			if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
+			   besb.magic2 != BEFS_MAGIC2 || besb.magic3 != BEFS_MAGIC3 ||
 			   besb.root_dir_len != 1 || besb.indices_len != 1 ||
 			   (1 << (int)besb.block_shift) != besb.block_size)
 			{
@@ -199,14 +143,14 @@ namespace FileSystemIDandChk.Plugins
 				                1 << (int)besb.block_shift, besb.block_size).AppendLine();
 			}
 			
-			if(besb.flags == 0x434C454E)
+			if(besb.flags == BEFS_CLEAN)
 			{
 				if(besb.log_start == besb.log_end)
 					sb.AppendLine("Filesystem is clean");
 				else
 					sb.AppendLine("Filesystem is dirty");
 			}
-			else if(besb.flags == 0x44495254)
+			else if(besb.flags == BEFS_DIRTY)
 				sb.AppendLine("Filesystem is dirty");
 			else
 				sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();

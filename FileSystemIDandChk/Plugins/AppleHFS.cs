@@ -196,14 +196,14 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", MDB.drFndrInfo5).AppendLine();
 			sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7).AppendLine();
 			
-			if(MDB.drEmbedSigWord == 0x482B)
+			if(MDB.drEmbedSigWord == HFSP_MAGIC)
 			{
 				sb.AppendLine("Volume wraps a HFS+ volume.");
 				sb.AppendFormat("Starting block of the HFS+ volume: {0}", MDB.xdrStABNt).AppendLine();
 				sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", MDB.xdrNumABlks).AppendLine();
 			}
 			
-			if(BB.signature == 0x4C4B)
+			if(BB.signature == HFSBB_MAGIC)
 			{
 				sb.AppendLine("Volume is bootable.");
 				sb.AppendLine();

@@ -9,6 +9,10 @@ namespace FileSystemIDandChk.Plugins
 {
 	class AppleHFSPlus : Plugin
 	{
+		private const UInt16 HFS_MAGIC  = 0x4244; // "BD"
+		private const UInt16 HFSP_MAGIC = 0x482B; // "H+"
+		private const UInt16 HFSX_MAGIC = 0x4858; // "HX"
+
 		public AppleHFSPlus(PluginBase Core)
         {
             base.Name = "Apple HFS+ filesystem";
@@ -17,68 +21,49 @@ namespace FileSystemIDandChk.Plugins
 		
 		public override bool Identify(FileStream stream, long offset)
 		{
-			byte[] sixteen_bit = new byte[2];
-			byte[] thirtytwo_bit = new byte[4];
 			UInt16 drSigWord;
 			UInt16 xdrStABNt;
 			UInt16 drAlBlSt;
 			UInt32 drAlBlkSiz;
 			
-			ushort signature;
 			long hfsp_offset;
-			bool wrapped = false;
+
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
+			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
 			
-			stream.Seek(0x400 + offset, SeekOrigin.Begin);
+			drSigWord = eabr.ReadUInt16();
 			
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			
-			drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
-			
-			if(drSigWord == 0x4244) // "BD"
+			if(drSigWord == HFS_MAGIC) // "BD"
 			{
-				stream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
+				eabr.BaseStream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
+				drSigWord = eabr.ReadUInt16();
 				
-				if(drSigWord == 0x482B) // "H+"
+				if(drSigWord == HFSP_MAGIC) // "H+"
 				{
-					stream.Read(sixteen_bit, 0, 2);
-					sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-					xdrStABNt = BitConverter.ToUInt16(sixteen_bit, 0);
+					xdrStABNt = eabr.ReadUInt16();
 					
-					stream.Seek(0x414 + offset, SeekOrigin.Begin);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					drAlBlkSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+					eabr.BaseStream.Seek(0x414 + offset, SeekOrigin.Begin);
+					drAlBlkSiz = eabr.ReadUInt32();
 					
-					stream.Seek(0x41C + offset, SeekOrigin.Begin);
-					stream.Read(sixteen_bit, 0, 2);
-					sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-					drAlBlSt = BitConverter.ToUInt16(sixteen_bit, 0);
+					eabr.BaseStream.Seek(0x41C + offset, SeekOrigin.Begin);
+					drAlBlSt = eabr.ReadUInt16();
 					
 					hfsp_offset = (drAlBlSt + xdrStABNt * (drAlBlkSiz / 512))*512;
-					wrapped = true;
 				}
 				else
 				{
 					hfsp_offset = 0;
-					wrapped = false;
 				}
 			}
 			else
 			{
 				hfsp_offset = 0;
-				wrapped = false;
 			}
 			
-			stream.Seek(0x400 + offset + hfsp_offset, SeekOrigin.Begin);
+			eabr.BaseStream.Seek(0x400 + offset + hfsp_offset, SeekOrigin.Begin);
 				
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			signature = BitConverter.ToUInt16(sixteen_bit, 0);
-			if(signature == 0x482B || signature == 0x4858)
+			drSigWord = eabr.ReadUInt16();
+			if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
 				return true;
 			else
 				return false;
@@ -88,9 +73,6 @@ namespace FileSystemIDandChk.Plugins
 		{
 			information = "";
 			
-			byte[] sixteen_bit = new byte[2];
-			byte[] thirtytwo_bit = new byte[4];
-			byte[] sixtyfour_bit = new byte[8];
 			UInt16 drSigWord;
 			UInt16 xdrStABNt;
 			UInt16 drAlBlSt;
@@ -99,36 +81,26 @@ namespace FileSystemIDandChk.Plugins
 			
 			long hfsp_offset;
 			bool wrapped = false;
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
 			
-			stream.Seek(0x400 + offset, SeekOrigin.Begin);
+			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
 			
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
+			drSigWord = eabr.ReadUInt16();
 			
-			drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
-			
-			if(drSigWord == 0x4244) // "BD"
+			if(drSigWord == HFS_MAGIC) // "BD"
 			{
-				stream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				drSigWord = BitConverter.ToUInt16(sixteen_bit, 0);
+				eabr.BaseStream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
+				drSigWord = eabr.ReadUInt16();
 				
-				if(drSigWord == 0x482B) // "H+"
+				if(drSigWord == HFSP_MAGIC) // "H+"
 				{
-					stream.Read(sixteen_bit, 0, 2);
-					sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-					xdrStABNt = BitConverter.ToUInt16(sixteen_bit, 0);
+					xdrStABNt = eabr.ReadUInt16();
 					
-					stream.Seek(0x414 + offset, SeekOrigin.Begin);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					drAlBlkSiz = BitConverter.ToUInt32(thirtytwo_bit, 0);
+					eabr.BaseStream.Seek(0x414 + offset, SeekOrigin.Begin);
+					drAlBlkSiz = eabr.ReadUInt32();
 					
-					stream.Seek(0x41C + offset, SeekOrigin.Begin);
-					stream.Read(sixteen_bit, 0, 2);
-					sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-					drAlBlSt = BitConverter.ToUInt16(sixteen_bit, 0);
+					eabr.BaseStream.Seek(0x41C + offset, SeekOrigin.Begin);
+					drAlBlSt = eabr.ReadUInt16();
 					
 					hfsp_offset = (drAlBlSt + xdrStABNt * (drAlBlkSiz / 512))*512;
 					wrapped = true;
@@ -145,12 +117,10 @@ namespace FileSystemIDandChk.Plugins
 				wrapped = false;
 			}
 			
-			stream.Seek(0x400 + offset + hfsp_offset, SeekOrigin.Begin);
+			eabr.BaseStream.Seek(0x400 + offset + hfsp_offset, SeekOrigin.Begin);
 				
-			stream.Read(sixteen_bit, 0, 2);
-			sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-			HPVH.signature = BitConverter.ToUInt16(sixteen_bit, 0);
-			if(HPVH.signature == 0x482B || HPVH.signature == 0x4858)
+			HPVH.signature = eabr.ReadUInt16();
+			if(HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)
 			{
 				StringBuilder sb = new StringBuilder();
 
@@ -161,111 +131,53 @@ namespace FileSystemIDandChk.Plugins
 				if(wrapped)
 					sb.AppendLine("Volume is wrapped inside an HFS volume.");
 				
-				stream.Read(sixteen_bit, 0, 2);
-				sixteen_bit = Swapping.SwapTwoBytes(sixteen_bit);
-				HPVH.version = BitConverter.ToUInt16(sixteen_bit, 0);
+				HPVH.version = eabr.ReadUInt16();
 				
 				if(HPVH.version == 4 || HPVH.version == 5)
 				{
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.attributes = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					HPVH.lastMountedVersion = Encoding.ASCII.GetString(sixteen_bit);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.journalInfoBlock = BitConverter.ToUInt32(thirtytwo_bit, 0);						
+					HPVH.attributes = eabr.ReadUInt32();
+					byte[] lastMountedVersion_b = eabr.ReadBytes(4);
+					HPVH.lastMountedVersion = Encoding.ASCII.GetString(lastMountedVersion_b);						
+					HPVH.journalInfoBlock = eabr.ReadUInt32();						
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.createDate = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.modifyDate = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.backupDate = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.checkedDate = BitConverter.ToUInt32(thirtytwo_bit, 0);						
+					HPVH.createDate = eabr.ReadUInt32();						
+					HPVH.modifyDate = eabr.ReadUInt32();						
+					HPVH.backupDate = eabr.ReadUInt32();						
+					HPVH.checkedDate = eabr.ReadUInt32();						
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.fileCount = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.folderCount = BitConverter.ToUInt32(thirtytwo_bit, 0);						
+					HPVH.fileCount = eabr.ReadUInt32();						
+					HPVH.folderCount = eabr.ReadUInt32();						
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.blockSize = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.totalBlocks = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.freeBlocks = BitConverter.ToUInt32(thirtytwo_bit, 0);						
+					HPVH.blockSize = eabr.ReadUInt32();						
+					HPVH.totalBlocks = eabr.ReadUInt32();						
+					HPVH.freeBlocks = eabr.ReadUInt32();						
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.nextAllocation = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.rsrcClumpSize = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.dataClumpSize = BitConverter.ToUInt32(thirtytwo_bit, 0);						
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.nextCatalogID = BitConverter.ToUInt32(thirtytwo_bit, 0);						
+					HPVH.nextAllocation = eabr.ReadUInt32();						
+					HPVH.rsrcClumpSize = eabr.ReadUInt32();						
+					HPVH.dataClumpSize = eabr.ReadUInt32();						
+					HPVH.nextCatalogID = eabr.ReadUInt32();						
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.writeCount = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Seek(8,SeekOrigin.Current); // Skipping encoding bitmap
+					HPVH.writeCount = eabr.ReadUInt32();
+					eabr.BaseStream.Seek(8,SeekOrigin.Current); // Skipping encoding bitmap
 
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo0 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo1 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo2 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo3 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Seek(4, SeekOrigin.Current); // Skipping reserved finder info
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo5 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo6 = BitConverter.ToUInt32(thirtytwo_bit, 0);
-					stream.Read(thirtytwo_bit, 0, 4);
-					thirtytwo_bit = Swapping.SwapFourBytes(thirtytwo_bit);
-					HPVH.drFndrInfo7 = BitConverter.ToUInt32(thirtytwo_bit, 0);
+					HPVH.drFndrInfo0 = eabr.ReadUInt32();
+					HPVH.drFndrInfo1 = eabr.ReadUInt32();
+					HPVH.drFndrInfo2 = eabr.ReadUInt32();
+					HPVH.drFndrInfo3 = eabr.ReadUInt32();
+					eabr.BaseStream.Seek(4, SeekOrigin.Current); // Skipping reserved finder info
+					HPVH.drFndrInfo5 = eabr.ReadUInt32();
+					HPVH.drFndrInfo6 = eabr.ReadUInt32();
+					HPVH.drFndrInfo7 = eabr.ReadUInt32();
 					
-					stream.Read(sixtyfour_bit, 0, 8);
-					sixtyfour_bit = Swapping.SwapEightBytes(sixtyfour_bit);
-					HPVH.allocationFile_logicalSize = BitConverter.ToUInt64(sixtyfour_bit, 0);
-					stream.Seek(72, SeekOrigin.Current); // Skip to next file info
-					stream.Read(sixtyfour_bit, 0, 8);
-					sixtyfour_bit = Swapping.SwapEightBytes(sixtyfour_bit);
-					HPVH.extentsFile_logicalSize = BitConverter.ToUInt64(sixtyfour_bit, 0);
-					stream.Seek(72, SeekOrigin.Current); // Skip to next file info
-					stream.Read(sixtyfour_bit, 0, 8);
-					sixtyfour_bit = Swapping.SwapEightBytes(sixtyfour_bit);
-					HPVH.catalogFile_logicalSize = BitConverter.ToUInt64(sixtyfour_bit, 0);
-					stream.Seek(72, SeekOrigin.Current); // Skip to next file info
-					stream.Read(sixtyfour_bit, 0, 8);
-					sixtyfour_bit = Swapping.SwapEightBytes(sixtyfour_bit);
-					HPVH.attributesFile_logicalSize = BitConverter.ToUInt64(sixtyfour_bit, 0);
-					stream.Seek(72, SeekOrigin.Current); // Skip to next file info
-					stream.Read(sixtyfour_bit, 0, 8);
-					sixtyfour_bit = Swapping.SwapEightBytes(sixtyfour_bit);
-					HPVH.startupFile_logicalSize = BitConverter.ToUInt64(sixtyfour_bit, 0);
+					HPVH.allocationFile_logicalSize = eabr.ReadUInt64();
+					eabr.BaseStream.Seek(72, SeekOrigin.Current); // Skip to next file info
+					HPVH.extentsFile_logicalSize = eabr.ReadUInt64();
+					eabr.BaseStream.Seek(72, SeekOrigin.Current); // Skip to next file info
+					HPVH.catalogFile_logicalSize = eabr.ReadUInt64();
+					eabr.BaseStream.Seek(72, SeekOrigin.Current); // Skip to next file info
+					HPVH.attributesFile_logicalSize = eabr.ReadUInt64();
+					eabr.BaseStream.Seek(72, SeekOrigin.Current); // Skip to next file info
+					HPVH.startupFile_logicalSize = eabr.ReadUInt64();
 					
 					sb.AppendFormat("Filesystem version is {0}.", HPVH.version).AppendLine();
 

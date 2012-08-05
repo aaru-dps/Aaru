@@ -98,13 +98,13 @@ namespace FileSystemIDandChk.Plugins
 			homeblock.reserved1 = br.ReadBytes(302);
 			homeblock.serialnum = br.ReadUInt32();
 			temp_string = br.ReadBytes(12);
-			homeblock.strucname = Encoding.ASCII.GetString(temp_string);
+			homeblock.strucname = StringHandlers.CToString(temp_string);
 			temp_string = br.ReadBytes(12);
-			homeblock.volname = Encoding.ASCII.GetString(temp_string);
+			homeblock.volname = StringHandlers.CToString(temp_string);
 			temp_string = br.ReadBytes(12);
-			homeblock.ownername = Encoding.ASCII.GetString(temp_string);
+			homeblock.ownername = StringHandlers.CToString(temp_string);
 			temp_string = br.ReadBytes(12);
-			homeblock.format = Encoding.ASCII.GetString(temp_string);
+			homeblock.format = StringHandlers.CToString(temp_string);
 			homeblock.reserved2 = br.ReadUInt16();
 			homeblock.checksum2 = br.ReadUInt16();
 			
