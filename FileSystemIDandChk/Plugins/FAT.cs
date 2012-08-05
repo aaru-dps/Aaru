@@ -21,17 +21,35 @@ namespace FileSystemIDandChk.Plugins
 			byte fats_no; // Must be 1 or 2. Dunno if it can be 0 in the wild, but it CANNOT BE bigger than 2
 			byte[] fat32_signature = new byte[8]; // "FAT32   "
 			UInt32 first_fat_entry; // No matter FAT size we read 4 bytes for checking
+			UInt16 bps, rsectors;
 
 			BinaryReader br = new BinaryReader(stream);
 
-			br.BaseStream.Seek(0x10 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
+			br.BaseStream.Seek(0x10 + offset, SeekOrigin.Begin); // FATs, 1 or 2, maybe 0, never bigger
 			fats_no = br.ReadByte();
 			br.BaseStream.Seek(0x15 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
 			media_descriptor = br.ReadByte();
 			br.BaseStream.Seek(0x52 + offset, SeekOrigin.Begin); // FAT32 signature, if present, is in 0x52
 			fat32_signature = br.ReadBytes(8);
-			br.BaseStream.Seek(0x200 + offset, SeekOrigin.Begin); // First FAT entry is always at 0x200 in pre-FAT32
+			br.BaseStream.Seek(0x0B + offset, SeekOrigin.Begin); // Bytes per sector
+			bps = br.ReadUInt16();
+			if(bps==0)
+				bps=0x200;
+			br.BaseStream.Seek(0x0E + offset, SeekOrigin.Begin); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
+			rsectors = br.ReadUInt16();
+			if(rsectors==0)
+				rsectors=1;
+			br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
 			first_fat_entry = br.ReadUInt32(); // Easier to manage
+
+			if(MainClass.isDebug)
+			{
+				Console.WriteLine("FAT: fats_no = {0}", fats_no);
+				Console.WriteLine("FAT: media_descriptor = 0x{0:X2}", media_descriptor);
+				Console.WriteLine("FAT: fat32_signature = {0}", StringHandlers.CToString(fat32_signature));
+				Console.WriteLine("FAT: bps = {0}", bps);
+				Console.WriteLine("FAT: first_fat_entry = 0x{0:X8}", first_fat_entry);
+			}
 
 			if(fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
 				return false;
@@ -66,6 +84,7 @@ namespace FileSystemIDandChk.Plugins
 			UInt32 first_fat_entry;
 			byte media_descriptor, fats_no;
 			string fat32_signature;
+			UInt16 bps, rsectors;
 
 			br.BaseStream.Seek(0x10 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
 			fats_no = br.ReadByte();
@@ -74,7 +93,15 @@ namespace FileSystemIDandChk.Plugins
 			br.BaseStream.Seek(0x52 + offset, SeekOrigin.Begin); // FAT32 signature, if present, is in 0x52
 			dosString = br.ReadBytes(8);
 			fat32_signature = Encoding.ASCII.GetString(dosString);
-			br.BaseStream.Seek(0x200 + offset, SeekOrigin.Begin); // First FAT entry is always at 0x200 in pre-FAT32
+			br.BaseStream.Seek(0x0B + offset, SeekOrigin.Begin); // Bytes per sector
+			bps = br.ReadUInt16();
+			if(bps==0)
+				bps=0x200;
+			br.BaseStream.Seek(0x0E + offset, SeekOrigin.Begin); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
+			rsectors = br.ReadUInt16();
+			if(rsectors==0)
+				rsectors=1;
+			br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
 			first_fat_entry = br.ReadUInt32(); // Easier to manage
 
 			if(fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
@@ -156,9 +183,9 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendFormat("{0} FATs.", BPB.fats_no).AppendLine();
 			sb.AppendFormat("{0} entires on root directory.", BPB.root_ent).AppendLine();
 			if(BPB.sectors==0)
-				sb.AppendFormat("{0} sectors on volume.", BPB.big_sectors).AppendLine();
+				sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.big_sectors, BPB.big_sectors*BPB.bps).AppendLine();
 			else
-				sb.AppendFormat("{0} sectors on volume.", BPB.sectors).AppendLine();
+				sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.sectors, BPB.sectors*BPB.bps).AppendLine();
 			if((BPB.media & 0xF0) == 0xF0)
 				sb.AppendFormat("Media format: 0x{0:X2}", BPB.media).AppendLine();
 			if(fat32_signature == "FAT32   ")
@@ -226,30 +253,30 @@ namespace FileSystemIDandChk.Plugins
 		
 		public struct ExtendedParameterBlock
 		{
-			public byte   drive_no;     // Drive number
-			public byte   nt_flags;     // Volume flags if NT (must be 0x29 signature)
-			public byte   signature;    // EPB signature, 0x28 or 0x29
-			public UInt32 serial_no;    // Volume serial number
+			public byte   drive_no;     // 0x24, Drive number
+			public byte   nt_flags;     // 0x25, Volume flags if NT (must be 0x29 signature)
+			public byte   signature;    // 0x26, EPB signature, 0x28 or 0x29
+			public UInt32 serial_no;    // 0x27, Volume serial number
 			/* Present only if signature == 0x29 */
-			public string volume_label; // Volume label, 11 bytes, space-padded
-			public string fs_type;      // Filesystem type, 8 bytes, space-padded
+			public string volume_label; // 0x2B, Volume label, 11 bytes, space-padded
+			public string fs_type;      // 0x36, Filesystem type, 8 bytes, space-padded
 		}
 		
 		public struct FAT32ParameterBlock
 		{
-			public UInt32 spfat;         // Sectors per FAT
-			public UInt16 fat_flags;     // FAT flags
-			public UInt16 version;       // FAT32 version
-			public UInt32 root_cluster;  // Cluster of root directory
-			public UInt16 fsinfo_sector; // Sector of FSINFO structure
-			public UInt16 backup_sector; // Secfor of FAT32PB bacup
-			       byte[] reserved;      // 12 reserved bytes
-			public byte   drive_no;      // Drive number
-			public byte   nt_flags;      // Volume flags
-			public byte   signature;     // FAT32PB signature, should be 0x29
-			public UInt32 serial_no;     // Volume serial number
-			public string volume_label;  // Volume label, 11 bytes, space-padded
-			public string fs_type;       // Filesystem type, 8 bytes, space-padded, must be "FAT32   "
+			public UInt32 spfat;         // 0x24, Sectors per FAT
+			public UInt16 fat_flags;     // 0x28, FAT flags
+			public UInt16 version;       // 0x2A, FAT32 version
+			public UInt32 root_cluster;  // 0x2C, Cluster of root directory
+			public UInt16 fsinfo_sector; // 0x30, Sector of FSINFO structure
+			public UInt16 backup_sector; // 0x32, Sector of FAT32PB bacup
+			       byte[] reserved;      // 0x34, 12 reserved bytes
+			public byte   drive_no;      // 0x40, Drive number
+			public byte   nt_flags;      // 0x41, Volume flags
+			public byte   signature;     // 0x42, FAT32PB signature, should be 0x29
+			public UInt32 serial_no;     // 0x43, Volume serial number
+			public string volume_label;  // 0x47, Volume label, 11 bytes, space-padded
+			public string fs_type;       // 0x52, Filesystem type, 8 bytes, space-padded, must be "FAT32   "
 		}
 	}
 }

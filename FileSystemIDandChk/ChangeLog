@@ -1,5 +1,14 @@
 2012-08-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/FAT.cs:
+	  Add debug information.
+	De-hardcode FAT location, use correct data from BPB or
+	  hardcode in case data is empty.
+	Show volume size in bytes also.
+	Added offset of PB entries on comments.
+
+2012-08-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/MinixFS.cs:
 	* FileSystemIDandChk.csproj:
 	  Added Minix V1, V2 and V3 filesystems.
