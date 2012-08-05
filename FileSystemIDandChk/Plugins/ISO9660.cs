@@ -12,10 +12,13 @@ namespace FileSystemIDandChk.Plugins
 {
     class ISO9660Plugin : Plugin
     {
+		private static bool alreadyLaunched;
+
         public ISO9660Plugin(PluginBase Core)
         {
             base.Name = "ISO9660 Filesystem";
             base.PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+			alreadyLaunched = false;
         }
 
         private struct DecodedVolumeDescriptor
@@ -37,6 +40,11 @@ namespace FileSystemIDandChk.Plugins
 
         public override bool Identify(FileStream fileStream, long offset)
         {
+			if(alreadyLaunched)
+				return false;
+			else
+				alreadyLaunched = true;
+
 			byte VDType;
 
 			// ISO9660 Primary Volume Descriptor starts at 32768, so that's minimal size.

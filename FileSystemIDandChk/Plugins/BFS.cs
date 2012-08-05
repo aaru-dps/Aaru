@@ -122,7 +122,7 @@ namespace FileSystemIDandChk.Plugins
 			besb.indices_start = eabr.ReadUInt16();
 			besb.indices_len = eabr.ReadUInt16();
 			
-			if(littleendian) // Big-endian filesystem
+			if(!littleendian) // Big-endian filesystem
 				sb.AppendLine("Big-endian BeFS");
 			else
 				sb.AppendLine("Little-endian BeFS");

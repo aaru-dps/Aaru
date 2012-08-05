@@ -8,6 +8,10 @@ namespace FileSystemIDandChk.PartPlugins
 {
 	class NeXTDisklabel : PartPlugin
 	{
+		public const UInt32 NEXT_MAGIC1 = 0x4E655854; // "NeXT"
+		public const UInt32 NEXT_MAGIC2 = 0x646C5632; // "dlV2"
+		public const UInt32 NEXT_MAGIC3 = 0x646C5633; // "dlV3"
+
 		public NeXTDisklabel (PluginBase Core)
 		{
             base.Name = "NeXT Disklabel";
@@ -16,10 +20,7 @@ namespace FileSystemIDandChk.PartPlugins
 		
 		public override bool GetInformation (FileStream stream, out List<Partition> partitions)
 		{
-			byte[] sixteen_bits = new byte[2];
-			byte[] thirtytwo_bits = new byte[4];
-			byte[] eight_bytes = new byte[8];
-			byte[] sixteen_bytes = new byte[16];
+			byte[] cString;
 			bool magic_found = false;
 			
 			UInt32 magic;
@@ -27,31 +28,27 @@ namespace FileSystemIDandChk.PartPlugins
 			UInt16 front_porch;
 			
 			partitions = new List<Partition>();
+
+			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
 			
-			stream.Seek(0, SeekOrigin.Begin); // Starts on sector 0 on NeXT machines, CDs and floppies
-			stream.Read(thirtytwo_bits, 0, 4);
-			thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-			magic = BitConverter.ToUInt32(thirtytwo_bits, 0);
+			eabr.BaseStream.Seek(0, SeekOrigin.Begin); // Starts on sector 0 on NeXT machines, CDs and floppies
+			magic = eabr.ReadUInt32();
 			
-			if(magic == 0x4E655854 || magic == 0x646C5632 || magic == 0x646C5633)
+			if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
 				magic_found = true;
 			else
 			{
-				stream.Seek(0x1E00, SeekOrigin.Begin); // Starts on sector 15 on MBR machines
-				stream.Read(thirtytwo_bits, 0, 4);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				magic = BitConverter.ToUInt32(thirtytwo_bits, 0);
+				eabr.BaseStream.Seek(0x1E00, SeekOrigin.Begin); // Starts on sector 15 on MBR machines
+				magic = eabr.ReadUInt32();
 				
-				if(magic == 0x4E655854 || magic == 0x646C5632 || magic == 0x646C5633)
+				if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
 					magic_found = true;
 				else
 				{
-					stream.Seek(0x2000, SeekOrigin.Begin); // Starts on sector 16 (4 on CD) on RISC disks
-					stream.Read(thirtytwo_bits, 0, 4);
-					thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-					magic = BitConverter.ToUInt32(thirtytwo_bits, 0);
+					eabr.BaseStream.Seek(0x2000, SeekOrigin.Begin); // Starts on sector 16 (4 on CD) on RISC disks
+					magic = eabr.ReadUInt32();
 					
-					if(magic == 0x4E655854 || magic == 0x646C5632 || magic == 0x646C5633)
+					if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
 						magic_found = true;
 					else
 						return false;
@@ -60,49 +57,33 @@ namespace FileSystemIDandChk.PartPlugins
 			
 			if(magic_found)
 			{
-				stream.Seek(88, SeekOrigin.Current); // Seek to sector size
-				stream.Read(thirtytwo_bits, 0, 4);
-				thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-				sector_size = BitConverter.ToUInt32(thirtytwo_bits, 0);
-				stream.Seek(16, SeekOrigin.Current); // Seek to front porch
-				stream.Read(sixteen_bits, 0, 2);
-				sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-				front_porch = BitConverter.ToUInt16(sixteen_bits, 0);
+				eabr.BaseStream.Seek(88, SeekOrigin.Current); // Seek to sector size
+				sector_size = eabr.ReadUInt32();
+				eabr.BaseStream.Seek(16, SeekOrigin.Current); // Seek to front porch
+				front_porch = eabr.ReadUInt16();
 				
-				stream.Seek(76, SeekOrigin.Current); // Seek to first partition entry
-				
-				NeXTEntry entry = new NeXTEntry();
+				eabr.BaseStream.Seek(76, SeekOrigin.Current); // Seek to first partition entry
 				
 				for(int i = 0; i < 8; i ++)
 				{
-					stream.Read(thirtytwo_bits, 0, 4);
-					thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-					entry.start = BitConverter.ToUInt32(thirtytwo_bits, 0);
-					stream.Read(thirtytwo_bits, 0, 4);
-					thirtytwo_bits = Swapping.SwapFourBytes(thirtytwo_bits);
-					entry.sectors = BitConverter.ToUInt32(thirtytwo_bits, 0);
-					stream.Read(sixteen_bits, 0, 2);
-					sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-					entry.block_size = BitConverter.ToUInt16(sixteen_bits, 0);
-					stream.Read(sixteen_bits, 0, 2);
-					sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-					entry.frag_size = BitConverter.ToUInt16(sixteen_bits, 0);
-					entry.optimization = (byte)stream.ReadByte();
-					stream.Read(sixteen_bits, 0, 2);
-					sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-					entry.cpg = BitConverter.ToUInt16(sixteen_bits, 0);
-					stream.Read(sixteen_bits, 0, 2);
-					sixteen_bits = Swapping.SwapTwoBytes(sixteen_bits);
-					entry.bpi = BitConverter.ToUInt16(sixteen_bits, 0);
-					entry.freemin = (byte)stream.ReadByte();
-					entry.unknown = (byte)stream.ReadByte();
-					entry.newfs = (byte)stream.ReadByte();
-					stream.Read(sixteen_bytes, 0, 16);
-					entry.mount_point = StringHandlers.CToString(sixteen_bytes);
-					entry.automount = (byte)stream.ReadByte();
-					stream.Read(eight_bytes, 0, 8);
-					entry.type = StringHandlers.CToString(eight_bytes);
-					entry.unknown2 = (byte)stream.ReadByte();
+					NeXTEntry entry = new NeXTEntry();
+
+					entry.start = eabr.ReadUInt32();
+					entry.sectors = eabr.ReadUInt32();
+					entry.block_size = eabr.ReadUInt16();
+					entry.frag_size = eabr.ReadUInt16();
+					entry.optimization = eabr.ReadByte();
+					entry.cpg = eabr.ReadUInt16();
+					entry.bpi = eabr.ReadUInt16();
+					entry.freemin = eabr.ReadByte();
+					entry.unknown = eabr.ReadByte();
+					entry.newfs = eabr.ReadByte();
+					cString = eabr.ReadBytes(16);
+					entry.mount_point = StringHandlers.CToString(cString);
+					entry.automount = eabr.ReadByte();
+					cString = eabr.ReadBytes(8);
+					entry.type = StringHandlers.CToString(cString);
+					entry.unknown2 = eabr.ReadByte();
 					
 					if(entry.sectors > 0 && entry.sectors < 0xFFFFFFFF && entry.start < 0xFFFFFFFF)
 					{

@@ -1,5 +1,25 @@
 2012-08-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/ISO9660.cs:
+	  Added code preventing it to be run on each partition,
+	  because this filesystem will be once and only. Now it runs
+	  only one time whenever there are partitions or how many.
+
+	* Plugins/FAT.cs:
+	  Added code to handle false positives (FATs can be 1 or 2,
+	  maybe 0 in the wild, never bigger).
+	Modified for BinaryReader class.
+
+	* Plugins/BFS.cs:
+	  Missed negation operand
+
+	* PartPlugins/NeXT.cs:
+	* PartPlugins/AppleMap.cs:
+	  Added constants and modified for EndianAwareBinaryReader
+	  class.
+
+2012-08-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/ODS.cs:
 	  Use StringHandlers class to prevent garbage coming from
 	  strings (even if they are not C strings, it does not hurt).
