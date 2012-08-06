@@ -1,3 +1,9 @@
+2012-08-06  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins/SolarFS.cs:
+	* FileSystemIDandChk.csproj:
+	  Added code for detection Solar_OS filesystem
+
 2012-08-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/FAT.cs:

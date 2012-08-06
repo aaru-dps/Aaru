@@ -64,6 +64,7 @@
     <Compile Include="EndianAwareBinaryReader.cs" />
     <Compile Include="StringHandlers.cs" />
     <Compile Include="Plugins\MinixFS.cs" />
+    <Compile Include="Plugins\SolarFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
