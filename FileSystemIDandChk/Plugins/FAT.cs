@@ -39,7 +39,10 @@ namespace FileSystemIDandChk.Plugins
 			rsectors = br.ReadUInt16();
 			if(rsectors==0)
 				rsectors=1;
-			br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
+			if((ulong)br.BaseStream.Length > (ulong)(bps*rsectors + offset))
+				br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
+			else
+				return false;
 			first_fat_entry = br.ReadUInt32(); // Easier to manage
 
 			if(MainClass.isDebug)

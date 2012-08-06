@@ -1,5 +1,14 @@
 2012-08-06  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/UNIXBFS.cs:
+	* FileSystemIDandChk.csproj:
+	  Added UNIX Boot filesystem.
+
+	* Plugins/FAT.cs:
+	  Don't seek to FAT if value is bigger than volume size.
+
+2012-08-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/SolarFS.cs:
 	* FileSystemIDandChk.csproj:
 	  Added code for detection Solar_OS filesystem
