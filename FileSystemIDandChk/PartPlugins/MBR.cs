@@ -135,33 +135,83 @@ namespace FileSystemIDandChk.PartPlugins
 								valid=true;
 							break;
 						}
-						case 0x63: // UnixWare disklabel
+						case 0x63: // UNIX disklabel
 						{
 							UInt32 magic;
-							br.BaseStream.Seek(4, SeekOrigin.Current);
+							br.BaseStream.Seek(29*0x200 + 4, SeekOrigin.Current); // Starts on sector 29 of partition
 							magic = br.ReadUInt32();
 						
-							if(magic == 0xCA5E600D)
+							if(magic == UNIXDiskLabel_MAGIC)
 							{
-								br.BaseStream.Seek(164, SeekOrigin.Current);
-								Int16 no_parts = br.ReadInt16();
-								br.BaseStream.Seek(42, SeekOrigin.Current);
-							
-								for(int j = 0; j < no_parts; j++)
+								UNIXDiskLabel dl = new UNIXDiskLabel();
+								bool isNewDL = false;
+
+								dl.version = br.ReadUInt32();
+								dl.serial = StringHandlers.CToString(br.ReadBytes(12));
+								dl.cyls = br.ReadUInt32();
+								dl.trks = br.ReadUInt32();
+								dl.secs = br.ReadUInt32();
+								dl.bps = br.ReadUInt32();
+								dl.start = br.ReadUInt32();
+								dl.unknown1 = br.ReadBytes(48);
+								dl.alt_tbl = br.ReadUInt32();
+								dl.alt_len = br.ReadUInt32();
+								dl.phys_cyl = br.ReadUInt32();
+
+								if(dl.phys_cyl != UNIXVTOC_MAGIC) // Old version VTOC starts here
 								{
-									Int16 unx_type = br.ReadInt16();
-									br.BaseStream.Seek(2, SeekOrigin.Current);
-									Partition part = new Partition();
-									part.PartitionStart = br.ReadInt32() * 512;
-									part.PartitionLength = br.ReadInt32() * 512;
-									part.PartitionSequence = counter;
-									part.PartitionType = String.Format("Unixware: {0}", unx_type);
-									part.PartitionDescription = "UnixWare slice.";
+									isNewDL = true;
+									dl.phys_trk = br.ReadUInt32();
+									dl.phys_sec = br.ReadUInt32();
+									dl.phys_bytes = br.ReadUInt32();
+									dl.unknown2 = br.ReadUInt32();
+									dl.unknown3 = br.ReadUInt32();
+									dl.pad = br.ReadBytes(48);
+								}
+								else
+									br.BaseStream.Seek(-4, SeekOrigin.Current); // Return to old VTOC magic
+
+								UNIXVTOC vtoc = new UNIXVTOC();
+
+								vtoc.magic = br.ReadUInt32();
 								
-									if(unx_type!=0)
+								if(vtoc.magic == UNIXVTOC_MAGIC)
+								{
+									vtoc.version = br.ReadUInt32();
+									vtoc.name = StringHandlers.CToString(br.ReadBytes(8));
+									vtoc.slices = br.ReadUInt16();
+									vtoc.unknown = br.ReadUInt16();
+									vtoc.reserved = br.ReadBytes(40);
+							
+									for(int j = 0; j < vtoc.slices; j++)
 									{
-										partitions.Add(part);
-										counter++;
+										UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
+
+										vtoc_ent.tag = br.ReadUInt16();
+										vtoc_ent.flags = br.ReadUInt16();
+										vtoc_ent.start = br.ReadUInt32();
+										vtoc_ent.length = br.ReadUInt32();
+
+										if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+										{
+											Partition part = new Partition();
+											part.PartitionStart = vtoc_ent.start * dl.bps;
+											part.PartitionLength = vtoc_ent.length * dl.bps;
+											part.PartitionSequence = counter;
+											part.PartitionType = String.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+
+											string info = "";
+
+											if((vtoc_ent.flags & 0x01) == 0x01)
+												info += " (do not mount)";
+											if((vtoc_ent.flags & 0x10) == 0x10)
+												info += " (do not mount)";
+
+											part.PartitionDescription = "UNIX slice" + info + ".";
+									
+											partitions.Add(part);
+											counter++;
+										}
 									}
 								}
 							}
@@ -386,38 +436,88 @@ namespace FileSystemIDandChk.PartPlugins
 											ext_valid=true;
 										break;
 									}
-									case 0x63: // UnixWare disklabel
+									case 0x63: // UNIX disklabel
 									{
 										UInt32 magic;
-										br.BaseStream.Seek(4, SeekOrigin.Current);
+										br.BaseStream.Seek(29*0x200 + 4, SeekOrigin.Current); // Starts on sector 29 of partition
 										magic = br.ReadUInt32();
-									
-										if(magic == 0xCA5E600D)
-										{
-											br.BaseStream.Seek(164, SeekOrigin.Current);
-											Int16 no_parts = br.ReadInt16();
-											br.BaseStream.Seek(42, SeekOrigin.Current);
 										
-											for(int j = 0; j < no_parts; j++)
-											{
-												Int16 unx_type = br.ReadInt16();
-												br.BaseStream.Seek(2, SeekOrigin.Current);
-												Partition part = new Partition();
-												part.PartitionStart = br.ReadInt32() * 512;
-												part.PartitionLength = br.ReadInt32() * 512;
-												part.PartitionSequence = counter;
-												part.PartitionType = String.Format("Unixware: {0}", unx_type);
-												part.PartitionDescription = "UnixWare slice.";
+										if(magic == UNIXDiskLabel_MAGIC)
+										{
+											UNIXDiskLabel dl = new UNIXDiskLabel();
+											bool isNewDL = false;
 											
-												if(unx_type!=0)
+											dl.version = br.ReadUInt32();
+											dl.serial = StringHandlers.CToString(br.ReadBytes(12));
+											dl.cyls = br.ReadUInt32();
+											dl.trks = br.ReadUInt32();
+											dl.secs = br.ReadUInt32();
+											dl.bps = br.ReadUInt32();
+											dl.start = br.ReadUInt32();
+											dl.unknown1 = br.ReadBytes(48);
+											dl.alt_tbl = br.ReadUInt32();
+											dl.alt_len = br.ReadUInt32();
+											dl.phys_cyl = br.ReadUInt32();
+											
+											if(dl.phys_cyl != UNIXVTOC_MAGIC) // Old version VTOC starts here
+											{
+												isNewDL = true;
+												dl.phys_trk = br.ReadUInt32();
+												dl.phys_sec = br.ReadUInt32();
+												dl.phys_bytes = br.ReadUInt32();
+												dl.unknown2 = br.ReadUInt32();
+												dl.unknown3 = br.ReadUInt32();
+												dl.pad = br.ReadBytes(48);
+											}
+											else
+												br.BaseStream.Seek(-4, SeekOrigin.Current); // Return to old VTOC magic
+											
+											UNIXVTOC vtoc = new UNIXVTOC();
+											
+											vtoc.magic = br.ReadUInt32();
+											
+											if(vtoc.magic == UNIXVTOC_MAGIC)
+											{
+												vtoc.version = br.ReadUInt32();
+												vtoc.name = StringHandlers.CToString(br.ReadBytes(8));
+												vtoc.slices = br.ReadUInt16();
+												vtoc.unknown = br.ReadUInt16();
+												vtoc.reserved = br.ReadBytes(40);
+												
+												for(int j = 0; j < vtoc.slices; j++)
 												{
-													partitions.Add(part);
-													counter++;
+													UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
+													
+													vtoc_ent.tag = br.ReadUInt16();
+													vtoc_ent.flags = br.ReadUInt16();
+													vtoc_ent.start = br.ReadUInt32();
+													vtoc_ent.length = br.ReadUInt32();
+													
+													if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+													{
+														Partition part = new Partition();
+														part.PartitionStart = vtoc_ent.start * dl.bps;
+														part.PartitionLength = vtoc_ent.length * dl.bps;
+														part.PartitionSequence = counter;
+														part.PartitionType = String.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+														
+														string info = "";
+														
+														if((vtoc_ent.flags & 0x01) == 0x01)
+															info += " (do not mount)";
+														if((vtoc_ent.flags & 0x10) == 0x10)
+															info += " (do not mount)";
+														
+														part.PartitionDescription = "UNIX slice" + info + ".";
+														
+														partitions.Add(part);
+														counter++;
+													}
 												}
 											}
 										}
 										else
-											valid = true;
+											ext_valid = true;
 										break;
 									}
 									case 0x82:
@@ -911,6 +1011,133 @@ namespace FileSystemIDandChk.PartPlugins
 			public UInt16 end_cylinder;   // Ending cylinder [0,1023]
 			public UInt32 lba_start;      // Starting absolute sector
 			public UInt32 lba_sectors;    // Total sectors	
+		}
+
+		private const UInt32 UNIXDiskLabel_MAGIC = 0xCA5E600D;
+		private const UInt32 UNIXVTOC_MAGIC      = 0x600DDEEE; // Same as Solaris VTOC
+
+		private struct UNIXDiskLabel
+		{
+			public UInt32 type;       // Drive type, seems always 0
+			public UInt32 magic;      // UNIXDiskLabel_MAGIC
+			public UInt32 version;    // Only seen 1
+			public string serial;     // 12 bytes, serial number of the device
+			public UInt32 cyls;       // data cylinders per device
+			public UInt32 trks;       // data tracks per cylinder
+			public UInt32 secs;       // data sectors per track
+			public UInt32 bps;        // data bytes per sector
+			public UInt32 start;      // first sector of this partition
+			public byte[] unknown1;   // 48 bytes
+			public UInt32 alt_tbl;    // byte offset of alternate table
+			public UInt32 alt_len;    // byte length of alternate table
+			// From onward here, is not on old version
+			public UInt32 phys_cyl;   // physical cylinders per device
+			public UInt32 phys_trk;   // physical tracks per cylinder
+			public UInt32 phys_sec;   // physical sectors per track
+			public UInt32 phys_bytes; // physical bytes per sector
+			public UInt32 unknown2;   //
+			public UInt32 unknown3;   //
+			public byte[] pad;        // 32bytes
+		}
+
+		private struct UNIXVTOC
+		{
+			public UInt32 magic;     // UNIXVTOC_MAGIC
+			public UInt32 version;   // 1
+			public string name;      // 8 bytes
+			public UInt32 slices;    // # of slices
+			public UInt32 unknown;   //
+			public byte[] reserved;  // 40 bytes
+		}
+
+		private struct UNIXVTOCEntry
+		{
+			public UInt16 tag;    // TAG
+			public UInt16 flags;  // Flags (see below)
+			public UInt32 start;  // Start sector
+			public UInt32 length; // Length of slice in sectors
+		}
+
+		private const UInt16 UNIX_TAG_EMPTY      = 0x0000; // empty
+		private const UInt16 UNIX_TAG_BOOT       = 0x0001; // boot
+		private const UInt16 UNIX_TAG_ROOT       = 0x0002; // root
+		private const UInt16 UNIX_TAG_SWAP       = 0x0003; // swap
+		private const UInt16 UNIX_TAG_USER       = 0x0004; // /usr
+		private const UInt16 UNIX_TAG_WHOLE      = 0x0005; // whole disk
+		private const UInt16 UNIX_TAG_STAND      = 0x0006; // stand partition ??
+		private const UInt16 UNIX_TAG_ALT_S      = 0x0006; // alternate sector space
+		private const UInt16 UNIX_TAG_VAR        = 0x0007; // /var
+		private const UInt16 UNIX_TAG_OTHER      = 0x0007; // non UNIX
+		private const UInt16 UNIX_TAG_HOME       = 0x0008; // /home
+		private const UInt16 UNIX_TAG_ALT_T      = 0x0008; // alternate track space
+		private const UInt16 UNIX_TAG_ALT_ST     = 0x0009; // alternate sector track
+		private const UInt16 UNIX_TAG_NEW_STAND  = 0x0009; // stand partition ??
+		private const UInt16 UNIX_TAG_CACHE      = 0x000A; // cache
+		private const UInt16 UNIX_TAG_NEW_VAR    = 0x000A; // /var
+		private const UInt16 UNIX_TAG_RESERVED   = 0x000B; // reserved
+		private const UInt16 UNIX_TAG_NEW_HOME   = 0x000B; // /home
+		private const UInt16 UNIX_TAG_DUMP       = 0x000C; // dump partition
+		private const UInt16 UNIX_TAG_NEW_ALT_ST = 0x000D; // alternate sector track
+		private const UInt16 UNIX_TAG_VM_PUBLIC  = 0x000E; // volume mgt public partition
+		private const UInt16 UNIX_TAG_VM_PRIVATE = 0x000F; // volume mgt private partition
+
+		private string decodeUNIXTAG(UInt16 type, bool isNew)
+		{
+			switch(type)
+			{
+			case UNIX_TAG_EMPTY:
+				return "Unused";
+			case UNIX_TAG_BOOT:
+				return "Boot";
+			case UNIX_TAG_ROOT:
+				return "/";
+			case UNIX_TAG_SWAP:
+				return "Swap";
+			case UNIX_TAG_USER:
+				return "/usr";
+			case UNIX_TAG_WHOLE:
+				return "Whole disk";
+			case UNIX_TAG_STAND:
+				if(isNew)
+					return "Stand";
+				else
+					return "Alternate sector space";
+			case UNIX_TAG_VAR:
+				if(isNew)
+					return "/var";
+				else
+					return "non UNIX";
+			case UNIX_TAG_HOME:
+				if(isNew)
+					return "/home";
+				else
+					return "Alternate track space";
+			case UNIX_TAG_ALT_ST:
+				if(isNew)
+					return "Alternate sector track";
+				else
+					return "Stand";
+			case UNIX_TAG_CACHE:
+				if(isNew)
+					return "Cache";
+				else
+					return "/var";
+			case UNIX_TAG_RESERVED:
+				if(isNew)
+					return "Reserved";
+				else
+					return "/home";
+			case UNIX_TAG_DUMP:
+				return "dump";
+			case UNIX_TAG_NEW_ALT_ST:
+				return "Alternate sector track";
+			case UNIX_TAG_VM_PUBLIC:
+				return "volume mgt public partition";
+			case UNIX_TAG_VM_PRIVATE:
+				return "volume mgt private partition";
+			default:
+				return String.Format ("Unknown TAG: 0x{0:X4}", type);
+			}
 		}
 	}
 }

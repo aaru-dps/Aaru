@@ -66,6 +66,7 @@
     <Compile Include="Plugins\MinixFS.cs" />
     <Compile Include="Plugins\SolarFS.cs" />
     <Compile Include="Plugins\UNIXBFS.cs" />
+    <Compile Include="Plugins\SysV.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

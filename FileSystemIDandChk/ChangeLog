@@ -1,3 +1,18 @@
+2012-08-07  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins/SysV.cs:
+	* FileSystemIDandChk.csproj:
+	  Added support for System V filesystem
+
+	* PartPlugins/MBR.cs:
+	  UnixWare is not the only one using the UNIX disklabel
+	Corrected UNIX disklabel sector.
+	Enhanced UNIX disklabel with structs and consts.
+	Added support for old UNIX disklabels.
+
+	* Swapping.cs:
+	  Added code for middle-endian (PDP-endian)
+
 2012-08-06  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/UNIXBFS.cs:
