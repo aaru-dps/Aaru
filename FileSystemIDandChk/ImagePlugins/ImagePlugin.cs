@@ -9,6 +9,10 @@ namespace FileSystemIDandChk.ImagePlugins
         public string Name;
         public Guid PluginUUID;
 
+        protected ImagePlugin ()
+        {
+        }
+
         protected ImagePlugin (string ImagePath)
         {
         }
@@ -50,14 +54,14 @@ namespace FileSystemIDandChk.ImagePlugins
         public abstract string   GetImageComments();             // Gets image comments
 
         // Functions to get information from disk represented by image
-        public abstract string GetDiskManufacturer(); // Gets disk manufacturer
-        public abstract string GetDiskModel();        // Gets disk model
-        public abstract string GetDiskSerialNumber(); // Gets disk serial number
-        public abstract string GetDiskBarcode();      // Gets disk (or product)
-        public abstract string GetDiskPartNumber();   // Gets disk part no. as manufacturer set
-        public abstract string GetDiskType();         // Gets disk type
-        public abstract int    GetDiskSequence();     // Gets disk sequence number, 1-starting
-        public abstract int    GetLastDiskSequence(); // Gets last disk sequence number
+        public abstract string   GetDiskManufacturer(); // Gets disk manufacturer
+        public abstract string   GetDiskModel();        // Gets disk model
+        public abstract string   GetDiskSerialNumber(); // Gets disk serial number
+        public abstract string   GetDiskBarcode();      // Gets disk (or product)
+        public abstract string   GetDiskPartNumber();   // Gets disk part no. as manufacturer set
+        public abstract DiskType GetDiskType();         // Gets disk type
+        public abstract int      GetDiskSequence();     // Gets disk sequence number, 1-starting
+        public abstract int      GetLastDiskSequence(); // Gets last disk sequence number
 
         // Functions to get information from drive used to create image
         public abstract string GetDriveManufacturer(); // Gets drive manufacturer

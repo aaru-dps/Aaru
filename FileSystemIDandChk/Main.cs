@@ -199,7 +199,7 @@ namespace FileSystemIDandChk
 			}
 			finally
 			{
-				stream.Close();
+                stream = null;
 			}
 		}
 

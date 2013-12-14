@@ -68,6 +68,7 @@
     <Compile Include="Plugins\UNIXBFS.cs" />
     <Compile Include="Plugins\SysV.cs" />
     <Compile Include="ImagePlugins\ImagePlugin.cs" />
+    <Compile Include="ImagePlugins\CDRWin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
