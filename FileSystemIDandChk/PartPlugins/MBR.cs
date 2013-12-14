@@ -826,6 +826,8 @@ namespace FileSystemIDandChk.PartPlugins
 					return "NetWare NSS";
 				case 0x70:
 					return "DiskSecure Multi-Boot";
+				case 0x72:
+					return "UNIX 7th Edition";
 				case 0x75:
 					return "IBM PC/IX";
 				case 0x80:

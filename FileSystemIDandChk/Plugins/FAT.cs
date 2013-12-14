@@ -253,6 +253,23 @@ namespace FileSystemIDandChk.Plugins
 			public UInt32 hsectors;    // 0x1C, Hidden sectors before BPB
 			public UInt32 big_sectors; // 0x20, Sectors in volume if > 65535
 		}
+
+		// This only applies for bootable disks
+		// From http://info-coach.fr/atari/software/FD-Soft.php
+		public struct AtariBootBlock
+		{
+			public UInt16 hsectors;    // 0x01C, Atari ST use 16 bit for hidden sectors, probably so did old DOS
+			public UInt16 xflag;       // 0x01E, indicates if COMMAND.PRG must be executed after OS load
+			public UInt16 ldmode;      // 0x020, load mode for, or 0 if fname indicates boot file
+			public UInt16 bsect;       // 0x022, sector from which to boot
+			public UInt16 bsects_no;   // 0x024, how many sectors to boot
+			public UInt32 ldaddr;      // 0x026, RAM address where boot should be located
+			public UInt32 fatbuf;      // 0x02A, RAM address to copy the FAT and root directory
+			public string fname;       // 0x02E, 11 bytes, name of boot file
+			public UInt16 reserved;    // 0x039, unused
+			public byte[] boot_code;   // 0x03B, 451 bytes boot code
+			public UInt16 checksum;    // 0x1FE, the sum of all the BPB+ABB must be 0x1234, so this bigendian value works as adjustment
+		}
 		
 		public struct ExtendedParameterBlock
 		{

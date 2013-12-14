@@ -67,11 +67,13 @@
     <Compile Include="Plugins\SolarFS.cs" />
     <Compile Include="Plugins\UNIXBFS.cs" />
     <Compile Include="Plugins\SysV.cs" />
+    <Compile Include="ImagePlugins\ImagePlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Plugins\" />
     <Folder Include="PartPlugins\" />
+    <Folder Include="ImagePlugins\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
