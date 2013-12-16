@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using FileSystemIDandChk.Plugins;
 using FileSystemIDandChk.PartPlugins;
+using FileSystemIDandChk.ImagePlugins;
 
 namespace FileSystemIDandChk
 {
@@ -24,6 +25,11 @@ namespace FileSystemIDandChk
 			Console.WriteLine ("Filesystem Identifier and Checker");
 			Console.WriteLine ("Copyright (C) Natalia Portillo, All Rights Reserved");
 			
+            // For debug
+            plugins.RegisterAllPlugins();
+            Runner("");
+
+            /*
 			if(args.Length==0)
 			{
 				Usage();
@@ -34,6 +40,10 @@ namespace FileSystemIDandChk
 				
 				if(args[0]=="--formats")
 				{
+                    Console.WriteLine("Supported images:");
+                    foreach(KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
+                        Console.WriteLine(kvp.Value.Name);
+                    Console.WriteLine();
 					Console.WriteLine("Supported filesystems:");
 					foreach(KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
 						Console.WriteLine(kvp.Value.Name);
@@ -73,6 +83,7 @@ namespace FileSystemIDandChk
 				
 				Runner(args[args.Length-1]);
 			}
+   */         
 		}
 
 		private static void Runner (string filename)
@@ -82,9 +93,54 @@ namespace FileSystemIDandChk
 			Plugin _plugin;
 			string information;
 			bool checkraw = false;
+            ImagePlugin _imageFormat;
 			
 			try
 			{
+                _imageFormat = null;
+
+                foreach(ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
+                {
+                    // DEBUG
+                    filename = "/Users/claunia/Desktop/disk_images/cdrom.cue";
+
+                    if(_imageplugin.IdentifyImage(filename))
+                    {
+                        _imageFormat = _imageplugin;
+                        Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
+                        break;
+                    }
+                }
+
+                if(_imageFormat == null)
+                {
+                    Console.WriteLine("Image format not identified, not proceeding.");
+                    return;
+                }
+
+                try
+                {
+                    if(_imageFormat.OpenImage(filename))
+                    {
+                        Console.WriteLine("DEBUG: Correctly opened image file.");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unable to open image format");
+                        Console.WriteLine("No error given");
+                        return;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Unable to open image format");
+                    Console.WriteLine("Error: {0}", ex.Message);
+                    return;
+                }
+
+                // All commented until image formats are implemented correctly.
+                /*
 				stream = File.OpenRead(filename);
 				
 				if(chkPartitions)
@@ -190,6 +246,7 @@ namespace FileSystemIDandChk
 						Console.Write(information);
 					}
 				}
+    */            
 			}
 			catch(Exception ex)
 			{

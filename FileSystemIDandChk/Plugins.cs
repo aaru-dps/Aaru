@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using FileSystemIDandChk.Plugins;
 using FileSystemIDandChk.PartPlugins;
+using FileSystemIDandChk.ImagePlugins;
 
 namespace FileSystemIDandChk
 {
@@ -10,11 +11,13 @@ namespace FileSystemIDandChk
 	{
 		public Dictionary<string, Plugin> PluginsList;
 		public Dictionary<string, PartPlugin> PartPluginsList;
+        public Dictionary<string, ImagePlugin> ImagePluginsList;
 		
 		public PluginBase ()
 		{
 			this.PluginsList = new Dictionary<string, Plugin>();
 			this.PartPluginsList = new Dictionary<string, PartPlugin>();
+            this.ImagePluginsList = new Dictionary<string, ImagePlugin>();
 		}
 		
 		public void RegisterAllPlugins()
@@ -25,6 +28,11 @@ namespace FileSystemIDandChk
             {
                 try
                 {
+                    if (type.IsSubclassOf(typeof(ImagePlugin)))
+                    {
+                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(new Type[] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        this.RegisterImagePlugin(plugin);
+                    }
                     if (type.IsSubclassOf(typeof(Plugin)))
                     {
                         Plugin plugin = (Plugin)type.GetConstructor(new Type[] { typeof(PluginBase) }).Invoke(new object[] { this });
@@ -41,6 +49,14 @@ namespace FileSystemIDandChk
                 {
                     Console.WriteLine(exception.ToString());
                 }
+            }
+        }
+
+        private void RegisterImagePlugin(ImagePlugin plugin)
+        {
+            if (!this.ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
+            {
+                this.ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
             }
         }
 

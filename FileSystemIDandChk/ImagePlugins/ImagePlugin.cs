@@ -13,13 +13,9 @@ namespace FileSystemIDandChk.ImagePlugins
         {
         }
 
-        protected ImagePlugin (string ImagePath)
-        {
-        }
-
         // Basic image handling functions
-        public abstract bool IdentifyImage();  // Returns true if the plugin can handle the given image file
-        public abstract bool OpenImage(); // Initialize internal plugin structures to handle image
+        public abstract bool IdentifyImage(string imagepath);  // Returns true if the plugin can handle the given image file
+        public abstract bool OpenImage(string imagepath); // Initialize internal plugin structures to handle image
         public abstract bool ImageHasPartitions(); // Image has different partitions (sessions, tracks)
 
         // Image size functions
@@ -74,12 +70,92 @@ namespace FileSystemIDandChk.ImagePlugins
         public abstract List<Track> GetSessionTracks(Session Session); // Returns disc track extensts for a session
         public abstract List<Track> GetSessionTracks(UInt16 Session);  // Returns disc track extensts for a session
         public abstract List<Session> GetSessions();                   // Returns disc sessions
+
+        // CD flags bitmask
+        public const byte CDFlagsFourChannel = 0x20;
+        public const byte CDFlagsDataTrack   = 0x10;
+        public const byte CDFlagsCopyPrevent = 0x08;
+        public const byte CDFlagsPreEmphasis = 0x04;
     }
 
     // Disk types
     public enum DiskType
     {
-        Unknown
+        Unknown,
+        // Somewhat standard Compact Disc formats
+        CDDA,       // CD Digital Audio (Red Book)
+        CDG,        // CD+G (Red Book)
+        CDEG,       // CD+EG (Red Book)
+        CDI,        // CD-i (Green Book)
+        CDROM,      // CD-ROM (Yellow Book)
+        CDROMXA,    // CD-ROM XA (Yellow Book)
+        CDPLUS,     // CD+ (Blue Book)
+        CDMO,       // CD-MO (Orange Book)
+        CDR,        // CD-Recordable (Orange Book)
+        CDRW,       // CD-ReWritable (Orange Book)
+        CDMRW,      // Mount-Rainier CD-RW
+        VCD,        // Video CD (White Book)
+        SVCD,       // Super Video CD (White Book)
+        PCD,        // Photo CD (Beige Book)
+        SACD,       // Super Audio CD (Scarlet Book)
+        DDCD,       // Double-Density CD-ROM (Purple Book)
+        DDCDR,      // DD CD-R (Purple Book)
+        DDCDRW,     // DD CD-RW (Purple Book)
+        DTSCD,      // DTS audio CD (non-standard)
+        CDMIDI,     // CD-MIDI (Red Book)
+        CD,         // Any unknown or standard violating CD
+        // Standard DVD formats
+        DVDROM,     // DVD-ROM (applies to DVD Video and DVD Audio)
+        DVDR,       // DVD-R
+        DVDRW,      // DVD-RW
+        DVDPR,      // DVD+R
+        DVDPRW,     // DVD+RW
+        DVDPRWDL,   // DVD+RW DL
+        DVDRDL,     // DVD-R DL
+        DVDPRDL,    // DVD+R DL
+        DVDRAM,     // DVD-RAM
+        // Standard HD-DVD formats
+        HDDVDROM,   // HD DVD-ROM (applies to HD DVD Video)
+        HDDVDRAM,   // HD DVD-RAM
+        HDDVDR,     // HD DVD-R
+        HDDVDRW,    // HD DVD-RW
+        // Standard Blu-ray formats
+        BDROM,      // BD-ROM (and BD Video)
+        BDR,        // BD-R
+        BDRE,       // BD-RE
+        // Rare or uncommon standards
+        EVD,        // Enhanced Versatile Disc
+        FVD,        // Forward Versatile Disc
+        HVD,        // Holographic Versatile Disc
+        CBHD,       // China Blue High Definition
+        HDVMD,      // High Definition Versatile Multilayer Disc
+        VCDHD,      // Versatile Compact Disc High Density
+        LD,         // Pioneer LaserDisc
+        LDROM,      // Pioneer LaserDisc data
+        MD,         // Sony MiniDisc
+        HiMD,       // Sony Hi-MD
+        UDO,        // Ultra Density Optical
+        SVOD,       // Stacked Volumetric Optical Disc
+        FDDVD,      // Five Dimensional disc
+        // Propietary game discs
+        PS1CD,      // Sony PlayStation game CD
+        PS2CD,      // Sony PlayStation 2 game CD
+        PS2DVD,     // Sony PlayStation 2 game DVD
+        PS3DVD,     // Sony PlayStation 3 game DVD
+        PS3BD,      // Sony PlayStation 3 game Blu-ray
+        PS4BD,      // Sony PlayStation 4 game Blu-ray
+        UMD,        // Sony PlayStation Portable Universal Media Disc (ECMA-365)
+        GOD,        // Nintendo GameCube Optical Disc
+        WOD,        // Nintendo Wii Optical Disc
+        WUOD,       // Nintendo Wii U Optical Disc
+        XGD,        // Microsoft X-box Game Disc
+        XGD2,       // Microsoft X-box 360 Game Disc
+        XGD3,       // Microsoft X-box 360 Game Disc
+        XGD4,       // Microsoft X-box One Game Disc
+        MEGACD,     // Sega MegaCD
+        SATURNCD,   // Sega Saturn disc
+        GDROM,      // Sega/Yamaha Gigabyte Disc
+        GDR         // Sega/Yamaha recordable Gigabyte Disc
     };
 
     // Track (as partitioning element) types
@@ -125,17 +201,18 @@ namespace FileSystemIDandChk.ImagePlugins
     // Metadata present for each sector (aka, "tag")
     public enum SectorTagType
     {
-        AppleSectorTag,     // Apple's GCR sector tags
-        CDSectorSync,       // Sync frame from CD sector
-        CDSectorHeader,     // CD sector header
+        AppleSectorTag,     // Apple's GCR sector tags, 20 bytes
+        CDSectorSync,       // Sync frame from CD sector, 12 bytes
+        CDSectorHeader,     // CD sector header, 4 bytes
         CDSectorSubHeader,  // CD mode 2 sector subheader
-        CDSectorEDC,        // CD sector EDC
-        CDSectorECC_P,      // CD sector ECC P
-        CDSectorECC_Q,      // CD sector ECC Q
-        CDSectorECC,        // CD sector ECC (P and Q)
-        CDSectorSubchannel, // CD sector subchannel
-        CDTrackISRC,        // CD track ISRC
-        CDTrackText,        // CD track text
+        CDSectorEDC,        // CD sector EDC, 4 bytes
+        CDSectorECC_P,      // CD sector ECC P, 172 bytes
+        CDSectorECC_Q,      // CD sector ECC Q, 104 bytes
+        CDSectorECC,        // CD sector ECC (P and Q), 276 bytes
+        CDSectorSubchannel, // CD sector subchannel, 96 bytes
+        CDTrackISRC,        // CD track ISRC, string, 12 bytes
+        CDTrackText,        // CD track text, string, 13 bytes
+        CDTrackFlags,       // CD track flags, 1 byte
         DVD_CMI             // DVD sector copyright information
     };
 
@@ -200,4 +277,15 @@ namespace FileSystemIDandChk.ImagePlugins
             System.Runtime.Serialization.StreamingContext context) { }
     }
 
+    // Corrupt, incorrect or unhandled feature found on image
+    [Serializable()]
+    public class ImageNotSupportedException : System.Exception
+    {
+        public ImageNotSupportedException() : base() { }
+        public ImageNotSupportedException(string message) : base(message) { }
+        public ImageNotSupportedException(string message, System.Exception inner) : base(message, inner) { }
+
+        protected ImageNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context) { }
+    }
 }
