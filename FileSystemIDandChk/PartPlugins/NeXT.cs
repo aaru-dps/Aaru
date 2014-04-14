@@ -1,7 +1,6 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 using FileSystemIDandChk;
 
 namespace FileSystemIDandChk.PartPlugins
@@ -14,10 +13,10 @@ namespace FileSystemIDandChk.PartPlugins
         // "dlV2"
         const UInt32 NEXT_MAGIC3 = 0x646C5633;
         // "dlV3"
-
-        const UInt16 disktabStart     = 0xB4; // 180
-        const UInt16 disktabEntrySize = 0x2C; // 44
-
+        const UInt16 disktabStart = 0xB4;
+        // 180
+        const UInt16 disktabEntrySize = 0x2C;
+        // 44
         public NeXTDisklabel(PluginBase Core)
         {
             Name = "NeXT Disklabel";

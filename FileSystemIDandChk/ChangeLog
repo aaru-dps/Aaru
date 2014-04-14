@@ -1,6 +1,42 @@
 2014-04-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Main.cs:
+	* Plugins.cs:
+	* Swapping.cs:
+	* Plugins/BFS.cs:
+	* Plugins/FAT.cs:
+	* Plugins/FFS.cs:
+	* Plugins/ODS.cs:
+	* Plugins/NTFS.cs:
+	* Plugins/HPFS.cs:
+	* DateHandlers.cs:
+	* Plugins/SysV.cs:
+	* Plugins/extFS.cs:
+	* Plugins/Opera.cs:
+	* Plugins/Plugin.cs:
+	* StringHandlers.cs:
+	* Plugins/ext2FS.cs:
+	* Plugins/SolarFS.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/ISO9660.cs:
+	* PartPlugins/MBR.cs:
+	* Plugins/AppleMFS.cs:
+	* PartPlugins/NeXT.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleHFS.cs:
+	* ImagePlugins/CDRWin.cs:
+	* PartPlugins/AppleMap.cs:
+	* Plugins/AppleHFSPlus.cs:
+	* BigEndianBitConverter.cs:
+	* FileSystemIDandChk.csproj:
+	* EndianAwareBinaryReader.cs:
+	* ImagePlugins/ImagePlugin.cs:
+	  Refactor and reformat code
+
+2014-04-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Main.cs:
 	* ImagePlugins/CDRWin.cs:
 	  Constrain debug information to debug mode
 

@@ -1,26 +1,26 @@
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using FileSystemIDandChk.Plugins;
-using FileSystemIDandChk.PartPlugins;
+using System.Reflection;
 using FileSystemIDandChk.ImagePlugins;
+using FileSystemIDandChk.PartPlugins;
+using FileSystemIDandChk.Plugins;
 
 namespace FileSystemIDandChk
 {
-	public class PluginBase
-	{
-		public Dictionary<string, Plugin> PluginsList;
-		public Dictionary<string, PartPlugin> PartPluginsList;
+    public class PluginBase
+    {
+        public Dictionary<string, Plugin> PluginsList;
+        public Dictionary<string, PartPlugin> PartPluginsList;
         public Dictionary<string, ImagePlugin> ImagePluginsList;
-		
-		public PluginBase ()
-		{
-			this.PluginsList = new Dictionary<string, Plugin>();
-			this.PartPluginsList = new Dictionary<string, PartPlugin>();
-            this.ImagePluginsList = new Dictionary<string, ImagePlugin>();
-		}
-		
-		public void RegisterAllPlugins()
+
+        public PluginBase()
+        {
+            PluginsList = new Dictionary<string, Plugin>();
+            PartPluginsList = new Dictionary<string, PartPlugin>();
+            ImagePluginsList = new Dictionary<string, ImagePlugin>();
+        }
+
+        public void RegisterAllPlugins()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
 
@@ -30,51 +30,51 @@ namespace FileSystemIDandChk
                 {
                     if (type.IsSubclassOf(typeof(ImagePlugin)))
                     {
-                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(new Type[] { typeof(PluginBase) }).Invoke(new object[] { this });
-                        this.RegisterImagePlugin(plugin);
+                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        RegisterImagePlugin(plugin);
                     }
                     if (type.IsSubclassOf(typeof(Plugin)))
                     {
-                        Plugin plugin = (Plugin)type.GetConstructor(new Type[] { typeof(PluginBase) }).Invoke(new object[] { this });
-                        this.RegisterPlugin(plugin);
+                        Plugin plugin = (Plugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        RegisterPlugin(plugin);
                     }
-					else if (type.IsSubclassOf(typeof(PartPlugin)))
+                    else if (type.IsSubclassOf(typeof(PartPlugin)))
                     {
-                        PartPlugin partplugin = (PartPlugin)type.GetConstructor(new Type[] { typeof(PluginBase) }).Invoke(new object[] { this });
-                        this.RegisterPartPlugin(partplugin);
+                        PartPlugin partplugin = (PartPlugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        RegisterPartPlugin(partplugin);
                     }
 					
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception.ToString());
+                    Console.WriteLine(exception);
                 }
             }
         }
 
-        private void RegisterImagePlugin(ImagePlugin plugin)
+        void RegisterImagePlugin(ImagePlugin plugin)
         {
-            if (!this.ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
+            if (!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
             {
-                this.ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
+                ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
             }
         }
 
-        private void RegisterPlugin(Plugin plugin)
+        void RegisterPlugin(Plugin plugin)
         {
-            if (!this.PluginsList.ContainsKey(plugin.Name.ToLower()))
+            if (!PluginsList.ContainsKey(plugin.Name.ToLower()))
             {
-                this.PluginsList.Add(plugin.Name.ToLower(), plugin);
+                PluginsList.Add(plugin.Name.ToLower(), plugin);
             }
         }
 
-	    private void RegisterPartPlugin(PartPlugin partplugin)
+        void RegisterPartPlugin(PartPlugin partplugin)
         {
-            if (!this.PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
+            if (!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
             {
-                this.PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
+                PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
             }
         }
-	}
+    }
 }
 

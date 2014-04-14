@@ -1,72 +1,69 @@
 using System;
-using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
 namespace FileSystemIDandChk.Plugins
 {
-	class NTFS : Plugin
-	{
-		public NTFS(PluginBase Core)
+    class NTFS : Plugin
+    {
+        public NTFS(PluginBase Core)
         {
-            base.Name = "New Technology File System (NTFS)";
-			base.PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+            Name = "New Technology File System (NTFS)";
+            PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
         }
-		
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
-		{
-			byte[] eigth_bytes = new byte[8];
-			byte signature1, fats_no;
-			UInt16 spfat, signature2;
-			string oem_name;
+        {
+            byte[] eigth_bytes = new byte[8];
+            byte signature1, fats_no;
+            UInt16 spfat, signature2;
+            string oem_name;
 			
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionOffset);
 			
             Array.Copy(ntfs_bpb, 0x003, eigth_bytes, 0, 8);
-			oem_name = StringHandlers.CToString(eigth_bytes);
+            oem_name = StringHandlers.CToString(eigth_bytes);
 			
-			if(oem_name != "NTFS    ")
-				return false;
+            if (oem_name != "NTFS    ")
+                return false;
 			
             fats_no = ntfs_bpb[0x010];
 			
-			if(fats_no != 0)
-				return false;
+            if (fats_no != 0)
+                return false;
 			
             spfat = BitConverter.ToUInt16(ntfs_bpb, 0x016);
 			
-			if(spfat != 0)
-				return false;
+            if (spfat != 0)
+                return false;
 			
             signature1 = ntfs_bpb[0x026];
 			
-			if(signature1 != 0x80)
-				return false;
+            if (signature1 != 0x80)
+                return false;
 			
             signature2 = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
 			
-			if(signature2 != 0xAA55)
-				return false;
+            return signature2 == 0xAA55;
 			
-			return true;
-		}
-		
-        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
-		{
-			information = "";
+        }
+
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        {
+            information = "";
 			
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 			
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionOffset);
 			
-			NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
+            NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
 			
-			byte[] oem_name = new byte[8];
+            byte[] oem_name = new byte[8];
 			
-			ntfs_bb.jmp1 = ntfs_bpb[0x000];
+            ntfs_bb.jmp1 = ntfs_bpb[0x000];
             ntfs_bb.jmp2 = BitConverter.ToUInt16(ntfs_bpb, 0x001);
             Array.Copy(ntfs_bpb, 0x003, oem_name, 0, 8);
-			ntfs_bb.OEMName = StringHandlers.CToString(oem_name);
+            ntfs_bb.OEMName = StringHandlers.CToString(oem_name);
             ntfs_bb.bps = BitConverter.ToUInt16(ntfs_bpb, 0x00B);
             ntfs_bb.spc = ntfs_bpb[0x00D];
             ntfs_bb.rsectors = BitConverter.ToUInt16(ntfs_bpb, 0x00E);
@@ -95,78 +92,108 @@ namespace FileSystemIDandChk.Plugins
             ntfs_bb.serial_no = BitConverter.ToUInt64(ntfs_bpb, 0x048);
             ntfs_bb.signature2 = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
 			
-			sb.AppendFormat("{0} bytes per sector", ntfs_bb.bps).AppendLine();
-			sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfs_bb.spc, ntfs_bb.spc*ntfs_bb.bps).AppendLine();
+            sb.AppendFormat("{0} bytes per sector", ntfs_bb.bps).AppendLine();
+            sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfs_bb.spc, ntfs_bb.spc * ntfs_bb.bps).AppendLine();
 //			sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
 //			sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
 //			sb.AppendFormat("{0} entries in the root folder", ntfs_bb.root_ent).AppendLine();
 //			sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
-			sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfs_bb.media).AppendLine();
+            sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfs_bb.media).AppendLine();
 //			sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
-			sb.AppendFormat("{0} sectors per track", ntfs_bb.sptrk).AppendLine();
-			sb.AppendFormat("{0} heads", ntfs_bb.heads).AppendLine();
-			sb.AppendFormat("{0} hidden sectors before filesystem", ntfs_bb.hsectors).AppendLine();
+            sb.AppendFormat("{0} sectors per track", ntfs_bb.sptrk).AppendLine();
+            sb.AppendFormat("{0} heads", ntfs_bb.heads).AppendLine();
+            sb.AppendFormat("{0} hidden sectors before filesystem", ntfs_bb.hsectors).AppendLine();
 //			sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
-			sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfs_bb.drive_no).AppendLine();
+            sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfs_bb.drive_no).AppendLine();
 //			sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
 //			sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
-			sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfs_bb.sectors, ntfs_bb.sectors*ntfs_bb.bps).AppendLine();
-			sb.AppendFormat("Sectors where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
-			sb.AppendFormat("Sectors where $MFTMirr starts: {0}", ntfs_bb.mftmirror_lsn).AppendLine();
+            sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfs_bb.sectors, ntfs_bb.sectors * ntfs_bb.bps).AppendLine();
+            sb.AppendFormat("Sectors where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
+            sb.AppendFormat("Sectors where $MFTMirr starts: {0}", ntfs_bb.mftmirror_lsn).AppendLine();
 
-			if (ntfs_bb.mft_rc_clusters > 0)
-				sb.AppendFormat("{0} clusters per MFT record ({1} bytes)", ntfs_bb.mft_rc_clusters,
-				                ntfs_bb.mft_rc_clusters*ntfs_bb.bps*ntfs_bb.spc).AppendLine();
-			else
-				sb.AppendFormat("{0} bytes per MFT record", 1 << -ntfs_bb.mft_rc_clusters).AppendLine();
-			if (ntfs_bb.index_blk_cts > 0)
-				sb.AppendFormat("{0} clusters per Index block ({1} bytes)", ntfs_bb.index_blk_cts,
-				                ntfs_bb.index_blk_cts*ntfs_bb.bps*ntfs_bb.spc).AppendLine();
-			else
-				sb.AppendFormat("{0} bytes per Index block", 1 << -ntfs_bb.index_blk_cts).AppendLine();
+            if (ntfs_bb.mft_rc_clusters > 0)
+                sb.AppendFormat("{0} clusters per MFT record ({1} bytes)", ntfs_bb.mft_rc_clusters,
+                    ntfs_bb.mft_rc_clusters * ntfs_bb.bps * ntfs_bb.spc).AppendLine();
+            else
+                sb.AppendFormat("{0} bytes per MFT record", 1 << -ntfs_bb.mft_rc_clusters).AppendLine();
+            if (ntfs_bb.index_blk_cts > 0)
+                sb.AppendFormat("{0} clusters per Index block ({1} bytes)", ntfs_bb.index_blk_cts,
+                    ntfs_bb.index_blk_cts * ntfs_bb.bps * ntfs_bb.spc).AppendLine();
+            else
+                sb.AppendFormat("{0} bytes per Index block", 1 << -ntfs_bb.index_blk_cts).AppendLine();
 
-			sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
+            sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
 //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 			
-			information = sb.ToString();
-		}
-		
-		private struct NTFS_BootBlock // Sector 0
-		{
-			// BIOS Parameter Block
-			public byte   jmp1;            // 0x000, Jump to boot code
-			public UInt16 jmp2;            // 0x001, ...;
-			public string OEMName;         // 0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "
-			public UInt16 bps;             // 0x00B, Bytes per sector
-			public byte   spc;             // 0x00D, Sectors per cluster
-			public UInt16 rsectors;        // 0x00E, Reserved sectors, seems 0
-			public byte   fats_no;         // 0x010, Number of FATs... obviously, 0
-			public UInt16 root_ent;        // 0x011, Number of entries on root directory... 0
-			public UInt16 sml_sectors;     // 0x013, Sectors in volume... 0
-			public byte   media;           // 0x015, Media descriptor
-			public UInt16 spfat;           // 0x016, Sectors per FAT... 0
-			public UInt16 sptrk;           // 0x018, Sectors per track, required to boot
-			public UInt16 heads;           // 0x01A, Heads... required to boot
-			public UInt32 hsectors;        // 0x01C, Hidden sectors before BPB
-			public UInt32 big_sectors;     // 0x020, Sectors in volume if > 65535... 0
-			public byte   drive_no;        // 0x024, Drive number
-			public byte   nt_flags;        // 0x025, 0
-			public byte   signature1;      // 0x026, EPB signature, 0x80
-			public byte   dummy;           // 0x027, Alignment
-			// End of BIOS Parameter Block
-			// NTFS real superblock
-			public Int64  sectors;         // 0x028, Sectors on volume
-			public Int64  mft_lsn;         // 0x030, LSN of $MFT
-			public Int64  mftmirror_lsn;   // 0x038, LSN of $MFTMirror
-			public sbyte  mft_rc_clusters; // 0x040, Clusters per MFT record
-			public byte   dummy2;          // 0x041, Alignment
-			public UInt16 dummy3;          // 0x042, Alignment
-			public sbyte  index_blk_cts;   // 0x044, Clusters per index block
-			public byte   dummy4;          // 0x045, Alignment
-			public UInt16 dummy5;          // 0x046, Alignment
-			public UInt64 serial_no;       // 0x048, Volume serial number
-			// End of NTFS superblock, followed by 430 bytes of boot code
-			public UInt16 signature2;      // 0x1FE, 0xAA55
-		}
-	}
+            information = sb.ToString();
+        }
+
+        struct NTFS_BootBlock // Sector 0
+        {
+            // BIOS Parameter Block
+            public byte jmp1;
+            // 0x000, Jump to boot code
+            public UInt16 jmp2;
+            // 0x001, ...;
+            public string OEMName;
+            // 0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "
+            public UInt16 bps;
+            // 0x00B, Bytes per sector
+            public byte spc;
+            // 0x00D, Sectors per cluster
+            public UInt16 rsectors;
+            // 0x00E, Reserved sectors, seems 0
+            public byte fats_no;
+            // 0x010, Number of FATs... obviously, 0
+            public UInt16 root_ent;
+            // 0x011, Number of entries on root directory... 0
+            public UInt16 sml_sectors;
+            // 0x013, Sectors in volume... 0
+            public byte media;
+            // 0x015, Media descriptor
+            public UInt16 spfat;
+            // 0x016, Sectors per FAT... 0
+            public UInt16 sptrk;
+            // 0x018, Sectors per track, required to boot
+            public UInt16 heads;
+            // 0x01A, Heads... required to boot
+            public UInt32 hsectors;
+            // 0x01C, Hidden sectors before BPB
+            public UInt32 big_sectors;
+            // 0x020, Sectors in volume if > 65535... 0
+            public byte drive_no;
+            // 0x024, Drive number
+            public byte nt_flags;
+            // 0x025, 0
+            public byte signature1;
+            // 0x026, EPB signature, 0x80
+            public byte dummy;
+            // 0x027, Alignment
+            // End of BIOS Parameter Block
+            // NTFS real superblock
+            public Int64 sectors;
+            // 0x028, Sectors on volume
+            public Int64 mft_lsn;
+            // 0x030, LSN of $MFT
+            public Int64 mftmirror_lsn;
+            // 0x038, LSN of $MFTMirror
+            public sbyte mft_rc_clusters;
+            // 0x040, Clusters per MFT record
+            public byte dummy2;
+            // 0x041, Alignment
+            public UInt16 dummy3;
+            // 0x042, Alignment
+            public sbyte index_blk_cts;
+            // 0x044, Clusters per index block
+            public byte dummy4;
+            // 0x045, Alignment
+            public UInt16 dummy5;
+            // 0x046, Alignment
+            public UInt64 serial_no;
+            // 0x048, Volume serial number
+            // End of NTFS superblock, followed by 430 bytes of boot code
+            public UInt16 signature2;
+            // 0x1FE, 0xAA55
+        }
+    }
 }

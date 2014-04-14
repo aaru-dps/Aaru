@@ -1,7 +1,6 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Globalization;
+using System.Text;
 using FileSystemIDandChk;
 
 // This is coded following ECMA-119.
@@ -13,16 +12,16 @@ namespace FileSystemIDandChk.Plugins
 {
     class ISO9660Plugin : Plugin
     {
-		private static bool alreadyLaunched;
+		static bool alreadyLaunched;
 
         public ISO9660Plugin(PluginBase Core)
         {
-            base.Name = "ISO9660 Filesystem";
-            base.PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+            Name = "ISO9660 Filesystem";
+            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
 			alreadyLaunched = false;
         }
 
-        private struct DecodedVolumeDescriptor
+        struct DecodedVolumeDescriptor
         {
             public string SystemIdentifier;
             public string VolumeIdentifier;
@@ -41,12 +40,11 @@ namespace FileSystemIDandChk.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
-			if(alreadyLaunched)
-				return false;
-			else
-				alreadyLaunched = true;
+            if (alreadyLaunched)
+                return false;
+            alreadyLaunched = true;
 
-			byte VDType;
+            byte VDType;
 
             // ISO9660 is designed for 2048 bytes/sector devices
             if (imagePlugin.GetSectorSize() < 2048)
@@ -60,19 +58,16 @@ namespace FileSystemIDandChk.Plugins
             byte[] vd_sector = imagePlugin.ReadSector(16 + partitionOffset);
 
             VDType = vd_sector[0];
-			byte[] VDMagic = new byte[5];
+            byte[] VDMagic = new byte[5];
 
-			// Wrong, VDs can be any order!
+            // Wrong, VDs can be any order!
             if (VDType == 255) // Supposedly we are in the PVD.
 	            return false;
 
             Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
 
-            if (Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
-                return false;
-			
-			return true;
-		}
+            return Encoding.ASCII.GetString(VDMagic) == "CD001";			
+        }
 		
         public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
@@ -246,10 +241,7 @@ namespace FileSystemIDandChk.Plugins
             if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
             {
                 Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
-                if (Encoding.ASCII.GetString(RRMagic) == "RR")
-                {
-                    RockRidge = true;
-                }
+                RockRidge |= Encoding.ASCII.GetString(RRMagic) == "RR";
             }
 
             #region SEGA IP.BIN Read and decoding
@@ -345,7 +337,7 @@ namespace FileSystemIDandChk.Plugins
                         Array.Copy(ipbin_sector, 0x1B0, spare_space7, 0, 64);     // Inside here should be modem information, but I need to get a modem-enabled game
                         Array.Copy(ipbin_sector, 0x1F0, region_codes, 0, 16);     // Region codes, space-filled
                         // Decoding all data
-                        DateTime ipbindate = new DateTime();
+                        DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
                         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "MMddyyyy", provider);
 
@@ -377,7 +369,7 @@ namespace FileSystemIDandChk.Plugins
                         IPBinInformation.AppendFormat("System program load size: {0} bytes", BitConverter.ToInt32(sp_loadsize, 0)).AppendLine();
                         IPBinInformation.AppendFormat("System program entry address: 0x{0}", BitConverter.ToInt32(sp_entry_address, 0).ToString("X")).AppendLine();
                         IPBinInformation.AppendFormat("System program work RAM: {0} bytes", BitConverter.ToInt32(sp_work_ram_size, 0)).AppendLine();
-                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate.ToString()).AppendLine();
+                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
                         IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
                         IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(hardware_id)).AppendLine();
                         IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(developer_code)).AppendLine();
@@ -425,7 +417,7 @@ namespace FileSystemIDandChk.Plugins
                                 case ' ':
                                     break;
                                 default:
-                                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral.ToString()).AppendLine();
+                                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
                                     break;
                             }
                         }
@@ -446,7 +438,7 @@ namespace FileSystemIDandChk.Plugins
                                 case ' ':
                                     break;
                                 default:
-                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region.ToString()).AppendLine();
+                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                                     break;
                             }
                         }
@@ -488,13 +480,13 @@ namespace FileSystemIDandChk.Plugins
                         Array.Copy(ipbin_sector, 0x050, peripherals, 0, 16);      // Supported peripherals, see above
                         Array.Copy(ipbin_sector, 0x060, product_name, 0, 112);	  // Game name, space-filled
                         // Decoding all data
-                        DateTime ipbindate = new DateTime();
+                        DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
                         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "yyyyMMdd", provider);
                         IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(product_name)).AppendLine();
                         IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(product_no)).AppendLine();
                         IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(product_version)).AppendLine();
-                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate.ToString()).AppendLine();
+                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
                         IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
 
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
@@ -523,7 +515,7 @@ namespace FileSystemIDandChk.Plugins
                                 case ' ':
                                     break;
                                 default:
-                                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral.ToString()).AppendLine();
+                                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
                                     break;
                             }
                         }
@@ -547,7 +539,7 @@ namespace FileSystemIDandChk.Plugins
                                 case ' ':
                                     break;
                                 default:
-                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region.ToString()).AppendLine();
+                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                                     break;
                             }
                         }
@@ -599,7 +591,7 @@ namespace FileSystemIDandChk.Plugins
                         Array.Copy(ipbin_sector, 0x068, producer, 0, 16);     // Game producer, space-filled
                         Array.Copy(ipbin_sector, 0x078, product_name, 0, 128);     // Game name, space-filled
                         // Decoding all data
-                        DateTime ipbindate = new DateTime();
+                        DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
                         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "yyyyMMdd", provider);
                         IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(product_name)).AppendLine();
@@ -607,7 +599,7 @@ namespace FileSystemIDandChk.Plugins
                         IPBinInformation.AppendFormat("Producer: {0}", Encoding.ASCII.GetString(producer)).AppendLine();
                         IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(dreamcast_media)).AppendLine();
                         IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
-                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate.ToString()).AppendLine();
+                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
                         switch (Encoding.ASCII.GetString(boot_filename))
                         {
                             case "1ST_READ.BIN":
@@ -637,7 +629,7 @@ namespace FileSystemIDandChk.Plugins
                                 case ' ':
                                     break;
                                 default:
-                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region.ToString()).AppendLine();
+                                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
                                     break;
                             }
                         }
@@ -728,17 +720,17 @@ namespace FileSystemIDandChk.Plugins
             ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedVD.PublisherIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedVD.DataPreparerIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Application identifier: {0}", decodedVD.ApplicationIdentifier).AppendLine();
-            ISOMetadata.AppendFormat("Volume creation date: {0}", decodedVD.CreationTime.ToString()).AppendLine();
+            ISOMetadata.AppendFormat("Volume creation date: {0}", decodedVD.CreationTime).AppendLine();
             if (decodedVD.HasModificationTime)
-                ISOMetadata.AppendFormat("Volume modification date: {0}", decodedVD.ModificationTime.ToString()).AppendLine();
+                ISOMetadata.AppendFormat("Volume modification date: {0}", decodedVD.ModificationTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
             if (decodedVD.HasExpirationTime)
-                ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedVD.ExpirationTime.ToString()).AppendLine();
+                ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedVD.ExpirationTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
             if (decodedVD.HasEffectiveTime)
-                ISOMetadata.AppendFormat("Volume effective date: {0}", decodedVD.EffectiveTime.ToString()).AppendLine();
+                ISOMetadata.AppendFormat("Volume effective date: {0}", decodedVD.EffectiveTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
 
@@ -753,17 +745,17 @@ namespace FileSystemIDandChk.Plugins
 				ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVD.PublisherIdentifier).AppendLine();
 				ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVD.DataPreparerIdentifier).AppendLine();
 				ISOMetadata.AppendFormat("Application identifier: {0}", decodedJolietVD.ApplicationIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime.ToString()).AppendLine();
+				ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime).AppendLine();
 				if (decodedJolietVD.HasModificationTime)
-					ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime.ToString()).AppendLine();
+					ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime).AppendLine();
 				else
 					ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
 				if (decodedJolietVD.HasExpirationTime)
-					ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime.ToString()).AppendLine();
+					ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime).AppendLine();
 				else
 					ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
 				if (decodedJolietVD.HasEffectiveTime)
-					ISOMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVD.EffectiveTime.ToString()).AppendLine();
+                    ISOMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVD.EffectiveTime).AppendLine();
 				else
 					ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
 			}
@@ -771,7 +763,7 @@ namespace FileSystemIDandChk.Plugins
             information = ISOMetadata.ToString();
         }
 
-        private DecodedVolumeDescriptor DecodeJolietDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
+        static DecodedVolumeDescriptor DecodeJolietDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
@@ -819,7 +811,7 @@ namespace FileSystemIDandChk.Plugins
             return decodedVD;
         }
 
-		private DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
+		static DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 

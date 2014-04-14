@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
 using FileSystemIDandChk;
 
 // TODO: Support AAP, AST, SpeedStor and Ontrack extensions
@@ -13,15 +13,14 @@ namespace FileSystemIDandChk.PartPlugins
 
         public MBR(PluginBase Core)
         {
-            base.Name = "Master Boot Record";
-            base.PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+            Name = "Master Boot Record";
+            PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         }
 
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
         {
             byte cyl_sect1, cyl_sect2; // For decoding cylinder and sector
             UInt16 signature;
-            UInt32 serial;
             ulong counter = 0;
 			
             partitions = new List<Partition>();
@@ -32,8 +31,6 @@ namespace FileSystemIDandChk.PartPlugins
 
             if (signature != MBRSignature)
                 return false; // Not MBR
-			
-            serial = BitConverter.ToUInt32(sector, 0x1B8);
 			
             for (int i = 0; i < 4; i++)
             {
@@ -68,8 +65,7 @@ namespace FileSystemIDandChk.PartPlugins
 
                 if (entry.status != 0x00 && entry.status != 0x80)
                     return false; // Maybe a FAT filesystem
-                if (entry.type == 0x00)
-                    valid = false;
+                valid &= entry.type != 0x00;
                 if (entry.type == 0xEE || entry.type == 0xEF)
                     return false; // This is a GPT
                 if (entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x85)
@@ -84,8 +80,7 @@ namespace FileSystemIDandChk.PartPlugins
                     disklabel = true;
                 }
 
-                if (entry.lba_start == 0 && entry.lba_sectors == 0 && entry.start_cylinder == 0 && entry.start_head == 0 && entry.start_sector == 0 && entry.end_cylinder == 0 && entry.end_head == 0 && entry.end_sector == 0)
-                    valid = false;
+                valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
                 if (entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
                     entry.lba_start = CHStoLBA(entry.start_cylinder, entry.start_head, entry.start_sector);
@@ -302,8 +297,7 @@ namespace FileSystemIDandChk.PartPlugins
                                         counter++;
                                     }
                                 }
-                                if (!minix_subs)
-                                    valid = true;
+                                valid |= !minix_subs;
 							
                                 break;
                             }
@@ -338,10 +332,7 @@ namespace FileSystemIDandChk.PartPlugins
                         part.PartitionType = String.Format("0x{0:X2}", entry.type);
                         part.PartitionName = decodeMBRType(entry.type);
                         part.PartitionSequence = counter;
-                        if (entry.status == 0x80)
-                            part.PartitionDescription = "Partition is bootable.";
-                        else
-                            part.PartitionDescription = "";
+                        part.PartitionDescription = entry.status == 0x80 ? "Partition is bootable." : "";
 						
                         counter++;
 						
@@ -388,10 +379,8 @@ namespace FileSystemIDandChk.PartPlugins
 
                             // Let's start the fun...
 							
-                            if (entry2.status != 0x00 && entry2.status != 0x80)
-                                ext_valid = false;
-                            if (entry2.type == 0x00)
-                                valid = false;
+                            ext_valid &= entry2.status == 0x00 || entry2.status == 0x80;
+                            valid &= entry2.type != 0x00;
                             if (entry2.type == 0x82 || entry2.type == 0xBF || entry2.type == 0xA5 || entry2.type == 0xA6 ||
                                 entry2.type == 0xA9 || entry2.type == 0xB7 || entry2.type == 0x81 || entry2.type == 0x63)
                             {
@@ -404,8 +393,8 @@ namespace FileSystemIDandChk.PartPlugins
                                 ext_disklabel = false;
                                 ext_extended = true; // Extended partition
                             }
-                            else if (l == 1)
-                                processing_extended = false;
+                            else
+                                processing_extended &= l != 1;
 							
                             if (ext_disklabel)
                             {
@@ -610,8 +599,7 @@ namespace FileSystemIDandChk.PartPlugins
                                                     counter++;
                                                 }
                                             }
-                                            if (!minix_subs)
-                                                ext_valid = true;
+                                            ext_valid |= !minix_subs;
 										
                                             break;
                                         }
@@ -647,10 +635,7 @@ namespace FileSystemIDandChk.PartPlugins
                                     part.PartitionType = String.Format("0x{0:X2}", entry2.type);
                                     part.PartitionName = decodeMBRType(entry2.type);
                                     part.PartitionSequence = counter;
-                                    if (entry2.status == 0x80)
-                                        part.PartitionDescription = "Partition is bootable.";
-                                    else
-                                        part.PartitionDescription = "";
+                                    part.PartitionDescription = entry2.status == 0x80 ? "Partition is bootable." : "";
 									
                                     counter++;
 									
@@ -668,18 +653,15 @@ namespace FileSystemIDandChk.PartPlugins
             }
 			
             // An empty MBR may exist, NeXT creates one and then hardcodes its disklabel
-            if (partitions.Count == 0)
-                return false;
-            else
-                return true;
+            return partitions.Count != 0;
         }
 
-        private UInt32 CHStoLBA(ushort cyl, byte head, byte sector)
+        static UInt32 CHStoLBA(ushort cyl, byte head, byte sector)
         {
             return (((UInt32)cyl * 16) + (UInt32)head) * 63 + (UInt32)sector - 1;
         }
 
-        private string decodeBSDType(byte type)
+        static string decodeBSDType(byte type)
         {
             switch (type)
             {
@@ -716,7 +698,7 @@ namespace FileSystemIDandChk.PartPlugins
             }
         }
 
-        private string decodeMBRType(byte type)
+        static string decodeMBRType(byte type)
         {
             switch (type)
             {
@@ -1057,10 +1039,10 @@ namespace FileSystemIDandChk.PartPlugins
             // Total sectors
         }
 
-        private const UInt32 UNIXDiskLabel_MAGIC = 0xCA5E600D;
-        private const UInt32 UNIXVTOC_MAGIC = 0x600DDEEE;
+        const UInt32 UNIXDiskLabel_MAGIC = 0xCA5E600D;
+        const UInt32 UNIXVTOC_MAGIC = 0x600DDEEE;
         // Same as Solaris VTOC
-        private struct UNIXDiskLabel
+        struct UNIXDiskLabel
         {
             public UInt32 type;
             // Drive type, seems always 0
@@ -1103,7 +1085,7 @@ namespace FileSystemIDandChk.PartPlugins
             // 32bytes
         }
 
-        private struct UNIXVTOC
+        struct UNIXVTOC
         {
             public UInt32 magic;
             // UNIXVTOC_MAGIC
@@ -1119,7 +1101,7 @@ namespace FileSystemIDandChk.PartPlugins
             // 40 bytes
         }
 
-        private struct UNIXVTOCEntry
+        struct UNIXVTOCEntry
         {
             public UInt16 tag;
             // TAG
@@ -1131,51 +1113,51 @@ namespace FileSystemIDandChk.PartPlugins
             // Length of slice in sectors
         }
 
-        private const UInt16 UNIX_TAG_EMPTY = 0x0000;
+        const UInt16 UNIX_TAG_EMPTY = 0x0000;
         // empty
-        private const UInt16 UNIX_TAG_BOOT = 0x0001;
+        const UInt16 UNIX_TAG_BOOT = 0x0001;
         // boot
-        private const UInt16 UNIX_TAG_ROOT = 0x0002;
+        const UInt16 UNIX_TAG_ROOT = 0x0002;
         // root
-        private const UInt16 UNIX_TAG_SWAP = 0x0003;
+        const UInt16 UNIX_TAG_SWAP = 0x0003;
         // swap
-        private const UInt16 UNIX_TAG_USER = 0x0004;
+        const UInt16 UNIX_TAG_USER = 0x0004;
         // /usr
-        private const UInt16 UNIX_TAG_WHOLE = 0x0005;
+        const UInt16 UNIX_TAG_WHOLE = 0x0005;
         // whole disk
-        private const UInt16 UNIX_TAG_STAND = 0x0006;
+        const UInt16 UNIX_TAG_STAND = 0x0006;
         // stand partition ??
-        private const UInt16 UNIX_TAG_ALT_S = 0x0006;
+        const UInt16 UNIX_TAG_ALT_S = 0x0006;
         // alternate sector space
-        private const UInt16 UNIX_TAG_VAR = 0x0007;
+        const UInt16 UNIX_TAG_VAR = 0x0007;
         // /var
-        private const UInt16 UNIX_TAG_OTHER = 0x0007;
+        const UInt16 UNIX_TAG_OTHER = 0x0007;
         // non UNIX
-        private const UInt16 UNIX_TAG_HOME = 0x0008;
+        const UInt16 UNIX_TAG_HOME = 0x0008;
         // /home
-        private const UInt16 UNIX_TAG_ALT_T = 0x0008;
+        const UInt16 UNIX_TAG_ALT_T = 0x0008;
         // alternate track space
-        private const UInt16 UNIX_TAG_ALT_ST = 0x0009;
+        const UInt16 UNIX_TAG_ALT_ST = 0x0009;
         // alternate sector track
-        private const UInt16 UNIX_TAG_NEW_STAND = 0x0009;
+        const UInt16 UNIX_TAG_NEW_STAND = 0x0009;
         // stand partition ??
-        private const UInt16 UNIX_TAG_CACHE = 0x000A;
+        const UInt16 UNIX_TAG_CACHE = 0x000A;
         // cache
-        private const UInt16 UNIX_TAG_NEW_VAR = 0x000A;
+        const UInt16 UNIX_TAG_NEW_VAR = 0x000A;
         // /var
-        private const UInt16 UNIX_TAG_RESERVED = 0x000B;
+        const UInt16 UNIX_TAG_RESERVED = 0x000B;
         // reserved
-        private const UInt16 UNIX_TAG_NEW_HOME = 0x000B;
+        const UInt16 UNIX_TAG_NEW_HOME = 0x000B;
         // /home
-        private const UInt16 UNIX_TAG_DUMP = 0x000C;
+        const UInt16 UNIX_TAG_DUMP = 0x000C;
         // dump partition
-        private const UInt16 UNIX_TAG_NEW_ALT_ST = 0x000D;
+        const UInt16 UNIX_TAG_NEW_ALT_ST = 0x000D;
         // alternate sector track
-        private const UInt16 UNIX_TAG_VM_PUBLIC = 0x000E;
+        const UInt16 UNIX_TAG_VM_PUBLIC = 0x000E;
         // volume mgt public partition
-        private const UInt16 UNIX_TAG_VM_PRIVATE = 0x000F;
+        const UInt16 UNIX_TAG_VM_PRIVATE = 0x000F;
         // volume mgt private partition
-        private string decodeUNIXTAG(UInt16 type, bool isNew)
+        static string decodeUNIXTAG(UInt16 type, bool isNew)
         {
             switch (type)
             {
@@ -1192,35 +1174,17 @@ namespace FileSystemIDandChk.PartPlugins
                 case UNIX_TAG_WHOLE:
                     return "Whole disk";
                 case UNIX_TAG_STAND:
-                    if (isNew)
-                        return "Stand";
-                    else
-                        return "Alternate sector space";
+                    return isNew ? "Stand" : "Alternate sector space";
                 case UNIX_TAG_VAR:
-                    if (isNew)
-                        return "/var";
-                    else
-                        return "non UNIX";
+                    return isNew ? "/var" : "non UNIX";
                 case UNIX_TAG_HOME:
-                    if (isNew)
-                        return "/home";
-                    else
-                        return "Alternate track space";
+                    return isNew ? "/home" : "Alternate track space";
                 case UNIX_TAG_ALT_ST:
-                    if (isNew)
-                        return "Alternate sector track";
-                    else
-                        return "Stand";
+                    return isNew ? "Alternate sector track" : "Stand";
                 case UNIX_TAG_CACHE:
-                    if (isNew)
-                        return "Cache";
-                    else
-                        return "/var";
+                    return isNew ? "Cache" : "/var";
                 case UNIX_TAG_RESERVED:
-                    if (isNew)
-                        return "Reserved";
-                    else
-                        return "/home";
+                    return isNew ? "Reserved" : "/home";
                 case UNIX_TAG_DUMP:
                     return "dump";
                 case UNIX_TAG_NEW_ALT_ST:

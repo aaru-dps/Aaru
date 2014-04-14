@@ -15,8 +15,8 @@ namespace FileSystemIDandChk
         /// Indicates the byte order ("endianess") in which data is stored in this computer
         /// architecture.
         ///</summary>
-        public static bool IsLittleEndian { get; set; } // should default to false, which is what we want for Empire
-
+        public static bool IsLittleEndian { get; set; }
+        // should default to false, which is what we want for Empire
         /// <summary>
         /// Converts the specified double-precision floating point number to a 64-bit
         /// signed integer.
@@ -28,7 +28,11 @@ namespace FileSystemIDandChk
         /// Returns:
         /// A 64-bit signed integer whose value is equivalent to value.
         ///</summary>
-        public static long DoubleToInt64Bits(double value) { throw new NotImplementedException(); }
+        public static long DoubleToInt64Bits(double value)
+        {
+            throw new NotImplementedException();
+        }
+
         ///
         /// <summary>
         /// Returns the specified Boolean value as an array of bytes.
@@ -44,6 +48,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified Unicode character value as an array of bytes.
@@ -59,6 +64,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified double-precision floating point value as an array of
@@ -75,6 +81,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified single-precision floating point value as an array of
@@ -91,6 +98,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 32-bit signed integer value as an array of bytes.
@@ -106,6 +114,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 64-bit signed integer value as an array of bytes.
@@ -121,6 +130,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 16-bit signed integer value as an array of bytes.
@@ -136,6 +146,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 32-bit unsigned integer value as an array of bytes.
@@ -147,11 +158,12 @@ namespace FileSystemIDandChk
         /// Returns:
         /// An array of bytes with length 4.
         ///</summary>
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public static byte[] GetBytes(uint value)
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 64-bit unsigned integer value as an array of bytes.
@@ -163,11 +175,12 @@ namespace FileSystemIDandChk
         /// Returns:
         /// An array of bytes with length 8.
         ///</summary>
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public static byte[] GetBytes(ulong value)
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Returns the specified 16-bit unsigned integer value as an array of bytes.
@@ -183,6 +196,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
         }
+
         ///
         /// <summary>
         /// Converts the specified 64-bit signed integer to a double-precision floating
@@ -195,7 +209,11 @@ namespace FileSystemIDandChk
         /// Returns:
         /// A double-precision floating point number whose value is equivalent to value.
         ///</summary>
-        public static double Int64BitsToDouble(long value) { throw new NotImplementedException(); }
+        public static double Int64BitsToDouble(long value)
+        {
+            throw new NotImplementedException();
+        }
+
         ///
         /// <summary>
         /// Returns a Boolean value converted from one byte at a specified position in
@@ -218,7 +236,11 @@ namespace FileSystemIDandChk
         /// System.ArgumentOutOfRangeException:
         /// startIndex is less than zero or greater than the length of value minus 1.
         ///</summary>
-        public static bool ToBoolean(byte[] value, int startIndex) { throw new NotImplementedException(); }
+        public static bool ToBoolean(byte[] value, int startIndex)
+        {
+            throw new NotImplementedException();
+        }
+
         ///
         /// <summary>
         /// Returns a Unicode character converted from two bytes at a specified position
@@ -244,7 +266,11 @@ namespace FileSystemIDandChk
         /// System.ArgumentOutOfRangeException:
         /// startIndex is less than zero or greater than the length of value minus 1.
         ///</summary>
-        public static char ToChar(byte[] value, int startIndex) { throw new NotImplementedException(); }
+        public static char ToChar(byte[] value, int startIndex)
+        {
+            throw new NotImplementedException();
+        }
+
         ///
         /// <summary>
         /// Returns a double-precision floating point number converted from eight bytes
@@ -272,7 +298,11 @@ namespace FileSystemIDandChk
         /// System.ArgumentOutOfRangeException:
         /// startIndex is less than zero or greater than the length of value minus 1.
         ///</summary>
-        public static double ToDouble(byte[] value, int startIndex) { throw new NotImplementedException(); }
+        public static double ToDouble(byte[] value, int startIndex)
+        {
+            throw new NotImplementedException();
+        }
+
         ///
         /// <summary>
         /// Returns a 16-bit signed integer converted from two bytes at a specified position
@@ -302,6 +332,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToInt16(value, startIndex) : BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(Int16) - startIndex);
         }
+
         ///
         /// <summary>
         /// Returns a 32-bit signed integer converted from four bytes at a specified
@@ -332,6 +363,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToInt32(value, startIndex) : BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(Int32) - startIndex);
         }
+
         ///
         /// <summary>
         /// Returns a 64-bit signed integer converted from eight bytes at a specified
@@ -362,6 +394,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToInt64(value, startIndex) : BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(Int64) - startIndex);
         }
+
         ///
         /// <summary>
         /// Returns a single-precision floating point number converted from four bytes
@@ -393,6 +426,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToSingle(value, startIndex) : BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(Single) - startIndex);
         }
+
         ///
         /// <summary>
         /// Converts the numeric value of each element of a specified array of bytes
@@ -414,6 +448,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToString(value) : BitConverter.ToString(value.Reverse().ToArray());
         }
+
         ///
         /// <summary>
         /// Converts the numeric value of each element of a specified subarray of bytes
@@ -442,6 +477,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToString(value, startIndex) : BitConverter.ToString(value.Reverse().ToArray(), startIndex);
         }
+
         ///
         /// <summary>
         /// Converts the numeric value of each element of a specified subarray of bytes
@@ -479,6 +515,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToString(value, startIndex, length) : BitConverter.ToString(value.Reverse().ToArray(), startIndex, length);
         }
+
         ///
         /// <summary>
         /// Returns a 16-bit unsigned integer converted from two bytes at a specified
@@ -508,6 +545,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToUInt16(value, startIndex) : BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(UInt16) - startIndex);
         }
+
         ///
         /// <summary>
         /// Returns a 32-bit unsigned integer converted from four bytes at a specified
@@ -538,6 +576,7 @@ namespace FileSystemIDandChk
         {
             return !IsLittleEndian ? BitConverter.ToUInt32(value, startIndex) : BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(UInt32) - startIndex);
         }
+
         ///
         /// <summary>
         /// Returns a 64-bit unsigned integer converted from eight bytes at a specified

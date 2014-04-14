@@ -1,28 +1,30 @@
 using System;
-using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using FileSystemIDandChk;
 
 namespace FileSystemIDandChk.PartPlugins
 {
-	class AppleMap : PartPlugin
-	{
-		private const UInt16 APM_MAGIC  = 0x4552; // "ER"
-		private const UInt16 APM_ENTRY  = 0x504D; // "PM"
-		private const UInt16 APM_OLDENT = 0x5453; // "TS", old entry magic
+    class AppleMap : PartPlugin
+    {
+        // "ER"
+        const UInt16 APM_MAGIC = 0x4552;
+        // "PM"
+        const UInt16 APM_ENTRY = 0x504D;
+        // "TS", old entry magic
+        const UInt16 APM_OLDENT = 0x5453;
 
-		public AppleMap (PluginBase Core)
-		{
+        public AppleMap(PluginBase Core)
+        {
             Name = "Apple Partition Map";
-			PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
-		}
-		
-        public override bool GetInformation (ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
-		{
-			byte[] cString;
+            PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+        }
+
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        {
+            byte[] cString;
 			
-			ulong apm_entries;
+            ulong apm_entries;
             uint sector_size;
 
             if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
@@ -30,10 +32,10 @@ namespace FileSystemIDandChk.PartPlugins
             else
                 sector_size = imagePlugin.GetSectorSize();
 			
-			partitions = new List<Partition>();
+            partitions = new List<Partition>();
 			
-			AppleMapBootEntry APMB = new AppleMapBootEntry();
-			AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
+            AppleMapBootEntry APMB = new AppleMapBootEntry();
+            AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
 
             byte[] APMB_sector = imagePlugin.ReadSector(0);
 
@@ -88,8 +90,8 @@ namespace FileSystemIDandChk.PartPlugins
 
             apm_entries = APMEntry.entries;
 			
-            for(ulong i = 0; i < apm_entries; i++) // For each partition
-			{
+            for (ulong i = 0; i < apm_entries; i++) // For each partition
+            {
                 APMEntry = new AppleMapPartitionEntry();
                 APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
                 APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
@@ -117,90 +119,118 @@ namespace FileSystemIDandChk.PartPlugins
                 Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
                 APMEntry.processor = StringHandlers.CToString(cString);
 
-                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
-				{
-					Partition _partition = new Partition();
-					StringBuilder sb = new StringBuilder();
+                if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
+                {
+                    Partition _partition = new Partition();
+                    StringBuilder sb = new StringBuilder();
 					
-					_partition.PartitionSequence = i;
-					_partition.PartitionType = APMEntry.type;
-					_partition.PartitionName = APMEntry.name;
+                    _partition.PartitionSequence = i;
+                    _partition.PartitionType = APMEntry.type;
+                    _partition.PartitionName = APMEntry.name;
                     _partition.PartitionStart = APMEntry.start * sector_size;
                     _partition.PartitionLength = APMEntry.sectors * sector_size;
                     _partition.PartitionStartSector = APMEntry.start;
                     _partition.PartitionSectors = APMEntry.sectors;
 					
-					sb.AppendLine("Partition flags:");
-					if((APMEntry.status & 0x01) == 0x01)
-						sb.AppendLine("Partition is valid.");
-					if((APMEntry.status & 0x02) == 0x02)
-						sb.AppendLine("Partition entry is not available.");
-					if((APMEntry.status & 0x04) == 0x04)
-						sb.AppendLine("Partition is mounted.");
-					if((APMEntry.status & 0x08) == 0x08)
-						sb.AppendLine("Partition is bootable.");
-					if((APMEntry.status & 0x10) == 0x10)
-						sb.AppendLine("Partition is readable.");
-					if((APMEntry.status & 0x20) == 0x20)
-						sb.AppendLine("Partition is writable.");
-					if((APMEntry.status & 0x40) == 0x40)
-						sb.AppendLine("Partition's boot code is position independent.");
+                    sb.AppendLine("Partition flags:");
+                    if ((APMEntry.status & 0x01) == 0x01)
+                        sb.AppendLine("Partition is valid.");
+                    if ((APMEntry.status & 0x02) == 0x02)
+                        sb.AppendLine("Partition entry is not available.");
+                    if ((APMEntry.status & 0x04) == 0x04)
+                        sb.AppendLine("Partition is mounted.");
+                    if ((APMEntry.status & 0x08) == 0x08)
+                        sb.AppendLine("Partition is bootable.");
+                    if ((APMEntry.status & 0x10) == 0x10)
+                        sb.AppendLine("Partition is readable.");
+                    if ((APMEntry.status & 0x20) == 0x20)
+                        sb.AppendLine("Partition is writable.");
+                    if ((APMEntry.status & 0x40) == 0x40)
+                        sb.AppendLine("Partition's boot code is position independent.");
 					
-					if((APMEntry.status & 0x08) == 0x08)
-					{
-						sb.AppendFormat("First boot sector: {0}", APMEntry.first_boot_block).AppendLine();
-						sb.AppendFormat("Boot is {0} bytes.", APMEntry.boot_size).AppendLine();
-						sb.AppendFormat("Boot load address: 0x{0:X8}", APMEntry.load_address).AppendLine();
-						sb.AppendFormat("Boot entry point: 0x{0:X8}", APMEntry.entry_point).AppendLine();
-						sb.AppendFormat("Boot code checksum: 0x{0:X8}", APMEntry.checksum).AppendLine();
-						sb.AppendFormat("Processor: {0}", APMEntry.processor).AppendLine();
-					}
+                    if ((APMEntry.status & 0x08) == 0x08)
+                    {
+                        sb.AppendFormat("First boot sector: {0}", APMEntry.first_boot_block).AppendLine();
+                        sb.AppendFormat("Boot is {0} bytes.", APMEntry.boot_size).AppendLine();
+                        sb.AppendFormat("Boot load address: 0x{0:X8}", APMEntry.load_address).AppendLine();
+                        sb.AppendFormat("Boot entry point: 0x{0:X8}", APMEntry.entry_point).AppendLine();
+                        sb.AppendFormat("Boot code checksum: 0x{0:X8}", APMEntry.checksum).AppendLine();
+                        sb.AppendFormat("Processor: {0}", APMEntry.processor).AppendLine();
+                    }
 					
-					_partition.PartitionDescription = sb.ToString();
+                    _partition.PartitionDescription = sb.ToString();
 					
-					if((APMEntry.status & 0x01) == 0x01)
-						if(APMEntry.type != "Apple_partition_map")
-							partitions.Add(_partition);
-				}
-			}
+                    if ((APMEntry.status & 0x01) == 0x01)
+                    if (APMEntry.type != "Apple_partition_map")
+                        partitions.Add(_partition);
+                }
+            }
 			
-			return true;
-		}
-		
-		public struct AppleMapBootEntry
-		{
-			public UInt16 signature;        // Signature ("ER")
-			public UInt16 sector_size;      // Byter per sector
-			public UInt32 sectors;          // Sectors of the disk
-			public UInt16 reserved1;        // Reserved
-			public UInt16 reserved2;        // Reserved
-			public UInt32 reserved3;        // Reserved
-			public UInt16 driver_entries;   // Number of entries of the driver descriptor
-			public UInt32 first_driver_blk; // First sector of the driver
-			public UInt16 driver_size;      // Size in 512bytes sectors of the driver
-			public UInt16 operating_system; // Operating system (MacOS = 1)	
-		}
-		
-		public struct AppleMapPartitionEntry
-		{
-			public UInt16 signature;        // Signature ("PM" or "TS")
-			public UInt16 reserved1;        // Reserved
-			public UInt32 entries;          // Number of entries on the partition map, each one sector
-			public UInt32 start;            // First sector of the partition
-			public UInt32 sectors;          // Number of sectos of the partition
-			public string name;             // Partition name, 32 bytes, null-padded
-			public string type;             // Partition type. 32 bytes, null-padded
-			public UInt32 first_data_block; // First sector of the data area
-			public UInt32 data_sectors;     // Number of sectors of the data area
-			public UInt32 status;           // Partition status
-			public UInt32 first_boot_block; // First sector of the boot code
-			public UInt32 boot_size;        // Size in bytes of the boot code
-			public UInt32 load_address;     // Load address of the boot code
-			public UInt32 reserved2;        // Reserved
-			public UInt32 entry_point;      // Entry point of the boot code
-			public UInt32 reserved3;        // Reserved
-			public UInt32 checksum;         // Boot code checksum
-			public string processor;        // Processor type, 16 bytes, null-padded
-		}
-	}
+            return true;
+        }
+
+        public struct AppleMapBootEntry
+        {
+            // Signature ("ER")
+            public UInt16 signature;
+            // Byter per sector
+            public UInt16 sector_size;
+            // Sectors of the disk
+            public UInt32 sectors;
+            // Reserved
+            public UInt16 reserved1;
+            // Reserved
+            public UInt16 reserved2;
+            // Reserved
+            public UInt32 reserved3;
+            // Number of entries of the driver descriptor
+            public UInt16 driver_entries;
+            // First sector of the driver
+            public UInt32 first_driver_blk;
+            // Size in 512bytes sectors of the driver
+            public UInt16 driver_size;
+            // Operating system (MacOS = 1)
+            public UInt16 operating_system;
+        }
+
+        public struct AppleMapPartitionEntry
+        {
+            // Signature ("PM" or "TS")
+            public UInt16 signature;
+            // Reserved
+            public UInt16 reserved1;
+            // Number of entries on the partition map, each one sector
+            public UInt32 entries;
+            // First sector of the partition
+            public UInt32 start;
+            // Number of sectos of the partition
+            public UInt32 sectors;
+            // Partition name, 32 bytes, null-padded
+            public string name;
+            // Partition type. 32 bytes, null-padded
+            public string type;
+            // First sector of the data area
+            public UInt32 first_data_block;
+            // Number of sectors of the data area
+            public UInt32 data_sectors;
+            // Partition status
+            public UInt32 status;
+            // First sector of the boot code
+            public UInt32 first_boot_block;
+            // Size in bytes of the boot code
+            public UInt32 boot_size;
+            // Load address of the boot code
+            public UInt32 load_address;
+            // Reserved
+            public UInt32 reserved2;
+            // Entry point of the boot code
+            public UInt32 entry_point;
+            // Reserved
+            public UInt32 reserved3;
+            // Boot code checksum
+            public UInt32 checksum;
+            // Processor type, 16 bytes, null-padded
+            public string processor;
+        }
+    }
 }

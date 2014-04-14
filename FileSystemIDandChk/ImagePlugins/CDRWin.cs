@@ -207,7 +207,6 @@ namespace FileSystemIDandChk.ImagePlugins
 
         #region Internal variables
 
-        bool initialized;
         string imagePath;
         StreamReader cueStream;
         FileStream imageStream;
@@ -622,11 +621,11 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchFlags.Success)
                         {
+                            // TODO: Implement FLAGS support.
                             if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found FLAGS at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found FLAGS field in incorrect place at line {0}", line));
-                            // TODO: Implement FLAGS support.
                         }
                         else if (MatchGenre.Success)
                         {
@@ -769,8 +768,6 @@ namespace FileSystemIDandChk.ImagePlugins
                             currenttrack.tracktype = MatchTrack.Groups[2].Value;
                             currenttrack.session = currentsession;
                             intrack = true;
-
-                            // TODO
                         }
                         else if (_line == "") // Empty line, ignore it
                         {
@@ -796,7 +793,6 @@ namespace FileSystemIDandChk.ImagePlugins
                 for (int s = 1; s <= _sessions.Length; s++)
                 {
                     _sessions[s - 1].SessionSequence = 1;
-                    ulong _session_offset;
 
                     if (s > 1)
                         _sessions[s - 1].StartSector = _sessions[s - 2].EndSector + 1;
@@ -804,7 +800,6 @@ namespace FileSystemIDandChk.ImagePlugins
                         _sessions[s - 1].StartSector = 0;
 
                     ulong session_sectors = 0;
-                    bool first_session_track = true;
                     int last_session_track = 0;
 
                     for (int i = 0; i < cuetracks.Length; i++)
@@ -1375,25 +1370,26 @@ namespace FileSystemIDandChk.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(this.imageStream);
-
-            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-
-            if (sector_offset == 0 && sector_skip == 0)
-                buffer = br.ReadBytes((int)(sector_size * length));
-            else
+            imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
+            using (BinaryReader br = new BinaryReader(imageStream))
             {
-                for (int i = 0; i < length; i++)
+                br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+                if (sector_offset == 0 && sector_skip == 0)
+                    buffer = br.ReadBytes((int)(sector_size * length));
+                else
                 {
-                    byte[] sector = new byte[sector_size];
-                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sector_size);
-                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-
-                    System.Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    for (int i = 0; i < length; i++)
+                    {
+                        byte[] sector;
+                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                        sector = br.ReadBytes((int)sector_size);
+                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    }
                 }
             }
+
+
 
             return buffer;
         }
@@ -1569,25 +1565,26 @@ namespace FileSystemIDandChk.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(this.imageStream);
-
-            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-
-            if (sector_offset == 0 && sector_skip == 0)
-                buffer = br.ReadBytes((int)(sector_size * length));
-            else
+            imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
+            using (BinaryReader br = new BinaryReader(imageStream))
             {
-                for (int i = 0; i < length; i++)
+                br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+                if (sector_offset == 0 && sector_skip == 0)
+                    buffer = br.ReadBytes((int)(sector_size * length));
+                else
                 {
-                    byte[] sector = new byte[sector_size];
-                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                    sector = br.ReadBytes((int)sector_size);
-                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-
-                    System.Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    for (int i = 0; i < length; i++)
+                    {
+                        byte[] sector;
+                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                        sector = br.ReadBytes((int)sector_size);
+                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    }
                 }
             }
+
+
 
             return buffer;
         }
@@ -1695,8 +1692,8 @@ namespace FileSystemIDandChk.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(this.imageStream);
+            imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(imageStream);
 
             br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
@@ -1706,12 +1703,12 @@ namespace FileSystemIDandChk.ImagePlugins
             {
                 for (int i = 0; i < length; i++)
                 {
-                    byte[] sector = new byte[sector_size];
+                    byte[] sector;
                     br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
                     sector = br.ReadBytes((int)sector_size);
                     br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
 
-                    System.Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
 
@@ -1810,8 +1807,7 @@ namespace FileSystemIDandChk.ImagePlugins
             {
                 return GetSessionTracks(session.SessionSequence);
             }
-            else
-                throw new ImageNotSupportedException("Session does not exist in disc image");
+            throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
         public override List<Track> GetSessionTracks(UInt16 session)

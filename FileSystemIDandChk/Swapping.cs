@@ -60,14 +60,14 @@ namespace FileSystemIDandChk
             return destination;
         }
 
-		public static UInt32 PDPFromLittleEndian(UInt32 x)
-		{
-			return ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
-		}
+        public static UInt32 PDPFromLittleEndian(UInt32 x)
+        {
+            return ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
+        }
 
-		public static UInt32 PDPFromBigEndian(UInt32 x)
-		{
-			return ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
-		}
+        public static UInt32 PDPFromBigEndian(UInt32 x)
+        {
+            return ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
+        }
     }
 }
