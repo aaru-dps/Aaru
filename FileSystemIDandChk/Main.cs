@@ -123,18 +123,18 @@ namespace FileSystemIDandChk
 
                 try
                 {
-                    if(_imageFormat.OpenImage(filename))
-                    {
-                        Console.WriteLine("DEBUG: Correctly opened image file.");
-
-                        Console.WriteLine("DEBUG: Image without headers is {0} bytes.", _imageFormat.GetImageSize());
-                        Console.WriteLine("DEBUG: Image has {0} sectors.", _imageFormat.GetSectors());
-                    }
-                    else
+                    if(!_imageFormat.OpenImage(filename))
                     {
                         Console.WriteLine("Unable to open image format");
                         Console.WriteLine("No error given");
                         return;
+                    }
+
+                    if(isDebug)
+                    {
+                        Console.WriteLine("DEBUG: Correctly opened image file.");
+                        Console.WriteLine("DEBUG: Image without headers is {0} bytes.", _imageFormat.GetImageSize());
+                        Console.WriteLine("DEBUG: Image has {0} sectors.", _imageFormat.GetSectors());
                     }
                 }
                 catch(Exception ex)

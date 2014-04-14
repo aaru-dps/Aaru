@@ -1,5 +1,11 @@
 2014-04-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Main.cs:
+	* ImagePlugins/CDRWin.cs:
+	  Constrain debug information to debug mode
+
+2014-04-14  Natalia Portillo  <claunia@claunia.com>
+
 	* BigEndianBitConverter.cs:
 	  Added BitConverter for BigEndian
 

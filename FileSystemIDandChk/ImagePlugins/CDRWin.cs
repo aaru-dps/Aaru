@@ -416,7 +416,8 @@ namespace FileSystemIDandChk.ImagePlugins
 
                     if (MatchDiskType.Success && !intrack)
                     {
-                        Console.WriteLine("DEBUG (CDRWin plugin): Found REM ORIGINAL MEDIA TYPE at line {0}", line);
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (CDRWin plugin): Found REM ORIGINAL MEDIA TYPE at line {0}", line);
                         discimage.disktypestr = MatchDiskType.Groups[1].Value;
                     }
                     else if (MatchDiskType.Success && intrack)
@@ -425,24 +426,28 @@ namespace FileSystemIDandChk.ImagePlugins
                     }
                     else if (MatchSession.Success)
                     {
-                        Console.WriteLine("DEBUG (CDRWin plugin): Found REM SESSION at line {0}", line);
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (CDRWin plugin): Found REM SESSION at line {0}", line);
                         currentsession = Byte.Parse(MatchSession.Groups[1].Value);
 
                         // What happens between sessions
                     }
                     else if (MatchLBA.Success)
                     {
-                        Console.WriteLine("DEBUG (CDRWin plugin): Found REM MSF at line {0}", line);
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (CDRWin plugin): Found REM MSF at line {0}", line);
                         // Just ignored
                     }
                     else if (MatchLeadOut.Success)
                     {
-                        Console.WriteLine("DEBUG (CDRWin plugin): Found REM LEAD-OUT at line {0}", line);
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (CDRWin plugin): Found REM LEAD-OUT at line {0}", line);
                         // Just ignored
                     }
                     else if (MatchComment.Success)
                     {
-                        Console.WriteLine("DEBUG (CDRWin plugin): Found REM at line {0}", line);
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (CDRWin plugin): Found REM at line {0}", line);
                         if (discimage.comment == "")
                             discimage.comment = MatchComment.Groups[1].Value; // First comment
                         else
@@ -470,7 +475,8 @@ namespace FileSystemIDandChk.ImagePlugins
 
                         if (MatchArranger.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found ARRANGER at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found ARRANGER at line {0}", line);
                             if (intrack)
                                 currenttrack.arranger = MatchArranger.Groups[1].Value;
                             else
@@ -478,7 +484,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchBarCode.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found UPC_EAN at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found UPC_EAN at line {0}", line);
                             if (!intrack)
                                 discimage.barcode = MatchBarCode.Groups[1].Value;
                             else
@@ -486,7 +493,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchCDText.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found CDTEXTFILE at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found CDTEXTFILE at line {0}", line);
                             if (!intrack)
                                 discimage.cdtextfile = MatchCDText.Groups[1].Value;
                             else
@@ -494,7 +502,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchComposer.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found COMPOSER at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found COMPOSER at line {0}", line);
                             if (intrack)
                                 currenttrack.arranger = MatchComposer.Groups[1].Value;
                             else
@@ -502,7 +511,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchDiskID.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found DISC_ID at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found DISC_ID at line {0}", line);
                             if (!intrack)
                                 discimage.disk_id = MatchDiskID.Groups[1].Value;
                             else
@@ -510,7 +520,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchFile.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found FILE at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found FILE at line {0}", line);
 
                             if (currenttrack.sequence != 0)
                             {
@@ -590,7 +601,8 @@ namespace FileSystemIDandChk.ImagePlugins
                             }
 
                             // File does exist, process it
-                            Console.WriteLine("DEBUG (CDRWin plugin): File \"{0}\" found", currentfile.datafile);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): File \"{0}\" found", currentfile.datafile);
 
                             switch (currentfile.filetype)
                             {
@@ -605,20 +617,21 @@ namespace FileSystemIDandChk.ImagePlugins
                                     throw new FeatureUnsupportedImageException(String.Format("Unknown file type {0}", currentfile.filetype));
                             }
 
-                            Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to 0 at line 514");
                             currentfile.offset = 0;
                             currentfile.sequence = 0;
                         }
                         else if (MatchFlags.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found FLAGS at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found FLAGS at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found FLAGS field in incorrect place at line {0}", line));
                             // TODO: Implement FLAGS support.
                         }
                         else if (MatchGenre.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found GENRE at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found GENRE at line {0}", line);
                             if (intrack)
                                 currenttrack.genre = MatchGenre.Groups[1].Value;
                             else
@@ -626,7 +639,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchIndex.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found INDEX at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found INDEX at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found INDEX before a track {0}", line));
                             else
@@ -643,15 +657,19 @@ namespace FileSystemIDandChk.ImagePlugins
                                     {
                                         cuetracks[currenttrack.sequence - 2].sectors = offset - currentfileoffsetsector;
                                         currentfile.offset += cuetracks[currenttrack.sequence - 2].sectors * cuetracks[currenttrack.sequence - 2].bps;
-                                        Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 553", currentfile.offset);
-                                        Console.WriteLine("DEBUG (CDRWin plugin): cuetracks[currenttrack.sequence-2].sectors = {0}", cuetracks[currenttrack.sequence - 2].sectors);
-                                        Console.WriteLine("DEBUG (CDRWin plugin): cuetracks[currenttrack.sequence-2].bps = {0}", cuetracks[currenttrack.sequence - 2].bps);
+                                        if (MainClass.isDebug)
+                                        {
+                                            Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 553", currentfile.offset);
+                                            Console.WriteLine("DEBUG (CDRWin plugin): cuetracks[currenttrack.sequence-2].sectors = {0}", cuetracks[currenttrack.sequence - 2].sectors);
+                                            Console.WriteLine("DEBUG (CDRWin plugin): cuetracks[currenttrack.sequence-2].bps = {0}", cuetracks[currenttrack.sequence - 2].bps);
+                                        }
                                     }
                                 }
 
                                 if ((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))) && currenttrack.sequence == 1)
                                 {
-                                    Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 559", offset * currenttrack.bps);
+                                    if (MainClass.isDebug)
+                                        Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 559", offset * currenttrack.bps);
                                     currentfile.offset = offset * currenttrack.bps;
                                 }
                                     
@@ -661,14 +679,16 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchISRC.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found ISRC at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found ISRC at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found ISRC before a track {0}", line));
                             currenttrack.isrc = MatchISRC.Groups[1].Value;
                         }
                         else if (MatchMCN.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found CATALOG at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found CATALOG at line {0}", line);
                             if (!intrack)
                                 discimage.mcn = MatchMCN.Groups[1].Value;
                             else
@@ -676,7 +696,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchPerformer.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found PERFORMER at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found PERFORMER at line {0}", line);
                             if (intrack)
                                 currenttrack.performer = MatchPerformer.Groups[1].Value;
                             else
@@ -684,7 +705,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchPostgap.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found POSTGAP at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found POSTGAP at line {0}", line);
                             if (intrack)
                             {
                                 currenttrack.postgap = CDRWinMSFToLBA(MatchPostgap.Groups[1].Value);
@@ -694,7 +716,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchPregap.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found PREGAP at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found PREGAP at line {0}", line);
                             if (intrack)
                             {
                                 currenttrack.pregap = CDRWinMSFToLBA(MatchPregap.Groups[1].Value);
@@ -704,7 +727,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchSongWriter.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found SONGWRITER at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found SONGWRITER at line {0}", line);
                             if (intrack)
                                 currenttrack.songwriter = MatchSongWriter.Groups[1].Value;
                             else
@@ -712,7 +736,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchTitle.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found TITLE at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found TITLE at line {0}", line);
                             if (intrack)
                                 currenttrack.title = MatchTitle.Groups[1].Value;
                             else
@@ -720,7 +745,8 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
                         else if (MatchTrack.Success)
                         {
-                            Console.WriteLine("DEBUG (CDRWin plugin): Found TRACK at line {0}", line);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Found TRACK at line {0}", line);
                             if (currentfile.datafile == "")
                                 throw new FeatureUnsupportedImageException(String.Format("Found TRACK field before a file is defined at line {0}", line));
                             if (intrack)
@@ -736,7 +762,8 @@ namespace FileSystemIDandChk.ImagePlugins
                             currenttrack = new CDRWinTrack();
                             currenttrack.indexes = new Dictionary<int, ulong>();
                             currenttrack.sequence = uint.Parse(MatchTrack.Groups[1].Value);
-                            Console.WriteLine("DEBUG (CDRWin plugin): Setting currenttrack.sequence to {0}", currenttrack.sequence);
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (CDRWin plugin): Setting currenttrack.sequence to {0}", currenttrack.sequence);
                             currentfile.sequence = currenttrack.sequence;
                             currenttrack.bps = CDRWinTrackTypeToBytesPerSector(MatchTrack.Groups[2].Value);
                             currenttrack.tracktype = MatchTrack.Groups[2].Value;
@@ -860,128 +887,132 @@ namespace FileSystemIDandChk.ImagePlugins
                         discimage.disktype = DiskType.CD;
                 }
 
-                // DEBUG information
-                Console.WriteLine("DEBUG (CDRWin plugin): Disc image parsing results");
-                Console.WriteLine("DEBUG (CDRWin plugin): Disc CD-TEXT:");
-                if (discimage.arranger == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tArranger is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tArranger: {0}", discimage.arranger);
-                if (discimage.composer == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tComposer is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tComposer: {0}", discimage.composer);
-                if (discimage.genre == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tGenre is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tGenre: {0}", discimage.genre);
-                if (discimage.performer == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tPerformer is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tPerformer: {0}", discimage.performer);
-                if (discimage.songwriter == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tSongwriter is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tSongwriter: {0}", discimage.songwriter);
-                if (discimage.title == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tTitle is not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tTitle: {0}", discimage.title);
-                if (discimage.cdtextfile == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tCD-TEXT binary file not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tCD-TEXT binary file: {0}", discimage.cdtextfile);
-                Console.WriteLine("DEBUG (CDRWin plugin): Disc information:");
-                if (discimage.disktypestr == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tISOBuster disc type not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tISOBuster disc type: {0}", discimage.disktypestr);
-                Console.WriteLine("DEBUG (CDRWin plugin): \tGuessed disk type: {0}", discimage.disktype);
-                if (discimage.barcode == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tBarcode not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tBarcode: {0}", discimage.barcode);
-                if (discimage.disk_id == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tDisc ID not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tDisc ID: {0}", discimage.disk_id);
-                if (discimage.mcn == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tMCN not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tMCN: {0}", discimage.mcn);
-                if (discimage.comment == null)
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tComment not set.");
-                else
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tComment: \"{0}\"", discimage.comment);
-                Console.WriteLine("DEBUG (CDRWin plugin): Session information:");
-                Console.WriteLine("DEBUG (CDRWin plugin): \tDisc contains {0} sessions", discimage.sessions.Count);
-                for (int i = 0; i < discimage.sessions.Count; i++)
+                if (MainClass.isDebug)
                 {
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tSession {0} information:", i + 1);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tStarting track: {0}", discimage.sessions[i].StartTrack);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tStarting sector: {0}", discimage.sessions[i].StartSector);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tEnding track: {0}", discimage.sessions[i].EndTrack);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tEnding sector: {0}", discimage.sessions[i].EndSector);
+                    // DEBUG information
+                    Console.WriteLine("DEBUG (CDRWin plugin): Disc image parsing results");
+                    Console.WriteLine("DEBUG (CDRWin plugin): Disc CD-TEXT:");
+                    if (discimage.arranger == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tArranger is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tArranger: {0}", discimage.arranger);
+                    if (discimage.composer == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tComposer is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tComposer: {0}", discimage.composer);
+                    if (discimage.genre == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tGenre is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tGenre: {0}", discimage.genre);
+                    if (discimage.performer == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPerformer is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPerformer: {0}", discimage.performer);
+                    if (discimage.songwriter == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tSongwriter is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tSongwriter: {0}", discimage.songwriter);
+                    if (discimage.title == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tTitle is not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tTitle: {0}", discimage.title);
+                    if (discimage.cdtextfile == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tCD-TEXT binary file not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tCD-TEXT binary file: {0}", discimage.cdtextfile);
+                    Console.WriteLine("DEBUG (CDRWin plugin): Disc information:");
+                    if (discimage.disktypestr == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tISOBuster disc type not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tISOBuster disc type: {0}", discimage.disktypestr);
+                    Console.WriteLine("DEBUG (CDRWin plugin): \tGuessed disk type: {0}", discimage.disktype);
+                    if (discimage.barcode == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tBarcode not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tBarcode: {0}", discimage.barcode);
+                    if (discimage.disk_id == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tDisc ID not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tDisc ID: {0}", discimage.disk_id);
+                    if (discimage.mcn == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tMCN not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tMCN: {0}", discimage.mcn);
+                    if (discimage.comment == null)
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tComment not set.");
+                    else
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tComment: \"{0}\"", discimage.comment);
+                    Console.WriteLine("DEBUG (CDRWin plugin): Session information:");
+                    Console.WriteLine("DEBUG (CDRWin plugin): \tDisc contains {0} sessions", discimage.sessions.Count);
+                    for (int i = 0; i < discimage.sessions.Count; i++)
+                    {
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tSession {0} information:", i + 1);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tStarting track: {0}", discimage.sessions[i].StartTrack);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tStarting sector: {0}", discimage.sessions[i].StartSector);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tEnding track: {0}", discimage.sessions[i].EndTrack);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tEnding sector: {0}", discimage.sessions[i].EndSector);
+                    }
+                    Console.WriteLine("DEBUG (CDRWin plugin): Track information:");
+                    Console.WriteLine("DEBUG (CDRWin plugin): \tDisc contains {0} tracks", discimage.tracks.Count);
+                    for (int i = 0; i < discimage.tracks.Count; i++)
+                    {
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tTrack {0} information:", discimage.tracks[i].sequence);
+
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\t{0} bytes per sector", discimage.tracks[i].bps);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tPregap: {0} sectors", discimage.tracks[i].pregap);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tData: {0} sectors", discimage.tracks[i].sectors);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tPostgap: {0} sectors", discimage.tracks[i].postgap);
+
+                        if (discimage.tracks[i].flag_4ch)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack is flagged as quadraphonic");
+                        if (discimage.tracks[i].flag_dcp)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack allows digital copy");
+                        if (discimage.tracks[i].flag_pre)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack has pre-emphasis applied");
+                        if (discimage.tracks[i].flag_scms)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack has SCMS");
+
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
+                            discimage.tracks[i].trackfile.datafile, discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
+
+                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tIndexes:");
+                        foreach (KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\t\tIndex {0} starts at sector {1}", kvp.Key, kvp.Value);
+
+                        if (discimage.tracks[i].isrc == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tISRC is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tISRC: {0}", discimage.tracks[i].isrc);
+
+                        if (discimage.tracks[i].arranger == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tArranger is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tArranger: {0}", discimage.tracks[i].arranger);
+                        if (discimage.tracks[i].composer == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tComposer is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tComposer: {0}", discimage.tracks[i].composer);
+                        if (discimage.tracks[i].genre == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tGenre is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tGenre: {0}", discimage.tracks[i].genre);
+                        if (discimage.tracks[i].performer == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tPerformer is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tPerformer: {0}", discimage.tracks[i].performer);
+                        if (discimage.tracks[i].songwriter == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tSongwriter is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tSongwriter: {0}", discimage.tracks[i].songwriter);
+                        if (discimage.tracks[i].title == null)
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTitle is not set.");
+                        else
+                            Console.WriteLine("DEBUG (CDRWin plugin): \t\tTitle: {0}", discimage.tracks[i].title);
+                    }
                 }
-                Console.WriteLine("DEBUG (CDRWin plugin): Track information:");
-                Console.WriteLine("DEBUG (CDRWin plugin): \tDisc contains {0} tracks", discimage.tracks.Count);
-                for (int i = 0; i < discimage.tracks.Count; i++)
-                {
-                    Console.WriteLine("DEBUG (CDRWin plugin): \tTrack {0} information:", discimage.tracks[i].sequence);
 
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\t{0} bytes per sector", discimage.tracks[i].bps);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tPregap: {0} sectors", discimage.tracks[i].pregap);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tData: {0} sectors", discimage.tracks[i].sectors);
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tPostgap: {0} sectors", discimage.tracks[i].postgap);
-
-                    if (discimage.tracks[i].flag_4ch)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack is flagged as quadraphonic");
-                    if (discimage.tracks[i].flag_dcp)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack allows digital copy");
-                    if (discimage.tracks[i].flag_pre)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack has pre-emphasis applied");
-                    if (discimage.tracks[i].flag_scms)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack has SCMS");
-
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                        discimage.tracks[i].trackfile.datafile, discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
-
-                    Console.WriteLine("DEBUG (CDRWin plugin): \t\tIndexes:");
-                    foreach (KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\t\tIndex {0} starts at sector {1}", kvp.Key, kvp.Value);
-
-                    if (discimage.tracks[i].isrc == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tISRC is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tISRC: {0}", discimage.tracks[i].isrc);
-
-                    if (discimage.tracks[i].arranger == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tArranger is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tArranger: {0}", discimage.tracks[i].arranger);
-                    if (discimage.tracks[i].composer == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tComposer is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tComposer: {0}", discimage.tracks[i].composer);
-                    if (discimage.tracks[i].genre == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tGenre is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tGenre: {0}", discimage.tracks[i].genre);
-                    if (discimage.tracks[i].performer == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tPerformer is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tPerformer: {0}", discimage.tracks[i].performer);
-                    if (discimage.tracks[i].songwriter == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tSongwriter is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tSongwriter: {0}", discimage.tracks[i].songwriter);
-                    if (discimage.tracks[i].title == null)
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTitle is not set.");
-                    else
-                        Console.WriteLine("DEBUG (CDRWin plugin): \t\tTitle: {0}", discimage.tracks[i].title);
-                }
-
-                Console.WriteLine("DEBUG (CDRWin plugin): Building offset map");
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (CDRWin plugin): Building offset map");
 
                 partitions = new List<FileSystemIDandChk.PartPlugins.Partition>();
 
@@ -1016,14 +1047,14 @@ namespace FileSystemIDandChk.ImagePlugins
                         byte_offset += partition.PartitionLength;
                         partitionSequence++;
 
-                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                        if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                         else
                         {
                             ulong old_start;
                             offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                            if(partition.PartitionStartSector < old_start)
+                            if (partition.PartitionStartSector < old_start)
                             {
                                 offsetmap.Remove(discimage.tracks[i].sequence);
                                 offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1054,14 +1085,14 @@ namespace FileSystemIDandChk.ImagePlugins
                         byte_offset += partition.PartitionLength;
                         partitionSequence++;
 
-                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                        if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                         else
                         {
                             ulong old_start;
                             offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                            if(partition.PartitionStartSector < old_start)
+                            if (partition.PartitionStartSector < old_start)
                             {
                                 offsetmap.Remove(discimage.tracks[i].sequence);
                                 offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1086,14 +1117,14 @@ namespace FileSystemIDandChk.ImagePlugins
                     byte_offset += partition.PartitionLength;
                     partitionSequence++;
 
-                    if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                    if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                         offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                     else
                     {
                         ulong old_start;
                         offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                        if(partition.PartitionStartSector < old_start)
+                        if (partition.PartitionStartSector < old_start)
                         {
                             offsetmap.Remove(discimage.tracks[i].sequence);
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1104,19 +1135,22 @@ namespace FileSystemIDandChk.ImagePlugins
                     partition = new FileSystemIDandChk.PartPlugins.Partition();
                 }
 
-				// Print offset map
-                Console.WriteLine("DEBUG (CDRWin plugin) printing partition map");
-				foreach(FileSystemIDandChk.PartPlugins.Partition partition in partitions)
-				{
-                    Console.WriteLine ("DEBUG (CDRWin plugin): Partition sequence: {0}", partition.PartitionSequence);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition name: {0}", partition.PartitionName);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition description: {0}", partition.PartitionDescription);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition type: {0}", partition.PartitionType);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition starting sector: {0}", partition.PartitionStartSector);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition sectors: {0}", partition.PartitionSectors);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition starting offset: {0}", partition.PartitionStart);
-                    Console.WriteLine ("DEBUG (CDRWin plugin): \tPartition size in bytes: {0}", partition.PartitionLength);
-				}
+                // Print offset map
+                if (MainClass.isDebug)
+                {
+                    Console.WriteLine("DEBUG (CDRWin plugin) printing partition map");
+                    foreach (FileSystemIDandChk.PartPlugins.Partition partition in partitions)
+                    {
+                        Console.WriteLine("DEBUG (CDRWin plugin): Partition sequence: {0}", partition.PartitionSequence);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition name: {0}", partition.PartitionName);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition description: {0}", partition.PartitionDescription);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition type: {0}", partition.PartitionType);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition starting sector: {0}", partition.PartitionStartSector);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition sectors: {0}", partition.PartitionSectors);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition starting offset: {0}", partition.PartitionStart);
+                        Console.WriteLine("DEBUG (CDRWin plugin): \tPartition size in bytes: {0}", partition.PartitionLength);
+                    }
+                }
 
                 return true;
             }
@@ -1220,7 +1254,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     {
                         if (cdrwin_track.sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -1240,7 +1274,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     {
                         if (cdrwin_track.sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
                         }
                     }
@@ -1344,7 +1378,7 @@ namespace FileSystemIDandChk.ImagePlugins
             this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(this.imageStream);
 
-            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress*(sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
             if (sector_offset == 0 && sector_skip == 0)
                 buffer = br.ReadBytes((int)(sector_size * length));
@@ -1521,7 +1555,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 case CDRWinTrackTypeCDG:
                     {
-                        if(tag != SectorTagType.CDSectorSubchannel)
+                        if (tag != SectorTagType.CDSectorSubchannel)
                             throw new ArgumentException("Unsupported tag requested for this track", "tag");
 
                         sector_offset = 2352;
@@ -1538,7 +1572,7 @@ namespace FileSystemIDandChk.ImagePlugins
             this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(this.imageStream);
 
-            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress*(sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
             if (sector_offset == 0 && sector_skip == 0)
                 buffer = br.ReadBytes((int)(sector_size * length));
@@ -1578,7 +1612,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     {
                         if (cdrwin_track.sequence == kvp.Key)
                         {
-                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -1664,7 +1698,7 @@ namespace FileSystemIDandChk.ImagePlugins
             this.imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(this.imageStream);
 
-            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress*(sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
             if (sector_offset == 0 && sector_skip == 0)
                 buffer = br.ReadBytes((int)(sector_size * length));
