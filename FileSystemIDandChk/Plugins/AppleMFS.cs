@@ -4,7 +4,8 @@ using System.Text;
 using FileSystemIDandChk;
 
 // Information from Inside Macintosh
-
+// TODO: Implement support for disc images
+/*
 namespace FileSystemIDandChk.Plugins
 {
 	class AppleMFS : Plugin
@@ -164,43 +165,43 @@ namespace FileSystemIDandChk.Plugins
 		
 		private struct MFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
 		{
-			public UInt16 drSigWord;  // Signature, 0xD2D7
-			public ulong drCrDate;   // Volume creation date
-			public ulong drLsBkUp;   // Volume last backup date
-			public UInt16 drAtrb;     // Volume attributes
-			public UInt16 drNmFls;    // Volume number of files
-			public UInt16 drDirSt;    // First directory block
-			public UInt16 drBlLen;    // Length of directory in blocks
-			public UInt16 drNmAlBlks; // Volume allocation blocks
-			public UInt32 drAlBlkSiz; // Size of allocation blocks
-			public UInt32 drClpSiz;   // Number of bytes to allocate
-			public UInt16 drAlBlSt;   // First allocation block in block map
-			public UInt32 drNxtFNum;  // Next unused file number
-			public UInt16 drFreeBks;  // Number of unused allocation blocks
-			public byte   drVNSiz;    // Length of volume name
-			public string drVN;       // Characters of volume name
+			public UInt16 drSigWord;  // 0x000, Signature, 0xD2D7
+			public ulong  drCrDate;   // 0x002, Volume creation date
+			public ulong  drLsBkUp;   // 0x00A, Volume last backup date
+			public UInt16 drAtrb;     // 0x012, Volume attributes
+			public UInt16 drNmFls;    // 0x014, Volume number of files
+			public UInt16 drDirSt;    // 0x016, First directory block
+			public UInt16 drBlLen;    // 0x018, Length of directory in blocks
+			public UInt16 drNmAlBlks; // 0x01A, Volume allocation blocks
+			public UInt32 drAlBlkSiz; // 0x01C, Size of allocation blocks
+			public UInt32 drClpSiz;   // 0x020, Number of bytes to allocate
+			public UInt16 drAlBlSt;   // 0x024, First allocation block in block map
+			public UInt32 drNxtFNum;  // 0x026. Next unused file number
+			public UInt16 drFreeBks;  // 0x02A, Number of unused allocation blocks
+			public byte   drVNSiz;    // 0x02C, Length of volume name
+			public string drVN;       // 0x02D, Characters of volume name
 		}
 		
 		private struct MFS_BootBlock // Should be offset 0x0000 bytes in volume
 		{
-			public UInt16 signature;    // Signature, 0x4C4B if bootable
-			public UInt32 branch;       // Branch
-			public byte   boot_flags;   // Boot block flags
-			public byte   boot_version; // Boot block version
-			public short  sec_sv_pages; // Allocate secondary buffers
-			public string system_name;  // System file name (10 bytes)
-			public string finder_name;  // Finder file name (10 bytes)
-			public string debug_name;   // Debugger file name (10 bytes)
-			public string disasm_name;  // Disassembler file name (10 bytes)
-			public string stupscr_name; // Startup screen file name (10 bytes)
-			public string bootup_name;  // First program to execute on boot (10 bytes)
-			public string clipbrd_name; // Clipboard file name (10 bytes)
-			public UInt16 max_files;    // 1/4 of maximum opened at a time files
-			public UInt16 queue_size;   // Event queue size
-			public UInt32 heap_128k;    // Heap size on a Mac with 128KiB of RAM
-			public UInt32 heap_256k;    // Heap size on a Mac with 256KiB of RAM
-			public UInt32 heap_512k;    // Heap size on a Mac with 512KiB of RAM or more
+			public UInt16 signature;    // 0x000, Signature, 0x4C4B if bootable
+			public UInt32 branch;       // 0x002, Branch
+			public byte   boot_flags;   // 0x006, Boot block flags
+			public byte   boot_version; // 0x007, Boot block version
+			public short  sec_sv_pages; // 0x008, Allocate secondary buffers
+			public string system_name;  // 0x00A, System file name (10 bytes)
+			public string finder_name;  // 0x014, Finder file name (10 bytes)
+			public string debug_name;   // 0x01E, Debugger file name (10 bytes)
+			public string disasm_name;  // 0x028, Disassembler file name (10 bytes)
+			public string stupscr_name; // 0x032, Startup screen file name (10 bytes)
+			public string bootup_name;  // 0x03C, First program to execute on boot (10 bytes)
+			public string clipbrd_name; // 0x046, Clipboard file name (10 bytes)
+			public UInt16 max_files;    // 0x050, 1/4 of maximum opened at a time files
+			public UInt16 queue_size;   // 0x052, Event queue size
+			public UInt32 heap_128k;    // 0x054, Heap size on a Mac with 128KiB of RAM
+			public UInt32 heap_256k;    // 0x058, Heap size on a Mac with 256KiB of RAM
+			public UInt32 heap_512k;    // 0x05C, Heap size on a Mac with 512KiB of RAM or more
 		} // Follows boot code
 	}
 }
-
+*/

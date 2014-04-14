@@ -4,7 +4,6 @@ using System.Text;
 using FileSystemIDandChk;
 
 // Based on FAT's BPB, cannot find a FAT or directory
-
 namespace FileSystemIDandChk.Plugins
 {
 	class SolarFS : Plugin
@@ -15,17 +14,18 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			byte signature; // 0x29
 			string fs_type; // "SOL_FS  "
 
-			BinaryReader br = new BinaryReader(stream);
+			byte[] bpb = imagePlugin.ReadSector (0 + partitionOffset);
 
-			br.BaseStream.Seek(0x25 + offset, SeekOrigin.Begin); // FATs, 1 or 2, maybe 0, never bigger
-			signature = br.ReadByte();
-			br.BaseStream.Seek(0x35 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
-			fs_type = StringHandlers.CToString(br.ReadBytes(8));
+            byte[] fs_type_b = new byte[8];
+
+			signature = bpb [0x25];
+			Array.Copy (bpb, 0x35, fs_type_b, 0, 8);
+			fs_type = StringHandlers.CToString(fs_type_b);
 
 			if(signature == 0x29 && fs_type == "SOL_FS  ")
 				return true;
@@ -33,35 +33,44 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
-			BinaryReader br = new BinaryReader(stream);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] bpb_strings;
 
 			SolarOSParameterBlock BPB = new SolarOSParameterBlock();
 
-			br.BaseStream.Seek(offset, SeekOrigin.Begin);
-			BPB.x86_jump = br.ReadBytes(3);
-			BPB.OEMName = StringHandlers.CToString(br.ReadBytes(8));
-			BPB.bps = br.ReadUInt16();
-			BPB.unk1 = br.ReadByte();
-			BPB.unk2 = br.ReadUInt16();
-			BPB.root_ent = br.ReadUInt16();
-			BPB.sectors = br.ReadUInt16();
-			BPB.media = br.ReadByte();
-			BPB.spfat = br.ReadUInt16();
-			BPB.sptrk = br.ReadUInt16();
-			BPB.heads = br.ReadUInt16();
-			BPB.unk3 = br.ReadBytes(10);
-			BPB.signature = br.ReadByte();
-			BPB.unk4 = br.ReadUInt32();
-			BPB.vol_name = StringHandlers.CToString(br.ReadBytes(11));
-			BPB.fs_type = StringHandlers.CToString(br.ReadBytes(8));
+            bpb_strings = new byte[8];
+            Array.Copy(bpb_sector, 0x03, bpb_strings, 0, 8);
+            BPB.OEMName = StringHandlers.CToString(bpb_strings);
+            BPB.bps = BitConverter.ToUInt16(bpb_sector, 0x0B);
+            BPB.root_ent = BitConverter.ToUInt16(bpb_sector, 0x10);
+            BPB.sectors = BitConverter.ToUInt16(bpb_sector, 0x12);
+            BPB.media = bpb_sector[0x14];
+            BPB.spfat = BitConverter.ToUInt16(bpb_sector, 0x15);
+            BPB.sptrk = BitConverter.ToUInt16(bpb_sector, 0x17);
+            BPB.heads = BitConverter.ToUInt16(bpb_sector, 0x19);
+            BPB.signature = bpb_sector[0x25];
+            bpb_strings = new byte[8];
+            Array.Copy(bpb_sector, 0x2A, bpb_strings, 0, 11);
+            BPB.vol_name = StringHandlers.CToString(bpb_strings);
+            bpb_strings = new byte[8];
+            Array.Copy(bpb_sector, 0x35, bpb_strings, 0, 8);
+            BPB.fs_type = StringHandlers.CToString(bpb_strings);
 
 			if(MainClass.isDebug)
 			{
+                BPB.x86_jump = new byte[3];
+                Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);
+                BPB.unk1 = bpb_sector[0x0D];
+                BPB.unk2 = BitConverter.ToUInt16(bpb_sector, 0x0E);
+                BPB.unk3 = new byte[10];
+                Array.Copy(bpb_sector, 0x1B, BPB.unk3, 0, 10);
+                BPB.unk4 = BitConverter.ToUInt32(bpb_sector, 0x26);
+
 				Console.WriteLine("(SolarFS) BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0], BPB.x86_jump[1], BPB.x86_jump[2]);
 				Console.WriteLine("(SolarFS) BPB.OEMName: \"{0}\"", BPB.OEMName);
 				Console.WriteLine("(SolarFS) BPB.bps: {0}", BPB.bps);
@@ -83,7 +92,21 @@ namespace FileSystemIDandChk.Plugins
 			sb.AppendLine("Solar_OS filesystem");
 			sb.AppendFormat("Media descriptor: 0x{0:X2}", BPB.media).AppendLine();
 			sb.AppendFormat("{0} bytes per sector", BPB.bps).AppendLine();
+            if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            {
+                if (BPB.bps != imagePlugin.GetSectorSize())
+                {
+                    sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, 2048).AppendLine();
+                }
+            }
+            else
+                if (BPB.bps != imagePlugin.GetSectorSize())
+                {
+                    sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
+                }
 			sb.AppendFormat("{0} sectors on volume ({1} bytes)", BPB.sectors, BPB.sectors*BPB.bps).AppendLine();
+            if (BPB.sectors > imagePlugin.GetSectors())
+                sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)", BPB.sectors, imagePlugin.GetSectors());
 			sb.AppendFormat("{0} heads", BPB.heads).AppendLine();
 			sb.AppendFormat("{0} sectors per track", BPB.sptrk).AppendLine();
 			sb.AppendFormat("Volume name: {0}", BPB.vol_name).AppendLine();
@@ -112,4 +135,3 @@ namespace FileSystemIDandChk.Plugins
 		}
 	}
 }
-

@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class PCEnginePlugin : Plugin
@@ -15,13 +13,12 @@ namespace FileSystemIDandChk.Plugins
             base.PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
             byte[] system_descriptor = new byte[23];
+            byte[] sector = imagePlugin.ReadSector(1 + partitionOffset);
 
-            stream.Seek(2080 + offset, SeekOrigin.Begin);
-
-            stream.Read(system_descriptor, 0, 23);
+            Array.Copy(sector, 0x20, system_descriptor, 0, 23);
 
             if(Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM")
                 return true;
@@ -29,10 +26,9 @@ namespace FileSystemIDandChk.Plugins
                 return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 		}
 	}
 }
-

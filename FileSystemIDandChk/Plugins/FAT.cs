@@ -3,8 +3,8 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
+// TODO: Implement detecting DOS bootable disks
+// TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
 namespace FileSystemIDandChk.Plugins
 {
 	class FAT : Plugin
@@ -15,7 +15,7 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+		public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
 			byte fats_no; // Must be 1 or 2. Dunno if it can be 0 in the wild, but it CANNOT BE bigger than 2
@@ -23,27 +23,23 @@ namespace FileSystemIDandChk.Plugins
 			UInt32 first_fat_entry; // No matter FAT size we read 4 bytes for checking
 			UInt16 bps, rsectors;
 
-			BinaryReader br = new BinaryReader(stream);
+			byte[] bpb_sector = imagePlugin.ReadSector (0 + partitionOffset);
+			byte[] fat_sector;
 
-			br.BaseStream.Seek(0x10 + offset, SeekOrigin.Begin); // FATs, 1 or 2, maybe 0, never bigger
-			fats_no = br.ReadByte();
-			br.BaseStream.Seek(0x15 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
-			media_descriptor = br.ReadByte();
-			br.BaseStream.Seek(0x52 + offset, SeekOrigin.Begin); // FAT32 signature, if present, is in 0x52
-			fat32_signature = br.ReadBytes(8);
-			br.BaseStream.Seek(0x0B + offset, SeekOrigin.Begin); // Bytes per sector
-			bps = br.ReadUInt16();
+			fats_no = bpb_sector[0x010]; // FATs, 1 or 2, maybe 0, never bigger
+			media_descriptor = bpb_sector[0x015]; // Media Descriptor if present is in 0x15
+			Array.Copy (bpb_sector, 0x52, fat32_signature, 0, 8); // FAT32 signature, if present, is in 0x52
+			bps = BitConverter.ToUInt16(bpb_sector, 0x00B); // Bytes per sector
 			if(bps==0)
 				bps=0x200;
-			br.BaseStream.Seek(0x0E + offset, SeekOrigin.Begin); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
-			rsectors = br.ReadUInt16();
+			rsectors = BitConverter.ToUInt16 (bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
 			if(rsectors==0)
 				rsectors=1;
-			if((ulong)br.BaseStream.Length > (ulong)(bps*rsectors + offset))
-				br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
+			if(imagePlugin.GetSectors() > ((ulong)rsectors + partitionOffset))
+				fat_sector = imagePlugin.ReadSector(rsectors + partitionOffset); // First FAT entry
 			else
 				return false;
-			first_fat_entry = br.ReadUInt32(); // Easier to manage
+			first_fat_entry = BitConverter.ToUInt32 (fat_sector, 0); // Easier to manage
 
 			if(MainClass.isDebug)
 			{
@@ -75,12 +71,11 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+		public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
-			BinaryReader br = new BinaryReader(stream);
 
 			byte[] dosString; // Space-padded
 			bool isFAT32 = false;
@@ -89,23 +84,22 @@ namespace FileSystemIDandChk.Plugins
 			string fat32_signature;
 			UInt16 bps, rsectors;
 
-			br.BaseStream.Seek(0x10 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
-			fats_no = br.ReadByte();
-			br.BaseStream.Seek(0x15 + offset, SeekOrigin.Begin); // Media Descriptor if present is in 0x15
-			media_descriptor =(byte) stream.ReadByte();
-			br.BaseStream.Seek(0x52 + offset, SeekOrigin.Begin); // FAT32 signature, if present, is in 0x52
-			dosString = br.ReadBytes(8);
-			fat32_signature = Encoding.ASCII.GetString(dosString);
-			br.BaseStream.Seek(0x0B + offset, SeekOrigin.Begin); // Bytes per sector
-			bps = br.ReadUInt16();
+			byte[] bpb_sector = imagePlugin.ReadSector (0 + partitionOffset);
+			byte[] fat_sector;
+			
+			fats_no = bpb_sector[0x010]; // FATs, 1 or 2, maybe 0, never bigger
+			media_descriptor = bpb_sector[0x015]; // Media Descriptor if present is in 0x15
+            dosString = new byte[8];
+            Array.Copy (bpb_sector, 0x52, dosString, 0, 8); // FAT32 signature, if present, is in 0x52
+            fat32_signature = Encoding.ASCII.GetString(dosString);
+			bps = BitConverter.ToUInt16(bpb_sector, 0x00B); // Bytes per sector
 			if(bps==0)
 				bps=0x200;
-			br.BaseStream.Seek(0x0E + offset, SeekOrigin.Begin); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
-			rsectors = br.ReadUInt16();
+			rsectors = BitConverter.ToUInt16 (bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
 			if(rsectors==0)
 				rsectors=1;
-			br.BaseStream.Seek(bps*rsectors + offset, SeekOrigin.Begin); // First FAT entry
-			first_fat_entry = br.ReadUInt32(); // Easier to manage
+			fat_sector = imagePlugin.ReadSector(rsectors + partitionOffset); // First FAT entry
+			first_fat_entry = BitConverter.ToUInt32 (fat_sector, 0); // Easier to manage
 
 			if(fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
 				return;
@@ -133,49 +127,52 @@ namespace FileSystemIDandChk.Plugins
 			ExtendedParameterBlock EPB = new ExtendedParameterBlock();
 			FAT32ParameterBlock FAT32PB = new FAT32ParameterBlock();
 			
-
-			br.BaseStream.Seek(3 + offset, SeekOrigin.Begin);
-			dosString = br.ReadBytes(8);
+            dosString = new byte[8];
+            Array.Copy (bpb_sector, 0x03, dosString, 0, 8);
 			BPB.OEMName = Encoding.ASCII.GetString(dosString);
-			BPB.bps = br.ReadUInt16();
-			BPB.spc = br.ReadByte();
-			BPB.rsectors = br.ReadUInt16();
-			BPB.fats_no = br.ReadByte();
-			BPB.root_ent = br.ReadUInt16();
-			BPB.sectors = br.ReadUInt16();
-			BPB.media = br.ReadByte();
-			BPB.spfat = br.ReadUInt16();
-			BPB.sptrk = br.ReadUInt16();
-			BPB.heads = br.ReadUInt16();
-			BPB.hsectors = br.ReadUInt32();
-			BPB.big_sectors = br.ReadUInt32();
+            BPB.bps = BitConverter.ToUInt16(bpb_sector, 0x0B);;
+            BPB.spc = bpb_sector[0x0D];
+            BPB.rsectors = BitConverter.ToUInt16(bpb_sector, 0x0E);
+            BPB.fats_no = bpb_sector[0x10];
+            BPB.root_ent = BitConverter.ToUInt16(bpb_sector, 0x11);
+            BPB.sectors = BitConverter.ToUInt16(bpb_sector, 0x13);
+            BPB.media = bpb_sector[0x15];
+            BPB.spfat = BitConverter.ToUInt16(bpb_sector, 0x16);
+            BPB.sptrk = BitConverter.ToUInt16(bpb_sector, 0x18);
+            BPB.heads = BitConverter.ToUInt16(bpb_sector, 0x1A);
+            BPB.hsectors = BitConverter.ToUInt32(bpb_sector, 0x1C);
+            BPB.big_sectors = BitConverter.ToUInt32(bpb_sector, 0x20);
 			
 			if(isFAT32)
 			{
-				FAT32PB.spfat = br.ReadUInt32();
-				FAT32PB.fat_flags = br.ReadUInt16();
-				FAT32PB.version = br.ReadUInt16();
-				FAT32PB.root_cluster = br.ReadUInt32();
-				FAT32PB.fsinfo_sector = br.ReadUInt16();
-				FAT32PB.backup_sector = br.ReadUInt16();
-				FAT32PB.drive_no = br.ReadByte();
-				FAT32PB.nt_flags = br.ReadByte();
-				FAT32PB.signature = br.ReadByte();
-				FAT32PB.serial_no = br.ReadUInt32();
-				dosString = br.ReadBytes(11);
+                FAT32PB.spfat = BitConverter.ToUInt32(bpb_sector, 0x24);
+                FAT32PB.fat_flags = BitConverter.ToUInt16(bpb_sector, 0x28);
+                FAT32PB.version = BitConverter.ToUInt16(bpb_sector, 0x2A);
+                FAT32PB.root_cluster = BitConverter.ToUInt32(bpb_sector, 0x2C);
+                FAT32PB.fsinfo_sector = BitConverter.ToUInt16(bpb_sector, 0x30);
+                FAT32PB.backup_sector = BitConverter.ToUInt16(bpb_sector, 0x32);
+                FAT32PB.drive_no = bpb_sector[0x40];
+                FAT32PB.nt_flags = bpb_sector[0x41];
+                FAT32PB.signature = bpb_sector[0x42];
+                FAT32PB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x43);
+                dosString = new byte[11];
+                Array.Copy (bpb_sector, 0x47, dosString, 0, 11);
 				FAT32PB.volume_label = Encoding.ASCII.GetString(dosString);
-				dosString = br.ReadBytes(8);
+                dosString = new byte[8];
+                Array.Copy (bpb_sector, 0x52, dosString, 0, 8);
 				FAT32PB.fs_type = Encoding.ASCII.GetString(dosString);
 			}
 			else
 			{
-				EPB.drive_no = br.ReadByte();
-				EPB.nt_flags = br.ReadByte();
-				EPB.signature = br.ReadByte();
-				EPB.serial_no = br.ReadUInt32();
-				dosString = br.ReadBytes(11);
+                EPB.drive_no = bpb_sector[0x24];
+                EPB.nt_flags = bpb_sector[0x25];
+                EPB.signature = bpb_sector[0x26];
+                EPB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x27);
+                dosString = new byte[11];
+                Array.Copy (bpb_sector, 0x2B, dosString, 0, 11);
 				EPB.volume_label = Encoding.ASCII.GetString(dosString);
-				dosString = br.ReadBytes(8);
+                dosString = new byte[8];
+                Array.Copy (bpb_sector, 0x36, dosString, 0, 8);
 				EPB.fs_type = Encoding.ASCII.GetString(dosString);
 			}
 			
@@ -300,4 +297,3 @@ namespace FileSystemIDandChk.Plugins
 		}
 	}
 }
-

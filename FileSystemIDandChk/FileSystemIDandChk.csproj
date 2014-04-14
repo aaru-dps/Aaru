@@ -69,6 +69,7 @@
     <Compile Include="Plugins\SysV.cs" />
     <Compile Include="ImagePlugins\ImagePlugin.cs" />
     <Compile Include="ImagePlugins\CDRWin.cs" />
+    <Compile Include="BigEndianBitConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -83,7 +84,7 @@
           <VersionControlPolicy inheritsSet="Mono">
             <CommitMessageStyle Indent="	" LastFilePostfix=":&#xA;  " IncludeDirectoryPaths="True" />
           </VersionControlPolicy>
-          <ChangeLogPolicy UpdateMode="ProjectRoot" inheritsSet="Mono">
+          <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="RequireEntry" inheritsSet="Mono">
             <MessageStyle LastFilePostfix=":&#xA;  " IncludeDirectoryPaths="True" />
           </ChangeLogPolicy>
         </Policies>

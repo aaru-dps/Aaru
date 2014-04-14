@@ -12,8 +12,8 @@ namespace FileSystemIDandChk.Plugins
         {
         }
 		
-		public abstract bool Identify(FileStream stream, long offset);
-        public abstract void GetInformation(FileStream stream, long offset, out string information);
+        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset);
+        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information);
 	}
 }
 

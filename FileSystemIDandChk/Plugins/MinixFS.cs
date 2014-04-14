@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class MinixFS : Plugin
@@ -28,21 +26,19 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			UInt16 magic;
-			BinaryReader br = new BinaryReader(stream);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
 
-			br.BaseStream.Seek(0x400 + 0x10 + offset, SeekOrigin.Begin); // Here should reside magic number on Minix V1 & V2
-			magic = br.ReadUInt16();
+            magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
 			
 			if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
 			   magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM || magic == MINIX2_CIGAM2)
 				return true;
 			else
 			{
-				br.BaseStream.Seek(0x400 + 0x18 + offset, SeekOrigin.Begin); // Here should reside magic number on Minix V1 & V2
-				magic = br.ReadUInt16();
+                magic = BitConverter.ToUInt16(minix_sb_sector, 0x018); // Here should reside magic number on Minix V3
 
 				if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
 					return true;
@@ -51,7 +47,7 @@ namespace FileSystemIDandChk.Plugins
 			}
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
@@ -62,10 +58,9 @@ namespace FileSystemIDandChk.Plugins
 			int filenamesize = 0;
 			string minixVersion;
 			UInt16 magic;
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, littleendian);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
 
-			eabr.BaseStream.Seek(0x400 + 0x18 + offset, SeekOrigin.Begin);
-			magic = eabr.ReadUInt16();
+            magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
 
 			if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
 			{
@@ -80,50 +75,49 @@ namespace FileSystemIDandChk.Plugins
 			}
 			else
 			{
-				eabr.BaseStream.Seek(0x400 + 0x10 + offset, SeekOrigin.Begin);
-				magic = eabr.ReadUInt16();
+				magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x010);
 
 				switch(magic)
 				{
 				case MINIX_MAGIC:
 					filenamesize = 14;
 					minixVersion = "Minix V1 filesystem";
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true;
 					break;
 				case MINIX_MAGIC2:
 					filenamesize = 30;
 					minixVersion = "Minix V1 filesystem";
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true;
 					break;
 				case MINIX2_MAGIC:
 					filenamesize = 14;
 					minixVersion = "Minix V2 filesystem";
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true;
 					break;
 				case MINIX2_MAGIC2:
 					filenamesize = 30;
 					minixVersion = "Minix V2 filesystem";
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true;
 					break;
 				case MINIX_CIGAM:
 					filenamesize = 14;
 					minixVersion = "Minix V1 filesystem";
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false;
 					break;
 				case MINIX_CIGAM2:
 					filenamesize = 30;
 					minixVersion = "Minix V1 filesystem";
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false;
 					break;
 				case MINIX2_CIGAM:
 					filenamesize = 14;
 					minixVersion = "Minix V2 filesystem";
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false;
 					break;
 				case MINIX2_CIGAM2:
 					filenamesize = 30;
 					minixVersion = "Minix V2 filesystem";
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false;
 					break;
 				default:
 					return;
@@ -131,26 +125,23 @@ namespace FileSystemIDandChk.Plugins
 				}
 			}
 
-			eabr = new EndianAwareBinaryReader(stream, littleendian);
-			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
-
 			if(minix3)
 			{
 				Minix3SuperBlock mnx_sb = new Minix3SuperBlock();
 
-				mnx_sb.s_ninodes = eabr.ReadUInt32();
-				mnx_sb.s_pad0 = eabr.ReadUInt16();
-				mnx_sb.s_imap_blocks = eabr.ReadUInt16();
-				mnx_sb.s_zmap_blocks = eabr.ReadUInt16();
-				mnx_sb.s_firstdatazone = eabr.ReadUInt16();
-				mnx_sb.s_log_zone_size = eabr.ReadUInt16();
-				mnx_sb.s_pad1 = eabr.ReadUInt16();
-				mnx_sb.s_max_size = eabr.ReadUInt32();
-				mnx_sb.s_zones = eabr.ReadUInt32();
-				mnx_sb.s_magic = eabr.ReadUInt16();
-				mnx_sb.s_pad2 = eabr.ReadUInt16();
-				mnx_sb.s_blocksize = eabr.ReadUInt16();
-				mnx_sb.s_disk_version = eabr.ReadByte();
+                mnx_sb.s_ninodes = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x00);
+                mnx_sb.s_pad0 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x04);
+                mnx_sb.s_imap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x06);
+                mnx_sb.s_zmap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x08);
+                mnx_sb.s_firstdatazone = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0A);
+                mnx_sb.s_log_zone_size = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0C);
+                mnx_sb.s_pad1 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0E);
+                mnx_sb.s_max_size = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x10);
+                mnx_sb.s_zones = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x14);
+                mnx_sb.s_magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x18);
+                mnx_sb.s_pad2 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x1A);
+                mnx_sb.s_blocksize = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x1C);
+                mnx_sb.s_disk_version = minix_sb_sector[0x1E];
 
 				sb.AppendLine(minixVersion);
 				sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
@@ -168,16 +159,16 @@ namespace FileSystemIDandChk.Plugins
 			{
 				MinixSuperBlock mnx_sb = new MinixSuperBlock();
 				
-				mnx_sb.s_ninodes = eabr.ReadUInt16();
-				mnx_sb.s_nzones = eabr.ReadUInt16();
-				mnx_sb.s_imap_blocks = eabr.ReadUInt16();
-				mnx_sb.s_zmap_blocks = eabr.ReadUInt16();
-				mnx_sb.s_firstdatazone = eabr.ReadUInt16();
-				mnx_sb.s_log_zone_size = eabr.ReadUInt16();
-				mnx_sb.s_max_size = eabr.ReadUInt32();
-				mnx_sb.s_magic = eabr.ReadUInt16();
-				mnx_sb.s_state = eabr.ReadUInt16();
-				mnx_sb.s_zones = eabr.ReadUInt32();
+                mnx_sb.s_ninodes = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x00);
+                mnx_sb.s_nzones = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x02);
+                mnx_sb.s_imap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x04);
+                mnx_sb.s_zmap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x06);
+                mnx_sb.s_firstdatazone = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x08);
+                mnx_sb.s_log_zone_size = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0A);
+                mnx_sb.s_max_size = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x0C);
+                mnx_sb.s_magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x10);
+                mnx_sb.s_state = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x12);
+                mnx_sb.s_zones = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x14);
 
 				sb.AppendLine(minixVersion);
 				sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();

@@ -1,3 +1,51 @@
+2014-04-14  Natalia Portillo  <claunia@claunia.com>
+
+	* BigEndianBitConverter.cs:
+	  Added BitConverter for BigEndian
+
+	* FileSystemIDandChk.csproj:
+	  FileSystemIDandChk/BigEndianBitConverter.cs
+
+
+	* ImagePlugins/CDRWin.cs:
+	  Corrected parsing
+	Implemented all ImagePlugin methods
+
+	* ImagePlugins/ImagePlugin.cs:
+	  Used document auto formatting
+
+	* Main.cs:
+	* Plugins/FAT.cs:
+	* Plugins/BFS.cs:
+	* Plugins/FFS.cs:
+	* Plugins/ODS.cs:
+	* Plugins/HPFS.cs:
+	* Plugins/SysV.cs:
+	* Plugins/NTFS.cs:
+	* Plugins/extFS.cs:
+	* Plugins/Opera.cs:
+	* Plugins/ext2FS.cs:
+	* Plugins/Plugin.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/SolarFS.cs:
+	* PartPlugins/MBR.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleHFS.cs:
+	* PartPlugins/NeXT.cs:
+	* Plugins/AppleMFS.cs:
+	* PartPlugins/AppleMap.cs:
+	* Plugins/AppleHFSPlus.cs:
+	  Added support for disc image plugins
+
+	* PartPlugins/PartPlugin.cs:
+	  Added support for disc image plugins
+	Added start sector and length in sectors to partitions
+
+	* Plugins/Symbian.cs:
+	  Commented til code is adapted for disc image plugins
+
 2012-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/SysV.cs:

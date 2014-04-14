@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class ext2FS : Plugin
@@ -15,14 +13,11 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+		public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
-			byte[] magic_b = new byte[2];
-			ushort magic;
+			byte[] sb_sector = imagePlugin.ReadSector (2 + partitionOffset);
 
-			stream.Seek(0x400 + 56 + offset, SeekOrigin.Begin); // Here should reside magic number
-			stream.Read(magic_b, 0, 2);
-			magic = BitConverter.ToUInt16(magic_b, 0);
+			UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038);
 			
 			if(magic == ext2FSMagic || magic == ext2OldFSMagic)
 				return true;
@@ -30,13 +25,12 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+		public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
 
-			BinaryReader br = new BinaryReader(stream);
 			ext2FSSuperBlock supblk = new ext2FSSuperBlock();
 			byte[] forstrings;
 			bool old_ext2 = false;
@@ -47,42 +41,54 @@ namespace FileSystemIDandChk.Plugins
 			byte[] guid_a = new byte[16];
 			byte[] guid_b = new byte[16];
 
-			br.BaseStream.Seek (0x400 + offset, SeekOrigin.Begin);
-			supblk.inodes = br.ReadUInt32();
-			supblk.blocks = br.ReadUInt32();
-			supblk.reserved_blocks = br.ReadUInt32();
-			supblk.free_blocks = br.ReadUInt32();
-			supblk.free_inodes = br.ReadUInt32();
-			supblk.first_block = br.ReadUInt32();
-			supblk.block_size = br.ReadUInt32();
-			supblk.frag_size = br.ReadInt32();
-			supblk.blocks_per_grp = br.ReadUInt32();
-			supblk.flags_per_grp = br.ReadUInt32();
-			supblk.inodes_per_grp = br.ReadUInt32();
-			supblk.mount_t = br.ReadUInt32();
-			supblk.write_t = br.ReadUInt32();
-			supblk.mount_c = br.ReadUInt16();
-			supblk.max_mount_c = br.ReadInt16();
-			supblk.magic = br.ReadUInt16();
-			supblk.state = br.ReadUInt16();
-			supblk.err_behaviour = br.ReadUInt16();
-			supblk.minor_revision = br.ReadUInt16();
-			supblk.check_t = br.ReadUInt32();
-			supblk.check_inv = br.ReadUInt32();
+			uint sb_size_in_sectors = 0;
+
+			if (imagePlugin.GetSectorSize () < 1024)
+				sb_size_in_sectors = 1024 / imagePlugin.GetSectorSize ();
+			else
+				sb_size_in_sectors = 1;
+
+			if (sb_size_in_sectors == 0) {
+				information = "Error calculating size in sectors of ext2/3/4 superblocks";
+				return;
+			}
+
+			byte[] sb_sector = imagePlugin.ReadSectors (2 + partitionOffset, sb_size_in_sectors);
+			supblk.inodes = BitConverter.ToUInt32 (sb_sector, 0x000);
+			supblk.blocks = BitConverter.ToUInt32 (sb_sector, 0x004);
+			supblk.reserved_blocks = BitConverter.ToUInt32 (sb_sector, 0x008);
+			supblk.free_blocks = BitConverter.ToUInt32 (sb_sector, 0x00C);
+			supblk.free_inodes = BitConverter.ToUInt32 (sb_sector, 0x010);
+			supblk.first_block = BitConverter.ToUInt32 (sb_sector, 0x014);
+			supblk.block_size = BitConverter.ToUInt32 (sb_sector, 0x018);
+			supblk.frag_size = BitConverter.ToInt32 (sb_sector, 0x01C);
+			supblk.blocks_per_grp = BitConverter.ToUInt32 (sb_sector, 0x020);
+			supblk.flags_per_grp = BitConverter.ToUInt32 (sb_sector, 0x024);
+			supblk.inodes_per_grp = BitConverter.ToUInt32 (sb_sector, 0x028);
+			supblk.mount_t = BitConverter.ToUInt32 (sb_sector, 0x02C);
+			supblk.write_t = BitConverter.ToUInt32 (sb_sector, 0x030);
+			supblk.mount_c = BitConverter.ToUInt16 (sb_sector, 0x034);
+			supblk.max_mount_c = BitConverter.ToInt16 (sb_sector, 0x036);
+			supblk.magic = BitConverter.ToUInt16 (sb_sector, 0x038);
+			supblk.state = BitConverter.ToUInt16 (sb_sector, 0x03A);
+			supblk.err_behaviour = BitConverter.ToUInt16 (sb_sector, 0x03C);
+			supblk.minor_revision = BitConverter.ToUInt16 (sb_sector, 0x03E);
+			supblk.check_t = BitConverter.ToUInt32 (sb_sector, 0x040);
+			supblk.check_inv = BitConverter.ToUInt32 (sb_sector, 0x044);
 			// From 0.5a onward
-			supblk.creator_os = br.ReadUInt32();
-			supblk.revision = br.ReadUInt32();
-			supblk.default_uid = br.ReadUInt16();
-			supblk.default_gid = br.ReadUInt16();
+			supblk.creator_os = BitConverter.ToUInt32 (sb_sector, 0x048);
+			supblk.revision = BitConverter.ToUInt32 (sb_sector, 0x04C);
+			supblk.default_uid = BitConverter.ToUInt16 (sb_sector, 0x050);
+			supblk.default_gid = BitConverter.ToUInt16 (sb_sector, 0x052);
 			// From 0.5b onward
-			supblk.first_inode = br.ReadUInt32();
-			supblk.inode_size = br.ReadUInt16();
-			supblk.block_group_no = br.ReadUInt16();
-			supblk.ftr_compat = br.ReadUInt32();
-			supblk.ftr_incompat = br.ReadUInt32();
-			supblk.ftr_ro_compat = br.ReadUInt32();
+			supblk.first_inode = BitConverter.ToUInt32 (sb_sector, 0x054);
+			supblk.inode_size = BitConverter.ToUInt16 (sb_sector, 0x058);
+			supblk.block_group_no = BitConverter.ToUInt16 (sb_sector, 0x05A);
+			supblk.ftr_compat = BitConverter.ToUInt32 (sb_sector, 0x05C);
+			supblk.ftr_incompat = BitConverter.ToUInt32 (sb_sector, 0x060);
+			supblk.ftr_ro_compat = BitConverter.ToUInt32 (sb_sector, 0x064);
 			// Volume UUID
-			guid_a = br.ReadBytes(16);
+			Array.Copy (sb_sector, 0x068, guid_a, 0, 16);
 			guid_b[0] = guid_a[3];
 			guid_b[1] = guid_a[2];
 			guid_b[2] = guid_a[1];
@@ -102,17 +108,17 @@ namespace FileSystemIDandChk.Plugins
 			supblk.uuid = new Guid(guid_b);
 			// End of volume UUID
 			forstrings = new byte[16];
-			forstrings = br.ReadBytes(16);
+			Array.Copy (sb_sector, 0x078, forstrings, 0, 16);
 			supblk.volume_name = StringHandlers.CToString(forstrings);
 			forstrings = new byte[64];
-			forstrings = br.ReadBytes(64);
+			Array.Copy (sb_sector, 0x088, forstrings, 0, 64);
 			supblk.last_mount_dir = StringHandlers.CToString(forstrings);
-			supblk.algo_usage_bmp = br.ReadUInt32();
-			supblk.prealloc_blks = br.ReadByte();
-			supblk.prealloc_dir_blks = br.ReadByte();
-			supblk.rsrvd_gdt_blocks = br.ReadUInt16();
+			supblk.algo_usage_bmp = BitConverter.ToUInt32 (sb_sector, 0x0C8);
+			supblk.prealloc_blks = sb_sector[0x0CC];
+			supblk.prealloc_dir_blks = sb_sector[0x0CD];
+			supblk.rsrvd_gdt_blocks = BitConverter.ToUInt16 (sb_sector, 0x0CE);
 			// ext3
-			guid_a = br.ReadBytes(16);
+			Array.Copy (sb_sector, 0x0D0, guid_a, 0, 16);
 			guid_b[0] = guid_a[3];
 			guid_b[1] = guid_a[2];
 			guid_b[2] = guid_a[1];
@@ -130,56 +136,53 @@ namespace FileSystemIDandChk.Plugins
 			guid_b[14] = guid_a[14];
 			guid_b[15] = guid_a[15];
 			supblk.journal_uuid = new Guid(guid_b);
-			supblk.journal_inode = br.ReadUInt32();
-			supblk.journal_dev = br.ReadUInt32();
-			supblk.last_orphan = br.ReadUInt32();
-			supblk.hash_seed_1 = br.ReadUInt32();
-			supblk.hash_seed_2 = br.ReadUInt32();
-			supblk.hash_seed_3 = br.ReadUInt32();
-			supblk.hash_seed_4 = br.ReadUInt32();
-			supblk.hash_version = br.ReadByte();
-			supblk.jnl_backup_type = br.ReadByte();
-			supblk.desc_grp_size = br.ReadUInt16();
-			supblk.default_mnt_opts = br.ReadUInt32();
-			supblk.first_meta_bg = br.ReadUInt32();
+			supblk.journal_inode = BitConverter.ToUInt32 (sb_sector, 0x0E0);
+			supblk.journal_dev = BitConverter.ToUInt32 (sb_sector, 0x0E4);
+			supblk.last_orphan = BitConverter.ToUInt32 (sb_sector, 0x0E8);
+			supblk.hash_seed_1 = BitConverter.ToUInt32 (sb_sector, 0x0EC);
+			supblk.hash_seed_2 = BitConverter.ToUInt32 (sb_sector, 0x0F0);
+			supblk.hash_seed_3 = BitConverter.ToUInt32 (sb_sector, 0x0F4);
+			supblk.hash_seed_4 = BitConverter.ToUInt32 (sb_sector, 0x0F8);
+			supblk.hash_version = sb_sector[0x0FC];
+			supblk.jnl_backup_type = sb_sector[0x0FD];
+			supblk.desc_grp_size = BitConverter.ToUInt16 (sb_sector, 0x0FE);
+			supblk.default_mnt_opts = BitConverter.ToUInt32 (sb_sector, 0x100);
+			supblk.first_meta_bg = BitConverter.ToUInt32 (sb_sector, 0x104);
 			// ext4
-			supblk.mkfs_t = br.ReadUInt32();
-			br.BaseStream.Seek(68, SeekOrigin.Current);
-			supblk.blocks_hi = br.ReadUInt32();
-			supblk.reserved_blocks_hi = br.ReadUInt32();
-			supblk.free_blocks_hi = br.ReadUInt32();
-			supblk.min_inode_size = br.ReadUInt16();
-			supblk.rsv_inode_size = br.ReadUInt16();
-			supblk.flags = br.ReadUInt32();
-			supblk.raid_stride = br.ReadUInt16();
-			supblk.mmp_interval = br.ReadUInt16();
-			supblk.mmp_block = br.ReadUInt64();
-			supblk.raid_stripe_width = br.ReadUInt32();
-			supblk.flex_bg_grp_size = br.ReadByte();
-			supblk.padding = br.ReadByte();
-			supblk.padding2 = br.ReadUInt16();
-			supblk.kbytes_written = br.ReadUInt64();
-			supblk.snapshot_inum = br.ReadUInt32();
-			supblk.snapshot_id = br.ReadUInt32();
-			supblk.snapshot_blocks = br.ReadUInt64();
-			supblk.snapshot_list = br.ReadUInt32();
-			supblk.error_count = br.ReadUInt32();
-			supblk.first_error_t = br.ReadUInt32();
-			supblk.first_error_inode = br.ReadUInt32();
-			supblk.first_error_block = br.ReadUInt64();
+			supblk.mkfs_t = BitConverter.ToUInt32 (sb_sector, 0x108);
+			supblk.blocks_hi = BitConverter.ToUInt32 (sb_sector, 0x14C);
+			supblk.reserved_blocks_hi = BitConverter.ToUInt32 (sb_sector, 0x150);
+			supblk.free_blocks_hi = BitConverter.ToUInt32 (sb_sector, 0x154);
+			supblk.min_inode_size = BitConverter.ToUInt16 (sb_sector, 0x158);
+			supblk.rsv_inode_size = BitConverter.ToUInt16 (sb_sector, 0x15A);
+			supblk.flags = BitConverter.ToUInt32 (sb_sector, 0x15C);
+			supblk.raid_stride = BitConverter.ToUInt16 (sb_sector, 0x160);
+			supblk.mmp_interval = BitConverter.ToUInt16 (sb_sector, 0x162);
+			supblk.mmp_block = BitConverter.ToUInt64 (sb_sector, 0x164);
+			supblk.raid_stripe_width = BitConverter.ToUInt32 (sb_sector, 0x16C);
+			supblk.flex_bg_grp_size = sb_sector[0x170];
+			supblk.kbytes_written = BitConverter.ToUInt64 (sb_sector, 0x174);
+			supblk.snapshot_inum = BitConverter.ToUInt32 (sb_sector, 0x17C);
+			supblk.snapshot_id = BitConverter.ToUInt32 (sb_sector, 0x180);
+			supblk.snapshot_blocks = BitConverter.ToUInt64 (sb_sector, 0x184);
+			supblk.snapshot_list = BitConverter.ToUInt32 (sb_sector, 0x18C);
+			supblk.error_count = BitConverter.ToUInt32 (sb_sector, 0x190);
+			supblk.first_error_t = BitConverter.ToUInt32 (sb_sector, 0x194);
+			supblk.first_error_inode = BitConverter.ToUInt32 (sb_sector, 0x198);
+			supblk.first_error_block = BitConverter.ToUInt64 (sb_sector, 0x19C);
 			forstrings = new byte[32];
-			forstrings = br.ReadBytes(32);
+			Array.Copy (sb_sector, 0x1A0, forstrings, 0, 32);
 			supblk.first_error_func = StringHandlers.CToString(forstrings);
-			supblk.first_error_line = br.ReadUInt32();
-			supblk.last_error_t = br.ReadUInt32();
-			supblk.last_error_inode = br.ReadUInt32();
-			supblk.last_error_block = br.ReadUInt64();
+			supblk.first_error_line = BitConverter.ToUInt32 (sb_sector, 0x1B0);
+			supblk.last_error_t = BitConverter.ToUInt32 (sb_sector, 0x1B4);
+			supblk.last_error_inode = BitConverter.ToUInt32 (sb_sector, 0x1B8);
+			supblk.last_error_line = BitConverter.ToUInt32 (sb_sector, 0x1BC);
+			supblk.last_error_block = BitConverter.ToUInt64 (sb_sector, 0x1C0);
 			forstrings = new byte[32];
-			forstrings = br.ReadBytes(32);
+			Array.Copy (sb_sector, 0x1C8, forstrings, 0, 32);
 			supblk.last_error_func = StringHandlers.CToString(forstrings);
-			supblk.last_error_line = br.ReadUInt32();
 			forstrings = new byte[64];
-			forstrings = br.ReadBytes(64);
+			Array.Copy (sb_sector, 0x1D8, forstrings, 0, 64);
 			supblk.mount_options = StringHandlers.CToString(forstrings);
 
 			if(supblk.magic == ext2OldFSMagic)
@@ -558,102 +561,103 @@ namespace FileSystemIDandChk.Plugins
 		public const UInt16 ext2FSMagic = 0xEF53; // Same for ext3 and ext4
 		public const UInt16 ext2OldFSMagic = 0xEF51;
 
+        // Size = 536 bytes
 		public struct ext2FSSuperBlock
 		{
-			public UInt32 inodes;             // inodes on volume
-			public UInt32 blocks;             // blocks on volume
-			public UInt32 reserved_blocks;    // reserved blocks
-			public UInt32 free_blocks;        // free blocks count
-			public UInt32 free_inodes;        // free inodes count
-			public UInt32 first_block;        // first data block
-			public UInt32 block_size;         // block size
-			public Int32  frag_size;          // fragment size
-			public UInt32 blocks_per_grp;     // blocks per group
-			public UInt32 flags_per_grp;      // fragments per group
-			public UInt32 inodes_per_grp;     // inodes per group
-			public UInt32 mount_t;            // last mount time
-			public UInt32 write_t;            // last write time
-			public UInt16 mount_c;            // mounts count
-			public Int16  max_mount_c;        // max mounts
-			public UInt16 magic;              // (little endian)
-			public UInt16 state;              // filesystem state
-			public UInt16 err_behaviour;      // behaviour on errors
-			public UInt16 minor_revision;     // From 0.5b onward
-			public UInt32 check_t;            // last check time
-			public UInt32 check_inv;          // max time between checks
+			public UInt32 inodes;             // 0x000, inodes on volume
+			public UInt32 blocks;             // 0x004, blocks on volume
+			public UInt32 reserved_blocks;    // 0x008, reserved blocks
+			public UInt32 free_blocks;        // 0x00C, free blocks count
+			public UInt32 free_inodes;        // 0x010, free inodes count
+			public UInt32 first_block;        // 0x014, first data block
+			public UInt32 block_size;         // 0x018, block size
+			public Int32  frag_size;          // 0x01C, fragment size
+			public UInt32 blocks_per_grp;     // 0x020, blocks per group
+			public UInt32 flags_per_grp;      // 0x024, fragments per group
+			public UInt32 inodes_per_grp;     // 0x028, inodes per group
+			public UInt32 mount_t;            // 0x02C, last mount time
+			public UInt32 write_t;            // 0x030, last write time
+			public UInt16 mount_c;            // 0x034, mounts count
+			public Int16  max_mount_c;        // 0x036, max mounts
+			public UInt16 magic;              // 0x038, (little endian)
+			public UInt16 state;              // 0x03A, filesystem state
+			public UInt16 err_behaviour;      // 0x03C, behaviour on errors
+			public UInt16 minor_revision;     // 0x03E, From 0.5b onward
+			public UInt32 check_t;            // 0x040, last check time
+			public UInt32 check_inv;          // 0x044, max time between checks
 			// From 0.5a onward
-			public UInt32 creator_os;         // Creation OS
-			public UInt32 revision;           // Revison level
-			public UInt16 default_uid;        // Default UID for reserved blocks
-			public UInt16 default_gid;        // Default GID for reserved blocks
+			public UInt32 creator_os;         // 0x048, Creation OS
+			public UInt32 revision;           // 0x04C, Revison level
+			public UInt16 default_uid;        // 0x050, Default UID for reserved blocks
+			public UInt16 default_gid;        // 0x052, Default GID for reserved blocks
 			// From 0.5b onward
-			public UInt32 first_inode;        // First unreserved inode
-			public UInt16 inode_size;         // inode size
-			public UInt16 block_group_no;     // Block group number of THIS superblock
-			public UInt32 ftr_compat;         // Compatible features set
-			public UInt32 ftr_incompat;       // Incompatible features set
+			public UInt32 first_inode;        // 0x054, First unreserved inode
+			public UInt16 inode_size;         // 0x058, inode size
+			public UInt16 block_group_no;     // 0x05A, Block group number of THIS superblock
+			public UInt32 ftr_compat;         // 0x05C, Compatible features set
+			public UInt32 ftr_incompat;       // 0x060, Incompatible features set
 			// Found on Linux 2.0.40
-			public UInt32 ftr_ro_compat;      // Read-only compatible features set
+			public UInt32 ftr_ro_compat;      // 0x064, Read-only compatible features set
 			// Found on Linux 2.1.132
-			public Guid   uuid;               // 16 bytes, UUID
-			public string volume_name;        // 16 bytes, volume name
-			public string last_mount_dir;     // 64 bytes, where last mounted
-			public UInt32 algo_usage_bmp;     // Usage bitmap algorithm, for compression
-			public byte   prealloc_blks;      // Block to try to preallocate
-			public byte   prealloc_dir_blks;  // Blocks to try to preallocate for directories
-			public UInt16 rsrvd_gdt_blocks;   // Per-group desc for online growth
+			public Guid   uuid;               // 0x068, 16 bytes, UUID
+			public string volume_name;        // 0x078, 16 bytes, volume name
+			public string last_mount_dir;     // 0x088, 64 bytes, where last mounted
+			public UInt32 algo_usage_bmp;     // 0x0C8, Usage bitmap algorithm, for compression
+			public byte   prealloc_blks;      // 0x0CC, Block to try to preallocate
+			public byte   prealloc_dir_blks;  // 0x0CD, Blocks to try to preallocate for directories
+			public UInt16 rsrvd_gdt_blocks;   // 0x0CE, Per-group desc for online growth
 			// Found on Linux 2.4
 			// ext3
-			public Guid   journal_uuid;       // 16 bytes, UUID of journal superblock
-			public UInt32 journal_inode;      // inode no. of journal file
-			public UInt32 journal_dev;        // device no. of journal file
-			public UInt32 last_orphan;        // Start of list of inodes to delete
-			public UInt32 hash_seed_1;        // First byte of 128bit HTREE hash seed
-			public UInt32 hash_seed_2;        // Second byte of 128bit HTREE hash seed
-			public UInt32 hash_seed_3;        // Third byte of 128bit HTREE hash seed
-			public UInt32 hash_seed_4;        // Fourth byte of 128bit HTREE hash seed
-			public byte   hash_version;       // Hash version
-			public byte   jnl_backup_type;    // Journal backup type
-			public UInt16 desc_grp_size;      // Size of group descriptor
-			public UInt32 default_mnt_opts;   // Default mount options
-			public UInt32 first_meta_bg;      // First metablock block group
+			public Guid   journal_uuid;       // 0x0D0, 16 bytes, UUID of journal superblock
+			public UInt32 journal_inode;      // 0x0E0, inode no. of journal file
+			public UInt32 journal_dev;        // 0x0E4, device no. of journal file
+			public UInt32 last_orphan;        // 0x0E8, Start of list of inodes to delete
+			public UInt32 hash_seed_1;        // 0x0EC, First byte of 128bit HTREE hash seed
+			public UInt32 hash_seed_2;        // 0x0F0, Second byte of 128bit HTREE hash seed
+			public UInt32 hash_seed_3;        // 0x0F4, Third byte of 128bit HTREE hash seed
+			public UInt32 hash_seed_4;        // 0x0F8, Fourth byte of 128bit HTREE hash seed
+			public byte   hash_version;       // 0x0FC, Hash version
+			public byte   jnl_backup_type;    // 0x0FD, Journal backup type
+			public UInt16 desc_grp_size;      // 0x0FE, Size of group descriptor
+			public UInt32 default_mnt_opts;   // 0x100, Default mount options
+			public UInt32 first_meta_bg;      // 0x104, First metablock block group
 			// Introduced with ext4, some can be ext3
-			public UInt32 mkfs_t;             // Filesystem creation time
+			public UInt32 mkfs_t;             // 0x108, Filesystem creation time
 			// Follows 17 uint32 (68 bytes) of journal inode backup
 			// Following 3 fields are valid if EXT4_FEATURE_COMPAT_64BIT is set
-			public UInt32 blocks_hi;          // High 32bits of blocks no.
-			public UInt32 reserved_blocks_hi; // High 32bits of reserved blocks no.
-			public UInt32 free_blocks_hi;     // High 32bits of free blocks no.
-			public UInt16 min_inode_size;     // inodes minimal size in bytes
-			public UInt16 rsv_inode_size;     // Bytes reserved by new inodes
-			public UInt32 flags;              // Flags
-			public UInt16 raid_stride;        // RAID stride
-			public UInt16 mmp_interval;       // Waiting seconds in MMP check
-			public UInt64 mmp_block;          // Block for multi-mount protection
-			public UInt32 raid_stripe_width;  // Blocks on all data disks (N*stride)
-			public byte   flex_bg_grp_size;   // FLEX_BG group size
-			public byte   padding;
-			public UInt16 padding2;
+			public UInt32 blocks_hi;          // 0x14C, High 32bits of blocks no.
+			public UInt32 reserved_blocks_hi; // 0x150, High 32bits of reserved blocks no.
+			public UInt32 free_blocks_hi;     // 0x154, High 32bits of free blocks no.
+			public UInt16 min_inode_size;     // 0x158, inodes minimal size in bytes
+			public UInt16 rsv_inode_size;     // 0x15A, Bytes reserved by new inodes
+			public UInt32 flags;              // 0x15C, Flags
+			public UInt16 raid_stride;        // 0x160, RAID stride
+			public UInt16 mmp_interval;       // 0x162, Waiting seconds in MMP check
+			public UInt64 mmp_block;          // 0x164, Block for multi-mount protection
+			public UInt32 raid_stripe_width;  // 0x16C, Blocks on all data disks (N*stride)
+			public byte   flex_bg_grp_size;   // 0x170, FLEX_BG group size
+			public byte   padding;            // 0x171
+			public UInt16 padding2;           // 0x172
 			// Following are introduced with ext4
-			public UInt64 kbytes_written;     // Kibibytes written in volume lifetime
-			public UInt32 snapshot_inum;      // Active snapshot inode number
-			public UInt32 snapshot_id;        // Active snapshot sequential ID
-			public UInt64 snapshot_blocks;    // Reserved blocks for active snapshot's future use
-			public UInt32 snapshot_list;      // inode number of the on-disk start of the snapshot list
+			public UInt64 kbytes_written;     // 0x174, Kibibytes written in volume lifetime
+			public UInt32 snapshot_inum;      // 0x17C, Active snapshot inode number
+			public UInt32 snapshot_id;        // 0x180, Active snapshot sequential ID
+			public UInt64 snapshot_blocks;    // 0x184, Reserved blocks for active snapshot's future use
+			public UInt32 snapshot_list;      // 0x18C, inode number of the on-disk start of the snapshot list
 			// Optional ext4 error-handling features
-			public UInt32 error_count;        // total registered filesystem errors
-			public UInt32 first_error_t;      // time on first error
-			public UInt32 first_error_inode;  // inode involved in first error
-			public UInt64 first_error_block;  // block involved of first error
-			public string first_error_func; // 32 bytes, function where the error happened
-			public UInt32 first_error_line;   // line number where error happened
-			public UInt32 last_error_t;       // time of most recent error
-			public UInt32 last_error_inode;   // inode involved in last error
-			public UInt32 last_error_line;    // line number where error happened
-			public UInt64 last_error_block;   // block involved of last error
-			public string last_error_func;    // 32 bytes, function where the error happened
-			// End of optiona error-handling features
-			public string mount_options;      // 64 bytes, last used mount options
+			public UInt32 error_count;        // 0x190, total registered filesystem errors
+			public UInt32 first_error_t;      // 0x194, time on first error
+			public UInt32 first_error_inode;  // 0x198, inode involved in first error
+			public UInt64 first_error_block;  // 0x19C, block involved of first error
+			public string first_error_func;   // 0x1A0, 32 bytes, function where the error happened
+			public UInt32 first_error_line;   // 0x1B0, line number where error happened
+			public UInt32 last_error_t;       // 0x1B4, time of most recent error
+			public UInt32 last_error_inode;   // 0x1B8, inode involved in last error
+			public UInt32 last_error_line;    // 0x1BC, line number where error happened
+			public UInt64 last_error_block;   // 0x1C0, block involved of last error
+			public string last_error_func;    // 0x1C8, 32 bytes, function where the error happened
+			// End of optional error-handling features
+			public string mount_options;      // 0x1D8, 64 bytes, last used mount options
 		}
 
 		// ext? filesystem states
@@ -723,4 +727,3 @@ namespace FileSystemIDandChk.Plugins
 		public const UInt32 EXT2_FLAGS_TEST_FILESYS  = 0x00000004;	// Testing development code
 	}
 }
-

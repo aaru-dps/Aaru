@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class HPFS : Plugin
@@ -15,22 +13,13 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
-			UInt16 bps;
 			UInt32 magic1, magic2;
 			
-			BinaryReader br = new BinaryReader(stream);
-			
-			br.BaseStream.Seek(offset + 3 + 8, SeekOrigin.Begin); // Seek to bps
-			bps = br.ReadUInt16();
-			
-			if(br.BaseStream.Length < offset + (16 * bps))
-				return false;
-			
-			br.BaseStream.Seek(offset + (16 * bps), SeekOrigin.Begin); // Seek to superblock, on logical sector 16
-			magic1 = br.ReadUInt32();
-			magic2 = br.ReadUInt32();
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionOffset); // Seek to superblock, on logical sector 16
+            magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
+            magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
 			
 			if(magic1 == 0xF995E849 && magic2 == 0xFA53E9C5)
 				return true;
@@ -38,13 +27,11 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
-			
-			BinaryReader br = new BinaryReader(stream);
 			
 			HPFS_BIOSParameterBlock hpfs_bpb = new HPFS_BIOSParameterBlock();
 			HPFS_SuperBlock hpfs_sb = new HPFS_SuperBlock();
@@ -53,73 +40,73 @@ namespace FileSystemIDandChk.Plugins
 			byte[] oem_name = new byte[8];
 			byte[] volume_name = new byte[11];
 			
-			br.BaseStream.Seek(offset, SeekOrigin.Begin); // Seek to BPB
-			hpfs_bpb.jmp1 = br.ReadByte();
-			hpfs_bpb.jmp2 = br.ReadUInt16();
-			oem_name = br.ReadBytes(8);
+            byte[] hpfs_bpb_sector = imagePlugin.ReadSector(0 + partitionOffset); // Seek to BIOS parameter block, on logical sector 0
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionOffset); // Seek to superblock, on logical sector 16
+            byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partitionOffset); // Seek to spareblock, on logical sector 17
+
+            hpfs_bpb.jmp1 = hpfs_bpb_sector[0x000];
+            hpfs_bpb.jmp2 = BitConverter.ToUInt16(hpfs_bpb_sector, 0x001);
+            Array.Copy(hpfs_bpb_sector, 0x003, oem_name, 0, 8);
 			hpfs_bpb.OEMName = StringHandlers.CToString(oem_name);
-			hpfs_bpb.bps = br.ReadUInt16();
-			hpfs_bpb.spc = br.ReadByte();
-			hpfs_bpb.rsectors = br.ReadUInt16();
-			hpfs_bpb.fats_no = br.ReadByte();
-			hpfs_bpb.root_ent = br.ReadUInt16();
-			hpfs_bpb.sectors = br.ReadUInt16();
-			hpfs_bpb.media = br.ReadByte();
-			hpfs_bpb.spfat = br.ReadUInt16();
-			hpfs_bpb.sptrk = br.ReadUInt16();
-			hpfs_bpb.heads = br.ReadUInt16();
-			hpfs_bpb.hsectors = br.ReadUInt32();
-			hpfs_bpb.big_sectors = br.ReadUInt32();
-			hpfs_bpb.drive_no = br.ReadByte();
-			hpfs_bpb.nt_flags = br.ReadByte();
-			hpfs_bpb.signature = br.ReadByte();
-			hpfs_bpb.serial_no = br.ReadUInt32();
-			volume_name = br.ReadBytes(11);
+            hpfs_bpb.bps = BitConverter.ToUInt16(hpfs_bpb_sector, 0x00B);
+            hpfs_bpb.spc = hpfs_bpb_sector[0x00D];
+            hpfs_bpb.rsectors = BitConverter.ToUInt16(hpfs_bpb_sector, 0x00E);
+            hpfs_bpb.fats_no = hpfs_bpb_sector[0x010];
+            hpfs_bpb.root_ent = BitConverter.ToUInt16(hpfs_bpb_sector, 0x011);
+            hpfs_bpb.sectors = BitConverter.ToUInt16(hpfs_bpb_sector, 0x013);
+            hpfs_bpb.media = hpfs_bpb_sector[0x015];
+            hpfs_bpb.spfat = BitConverter.ToUInt16(hpfs_bpb_sector, 0x016);
+            hpfs_bpb.sptrk = BitConverter.ToUInt16(hpfs_bpb_sector, 0x018);
+            hpfs_bpb.heads = BitConverter.ToUInt16(hpfs_bpb_sector, 0x01A);
+            hpfs_bpb.hsectors = BitConverter.ToUInt32(hpfs_bpb_sector, 0x01C);
+            hpfs_bpb.big_sectors = BitConverter.ToUInt32(hpfs_bpb_sector, 0x024);
+            hpfs_bpb.drive_no = hpfs_bpb_sector[0x028];
+            hpfs_bpb.nt_flags = hpfs_bpb_sector[0x029];
+            hpfs_bpb.signature = hpfs_bpb_sector[0x02A];
+            hpfs_bpb.serial_no = BitConverter.ToUInt32(hpfs_bpb_sector, 0x02B);
+            Array.Copy(hpfs_bpb_sector, 0x02F, volume_name, 0, 11);
 			hpfs_bpb.volume_label = StringHandlers.CToString(volume_name);
-			oem_name = br.ReadBytes(8);
+            Array.Copy(hpfs_bpb_sector, 0x03A, oem_name, 0, 8);
 			hpfs_bpb.fs_type = StringHandlers.CToString(oem_name);
 			
-			br.BaseStream.Seek((16*hpfs_bpb.bps) + offset, SeekOrigin.Begin); // Seek to SuperBlock
-			
-			hpfs_sb.magic1 = br.ReadUInt32();
-			hpfs_sb.magic2 = br.ReadUInt32();
-			hpfs_sb.version = br.ReadByte();
-			hpfs_sb.func_version = br.ReadByte();
-			hpfs_sb.dummy = br.ReadUInt16();
-			hpfs_sb.root_fnode = br.ReadUInt32();
-			hpfs_sb.sectors = br.ReadUInt32();
-			hpfs_sb.badblocks = br.ReadUInt32();
-			hpfs_sb.bitmap_lsn = br.ReadUInt32();
-			hpfs_sb.zero1 = br.ReadUInt32();
-			hpfs_sb.badblock_lsn = br.ReadUInt32();
-			hpfs_sb.zero2 = br.ReadUInt32();
-			hpfs_sb.last_chkdsk = br.ReadInt32();
-			hpfs_sb.last_optim = br.ReadInt32();
-			hpfs_sb.dband_sectors = br.ReadUInt32();
-			hpfs_sb.dband_start = br.ReadUInt32();
-			hpfs_sb.dband_last = br.ReadUInt32();
-			hpfs_sb.dband_bitmap = br.ReadUInt32();
-			hpfs_sb.zero3 = br.ReadUInt64();
-			hpfs_sb.zero4 = br.ReadUInt64();
-			hpfs_sb.zero5 = br.ReadUInt64();
-			hpfs_sb.zero6 = br.ReadUInt64();
+			hpfs_sb.magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
+            hpfs_sb.magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
+            hpfs_sb.version = hpfs_sb_sector[0x008];
+            hpfs_sb.func_version = hpfs_sb_sector[0x009];
+            hpfs_sb.dummy = BitConverter.ToUInt16(hpfs_sb_sector, 0x00A);
+            hpfs_sb.root_fnode = BitConverter.ToUInt32(hpfs_sb_sector, 0x00C);
+            hpfs_sb.sectors = BitConverter.ToUInt32(hpfs_sb_sector, 0x010);
+            hpfs_sb.badblocks = BitConverter.ToUInt32(hpfs_sb_sector, 0x014);
+            hpfs_sb.bitmap_lsn = BitConverter.ToUInt32(hpfs_sb_sector, 0x018);
+            hpfs_sb.zero1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x01C);
+            hpfs_sb.badblock_lsn = BitConverter.ToUInt32(hpfs_sb_sector, 0x020);
+            hpfs_sb.zero2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x024);
+            hpfs_sb.last_chkdsk = BitConverter.ToInt32(hpfs_sb_sector, 0x028);
+            hpfs_sb.last_optim = BitConverter.ToInt32(hpfs_sb_sector, 0x02C);
+            hpfs_sb.dband_sectors = BitConverter.ToUInt32(hpfs_sb_sector, 0x030);
+            hpfs_sb.dband_start = BitConverter.ToUInt32(hpfs_sb_sector, 0x034);
+            hpfs_sb.dband_last = BitConverter.ToUInt32(hpfs_sb_sector, 0x038);
+            hpfs_sb.dband_bitmap = BitConverter.ToUInt32(hpfs_sb_sector, 0x03C);
+            hpfs_sb.zero3 = BitConverter.ToUInt64(hpfs_sb_sector, 0x040);
+            hpfs_sb.zero4 = BitConverter.ToUInt64(hpfs_sb_sector, 0x048);
+            hpfs_sb.zero5 = BitConverter.ToUInt64(hpfs_sb_sector, 0x04C);
+            hpfs_sb.zero6 = BitConverter.ToUInt64(hpfs_sb_sector, 0x050);
+            hpfs_sb.acl_start = BitConverter.ToUInt32(hpfs_sb_sector, 0x058);
 
-			br.BaseStream.Seek((17*hpfs_bpb.bps) + offset, SeekOrigin.Begin); // Seek to SuperBlock
-			
-			hpfs_sp.magic1 = br.ReadUInt32();
-			hpfs_sp.magic2 = br.ReadUInt32();
-			hpfs_sp.flags1 = br.ReadByte();
-			hpfs_sp.flags2 = br.ReadByte();
-			hpfs_sp.dummy = br.ReadUInt16();
-			hpfs_sp.hotfix_start = br.ReadUInt32();
-			hpfs_sp.hotfix_used = br.ReadUInt32();
-			hpfs_sp.hotfix_entries = br.ReadUInt32();
-			hpfs_sp.spare_dnodes_free = br.ReadUInt32();
-			hpfs_sp.spare_dnodes = br.ReadUInt32();
-			hpfs_sp.codepage_lsn = br.ReadUInt32();
-			hpfs_sp.codepages = br.ReadUInt32();
-			hpfs_sp.sb_crc32 = br.ReadUInt32();
-			hpfs_sp.sp_crc32 = br.ReadUInt32();
+            hpfs_sp.magic1 = BitConverter.ToUInt32(hpfs_sp_sector, 0x000);
+            hpfs_sp.magic2 = BitConverter.ToUInt32(hpfs_sp_sector, 0x004);
+            hpfs_sp.flags1 = hpfs_sp_sector[0x008];
+            hpfs_sp.flags2 = hpfs_sp_sector[0x009];
+            hpfs_sp.dummy = BitConverter.ToUInt16(hpfs_sp_sector, 0x00A);
+            hpfs_sp.hotfix_start = BitConverter.ToUInt32(hpfs_sp_sector, 0x00C);
+            hpfs_sp.hotfix_used = BitConverter.ToUInt32(hpfs_sp_sector, 0x010);
+            hpfs_sp.hotfix_entries = BitConverter.ToUInt32(hpfs_sp_sector, 0x014);
+            hpfs_sp.spare_dnodes_free = BitConverter.ToUInt32(hpfs_sp_sector, 0x018);
+            hpfs_sp.spare_dnodes = BitConverter.ToUInt32(hpfs_sp_sector, 0x01C);
+            hpfs_sp.codepage_lsn = BitConverter.ToUInt32(hpfs_sp_sector, 0x020);
+            hpfs_sp.codepages = BitConverter.ToUInt32(hpfs_sp_sector, 0x024);
+            hpfs_sp.sb_crc32 = BitConverter.ToUInt32(hpfs_sp_sector, 0x028);
+            hpfs_sp.sp_crc32 = BitConverter.ToUInt32(hpfs_sp_sector, 0x02C);
 			
 			if(hpfs_bpb.fs_type != "HPFS    " ||
 			   hpfs_sb.magic1 != 0xF995E849 || hpfs_sb.magic2 != 0xFA53E9C5 ||
@@ -225,73 +212,72 @@ namespace FileSystemIDandChk.Plugins
 		
 		private struct HPFS_BIOSParameterBlock // Sector 0
 		{
-			public byte   jmp1;        // Jump to boot code
-			public UInt16 jmp2;        // ...;
-			public string OEMName;     // OEM Name, 8 bytes, space-padded
-			public UInt16 bps;         // Bytes per sector
-			public byte   spc;         // Sectors per cluster
-			public UInt16 rsectors;    // Reserved sectors between BPB and... does it have sense in HPFS?
-			public byte   fats_no;     // Number of FATs... seriously?
-			public UInt16 root_ent;    // Number of entries on root directory... ok
-			public UInt16 sectors;     // Sectors in volume... doubt it
-			public byte   media;       // Media descriptor
-			public UInt16 spfat;       // Sectors per FAT... again
-			public UInt16 sptrk;       // Sectors per track... you're kidding
-			public UInt16 heads;       // Heads... stop!
-			public UInt32 hsectors;    // Hidden sectors before BPB
-			public UInt32 big_sectors; // Sectors in volume if > 65535...
-			public byte   drive_no;     // Drive number
-			public byte   nt_flags;     // Volume flags?
-			public byte   signature;    // EPB signature, 0x29
-			public UInt32 serial_no;    // Volume serial number
-			public string volume_label; // Volume label, 11 bytes, space-padded
-			public string fs_type;      // Filesystem type, 8 bytes, space-padded ("HPFS    ")
+			public byte   jmp1;         // 0x000, Jump to boot code
+			public UInt16 jmp2;         // 0x001, ...;
+			public string OEMName;      // 0x003, OEM Name, 8 bytes, space-padded
+			public UInt16 bps;          // 0x00B, Bytes per sector
+			public byte   spc;          // 0x00D, Sectors per cluster
+			public UInt16 rsectors;     // 0x00E, Reserved sectors between BPB and... does it have sense in HPFS?
+			public byte   fats_no;      // 0x010, Number of FATs... seriously?
+			public UInt16 root_ent;     // 0x011, Number of entries on root directory... ok
+			public UInt16 sectors;      // 0x013, Sectors in volume... doubt it
+			public byte   media;        // 0x015, Media descriptor
+			public UInt16 spfat;        // 0x016, Sectors per FAT... again
+			public UInt16 sptrk;        // 0x018, Sectors per track... you're kidding
+			public UInt16 heads;        // 0x01A, Heads... stop!
+			public UInt32 hsectors;     // 0x01C, Hidden sectors before BPB
+			public UInt32 big_sectors;  // 0x024, Sectors in volume if > 65535...
+			public byte   drive_no;     // 0x028, Drive number
+			public byte   nt_flags;     // 0x029, Volume flags?
+			public byte   signature;    // 0x02A, EPB signature, 0x29
+			public UInt32 serial_no;    // 0x02B, Volume serial number
+			public string volume_label; // 0x02F, Volume label, 11 bytes, space-padded
+			public string fs_type;      // 0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")
 		}
 		
 		private struct HPFS_SuperBlock // Sector 16
 		{
-			public UInt32 magic1;        // 0xF995E849
-			public UInt32 magic2;        // 0xFA53E9C5
-			public byte   version;       // HPFS version
-			public byte   func_version;  // 2 if <= 4 GiB, 3 if > 4 GiB
-			public UInt16 dummy;         // Alignment
-			public UInt32 root_fnode;    // LSN pointer to root fnode
-			public UInt32 sectors;       // Sectors on volume
-			public UInt32 badblocks;     // Bad blocks on volume
-			public UInt32 bitmap_lsn;    // LSN pointer to volume bitmap
-			public UInt32 zero1;         // 0
-			public UInt32 badblock_lsn;  // LSN pointer to badblock directory
-			public UInt32 zero2;         // 0
-			public Int32  last_chkdsk;   // Time of last CHKDSK
-			public Int32  last_optim;    // Time of last optimization
-			public UInt32 dband_sectors; // Sectors of dir band
-			public UInt32 dband_start;   // Start sector of dir band
-			public UInt32 dband_last;    // Last sector of dir band
-			public UInt32 dband_bitmap;  // LSN of free space bitmap
-			public UInt64 zero3;         // Can be used for volume name (32 bytes)
-			public UInt64 zero4;         // ...
-			public UInt64 zero5;         // ...
-			public UInt64 zero6;         // ...;
-			public UInt32 acl_start;     // LSN pointer to ACLs (only HPFS386)
+			public UInt32 magic1;        // 0x000, 0xF995E849
+			public UInt32 magic2;        // 0x004, 0xFA53E9C5
+			public byte   version;       // 0x008, HPFS version
+			public byte   func_version;  // 0x009, 2 if <= 4 GiB, 3 if > 4 GiB
+			public UInt16 dummy;         // 0x00A, Alignment
+			public UInt32 root_fnode;    // 0x00C, LSN pointer to root fnode
+			public UInt32 sectors;       // 0x010, Sectors on volume
+			public UInt32 badblocks;     // 0x014, Bad blocks on volume
+			public UInt32 bitmap_lsn;    // 0x018, LSN pointer to volume bitmap
+			public UInt32 zero1;         // 0x01C, 0
+			public UInt32 badblock_lsn;  // 0x020, LSN pointer to badblock directory
+			public UInt32 zero2;         // 0x024, 0
+			public Int32  last_chkdsk;   // 0x028, Time of last CHKDSK
+			public Int32  last_optim;    // 0x02C, Time of last optimization
+			public UInt32 dband_sectors; // 0x030, Sectors of dir band
+			public UInt32 dband_start;   // 0x034, Start sector of dir band
+			public UInt32 dband_last;    // 0x038, Last sector of dir band
+			public UInt32 dband_bitmap;  // 0x03C, LSN of free space bitmap
+			public UInt64 zero3;         // 0x040, Can be used for volume name (32 bytes)
+			public UInt64 zero4;         // 0x048, ...
+			public UInt64 zero5;         // 0x04C, ...
+			public UInt64 zero6;         // 0x050, ...;
+			public UInt32 acl_start;     // 0x058, LSN pointer to ACLs (only HPFS386)
 		}
 		
 		private struct HPFS_SpareBlock // Sector 17
 		{
-			public UInt32 magic1;            // 0xF9911849
-			public UInt32 magic2;            // 0xFA5229C5
-			public byte   flags1;            // HPFS flags
-			public byte   flags2;            // HPFS386 flags
-			public UInt16 dummy;             // Alignment
-			public UInt32 hotfix_start;      // LSN of hotfix directory
-			public UInt32 hotfix_used;       // Used hotfixes
-			public UInt32 hotfix_entries;    // Total hotfixes available
-			public UInt32 spare_dnodes_free; // Unused spare dnodes
-			public UInt32 spare_dnodes;      // Length of spare dnodes list
-			public UInt32 codepage_lsn;      // LSN of codepage directory
-			public UInt32 codepages;         // Number of codepages used
-			public UInt32 sb_crc32;          // SuperBlock CRC32 (only HPFS386)
-			public UInt32 sp_crc32;          // SpareBlock CRC32 (only HPFS386)
+			public UInt32 magic1;            // 0x000, 0xF9911849
+			public UInt32 magic2;            // 0x004, 0xFA5229C5
+			public byte   flags1;            // 0x008, HPFS flags
+			public byte   flags2;            // 0x009, HPFS386 flags
+			public UInt16 dummy;             // 0x00A, Alignment
+			public UInt32 hotfix_start;      // 0x00C, LSN of hotfix directory
+			public UInt32 hotfix_used;       // 0x010, Used hotfixes
+			public UInt32 hotfix_entries;    // 0x014, Total hotfixes available
+			public UInt32 spare_dnodes_free; // 0x018, Unused spare dnodes
+			public UInt32 spare_dnodes;      // 0x01C, Length of spare dnodes list
+			public UInt32 codepage_lsn;      // 0x020, LSN of codepage directory
+			public UInt32 codepages;         // 0x024, Number of codepages used
+			public UInt32 sb_crc32;          // 0x028, SuperBlock CRC32 (only HPFS386)
+			public UInt32 sp_crc32;          // 0x02C, SpareBlock CRC32 (only HPFS386)
 		}
 	}
 }
-

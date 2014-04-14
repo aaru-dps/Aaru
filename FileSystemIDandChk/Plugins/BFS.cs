@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class BeFS : Plugin
@@ -29,100 +27,93 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+		public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			UInt32 magic;
-			
-			BinaryReader br = new BinaryReader(stream);
-			
-			br.BaseStream.Seek(32 + offset, SeekOrigin.Begin); // Seek to magic
-			
-			magic = br.ReadUInt32();
-			
-			if(magic == BEFS_MAGIC1) // Little-endian BFS
-				return true;
-			else if(magic == BEFS_CIGAM1) // Big-endian BFS
+			UInt32 magic_be;
+
+			byte[] sb_sector = imagePlugin.ReadSector (0 + partitionOffset);
+
+			magic = BitConverter.ToUInt32 (sb_sector, 0x20);
+			magic_be = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+
+			if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
 				return true;
 			else
 			{
-				br.BaseStream.Seek(32 + 512 + offset, SeekOrigin.Begin); // Seek to magic, skip boot
+				sb_sector = imagePlugin.ReadSector (1 + partitionOffset);
+				
+				magic = BitConverter.ToUInt32 (sb_sector, 0x20);
+				magic_be = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
 
-				magic = br.ReadUInt32();
-			
-				if(magic == BEFS_MAGIC1) // Little-endian BFS
-					return true;
-				else if(magic == BEFS_CIGAM1) // Big-endian BFS
+				if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
 					return true;
 				else
 					return false;
 			}
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+		public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			byte[] name_bytes = new byte[32];
-			bool littleendian = true;
-			
+
 			StringBuilder sb = new StringBuilder();
 			
 			BeSuperBlock besb = new BeSuperBlock();
-			
-			BinaryReader br = new BinaryReader(stream);
-			
-			br.BaseStream.Seek(32 + offset, SeekOrigin.Begin); // Seek to magic
-			besb.magic1 = br.ReadUInt32();
+
+			byte[] sb_sector = imagePlugin.ReadSector (0 + partitionOffset);
+
+			BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
+
+			besb.magic1 = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
 			if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
 			{
-				br.BaseStream.Seek(offset, SeekOrigin.Begin);
 				if(besb.magic1 == BEFS_CIGAM1)
-					littleendian = false;
+					BigEndianBitConverter.IsLittleEndian = false;
 			}
 			else
 			{
-				br.BaseStream.Seek(32 + 512 + offset, SeekOrigin.Begin); // Seek to magic
-				besb.magic1 = br.ReadUInt32();
+				sb_sector = imagePlugin.ReadSector (1 + partitionOffset);
+				besb.magic1 = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
 				
 				if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
 				{
-					br.BaseStream.Seek(offset + 512, SeekOrigin.Begin);
 					if(besb.magic1 == BEFS_CIGAM1)
-						littleendian = false;
+						BigEndianBitConverter.IsLittleEndian = false;
 				}
 				else
 					return;
 			}
 
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, littleendian);
-			name_bytes = eabr.ReadBytes(32);
-			
+			Array.Copy (sb_sector, 0x000, name_bytes, 0, 0x20);
 			besb.name = StringHandlers.CToString(name_bytes);
-			besb.magic1 = eabr.ReadUInt32();
-			besb.fs_byte_order = eabr.ReadUInt32();
-			besb.block_size = eabr.ReadUInt32();
-			besb.block_shift = eabr.ReadUInt32();
-			besb.num_blocks = eabr.ReadInt64();
-			besb.used_blocks = eabr.ReadInt64();
-			besb.inode_size = eabr.ReadInt32();
-			besb.magic2 = eabr.ReadUInt32();
-			besb.blocks_per_ag = eabr.ReadInt32();
-			besb.ag_shift = eabr.ReadInt32();
-			besb.num_ags = eabr.ReadInt32();
-			besb.flags = eabr.ReadUInt32();
-			besb.log_blocks_ag = eabr.ReadInt32();
-			besb.log_blocks_start = eabr.ReadUInt16();
-			besb.log_blocks_len = eabr.ReadUInt16();
-			besb.log_start = eabr.ReadInt64();
-			besb.log_end = eabr.ReadInt64();
-			besb.magic3 = eabr.ReadUInt32();
-			besb.root_dir_ag = eabr.ReadInt32();
-			besb.root_dir_start = eabr.ReadUInt16();
-			besb.root_dir_len = eabr.ReadUInt16();
-			besb.indices_ag = eabr.ReadInt32();
-			besb.indices_start = eabr.ReadUInt16();
-			besb.indices_len = eabr.ReadUInt16();
+			besb.magic1 = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.fs_byte_order = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.block_size = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.block_shift = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.num_blocks = BigEndianBitConverter.ToInt64 (sb_sector, 0x20);
+			besb.used_blocks = BigEndianBitConverter.ToInt64 (sb_sector, 0x20);
+			besb.inode_size = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.magic2 = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.blocks_per_ag = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.ag_shift = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.num_ags = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.flags = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.log_blocks_ag = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.log_blocks_start = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
+			besb.log_blocks_len = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
+			besb.log_start = BigEndianBitConverter.ToInt64 (sb_sector, 0x20);
+			besb.log_end = BigEndianBitConverter.ToInt64 (sb_sector, 0x20);
+			besb.magic3 = BigEndianBitConverter.ToUInt32 (sb_sector, 0x20);
+			besb.root_dir_ag = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.root_dir_start = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
+			besb.root_dir_len = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
+			besb.indices_ag = BigEndianBitConverter.ToInt32 (sb_sector, 0x20);
+			besb.indices_start = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
+			besb.indices_len = BigEndianBitConverter.ToUInt16 (sb_sector, 0x20);
 			
-			if(!littleendian) // Big-endian filesystem
+			if(!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
 				sb.AppendLine("Big-endian BeFS");
 			else
 				sb.AppendLine("Little-endian BeFS");
@@ -175,32 +166,31 @@ namespace FileSystemIDandChk.Plugins
 		
 		private struct BeSuperBlock
 		{
-			public string name;             // Volume name, 32 bytes
-			public UInt32 magic1;           // "BFS1", 0x42465331
-			public UInt32 fs_byte_order;    // "BIGE", 0x42494745
-			public UInt32 block_size;       // Bytes per block
-			public UInt32 block_shift;      // 1 << block_shift == block_size
-			public Int64  num_blocks;       // Blocks in volume
-			public Int64  used_blocks;      // Used blocks in volume
-			public Int32  inode_size;       // Bytes per inode
-			public UInt32 magic2;           // 0xDD121031
-			public Int32  blocks_per_ag;    // Blocks per allocation group
-			public Int32  ag_shift;         // 1 << ag_shift == blocks_per_ag
-			public Int32  num_ags;          // Allocation groups in volume
-			public UInt32 flags;            // 0x434c454e if clean, 0x44495254 if dirty
-			public Int32  log_blocks_ag;    // Allocation group of journal
-			public UInt16 log_blocks_start; // Start block of journal, inside ag
-			public UInt16 log_blocks_len;   // Length in blocks of journal, inside ag
-			public Int64  log_start;        // Start of journal
-			public Int64  log_end;          // End of journal
-			public UInt32 magic3;           // 0x15B6830E
-			public Int32  root_dir_ag;      // Allocation group where root folder's i-node resides
-			public UInt16 root_dir_start;   // Start in ag of root folder's i-node
-			public UInt16 root_dir_len;     // As this is part of inode_addr, this is 1
-			public Int32  indices_ag;       // Allocation group where indices' i-node resides
-			public UInt16 indices_start;    // Start in ag of indices' i-node
-			public UInt16 indices_len;      // As this is part of inode_addr, this is 1
+			public string name;             // 0x000, Volume name, 32 bytes
+			public UInt32 magic1;           // 0x020, "BFS1", 0x42465331
+			public UInt32 fs_byte_order;    // 0x024, "BIGE", 0x42494745
+			public UInt32 block_size;       // 0x028, Bytes per block
+			public UInt32 block_shift;      // 0x02C, 1 << block_shift == block_size
+			public Int64  num_blocks;       // 0x030, Blocks in volume
+			public Int64  used_blocks;      // 0x038, Used blocks in volume
+			public Int32  inode_size;       // 0x040, Bytes per inode
+			public UInt32 magic2;           // 0x044, 0xDD121031
+			public Int32  blocks_per_ag;    // 0x048, Blocks per allocation group
+			public Int32  ag_shift;         // 0x04C, 1 << ag_shift == blocks_per_ag
+			public Int32  num_ags;          // 0x050, Allocation groups in volume
+			public UInt32 flags;            // 0x054, 0x434c454e if clean, 0x44495254 if dirty
+			public Int32  log_blocks_ag;    // 0x058, Allocation group of journal
+			public UInt16 log_blocks_start; // 0x05C, Start block of journal, inside ag
+			public UInt16 log_blocks_len;   // 0x05E, Length in blocks of journal, inside ag
+			public Int64  log_start;        // 0x060, Start of journal
+			public Int64  log_end;          // 0x068, End of journal
+			public UInt32 magic3;           // 0x070, 0x15B6830E
+			public Int32  root_dir_ag;      // 0x074, Allocation group where root folder's i-node resides
+			public UInt16 root_dir_start;   // 0x078, Start in ag of root folder's i-node
+			public UInt16 root_dir_len;     // 0x07A, As this is part of inode_addr, this is 1
+			public Int32  indices_ag;       // 0x07C, Allocation group where indices' i-node resides
+			public UInt16 indices_start;    // 0x080, Start in ag of indices' i-node
+			public UInt16 indices_len;      // 0x082, As this is part of inode_addr, this is 1
 		}
 	}
 }
-

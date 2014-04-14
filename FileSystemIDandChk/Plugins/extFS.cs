@@ -3,8 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
-
 namespace FileSystemIDandChk.Plugins
 {
 	class extFS : Plugin
@@ -15,14 +13,11 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+		public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
-			byte[] magic_b = new byte[2];
-			ushort magic;
+			byte[] sb_sector = imagePlugin.ReadSector (2 + partitionOffset); // Superblock resides at 0x400
 
-			stream.Seek(0x400 + 56 + offset, SeekOrigin.Begin); // Here should reside magic number
-			stream.Read(magic_b, 0, 2);
-			magic = BitConverter.ToUInt16(magic_b, 0);
+			UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
 			
 			if(magic == extFSMagic)
 				return true;
@@ -30,25 +25,24 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+		public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
 
-			BinaryReader br = new BinaryReader(stream);
+			byte[] sb_sector = imagePlugin.ReadSector (2 + partitionOffset); // Superblock resides at 0x400
 			extFSSuperBlock ext_sb = new extFSSuperBlock();
 
-			br.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
-			ext_sb.inodes = br.ReadUInt32();
-			ext_sb.zones = br.ReadUInt32();
-			ext_sb.firstfreeblk = br.ReadUInt32();
-			ext_sb.freecountblk = br.ReadUInt32();
-			ext_sb.firstfreeind = br.ReadUInt32();
-			ext_sb.freecountind = br.ReadUInt32();
-			ext_sb.firstdatazone = br.ReadUInt32();
-			ext_sb.logzonesize = br.ReadUInt32();
-			ext_sb.maxsize = br.ReadUInt32();
+			ext_sb.inodes = BitConverter.ToUInt32(sb_sector, 0x000);
+			ext_sb.zones = BitConverter.ToUInt32(sb_sector, 0x004);
+			ext_sb.firstfreeblk = BitConverter.ToUInt32(sb_sector, 0x008);
+			ext_sb.freecountblk = BitConverter.ToUInt32(sb_sector, 0x00C);
+			ext_sb.firstfreeind = BitConverter.ToUInt32(sb_sector, 0x010);
+			ext_sb.freecountind = BitConverter.ToUInt32(sb_sector, 0x014);
+			ext_sb.firstdatazone = BitConverter.ToUInt32(sb_sector, 0x018);
+			ext_sb.logzonesize = BitConverter.ToUInt32(sb_sector, 0x01C);
+			ext_sb.maxsize = BitConverter.ToUInt32(sb_sector, 0x020);
 
 			sb.AppendLine("ext filesystem");
 			sb.AppendFormat("{0} zones on volume", ext_sb.zones);
@@ -67,22 +61,21 @@ namespace FileSystemIDandChk.Plugins
 
 		public struct extFSSuperBlock
 		{
-			public UInt32 inodes;        // inodes on volume
-			public UInt32 zones;         // zones on volume
-			public UInt32 firstfreeblk;  // first free block
-			public UInt32 freecountblk;  // free blocks count
-			public UInt32 firstfreeind;  // first free inode
-			public UInt32 freecountind;  // free inodes count
-			public UInt32 firstdatazone; // first data zone
-			public UInt32 logzonesize;   // log zone size
-			public UInt32 maxsize;       // max zone size
-			public UInt32 reserved1;     // reserved
-			public UInt32 reserved2;     // reserved
-			public UInt32 reserved3;     // reserved
-			public UInt32 reserved4;     // reserved
-			public UInt32 reserved5;     // reserved
-			public UInt16 magic;         // 0x137D (little endian)
+			public UInt32 inodes;        // 0x000, inodes on volume
+			public UInt32 zones;         // 0x004, zones on volume
+			public UInt32 firstfreeblk;  // 0x008, first free block
+			public UInt32 freecountblk;  // 0x00C, free blocks count
+			public UInt32 firstfreeind;  // 0x010, first free inode
+			public UInt32 freecountind;  // 0x014, free inodes count
+			public UInt32 firstdatazone; // 0x018, first data zone
+			public UInt32 logzonesize;   // 0x01C, log zone size
+			public UInt32 maxsize;       // 0x020, max zone size
+			public UInt32 reserved1;     // 0x024, reserved
+			public UInt32 reserved2;     // 0x028, reserved
+			public UInt32 reserved3;     // 0x02C, reserved
+			public UInt32 reserved4;     // 0x030, reserved
+			public UInt32 reserved5;     // 0x034, reserved
+			public UInt16 magic;         // 0x038, 0x137D (little endian)
 		}
 	}
 }
-

@@ -5,6 +5,8 @@ using FileSystemIDandChk;
 using System.Collections.Generic;
 
 // Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
+// TODO: Implement support for disc images
+/*
 
 namespace FileSystemIDandChk.Plugins
 {
@@ -330,3 +332,4 @@ namespace FileSystemIDandChk.Plugins
 	}
 }
 
+*/

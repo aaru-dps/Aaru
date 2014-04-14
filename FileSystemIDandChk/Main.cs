@@ -20,70 +20,76 @@ namespace FileSystemIDandChk
 			
 			chkPartitions = true;
 			chkFilesystems = true;
-			isDebug = false;
+            // RELEASE
+            //isDebug = false;
+            // DEBUG
+            isDebug = true;
 			
 			Console.WriteLine ("Filesystem Identifier and Checker");
 			Console.WriteLine ("Copyright (C) Natalia Portillo, All Rights Reserved");
 			
             // For debug
-            plugins.RegisterAllPlugins();
-            Runner("");
-
-            /*
-			if(args.Length==0)
-			{
-				Usage();
-			}
-			else if(args.Length==1)
-			{
-				plugins.RegisterAllPlugins();
+            if (isDebug)
+            {
+                plugins.RegisterAllPlugins();
+                Runner("/Users/claunia/Desktop/disk_images/cdrom.cue");
+            }
+            else
+            {
+                if (args.Length == 0)
+                {
+                    Usage();
+                }
+                else if (args.Length == 1)
+                {
+                    plugins.RegisterAllPlugins();
 				
-				if(args[0]=="--formats")
-				{
-                    Console.WriteLine("Supported images:");
-                    foreach(KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
-                        Console.WriteLine(kvp.Value.Name);
-                    Console.WriteLine();
-					Console.WriteLine("Supported filesystems:");
-					foreach(KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
-						Console.WriteLine(kvp.Value.Name);
-					Console.WriteLine();
-					Console.WriteLine("Supported partitions:");
-					foreach(KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
-						Console.WriteLine(kvp.Value.Name);
-				}
-				else
-					Runner(args[0]);
-			}
-			else
-			{
-				for(int i = 0; i<args.Length-1; i++)
-				{
-					switch(args[i])	
-					{
-						case "--filesystems":
-							chkFilesystems = true;
-							chkPartitions = false;
-							break;
-						case "--partitions":
-							chkFilesystems = false;
-							chkPartitions = true;
-							break;
-						case "--all":
-							chkFilesystems = true;
-							chkPartitions = true;
-							break;
-						case "--debug":
-							isDebug = true;
-							break;
-						default:
-							break;
-					}
-				}
+                    if (args[0] == "--formats")
+                    {
+                        Console.WriteLine("Supported images:");
+                        foreach (KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
+                            Console.WriteLine(kvp.Value.Name);
+                        Console.WriteLine();
+                        Console.WriteLine("Supported filesystems:");
+                        foreach (KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
+                            Console.WriteLine(kvp.Value.Name);
+                        Console.WriteLine();
+                        Console.WriteLine("Supported partitions:");
+                        foreach (KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
+                            Console.WriteLine(kvp.Value.Name);
+                    }
+                    else
+                        Runner(args[0]);
+                }
+                else
+                {
+                    for (int i = 0; i < args.Length - 1; i++)
+                    {
+                        switch (args[i])
+                        {
+                            case "--filesystems":
+                                chkFilesystems = true;
+                                chkPartitions = false;
+                                break;
+                            case "--partitions":
+                                chkFilesystems = false;
+                                chkPartitions = true;
+                                break;
+                            case "--all":
+                                chkFilesystems = true;
+                                chkPartitions = true;
+                                break;
+                            case "--debug":
+                                isDebug = true;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 				
-				Runner(args[args.Length-1]);
-			}
-   */         
+                    Runner(args[args.Length - 1]);
+                }    
+            }
 		}
 
 		private static void Runner (string filename)
@@ -101,9 +107,6 @@ namespace FileSystemIDandChk
 
                 foreach(ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
                 {
-                    // DEBUG
-                    filename = "/Users/claunia/Desktop/disk_images/cdrom.cue";
-
                     if(_imageplugin.IdentifyImage(filename))
                     {
                         _imageFormat = _imageplugin;
@@ -123,7 +126,9 @@ namespace FileSystemIDandChk
                     if(_imageFormat.OpenImage(filename))
                     {
                         Console.WriteLine("DEBUG: Correctly opened image file.");
-                        return;
+
+                        Console.WriteLine("DEBUG: Image without headers is {0} bytes.", _imageFormat.GetImageSize());
+                        Console.WriteLine("DEBUG: Image has {0} sectors.", _imageFormat.GetSectors());
                     }
                     else
                     {
@@ -139,29 +144,35 @@ namespace FileSystemIDandChk
                     return;
                 }
 
-                // All commented until image formats are implemented correctly.
-                /*
-				stream = File.OpenRead(filename);
-				
+                Console.WriteLine("Image identified as {0}.", _imageFormat.GetImageFormat());
+
 				if(chkPartitions)
 				{
 					List<Partition> partitions = new List<Partition>();
 					string partition_scheme = "";
 					
+                    // TODO: Solve possibility of multiple partition schemes (CUE + MBR, MBR + RDB, CUE + APM, etc)
 					foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
           			{
 						List<Partition> _partitions;
 
-            			if (_partplugin.GetInformation(stream, out _partitions))
+                        if (_partplugin.GetInformation(_imageFormat, out _partitions))
 						{
 							partition_scheme=_partplugin.Name;
 							partitions = _partitions;
 							break;
 						}
            			}
+
+                    if(_imageFormat.ImageHasPartitions())
+                    {
+                        partition_scheme = _imageFormat.GetImageFormat();
+                        partitions = _imageFormat.GetPartitions();
+                    }
 					
 					if(partition_scheme=="")
 					{
+                        Console.WriteLine("DEBUG: No partitions found");
 						if(!chkFilesystems)
 						{
 							Console.WriteLine("No partitions founds, not searching for filesystems");
@@ -190,7 +201,7 @@ namespace FileSystemIDandChk
 							{
 								Console.WriteLine("Identifying filesystem on partition");
 								
-								Identify(stream, out id_plugins, partitions[i].PartitionStart);
+                                Identify(_imageFormat, out id_plugins, partitions[i].PartitionStart);
 								if(id_plugins.Count==0)
 									Console.WriteLine("Filesystem not identified");
 								else if(id_plugins.Count>1)
@@ -202,7 +213,7 @@ namespace FileSystemIDandChk
 										if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
 										{
 											Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-											_plugin.GetInformation(stream, partitions[i].PartitionStart, out information);
+                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStart, out information);
 											Console.Write(information);
 										}
 									}
@@ -211,7 +222,7 @@ namespace FileSystemIDandChk
 								{
 									plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
 									Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-									_plugin.GetInformation(stream, partitions[i].PartitionStart, out information);
+                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStart, out information);
 									Console.Write(information);
 								}
 							}
@@ -219,9 +230,9 @@ namespace FileSystemIDandChk
 					}
 				}
 				
-				if(checkraw)
+                if(checkraw)
 				{
-					Identify(stream, out id_plugins, 0);
+                    Identify(_imageFormat, out id_plugins, 0);
 					if(id_plugins.Count==0)
 						Console.WriteLine("Filesystem not identified");
 					else if(id_plugins.Count>1)
@@ -233,7 +244,7 @@ namespace FileSystemIDandChk
 							if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
 							{
 								Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-								_plugin.GetInformation(stream, 0, out information);
+                                _plugin.GetInformation(_imageFormat, 0, out information);
 								Console.Write(information);
 							}
 						}
@@ -242,11 +253,10 @@ namespace FileSystemIDandChk
 					{
 						plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
 						Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-						_plugin.GetInformation(stream, 0, out information);
+                        _plugin.GetInformation(_imageFormat, 0, out information);
 						Console.Write(information);
 					}
 				}
-    */            
 			}
 			catch(Exception ex)
 			{
@@ -260,13 +270,13 @@ namespace FileSystemIDandChk
 			}
 		}
 
-		private static void Identify (FileStream stream, out List<string> id_plugins, long offset)
+        private static void Identify (ImagePlugins.ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionOffset)
 		{
 			id_plugins = new List<string>();
 			
 			foreach (Plugin _plugin in plugins.PluginsList.Values)
             {
-            	if (_plugin.Identify(stream, offset))
+                if (_plugin.Identify(imagePlugin, partitionOffset))
                 	id_plugins.Add(_plugin.Name.ToLower());
             }
 		}

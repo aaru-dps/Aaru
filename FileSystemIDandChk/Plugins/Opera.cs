@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using FileSystemIDandChk;
 
-// Information from Inside Macintosh
 
 namespace FileSystemIDandChk.Plugins
 {
@@ -15,17 +14,17 @@ namespace FileSystemIDandChk.Plugins
             base.PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
         }
 		
-		public override bool Identify(FileStream fileStream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
-            fileStream.Seek(0 + offset, SeekOrigin.Begin);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
 
             byte record_type;
             byte[] sync_bytes = new byte[5];
             byte record_version;
 			
-			record_type = (byte)fileStream.ReadByte();
-            fileStream.Read(sync_bytes, 0, 5);
-			record_version = (byte)fileStream.ReadByte();
+            record_type = sb_sector[0x000];
+            Array.Copy(sb_sector, 0x001, sync_bytes, 0, 5);
+            record_version = sb_sector[0x006];
 			
 			if (record_type != 1 || record_version != 1)
                 return false;
@@ -35,32 +34,32 @@ namespace FileSystemIDandChk.Plugins
 			return true;
 		}
 		
-		public override void GetInformation (FileStream fileStream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
             StringBuilder SuperBlockMetadata = new StringBuilder();
 
-            fileStream.Seek(0 + offset, SeekOrigin.Begin);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
 
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(fileStream, false); // BigEndian
 			OperaSuperBlock sb = new OperaSuperBlock();
-			byte[] cString;
+            byte[] cString = new byte[32];
+            sb.sync_bytes = new byte[5];
 
-			sb.record_type = eabr.ReadByte();
-			sb.sync_bytes = eabr.ReadBytes(5);
-			sb.record_version = eabr.ReadByte();
-			sb.volume_flags = eabr.ReadByte();
-			cString = eabr.ReadBytes(32);
+            sb.record_type = sb_sector[0x000];
+            Array.Copy(sb_sector, 0x001, sb.sync_bytes, 0, 5);
+            sb.record_version = sb_sector[0x006];
+            sb.volume_flags = sb_sector[0x007];
+            Array.Copy(sb_sector, 0x008, cString, 0, 32);
 			sb.volume_comment = StringHandlers.CToString(cString);
-			cString = eabr.ReadBytes(32);
+            Array.Copy(sb_sector, 0x028, cString, 0, 32);
 			sb.volume_label = StringHandlers.CToString(cString);
-			sb.volume_id = eabr.ReadInt32();
-			sb.block_size = eabr.ReadInt32();
-			sb.block_count = eabr.ReadInt32();
-			sb.root_dirid = eabr.ReadInt32();
-			sb.rootdir_blocks = eabr.ReadInt32();
-			sb.rootdir_bsize = eabr.ReadInt32();
-			sb.last_root_copy = eabr.ReadInt32();
+            sb.volume_id = BigEndianBitConverter.ToInt32(sb_sector, 0x048);
+            sb.block_size = BigEndianBitConverter.ToInt32(sb_sector, 0x04C);
+            sb.block_count = BigEndianBitConverter.ToInt32(sb_sector, 0x050);
+            sb.root_dirid = BigEndianBitConverter.ToInt32(sb_sector, 0x054);
+            sb.rootdir_blocks = BigEndianBitConverter.ToInt32(sb_sector, 0x058);
+            sb.rootdir_bsize = BigEndianBitConverter.ToInt32(sb_sector, 0x05C);
+            sb.last_root_copy = BigEndianBitConverter.ToInt32(sb_sector, 0x060);
 
 			if (sb.record_type != 1 || sb.record_version != 1)
                 return;
@@ -78,7 +77,16 @@ namespace FileSystemIDandChk.Plugins
 			SuperBlockMetadata.AppendFormat("Volume comment: {0}", sb.volume_comment).AppendLine();
 			SuperBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
 			SuperBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
+            if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            {
+                if (sb.block_size != 2048)
+                    SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, 2048);
+            }
+            else if (imagePlugin.GetSectorSize() != sb.block_size)
+                SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, imagePlugin.GetSectorSize());
 			SuperBlockMetadata.AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size*sb.block_count).AppendLine();
+            if((ulong)sb.block_count > imagePlugin.GetSectors())
+                SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks", sb.block_count, imagePlugin.GetSectors());
 			SuperBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
 			SuperBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();
 			SuperBlockMetadata.AppendFormat("Root directory size: {0} blocks, {1} bytes", sb.rootdir_blocks, sb.rootdir_bsize*sb.rootdir_blocks).AppendLine();
@@ -89,20 +97,19 @@ namespace FileSystemIDandChk.Plugins
 
 		private struct OperaSuperBlock
 		{
-			public byte   record_type;    // Record type, must be 1
-			public byte[] sync_bytes;     // 5 bytes, "ZZZZZ" = new byte[5];
-			public byte   record_version; // Record version, must be 1
-			public byte   volume_flags;   // Volume flags
-			public string volume_comment; // 32 bytes, volume comment
-			public string volume_label;   // 32 bytes, volume label
-			public Int32  volume_id;      // Volume ID
-			public Int32  block_size;     // Block size in bytes
-			public Int32  block_count;    // Blocks in volume
-			public Int32  root_dirid;     // Root directory ID
-			public Int32  rootdir_blocks; // Root directory blocks
-			public Int32  rootdir_bsize;  // Root directory block size
-			public Int32  last_root_copy; // Last root directory copy
+            public byte   record_type;    // 0x000, Record type, must be 1
+            public byte[] sync_bytes;     // 0x001, 5 bytes, "ZZZZZ" = new byte[5];
+            public byte   record_version; // 0x006, Record version, must be 1
+            public byte   volume_flags;   // 0x007, Volume flags
+            public string volume_comment; // 0x008, 32 bytes, volume comment
+            public string volume_label;   // 0x028, 32 bytes, volume label
+            public Int32  volume_id;      // 0x048, Volume ID
+            public Int32  block_size;     // 0x04C, Block size in bytes
+            public Int32  block_count;    // 0x050, Blocks in volume
+            public Int32  root_dirid;     // 0x054, Root directory ID
+            public Int32  rootdir_blocks; // 0x058, Root directory blocks
+            public Int32  rootdir_bsize;  // 0x05C, Root directory block size
+            public Int32  last_root_copy; // 0x060, Last root directory copy
 		}
 	}
 }
-

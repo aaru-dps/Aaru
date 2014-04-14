@@ -14,121 +14,121 @@ namespace FileSystemIDandChk.PartPlugins
 
 		public AppleMap (PluginBase Core)
 		{
-            base.Name = "Apple Partition Map";
-			base.PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+            Name = "Apple Partition Map";
+			PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
 		}
 		
-		public override bool GetInformation (FileStream stream, out List<Partition> partitions)
+        public override bool GetInformation (ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
 		{
 			byte[] cString;
 			
 			ulong apm_entries;
+            uint sector_size;
+
+            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                sector_size = 2048;
+            else
+                sector_size = imagePlugin.GetSectorSize();
 			
 			partitions = new List<Partition>();
 			
 			AppleMapBootEntry APMB = new AppleMapBootEntry();
 			AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
 
-			eabr.BaseStream.Seek(0, SeekOrigin.Begin);
-			APMB.signature = eabr.ReadUInt16();
-			
-			if(APMB.signature == APM_MAGIC)
-			{
-				APMB.sector_size = eabr.ReadUInt16();
-			}
-			else
-				APMB.sector_size = 512; // Some disks omit the boot entry
+            byte[] APMB_sector = imagePlugin.ReadSector(0);
 
-			if(APMB.sector_size == 2048) // A CD, search if buggy (aligns in 512 bytes blocks) first
-			{
-				eabr.BaseStream.Seek(512, SeekOrigin.Begin); // Seek to first entry
-				APMEntry.signature = eabr.ReadUInt16();
-				if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT) // It should have partition entry signature if buggy
-				{
-					eabr.BaseStream.Seek(2048, SeekOrigin.Begin); // Seek to first entry considering 2048 bytes blocks. Unbuggy.
-					APMEntry.signature = eabr.ReadUInt16();
-					if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
-						return false;
-					else
-						APMB.sector_size = 2048;
-				}
-				else
-					APMB.sector_size = 512;
-			}
-			else
-			{
-				eabr.BaseStream.Seek(APMB.sector_size, SeekOrigin.Begin); // Seek to first entry
-				APMEntry.signature = eabr.ReadUInt16();
-				if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT) // It should have partition entry signature if buggy
-				{
-					eabr.BaseStream.Seek(512, SeekOrigin.Begin); // Seek to first entry considering 512 bytes blocks. Buggy.
-					APMEntry.signature = eabr.ReadUInt16();
-					if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
-						return false;
-					else
-						APMB.sector_size = 512;
-				}
-			}
+            APMB.signature = BigEndianBitConverter.ToUInt16(APMB_sector, 0x00);
+            APMB.sector_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x02);
+            APMB.sectors = BigEndianBitConverter.ToUInt32(APMB_sector, 0x04);
+            APMB.reserved1 = BigEndianBitConverter.ToUInt16(APMB_sector, 0x08);
+            APMB.reserved2 = BigEndianBitConverter.ToUInt16(APMB_sector, 0x0A);
+            APMB.reserved3 = BigEndianBitConverter.ToUInt32(APMB_sector, 0x0C);
+            APMB.driver_entries = BigEndianBitConverter.ToUInt16(APMB_sector, 0x10);
+            APMB.first_driver_blk = BigEndianBitConverter.ToUInt32(APMB_sector, 0x12);
+            APMB.driver_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x16);
+            APMB.operating_system = BigEndianBitConverter.ToUInt16(APMB_sector, 0x18);
 
-			eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip reserved1
-			APMEntry.entries = eabr.ReadUInt32();
-			if(APMEntry.entries <= 1) // It should have more than one entry
-				return false;
+            ulong first_sector = 0;
+
+            if (APMB.signature == APM_MAGIC) // APM boot block found, APM starts in next sector
+                first_sector = 1;
+
+            // Read first entry
+            byte[] APMEntry_sector = imagePlugin.ReadSector(first_sector);
+            APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
+            APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
+            APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
+            APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
+            APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
+            cString = new byte[32];
+            Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
+            APMEntry.name = StringHandlers.CToString(cString);
+            cString = new byte[32];
+            Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
+            APMEntry.type = StringHandlers.CToString(cString);
+            APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
+            APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
+            APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
+            APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
+            APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
+            APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
+            APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
+            APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
+            APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
+            APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
+            cString = new byte[16];
+            Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
+            APMEntry.processor = StringHandlers.CToString(cString);
+
+            if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
+                return false;
+
+            if (APMEntry.entries <= 1)
+                return false;
+
+            apm_entries = APMEntry.entries;
 			
-//			eabr.BaseStream.Seek(4, SeekOrigin.Current); // Skip start, we don't need it
-//			eabr.BaseStream.Seek(4, SeekOrigin.Current); // Skip sectors, we don't need it
-//			eabr.BaseStream.Seek(32, SeekOrigin.Current); // Skip name, we don't ned it
-			
-//			cString = eabr.ReadBytes(32);
-//			APMEntry.type = StringHandlers.CToString(cString);
-//			if(APMEntry.type != "Apple_partition_map") // APM self-describes, if not, this is incorrect
-//				return false;
-			
-			apm_entries = APMEntry.entries;
-			
-			for(ulong i = 1; i <= apm_entries; i++) // For each partition
+            for(ulong i = 0; i < apm_entries; i++) // For each partition
 			{
-				APMEntry = new AppleMapPartitionEntry();
-				
-				eabr.BaseStream.Seek((long)(APMB.sector_size*i), SeekOrigin.Begin); // Seek to partition descriptor
-				//eabr.BaseStream.Seek((long)(0x200*i), SeekOrigin.Begin); // Seek to partition descriptor
-				
-				APMEntry.signature = eabr.ReadUInt16();
-				if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
+                APMEntry = new AppleMapPartitionEntry();
+                APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
+                APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
+                APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
+                APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
+                APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
+                APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
+                cString = new byte[32];
+                Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
+                APMEntry.name = StringHandlers.CToString(cString);
+                cString = new byte[32];
+                Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
+                APMEntry.type = StringHandlers.CToString(cString);
+                APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
+                APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
+                APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
+                APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
+                APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
+                APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
+                APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
+                APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
+                APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
+                APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
+                cString = new byte[16];
+                Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
+                APMEntry.processor = StringHandlers.CToString(cString);
+
+                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
 				{
 					Partition _partition = new Partition();
 					StringBuilder sb = new StringBuilder();
 					
-					eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip reserved1
-					eabr.BaseStream.Seek(4, SeekOrigin.Current); // Skip entries
-					
-					APMEntry.start = eabr.ReadUInt32();
-					APMEntry.sectors = eabr.ReadUInt32();
-					cString = eabr.ReadBytes(32);
-					APMEntry.name = StringHandlers.CToString(cString);
-					cString = eabr.ReadBytes(32);
-					APMEntry.type = StringHandlers.CToString(cString);
-					APMEntry.first_data_block = eabr.ReadUInt32();
-					APMEntry.data_sectors = eabr.ReadUInt32();
-					APMEntry.status = eabr.ReadUInt32();
-					APMEntry.first_boot_block = eabr.ReadUInt32();
-					APMEntry.boot_size = eabr.ReadUInt32();
-					APMEntry.load_address = eabr.ReadUInt32();
-					eabr.BaseStream.Seek(4, SeekOrigin.Current);
-					APMEntry.entry_point = eabr.ReadUInt32();
-					eabr.BaseStream.Seek(4, SeekOrigin.Current);
-					APMEntry.checksum = eabr.ReadUInt32();
-					cString = eabr.ReadBytes(16);
-					APMEntry.processor = StringHandlers.CToString(cString);
-					
 					_partition.PartitionSequence = i;
 					_partition.PartitionType = APMEntry.type;
 					_partition.PartitionName = APMEntry.name;
-//					_partition.PartitionStart = APMEntry.start * 0x200; // This seems to be hardcoded
-					_partition.PartitionStart = APMEntry.start * APMB.sector_size;
-//					_partition.PartitionLength = APMEntry.sectors * 0x200; // This seems to be hardcoded
-					_partition.PartitionLength = APMEntry.sectors * APMB.sector_size;
+                    _partition.PartitionStart = APMEntry.start * sector_size;
+                    _partition.PartitionLength = APMEntry.sectors * sector_size;
+                    _partition.PartitionStartSector = APMEntry.start;
+                    _partition.PartitionSectors = APMEntry.sectors;
 					
 					sb.AppendLine("Partition flags:");
 					if((APMEntry.status & 0x01) == 0x01)

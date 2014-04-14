@@ -28,14 +28,12 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			UInt32 magic;
 			string s_fname, s_fpack;
 			UInt16 s_nfree, s_ninode;
 			UInt32 s_fsize;
-
-			BinaryReader br = new BinaryReader(stream);
 
 			/*for(int j = 0; j<=(br.BaseStream.Length/0x200); j++)
 			{
@@ -57,37 +55,44 @@ namespace FileSystemIDandChk.Plugins
 				Console.WriteLine("@{0:X8}: 0x{1:X8} ({1})", br.BaseStream.Position-offset-4, number);
 			}*/
 
-			for(int i = 0; i<=4; i++) // Check on 0x0000, 0x0200, 0x0600, 0x0800 + offset
-			{
-				if((ulong)br.BaseStream.Length <= (ulong)(offset + i*0x200 + 0x400)) // Stream must be bigger than SB location + SB size + offset
-					return false;
+            byte sb_size_in_sectors;
 
-				br.BaseStream.Seek(offset + i*0x200 + 0x3F8, SeekOrigin.Begin); // XENIX magic location
-				magic = br.ReadUInt32();
+            if (imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
+                sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
+            else
+                sb_size_in_sectors = 1; // If not a single sector can store it
+
+            if (imagePlugin.GetSectors() <= (partitionOffset + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
+                return false;
+
+            // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
+            for(int i = 0; i<=16; i++)
+			{
+                byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partitionOffset, sb_size_in_sectors);
+
+                magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
 				if(magic == XENIX_MAGIC || magic == XENIX_CIGAM)
 					return true;
 
-				br.BaseStream.Seek(offset + i*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
-				magic = br.ReadUInt32();
+                magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
 
 				if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
 					return true;
 
-				br.BaseStream.Seek(offset + i*0x200 + 0x1E8, SeekOrigin.Begin); // Coherent UNIX s_fname location
-				s_fname = StringHandlers.CToString(br.ReadBytes(6));
-				s_fpack = StringHandlers.CToString(br.ReadBytes(6));
+                byte[] coherent_string = new byte[6];
+                Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
+                s_fname = StringHandlers.CToString(coherent_string);
+                Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+                s_fpack = StringHandlers.CToString(coherent_string);
 
 				if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
 					return true;
 
 				// Now try to identify 7th edition
-				br.BaseStream.Seek(offset + i*0x200 + 0x002, SeekOrigin.Begin);
-				s_fsize = br.ReadUInt32();
-				br.BaseStream.Seek(offset + i*0x200 + 0x006, SeekOrigin.Begin);
-				s_nfree = br.ReadUInt16();
-				br.BaseStream.Seek(offset + i*0x200 + 0x0D0, SeekOrigin.Begin);
-				s_ninode = br.ReadUInt16();
+                s_fsize = BitConverter.ToUInt32(sb_sector, 0x002); // 7th edition's s_fsize
+                s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
+                s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
 				if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
 				{
@@ -103,7 +108,7 @@ namespace FileSystemIDandChk.Plugins
 					{
 						if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
 						{
-							if((s_fsize * 1024) <= (br.BaseStream.Length-offset) || (s_fsize * 512) <= (br.BaseStream.Length-offset))
+                            if((s_fsize * 1024) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
 								return true;
 						}
 					}
@@ -113,13 +118,13 @@ namespace FileSystemIDandChk.Plugins
 			return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
 			bool littleendian = true;
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, littleendian); // Start in little endian until we know what are we handling here
+            BigEndianBitConverter.IsLittleEndian = true; // Start in little endian until we know what are we handling here
 			int start;
 			UInt32 magic;
 			string s_fname, s_fpack;
@@ -131,59 +136,65 @@ namespace FileSystemIDandChk.Plugins
 			bool sysvr4 = false;
 			bool sys7th = false;
 			bool coherent = false;
+            byte[] sb_sector;
+            byte sb_size_in_sectors;
 
-			for(start = 0; start<=4; start++) // Check on 0x0000, 0x0200, 0x0600, 0x0800 + offset
+            if (imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
+                sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
+            else
+                sb_size_in_sectors = 1; // If not a single sector can store it
+
+            // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
+            for(start = 0; start<=16; start++)
 			{
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x3F8, SeekOrigin.Begin); // XENIX magic location
-				magic = eabr.ReadUInt32();
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 			
 				if(magic == XENIX_MAGIC)
 				{
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
 					xenix = true;
 					break;
 				}
 				else if(magic == XENIX_CIGAM)
 				{
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
 					xenix = true;
 					break;
 				}
 
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
-				magic = eabr.ReadUInt32();
+                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8); // XENIX magic location
 			
 				if(magic == SYSV_MAGIC)
 				{
-					littleendian = true;
+                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
 					sysv = true;
 					break;
 				}
 				else if(magic == SYSV_CIGAM)
 				{
-					littleendian = false;
+                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
 					sysv = true;
 					break;
 				}
 
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x1E8, SeekOrigin.Begin); // Coherent UNIX s_fname location
-				s_fname = StringHandlers.CToString(eabr.ReadBytes(6));
-				s_fpack = StringHandlers.CToString(eabr.ReadBytes(6));
+                byte[] coherent_string = new byte[6];
+                Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
+                s_fname = StringHandlers.CToString(coherent_string);
+                Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+                s_fpack = StringHandlers.CToString(coherent_string);
 			
 				if(s_fname == COH_FNAME	|| s_fpack == COH_FPACK)
 				{
-					littleendian = true; // Coherent is in PDP endianness, use helper for that
+                    BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
 					coherent = true;
 					break;
 				}
 
 				// Now try to identify 7th edition
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x002, SeekOrigin.Begin);
-				s_fsize = eabr.ReadUInt32();
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x006, SeekOrigin.Begin);
-				s_nfree = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x0D0, SeekOrigin.Begin);
-				s_ninode = eabr.ReadUInt16();
+                s_fsize = BitConverter.ToUInt32(sb_sector, 0x002); // 7th edition's s_fsize
+                s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
+                s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
 				if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
 				{
@@ -201,10 +212,10 @@ namespace FileSystemIDandChk.Plugins
 					{
 						if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
 						{
-							if((s_fsize * 1024) <= (eabr.BaseStream.Length-offset) || (s_fsize * 512) <= (eabr.BaseStream.Length-offset))
+                            if((s_fsize * 1024) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
 							{
 								sys7th = true;
-								littleendian = true;
+                                BigEndianBitConverter.IsLittleEndian = true;
 								break;
 							}
 						}
@@ -216,32 +227,32 @@ namespace FileSystemIDandChk.Plugins
 
 			if(xenix)
 			{
-				eabr = new EndianAwareBinaryReader(stream, littleendian);
+                byte[] xenix_strings = new byte[6];
 				XenixSuperBlock xnx_sb = new XenixSuperBlock();
-				eabr.BaseStream.Seek(offset + start*0x200, SeekOrigin.Begin);
-				xnx_sb.s_isize = eabr.ReadUInt16();
-				xnx_sb.s_fsize = eabr.ReadUInt32();
-				xnx_sb.s_nfree = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(400, SeekOrigin.Current); // Skip free block list
-				xnx_sb.s_ninode = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free inode list
-				xnx_sb.s_flock = eabr.ReadByte();
-				xnx_sb.s_ilock = eabr.ReadByte();
-				xnx_sb.s_fmod = eabr.ReadByte();
-				xnx_sb.s_ronly = eabr.ReadByte();
-				xnx_sb.s_time = eabr.ReadUInt32();
-				xnx_sb.s_tfree = eabr.ReadUInt32();
-				xnx_sb.s_tinode = eabr.ReadUInt16();
-				xnx_sb.s_cylblks = eabr.ReadUInt16();
-				xnx_sb.s_gapblks = eabr.ReadUInt16();
-				xnx_sb.s_dinfo0 = eabr.ReadUInt16();
-				xnx_sb.s_dinfo1 = eabr.ReadUInt16();
-				xnx_sb.s_fname = StringHandlers.CToString(eabr.ReadBytes(6));
-				xnx_sb.s_fpack = StringHandlers.CToString(eabr.ReadBytes(6));
-				xnx_sb.s_clean = eabr.ReadByte();
-				xnx_sb.s_magic = eabr.ReadUInt32();
-				eabr.BaseStream.Seek(371, SeekOrigin.Current); // Skip fill zone
-				xnx_sb.s_type = eabr.ReadUInt32();
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+				
+                xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
+                xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x198);
+                xnx_sb.s_flock = sb_sector[0x262];
+                xnx_sb.s_ilock = sb_sector[0x263];
+                xnx_sb.s_fmod = sb_sector[0x264];
+                xnx_sb.s_ronly = sb_sector[0x265];
+                xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x266);
+                xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x26A);
+                xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x26E);
+                xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x270);
+                xnx_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x272);
+                xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x274);
+                xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x276);
+                Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
+                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
+                Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
+                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
+                xnx_sb.s_clean = sb_sector[0x284];
+                xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
+                xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x3FC);
 
 				UInt32 bs = 512;
 				sb.AppendLine("XENIX filesystem");
@@ -262,6 +273,16 @@ namespace FileSystemIDandChk.Plugins
 					sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
 					break;
 				}
+                if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                {
+                    if (bs != 2048)
+                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, 2048).AppendLine();
+                }
+                else
+                {
+                    if (bs != imagePlugin.GetSectorSize())
+                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
+                }
 				sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize*bs).AppendLine();
 				sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree*bs).AppendLine();
 				sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree*bs).AppendLine();
@@ -289,17 +310,14 @@ namespace FileSystemIDandChk.Plugins
 
 			if(sysv)
 			{
-				eabr = new EndianAwareBinaryReader(stream, littleendian);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
 				UInt16 pad0, pad1, pad2, pad3;
+                byte[] sysv_strings = new byte[6];
 
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x002, SeekOrigin.Begin); // First padding
-				pad0 = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x00A, SeekOrigin.Begin); // Second padding
-				pad1 = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x0D6, SeekOrigin.Begin); // Third padding
-				pad2 = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(offset + start*0x200 + 0x1B6, SeekOrigin.Begin); // Fourth padding
-				pad3 = eabr.ReadUInt16();
+                pad0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x002); // First padding
+                pad1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x00A); // Second padding
+                pad2 = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D6); // Third padding
+                pad3 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B6); // Fourth padding
 
 				// This detection is not working as expected
 				if(pad0 == 0 && pad1 == 0 && pad2 == 0)
@@ -308,43 +326,55 @@ namespace FileSystemIDandChk.Plugins
 					sysvr2 = true;
 
 				SystemVRelease4SuperBlock sysv_sb = new SystemVRelease4SuperBlock();
-				eabr.BaseStream.Seek(offset + start*0x200, SeekOrigin.Begin);
-				sysv_sb.s_isize = eabr.ReadUInt16();
-				if(sysvr4)
-					eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip padding
-				sysv_sb.s_fsize = eabr.ReadUInt32();
-				sysv_sb.s_nfree = eabr.ReadUInt16();
-				if(sysvr4)
-					eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip padding
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free block list
-				sysv_sb.s_ninode = eabr.ReadUInt16();
-				if(sysvr4)
-					eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip padding
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free inode list
-				sysv_sb.s_flock = eabr.ReadByte();
-				sysv_sb.s_ilock = eabr.ReadByte();
-				sysv_sb.s_fmod = eabr.ReadByte();
-				sysv_sb.s_ronly = eabr.ReadByte();
-				sysv_sb.s_time = eabr.ReadUInt32();
-				sysv_sb.s_cylblks = eabr.ReadUInt16();
-				sysv_sb.s_gapblks = eabr.ReadUInt16();
-				sysv_sb.s_dinfo0 = eabr.ReadUInt16();
-				sysv_sb.s_dinfo1 = eabr.ReadUInt16();
-				sysv_sb.s_tfree = eabr.ReadUInt32();
-				sysv_sb.s_tinode = eabr.ReadUInt16();
-				if(sysvr4 && pad3 == 0)
-					eabr.BaseStream.Seek(2, SeekOrigin.Current); // Skip padding
-				sysv_sb.s_fname = StringHandlers.CToString(eabr.ReadBytes(6));
-				sysv_sb.s_fpack = StringHandlers.CToString(eabr.ReadBytes(6));
-				if(sysvr4 && pad3 == 0)
-					eabr.BaseStream.Seek(50, SeekOrigin.Current); // Skip fill zone
-				else if(sysvr4)
-					eabr.BaseStream.Seek(50, SeekOrigin.Current); // Skip fill zone
-				else
-					eabr.BaseStream.Seek(56, SeekOrigin.Current); // Skip fill zone
-				sysv_sb.s_state = eabr.ReadUInt32();
-				sysv_sb.s_magic = eabr.ReadUInt32();
-				sysv_sb.s_type = eabr.ReadUInt32();
+
+                // Common offsets
+                sysv_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                sysv_sb.s_state = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4);
+                sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8);
+                sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC);
+
+                if (sysvr4)
+                {
+                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004);
+                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008);
+                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D4);
+                    sysv_sb.s_flock = sb_sector[0x1A0];
+                    sysv_sb.s_ilock = sb_sector[0x1A1];
+                    sysv_sb.s_fmod = sb_sector[0x1A2];
+                    sysv_sb.s_ronly = sb_sector[0x1A3];
+                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A4);
+                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
+                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
+                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
+                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
+                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0);
+                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4);
+                    Array.Copy(sb_sector, 0x1B8, sysv_strings, 0, 6);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings);
+                    Array.Copy(sb_sector, 0x1BE, sysv_strings, 0, 6);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings);
+                }
+                else
+                {
+                    sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
+                    sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                    sysv_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D0);
+                    sysv_sb.s_flock = sb_sector[0x19A];
+                    sysv_sb.s_ilock = sb_sector[0x19B];
+                    sysv_sb.s_fmod = sb_sector[0x19C];
+                    sysv_sb.s_ronly = sb_sector[0x19D];
+                    sysv_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E);
+                    sysv_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A2);
+                    sysv_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A4);
+                    sysv_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6);
+                    sysv_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
+                    sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1AA);
+                    sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
+                    Array.Copy(sb_sector, 0x1B0, sysv_strings, 0, 6);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings);
+                    Array.Copy(sb_sector, 0x1B6, sysv_strings, 0, 6);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings);
+                }
 
 				UInt32 bs = 512;
 				if(sysvr4)
@@ -368,6 +398,16 @@ namespace FileSystemIDandChk.Plugins
 					sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
 					break;
 				}
+                if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                {
+                    if (bs != 2048)
+                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, 2048).AppendLine();
+                }
+                else
+                {
+                    if (bs != imagePlugin.GetSectorSize())
+                        sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
+                }
 				sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize*bs).AppendLine();
 				sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree*bs).AppendLine();
 				sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree*bs).AppendLine();
@@ -395,28 +435,31 @@ namespace FileSystemIDandChk.Plugins
 
 			if(coherent)
 			{
-				eabr = new EndianAwareBinaryReader(stream, true);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
 				CoherentSuperBlock coh_sb = new CoherentSuperBlock();
-				eabr.BaseStream.Seek(offset + start*0x200, SeekOrigin.Begin);
-				coh_sb.s_isize = eabr.ReadUInt16();
-				coh_sb.s_fsize = Swapping.PDPFromLittleEndian(eabr.ReadUInt32());
-				coh_sb.s_nfree = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(256, SeekOrigin.Current); // Skip free block list
-				coh_sb.s_ninode = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free inode list
-				coh_sb.s_flock = eabr.ReadByte();
-				coh_sb.s_ilock = eabr.ReadByte();
-				coh_sb.s_fmod = eabr.ReadByte();
-				coh_sb.s_ronly = eabr.ReadByte();
-				coh_sb.s_time = Swapping.PDPFromLittleEndian(eabr.ReadUInt32());
-				coh_sb.s_tfree = Swapping.PDPFromLittleEndian(eabr.ReadUInt32());
-				coh_sb.s_tinode = eabr.ReadUInt16();
-				coh_sb.s_int_m = eabr.ReadUInt16();
-				coh_sb.s_int_n = eabr.ReadUInt16();
-				coh_sb.s_fname = StringHandlers.CToString(eabr.ReadBytes(6));
-				coh_sb.s_fpack = StringHandlers.CToString(eabr.ReadBytes(6));
+                byte[] coh_strings = new byte[6];
+
+                coh_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                coh_sb.s_fsize = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x002));
+                coh_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                coh_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x108);
+                coh_sb.s_flock = sb_sector[0x1D2];
+                coh_sb.s_ilock = sb_sector[0x1D3];
+                coh_sb.s_fmod = sb_sector[0x1D4];
+                coh_sb.s_ronly = sb_sector[0x1D5];
+                coh_sb.s_time = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x1D6));
+                coh_sb.s_tfree = Swapping.PDPFromLittleEndian(BigEndianBitConverter.ToUInt32(sb_sector, 0x1DE));
+                coh_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E2);
+                coh_sb.s_int_m = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E4);
+                coh_sb.s_int_n = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E6);
+                Array.Copy(sb_sector, 0x1E8, coh_strings, 0, 6);
+                coh_sb.s_fname = StringHandlers.CToString(coh_strings);
+                Array.Copy(sb_sector, 0x1EE, coh_strings, 0, 6);
+                coh_sb.s_fpack = StringHandlers.CToString(coh_strings);
 
 				sb.AppendLine("Coherent UNIX filesystem");
+                if (imagePlugin.GetSectorSize() != 512)
+                    sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
 				sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize*512).AppendLine();
 				sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree*512).AppendLine();
 				sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree*512).AppendLine();
@@ -438,28 +481,31 @@ namespace FileSystemIDandChk.Plugins
 
 			if(sys7th)
 			{
-				eabr = new EndianAwareBinaryReader(stream, littleendian);
-				UNIX7thEditionSuperBlock v7_sb = new UNIX7thEditionSuperBlock();
-				eabr.BaseStream.Seek(offset + start*0x200, SeekOrigin.Begin);
-				v7_sb.s_isize = eabr.ReadUInt16();
-				v7_sb.s_fsize = eabr.ReadUInt32();
-				v7_sb.s_nfree = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free block list
-				v7_sb.s_ninode = eabr.ReadUInt16();
-				eabr.BaseStream.Seek(200, SeekOrigin.Current); // Skip free inode list
-				v7_sb.s_flock = eabr.ReadByte();
-				v7_sb.s_ilock = eabr.ReadByte();
-				v7_sb.s_fmod = eabr.ReadByte();
-				v7_sb.s_ronly = eabr.ReadByte();
-				v7_sb.s_time = eabr.ReadUInt32();
-				v7_sb.s_tfree = eabr.ReadUInt32();
-				v7_sb.s_tinode = eabr.ReadUInt16();
-				v7_sb.s_int_m = eabr.ReadUInt16();
-				v7_sb.s_int_n = eabr.ReadUInt16();
-				v7_sb.s_fname = StringHandlers.CToString(eabr.ReadBytes(6));
-				v7_sb.s_fpack = StringHandlers.CToString(eabr.ReadBytes(6));
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                UNIX7thEditionSuperBlock v7_sb = new UNIX7thEditionSuperBlock();
+                byte[] sys7_strings = new byte[6];
+
+                v7_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                v7_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
+                v7_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                v7_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D0);
+                v7_sb.s_flock = sb_sector[0x19A];
+                v7_sb.s_ilock = sb_sector[0x19B];
+                v7_sb.s_fmod = sb_sector[0x19C];
+                v7_sb.s_ronly = sb_sector[0x19D];
+                v7_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E);
+                v7_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A2);
+                v7_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6);
+                v7_sb.s_int_m = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
+                v7_sb.s_int_n = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
+                Array.Copy(sb_sector, 0x1AC, sys7_strings, 0, 6);
+                v7_sb.s_fname = StringHandlers.CToString(sys7_strings);
+                Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
+                v7_sb.s_fpack = StringHandlers.CToString(sys7_strings);
 
 				sb.AppendLine("UNIX 7th Edition filesystem");
+                if (imagePlugin.GetSectorSize() != 512)
+                    sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
 				sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize*512).AppendLine();
 				sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree*512).AppendLine();
 				sb.AppendFormat("{0} free blocks on list ({1} bytes)", v7_sb.s_nfree, v7_sb.s_nfree*512).AppendLine();
@@ -480,6 +526,8 @@ namespace FileSystemIDandChk.Plugins
 			}
 
 			information = sb.ToString();
+
+            BigEndianBitConverter.IsLittleEndian = false; // Return to default (bigendian)
 		}
 
 		private struct XenixSuperBlock
@@ -621,4 +669,3 @@ namespace FileSystemIDandChk.Plugins
 		}
 	}
 }
-

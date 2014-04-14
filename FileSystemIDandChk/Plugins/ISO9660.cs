@@ -7,6 +7,7 @@ using FileSystemIDandChk;
 // This is coded following ECMA-119.
 // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
 // TODO: Apple extensiones, requires XA or advance RR interpretation.
+// TODO: Needs a major rewrite
 
 namespace FileSystemIDandChk.Plugins
 {
@@ -38,7 +39,7 @@ namespace FileSystemIDandChk.Plugins
             public DateTime EffectiveTime;
         }
 
-        public override bool Identify(FileStream fileStream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
 			if(alreadyLaunched)
 				return false;
@@ -47,22 +48,25 @@ namespace FileSystemIDandChk.Plugins
 
 			byte VDType;
 
-			// ISO9660 Primary Volume Descriptor starts at 32768, so that's minimal size.
-            if (fileStream.Length < 32768)
+            // ISO9660 is designed for 2048 bytes/sector devices
+            if (imagePlugin.GetSectorSize() < 2048)
                 return false;
-			
-			// Seek to Volume Descriptor
-            fileStream.Seek(32768, SeekOrigin.Begin);
 
-            VDType = (byte)fileStream.ReadByte();
+            // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
+            if (imagePlugin.GetSectors() < 16)
+                return false;
+
+            // Read to Volume Descriptor
+            byte[] vd_sector = imagePlugin.ReadSector(16 + partitionOffset);
+
+            VDType = vd_sector[0];
 			byte[] VDMagic = new byte[5];
 
 			// Wrong, VDs can be any order!
             if (VDType == 255) // Supposedly we are in the PVD.
 	            return false;
 
-            if (fileStream.Read(VDMagic, 0, 5) != 5)
-	            return false; // Something bad happened
+            Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
 
             if (Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
                 return false;
@@ -70,7 +74,7 @@ namespace FileSystemIDandChk.Plugins
 			return true;
 		}
 		
-		public override void GetInformation (FileStream fileStream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
             information = "";
             StringBuilder ISOMetadata = new StringBuilder();
@@ -108,20 +112,22 @@ namespace FileSystemIDandChk.Plugins
             byte[] VDPathTableStart = new byte[4];
             byte[] RootDirectoryLocation = new byte[4];
 
-            fileStream.Seek(0, SeekOrigin.Begin);
-
-            // ISO9660 Primary Volume Descriptor starts at 32768, so that's minimal size.
-            if (fileStream.Length < 32768)
+            // ISO9660 is designed for 2048 bytes/sector devices
+            if (imagePlugin.GetSectorSize() < 2048)
                 return;
 
-            int counter = 0;
+            // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
+            if (imagePlugin.GetSectors() < 16)
+                return;
+
+            ulong counter = 0;
 
             while (true)
             {
                 // Seek to Volume Descriptor
-                fileStream.Seek(32768+(2048*counter), SeekOrigin.Begin);
+                byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partitionOffset);
 
-                VDType = (byte)fileStream.ReadByte();
+                VDType = vd_sector[0];
 
                 if (VDType == 255) // Supposedly we are in the PVD.
                 {
@@ -130,12 +136,7 @@ namespace FileSystemIDandChk.Plugins
                     break;
                 }
 
-                if (fileStream.Read(VDMagic, 0, 5) != 5)
-                {
-                    if (counter == 0)
-                        return; // Something bad happened
-                    break;
-                }
+                Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
 
                 if (Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
                 {
@@ -151,11 +152,8 @@ namespace FileSystemIDandChk.Plugins
                             Bootable = true;
                             BootSpec = "Unknown";
 
-                            // Seek to boot system identifier
-                            fileStream.Seek(32775 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(BootSysId, 0, 32) != 32)
-                                break; // Something bad happened
+                            // Read to boot system identifier
+                            Array.Copy(vd_sector, 0x007, BootSysId, 0, 32);
 
                             if (Encoding.ASCII.GetString(BootSysId).Substring(0, 23) == "EL TORITO SPECIFICATION")
                                 BootSpec = "El Torito";
@@ -164,56 +162,31 @@ namespace FileSystemIDandChk.Plugins
                         }
                     case 1:
                         {
-                            // Seek to first identifiers
-                            fileStream.Seek(32776 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(VDSysId, 0, 32) != 32)
-                                break; // Something bad happened
-                            if (fileStream.Read(VDVolId, 0, 32) != 32)
-                                break; // Something bad happened
+                            // Read first identifiers
+                            Array.Copy(vd_sector, 0x008, VDSysId, 0, 32);
+                            Array.Copy(vd_sector, 0x028, VDVolId, 0, 32);
 
                             // Get path table start
-                            fileStream.Seek(32908 + (2048 * counter), SeekOrigin.Begin);
+                            Array.Copy(vd_sector, 0x08C, VDPathTableStart, 0, 4);
 
-                            if (fileStream.Read(VDPathTableStart, 0, 4) != 4)
-                                break; // Something bad happened
+                            // Read next identifiers
+                            Array.Copy(vd_sector, 0x0BE, VDVolSetId, 0, 128);
+                            Array.Copy(vd_sector, 0x13E, VDPubId, 0, 128);
+                            Array.Copy(vd_sector, 0x1BE, VDDataPrepId, 0, 128);
+                            Array.Copy(vd_sector, 0x23E, VDAppId, 0, 128);
 
-                            // Seek to next identifiers
-                            fileStream.Seek(32958 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(VDVolSetId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(VDPubId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(VDDataPrepId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(VDAppId, 0, 128) != 128)
-                                break; // Something bad happened
-
-                            // Seek to dates
-                            fileStream.Seek(33581 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(VCTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(VMTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(VXTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(VETime, 0, 17) != 17)
-                                break; // Something bad happened
+                            // Read dates
+                            Array.Copy(vd_sector, 0x32D, VCTime, 0, 17);
+                            Array.Copy(vd_sector, 0x33E, VMTime, 0, 17);
+                            Array.Copy(vd_sector, 0x34F, VXTime, 0, 17);
+                            Array.Copy(vd_sector, 0x360, VETime, 0, 17);
 
                             break;
                         }
                     case 2:
                         {
                             // Check if this is Joliet
-                            fileStream.Seek(32856 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(JolietMagic, 0, 3) != 3)
-                            {
-                                break; // Something bad happened
-                            }
-
+                            Array.Copy(vd_sector, 0x058, JolietMagic, 0, 3);
                             if (JolietMagic[0] == '%' && JolietMagic[1] == '/')
                             {
                                 if (JolietMagic[2] == '@' || JolietMagic[2] == 'C' || JolietMagic[2] == 'E')
@@ -228,37 +201,21 @@ namespace FileSystemIDandChk.Plugins
                             else
                                 break;
 
-                            // Seek to first identifiers
-                            fileStream.Seek(32776 + (2048 * counter), SeekOrigin.Begin);
+                            // Read first identifiers
+                            Array.Copy(vd_sector, 0x008, JolietSysId, 0, 32);
+                            Array.Copy(vd_sector, 0x028, JolietVolId, 0, 32);
 
-                            if (fileStream.Read(JolietSysId, 0, 32) != 32)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietVolId, 0, 32) != 32)
-                                break; // Something bad happened
+                            // Read next identifiers
+                            Array.Copy(vd_sector, 0x0BE, JolietVolSetId, 0, 128);
+                            Array.Copy(vd_sector, 0x13E, JolietPubId, 0, 128);
+                            Array.Copy(vd_sector, 0x13E, JolietDataPrepId, 0, 128);
+                            Array.Copy(vd_sector, 0x13E, JolietAppId, 0, 128);
 
-                            // Seek to next identifiers
-                            fileStream.Seek(32958 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(JolietVolSetId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietPubId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietDataPrepId, 0, 128) != 128)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietAppId, 0, 128) != 128)
-                                break; // Something bad happened
-
-                            // Seek to dates
-                            fileStream.Seek(33581 + (2048 * counter), SeekOrigin.Begin);
-
-                            if (fileStream.Read(JolietCTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietMTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietXTime, 0, 17) != 17)
-                                break; // Something bad happened
-                            if (fileStream.Read(JolietETime, 0, 17) != 17)
-                                break; // Something bad happened
+                            // Read dates
+                            Array.Copy(vd_sector, 0x32D, JolietCTime, 0, 17);
+                            Array.Copy(vd_sector, 0x33E, JolietMTime, 0, 17);
+                            Array.Copy(vd_sector, 0x34F, JolietXTime, 0, 17);
+                            Array.Copy(vd_sector, 0x360, JolietETime, 0, 17);
 
                             break;
                         }
@@ -275,27 +232,23 @@ namespace FileSystemIDandChk.Plugins
 				decodedJolietVD = DecodeJolietDescriptor(JolietSysId, JolietVolId, JolietVolSetId, JolietPubId, JolietDataPrepId, JolietAppId, JolietCTime, JolietMTime, JolietXTime, JolietETime);
 
 
-            int i = BitConverter.ToInt32(VDPathTableStart, 0);
+            ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
 
-            fileStream.Seek((i * 2048)+2, SeekOrigin.Begin); // Seek to first path table location field
-
+            byte[] path_table = imagePlugin.ReadSector(i + partitionOffset);
+            Array.Copy(path_table, 2, RootDirectoryLocation, 0, 4);
             // Check for Rock Ridge
-            if (fileStream.Read(RootDirectoryLocation, 0, 4) == 4)
+            byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partitionOffset);
+
+            byte[] SUSPMagic = new byte[2];
+            byte[] RRMagic = new byte[2];
+
+            Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
+            if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
             {
-                fileStream.Seek((BitConverter.ToInt32(RootDirectoryLocation,0) * 2048)+34, SeekOrigin.Begin); // Seek to root directory, first entry, system use field
-
-                byte[] SUSPMagic = new byte[2];
-                byte[] RRMagic = new byte[2];
-
-                fileStream.Read(SUSPMagic, 0, 2);
-                if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
+                Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
+                if (Encoding.ASCII.GetString(RRMagic) == "RR")
                 {
-                    fileStream.Seek(5, SeekOrigin.Current); // Seek for rock ridge magic
-                    fileStream.Read(RRMagic, 0, 2);
-                    if (Encoding.ASCII.GetString(RRMagic) == "RR")
-                    {
-                        RockRidge = true;
-                    }
+                    RockRidge = true;
                 }
             }
 
@@ -307,8 +260,8 @@ namespace FileSystemIDandChk.Plugins
             StringBuilder IPBinInformation = new StringBuilder();
 
             byte[] SegaHardwareID = new byte[16];
-            fileStream.Seek(0, SeekOrigin.Begin); // Seek to start (again)
-            fileStream.Read(SegaHardwareID, 0, 16);
+            byte[] ipbin_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            Array.Copy(ipbin_sector, 0x000, SegaHardwareID, 0, 16);
 
             switch (Encoding.ASCII.GetString(SegaHardwareID))
             {
@@ -323,85 +276,80 @@ namespace FileSystemIDandChk.Plugins
                         IPBinInformation.AppendLine("--------------------------------");
 
                         // Definitions following
-                        byte[] volume_name = new byte[11];      // Varies
-                        byte[] spare_space1 = new byte[1];         // 0x00
-                        byte[] volume_version = new byte[2];       // Volume version in BCD. <100 = Prerelease.
-                        byte[] volume_type = new byte[2];          // Bit 0 = 1 => CD-ROM. Rest should be 0.
-                        byte[] system_name = new byte[11];      // Unknown, varies!
-                        byte[] spare_space2 = new byte[1];         // 0x00
-                        byte[] system_version = new byte[2];       // Should be 1
-                        byte[] spare_space3 = new byte[2];         // 0x0000
-                        byte[] ip_address = new byte[4];	      // Initial program address
-                        byte[] ip_loadsize = new byte[4];          // Load size of initial program
-                        byte[] ip_entry_address = new byte[4];     // Initial program entry address
-                        byte[] ip_work_ram_size = new byte[4];     // Initial program work RAM size in bytes
-                        byte[] sp_address = new byte[4];	      // System program address
-                        byte[] sp_loadsize = new byte[4];          // Load size of system program
-                        byte[] sp_entry_address = new byte[4];     // System program entry address
-                        byte[] sp_work_ram_size = new byte[4];     // System program work RAM size in bytes
-                        byte[] release_date = new byte[8];      // MMDDYYYY
-                        byte[] unknown1 = new byte[7];          // Seems to be all 0x20s
-                        byte[] spare_space4 = new byte[1];         // 0x00 ?
-                        byte[] system_reserved = new byte[160]; // System Reserved Area
-                        byte[] hardware_id = new byte[16];      // Hardware ID
-                        byte[] copyright = new byte[3];         // "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
-                        byte[] developer_code = new byte[5];    // "SEGA" or "T-xx"
-                        byte[] unknown2 = new byte[1];             // Seems to be part of developer code, need to get a SEGA disc to check
-                        byte[] release_date2 = new byte[8];     // Another release date, this with month in letters?
-                        byte[] domestic_title = new byte[48];   // Domestic version of the game title
-                        byte[] overseas_title = new byte[48];   // Overseas version of the game title
-                        byte[] application_type = new byte[2];  // Application type
-                        byte[] space_space5 = new byte[1];         // 0x20
-                        byte[] product_code = new byte[13];      // Official product code
-                        byte[] peripherals = new byte[16];      // Supported peripherals, see above
-                        byte[] spare_space6 = new byte[16];     // 0x20
-                        byte[] spare_space7 = new byte[64];     // Inside here should be modem information, but I need to get a modem-enabled game
-                        byte[] region_codes = new byte[16];     // Region codes, space-filled
+                        byte[] volume_name = new byte[11];      // 0x010, Varies
+                        byte[] spare_space1 = new byte[1];      // 0x01B, 0x00
+                        byte[] volume_version = new byte[2];    // 0x01C, Volume version in BCD. <100 = Prerelease.
+                        byte[] volume_type = new byte[2];       // 0x01E, Bit 0 = 1 => CD-ROM. Rest should be 0.
+                        byte[] system_name = new byte[11];      // 0x020, Unknown, varies!
+                        byte[] spare_space2 = new byte[1];      // 0x02B, 0x00
+                        byte[] system_version = new byte[2];    // 0x02C, Should be 1
+                        byte[] spare_space3 = new byte[2];      // 0x02E, 0x0000
+                        byte[] ip_address = new byte[4];	    // 0x030, Initial program address
+                        byte[] ip_loadsize = new byte[4];       // 0x034, Load size of initial program
+                        byte[] ip_entry_address = new byte[4];  // 0x038, Initial program entry address
+                        byte[] ip_work_ram_size = new byte[4];  // 0x03C, Initial program work RAM size in bytes
+                        byte[] sp_address = new byte[4];	    // 0x040, System program address
+                        byte[] sp_loadsize = new byte[4];       // 0x044, Load size of system program
+                        byte[] sp_entry_address = new byte[4];  // 0x048, System program entry address
+                        byte[] sp_work_ram_size = new byte[4];  // 0x04C, System program work RAM size in bytes
+                        byte[] release_date = new byte[8];      // 0x050, MMDDYYYY
+                        byte[] unknown1 = new byte[7];          // 0x058, Seems to be all 0x20s
+                        byte[] spare_space4 = new byte[1];      // 0x05F, 0x00 ?
+                        byte[] system_reserved = new byte[160]; // 0x060, System Reserved Area
+                        byte[] hardware_id = new byte[16];      // 0x100, Hardware ID
+                        byte[] copyright = new byte[3];         // 0x110, "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
+                        byte[] developer_code = new byte[5];    // 0x113 or 0x110, "SEGA" or "T-xx"
+                        byte[] release_date2 = new byte[8];     // 0x118, Another release date, this with month in letters?
+                        byte[] domestic_title = new byte[48];   // 0x120, Domestic version of the game title
+                        byte[] overseas_title = new byte[48];   // 0x150, Overseas version of the game title
+                        byte[] product_code = new byte[13];     // 0x180, Official product code
+                        byte[] peripherals = new byte[16];      // 0x190, Supported peripherals, see above
+                        byte[] spare_space6 = new byte[16];     // 0x1A0, 0x20
+                        byte[] spare_space7 = new byte[64];     // 0x1B0, Inside here should be modem information, but I need to get a modem-enabled game
+                        byte[] region_codes = new byte[16];     // 0x1F0, Region codes, space-filled
                         //Reading all data
-                        fileStream.Read(volume_name, 0, 11);      // Varies
-                        fileStream.Read(spare_space1, 0, 1);         // 0x00
-                        fileStream.Read(volume_version, 0, 2);       // Volume version in BCD. <100 = Prerelease.
-                        fileStream.Read(volume_type, 0, 2);          // Bit 0 = 1 => CD-ROM. Rest should be 0.
-                        fileStream.Read(system_name, 0, 11);      // Unknown, varies!
-                        fileStream.Read(spare_space2, 0, 1);         // 0x00
-                        fileStream.Read(system_version, 0, 2);       // Should be 1
-                        fileStream.Read(spare_space3, 0, 2);         // 0x0000
-                        fileStream.Read(ip_address, 0, 4);	      // Initial program address
-                        fileStream.Read(ip_loadsize, 0, 4);          // Load size of initial program
-                        fileStream.Read(ip_entry_address, 0, 4);     // Initial program entry address
-                        fileStream.Read(ip_work_ram_size, 0, 4);     // Initial program work RAM size in bytes
-                        fileStream.Read(sp_address, 0, 4);	      // System program address
-                        fileStream.Read(sp_loadsize, 0, 4);          // Load size of system program
-                        fileStream.Read(sp_entry_address, 0, 4);     // System program entry address
-                        fileStream.Read(sp_work_ram_size, 0, 4);     // System program work RAM size in bytes
-                        fileStream.Read(release_date, 0, 8);      // MMDDYYYY
-                        fileStream.Read(unknown1, 0, 7);          // Seems to be all 0x20s
-                        fileStream.Read(spare_space4, 0, 1);         // 0x00 ?
-                        fileStream.Read(system_reserved, 0, 160); // System Reserved Area
-                        fileStream.Read(hardware_id, 0, 16);      // Hardware ID
-                        fileStream.Read(copyright, 0, 3);         // "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
-                        if (Encoding.ASCII.GetString(copyright) != "(C)")
-                            fileStream.Seek(-3, SeekOrigin.Current);
-                        fileStream.Read(developer_code, 0, 5);    // "SEGA" or "T-xx"
-                        if (Encoding.ASCII.GetString(copyright) != "(C)")
-                            fileStream.Seek(1, SeekOrigin.Current);
-                        fileStream.Read(release_date2, 0, 8);     // Another release date, this with month in letters?
-                        if (Encoding.ASCII.GetString(copyright) != "(C)")
-                            fileStream.Seek(2, SeekOrigin.Current);
-                        fileStream.Read(domestic_title, 0, 48);   // Domestic version of the game title
-                        fileStream.Read(overseas_title, 0, 48);   // Overseas version of the game title
-                        fileStream.Read(application_type, 0, 2);  // Application type
-                        fileStream.Read(space_space5, 0, 1);         // 0x20
-                        fileStream.Read(product_code, 0, 13);      // Official product code
-                        fileStream.Read(peripherals, 0, 16);      // Supported peripherals, see above
-                        fileStream.Read(spare_space6, 0, 16);     // 0x20
-                        fileStream.Read(spare_space7, 0, 64);     // Inside here should be modem information, but I need to get a modem-enabled game
-                        fileStream.Read(region_codes, 0, 16);     // Region codes, space-filled
+                        Array.Copy(ipbin_sector, 0x010, volume_name, 0, 11);      // Varies
+                        Array.Copy(ipbin_sector, 0x01B, spare_space1, 0, 1);         // 0x00
+                        Array.Copy(ipbin_sector, 0x01C, volume_version, 0, 2);       // Volume version in BCD. <100 = Prerelease.
+                        Array.Copy(ipbin_sector, 0x01E, volume_type, 0, 2);          // Bit 0 = 1 => CD-ROM. Rest should be 0.
+                        Array.Copy(ipbin_sector, 0x020, system_name, 0, 11);      // Unknown, varies!
+                        Array.Copy(ipbin_sector, 0x02B, spare_space2, 0, 1);         // 0x00
+                        Array.Copy(ipbin_sector, 0x02C, system_version, 0, 2);       // Should be 1
+                        Array.Copy(ipbin_sector, 0x02E, spare_space3, 0, 2);         // 0x0000
+                        Array.Copy(ipbin_sector, 0x030, ip_address, 0, 4);	      // Initial program address
+                        Array.Copy(ipbin_sector, 0x034, ip_loadsize, 0, 4);          // Load size of initial program
+                        Array.Copy(ipbin_sector, 0x038, ip_entry_address, 0, 4);     // Initial program entry address
+                        Array.Copy(ipbin_sector, 0x03C, ip_work_ram_size, 0, 4);     // Initial program work RAM size in bytes
+                        Array.Copy(ipbin_sector, 0x040, sp_address, 0, 4);	      // System program address
+                        Array.Copy(ipbin_sector, 0x044, sp_loadsize, 0, 4);          // Load size of system program
+                        Array.Copy(ipbin_sector, 0x048, sp_entry_address, 0, 4);     // System program entry address
+                        Array.Copy(ipbin_sector, 0x04C, sp_work_ram_size, 0, 4);     // System program work RAM size in bytes
+                        Array.Copy(ipbin_sector, 0x050, release_date, 0, 8);      // MMDDYYYY
+                        Array.Copy(ipbin_sector, 0x058, unknown1, 0, 7);          // Seems to be all 0x20s
+                        Array.Copy(ipbin_sector, 0x05F, spare_space4, 0, 1);         // 0x00 ?
+                        Array.Copy(ipbin_sector, 0x060, system_reserved, 0, 160); // System Reserved Area
+                        Array.Copy(ipbin_sector, 0x100, hardware_id, 0, 16);      // Hardware ID
+                        Array.Copy(ipbin_sector, 0x110, copyright, 0, 3);         // "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
+                        if (Encoding.ASCII.GetString(copyright) == "(C)")
+                            Array.Copy(ipbin_sector, 0x113, developer_code, 0, 5);    // "SEGA" or "T-xx"
+                        else
+                            Array.Copy(ipbin_sector, 0x110, developer_code, 0, 5);    // "SEGA" or "T-xx"
+                        Array.Copy(ipbin_sector, 0x118, release_date2, 0, 8);     // Another release date, this with month in letters?
+                        Array.Copy(ipbin_sector, 0x120, domestic_title, 0, 48);   // Domestic version of the game title
+                        Array.Copy(ipbin_sector, 0x150, overseas_title, 0, 48);   // Overseas version of the game title
+                        //Array.Copy(ipbin_sector, 0x000, application_type, 0, 2);  // Application type
+                        //Array.Copy(ipbin_sector, 0x000, space_space5, 0, 1);         // 0x20
+                        Array.Copy(ipbin_sector, 0x180, product_code, 0, 13);      // Official product code
+                        Array.Copy(ipbin_sector, 0x190, peripherals, 0, 16);      // Supported peripherals, see above
+                        Array.Copy(ipbin_sector, 0x1A0, spare_space6, 0, 16);     // 0x20
+                        Array.Copy(ipbin_sector, 0x1B0, spare_space7, 0, 64);     // Inside here should be modem information, but I need to get a modem-enabled game
+                        Array.Copy(ipbin_sector, 0x1F0, region_codes, 0, 16);     // Region codes, space-filled
                         // Decoding all data
                         DateTime ipbindate = new DateTime();
                         CultureInfo provider = CultureInfo.InvariantCulture;
                         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "MMddyyyy", provider);
 
+                        /*
                         switch (Encoding.ASCII.GetString(application_type))
                         {
                             case "GM":
@@ -414,6 +362,7 @@ namespace FileSystemIDandChk.Plugins
                                 IPBinInformation.AppendLine("Disc is from unknown type.");
                                 break;
                         }
+                        */
 
                         IPBinInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(volume_name)).AppendLine();
                         //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(volume_version)).AppendLine();
@@ -513,33 +462,31 @@ namespace FileSystemIDandChk.Plugins
                         IPBinInformation.AppendLine("--------------------------------");
 
                         // Definitions following
-                        byte[] maker_id = new byte[16];      // "SEGA ENTERPRISES"
-                        byte[] product_no = new byte[10];         // Product number
-                        byte[] product_version = new byte[6];       // Product version
-                        byte[] release_date = new byte[8];          // YYYYMMDD
-                        byte[] saturn_media = new byte[3];      // "CD-"
-                        byte[] disc_no = new byte[1];         // Disc number
-                        byte[] disc_no_separator = new byte[1];       // '/'
-                        byte[] disc_total_nos = new byte[1];         // Total number of discs
-                        byte[] spare_space1 = new byte[2];	      // "  "
-                        byte[] region_codes = new byte[10];          // Region codes, space-filled
-                        byte[] spare_space2 = new byte[6];     // "  "
-                        byte[] peripherals = new byte[16];     // Supported peripherals, see above
-                        byte[] product_name = new byte[112];	     // Game name, space-filled
+                        byte[] maker_id = new byte[16];         // 0x010, "SEGA ENTERPRISES"
+                        byte[] product_no = new byte[10];       // 0x020, Product number
+                        byte[] product_version = new byte[6];   // 0x02A, Product version
+                        byte[] release_date = new byte[8];      // 0x030, YYYYMMDD
+                        byte[] saturn_media = new byte[3];      // 0x038, "CD-"
+                        byte[] disc_no = new byte[1];           // 0x03B, Disc number
+                        byte[] disc_no_separator = new byte[1]; // 0x03C, '/'
+                        byte[] disc_total_nos = new byte[1];    // 0x03D, Total number of discs
+                        byte[] spare_space1 = new byte[2];	    // 0x03E, "  "
+                        byte[] region_codes = new byte[16];     // 0x040, Region codes, space-filled
+                        byte[] peripherals = new byte[16];      // 0x050, Supported peripherals, see above
+                        byte[] product_name = new byte[112];	// 0x060, Game name, space-filled
                         // Reading all data
-                        fileStream.Read(maker_id, 0, 16);      // "SEGA ENTERPRISES"
-                        fileStream.Read(product_no, 0, 10);         // Product number
-                        fileStream.Read(product_version, 0, 6);       // Product version
-                        fileStream.Read(release_date, 0, 8);          // YYYYMMDD
-                        fileStream.Read(saturn_media, 0, 3);      // "CD-"
-                        fileStream.Read(disc_no, 0, 1);         // Disc number
-                        fileStream.Read(disc_no_separator, 0, 1);       // '/'
-                        fileStream.Read(disc_total_nos, 0, 1);         // Total number of discs
-                        fileStream.Read(spare_space1, 0, 2);	      // "  "
-                        fileStream.Read(region_codes, 0, 10);          // Region codes, space-filled
-                        fileStream.Read(spare_space2, 0, 6);     // "  "
-                        fileStream.Read(peripherals, 0, 16);     // Supported peripherals, see above
-                        fileStream.Read(product_name, 0, 112);	     // Game name, space-filled
+                        Array.Copy(ipbin_sector, 0x010, maker_id, 0, 16);         // "SEGA ENTERPRISES"
+                        Array.Copy(ipbin_sector, 0x020, product_no, 0, 10);       // Product number
+                        Array.Copy(ipbin_sector, 0x02A, product_version, 0, 6);   // Product version
+                        Array.Copy(ipbin_sector, 0x030, release_date, 0, 8);      // YYYYMMDD
+                        Array.Copy(ipbin_sector, 0x038, saturn_media, 0, 3);      // "CD-"
+                        Array.Copy(ipbin_sector, 0x03B, disc_no, 0, 1);           // Disc number
+                        Array.Copy(ipbin_sector, 0x03C, disc_no_separator, 0, 1); // '/'
+                        Array.Copy(ipbin_sector, 0x03D, disc_total_nos, 0, 1);    // Total number of discs
+                        Array.Copy(ipbin_sector, 0x03E, spare_space1, 0, 2);	  // "  "
+                        Array.Copy(ipbin_sector, 0x040, region_codes, 0, 16);     // Region codes, space-filled
+                        Array.Copy(ipbin_sector, 0x050, peripherals, 0, 16);      // Supported peripherals, see above
+                        Array.Copy(ipbin_sector, 0x060, product_name, 0, 112);	  // Game name, space-filled
                         // Decoding all data
                         DateTime ipbindate = new DateTime();
                         CultureInfo provider = CultureInfo.InvariantCulture;
@@ -616,41 +563,41 @@ namespace FileSystemIDandChk.Plugins
                         IPBinInformation.AppendLine("--------------------------------");
 
                         // Declarations following
-                        byte[] maker_id = new byte[16];      // "SEGA ENTERPRISES"
-                        byte[] dreamcast_crc = new byte[4];         // CRC of product_no and product_version
-                        byte[] spare_space1 = new byte[1];       // " "
-                        byte[] dreamcast_media = new byte[6];          // "GD-ROM"
-                        byte[] disc_no = new byte[1];         // Disc number
-                        byte[] disc_no_separator = new byte[1];       // '/'
-                        byte[] disc_total_nos = new byte[1];         // Total number of discs
-                        byte[] spare_space2 = new byte[2];	      // "  "
-                        byte[] region_codes = new byte[8];          // Region codes, space-filled
-                        byte[] peripherals = new byte[4];     // Supported peripherals, bitwise
-                        byte[] product_no = new byte[10];     // Product number
-                        byte[] product_version = new byte[6];	     // Product version
-                        byte[] release_date = new byte[8];     // YYYYMMDD
-                        byte[] spare_space3 = new byte[8];     // "  "
-                        byte[] boot_filename = new byte[12];     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-                        byte[] producer = new byte[16];     // Game producer, space-filled
-                        byte[] product_name = new byte[128];     // Game name, space-filled
+                        byte[] maker_id = new byte[16];         // 0x010, "SEGA ENTERPRISES"
+                        byte[] dreamcast_crc = new byte[4];     // 0x020, CRC of product_no and product_version
+                        byte[] spare_space1 = new byte[1];      // 0x024, " "
+                        byte[] dreamcast_media = new byte[6];   // 0x025, "GD-ROM"
+                        byte[] disc_no = new byte[1];           // 0x02B, Disc number
+                        byte[] disc_no_separator = new byte[1]; // 0x02C, '/'
+                        byte[] disc_total_nos = new byte[1];    // 0x02D, Total number of discs
+                        byte[] spare_space2 = new byte[2];	    // 0x02E, "  "
+                        byte[] region_codes = new byte[8];      // 0x030, Region codes, space-filled
+                        byte[] peripherals = new byte[4];       // 0x038, Supported peripherals, bitwise
+                        byte[] product_no = new byte[10];       // 0x03C, Product number
+                        byte[] product_version = new byte[6];	// 0x046, Product version
+                        byte[] release_date = new byte[8];      // 0x04C, YYYYMMDD
+                        byte[] spare_space3 = new byte[8];      // 0x054, "  "
+                        byte[] boot_filename = new byte[12];    // 0x05C, Usually "1ST_READ.BIN" or "0WINCE.BIN  "
+                        byte[] producer = new byte[16];         // 0x068, Game producer, space-filled
+                        byte[] product_name = new byte[128];    // 0x078, Game name, space-filled
                         // Reading all data
-                        fileStream.Read(maker_id, 0, 16);      // "SEGA ENTERPRISES"
-                        fileStream.Read(dreamcast_crc, 0, 4);         // CRC of product_no and product_version
-                        fileStream.Read(spare_space1, 0, 1);       // " "
-                        fileStream.Read(dreamcast_media, 0, 6);          // "GD-ROM"
-                        fileStream.Read(disc_no, 0, 1);         // Disc number
-                        fileStream.Read(disc_no_separator, 0, 1);       // '/'
-                        fileStream.Read(disc_total_nos, 0, 1);         // Total number of discs
-                        fileStream.Read(spare_space2, 0, 2);	      // "  "
-                        fileStream.Read(region_codes, 0, 8);          // Region codes, space-filled
-                        fileStream.Read(peripherals, 0, 4);     // Supported peripherals, bitwise
-                        fileStream.Read(product_no, 0, 10);     // Product number
-                        fileStream.Read(product_version, 0, 6);	     // Product version
-                        fileStream.Read(release_date, 0, 8);     // YYYYMMDD
-                        fileStream.Read(spare_space3, 0, 8);        // "  "
-                        fileStream.Read(boot_filename, 0, 12);     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-                        fileStream.Read(producer, 0, 16);     // Game producer, space-filled
-                        fileStream.Read(product_name, 0, 128);     // Game name, space-filled
+                        Array.Copy(ipbin_sector, 0x010, maker_id, 0, 16);      // "SEGA ENTERPRISES"
+                        Array.Copy(ipbin_sector, 0x020, dreamcast_crc, 0, 4);         // CRC of product_no and product_version
+                        Array.Copy(ipbin_sector, 0x024, spare_space1, 0, 1);       // " "
+                        Array.Copy(ipbin_sector, 0x025, dreamcast_media, 0, 6);          // "GD-ROM"
+                        Array.Copy(ipbin_sector, 0x02B, disc_no, 0, 1);         // Disc number
+                        Array.Copy(ipbin_sector, 0x02C, disc_no_separator, 0, 1);       // '/'
+                        Array.Copy(ipbin_sector, 0x02D, disc_total_nos, 0, 1);         // Total number of discs
+                        Array.Copy(ipbin_sector, 0x02E, spare_space2, 0, 2);	      // "  "
+                        Array.Copy(ipbin_sector, 0x030, region_codes, 0, 8);          // Region codes, space-filled
+                        Array.Copy(ipbin_sector, 0x038, peripherals, 0, 4);     // Supported peripherals, bitwise
+                        Array.Copy(ipbin_sector, 0x03C, product_no, 0, 10);     // Product number
+                        Array.Copy(ipbin_sector, 0x046, product_version, 0, 6);	     // Product version
+                        Array.Copy(ipbin_sector, 0x04C, release_date, 0, 8);     // YYYYMMDD
+                        Array.Copy(ipbin_sector, 0x054, spare_space3, 0, 8);        // "  "
+                        Array.Copy(ipbin_sector, 0x05C, boot_filename, 0, 12);     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
+                        Array.Copy(ipbin_sector, 0x068, producer, 0, 16);     // Game producer, space-filled
+                        Array.Copy(ipbin_sector, 0x078, product_name, 0, 128);     // Game name, space-filled
                         // Decoding all data
                         DateTime ipbindate = new DateTime();
                         CultureInfo provider = CultureInfo.InvariantCulture;

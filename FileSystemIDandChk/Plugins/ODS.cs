@@ -14,6 +14,8 @@ using FileSystemIDandChk;
 
 // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
 
+// TODO: Implement checksum
+
 namespace FileSystemIDandChk.Plugins
 {
 	class ODS : Plugin
@@ -24,17 +26,13 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
 			byte[] magic_b = new byte[12];
 			string magic;
-			
-			BinaryReader br = new BinaryReader(stream);
-			
-			br.BaseStream.Seek(0x200 + offset, SeekOrigin.Begin); // Seek to home block
-			br.BaseStream.Seek(0x1F0, SeekOrigin.Current); // Seek to format
-			
-			br.BaseStream.Read(magic_b, 0, 12);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionOffset);
+
+            Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
 			magic = Encoding.ASCII.GetString(magic_b);
 			
 			if(magic == "DECFILE11A  " || magic == "DECFILE11B  ")
@@ -43,70 +41,66 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
 			StringBuilder sb = new StringBuilder();
-			BinaryReader br = new BinaryReader(stream);
 			ODSHomeBlock homeblock = new ODSHomeBlock();
 			byte[] temp_string = new byte[12];
 			homeblock.min_class = new byte[20];
 			homeblock.max_class = new byte[20];
-			homeblock.reserved1 = new byte[302];
 			
-			br.BaseStream.Seek(0x200 + offset, SeekOrigin.Begin);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionOffset);
 			
-			homeblock.homelbn = br.ReadUInt32();
-			homeblock.alhomelbn = br.ReadUInt32();
-			homeblock.altidxlbn = br.ReadUInt32();
-			homeblock.struclev = br.ReadUInt16();
-			homeblock.cluster = br.ReadUInt16();
-			homeblock.homevbn = br.ReadUInt16();
-			homeblock.alhomevbn = br.ReadUInt16();
-			homeblock.altidxvbn = br.ReadUInt16();
-			homeblock.ibmapvbn = br.ReadUInt16();
-			homeblock.ibmaplbn = br.ReadUInt32();
-			homeblock.maxfiles = br.ReadUInt32();
-			homeblock.ibmapsize = br.ReadUInt16();
-			homeblock.resfiles = br.ReadUInt16();
-			homeblock.devtype = br.ReadUInt16();
-			homeblock.rvn = br.ReadUInt16();
-			homeblock.setcount = br.ReadUInt16();
-			homeblock.volchar = br.ReadUInt16();
-			homeblock.volowner = br.ReadUInt32();
-			homeblock.sec_mask = br.ReadUInt32();
-			homeblock.protect = br.ReadUInt16();
-			homeblock.fileprot = br.ReadUInt16();
-			homeblock.recprot = br.ReadUInt16();
-			homeblock.checksum1 = br.ReadUInt16();
-			homeblock.credate = br.ReadUInt64();
-			homeblock.window = br.ReadByte();
-			homeblock.lru_lim = br.ReadByte();
-			homeblock.extend = br.ReadUInt16();
-			homeblock.retainmin = br.ReadUInt64();
-			homeblock.retainmax = br.ReadUInt64();
-			homeblock.revdate = br.ReadUInt64();
-			homeblock.min_class = br.ReadBytes(20);
-			homeblock.max_class = br.ReadBytes(20);
-			homeblock.filetab_fid1 = br.ReadUInt16();
-			homeblock.filetab_fid2 = br.ReadUInt16();
-			homeblock.filetab_fid3 = br.ReadUInt16();
-			homeblock.lowstruclev = br.ReadUInt16();
-			homeblock.highstruclev = br.ReadUInt16();
-			homeblock.copydate = br.ReadUInt64();
-			homeblock.reserved1 = br.ReadBytes(302);
-			homeblock.serialnum = br.ReadUInt32();
-			temp_string = br.ReadBytes(12);
+            homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
+            homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);
+            homeblock.altidxlbn = BitConverter.ToUInt32(hb_sector, 0x008);
+            homeblock.struclev = BitConverter.ToUInt16(hb_sector, 0x00C);
+            homeblock.cluster = BitConverter.ToUInt16(hb_sector, 0x00E);
+            homeblock.homevbn = BitConverter.ToUInt16(hb_sector, 0x010);
+            homeblock.alhomevbn = BitConverter.ToUInt16(hb_sector, 0x012);
+            homeblock.altidxvbn = BitConverter.ToUInt16(hb_sector, 0x014);
+            homeblock.ibmapvbn = BitConverter.ToUInt16(hb_sector, 0x016);
+            homeblock.ibmaplbn = BitConverter.ToUInt32(hb_sector, 0x018);
+            homeblock.maxfiles = BitConverter.ToUInt32(hb_sector, 0x01C);
+            homeblock.ibmapsize = BitConverter.ToUInt16(hb_sector, 0x020);
+            homeblock.resfiles = BitConverter.ToUInt16(hb_sector, 0x022);
+            homeblock.devtype = BitConverter.ToUInt16(hb_sector, 0x024);
+            homeblock.rvn = BitConverter.ToUInt16(hb_sector, 0x026);
+            homeblock.setcount = BitConverter.ToUInt16(hb_sector, 0x028);
+            homeblock.volchar = BitConverter.ToUInt16(hb_sector, 0x02A);
+            homeblock.volowner = BitConverter.ToUInt32(hb_sector, 0x02C);
+            homeblock.sec_mask = BitConverter.ToUInt32(hb_sector, 0x030);
+            homeblock.protect = BitConverter.ToUInt16(hb_sector, 0x034);
+            homeblock.fileprot = BitConverter.ToUInt16(hb_sector, 0x036);
+            homeblock.recprot = BitConverter.ToUInt16(hb_sector, 0x038);
+            homeblock.checksum1 = BitConverter.ToUInt16(hb_sector, 0x03A);
+            homeblock.credate = BitConverter.ToUInt64(hb_sector, 0x03C);
+            homeblock.window = hb_sector[0x044];
+            homeblock.lru_lim = hb_sector[0x045];
+            homeblock.extend = BitConverter.ToUInt16(hb_sector, 0x046);
+            homeblock.retainmin = BitConverter.ToUInt64(hb_sector, 0x048);
+            homeblock.retainmax = BitConverter.ToUInt64(hb_sector, 0x050);
+            homeblock.revdate = BitConverter.ToUInt64(hb_sector, 0x058);
+            Array.Copy(hb_sector, 0x060, homeblock.min_class, 0, 20);
+            Array.Copy(hb_sector, 0x074, homeblock.max_class, 0, 20);
+            homeblock.filetab_fid1 = BitConverter.ToUInt16(hb_sector, 0x088);
+            homeblock.filetab_fid2 = BitConverter.ToUInt16(hb_sector, 0x08A);
+            homeblock.filetab_fid3 = BitConverter.ToUInt16(hb_sector, 0x08C);
+            homeblock.lowstruclev = BitConverter.ToUInt16(hb_sector, 0x08E);
+            homeblock.highstruclev = BitConverter.ToUInt16(hb_sector, 0x090);
+            homeblock.copydate = BitConverter.ToUInt64(hb_sector, 0x092);
+            homeblock.serialnum = BitConverter.ToUInt32(hb_sector, 0x1C8);
+            Array.Copy(hb_sector, 0x1CC, temp_string, 0, 12);
 			homeblock.strucname = StringHandlers.CToString(temp_string);
-			temp_string = br.ReadBytes(12);
+            Array.Copy(hb_sector, 0x1D8, temp_string, 0, 12);
 			homeblock.volname = StringHandlers.CToString(temp_string);
-			temp_string = br.ReadBytes(12);
+            Array.Copy(hb_sector, 0x1E4, temp_string, 0, 12);
 			homeblock.ownername = StringHandlers.CToString(temp_string);
-			temp_string = br.ReadBytes(12);
+            Array.Copy(hb_sector, 0x1F0, temp_string, 0, 12);
 			homeblock.format = StringHandlers.CToString(temp_string);
-			homeblock.reserved2 = br.ReadUInt16();
-			homeblock.checksum2 = br.ReadUInt16();
+            homeblock.checksum2 = BitConverter.ToUInt16(hb_sector, 0x1FE);
 			
 			if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || homeblock.format != "DECFILE11B  ")
 				sb.AppendLine("The following information may be incorrect for this volume.");
@@ -233,53 +227,52 @@ namespace FileSystemIDandChk.Plugins
 		
 		private struct ODSHomeBlock
 		{
-			public UInt32 homelbn;      // LBN of THIS home block
-			public UInt32 alhomelbn;    // LBN of the secondary home block
-			public UInt32 altidxlbn;    // LBN of backup INDEXF.SYS;1
-			public UInt16 struclev;     // High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)
-			public UInt16 cluster;      // Number of blocks each bit of the volume bitmap represents
-			public UInt16 homevbn;      // VBN of THIS home block
-			public UInt16 alhomevbn;    // VBN of the secondary home block
-			public UInt16 altidxvbn;    // VBN of backup INDEXF.SYS;1
-			public UInt16 ibmapvbn;     // VBN of the bitmap
-			public UInt32 ibmaplbn;     // LBN of the bitmap
-			public UInt32 maxfiles;     // Max files on volume
-			public UInt16 ibmapsize;    // Bitmap size in sectors
-			public UInt16 resfiles;     // Reserved files, 5 at minimum
-			public UInt16 devtype;      // Device type, ODS-2 defines it as always 0
-			public UInt16 rvn;          // Relative volume number (number of the volume in a set)
-			public UInt16 setcount;     // Total number of volumes in the set this volume is
-			public UInt16 volchar;      // Flags
-			public UInt32 volowner;     // User ID of the volume owner
-			public UInt32 sec_mask;     // Security mask (??)
-			public UInt16 protect;      // Volume permissions (system, owner, group and other)
-			public UInt16 fileprot;     // Default file protection, unsupported in ODS-2
-			public UInt16 recprot;      // Default file record protection
-			public UInt16 checksum1;    // Checksum of all preceding entries
-			public UInt64 credate;      // Creation date
-			public byte   window;       // Window size (pointers for the window)
-			public byte   lru_lim;      // Directories to be stored in cache
-			public UInt16 extend;       // Default allocation size in blocks
-			public UInt64 retainmin;    // Minimum file retention period
-			public UInt64 retainmax;    // Maximum file retention period
-			public UInt64 revdate;      // Last modification date
-			public byte[] min_class;    // Minimum security class, 20 bytes
-			public byte[] max_class;    // Maximum security class, 20 bytes
-			public UInt16 filetab_fid1; // File lookup table FID
-			public UInt16 filetab_fid2; // File lookup table FID
-			public UInt16 filetab_fid3; // File lookup table FID
-			public UInt16 lowstruclev;  // Lowest structure level on the volume
-			public UInt16 highstruclev; // Highest structure level on the volume
-			public UInt64 copydate;     // Volume copy date (??)
-			public byte[] reserved1;    // 302 bytes
-			public UInt32 serialnum;    // Physical drive serial number
-			public string strucname;    // Name of the volume set, 12 bytes
-			public string volname;      // Volume label, 12 bytes
-			public string ownername;    // Name of the volume owner, 12 bytes
-			public string format;       // ODS-2 defines it as "DECFILE11B", 12 bytes
-			public UInt16 reserved2;    // Reserved
-			public UInt16 checksum2;    // Checksum of preceding 255 words (16 bit units)
+            public UInt32 homelbn;      // 0x000, LBN of THIS home block
+            public UInt32 alhomelbn;    // 0x004, LBN of the secondary home block
+            public UInt32 altidxlbn;    // 0x008, LBN of backup INDEXF.SYS;1
+            public UInt16 struclev;     // 0x00C, High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)
+            public UInt16 cluster;      // 0x00E, Number of blocks each bit of the volume bitmap represents
+            public UInt16 homevbn;      // 0x010, VBN of THIS home block
+            public UInt16 alhomevbn;    // 0x012, VBN of the secondary home block
+            public UInt16 altidxvbn;    // 0x014, VBN of backup INDEXF.SYS;1
+            public UInt16 ibmapvbn;     // 0x016, VBN of the bitmap
+            public UInt32 ibmaplbn;     // 0x018, LBN of the bitmap
+            public UInt32 maxfiles;     // 0x01C, Max files on volume
+            public UInt16 ibmapsize;    // 0x020, Bitmap size in sectors
+            public UInt16 resfiles;     // 0x022, Reserved files, 5 at minimum
+            public UInt16 devtype;      // 0x024, Device type, ODS-2 defines it as always 0
+            public UInt16 rvn;          // 0x026, Relative volume number (number of the volume in a set)
+            public UInt16 setcount;     // 0x028, Total number of volumes in the set this volume is
+            public UInt16 volchar;      // 0x02A, Flags
+            public UInt32 volowner;     // 0x02C, User ID of the volume owner
+            public UInt32 sec_mask;     // 0x030, Security mask (??)
+            public UInt16 protect;      // 0x034, Volume permissions (system, owner, group and other)
+            public UInt16 fileprot;     // 0x036, Default file protection, unsupported in ODS-2
+            public UInt16 recprot;      // 0x038, Default file record protection
+            public UInt16 checksum1;    // 0x03A, Checksum of all preceding entries
+            public UInt64 credate;      // 0x03C, Creation date
+            public byte   window;       // 0x044, Window size (pointers for the window)
+            public byte   lru_lim;      // 0x045, Directories to be stored in cache
+            public UInt16 extend;       // 0x046, Default allocation size in blocks
+            public UInt64 retainmin;    // 0x048, Minimum file retention period
+            public UInt64 retainmax;    // 0x050, Maximum file retention period
+            public UInt64 revdate;      // 0x058, Last modification date
+            public byte[] min_class;    // 0x060, Minimum security class, 20 bytes
+            public byte[] max_class;    // 0x074, Maximum security class, 20 bytes
+            public UInt16 filetab_fid1; // 0x088, File lookup table FID
+            public UInt16 filetab_fid2; // 0x08A, File lookup table FID
+            public UInt16 filetab_fid3; // 0x08C, File lookup table FID
+            public UInt16 lowstruclev;  // 0x08E, Lowest structure level on the volume
+            public UInt16 highstruclev; // 0x090, Highest structure level on the volume
+            public UInt64 copydate;     // 0x092, Volume copy date (??)
+            public byte[] reserved1;    // 0x09A, 302 bytes
+            public UInt32 serialnum;    // 0x1C8, Physical drive serial number
+            public string strucname;    // 0x1CC, Name of the volume set, 12 bytes
+            public string volname;      // 0x1D8, Volume label, 12 bytes
+            public string ownername;    // 0x1E4, Name of the volume owner, 12 bytes
+            public string format;       // 0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes
+            public UInt16 reserved2;    // 0x1FC, Reserved
+            public UInt16 checksum2;    // 0x1FE, Checksum of preceding 255 words (16 bit units)
 		}
 	}
 }
-

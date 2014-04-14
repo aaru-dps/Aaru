@@ -4,7 +4,7 @@ using System.Text;
 using FileSystemIDandChk;
 
 // Information from Inside Macintosh
-
+// https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 namespace FileSystemIDandChk.Plugins
 {
 	class AppleHFS : Plugin
@@ -19,20 +19,14 @@ namespace FileSystemIDandChk.Plugins
 			base.PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
         }
 		
-		public override bool Identify(FileStream stream, long offset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
 		{
-			byte[] signature = new byte[2];
-			UInt16 drSigWord;
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+            UInt16 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
-			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
-			
-			drSigWord = eabr.ReadUInt16();
-			
 			if(drSigWord == HFS_MAGIC)
 			{
-				eabr.BaseStream.Seek(0x47C + offset, SeekOrigin.Begin); // Seek to embedded HFS+ signature
-				drSigWord = eabr.ReadUInt16();
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
 				
 				if(drSigWord == HFSP_MAGIC) // "H+"
 					return false;
@@ -43,7 +37,7 @@ namespace FileSystemIDandChk.Plugins
 				return false;
 		}
 		
-		public override void GetInformation (FileStream stream, long offset, out string information)
+        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
 		{
 			information = "";
 			
@@ -54,85 +48,95 @@ namespace FileSystemIDandChk.Plugins
 
 			byte[] pString;
 
-			EndianAwareBinaryReader eabr = new EndianAwareBinaryReader(stream, false); // BigEndian
-			eabr.BaseStream.Seek(0x400 + offset, SeekOrigin.Begin);
-			MDB.drSigWord = eabr.ReadUInt16();
+            byte[] bb_sector = imagePlugin.ReadSector(2 + partitionOffset); // BB's first sector
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset); // MDB sector
+            MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
 			if(MDB.drSigWord != HFS_MAGIC)
 				return;
 			
-			MDB.drCrDate = eabr.ReadUInt32();
-			MDB.drLsMod = eabr.ReadUInt32();
-			MDB.drAtrb = eabr.ReadUInt16();
-			MDB.drNmFls = eabr.ReadUInt16();
-			MDB.drVBMSt = eabr.ReadUInt16();
-			MDB.drAllocPtr = eabr.ReadUInt16();
-			MDB.drNmAlBlks = eabr.ReadUInt16();
-			MDB.drAlBlkSiz = eabr.ReadUInt32();
-			MDB.drClpSiz = eabr.ReadUInt32();
-			MDB.drAlBlSt = eabr.ReadUInt16();
-			MDB.drNxtCNID = eabr.ReadUInt32();
-			MDB.drFreeBks = eabr.ReadUInt16();
-			pString = eabr.ReadBytes(28);
+            MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdb_sector, 0x002);
+            MDB.drLsMod = BigEndianBitConverter.ToUInt32(mdb_sector, 0x006);
+            MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00A);
+            MDB.drNmFls = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00C);
+            MDB.drVBMSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0X00E);
+            MDB.drAllocPtr = BigEndianBitConverter.ToUInt16(mdb_sector, 0x010);
+            MDB.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x012);
+            MDB.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x014);
+            MDB.drClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x018);
+            MDB.drAlBlSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x01C);
+            MDB.drNxtCNID = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01E);
+            MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
+            pString = new byte[28];
+            Array.Copy(mdb_sector, 0x024, pString, 0, 28);
 			MDB.drVN = StringHandlers.PascalToString(pString);
 			
-			MDB.drVolBkUp = eabr.ReadUInt32();
-			MDB.drVSeqNum = eabr.ReadUInt16();
-			MDB.drWrCnt = eabr.ReadUInt32();
-			MDB.drXTClpSiz = eabr.ReadUInt32();
-			MDB.drCTClpSiz = eabr.ReadUInt32();
-			MDB.drNmRtDirs = eabr.ReadUInt16();
-			MDB.drFilCnt = eabr.ReadUInt32();
-			MDB.drDirCnt = eabr.ReadUInt32();
+            MDB.drVolBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x040);
+            MDB.drVSeqNum = BigEndianBitConverter.ToUInt16(mdb_sector, 0x044);
+            MDB.drWrCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x046);
+            MDB.drXTClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x04A);
+            MDB.drCTClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x04E);
+            MDB.drNmRtDirs = BigEndianBitConverter.ToUInt16(mdb_sector, 0x052);
+            MDB.drFilCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x054);
+            MDB.drDirCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x058);
 			
-			MDB.drFndrInfo0 = eabr.ReadUInt32();
-			MDB.drFndrInfo1 = eabr.ReadUInt32();
-			MDB.drFndrInfo2 = eabr.ReadUInt32();
-			MDB.drFndrInfo3 = eabr.ReadUInt32();
-			MDB.drFndrInfo4 = eabr.ReadUInt32();
-			MDB.drFndrInfo5 = eabr.ReadUInt32();
-			MDB.drFndrInfo6 = eabr.ReadUInt32();
-			MDB.drFndrInfo7 = eabr.ReadUInt32();
+            MDB.drFndrInfo0 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x05C);
+            MDB.drFndrInfo1 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x060);
+            MDB.drFndrInfo2 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x064);
+            MDB.drFndrInfo3 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x068);
+            MDB.drFndrInfo4 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x06C);
+            MDB.drFndrInfo5 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x070);
+            MDB.drFndrInfo6 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x074);
+            MDB.drFndrInfo7 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x078);
+
+            MDB.drVCSize = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07C);
+            MDB.drVBMCSize = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07E);
+            MDB.drCtlCSize = BigEndianBitConverter.ToUInt16(mdb_sector, 0x080);
+
+            // For HFS+ embedded volume
+            MDB.drEmbedSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07C);
+            MDB.xdrStABNt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07E);
+            MDB.xdrNumABlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x080);
 			
-			MDB.drEmbedSigWord = eabr.ReadUInt16();
-			MDB.xdrStABNt = eabr.ReadUInt16();
-			MDB.xdrNumABlks = eabr.ReadUInt16();
+            MDB.drXTFlSize = BigEndianBitConverter.ToUInt32(mdb_sector, 0x082);
+            MDB.drCTFlSize = BigEndianBitConverter.ToUInt32(mdb_sector, 0x092);
 			
-			MDB.drXTFlSize = eabr.ReadUInt32();
-			eabr.BaseStream.Seek(12, SeekOrigin.Current);
-			MDB.drCTFlSize = eabr.ReadUInt32();
-			eabr.BaseStream.Seek(12, SeekOrigin.Current);
-			
-			eabr.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
-			BB.signature = eabr.ReadUInt16();
+            BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
 			
 			if(BB.signature == HFSBB_MAGIC)
 			{
-				BB.branch = eabr.ReadUInt32();
-				BB.boot_flags = eabr.ReadByte();
-				BB.boot_version = eabr.ReadByte();
+                BB.branch = BigEndianBitConverter.ToUInt32(bb_sector, 0x002);
+                BB.boot_flags = bb_sector[0x006];
+                BB.boot_version = bb_sector[0x007];
 				
-				BB.sec_sv_pages = eabr.ReadInt16();
+                BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bb_sector, 0x008);
 
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x00A, pString, 0, 16);
 				BB.system_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x01A, pString, 0, 16);
 				BB.finder_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x02A, pString, 0, 16);
 				BB.debug_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x03A, pString, 0, 16);
 				BB.disasm_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x04A, pString, 0, 16);
 				BB.stupscr_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x05A, pString, 0, 16);
 				BB.bootup_name = StringHandlers.PascalToString(pString);
-				pString = eabr.ReadBytes(16);
+                pString = new byte[16];
+                Array.Copy(bb_sector, 0x06A, pString, 0, 16);
 				BB.clipbrd_name = StringHandlers.PascalToString(pString);
 				
-				BB.max_files = eabr.ReadUInt16();
-				BB.queue_size = eabr.ReadUInt16();
-				BB.heap_128k = eabr.ReadUInt32();
-				BB.heap_256k = eabr.ReadUInt32();
-				BB.heap_512k = eabr.ReadUInt32();
+                BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
+                BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);
+                BB.heap_128k = BigEndianBitConverter.ToUInt32(bb_sector, 0x07E);
+                BB.heap_256k = BigEndianBitConverter.ToUInt32(bb_sector, 0x082);
+                BB.heap_512k = BigEndianBitConverter.ToUInt32(bb_sector, 0x086);
 			}
 			else
 				BB.signature = 0x0000;
@@ -202,6 +206,12 @@ namespace FileSystemIDandChk.Plugins
 				sb.AppendFormat("Starting block of the HFS+ volume: {0}", MDB.xdrStABNt).AppendLine();
 				sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", MDB.xdrNumABlks).AppendLine();
 			}
+            else
+            {
+                sb.AppendFormat("{0} blocks in volume cache", MDB.drVCSize).AppendLine();
+                sb.AppendFormat("{0} blocks in volume bitmap cache", MDB.drVBMCSize).AppendLine();
+                sb.AppendFormat("{0} blocks in volume common cache", MDB.drCtlCSize).AppendLine();
+            }
 			
 			if(BB.signature == HFSBB_MAGIC)
 			{
@@ -243,67 +253,72 @@ namespace FileSystemIDandChk.Plugins
 			return;
 		}
 		
-		private struct HFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
+        private struct HFS_MasterDirectoryBlock // Should be sector 2 in volume
 		{
-			public UInt16 drSigWord;      // Signature, 0x4244
-			public ulong  drCrDate;       // Volume creation date
-			public ulong  drLsMod;        // Volume last modification date
-			public UInt16 drAtrb;         // Volume attributes
-			public UInt16 drNmFls;        // Files in root directory
-			public UInt16 drVBMSt;        // Start 512-byte sector of volume bitmap
-			public UInt16 drAllocPtr;     // Allocation block to begin next allocation
-			public UInt16 drNmAlBlks;     // Allocation blocks
-			public UInt32  drAlBlkSiz;     // Bytes per allocation block
-			public UInt32  drClpSiz;       // Bytes to allocate when extending a file
-			public UInt16 drAlBlSt;       // Start 512-byte sector of first allocation block
-			public UInt32  drNxtCNID;      // CNID for next file
-			public UInt16 drFreeBks;      // Free allocation blocks
-			public string drVN;           // Volume name (28 bytes)
-			public ulong  drVolBkUp;      // Volume last backup time
-			public UInt16 drVSeqNum;      // Volume backup sequence number
-			public UInt32  drWrCnt;        // Filesystem write count
-			public UInt32  drXTClpSiz;     // Bytes to allocate when extending the extents B-Tree
-			public UInt32  drCTClpSiz;     // Bytes to allocate when extending the catalog B-Tree
-			public UInt16 drNmRtDirs;     // Number of directories in root directory
-			public UInt32  drFilCnt;       // Number of files in the volume
-			public UInt32  drDirCnt;       // Number of directories in the volume
-			public UInt32  drFndrInfo0;    // finderInfo[0], CNID for bootable system's directory
-			public UInt32  drFndrInfo1;    // finderInfo[1], CNID of the directory containing the boot application
-			public UInt32  drFndrInfo2;    // finderInfo[2], CNID of the directory that should be opened on boot
-			public UInt32  drFndrInfo3;    // finderInfo[3], CNID for Mac OS 8 or 9 directory
-			public UInt32  drFndrInfo4;    // finderInfo[4], Reserved
-			public UInt32  drFndrInfo5;    // finderInfo[5], CNID for Mac OS X directory
-			public UInt32  drFndrInfo6;    // finderInfo[6], first part of Mac OS X volume ID
-			public UInt32  drFndrInfo7;    // finderInfo[7], second part of Mac OS X volume ID
-			public UInt16 drEmbedSigWord; // Embedded volume signature, "H+" if HFS+ is embedded ignore following two fields if not
-			public UInt16 xdrStABNt;      // Starting block number of embedded HFS+ volume
-			public UInt16 xdrNumABlks;    // Allocation blocks used by embedded volume
-			public UInt32  drXTFlSize;     // Bytes in the extents B-Tree
+			public UInt16 drSigWord;      // 0x000, Signature, 0x4244
+            public UInt32 drCrDate;       // 0x002, Volume creation date
+            public UInt32 drLsMod;        // 0x006, Volume last modification date
+            public UInt16 drAtrb;         // 0x00A, Volume attributes
+            public UInt16 drNmFls;        // 0x00C, Files in root directory
+            public UInt16 drVBMSt;        // 0x00E, Start 512-byte sector of volume bitmap
+            public UInt16 drAllocPtr;     // 0x010, Allocation block to begin next allocation
+            public UInt16 drNmAlBlks;     // 0x012, Allocation blocks
+            public UInt32 drAlBlkSiz;     // 0x014, Bytes per allocation block
+            public UInt32 drClpSiz;       // 0x018, Bytes to allocate when extending a file
+            public UInt16 drAlBlSt;       // 0x01C, Start 512-byte sector of first allocation block
+            public UInt32 drNxtCNID;      // 0x01E, CNID for next file
+            public UInt16 drFreeBks;      // 0x022, Free allocation blocks
+            public string drVN;           // 0x024, Volume name (28 bytes)
+            public UInt32 drVolBkUp;      // 0x040, Volume last backup time
+            public UInt16 drVSeqNum;      // 0x044, Volume backup sequence number
+            public UInt32 drWrCnt;        // 0x046, Filesystem write count
+            public UInt32 drXTClpSiz;     // 0x04A, Bytes to allocate when extending the extents B-Tree
+            public UInt32 drCTClpSiz;     // 0x04E, Bytes to allocate when extending the catalog B-Tree
+            public UInt16 drNmRtDirs;     // 0x052, Number of directories in root directory
+            public UInt32 drFilCnt;       // 0x054, Number of files in the volume
+            public UInt32 drDirCnt;       // 0x058, Number of directories in the volume
+            public UInt32 drFndrInfo0;    // 0x05C, finderInfo[0], CNID for bootable system's directory
+            public UInt32 drFndrInfo1;    // 0x060, finderInfo[1], CNID of the directory containing the boot application
+            public UInt32 drFndrInfo2;    // 0x064, finderInfo[2], CNID of the directory that should be opened on boot
+            public UInt32 drFndrInfo3;    // 0x068, finderInfo[3], CNID for Mac OS 8 or 9 directory
+            public UInt32 drFndrInfo4;    // 0x06C, finderInfo[4], Reserved
+            public UInt32 drFndrInfo5;    // 0x070, finderInfo[5], CNID for Mac OS X directory
+            public UInt32 drFndrInfo6;    // 0x074, finderInfo[6], first part of Mac OS X volume ID
+            public UInt32 drFndrInfo7;    // 0x078, finderInfo[7], second part of Mac OS X volume ID
+            // If wrapping HFS+
+            public UInt16 drEmbedSigWord; // 0x07C, Embedded volume signature, "H+" if HFS+ is embedded ignore following two fields if not
+            public UInt16 xdrStABNt;      // 0x07E, Starting block number of embedded HFS+ volume
+            public UInt16 xdrNumABlks;    // 0x080, Allocation blocks used by embedded volume
+            // If not
+            public UInt16 drVCSize;       // 0x07C, Size in blocks of volume cache
+            public UInt16 drVBMCSize;     // 0x07E, Size in blocks of volume bitmap cache
+            public UInt16 drCtlCSize;     // 0x080, Size in blocks of volume common cache
+            // End of variable variables :D
+            public UInt32 drXTFlSize;     // 0x082, Bytes in the extents B-Tree
 			// 3 HFS extents following, 32 bits each
-			public UInt32  drCTFlSize;     // Bytes in the catalog B-Tree
+            public UInt32 drCTFlSize;     // 0x092, Bytes in the catalog B-Tree
 			// 3 HFS extents following, 32 bits each
 		}
 		
-		private struct HFS_BootBlock // Should be offset 0x0000 bytes in volume
+        private struct HFS_BootBlock // Should be sectors 0 and 1 in volume
 		{
-			public UInt16 signature;    // Signature, 0x4C4B if bootable
-			public UInt32  branch;       // Branch
-			public byte   boot_flags;   // Boot block flags
-			public byte   boot_version; // Boot block version
-			public Int16  sec_sv_pages; // Allocate secondary buffers
-			public string system_name;  // System file name (10 bytes)
-			public string finder_name;  // Finder file name (10 bytes)
-			public string debug_name;   // Debugger file name (10 bytes)
-			public string disasm_name;  // Disassembler file name (10 bytes)
-			public string stupscr_name; // Startup screen file name (10 bytes)
-			public string bootup_name;  // First program to execute on boot (10 bytes)
-			public string clipbrd_name; // Clipboard file name (10 bytes)
-			public UInt16 max_files;    // 1/4 of maximum opened at a time files
-			public UInt16 queue_size;   // Event queue size
-			public UInt32  heap_128k;    // Heap size on a Mac with 128KiB of RAM
-			public UInt32  heap_256k;    // Heap size on a Mac with 256KiB of RAM
-			public UInt32  heap_512k;    // Heap size on a Mac with 512KiB of RAM or more
+			public UInt16 signature;    // 0x000, Signature, 0x4C4B if bootable
+			public UInt32 branch;       // 0x002, Branch
+			public byte   boot_flags;   // 0x006, Boot block flags
+			public byte   boot_version; // 0x007, Boot block version
+			public Int16  sec_sv_pages; // 0x008, Allocate secondary buffers
+            public string system_name;  // 0x00A, System file name (16 bytes)
+            public string finder_name;  // 0x01A, Finder file name (16 bytes)
+            public string debug_name;   // 0x02A, Debugger file name (16 bytes)
+            public string disasm_name;  // 0x03A, Disassembler file name (16 bytes)
+            public string stupscr_name; // 0x04A, Startup screen file name (16 bytes)
+            public string bootup_name;  // 0x05A, First program to execute on boot (16 bytes)
+            public string clipbrd_name; // 0x06A, Clipboard file name (16 bytes)
+            public UInt16 max_files;    // 0x07A, 1/4 of maximum opened at a time files
+            public UInt16 queue_size;   // 0x07C, Event queue size
+            public UInt32 heap_128k;    // 0x07E, Heap size on a Mac with 128KiB of RAM
+            public UInt32 heap_256k;    // 0x082, Heap size on a Mac with 256KiB of RAM
+            public UInt32 heap_512k;    // 0x086, Heap size on a Mac with 512KiB of RAM or more
 		} // Follows boot code
 	}
 }
-
