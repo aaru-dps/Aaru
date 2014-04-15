@@ -1,3 +1,12 @@
+2014-04-15  Natalia Portillo  <claunia@claunia.com>
+
+	* FileSystemIDandChk.csproj:
+	* ImagePlugins/DiskCopy42.cs:
+	  Added support for Apple DiskCopy 4.2 format
+
+	* ImagePlugins/ImagePlugin.cs:
+	  Added standard IBM, DEC and Apple floppy formats
+
 2014-04-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Main.cs:

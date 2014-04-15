@@ -118,148 +118,215 @@ namespace FileSystemIDandChk.ImagePlugins
     {
         Unknown,
         // Somewhat standard Compact Disc formats
-        CDDA,
         // CD Digital Audio (Red Book)
-        CDG,
+        CDDA,
         // CD+G (Red Book)
-        CDEG,
+        CDG,
         // CD+EG (Red Book)
-        CDI,
+        CDEG,
         // CD-i (Green Book)
-        CDROM,
+        CDI,
         // CD-ROM (Yellow Book)
-        CDROMXA,
+        CDROM,
         // CD-ROM XA (Yellow Book)
-        CDPLUS,
+        CDROMXA,
         // CD+ (Blue Book)
-        CDMO,
+        CDPLUS,
         // CD-MO (Orange Book)
-        CDR,
+        CDMO,
         // CD-Recordable (Orange Book)
-        CDRW,
+        CDR,
         // CD-ReWritable (Orange Book)
-        CDMRW,
+        CDRW,
         // Mount-Rainier CD-RW
-        VCD,
+        CDMRW,
         // Video CD (White Book)
-        SVCD,
+        VCD,
         // Super Video CD (White Book)
-        PCD,
+        SVCD,
         // Photo CD (Beige Book)
-        SACD,
+        PCD,
         // Super Audio CD (Scarlet Book)
-        DDCD,
+        SACD,
         // Double-Density CD-ROM (Purple Book)
-        DDCDR,
+        DDCD,
         // DD CD-R (Purple Book)
-        DDCDRW,
+        DDCDR,
         // DD CD-RW (Purple Book)
-        DTSCD,
+        DDCDRW,
         // DTS audio CD (non-standard)
-        CDMIDI,
+        DTSCD,
         // CD-MIDI (Red Book)
-        CD,
+        CDMIDI,
         // Any unknown or standard violating CD
+        CD,
         // Standard DVD formats
-        DVDROM,
         // DVD-ROM (applies to DVD Video and DVD Audio)
-        DVDR,
+        DVDROM,
         // DVD-R
-        DVDRW,
+        DVDR,
         // DVD-RW
-        DVDPR,
+        DVDRW,
         // DVD+R
-        DVDPRW,
+        DVDPR,
         // DVD+RW
-        DVDPRWDL,
+        DVDPRW,
         // DVD+RW DL
-        DVDRDL,
+        DVDPRWDL,
         // DVD-R DL
-        DVDPRDL,
+        DVDRDL,
         // DVD+R DL
-        DVDRAM,
+        DVDPRDL,
         // DVD-RAM
+        DVDRAM,
         // Standard HD-DVD formats
-        HDDVDROM,
         // HD DVD-ROM (applies to HD DVD Video)
-        HDDVDRAM,
+        HDDVDROM,
         // HD DVD-RAM
-        HDDVDR,
+        HDDVDRAM,
         // HD DVD-R
-        HDDVDRW,
+        HDDVDR,
         // HD DVD-RW
+        HDDVDRW,
         // Standard Blu-ray formats
-        BDROM,
         // BD-ROM (and BD Video)
-        BDR,
+        BDROM,
         // BD-R
-        BDRE,
+        BDR,
         // BD-RE
+        BDRE,
         // Rare or uncommon standards
-        EVD,
         // Enhanced Versatile Disc
-        FVD,
+        EVD,
         // Forward Versatile Disc
-        HVD,
+        FVD,
         // Holographic Versatile Disc
-        CBHD,
+        HVD,
         // China Blue High Definition
-        HDVMD,
+        CBHD,
         // High Definition Versatile Multilayer Disc
-        VCDHD,
+        HDVMD,
         // Versatile Compact Disc High Density
-        LD,
+        VCDHD,
         // Pioneer LaserDisc
-        LDROM,
+        LD,
         // Pioneer LaserDisc data
-        MD,
+        LDROM,
         // Sony MiniDisc
-        HiMD,
+        MD,
         // Sony Hi-MD
-        UDO,
+        HiMD,
         // Ultra Density Optical
-        SVOD,
+        UDO,
         // Stacked Volumetric Optical Disc
-        FDDVD,
+        SVOD,
         // Five Dimensional disc
+        FDDVD,
         // Propietary game discs
-        PS1CD,
         // Sony PlayStation game CD
-        PS2CD,
+        PS1CD,
         // Sony PlayStation 2 game CD
-        PS2DVD,
+        PS2CD,
         // Sony PlayStation 2 game DVD
-        PS3DVD,
+        PS2DVD,
         // Sony PlayStation 3 game DVD
-        PS3BD,
+        PS3DVD,
         // Sony PlayStation 3 game Blu-ray
-        PS4BD,
+        PS3BD,
         // Sony PlayStation 4 game Blu-ray
-        UMD,
+        PS4BD,
         // Sony PlayStation Portable Universal Media Disc (ECMA-365)
-        GOD,
+        UMD,
         // Nintendo GameCube Optical Disc
-        WOD,
+        GOD,
         // Nintendo Wii Optical Disc
-        WUOD,
+        WOD,
         // Nintendo Wii U Optical Disc
-        XGD,
+        WUOD,
         // Microsoft X-box Game Disc
+        XGD,
+        // Microsoft X-box 360 Game Disc
         XGD2,
         // Microsoft X-box 360 Game Disc
         XGD3,
-        // Microsoft X-box 360 Game Disc
-        XGD4,
         // Microsoft X-box One Game Disc
-        MEGACD,
+        XGD4,
         // Sega MegaCD
-        SATURNCD,
+        MEGACD,
         // Sega Saturn disc
-        GDROM,
+        SATURNCD,
         // Sega/Yamaha Gigabyte Disc
-        GDR
+        GDROM,
         // Sega/Yamaha recordable Gigabyte Disc}}
-
+        GDR,
+        // Apple standard floppy formats
+        // 5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR
+        Apple32SS,
+        // 5.25", DS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR
+        Apple32DS,
+        // 5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR
+        Apple33SS,
+        // 5.25", DS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR
+        Apple33DS,
+        // 3.5", SS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR
+        AppleSonySS,
+        // 3.5", DS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR
+        AppleSonyDS,
+        // IBM/Microsoft PC standard floppy formats
+        // 5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM
+        DOS_525_SS_DD_8,
+        // 5.25", SS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM
+        DOS_525_SS_DD_9,
+        // 5.25", DS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM
+        DOS_525_DS_DD_8,
+        // 5.25", DS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM
+        DOS_525_DS_DD_9,
+        // 5.25", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM
+        DOS_525_HD,
+        // 3.5", SS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM
+        DOS_35_SS_DD_8,
+        // 3.5", SS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        DOS_35_SS_DD_9,
+        // 3.5", DS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM
+        DOS_35_DS_DD_8,
+        // 3.5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        DOS_35_DS_DD_9,
+        // 3.5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM
+        DOS_35_HD,
+        // 3.5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM
+        DOS_35_ED,
+        // Microsoft non standard floppy formats
+        // 3.5", DS, DD, 80 tracks, 21 spt, 512 bytes/sector, MFM
+        DMF,
+        // 3.5", DS, DD, 82 tracks, 21 spt, 512 bytes/sector, MFM
+        DMF_82,
+        // IBM non standard floppy formats
+        XDF_525,
+        XDF_35,
+        // IBM standard floppy formats
+        // 8", SS, SD, 32 tracks, 8 spt, 319 bytes/sector, FM
+        IBM23FD,
+        // 8", SS, SD, 73 tracks, 26 spt, 128 bytes/sector, FM
+        IBM33FD_128,
+        // 8", SS, SD, 74 tracks, 15 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        IBM33FD_256,
+        // 8", SS, SD, 74 tracks, 8 spt, 512 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        IBM33FD_512,
+        // 8", DS, SD, 74 tracks, 26 spt, 128 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        IBM43FD_128,
+        // 8", DS, SD, 74 tracks, 26 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        IBM43FD_256,
+        // 8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        IBM53FD_256,
+        // 8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        IBM53FD_512,
+        // 8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        IBM53FD_1024,
+        // DEC standard floppy formats
+        // 8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        RX01,
+        // 8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM
+        RX02
     };
     // Track (as partitioning element) types
     public enum TrackType
@@ -316,7 +383,7 @@ namespace FileSystemIDandChk.ImagePlugins
     public enum SectorTagType
     {
         AppleSectorTag,
-        // Apple's GCR sector tags, 20 bytes
+        // Apple's GCR sector tags, 12 bytes
         CDSectorSync,
         // Sync frame from CD sector, 12 bytes
         CDSectorHeader,

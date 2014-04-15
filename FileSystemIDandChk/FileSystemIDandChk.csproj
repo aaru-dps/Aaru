@@ -70,6 +70,7 @@
     <Compile Include="ImagePlugins\ImagePlugin.cs" />
     <Compile Include="ImagePlugins\CDRWin.cs" />
     <Compile Include="BigEndianBitConverter.cs" />
+    <Compile Include="ImagePlugins\DiskCopy42.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
