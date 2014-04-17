@@ -1,3 +1,40 @@
+/***************************************************************************
+FileSystem identifier and checker
+----------------------------------------------------------------------------
+ 
+Filename       : ODS.cs
+Version        : 1.0
+Author(s)      : Natalia Portillo
+ 
+Component      : Filesystem plugins
+
+Revision       : $Revision$
+Last change by : $Author$
+Date           : $Date$
+ 
+--[ Description ] ----------------------------------------------------------
+ 
+Identifies VMS filesystems and shows information.
+ 
+--[ License ] --------------------------------------------------------------
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+----------------------------------------------------------------------------
+Copyright (C) 2011-2014 Claunia.com
+****************************************************************************/
+//$Id$
 using System;
 using System.Text;
 using FileSystemIDandChk;
@@ -7,7 +44,7 @@ using FileSystemIDandChk;
 // With some hints from http://www.decuslib.com/DECUS/vmslt97b/gnusoftware/gccaxp/7_1/vms/hm2def.h
 // Expects the home block to be always in sector #1 (does not check deltas)
 // Assumes a sector size of 512 bytes (VMS does on HDDs and optical drives, dunno about M.O.)
-// Book only describes ODS-2. Need to test ODS-1 and OSD-5
+// Book only describes ODS-2. Need to test ODS-1 and ODS-5
 // There is an ODS with signature "DECFILES11A", yet to be seen
 // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
 // TODO: Implement checksum

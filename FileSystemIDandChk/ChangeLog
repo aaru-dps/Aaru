@@ -1,5 +1,45 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* Main.cs:
+	* Plugins.cs:
+	* Swapping.cs:
+	* Plugins/ODS.cs:
+	* Plugins/FFS.cs:
+	* Plugins/FAT.cs:
+	* Plugins/BFS.cs:
+	* Plugins/SysV.cs:
+	* DateHandlers.cs:
+	* Plugins/NTFS.cs:
+	* AssemblyInfo.cs:
+	* Plugins/HPFS.cs:
+	* Plugins/Opera.cs:
+	* Plugins/extFS.cs:
+	* Plugins/Plugin.cs:
+	* Plugins/LisaFS.cs:
+	* StringHandlers.cs:
+	* Plugins/ext2FS.cs:
+	* PartPlugins/MBR.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/Symbian.cs:
+	* Plugins/SolarFS.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleHFS.cs:
+	* PartPlugins/NeXT.cs:
+	* Plugins/AppleMFS.cs:
+	* ImagePlugins/CDRWin.cs:
+	* Plugins/AppleHFSPlus.cs:
+	* PartPlugins/AppleMap.cs:
+	* BigEndianBitConverter.cs:
+	* PartPlugins/PartPlugin.cs:
+	* ImagePlugins/DiskCopy42.cs:
+	* EndianAwareBinaryReader.cs:
+	* ImagePlugins/ImagePlugin.cs:
+	  Added information and license header.
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* DateHandlers.cs:
 	  Lisa epoch is 1901 not 1904
 

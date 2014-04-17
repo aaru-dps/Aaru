@@ -1,7 +1,43 @@
+/***************************************************************************
+FileSystem identifier and checker
+----------------------------------------------------------------------------
+ 
+Filename       : MBR.cs
+Version        : 1.0
+Author(s)      : Natalia Portillo
+ 
+Component      : Partitioning scheme plugins
+
+Revision       : $Revision$
+Last change by : $Author$
+Date           : $Date$
+ 
+--[ Description ] ----------------------------------------------------------
+ 
+Manages Intel/Microsoft MBR and UNIX slicing inside it.
+ 
+--[ License ] --------------------------------------------------------------
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+----------------------------------------------------------------------------
+Copyright (C) 2011-2014 Claunia.com
+****************************************************************************/
+//$Id$
+
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using FileSystemIDandChk;
 
 // TODO: Support AAP, AST, SpeedStor and Ontrack extensions
