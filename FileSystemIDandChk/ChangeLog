@@ -1,6 +1,14 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
 	* DateHandlers.cs:
+	  Lisa epoch is 1901 not 1904
+
+	* Plugins/LisaFS.cs:
+	  Typos corrected, now works perfectly
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
+	* DateHandlers.cs:
 	  lisatime_t is unsigned
 
 	* Plugins/LisaFS.cs:

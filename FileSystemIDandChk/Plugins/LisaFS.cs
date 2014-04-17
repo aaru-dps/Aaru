@@ -45,7 +45,7 @@ namespace FileSystemIDandChk.Plugins
                 for (int i = 0; i < 100; i++)
                 {
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x02);
+                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
                     if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (LisaFS plugin): Sector {0}, file ID 0x{1:X4}", i, fileid);
@@ -78,7 +78,7 @@ namespace FileSystemIDandChk.Plugins
                         if (mddf.mddf_block != i)
                             return false;
 
-                        if (mddf.vol_size < imagePlugin.GetSectors())
+                        if (mddf.vol_size > imagePlugin.GetSectors())
                             return false;
 
                         if (mddf.vol_size - 1 != mddf.volsize_minus_one)
@@ -128,7 +128,7 @@ namespace FileSystemIDandChk.Plugins
                 for (int i = 0; i < 100; i++)
                 {
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x02);
+                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
                     if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (LisaFS plugin): Sector {0}, file ID 0x{1:X4}", i, fileid);
@@ -267,7 +267,7 @@ namespace FileSystemIDandChk.Plugins
                         if (mddf.mddf_block != i)
                             return;
 
-                        if (mddf.vol_size < imagePlugin.GetSectors())
+                        if (mddf.vol_size > imagePlugin.GetSectors())
                             return;
 
                         if (mddf.vol_size - 1 != mddf.volsize_minus_one)

@@ -4,7 +4,7 @@ namespace FileSystemIDandChk
 {
     public static class DateHandlers
     {
-        static readonly DateTime LisaEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
+        static readonly DateTime LisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
         static readonly DateTime MacEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
         static readonly DateTime UNIXEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         // Day 0 of Julian Date system
