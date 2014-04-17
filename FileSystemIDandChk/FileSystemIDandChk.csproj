@@ -71,6 +71,7 @@
     <Compile Include="ImagePlugins\CDRWin.cs" />
     <Compile Include="BigEndianBitConverter.cs" />
     <Compile Include="ImagePlugins\DiskCopy42.cs" />
+    <Compile Include="Plugins\LisaFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

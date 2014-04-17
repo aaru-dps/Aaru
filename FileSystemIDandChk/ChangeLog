@@ -1,5 +1,15 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/LisaFS.cs:
+	* FileSystemIDandChk.csproj:
+	  Added LisaFS skeleton with Lisa's MDDF and tag structs
+
+	* DateHandlers.cs:
+	  Added convert function from Lisa timestamp fields to C#
+	  DateTime
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugins/DiskCopy42.cs:
 	* ImagePlugins/ImagePlugin.cs:
 	  Added support for Apple FileWare (aka Twiggy) disks as

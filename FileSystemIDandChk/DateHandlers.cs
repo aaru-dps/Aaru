@@ -4,13 +4,20 @@ namespace FileSystemIDandChk
 {
     public static class DateHandlers
     {
+        static readonly DateTime LisaEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
         static readonly DateTime MacEpoch = new DateTime(1904, 1, 1, 0, 0, 0);
         static readonly DateTime UNIXEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
-        static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
         // Day 0 of Julian Date system
+        static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
+
         public static DateTime MacToDateTime(ulong MacTimeStamp)
         {
             return MacEpoch.AddTicks((long)(MacTimeStamp * 10000000));
+        }
+
+        public static DateTime LisaToDateTime(Int32 LisaTimeStamp)
+        {
+            return LisaEpoch.AddSeconds(LisaTimeStamp);
         }
 
         public static DateTime UNIXToDateTime(Int32 UNIXTimeStamp)
@@ -93,6 +100,7 @@ namespace FileSystemIDandChk
 			
             return decodedDT;
         }
+
         // C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC
         public static DateTime VMSToDateTime(UInt64 vmsDate)
         {
