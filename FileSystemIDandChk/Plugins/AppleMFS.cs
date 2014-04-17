@@ -48,20 +48,20 @@ namespace FileSystemIDandChk.Plugins
                 return;
 			
             MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdb_sector, 0x002);
-            MDB.drLsBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x00A);
-            MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdb_sector, 0x012);
-            MDB.drNmFls = BigEndianBitConverter.ToUInt16(mdb_sector, 0x014);
-            MDB.drDirSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x016);
-            MDB.drBlLen = BigEndianBitConverter.ToUInt16(mdb_sector, 0x018);
-            MDB.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x01A);
-            MDB.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01C);
-            MDB.drClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x020);
-            MDB.drAlBlSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x024);
-            MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdb_sector, 0x026);
-            MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x02A);
-            MDB.drVNSiz = mdb_sector[0x02C];
+            MDB.drLsBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x006);
+            MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00A);
+            MDB.drNmFls = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00C);
+            MDB.drDirSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00E);
+            MDB.drBlLen = BigEndianBitConverter.ToUInt16(mdb_sector, 0x010);
+            MDB.drNmAlBlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x012);
+            MDB.drAlBlkSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x014);
+            MDB.drClpSiz = BigEndianBitConverter.ToUInt32(mdb_sector, 0x018);
+            MDB.drAlBlSt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x01C);
+            MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01E);
+            MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
+            MDB.drVNSiz = mdb_sector[0x024];
             variable_size = new byte[MDB.drVNSiz];
-            Array.Copy(mdb_sector, 0x02D, variable_size, 0, MDB.drVNSiz);
+            Array.Copy(mdb_sector, 0x025, variable_size, 0, MDB.drVNSiz);
             MDB.drVN = Encoding.ASCII.GetString(variable_size);
 			
             BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
@@ -160,36 +160,36 @@ namespace FileSystemIDandChk.Plugins
 
         struct MFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
         {
-            public UInt16 drSigWord;
             // 0x000, Signature, 0xD2D7
-            public ulong drCrDate;
+            public UInt16 drSigWord;
             // 0x002, Volume creation date
-            public ulong drLsBkUp;
-            // 0x00A, Volume last backup date
+            public UInt32 drCrDate;
+            // 0x006, Volume last backup date
+            public UInt32 drLsBkUp;
+            // 0x00A, Volume attributes
             public UInt16 drAtrb;
-            // 0x012, Volume attributes
+            // 0x00C, Volume number of files
             public UInt16 drNmFls;
-            // 0x014, Volume number of files
+            // 0x00E, First directory block
             public UInt16 drDirSt;
-            // 0x016, First directory block
+            // 0x010, Length of directory in blocks
             public UInt16 drBlLen;
-            // 0x018, Length of directory in blocks
+            // 0x012, Volume allocation blocks
             public UInt16 drNmAlBlks;
-            // 0x01A, Volume allocation blocks
+            // 0x014, Size of allocation blocks
             public UInt32 drAlBlkSiz;
-            // 0x01C, Size of allocation blocks
+            // 0x018, Number of bytes to allocate
             public UInt32 drClpSiz;
-            // 0x020, Number of bytes to allocate
+            // 0x01C, First allocation block in block map
             public UInt16 drAlBlSt;
-            // 0x024, First allocation block in block map
+            // 0x01E. Next unused file number
             public UInt32 drNxtFNum;
-            // 0x026. Next unused file number
+            // 0x022, Number of unused allocation blocks
             public UInt16 drFreeBks;
-            // 0x02A, Number of unused allocation blocks
+            // 0x024, Length of volume name
             public byte drVNSiz;
-            // 0x02C, Length of volume name
+            // 0x025, Characters of volume name
             public string drVN;
-            // 0x02D, Characters of volume name
         }
 
         struct MFS_BootBlock // Should be offset 0x0000 bytes in volume

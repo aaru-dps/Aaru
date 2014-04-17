@@ -1,5 +1,11 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/AppleMFS.cs:
+	  Corrected alignment failure because of incorrect type
+	  definition on MDB struct.
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugins/DiskCopy42.cs:
 	  Correct typos, misalignment of field and
 	  BigEndianBitConverter behaviour
