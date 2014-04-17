@@ -150,4 +150,9 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="TODO" />
+    <None Include="LICENSE" />
+    <None Include="README.md" />
+  </ItemGroup>
 </Project>

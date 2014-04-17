@@ -1,5 +1,14 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* TODO:
+	* LICENSE:
+	* Main.cs:
+	* README.md:
+	* FileSystemIDandChk.csproj:
+	  Add documentation and license and prepare for publication
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* Main.cs:
 	* Plugins.cs:
 	* Swapping.cs:

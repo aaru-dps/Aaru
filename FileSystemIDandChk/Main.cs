@@ -58,12 +58,12 @@ namespace FileSystemIDandChk
             chkPartitions = true;
             chkFilesystems = true;
             // RELEASE
-            //isDebug = false;
+            isDebug = false;
             // DEBUG
-            isDebug = true;
+            //isDebug = true;
 			
             Console.WriteLine("Filesystem Identifier and Checker");
-            Console.WriteLine("Copyright (C) Natalia Portillo, All Rights Reserved");
+            Console.WriteLine("Copyright (C) 2011-2014 Natalia Portillo");
 			
             // For debug
             if (isDebug)
