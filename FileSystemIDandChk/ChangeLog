@@ -352,3 +352,44 @@
 	  Moved all datetime convertions from plugins to central
 	  class.
 
+2011-06-02  Natalia Portillo  <claunia@claunia.com>
+
+	* Added VMS ODS
+
+2011-03-29  Natalia Portillo  <claunia@claunia.com>
+
+	* Added NTFS
+
+2011-03-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Added HPFS
+
+2011-03-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Added Be filesystem
+
+2011-03-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Use FOBOS guids
+
+2011-03-25  Natalia Portillo  <claunia@claunia.com>
+
+	* Added NeXT disklabels and unidentify MBR with 0 entries
+
+2011-03-25  Natalia Portillo  <claunia@claunia.com>
+
+	* ISO9660 should always check from offset 0, needs to be sure it runs only once
+
+2011-03-25  Natalia Portillo  <claunia@claunia.com>
+
+	* Added MBR partition scheme.
+
+2011-03-06  Natalia Portillo  <claunia@claunia.com>
+	* Added skeleton for BSD FFS.
+	* Added HFS+.
+	* If HFS detects it has wrapped a HFS+ volume, inform that it's not its filesystem.
+	* Added a workaround in calculation with UInt32 and ulong that made HFS and MFS show a bad date.
+
+2011-03-203 Natalia Portillo  <claunia@claunia.com>
+
+	* First commit to SVN
