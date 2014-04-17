@@ -333,7 +333,7 @@ namespace FileSystemIDandChk.Plugins
                                 sb.AppendLine("LisaFS v2");
                                 break;
                             case LisaFSv3:
-                                sb.AppendLine("LisaFS v1");
+                                sb.AppendLine("LisaFS v3");
                                 break;
                             default:
                                 sb.AppendFormat("Uknown LisaFS version {0}", mddf.fsversion).AppendLine();
