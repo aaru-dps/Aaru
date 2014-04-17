@@ -1,3 +1,9 @@
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/DiskCopy42.cs:
+	  Correct typos, misalignment of field and
+	  BigEndianBitConverter behaviour
+
 2014-04-15  Natalia Portillo  <claunia@claunia.com>
 
 	* FileSystemIDandChk.csproj:

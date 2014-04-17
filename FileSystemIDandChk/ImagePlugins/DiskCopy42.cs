@@ -29,7 +29,7 @@ namespace FileSystemIDandChk.ImagePlugins
             public byte fmtByte;
             // 0x52, is disk image valid? always 0x01
             public byte valid;
-            // 0x54, reserved, always 0x00
+            // 0x53, reserved, always 0x00
             public byte reserved;
         }
 
@@ -110,6 +110,9 @@ namespace FileSystemIDandChk.ImagePlugins
             DC42Header tmp_header = new DC42Header();
 
             Array.Copy(buffer, 0, pString, 0, 64);
+
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
             tmp_header.diskName = StringHandlers.PascalToString(pString);
             tmp_header.dataSize = BigEndianBitConverter.ToUInt32(buffer, 0x40);
             tmp_header.tagSize = BigEndianBitConverter.ToUInt32(buffer, 0x44);
@@ -118,25 +121,25 @@ namespace FileSystemIDandChk.ImagePlugins
             tmp_header.format = buffer[0x50];
             tmp_header.fmtByte = buffer[0x51];
             tmp_header.valid = buffer[0x52];
-            tmp_header.reserved = buffer[0x54];
+            tmp_header.reserved = buffer[0x53];
 
             if (MainClass.isDebug)
             {
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.diskName = \"{0}\"", tmp_header.diskName);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.dataSize = {0} bytes", tmp_header.dataSize);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.tagSize = {0} bytes", tmp_header.tagSize);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.dataChecksum = 0x{0:X8}", tmp_header.dataChecksum);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.tagChecksum = 0x{0:X8}", tmp_header.tagChecksum);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.format = 0x{0:X2}", tmp_header.format);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.fmtByte = 0x{0:X2}", tmp_header.fmtByte);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.valid = {0}", tmp_header.valid);
-                Console.WriteLine("DEBUG (CDRWin plugin): tmp_header.reserved = {0}", tmp_header.reserved);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.diskName = \"{0}\"", tmp_header.diskName);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.dataSize = {0} bytes", tmp_header.dataSize);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.tagSize = {0} bytes", tmp_header.tagSize);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.dataChecksum = 0x{0:X8}", tmp_header.dataChecksum);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.tagChecksum = 0x{0:X8}", tmp_header.tagChecksum);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.format = 0x{0:X2}", tmp_header.format);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.fmtByte = 0x{0:X2}", tmp_header.fmtByte);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.valid = {0}", tmp_header.valid);
+                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.reserved = {0}", tmp_header.reserved);
             }
 
             if (tmp_header.valid != 1 || tmp_header.reserved != 0)
                 return false;
 
-            FileInfo fi = new FileInfo(dc42ImagePath);
+            FileInfo fi = new FileInfo(imagePath);
 
             if (tmp_header.dataSize + tmp_header.tagSize + 0x54 != fi.Length)
                 return false;
@@ -183,6 +186,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 return false;
 
             header = new DC42Header();
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             Array.Copy(buffer, 0, pString, 0, 64);
             header.diskName = StringHandlers.PascalToString(pString);
@@ -193,25 +197,25 @@ namespace FileSystemIDandChk.ImagePlugins
             header.format = buffer[0x50];
             header.fmtByte = buffer[0x51];
             header.valid = buffer[0x52];
-            header.reserved = buffer[0x54];
+            header.reserved = buffer[0x53];
 
             if (MainClass.isDebug)
             {
-                Console.WriteLine("DEBUG (CDRWin plugin): header.diskName = \"{0}\"", header.diskName);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.dataSize = {0} bytes", header.dataSize);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.tagSize = {0} bytes", header.tagSize);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.dataChecksum = 0x{0:X8}", header.dataChecksum);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.tagChecksum = 0x{0:X8}", header.tagChecksum);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.format = 0x{0:X2}", header.format);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.fmtByte = 0x{0:X2}", header.fmtByte);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.valid = {0}", header.valid);
-                Console.WriteLine("DEBUG (CDRWin plugin): header.reserved = {0}", header.reserved);
+                Console.WriteLine("DEBUG (DC42 plugin): header.diskName = \"{0}\"", header.diskName);
+                Console.WriteLine("DEBUG (DC42 plugin): header.dataSize = {0} bytes", header.dataSize);
+                Console.WriteLine("DEBUG (DC42 plugin): header.tagSize = {0} bytes", header.tagSize);
+                Console.WriteLine("DEBUG (DC42 plugin): header.dataChecksum = 0x{0:X8}", header.dataChecksum);
+                Console.WriteLine("DEBUG (DC42 plugin): header.tagChecksum = 0x{0:X8}", header.tagChecksum);
+                Console.WriteLine("DEBUG (DC42 plugin): header.format = 0x{0:X2}", header.format);
+                Console.WriteLine("DEBUG (DC42 plugin): header.fmtByte = 0x{0:X2}", header.fmtByte);
+                Console.WriteLine("DEBUG (DC42 plugin): header.valid = {0}", header.valid);
+                Console.WriteLine("DEBUG (DC42 plugin): header.reserved = {0}", header.reserved);
             }
 
             if (header.valid != 1 || header.reserved != 0)
                 return false;
 
-            FileInfo fi = new FileInfo(dc42ImagePath);
+            FileInfo fi = new FileInfo(imagePath);
 
             if (header.dataSize + header.tagSize + 0x54 != fi.Length)
                 return false;
@@ -220,7 +224,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 header.format != kSonyFormat1440K && header.format != kSonyFormat1680K)
             {
                 if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (CDRWin plugin): Unknown header.format = 0x{0:X2} value", header.format);
+                    Console.WriteLine("DEBUG (DC42 plugin): Unknown header.format = 0x{0:X2} value", header.format);
 
                 return false;
             }
@@ -229,7 +233,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte)
             {
                 if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (CDRWin plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
+                    Console.WriteLine("DEBUG (DC42 plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
                 return false;
             }
@@ -237,7 +241,7 @@ namespace FileSystemIDandChk.ImagePlugins
             if (header.fmtByte == kInvalidFmtByte)
             {
                 if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (CDRWin plugin): Image says it's unformatted");
+                    Console.WriteLine("DEBUG (DC42 plugin): Image says it's unformatted");
 
                 return false;
             }
@@ -255,7 +259,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 if (header.tagSize / 12 != sectors)
                 {
                     if (MainClass.isDebug)
-                        Console.WriteLine("DEBUG (CDRWin plugin): header.tagSize / 12 != sectors");
+                        Console.WriteLine("DEBUG (DC42 plugin): header.tagSize / 12 != sectors");
 
                     return false;
                 }
