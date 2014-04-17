@@ -49,11 +49,15 @@ namespace FileSystemIDandChk.ImagePlugins
         // 3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)
         // Unchecked value
         const byte kSonyFormat1680K = 0x04;
+        // Defined by Sigma Seven's BLU
+        const byte kSigmaFormatTwiggy = 0x54;
         // There should be a value for Apple HD20 hard disks, unknown...
         // fmyByte byte
         // Based on GCR nibble
         // Always 0x02 for MFM disks
         // Unknown for Apple HD20
+        // Defined by Sigma Seven's BLU
+        const byte kSignaFmtByteTwiggy = 0x01;
         // 3.5" single side double density GCR and MFM all use same code
         const byte kSonyFmtByte400K = 0x02;
         const byte kSonyFmtByte720K = kSonyFmtByte400K;
@@ -141,11 +145,11 @@ namespace FileSystemIDandChk.ImagePlugins
 
             FileInfo fi = new FileInfo(imagePath);
 
-            if (tmp_header.dataSize + tmp_header.tagSize + 0x54 != fi.Length)
+            if (tmp_header.dataSize + tmp_header.tagSize + 0x54 != fi.Length && tmp_header.format != kSigmaFormatTwiggy)
                 return false;
 
             if (tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
-                tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K)
+                tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
@@ -154,7 +158,7 @@ namespace FileSystemIDandChk.ImagePlugins
             }
 
             if (tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
-                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte)
+                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSignaFmtByteTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
@@ -217,11 +221,11 @@ namespace FileSystemIDandChk.ImagePlugins
 
             FileInfo fi = new FileInfo(imagePath);
 
-            if (header.dataSize + header.tagSize + 0x54 != fi.Length)
+            if (header.dataSize + header.tagSize + 0x54 != fi.Length && header.format != kSigmaFormatTwiggy)
                 return false;
 
             if (header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
-                header.format != kSonyFormat1440K && header.format != kSonyFormat1680K)
+                header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Unknown header.format = 0x{0:X2} value", header.format);
@@ -230,7 +234,7 @@ namespace FileSystemIDandChk.ImagePlugins
             }
 
             if (header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
-                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte)
+                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSignaFmtByteTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
@@ -421,6 +425,8 @@ namespace FileSystemIDandChk.ImagePlugins
                     return DiskType.DOS_35_HD;
                 case kSonyFormat1680K:
                     return DiskType.DMF;
+                case kSigmaFormatTwiggy:
+                    return DiskType.AppleFileWare;
                 default:
                     return DiskType.Unknown;
             }

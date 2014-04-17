@@ -1,5 +1,12 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugins/DiskCopy42.cs:
+	* ImagePlugins/ImagePlugin.cs:
+	  Added support for Apple FileWare (aka Twiggy) disks as
+	  dumped by Sigma Seven's BLU
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/AppleMFS.cs:
 	  Corrected alignment failure because of incorrect type
 	  definition on MDB struct.

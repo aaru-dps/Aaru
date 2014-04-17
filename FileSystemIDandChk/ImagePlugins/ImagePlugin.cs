@@ -272,6 +272,8 @@ namespace FileSystemIDandChk.ImagePlugins
         AppleSonySS,
         // 3.5", DS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR
         AppleSonyDS,
+        // 5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy
+        AppleFileWare,
         // IBM/Microsoft PC standard floppy formats
         // 5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM
         DOS_525_SS_DD_8,
