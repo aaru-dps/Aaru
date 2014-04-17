@@ -1,5 +1,14 @@
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
+	* DateHandlers.cs:
+	  lisatime_t is unsigned
+
+	* Plugins/LisaFS.cs:
+	  Added code to search for MDDF, check some variables to be
+	  sure it's a real MDDF, and get information about it.
+
+2014-04-17  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/LisaFS.cs:
 	* FileSystemIDandChk.csproj:
 	  Added LisaFS skeleton with Lisa's MDDF and tag structs

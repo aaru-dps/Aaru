@@ -15,7 +15,7 @@ namespace FileSystemIDandChk
             return MacEpoch.AddTicks((long)(MacTimeStamp * 10000000));
         }
 
-        public static DateTime LisaToDateTime(Int32 LisaTimeStamp)
+        public static DateTime LisaToDateTime(UInt32 LisaTimeStamp)
         {
             return LisaEpoch.AddSeconds(LisaTimeStamp);
         }
