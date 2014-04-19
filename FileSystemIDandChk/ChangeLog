@@ -1,3 +1,46 @@
+2014-04-19  Natalia Portillo  <claunia@claunia.com>
+
+	* LICENSE:
+	* Main.cs:
+	* Plugins.cs:
+	* Swapping.cs:
+	* Plugins/BFS.cs:
+	* Plugins/FFS.cs:
+	* Plugins/ODS.cs:
+	* Plugins/FAT.cs:
+	* Plugins/SysV.cs:
+	* Plugins/NTFS.cs:
+	* AssemblyInfo.cs:
+	* Plugins/HPFS.cs:
+	* DateHandlers.cs:
+	* Plugins/Opera.cs:
+	* Plugins/extFS.cs:
+	* Plugins/ext2FS.cs:
+	* Plugins/LisaFS.cs:
+	* StringHandlers.cs:
+	* Plugins/Plugin.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/Symbian.cs:
+	* Plugins/SolarFS.cs:
+	* PartPlugins/MBR.cs:
+	* PartPlugins/NeXT.cs:
+	* Plugins/AppleMFS.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleHFS.cs:
+	* ImagePlugins/CDRWin.cs:
+	* Plugins/AppleHFSPlus.cs:
+	* PartPlugins/AppleMap.cs:
+	* BigEndianBitConverter.cs:
+	* PartPlugins/PartPlugin.cs:
+	* EndianAwareBinaryReader.cs:
+	* ImagePlugins/DiskCopy42.cs:
+	* ImagePlugins/ImagePlugin.cs:
+	  Change license from AGPLv3 to GPLv3 to make some good
+	  friends happier, and be able to use code from Linux if ever
+	  *ever* needed.
+
 2014-04-17  Natalia Portillo  <claunia@claunia.com>
 
 	* TODO:
