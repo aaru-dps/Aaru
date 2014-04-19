@@ -1,5 +1,12 @@
 2014-04-19  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugins/TeleDisk.cs:
+	* FileSystemIDandChk.csproj:
+	  Started Sydex TeleDisk implementation, with structs,
+	  constants and initial Identify() implementation.
+
+2014-04-19  Natalia Portillo  <claunia@claunia.com>
+
 	* LICENSE:
 	* Main.cs:
 	* Plugins.cs:
