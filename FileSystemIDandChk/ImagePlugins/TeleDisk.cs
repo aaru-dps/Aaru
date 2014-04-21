@@ -191,6 +191,8 @@ namespace FileSystemIDandChk.ImagePlugins
         TDCommentBlockHeader commentHeader;
         byte[] commentBlock;
         string comment;
+        DateTime creationDate;
+        DateTime modificationDate;
 
         #endregion
         
@@ -264,7 +266,139 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override bool OpenImage(string imagePath)
         {
-            throw new NotImplementedException("Not yet implemented.");
+            header = new TD0Header();
+            byte[] headerBytes = new byte[12];
+            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            
+            stream.Read(headerBytes, 0, 12);
+            
+            header.signature = BitConverter.ToUInt16(headerBytes, 0);
+            
+            if (header.signature != tdMagic && header.signature != tdAdvCompMagic)
+                return false;
+            
+            header.sequence = headerBytes[2];
+            header.diskSet = headerBytes[3];
+            header.version = headerBytes[4];
+            header.dataRate = headerBytes[5];
+            header.driveType = headerBytes[6];
+            header.stepping = headerBytes[7];
+            header.dosAllocation = headerBytes[8];
+            header.sides = headerBytes[9];
+            header.crc = BitConverter.ToUInt16(headerBytes, 10);
+            
+            byte[] headerBytesForCRC = new byte[10];
+            Array.Copy(headerBytes, headerBytesForCRC, 10);
+            UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
+            
+            if (MainClass.isDebug)
+            {
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.sequence = 0x{0:X2}", header.sequence);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.diskSet = 0x{0:X2}", header.diskSet);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.version = 0x{0:X2}", header.version);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.dataRate = 0x{0:X2}", header.dataRate);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.driveType = 0x{0:X2}", header.driveType);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.stepping = 0x{0:X2}", header.stepping);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.dosAllocation = 0x{0:X2}", header.dosAllocation);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.sides = 0x{0:X2}", header.sides);
+                Console.WriteLine("DEBUG (TeleDisk plugin): header.crc = 0x{0:X4}", header.crc);
+                Console.WriteLine("DEBUG (TeleDisk plugin): calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
+            }
+            
+            // We need more checks as the magic is too simply.
+            // This may deny legal images
+            
+            // That would be much of a coincidence
+            if (header.crc != calculatedHeaderCRC && MainClass.isDebug)
+                Console.WriteLine("DEBUG (TeleDisk plugin): Calculated CRC does not coincide with stored one.");
+
+            if (header.sequence != 0x00)
+                return false;
+            
+            if (header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
+                return false;
+            
+            if (header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+                header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
+                return false;
+
+            if (header.signature == tdAdvCompMagic)
+                throw new NotImplementedException("TeleDisk Advanced Compression support not yet implemented");
+
+            creationDate = DateTime.MinValue;
+
+            if ((header.stepping & CommentBlockPresent) == CommentBlockPresent)
+            {
+                commentHeader = new TDCommentBlockHeader();
+
+                byte[] commentHeaderBytes = new byte[10];
+                byte[] commentBlockForCRC;
+
+                stream.Read(commentHeaderBytes, 0, 10);
+                commentHeader.crc = BitConverter.ToUInt16(commentHeaderBytes, 0);
+                commentHeader.length = BitConverter.ToUInt16(commentHeaderBytes, 2);
+                commentHeader.year = commentHeaderBytes[4];
+                commentHeader.month = commentHeaderBytes[5];
+                commentHeader.day = commentHeaderBytes[6];
+                commentHeader.hour = commentHeaderBytes[7];
+                commentHeader.minute = commentHeaderBytes[8];
+                commentHeader.second = commentHeaderBytes[9];
+
+                commentBlock = new byte[commentHeader.length];
+                stream.Read(commentBlock, 0, commentHeader.length);
+
+                commentBlockForCRC = new byte[commentHeader.length + 8];
+                Array.Copy(commentHeaderBytes, 2, commentBlockForCRC, 0, 8);
+                Array.Copy(commentBlock, 0, commentBlockForCRC, 8, commentHeader.length);
+
+                UInt16 cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
+
+                if(MainClass.isDebug)
+                {
+                    Console.WriteLine("DEBUG (TeleDisk plugin): Comment header");
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tCalculated CRC = 0x{0:X4}", cmtcrc);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.length = {0} bytes", commentHeader.length);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.year = {0}", commentHeader.year);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.month = {0}", commentHeader.month);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.day = {0}", commentHeader.day);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.hour = {0}", commentHeader.hour);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.minute = {0}", commentHeader.minute);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.second = {0}", commentHeader.second);
+                }
+
+                for(int i=0;i<commentBlock.Length;i++)
+                {
+                    // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
+                    if(commentBlock[i]==0x00)
+                        commentBlock[i]=0x0A;
+                }
+
+                comment = System.Text.Encoding.ASCII.GetString(commentBlock);
+
+                if(MainClass.isDebug)
+                {
+                    Console.WriteLine("DEBUG (TeleDisk plugin): Comment");
+                    Console.WriteLine("DEBUG (TeleDisk plugin): {0}", comment);
+                }
+
+                creationDate = new DateTime(commentHeader.year+1900, commentHeader.month+1, commentHeader.day,
+                                            commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
+            }
+
+            FileInfo fi = new FileInfo(imagePath);
+            if (creationDate == DateTime.MinValue)
+                creationDate = fi.CreationTimeUtc;
+            modificationDate = fi.LastWriteTimeUtc;
+
+            if (MainClass.isDebug)
+            {
+                Console.WriteLine("DEBUG (TeleDisk plugin): Image created on {0}", creationDate);
+                Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", modificationDate);
+            }
+
+            return false;
         }
         
         public override bool ImageHasPartitions()
