@@ -187,7 +187,10 @@ namespace FileSystemIDandChk.ImagePlugins
         #endregion
         
         #region Internal variables
-        
+        TD0Header header;
+        TDCommentBlockHeader commentHeader;
+        byte[] commentBlock;
+        string comment;
 
         #endregion
         
@@ -196,10 +199,10 @@ namespace FileSystemIDandChk.ImagePlugins
             Name = "Sydex TeleDisk";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         }
-        
+
         public override bool IdentifyImage(string imagePath)
         {
-            TD0Header header = new TD0Header();
+            header = new TD0Header();
             byte[] headerBytes = new byte[12];
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
 
@@ -220,6 +223,10 @@ namespace FileSystemIDandChk.ImagePlugins
             header.sides = headerBytes[9];
             header.crc = BitConverter.ToUInt16(headerBytes, 10);
 
+            byte[] headerBytesForCRC = new byte[10];
+            Array.Copy(headerBytes, headerBytesForCRC, 10);
+            UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
+
             if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
@@ -232,7 +239,25 @@ namespace FileSystemIDandChk.ImagePlugins
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.dosAllocation = 0x{0:X2}", header.dosAllocation);
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.sides = 0x{0:X2}", header.sides);
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.crc = 0x{0:X4}", header.crc);
+                Console.WriteLine("DEBUG (TeleDisk plugin): calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
             }
+
+            // We need more checks as the magic is too simply.
+            // This may deny legal images
+
+            // That would be much of a coincidence
+            if (header.crc == calculatedHeaderCRC)
+                return true;
+
+            if (header.sequence != 0x00)
+                return false;
+
+            if (header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
+                return false;
+
+            if (header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+                header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
+                return false;
 
             return true;
         }
@@ -321,7 +346,31 @@ namespace FileSystemIDandChk.ImagePlugins
         {
             throw new NotImplementedException("Not yet implemented.");
         }
-        
+
+        #region Private methods
+        static UInt16 TeleDiskCRC(UInt16 crc, byte[] buffer)
+        {
+            int counter = 0;
+
+            while (counter < buffer.Length)
+            {
+                crc ^= (UInt16)((buffer[counter] & 0xFF) << 8);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if ((crc & 0x8000) > 0)
+                        crc = (UInt16)((crc << 1) ^ TeleDiskCRCPoly);
+                    else
+                        crc = (UInt16)(crc << 1);
+                }
+
+                counter++;
+            }
+
+            return crc;
+        }
+        #endregion
+
         #region Unsupported features
         
         public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)

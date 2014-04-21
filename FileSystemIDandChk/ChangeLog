@@ -1,3 +1,9 @@
+2014-04-21  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/TeleDisk.cs:
+	  Added CRC calculation method and check of header using CRC
+	  to return a positive identification.
+
 2014-04-19  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/TeleDisk.cs:
