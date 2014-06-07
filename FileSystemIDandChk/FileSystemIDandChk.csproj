@@ -75,6 +75,7 @@
     <Compile Include="Plugins\LisaFS.cs" />
     <Compile Include="ImagePlugins\TeleDisk.cs" />
     <Compile Include="ArrayFill.cs" />
+    <Compile Include="PrintHex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
