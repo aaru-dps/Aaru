@@ -40,16 +40,34 @@ using System;
 
 namespace FileSystemIDandChk.Plugins
 {
+    /// <summary>
+    /// Abstract class to implement filesystem plugins.
+    /// </summary>
 	public abstract class Plugin
 	{
+        /// <summary>Plugin name.</summary>
         public string Name;
+        /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
 
         protected Plugin()
         {
         }
 		
+        /// <summary>
+        /// Identifies the filesystem in the specified LBA
+        /// </summary>
+        /// <param name="imagePlugin">Disk image.</param>
+        /// <param name="partitionOffset">Partition offset (LBA).</param>
+        /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
         public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset);
+
+        /// <summary>
+        /// Gets information about the identified filesystem.
+        /// </summary>
+        /// <param name="imagePlugin">Disk image.</param>
+        /// <param name="partitionOffset">Partition offset (LBA).</param>
+        /// <param name="information">Filesystem information.</param>
         public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information);
 	}
 }

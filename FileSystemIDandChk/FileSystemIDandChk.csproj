@@ -10,6 +10,7 @@
     <RootNamespace>FileSystemIDandChk</RootNamespace>
     <AssemblyName>FileSystemIDandChk</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ReleaseVersion>1.10</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>

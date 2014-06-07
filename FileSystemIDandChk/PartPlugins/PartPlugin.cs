@@ -41,35 +41,49 @@ using System.Collections.Generic;
 
 namespace FileSystemIDandChk.PartPlugins
 {
+    /// <summary>
+    /// Abstract class to implement partitioning schemes interpreting plugins.
+    /// </summary>
     public abstract class PartPlugin
     {
+        /// <summary>Plugin name.</summary>
         public string Name;
+        /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
 
         protected PartPlugin()
         {
         }
 
+        /// <summary>
+        /// Interprets a partitioning scheme.
+        /// </summary>
+        /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
+        /// <param name="imagePlugin">Disk image.</param>
+        /// <param name="partitions">Returns list of partitions.</param>
         public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions);
     }
 
+    /// <summary>
+    /// Partition structure.
+    /// </summary>
     public struct Partition
     {
+        /// <summary>Partition number, 0-started</summary>
         public ulong PartitionSequence;
-        // Partition number, 0-started
+        /// <summary>Partition type</summary>
         public string PartitionType;
-        // Partition type
+        /// <summary>Partition name (if the scheme supports it)</summary>
         public string PartitionName;
-        // Partition name (if the scheme supports it)
+        /// <summary>Start of the partition, in bytes</summary>
         public ulong PartitionStart;
-        // Start of the partition, in bytes
+        /// <summary>LBA of partition start</summary>
         public ulong PartitionStartSector;
-        // LBA of partition start
+        /// <summary>Length in bytes of the partition</summary>
         public ulong PartitionLength;
-        // Length in bytes of the partition
+        /// <summary>Length in sectors of the partition</summary>
         public ulong PartitionSectors;
-        // Length in sectors of the partition
+        /// <summary>Information that does not find space in this struct</summary>
         public string PartitionDescription;
-        // Information that does not find space in this struct
     }
 }

@@ -456,8 +456,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 {
                     if (spt != 0)
                         throw new FeatureUnsupportedImageException("Variable number of sectors per track. This kind of image is not yet supported");
-                    else
-                        spt = TDTrack.sectors;
+                    spt = TDTrack.sectors;
                 }
 
                 for (byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
@@ -575,17 +574,17 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override UInt64 GetImageSize()
         {
-            return this.imageSizeWithoutHeaders;
+            return imageSizeWithoutHeaders;
         }
         
         public override UInt64 GetSectors()
         {
-            return (ulong)this.sectorsData.Count;
+            return (ulong)sectorsData.Count;
         }
         
         public override UInt32 GetSectorSize()
         {
-            return this.biggestSectorSize;
+            return biggestSectorSize;
         }
         
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -601,12 +600,12 @@ namespace FileSystemIDandChk.ImagePlugins
 
             for (ulong i = sectorAddress; i < (sectorAddress + length); i++)
             {
-                if (!this.sectorsData.ContainsKey((uint)i))
+                if (!sectorsData.ContainsKey((uint)i))
                     throw new ImageNotSupportedException(String.Format("Requested sector {0} not found", i));
 
                 byte[] sector;
 
-                if(!this.sectorsData.TryGetValue((uint)i, out sector))
+                if(!sectorsData.TryGetValue((uint)i, out sector))
                     throw new ImageNotSupportedException(String.Format("Error reading sector {0}", i));
 
                 if (first)
@@ -643,7 +642,7 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override string   GetImageVersion()
         {
-            return this.telediskVersion;
+            return telediskVersion;
         }
         
         public override string   GetImageApplication()
@@ -653,38 +652,38 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override string   GetImageApplicationVersion()
         {
-            return this.telediskVersion;
+            return telediskVersion;
         }
         
         public override DateTime GetImageCreationTime()
         {
-            return this.creationDate;
+            return creationDate;
         }
         
         public override DateTime GetImageLastModificationTime()
         {
-            return this.modificationDate;
+            return modificationDate;
         }
         
         public override string   GetImageName()
         {
-            return this.imageName;
+            return imageName;
         }
         
         public override DiskType GetDiskType()
         {
-            switch (this.header.driveType)
+            switch (header.driveType)
             {
                 case DriveType525DD:
                 case DriveType525HD_DDDisk:
                 case DriveType525HD:
                     {
-                        switch (this.totalDiskSize)
+                        switch (totalDiskSize)
                         {
                             case 163840:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if(this.biggestSectorSize == 256)
+                                    if(biggestSectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_40;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_8;
@@ -692,7 +691,7 @@ namespace FileSystemIDandChk.ImagePlugins
                             case 184320:
                                 {
                                     // Atari disk uses 256 bytes/sector
-                                    if(this.biggestSectorSize == 256)
+                                    if(biggestSectorSize == 256)
                                         return DiskType.ATARI_525_DD;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_9;
@@ -700,7 +699,7 @@ namespace FileSystemIDandChk.ImagePlugins
                             case 327680:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if(this.biggestSectorSize == 256)
+                                    if(biggestSectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_80;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_DS_DD_8;
@@ -742,17 +741,16 @@ namespace FileSystemIDandChk.ImagePlugins
                             default:
                                 {
                                     if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 5,25\" disk with {0} bytes", this.totalDiskSize);
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 5,25\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
-                        break;
                     }
                 case DriveType35DD:
                 case DriveType35ED:
                 case DriveType35HD:
                     {
-                        switch (this.totalDiskSize)
+                        switch (totalDiskSize)
                         {
                             case 327680:
                                 return DiskType.DOS_35_SS_DD_8;
@@ -788,14 +786,14 @@ namespace FileSystemIDandChk.ImagePlugins
                             default:
                                 {
                                     if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 3,5\" disk with {0} bytes", this.totalDiskSize);
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 3,5\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
                     }
                 case DriveType8inch:
                     {
-                        switch (this.totalDiskSize)
+                        switch (totalDiskSize)
                         {
                             case 81664:
                                 return DiskType.IBM23FD;
@@ -821,7 +819,7 @@ namespace FileSystemIDandChk.ImagePlugins
                             case 512512:
                                 {
                                     // DEC disk uses 256 bytes/sector
-                                    if(this.biggestSectorSize == 256)
+                                    if(biggestSectorSize == 256)
                                         return DiskType.RX02;
                                     else // ECMA disks use 128 bytes/sector
                                         return DiskType.ECMA_59;
@@ -837,7 +835,7 @@ namespace FileSystemIDandChk.ImagePlugins
                             default:
                                 {
                                     if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 8\" disk with {0} bytes", this.totalDiskSize);
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 8\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
@@ -845,12 +843,11 @@ namespace FileSystemIDandChk.ImagePlugins
                 default:
                     {
                         if (MainClass.isDebug)
-                            Console.WriteLine("DEBUG (TeleDisk plugin): Unknown drive type {1} with {0} bytes", this.totalDiskSize, this.header.driveType);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
                         return DiskType.Unknown;
                     }
 
             }
-            throw new NotImplementedException("Not yet implemented.");
         }
 
         #region Private methods
@@ -952,7 +949,6 @@ namespace FileSystemIDandChk.ImagePlugins
                             if (Encoding == 0x00)
                             {
                                 Length = encodedData[ins + 1];
-                                Piece = new byte[Length];
                                 Array.Copy(encodedData, ins + 2, decodedData, outs, Length);
                                 ins += (2 + Length);
                                 outs += Length;

@@ -41,523 +41,790 @@ using System.Collections.Generic;
 
 namespace FileSystemIDandChk.ImagePlugins
 {
+    /// <summary>
+    /// Abstract class to implement disk image reading plugins.
+    /// </summary>
     public abstract class ImagePlugin
     {
+        /// <summary>Plugin name.</summary>
         public string Name;
+        /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
 
         protected ImagePlugin()
         {
         }
+
         // Basic image handling functions
+
+        /// <summary>
+        /// Identifies the image.
+        /// </summary>
+        /// <returns><c>true</c>, if image was identified, <c>false</c> otherwise.</returns>
+        /// <param name="imagePath">Image path.</param>
         public abstract bool IdentifyImage(string imagePath);
-        // Returns true if the plugin can handle the given image file
+
+        /// <summary>
+        /// Opens the image.
+        /// </summary>
+        /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
+        /// <param name="imagePath">Image path.</param>
         public abstract bool OpenImage(string imagePath);
-        // Initialize internal plugin structures to handle image
+
+        /// <summary>
+        /// Asks the disk image plugin if the image contains partitions
+        /// </summary>
+        /// <returns><c>true</c>, if the image contains partitions, <c>false</c> otherwise.</returns>
         public abstract bool ImageHasPartitions();
-        // Image has different partitions (sessions, tracks)
+
         // Image size functions
+
+        /// <summary>
+        /// Gets the size of the image, without headers.
+        /// </summary>
+        /// <returns>The image size.</returns>
         public abstract UInt64 GetImageSize();
-        // Returns image size, without headers, in bytes
+
+        /// <summary>
+        /// Gets the number of sectors in the image.
+        /// </summary>
+        /// <returns>Sectors in image.</returns>
         public abstract UInt64 GetSectors();
-        // Returns image size in sectors
+
+        /// <summary>
+        /// Returns the size of the biggest sector, counting user data only.
+        /// </summary>
+        /// <returns>Biggest sector size (user data only).</returns>
         public abstract UInt32 GetSectorSize();
-        // Returns sector size in bytes (user data only)
+
         // Image reading functions
+
+        /// <summary>
+        /// Reads a disk tag.
+        /// </summary>
+        /// <returns>Disk tag</returns>
+        /// <param name="tag">Tag type to read.</param>
         public abstract byte[] ReadDiskTag(DiskTagType tag);
+
         // Gets a disk tag
+        /// <summary>
+        /// Reads a sector's user data.
+        /// </summary>
+        /// <returns>The sector's user data.</returns>
+        /// <param name="sectorAddress">Sector address (LBA).</param>
         public abstract byte[] ReadSector(UInt64 sectorAddress);
-        // Reads a sector (user data only)
+
+        /// <summary>
+        /// Reads a sector's tag.
+        /// </summary>
+        /// <returns>The sector's tag.</returns>
+        /// <param name="sectorAddress">Sector address (LBA).</param>
+        /// <param name="tag">Tag type.</param>
         public abstract byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag);
-        // Reads specified tag from sector
+
+        /// <summary>
+        /// Reads a sector's user data, relative to track.
+        /// </summary>
+        /// <returns>The sector's user data.</returns>
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
         public abstract byte[] ReadSector(UInt64 sectorAddress, UInt32 track);
-        // Reads a sector (user data only), relative to track
+
+        /// <summary>
+        /// Reads a sector's tag, relative to track.
+        /// </summary>
+        /// <returns>The sector's tag.</returns>
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
+        /// <param name="tag">Tag type.</param>
         public abstract byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag);
-        // Reads specified tag from sector
+
+        /// <summary>
+        /// Reads user data from several sectors.
+        /// </summary>
+        /// <returns>The sectors user data.</returns>
+        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
         public abstract byte[] ReadSectors(UInt64 sectorAddress, UInt32 length);
-        // Reads sector (user data only)
+
+        /// <summary>
+        /// Reads tag from several sectors.
+        /// </summary>
+        /// <returns>The sectors tag.</returns>
+        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="tag">Tag type.</param>
         public abstract byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag);
-        // Reads specified tag from sector
+
+        /// <summary>
+        /// Reads user data from several sectors, relative to track.
+        /// </summary>
+        /// <returns>The sectors user data.</returns>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
         public abstract byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track);
-        // Reads a sector (user data only), relative to track
+
+        /// <summary>
+        /// Reads tag from several sectors, relative to track.
+        /// </summary>
+        /// <returns>The sectors tag.</returns>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
+        /// <param name="tag">Tag type.</param>
         public abstract byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag);
-        // Reads specified tag from sector, relative to track
+
+        /// <summary>
+        /// Reads a complete sector (user data + all tags).
+        /// </summary>
+        /// <returns>The complete sector. Format depends on disk type.</returns>
+        /// <param name="sectorAddress">Sector address (LBA).</param>
         public abstract byte[] ReadSectorLong(UInt64 sectorAddress);
-        // Reads a sector (user data + tags)
+
+        /// <summary>
+        /// Reads a complete sector (user data + all tags), relative to track.
+        /// </summary>
+        /// <returns>The complete sector. Format depends on disk type.</returns>
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
         public abstract byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track);
-        // Reads a sector (user data + tags), relative to track
+
+        /// <summary>
+        /// Reads several complete sector (user data + all tags).
+        /// </summary>
+        /// <returns>The complete sectors. Format depends on disk type.</returns>
+        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
         public abstract byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length);
-        // Reads sector (user data + tags)
+
+        /// <summary>
+        /// Reads several complete sector (user data + all tags), relative to track.
+        /// </summary>
+        /// <returns>The complete sectors. Format depends on disk type.</returns>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
         public abstract byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track);
-        // Reads sectors (user data + tags), relative to track
+
         // Image information functions
+
+        /// <summary>
+        /// Gets the image format.
+        /// </summary>
+        /// <returns>The image format.</returns>
         public abstract string   GetImageFormat();
-        // Gets image format
+
+        /// <summary>
+        /// Gets the image version.
+        /// </summary>
+        /// <returns>The image version.</returns>
         public abstract string   GetImageVersion();
-        // Gets format's version
+
+        /// <summary>
+        /// Gets the application that created the image.
+        /// </summary>
+        /// <returns>The application that created the image.</returns>
         public abstract string   GetImageApplication();
-        // Gets application that created this image
+
+        /// <summary>
+        /// Gets the version of the application that created the image.
+        /// </summary>
+        /// <returns>The version of the application that created the image.</returns>
         public abstract string   GetImageApplicationVersion();
-        // Gets application version
+
+        /// <summary>
+        /// Gets the image creator.
+        /// </summary>
+        /// <returns>Who created the image.</returns>
         public abstract string   GetImageCreator();
-        // Gets image creator (person)
+
+        /// <summary>
+        /// Gets the image creation time.
+        /// </summary>
+        /// <returns>The image creation time.</returns>
         public abstract DateTime GetImageCreationTime();
-        // Gets image creation time
+
+        /// <summary>
+        /// Gets the image last modification time.
+        /// </summary>
+        /// <returns>The image last modification time.</returns>
         public abstract DateTime GetImageLastModificationTime();
-        // Gets image last modification time
+
+        /// <summary>
+        /// Gets the name of the image.
+        /// </summary>
+        /// <returns>The image name.</returns>
         public abstract string   GetImageName();
-        // Gets image name
+
+        /// <summary>
+        /// Gets the image comments.
+        /// </summary>
+        /// <returns>The image comments.</returns>
         public abstract string   GetImageComments();
-        // Gets image comments
+
         // Functions to get information from disk represented by image
+
+        /// <summary>
+        /// Gets the disk manufacturer.
+        /// </summary>
+        /// <returns>The disk manufacturer.</returns>
         public abstract string   GetDiskManufacturer();
-        // Gets disk manufacturer
+
+        /// <summary>
+        /// Gets the disk model.
+        /// </summary>
+        /// <returns>The disk model.</returns>
         public abstract string   GetDiskModel();
-        // Gets disk model
+
+        /// <summary>
+        /// Gets the disk serial number.
+        /// </summary>
+        /// <returns>The disk serial number.</returns>
         public abstract string   GetDiskSerialNumber();
-        // Gets disk serial number
+
+        /// <summary>
+        /// Gets the disk (or product) barcode.
+        /// </summary>
+        /// <returns>The disk barcode.</returns>
         public abstract string   GetDiskBarcode();
-        // Gets disk (or product)
+
+        /// <summary>
+        /// Gets the disk part number.
+        /// </summary>
+        /// <returns>The disk part number.</returns>
         public abstract string   GetDiskPartNumber();
-        // Gets disk part no. as manufacturer set
+
+        /// <summary>
+        /// Gets the type of the disk.
+        /// </summary>
+        /// <returns>The disk type.</returns>
         public abstract DiskType GetDiskType();
-        // Gets disk type
+
+        /// <summary>
+        /// Gets the disk sequence.
+        /// </summary>
+        /// <returns>The disk sequence, starting at 1.</returns>
         public abstract int      GetDiskSequence();
-        // Gets disk sequence number, 1-starting
+
+        /// <summary>
+        /// Gets the last disk in the sequence.
+        /// </summary>
+        /// <returns>The last disk in the sequence.</returns>
         public abstract int      GetLastDiskSequence();
-        // Gets last disk sequence number
+
         // Functions to get information from drive used to create image
+
+        /// <summary>
+        /// Gets the manufacturer of the drive used to create the image.
+        /// </summary>
+        /// <returns>The drive manufacturer.</returns>
         public abstract string GetDriveManufacturer();
-        // Gets drive manufacturer
+
+        /// <summary>
+        /// Gets the model of the drive used to create the image.
+        /// </summary>
+        /// <returns>The drive model.</returns>
         public abstract string GetDriveModel();
-        // Gets drive model
+
+        /// <summary>
+        /// Gets the serial number of the drive used to create the image.
+        /// </summary>
+        /// <returns>The drive serial number.</returns>
         public abstract string GetDriveSerialNumber();
-        // Gets drive serial number
+
         // Partitioning functions
+
+        /// <summary>
+        /// Gets an array partitions. Typically only useful for optical disc
+        /// images where each track and index means a different partition, as
+        /// reads can be relative to them.
+        /// </summary>
+        /// <returns>The partitions.</returns>
         public abstract List<PartPlugins.Partition> GetPartitions();
-        // Returns disc partitions, tracks, sessions, as partition extents
+
+        /// <summary>
+        /// Gets the disc track extents (start, length).
+        /// </summary>
+        /// <returns>The track extents.</returns>
         public abstract List<Track> GetTracks();
-        // Returns disc track extents
+
+        /// <summary>
+        /// Gets the disc track extents for a specified session.
+        /// </summary>
+        /// <returns>The track exents for that session.</returns>
+        /// <param name="session">Session.</param>
         public abstract List<Track> GetSessionTracks(Session session);
-        // Returns disc track extensts for a session
+
+        /// <summary>
+        /// Gets the disc track extents for a specified session.
+        /// </summary>
+        /// <returns>The track exents for that session.</returns>
+        /// <param name="session">Session.</param>
         public abstract List<Track> GetSessionTracks(UInt16 session);
-        // Returns disc track extensts for a session
+
+        /// <summary>
+        /// Gets the sessions (optical discs only).
+        /// </summary>
+        /// <returns>The sessions.</returns>
         public abstract List<Session> GetSessions();
         // Returns disc sessions
+
         // CD flags bitmask
+
+        /// <summary>Track is quadraphonic.</summary>
         public const byte CDFlagsFourChannel = 0x20;
+        /// <summary>Track is non-audio (data).</summary>
         public const byte CDFlagsDataTrack = 0x10;
+        /// <summary>Track is copy protected.</summary>
         public const byte CDFlagsCopyPrevent = 0x08;
+        /// <summary>Track has pre-emphasis.</summary>
         public const byte CDFlagsPreEmphasis = 0x04;
     }
+
     // Disk types
     public enum DiskType
     {
+        /// <summary>Unknown disk type</summary>
         Unknown,
+
         // Somewhat standard Compact Disc formats
-        // CD Digital Audio (Red Book)
+        /// <summary>CD Digital Audio (Red Book)</summary>
         CDDA,
-        // CD+G (Red Book)
+        /// <summary>CD+G (Red Book)</summary>
         CDG,
-        // CD+EG (Red Book)
+        /// <summary>CD+EG (Red Book)</summary>
         CDEG,
-        // CD-i (Green Book)
+        /// <summary>CD-i (Green Book)</summary>
         CDI,
-        // CD-ROM (Yellow Book)
+        /// <summary>CD-ROM (Yellow Book)</summary>
         CDROM,
-        // CD-ROM XA (Yellow Book)
+        /// <summary>CD-ROM XA (Yellow Book)</summary>
         CDROMXA,
-        // CD+ (Blue Book)
+        /// <summary>CD+ (Blue Book)</summary>
         CDPLUS,
-        // CD-MO (Orange Book)
+        /// <summary>CD-MO (Orange Book)</summary>
         CDMO,
-        // CD-Recordable (Orange Book)
+        /// <summary>CD-Recordable (Orange Book)</summary>
         CDR,
-        // CD-ReWritable (Orange Book)
+        /// <summary>CD-ReWritable (Orange Book)</summary>
         CDRW,
-        // Mount-Rainier CD-RW
+        /// <summary>Mount-Rainier CD-RW</summary>
         CDMRW,
-        // Video CD (White Book)
+        /// <summary>Video CD (White Book)</summary>
         VCD,
-        // Super Video CD (White Book)
+        /// <summary>Super Video CD (White Book)</summary>
         SVCD,
-        // Photo CD (Beige Book)
+        /// <summary>Photo CD (Beige Book)</summary>
         PCD,
-        // Super Audio CD (Scarlet Book)
+        /// <summary>Super Audio CD (Scarlet Book)</summary>
         SACD,
-        // Double-Density CD-ROM (Purple Book)
+        /// <summary>Double-Density CD-ROM (Purple Book)</summary>
         DDCD,
-        // DD CD-R (Purple Book)
+        /// <summary>DD CD-R (Purple Book)</summary>
         DDCDR,
-        // DD CD-RW (Purple Book)
+        /// <summary>DD CD-RW (Purple Book)</summary>
         DDCDRW,
-        // DTS audio CD (non-standard)
+        /// <summary>DTS audio CD (non-standard)</summary>
         DTSCD,
-        // CD-MIDI (Red Book)
+        /// <summary>CD-MIDI (Red Book)</summary>
         CDMIDI,
-        // Any unknown or standard violating CD
+        /// <summary>Any unknown or standard violating CD</summary>
         CD,
+
         // Standard DVD formats
-        // DVD-ROM (applies to DVD Video and DVD Audio)
+        /// <summary>DVD-ROM (applies to DVD Video and DVD Audio)</summary>
         DVDROM,
-        // DVD-R
+        /// <summary>DVD-R</summary>
         DVDR,
-        // DVD-RW
+        /// <summary>DVD-RW</summary>
         DVDRW,
-        // DVD+R
+        /// <summary>DVD+R</summary>
         DVDPR,
-        // DVD+RW
+        /// <summary>DVD+RW</summary>
         DVDPRW,
-        // DVD+RW DL
+        /// <summary>DVD+RW DL</summary>
         DVDPRWDL,
-        // DVD-R DL
+        /// <summary>DVD-R DL</summary>
         DVDRDL,
-        // DVD+R DL
+        /// <summary>DVD+R DL</summary>
         DVDPRDL,
-        // DVD-RAM
+        /// <summary>DVD-RAM</summary>
         DVDRAM,
+
         // Standard HD-DVD formats
-        // HD DVD-ROM (applies to HD DVD Video)
+        /// <summary>HD DVD-ROM (applies to HD DVD Video)</summary>
         HDDVDROM,
-        // HD DVD-RAM
+        /// <summary>HD DVD-RAM</summary>
         HDDVDRAM,
-        // HD DVD-R
+        /// <summary>HD DVD-R</summary>
         HDDVDR,
-        // HD DVD-RW
+        /// <summary>HD DVD-RW</summary>
         HDDVDRW,
+
         // Standard Blu-ray formats
-        // BD-ROM (and BD Video)
+        /// <summary>BD-ROM (and BD Video)</summary>
         BDROM,
-        // BD-R
+        /// <summary>BD-R</summary>
         BDR,
-        // BD-RE
+        /// <summary>BD-RE</summary>
         BDRE,
+
         // Rare or uncommon standards
-        // Enhanced Versatile Disc
+        /// <summary>Enhanced Versatile Disc</summary>
         EVD,
-        // Forward Versatile Disc
+        /// <summary>Forward Versatile Disc</summary>
         FVD,
-        // Holographic Versatile Disc
+        /// <summary>Holographic Versatile Disc</summary>
         HVD,
-        // China Blue High Definition
+        /// <summary>China Blue High Definition</summary>
         CBHD,
-        // High Definition Versatile Multilayer Disc
+        /// <summary>High Definition Versatile Multilayer Disc</summary>
         HDVMD,
-        // Versatile Compact Disc High Density
+        /// <summary>Versatile Compact Disc High Density</summary>
         VCDHD,
-        // Pioneer LaserDisc
+        /// <summary>Pioneer LaserDisc</summary>
         LD,
-        // Pioneer LaserDisc data
+        /// <summary>Pioneer LaserDisc data</summary>
         LDROM,
-        // Sony MiniDisc
+        /// <summary>Sony MiniDisc</summary>
         MD,
-        // Sony Hi-MD
+        /// <summary>Sony Hi-MD</summary>
         HiMD,
-        // Ultra Density Optical
+        /// <summary>Ultra Density Optical</summary>
         UDO,
-        // Stacked Volumetric Optical Disc
+        /// <summary>Stacked Volumetric Optical Disc</summary>
         SVOD,
-        // Five Dimensional disc
+        /// <summary>Five Dimensional disc</summary>
         FDDVD,
+
         // Propietary game discs
-        // Sony PlayStation game CD
+        /// <summary>Sony PlayStation game CD</summary>
         PS1CD,
-        // Sony PlayStation 2 game CD
+        /// <summary>Sony PlayStation 2 game CD</summary>
         PS2CD,
-        // Sony PlayStation 2 game DVD
+        /// <summary>Sony PlayStation 2 game DVD</summary>
         PS2DVD,
-        // Sony PlayStation 3 game DVD
+        /// <summary>Sony PlayStation 3 game DVD</summary>
         PS3DVD,
-        // Sony PlayStation 3 game Blu-ray
+        /// <summary>Sony PlayStation 3 game Blu-ray</summary>
         PS3BD,
-        // Sony PlayStation 4 game Blu-ray
+        /// <summary>Sony PlayStation 4 game Blu-ray</summary>
         PS4BD,
-        // Sony PlayStation Portable Universal Media Disc (ECMA-365)
+        /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
         UMD,
-        // Nintendo GameCube Optical Disc
+        /// <summary>Nintendo GameCube Optical Disc</summary>
         GOD,
-        // Nintendo Wii Optical Disc
+        /// <summary>Nintendo Wii Optical Disc</summary>
         WOD,
-        // Nintendo Wii U Optical Disc
+        /// <summary>Nintendo Wii U Optical Disc</summary>
         WUOD,
-        // Microsoft X-box Game Disc
+        /// <summary>Microsoft X-box Game Disc</summary>
         XGD,
-        // Microsoft X-box 360 Game Disc
+        /// <summary>Microsoft X-box 360 Game Disc</summary>
         XGD2,
-        // Microsoft X-box 360 Game Disc
+        /// <summary>Microsoft X-box 360 Game Disc</summary>
         XGD3,
-        // Microsoft X-box One Game Disc
+        /// <summary>Microsoft X-box One Game Disc</summary>
         XGD4,
-        // Sega MegaCD
+        /// <summary>Sega MegaCD</summary>
         MEGACD,
-        // Sega Saturn disc
+        /// <summary>Sega Saturn disc</summary>
         SATURNCD,
-        // Sega/Yamaha Gigabyte Disc
+        /// <summary>Sega/Yamaha Gigabyte Disc</summary>
         GDROM,
-        // Sega/Yamaha recordable Gigabyte Disc}}
+        /// <summary>Sega/Yamaha recordable Gigabyte Disc}}</summary>
         GDR,
-        // Apple standard floppy formats
-        // 5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR
+
+        // Apple standard floppy format
+        /// <summary>5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
         Apple32SS,
-        // 5.25", DS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR
+        /// <summary>5.25", DS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
         Apple32DS,
-        // 5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR
+        /// <summary>5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR</summary>
         Apple33SS,
-        // 5.25", DS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR
+        /// <summary>5.25", DS, DD, 35 tracks, 16 spt, 256 bytes/sector, GCR</summary>
         Apple33DS,
-        // 3.5", SS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR
+        /// <summary>3.5", SS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR</summary>
         AppleSonySS,
-        // 3.5", DS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR
+        /// <summary>3.5", DS, DD, 80 tracks, 8 to 12 spt, 512 bytes/sector, GCR</summary>
         AppleSonyDS,
-        // 5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy
+        /// <summary>5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy</summary>
         AppleFileWare,
+
         // IBM/Microsoft PC standard floppy formats
-        // 5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM
+        /// <summary>5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM</summary>
         DOS_525_SS_DD_8,
-        // 5.25", SS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM
+        /// <summary>5.25", SS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         DOS_525_SS_DD_9,
-        // 5.25", DS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM
+        /// <summary>5.25", DS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM</summary>
         DOS_525_DS_DD_8,
-        // 5.25", DS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM
+        /// <summary>5.25", DS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         DOS_525_DS_DD_9,
-        // 5.25", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM
+        /// <summary>5.25", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM</summary>
         DOS_525_HD,
-        // 3.5", SS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", SS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM</summary>
         DOS_35_SS_DD_8,
-        // 3.5", SS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", SS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         DOS_35_SS_DD_9,
-        // 3.5", DS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, DD, 80 tracks, 8 spt, 512 bytes/sector, MFM</summary>
         DOS_35_DS_DD_8,
-        // 3.5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         DOS_35_DS_DD_9,
-        // 3.5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM</summary>
         DOS_35_HD,
-        // 3.5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM</summary>
         DOS_35_ED,
+
         // Microsoft non standard floppy formats
-        // 3.5", DS, DD, 80 tracks, 21 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, DD, 80 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF,
-        // 3.5", DS, DD, 82 tracks, 21 spt, 512 bytes/sector, MFM
+        /// <summary>3.5", DS, DD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF_82,
+
         // IBM non standard floppy formats
         XDF_525,
         XDF_35,
+
         // IBM standard floppy formats
-        // 8", SS, SD, 32 tracks, 8 spt, 319 bytes/sector, FM
+        /// <summary>8", SS, SD, 32 tracks, 8 spt, 319 bytes/sector, FM</summary>
         IBM23FD,
-        // 8", SS, SD, 73 tracks, 26 spt, 128 bytes/sector, FM
+        /// <summary>8", SS, SD, 73 tracks, 26 spt, 128 bytes/sector, FM</summary>
         IBM33FD_128,
-        // 8", SS, SD, 74 tracks, 15 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        /// <summary>8", SS, SD, 74 tracks, 15 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM33FD_256,
-        // 8", SS, SD, 74 tracks, 8 spt, 512 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        /// <summary>8", SS, SD, 74 tracks, 8 spt, 512 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM33FD_512,
-        // 8", DS, SD, 74 tracks, 26 spt, 128 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        /// <summary>8", DS, SD, 74 tracks, 26 spt, 128 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM43FD_128,
-        // 8", DS, SD, 74 tracks, 26 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector
+        /// <summary>8", DS, SD, 74 tracks, 26 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM43FD_256,
-        // 8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        /// <summary>8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
         IBM53FD_256,
-        // 8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        /// <summary>8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
         IBM53FD_512,
-        // 8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector
+        /// <summary>8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
         IBM53FD_1024,
+
         // DEC standard floppy formats
-        // 8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        /// <summary>8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         RX01,
-        // 8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM
+        /// <summary>8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM</summary>
         RX02,
+
         // Acorn standard floppy formats
-        // 5,25", SS, SD, 40 tracks, 10 spt, 256 bytes/sector, FM
+        /// <summary>5,25", SS, SD, 40 tracks, 10 spt, 256 bytes/sector, FM</summary>
         ACORN_525_SS_SD_40,
-        // 5,25", SS, SD, 80 tracks, 10 spt, 256 bytes/sector, FM
+        /// <summary>5,25", SS, SD, 80 tracks, 10 spt, 256 bytes/sector, FM</summary>
         ACORN_525_SS_SD_80,
-        // 5,25", SS, DD, 40 tracks, 16 spt, 256 bytes/sector, MFM
+        /// <summary>5,25", SS, DD, 40 tracks, 16 spt, 256 bytes/sector, MFM</summary>
         ACORN_525_SS_DD_40,
-        // 5,25", SS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM
+        /// <summary>5,25", SS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM</summary>
         ACORN_525_SS_DD_80,
-        // 5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM
+        /// <summary>5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM</summary>
         ACORN_525_DS_DD,
+
         // Atari standard floppy formats
-        // 5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM
+        /// <summary>5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM</summary>
         ATARI_525_SD,
-        // 5,25", SS, ED, 40 tracks, 26 spt, 128 bytes/sector, MFM
+        /// <summary>5,25", SS, ED, 40 tracks, 26 spt, 128 bytes/sector, MFM</summary>
         ATARI_525_ED,
-        // 5,25", SS, DD, 40 tracks, 18 spt, 256 bytes/sector, MFM
+        /// <summary>5,25", SS, DD, 40 tracks, 18 spt, 256 bytes/sector, MFM</summary>
         ATARI_525_DD,
+
         // Commodore standard floppy formats
-        // 3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM
+        /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         CBM_35_DD,
-        // 3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)
+        /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)</summary>
         CBM_AMIGA_35_DD,
-        // 3,5", DS, HD, 80 tracks, 22 spt, 512 bytes/sector, MFM (Amiga)
+        /// <summary>3,5", DS, HD, 80 tracks, 22 spt, 512 bytes/sector, MFM (Amiga)</summary>
         CBM_AMIGA_35_HD,
+
         // NEC standard floppy formats
-        // 8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         NEC_8_SD,
-        // 8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM
+        /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_8_DD,
-        // 5,25", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM
+        /// <summary>5,25", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_525_HD,
-        // 3,5", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM
+        /// <summary>3,5", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_35_HD_8,
-        // 3,5", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM
+        /// <summary>3,5", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM</summary>
         NEC_35_HD_15,
+
         // SHARP standard floppy formats
-        // 5,25", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM
+        /// <summary>5,25", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_525,
-        // 3,5", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM
+        /// <summary>3,5", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_35,
+
         // ECMA standards
-        // 5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_99_8,
-        // 5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_99_15,
-        // 5,25", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>5,25", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_99_26,
-        // 3,5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        /// <summary>3,5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM</summary>
         ECMA_100,
-        // 3,5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM
+        /// <summary>3,5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM</summary>
         ECMA_125,
-        // 3,5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM
+        /// <summary>3,5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM</summary>
         ECMA_147,
-        // 8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         ECMA_54,
-        // 8", DS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        /// <summary>8", DS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         ECMA_59,
-        // 5,25", SS, DD, 35 tracks, 9 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector
+        /// <summary>5,25", SS, DD, 35 tracks, 9 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector</summary>
         ECMA_66,
-        // 8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_69_8,
-        // 8", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>8", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_69_15,
-        // 8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        /// <summary>8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_69_26,
-        // 5,25", DS, DD, 40 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector
+        /// <summary>5,25", DS, DD, 40 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector</summary>
         ECMA_70,
-        // 5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector
+        /// <summary>5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector</summary>
         ECMA_78,
-        // 5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM
+        /// <summary>5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM</summary>
         ECMA_78_2,
-        // 3,5", M.O., 250000 sectors, 512 bytes/sector
+        /// <summary>3,5", M.O., 250000 sectors, 512 bytes/sector</summary>
         ECMA_154,
-        // 5,25", M.O., 940470 sectors, 512 bytes/sector
+        /// <summary>5,25", M.O., 940470 sectors, 512 bytes/sector</summary>
         ECMA_183_512,
-        // 5,25", M.O., 520902 sectors, 1024 bytes/sector
+        /// <summary>5,25", M.O., 520902 sectors, 1024 bytes/sector</summary>
         ECMA_183_1024,
-        // 5,25", M.O., 1165600 sectors, 512 bytes/sector
+        /// <summary>5,25", M.O., 1165600 sectors, 512 bytes/sector</summary>
         ECMA_184_512,
-        // 5,25", M.O., 639200 sectors, 1024 bytes/sector
+        /// <summary>5,25", M.O., 639200 sectors, 1024 bytes/sector</summary>
         ECMA_184_1024,
-        // 3,5", M.O., 448500 sectors, 512 bytes/sector
+        /// <summary>3,5", M.O., 448500 sectors, 512 bytes/sector</summary>
         ECMA_201,
+
         // FDFORMAT, non-standard floppy formats
-        // 5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM
+        /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_525_DD
     };
-    // Track (as partitioning element) types
+
+    /// <summary>
+    /// Track (as partitioning element) types.
+    /// </summary>
     public enum TrackType
     {
+        /// <summary>Audio track</summary>
         Audio,
-        // Audio track
+        /// <summary>Data track (not any of the below defined ones)</summary>
         Data,
-        // Data track (not any of the below defined ones)
+        /// <summary>Data track, compact disc mode 1</summary>
         CDMode1,
-        // Data track, compact disc mode 1
+        /// <summary>Data track, compact disc mode 2, formless</summary>
         CDMode2Formless,
-        // Data track, compact disc mode 2, formless
+        /// <summary>Data track, compact disc mode 2, form 1</summary>
         CDMode2Form1,
-        // Data track, compact disc mode 2, form 1
+        /// <summary>Data track, compact disc mode 2, form 2</summary>
         CDMode2Form2
-        // Data track, compact disc mode 2, form 2}}
-
     };
-    // Track defining structure
+
+    /// <summary>
+    /// Track defining structure.
+    /// </summary>
     public struct Track
     {
+        /// <summary>Track number, 1-started</summary>
         public UInt32 TrackSequence;
-        // Track number, 1-started
+        /// <summary>Partition type</summary>
         public TrackType TrackType;
-        // Partition type
+        /// <summary>Track starting sector</summary>
         public UInt64 TrackStartSector;
-        // Track starting sector
+        /// <summary>Track ending sector</summary>
         public UInt64 TrackEndSector;
-        // Track ending sector
+        /// <summary>Track pre-gap</summary>
         public UInt64 TrackPregap;
-        // Track pre-gap
+        /// <summary>Session this track belongs to</summary>
         public UInt16 TrackSession;
-        // Session this track belongs to
+        /// <summary>Information that does not find space in this struct</summary>
         public string TrackDescription;
-        // Information that does not find space in this struct
+        /// <summary>Indexes, 00 to 99 and sector offset</summary>
         public Dictionary<int, UInt64> Indexes;
-        // Indexes, 00 to 99 and sector offset
     }
-    // Session defining structure
+
+    /// <summary>
+    /// Session defining structure.
+    /// </summary>
     public struct Session
     {
+        /// <summary>Session number, 1-started</summary>
         public UInt16 SessionSequence;
-        // Session number, 1-started
+        /// <summary>First track present on this session</summary>
         public UInt32 StartTrack;
-        // First track present on this session
+        /// <summary>Last track present on this session</summary>
         public UInt32 EndTrack;
-        // Last track present on this session
+        /// <summary>First sector present on this session</summary>
         public UInt64 StartSector;
-        // First sector present on this session
+        /// <summary>Last sector present on this session</summary>
         public UInt64 EndSector;
-        // Last sector present on this session
     }
-    // Metadata present for each sector (aka, "tag")
+
+    /// <summary>
+    /// Metadata present for each sector (aka, "tag").
+    /// </summary>
     public enum SectorTagType
     {
+        /// <summary>Apple's GCR sector tags, 12 bytes</summary>
         AppleSectorTag,
-        // Apple's GCR sector tags, 12 bytes
+        /// <summary>Sync frame from CD sector, 12 bytes</summary>
         CDSectorSync,
-        // Sync frame from CD sector, 12 bytes
+        /// <summary>CD sector header, 4 bytes</summary>
         CDSectorHeader,
-        // CD sector header, 4 bytes
+        /// <summary>CD mode 2 sector subheader</summary>
         CDSectorSubHeader,
-        // CD mode 2 sector subheader
+        /// <summary>CD sector EDC, 4 bytes</summary>
         CDSectorEDC,
-        // CD sector EDC, 4 bytes
+        /// <summary>CD sector ECC P, 172 bytes</summary>
         CDSectorECC_P,
-        // CD sector ECC P, 172 bytes
+        /// <summary>CD sector ECC Q, 104 bytes</summary>
         CDSectorECC_Q,
-        // CD sector ECC Q, 104 bytes
+        /// <summary>CD sector ECC (P and Q), 276 bytes</summary>
         CDSectorECC,
-        // CD sector ECC (P and Q), 276 bytes
+        /// <summary>CD sector subchannel, 96 bytes</summary>
         CDSectorSubchannel,
-        // CD sector subchannel, 96 bytes
+        /// <summary>CD track ISRC, string, 12 bytes</summary>
         CDTrackISRC,
-        // CD track ISRC, string, 12 bytes
+        /// <summary>CD track text, string, 13 bytes</summary>
         CDTrackText,
-        // CD track text, string, 13 bytes
+        /// <summary>CD track flags, 1 byte</summary>
         CDTrackFlags,
-        // CD track flags, 1 byte
+        /// <summary>DVD sector copyright information</summary>
         DVD_CMI
-        // DVD sector copyright information}}
-
     };
-    // Metadata present for each disk
+
+    /// <summary>
+    /// Metadata present for each disk.
+    /// </summary>
     public enum DiskTagType
     {
+        /// <summary>CD PMA</summary>
         CD_PMA,
-        // CD PMA
+        /// <summary>CD Adress-Time-In-Pregroove</summary>
         CD_ATIP,
-        // CD Adress-Time-In-Pregroove
+        /// <summary>CD-Text</summary>
         CD_TEXT,
-        // CD-Text
+        /// <summary>CD Media Catalogue Number</summary>
         CD_MCN,
-        // CD Media Catalogue Number
+        /// <summary>DVD Burst Cutting Area</summary>
         DVD_BCA,
-        // DVD Burst Cutting Area
+        /// <summary>DVD Physical Format Information</summary>
         DVD_PFI,
-        // DVD Physical Format Information
+        /// <summary>DVD Copyright Management Information</summary>
         DVD_CMI,
-        // DVD Copyright Management Information
+        /// <summary>DVD Disc Manufacturer Information</summary>
         DVD_DMI
-        // DVD Disc Manufacturer Information}}
-
     };
-    // Feature is supported by image but not implemented yet
+
+    /// <summary>
+    /// Feature is supported by image but not implemented yet.
+    /// </summary>
     [Serializable]
     public class FeatureSupportedButNotImplementedImageException : Exception
     {
@@ -576,7 +843,10 @@ namespace FileSystemIDandChk.ImagePlugins
                 throw new ArgumentNullException("info");
         }
     }
-    // Feature is not supported by image
+
+    /// <summary>
+    /// Feature is not supported by image.
+    /// </summary>
     [Serializable]
     public class FeatureUnsupportedImageException : Exception
     {
@@ -595,7 +865,10 @@ namespace FileSystemIDandChk.ImagePlugins
                 throw new ArgumentNullException("info");
         }
     }
-    // Feature is supported by image but not present on it
+
+    /// <summary>
+    /// Feature is supported by image but not present on it.
+    /// </summary>
     [Serializable]
     public class FeatureNotPresentImageException : Exception
     {
@@ -614,7 +887,10 @@ namespace FileSystemIDandChk.ImagePlugins
                 throw new ArgumentNullException("info");
         }
     }
-    // Feature is supported by image but not by the disc it represents
+
+    /// <summary>
+    /// Feature is supported by image but not by the disc it represents.
+    /// </summary>
     [Serializable]
     public class FeaturedNotSupportedByDiscImageException : Exception
     {
@@ -633,7 +909,10 @@ namespace FileSystemIDandChk.ImagePlugins
                 throw new ArgumentNullException("info");
         }
     }
-    // Corrupt, incorrect or unhandled feature found on image
+
+    /// <summary>
+    /// Corrupt, incorrect or unhandled feature found on image
+    /// </summary>
     [Serializable]
     public class ImageNotSupportedException : Exception
     {
