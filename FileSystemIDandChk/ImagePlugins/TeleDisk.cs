@@ -452,7 +452,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     break;
                 }
 
-                if (spt != TDTrack.sectors)
+                if (spt != TDTrack.sectors && TDTrack.sectors > 0)
                 {
                     if (spt != 0)
                         throw new FeatureUnsupportedImageException("Variable number of sectors per track. This kind of image is not yet supported");
