@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -73,6 +73,7 @@
     <Compile Include="ImagePlugins\DiskCopy42.cs" />
     <Compile Include="Plugins\LisaFS.cs" />
     <Compile Include="ImagePlugins\TeleDisk.cs" />
+    <Compile Include="ArrayFill.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

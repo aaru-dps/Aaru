@@ -69,7 +69,7 @@ namespace FileSystemIDandChk
             if (isDebug)
             {
                 plugins.RegisterAllPlugins();
-                Runner("/Users/claunia/Desktop/disk_images/dc42.dc42");
+                Runner("/Users/claunia/Desktop/disk_images/teledisk.td0");
             }
             else
             {
@@ -169,6 +169,7 @@ namespace FileSystemIDandChk
                         Console.WriteLine("DEBUG: Correctly opened image file.");
                         Console.WriteLine("DEBUG: Image without headers is {0} bytes.", _imageFormat.GetImageSize());
                         Console.WriteLine("DEBUG: Image has {0} sectors.", _imageFormat.GetSectors());
+                        Console.WriteLine("DEBUG: Image identifies disk type as {0}.", _imageFormat.GetDiskType());
                     }
                 }
                 catch (Exception ex)

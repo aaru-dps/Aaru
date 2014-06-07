@@ -365,7 +365,94 @@ namespace FileSystemIDandChk.ImagePlugins
         // 8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM
         RX01,
         // 8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM
-        RX02
+        RX02,
+        // Acorn standard floppy formats
+        // 5,25", SS, SD, 40 tracks, 10 spt, 256 bytes/sector, FM
+        ACORN_525_SS_SD_40,
+        // 5,25", SS, SD, 80 tracks, 10 spt, 256 bytes/sector, FM
+        ACORN_525_SS_SD_80,
+        // 5,25", SS, DD, 40 tracks, 16 spt, 256 bytes/sector, MFM
+        ACORN_525_SS_DD_40,
+        // 5,25", SS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM
+        ACORN_525_SS_DD_80,
+        // 5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM
+        ACORN_525_DS_DD,
+        // Atari standard floppy formats
+        // 5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM
+        ATARI_525_SD,
+        // 5,25", SS, ED, 40 tracks, 26 spt, 128 bytes/sector, MFM
+        ATARI_525_ED,
+        // 5,25", SS, DD, 40 tracks, 18 spt, 256 bytes/sector, MFM
+        ATARI_525_DD,
+        // Commodore standard floppy formats
+        // 3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM
+        CBM_35_DD,
+        // 3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)
+        CBM_AMIGA_35_DD,
+        // 3,5", DS, HD, 80 tracks, 22 spt, 512 bytes/sector, MFM (Amiga)
+        CBM_AMIGA_35_HD,
+        // NEC standard floppy formats
+        // 8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        NEC_8_SD,
+        // 8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM
+        NEC_8_DD,
+        // 5,25", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM
+        NEC_525_HD,
+        // 3,5", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM
+        NEC_35_HD_8,
+        // 3,5", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM
+        NEC_35_HD_15,
+        // SHARP standard floppy formats
+        // 5,25", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM
+        SHARP_525,
+        // 3,5", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM
+        SHARP_35,
+        // ECMA standards
+        // 5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_99_8,
+        // 5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_99_15,
+        // 5,25", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_99_26,
+        // 3,5", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, MFM
+        ECMA_100,
+        // 3,5", DS, HD, 80 tracks, 18 spt, 512 bytes/sector, MFM
+        ECMA_125,
+        // 3,5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM
+        ECMA_147,
+        // 8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        ECMA_54,
+        // 8", DS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM
+        ECMA_59,
+        // 5,25", SS, DD, 35 tracks, 9 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector
+        ECMA_66,
+        // 8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_69_8,
+        // 8", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_69_15,
+        // 8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector
+        ECMA_69_26,
+        // 5,25", DS, DD, 40 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector
+        ECMA_70,
+        // 5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, FM, track 0 side 0 = 16 sectors, 128 bytes/sector, track 0 side 1 = 16 sectors, 256 bytes/sector
+        ECMA_78,
+        // 5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM
+        ECMA_78_2,
+        // 3,5", M.O., 250000 sectors, 512 bytes/sector
+        ECMA_154,
+        // 5,25", M.O., 940470 sectors, 512 bytes/sector
+        ECMA_183_512,
+        // 5,25", M.O., 520902 sectors, 1024 bytes/sector
+        ECMA_183_1024,
+        // 5,25", M.O., 1165600 sectors, 512 bytes/sector
+        ECMA_184_512,
+        // 5,25", M.O., 639200 sectors, 1024 bytes/sector
+        ECMA_184_1024,
+        // 3,5", M.O., 448500 sectors, 512 bytes/sector
+        ECMA_201,
+        // FDFORMAT, non-standard floppy formats
+        // 5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM
+        FDFORMAT_525_DD
     };
     // Track (as partitioning element) types
     public enum TrackType

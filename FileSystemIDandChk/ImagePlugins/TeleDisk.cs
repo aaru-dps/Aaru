@@ -41,6 +41,7 @@ using System.IO;
 using System.Collections.Generic;
 
 // Created following notes from Dave Dunfield
+// http://www.classiccmp.org/dunfield/img54306/td0notes.txt
 namespace FileSystemIDandChk.ImagePlugins
 {
     class TeleDisk : ImagePlugin
@@ -193,7 +194,12 @@ namespace FileSystemIDandChk.ImagePlugins
         string comment;
         DateTime creationDate;
         DateTime modificationDate;
-
+        Dictionary<UInt32, byte[]> sectorsData; // LBA, data
+        UInt32 totalDiskSize;
+        UInt64 imageSizeWithoutHeaders;
+        string imageName;
+        string telediskVersion;
+        UInt32 biggestSectorSize;
         #endregion
         
         public TeleDisk(PluginBase Core)
@@ -286,6 +292,9 @@ namespace FileSystemIDandChk.ImagePlugins
             header.dosAllocation = headerBytes[8];
             header.sides = headerBytes[9];
             header.crc = BitConverter.ToUInt16(headerBytes, 10);
+
+            imageName = Path.GetFileNameWithoutExtension(imagePath);
+            telediskVersion = String.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
             
             byte[] headerBytesForCRC = new byte[10];
             Array.Copy(headerBytes, headerBytesForCRC, 10);
@@ -398,7 +407,165 @@ namespace FileSystemIDandChk.ImagePlugins
                 Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", modificationDate);
             }
 
-            return false;
+            if (MainClass.isDebug)
+                Console.WriteLine("DEBUG (TeleDisk plugin): Parsing image");
+
+            totalDiskSize = 0;
+            byte spt = 0;
+            imageSizeWithoutHeaders = 0;
+            sectorsData = new Dictionary<uint, byte[]>();
+            biggestSectorSize = 0;
+            while (true)
+            {
+                TDTrackHeader TDTrack = new TDTrackHeader();
+                byte[] TDTrackForCRC = new byte[3];
+                byte TDTrackCalculatedCRC;
+
+                TDTrack.sectors = (byte)stream.ReadByte();
+                TDTrack.cylinder = (byte)stream.ReadByte();
+                TDTrack.head = (byte)stream.ReadByte();
+                TDTrack.crc = (byte)stream.ReadByte();
+
+                TDTrackForCRC[0] = TDTrack.sectors;
+                TDTrackForCRC[1] = TDTrack.cylinder;
+                TDTrackForCRC[2] = TDTrack.head;
+
+                TDTrackCalculatedCRC = (byte)(TeleDiskCRC(0, TDTrackForCRC) & 0xFF);
+
+                if (MainClass.isDebug)
+                {
+                    Console.WriteLine("DEBUG (TeleDisk plugin): Track follows");
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack cylinder: {0}\t", TDTrack.cylinder);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack head: {0}\t", TDTrack.head);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tSectors in track: {0}\t", TDTrack.sectors);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t", TDTrack.crc, TDTrackCalculatedCRC);
+                }
+
+                if (TDTrack.sectors == 0xFF) // End of disk image
+                {
+                    if (MainClass.isDebug)
+                    {
+                        Console.WriteLine("DEBUG (TeleDisk plugin): End of disk image arrived");
+                        Console.WriteLine("DEBUG (TeleDisk plugin): Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
+                    }
+
+                    break;
+                }
+
+                if (spt != TDTrack.sectors)
+                {
+                    if (spt != 0)
+                        throw new FeatureUnsupportedImageException("Variable number of sectors per track. This kind of image is not yet supported");
+                    else
+                        spt = TDTrack.sectors;
+                }
+
+                for (byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+                {
+                    TDSectorHeader TDSector = new TDSectorHeader();
+                    TDDataHeader TDData = new TDDataHeader();
+                    byte[] dataSizeBytes = new byte[2];
+                    byte[] data;
+                    byte[] decodedData;
+
+                    TDSector.cylinder = (byte)stream.ReadByte();
+                    TDSector.head = (byte)stream.ReadByte();
+                    TDSector.sectorNumber = (byte)stream.ReadByte();
+                    TDSector.sectorSize = (byte)stream.ReadByte();
+                    TDSector.flags = (byte)stream.ReadByte();
+                    TDSector.crc = (byte)stream.ReadByte();
+
+                    if (MainClass.isDebug)
+                    {
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \tSector follows");
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark cylinder: {0}", TDSector.cylinder);
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark head: {0}", TDSector.head);
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark sector number: {0}", TDSector.sectorNumber);
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector size: {0}", TDSector.sectorSize);
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector flags: 0x{0:X2}", TDSector.flags);
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
+                    }
+
+                    UInt32 LBA = (uint)((TDSector.cylinder * header.sides * spt) + (TDSector.head * spt) + (TDSector.sectorNumber - 1));
+                    if ((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+                    {
+                        stream.Read(dataSizeBytes, 0, 2);
+                        TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
+                        TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
+                        imageSizeWithoutHeaders += TDData.dataSize;
+                        TDData.dataEncoding = (byte)stream.ReadByte();
+                        data = new byte[TDData.dataSize];
+                        stream.Read(data, 0, TDData.dataSize);
+                        if (MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData size (in-image): {0}", TDData.dataSize);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
+                        }
+
+                        decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
+                    }
+                    else
+                    {
+                        switch (TDSector.sectorSize)
+                        {
+                            case SectorSize128:
+                                decodedData = new byte[128];
+                                break;
+                            case SectorSize256:
+                                decodedData = new byte[256];
+                                break;
+                            case SectorSize512:
+                                decodedData = new byte[512];
+                                break;
+                            case SectorSize1K:
+                                decodedData = new byte[1024];
+                                break;
+                            case SectorSize2K:
+                                decodedData = new byte[2048];
+                                break;
+                            case SectorSize4K:
+                                decodedData = new byte[4096];
+                                break;
+                            case SectorSize8K:
+                                decodedData = new byte[8192];
+                                break;
+                            default:
+                                throw new ImageNotSupportedException(String.Format("Sector size {0} for cylinder {1} head {2} sector {3} is incorrect.",
+                                    TDSector.sectorSize, TDSector.cylinder, TDSector.head, TDSector.sectorNumber));
+                        }
+                        ArrayHelpers.ArrayFill(decodedData, (byte)0);
+                    }
+                    if (MainClass.isDebug)
+                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tLBA: {0}", LBA);
+
+                    if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+                    {
+                        if (sectorsData.ContainsKey(LBA))
+                        {
+                            if ((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
+                            {
+                                if (MainClass.isDebug)
+                                    Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
+                                        TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                            }
+                            else
+                            {
+                                if (MainClass.isDebug)
+                                    Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                        TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                            }
+                        }
+                        else
+                        {
+                            sectorsData.Add(LBA, decodedData);
+                            totalDiskSize += (uint)decodedData.Length;
+                        }
+                    }
+                    if (decodedData.Length > biggestSectorSize)
+                        biggestSectorSize = (uint)decodedData.Length;
+                }
+            }
+            return true;
         }
         
         public override bool ImageHasPartitions()
@@ -408,17 +575,17 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override UInt64 GetImageSize()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.imageSizeWithoutHeaders;
         }
         
         public override UInt64 GetSectors()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return (ulong)this.sectorsData.Count;
         }
         
         public override UInt32 GetSectorSize()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.biggestSectorSize;
         }
         
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -428,7 +595,35 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            throw new NotImplementedException("Not yet implemented.");
+            byte[] data = new byte[1]; // To make compiler happy
+            bool first = true;
+            int dataPosition = 0;
+
+            for (ulong i = sectorAddress; i < (sectorAddress + length); i++)
+            {
+                if (!this.sectorsData.ContainsKey((uint)i))
+                    throw new ImageNotSupportedException(String.Format("Requested sector {0} not found", i));
+
+                byte[] sector;
+
+                if(!this.sectorsData.TryGetValue((uint)i, out sector))
+                    throw new ImageNotSupportedException(String.Format("Error reading sector {0}", i));
+
+                if (first)
+                {
+                    data = new byte[sector.Length];
+                    Array.Copy(sector, data, sector.Length);
+                    first = false;
+                }
+                else
+                {
+                    Array.Resize(ref data, dataPosition + sector.Length);
+                    Array.Copy(sector, 0, data, dataPosition, sector.Length);
+                }
+                dataPosition += sector.Length;
+            }
+
+            return data;
         }
         
         public override byte[] ReadSectorLong(UInt64 sectorAddress)
@@ -448,7 +643,7 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override string   GetImageVersion()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.telediskVersion;
         }
         
         public override string   GetImageApplication()
@@ -458,26 +653,203 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override string   GetImageApplicationVersion()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.telediskVersion;
         }
         
         public override DateTime GetImageCreationTime()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.creationDate;
         }
         
         public override DateTime GetImageLastModificationTime()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.modificationDate;
         }
         
         public override string   GetImageName()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            return this.imageName;
         }
         
         public override DiskType GetDiskType()
         {
+            switch (this.header.driveType)
+            {
+                case DriveType525DD:
+                case DriveType525HD_DDDisk:
+                case DriveType525HD:
+                    {
+                        switch (this.totalDiskSize)
+                        {
+                            case 163840:
+                                {
+                                    // Acorn disk uses 256 bytes/sector
+                                    if(this.biggestSectorSize == 256)
+                                        return DiskType.ACORN_525_SS_DD_40;
+                                    else // DOS disks use 512 bytes/sector
+                                        return DiskType.DOS_525_SS_DD_8;
+                                }
+                            case 184320:
+                                {
+                                    // Atari disk uses 256 bytes/sector
+                                    if(this.biggestSectorSize == 256)
+                                        return DiskType.ATARI_525_DD;
+                                    else // DOS disks use 512 bytes/sector
+                                        return DiskType.DOS_525_SS_DD_9;
+                                }
+                            case 327680:
+                                {
+                                    // Acorn disk uses 256 bytes/sector
+                                    if(this.biggestSectorSize == 256)
+                                        return DiskType.ACORN_525_SS_DD_80;
+                                    else // DOS disks use 512 bytes/sector
+                                        return DiskType.DOS_525_DS_DD_8;
+                                }
+                            case 368640:
+                                return DiskType.DOS_525_DS_DD_9;
+                            case 1228800:
+                                return DiskType.DOS_525_HD;
+                            case 102400:
+                                return DiskType.ACORN_525_SS_SD_40;
+                            case 204800:
+                                return DiskType.ACORN_525_SS_SD_80;
+                            case 655360:
+                                return DiskType.ACORN_525_DS_DD;
+                            case 92160:
+                                return DiskType.ATARI_525_SD;
+                            case 133120:
+                                return DiskType.ATARI_525_ED;
+                            case 1310720:
+                                return DiskType.NEC_525_HD;
+                            case 1261568:
+                                return DiskType.SHARP_525;
+                            case 839680:
+                                return DiskType.FDFORMAT_525_DD;
+                            case 1304320:
+                                return DiskType.ECMA_99_8;
+                            case 1223424:
+                                return DiskType.ECMA_99_15;
+                            case 1061632:
+                                return DiskType.ECMA_99_26;
+                            case 80384:
+                                return DiskType.ECMA_66;
+                            case 325632:
+                                return DiskType.ECMA_70;
+                            case 653312:
+                                return DiskType.ECMA_78;
+                            case 737280:
+                                return DiskType.ECMA_78_2;
+                            default:
+                                {
+                                    if (MainClass.isDebug)
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 5,25\" disk with {0} bytes", this.totalDiskSize);
+                                    return DiskType.Unknown;
+                                }
+                        }
+                        break;
+                    }
+                case DriveType35DD:
+                case DriveType35ED:
+                case DriveType35HD:
+                    {
+                        switch (this.totalDiskSize)
+                        {
+                            case 327680:
+                                return DiskType.DOS_35_SS_DD_8;
+                            case 368640:
+                                return DiskType.DOS_35_SS_DD_9;
+                            case 655360:
+                                return DiskType.DOS_35_DS_DD_8;
+                            case 737280:
+                                return DiskType.DOS_35_DS_DD_9;
+                            case 1474560:
+                                return DiskType.DOS_35_HD;
+                            case 2949120:
+                                return DiskType.DOS_35_ED;
+                            case 1720320:
+                                return DiskType.DMF;
+                            case 1763328:
+                                return DiskType.DMF_82;
+                            case 1884160: // Irreal size, seen as BIOS with TSR, 23 sectors/track
+                            case 1860608: // Real data size, sum of all sectors
+                                return DiskType.XDF_35;
+                            case 819200:
+                                return DiskType.CBM_35_DD;
+                            case 901120:
+                                return DiskType.CBM_AMIGA_35_DD;
+                            case 1802240:
+                                return DiskType.CBM_AMIGA_35_HD;
+                            case 1310720:
+                                return DiskType.NEC_35_HD_8;
+                            case 1228800:
+                                return DiskType.NEC_35_HD_15;
+                            case 1261568:
+                                return DiskType.SHARP_35;
+                            default:
+                                {
+                                    if (MainClass.isDebug)
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 3,5\" disk with {0} bytes", this.totalDiskSize);
+                                    return DiskType.Unknown;
+                                }
+                        }
+                    }
+                case DriveType8inch:
+                    {
+                        switch (this.totalDiskSize)
+                        {
+                            case 81664:
+                                return DiskType.IBM23FD;
+                            case 242944:
+                                return DiskType.IBM33FD_128;
+                            case 287488:
+                                return DiskType.IBM33FD_256;
+                            case 306432:
+                                return DiskType.IBM33FD_512;
+                            case 499200:
+                                return DiskType.IBM43FD_128;
+                            case 574976:
+                                return DiskType.IBM43FD_256;
+                            case 995072:
+                                return DiskType.IBM53FD_256;
+                            case 1146624:
+                                return DiskType.IBM53FD_512;
+                            case 1222400:
+                                return DiskType.IBM53FD_1024;
+                            case 256256:
+                                // Same size, with same disk geometry, for DEC RX01, NEC and ECMA, return ECMA
+                                return DiskType.ECMA_54;
+                            case 512512:
+                                {
+                                    // DEC disk uses 256 bytes/sector
+                                    if(this.biggestSectorSize == 256)
+                                        return DiskType.RX02;
+                                    else // ECMA disks use 128 bytes/sector
+                                        return DiskType.ECMA_59;
+                                }
+                            case 1261568:
+                                return DiskType.NEC_8_DD;
+                            case 1255168:
+                                return DiskType.ECMA_69_8;
+                            case 1177344:
+                                return DiskType.ECMA_69_15;
+                            case 1021696:
+                                return DiskType.ECMA_69_26;
+                            default:
+                                {
+                                    if (MainClass.isDebug)
+                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 8\" disk with {0} bytes", this.totalDiskSize);
+                                    return DiskType.Unknown;
+                                }
+                        }
+                    }
+                default:
+                    {
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (TeleDisk plugin): Unknown drive type {1} with {0} bytes", this.totalDiskSize, this.header.driveType);
+                        return DiskType.Unknown;
+                    }
+
+            }
             throw new NotImplementedException("Not yet implemented.");
         }
 
@@ -502,6 +874,116 @@ namespace FileSystemIDandChk.ImagePlugins
             }
 
             return crc;
+        }
+
+        static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
+        {
+            byte[] decodedData;
+            switch (sectorSize)
+            {
+                case SectorSize128:
+                    decodedData = new byte[128];
+                    break;
+                case SectorSize256:
+                    decodedData = new byte[256];
+                    break;
+                case SectorSize512:
+                    decodedData = new byte[512];
+                    break;
+                case SectorSize1K:
+                    decodedData = new byte[1024];
+                    break;
+                case SectorSize2K:
+                    decodedData = new byte[2048];
+                    break;
+                case SectorSize4K:
+                    decodedData = new byte[4096];
+                    break;
+                case SectorSize8K:
+                    decodedData = new byte[8192];
+                    break;
+                default:
+                    throw new ImageNotSupportedException(String.Format("Sector size {0} is incorrect.", sectorSize));
+            }
+
+            switch (encodingType)
+            {
+                case dataBlockCopy:
+                    Array.Copy(encodedData, decodedData, decodedData.Length);
+                    break;
+                case dataBlockPattern:
+                    {
+                        int ins = 0;
+                        int outs = 0;
+                        while (ins < encodedData.Length)
+                        {
+                            UInt16 repeatNumber;
+                            byte[] repeatValue = new byte[2];
+
+                            repeatNumber = BitConverter.ToUInt16(encodedData, ins);
+                            Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
+                            byte[] decodedPiece = new byte[repeatNumber*2];
+                            ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
+                            Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
+                            ins += 4;
+                            outs += decodedPiece.Length;
+                        }
+                        if (MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Input data size: {0} bytes", encodedData.Length);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Processed input: {0} bytes", ins);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Output data size: {0} bytes", decodedData.Length);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Processed Output: {0} bytes", outs);
+                        }
+                        break;
+                    }
+                case dataBlockRLE:
+                    {
+                        int ins = 0;
+                        int outs = 0;
+                        while (ins < encodedData.Length)
+                        {
+                            byte Run;
+                            byte Length;
+                            byte Encoding;
+                            byte[] Piece;
+
+                            Encoding = encodedData[ins];
+                            if (Encoding == 0x00)
+                            {
+                                Length = encodedData[ins + 1];
+                                Piece = new byte[Length];
+                                Array.Copy(encodedData, ins + 2, decodedData, outs, Length);
+                                ins += (2 + Length);
+                                outs += Length;
+                            }
+                            else
+                            {
+                                Length = (byte)(Encoding * 2);
+                                Run = encodedData[ins + 1];
+                                byte[] Part = new byte[Length];
+                                Array.Copy(encodedData, ins + 2, Part, 0, Length);
+                                Piece = new byte[Length * Run];
+                                ArrayHelpers.ArrayFill(Piece, Part);
+                                Array.Copy(Piece, 0, decodedData, outs, Piece.Length);
+                                ins += (2 + Length);
+                                outs += Piece.Length;
+                            }
+                        }
+                        if (MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Input data size: {0} bytes", encodedData.Length);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Processed input: {0} bytes", ins);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Output data size: {0} bytes", decodedData.Length);
+                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Processed Output: {0} bytes", outs);
+                        }
+                        break;
+                    }
+                default:
+                    throw new ImageNotSupportedException(String.Format("Data encoding {0} is incorrect.", encodingType));
+            }
+
+            return decodedData;
         }
         #endregion
 
