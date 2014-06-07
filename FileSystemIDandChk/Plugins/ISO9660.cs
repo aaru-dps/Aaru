@@ -45,7 +45,6 @@ using FileSystemIDandChk;
 // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
 // TODO: Apple extensiones, requires XA or advance RR interpretation.
 // TODO: Needs a major rewrite
-
 namespace FileSystemIDandChk.Plugins
 {
     class ISO9660Plugin : Plugin

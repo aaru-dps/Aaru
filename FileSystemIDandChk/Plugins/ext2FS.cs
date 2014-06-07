@@ -339,7 +339,7 @@ namespace FileSystemIDandChk.Plugins
             if (supblk.block_size == 0) // Then it is 1024 bytes
 				supblk.block_size = 1024;
 
-            sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks, supblk.block_size, blocks * supblk.block_size).AppendLine();
+            sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks, 1024<<(int)supblk.block_size, blocks * (ulong)(1024<<(int)supblk.block_size)).AppendLine();
             if (supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if (supblk.mount_t > 0)

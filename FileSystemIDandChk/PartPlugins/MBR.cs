@@ -76,25 +76,25 @@ namespace FileSystemIDandChk.PartPlugins
                 MBRPartitionEntry entry = new MBRPartitionEntry();
 				
                 entry.status = sector[0x1BE + 16 * i + 0x00];
-                entry.start_head = sector[0x1BE + 16 * i + 0x00];
+                entry.start_head = sector[0x1BE + 16 * i + 0x01];
 
-                cyl_sect1 = sector[0x1BE + 16 * i + 0x00];
-                cyl_sect2 = sector[0x1BE + 16 * i + 0x00];
+                cyl_sect1 = sector[0x1BE + 16 * i + 0x02];
+                cyl_sect2 = sector[0x1BE + 16 * i + 0x03];
 
                 entry.start_sector = (byte)(cyl_sect1 & 0x3F);
                 entry.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
 				
-                entry.type = sector[0x1BE + 16 * i + 0x00];
-                entry.end_head = sector[0x1BE + 16 * i + 0x00];
+                entry.type = sector[0x1BE + 16 * i + 0x04];
+                entry.end_head = sector[0x1BE + 16 * i + 0x05];
 
-                cyl_sect1 = sector[0x1BE + 16 * i + 0x00];
-                cyl_sect2 = sector[0x1BE + 16 * i + 0x00];
+                cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
+                cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
 				
                 entry.end_sector = (byte)(cyl_sect1 & 0x3F);
                 entry.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
 				
-                entry.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x00);
-                entry.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x00);
+                entry.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
+                entry.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
 				
                 // Let's start the fun...
 				
@@ -396,25 +396,25 @@ namespace FileSystemIDandChk.PartPlugins
                             MBRPartitionEntry entry2 = new MBRPartitionEntry();
 					
                             entry2.status = sector[0x1BE + 16 * i + 0x00];
-                            entry2.start_head = sector[0x1BE + 16 * i + 0x00];
+                            entry2.start_head = sector[0x1BE + 16 * i + 0x01];
 							
-                            cyl_sect1 = sector[0x1BE + 16 * i + 0x00];
-                            cyl_sect2 = sector[0x1BE + 16 * i + 0x00];
+                            cyl_sect1 = sector[0x1BE + 16 * i + 0x02];
+                            cyl_sect2 = sector[0x1BE + 16 * i + 0x03];
 							
                             entry2.start_sector = (byte)(cyl_sect1 & 0x3F);
                             entry2.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
 							
-                            entry2.type = sector[0x1BE + 16 * i + 0x00];
-                            entry2.end_head = sector[0x1BE + 16 * i + 0x00];
+                            entry2.type = sector[0x1BE + 16 * i + 0x04];
+                            entry2.end_head = sector[0x1BE + 16 * i + 0x05];
 							
-                            cyl_sect1 = sector[0x1BE + 16 * i + 0x00];
-                            cyl_sect2 = sector[0x1BE + 16 * i + 0x00];
+                            cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
+                            cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
 							
                             entry2.end_sector = (byte)(cyl_sect1 & 0x3F);
                             entry2.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
 							
-                            entry2.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x00);
-                            entry2.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x00);
+                            entry2.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
+                            entry2.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
 
                             // Let's start the fun...
 							

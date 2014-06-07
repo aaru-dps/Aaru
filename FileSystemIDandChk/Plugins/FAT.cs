@@ -287,7 +287,7 @@ namespace FileSystemIDandChk.Plugins
                 sb.AppendFormat("{0} sectors per cluster.", BPB.spc).AppendLine();
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", BPB.rsectors).AppendLine();
                 sb.AppendFormat("{0} FATs.", BPB.fats_no).AppendLine();
-                sb.AppendFormat("{0} entires on root directory.", BPB.root_ent).AppendLine();
+                sb.AppendFormat("{0} entries on root directory.", BPB.root_ent).AppendLine();
                 if (BPB.sectors == 0)
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.big_sectors, BPB.big_sectors * BPB.bps).AppendLine();
                 else

@@ -249,8 +249,8 @@ namespace FileSystemIDandChk
                             Console.WriteLine("Partition {0}:", partitions[i].PartitionSequence);	
                             Console.WriteLine("Partition name: {0}", partitions[i].PartitionName);	
                             Console.WriteLine("Partition type: {0}", partitions[i].PartitionType);	
-                            Console.WriteLine("Partition start: {0}", partitions[i].PartitionStart);	
-                            Console.WriteLine("Partition length: {0}", partitions[i].PartitionLength);	
+                            Console.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);	
+                            Console.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);	
                             Console.WriteLine("Partition description:");	
                             Console.WriteLine(partitions[i].PartitionDescription);
 							
@@ -258,7 +258,7 @@ namespace FileSystemIDandChk
                             {
                                 Console.WriteLine("Identifying filesystem on partition");
 								
-                                Identify(_imageFormat, out id_plugins, partitions[i].PartitionStart);
+                                Identify(_imageFormat, out id_plugins, partitions[i].PartitionStartSector);
                                 if (id_plugins.Count == 0)
                                     Console.WriteLine("Filesystem not identified");
                                 else if (id_plugins.Count > 1)
@@ -270,7 +270,7 @@ namespace FileSystemIDandChk
                                         if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                         {
                                             Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStart, out information);
+                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, out information);
                                             Console.Write(information);
                                         }
                                     }
@@ -279,7 +279,7 @@ namespace FileSystemIDandChk
                                 {
                                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                                     Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStart, out information);
+                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, out information);
                                     Console.Write(information);
                                 }
                             }
