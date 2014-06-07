@@ -69,7 +69,7 @@ namespace FileSystemIDandChk
             if (isDebug)
             {
                 plugins.RegisterAllPlugins();
-                Runner("/Users/claunia/Desktop/disk_images/teledisk.td0");
+                Runner("");
             }
             else
             {
@@ -139,16 +139,38 @@ namespace FileSystemIDandChk
             {
                 _imageFormat = null;
 
+                // Check all but RAW plugin
                 foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
                 {
-                    if (_imageplugin.IdentifyImage(filename))
+                    if(_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
-                        _imageFormat = _imageplugin;
-                        Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
-                        break;
+                        if (_imageplugin.IdentifyImage(filename))
+                        {
+                            _imageFormat = _imageplugin;
+                            Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
+                            break;
+                        }
                     }
                 }
 
+                // Check only RAW plugin
+                if (_imageFormat == null)
+                {
+                    foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
+                    {
+                        if(_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        {
+                            if (_imageplugin.IdentifyImage(filename))
+                            {
+                                _imageFormat = _imageplugin;
+                                Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Still not recognized
                 if (_imageFormat == null)
                 {
                     Console.WriteLine("Image format not identified, not proceeding.");

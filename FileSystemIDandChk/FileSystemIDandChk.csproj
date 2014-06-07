@@ -76,6 +76,7 @@
     <Compile Include="ImagePlugins\TeleDisk.cs" />
     <Compile Include="ArrayFill.cs" />
     <Compile Include="PrintHex.cs" />
+    <Compile Include="ImagePlugins\ZZZRawImage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

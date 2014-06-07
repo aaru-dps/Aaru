@@ -594,6 +594,12 @@ namespace FileSystemIDandChk.ImagePlugins
         
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
+            if (sectorAddress > (ulong)sectorsData.Count - 1)
+                throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+
+            if (sectorAddress + length > (ulong)sectorsData.Count)
+                throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+
             byte[] data = new byte[1]; // To make compiler happy
             bool first = true;
             int dataPosition = 0;

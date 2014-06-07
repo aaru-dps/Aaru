@@ -469,6 +469,10 @@ namespace FileSystemIDandChk.ImagePlugins
         BDR,
         /// <summary>BD-RE</summary>
         BDRE,
+        /// <summary>BD-R XL</summary>
+        BDRXL,
+        /// <summary>BD-RE XL</summary>
+        BDREXL,
 
         // Rare or uncommon standards
         /// <summary>Enhanced Versatile Disc</summary>
@@ -599,11 +603,11 @@ namespace FileSystemIDandChk.ImagePlugins
         IBM43FD_128,
         /// <summary>8", DS, SD, 74 tracks, 26 spt, 256 bytes/sector, FM, track 0 = 26 sectors, 128 bytes/sector</summary>
         IBM43FD_256,
-        /// <summary>8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
+        /// <summary>8", DS, DD, 74 tracks, 26 spt, 256 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         IBM53FD_256,
-        /// <summary>8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
+        /// <summary>8", DS, DD, 74 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         IBM53FD_512,
-        /// <summary>8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 128 bytes/sector</summary>
+        /// <summary>8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         IBM53FD_1024,
 
         // DEC standard floppy formats
@@ -704,7 +708,16 @@ namespace FileSystemIDandChk.ImagePlugins
 
         // FDFORMAT, non-standard floppy formats
         /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
-        FDFORMAT_525_DD
+        FDFORMAT_525_DD,
+        /// <summary>5,25", DS, HD, 82 tracks, 17 spt, 512 bytes/sector, MFM</summary>
+        FDFORMAT_525_HD,
+        /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        FDFORMAT_35_DD,
+        /// <summary>5,25", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
+        FDFORMAT_35_HD,
+
+        // Generic hard disks
+        GENERIC_HDD
     };
 
     /// <summary>

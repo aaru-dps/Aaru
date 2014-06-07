@@ -1,5 +1,4 @@
 ﻿Disc image plugins:
---- Add support for no disc image, that is, raw.
 --- Add support for BlindWrite images
 --- Add support for CloneCD images
 --- Add support for DiscJuggler images
@@ -67,3 +66,6 @@ Other things:
 Teledisk plugin:
 --- Add support for "advanced compression"
 --- Handle variable sectors per track situation. Teledisk seems to be able to read garbage from previous formattings.
+
+RAW plugin:
+--- Finish support for reading sectors of variable bytes/sector images
