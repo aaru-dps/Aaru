@@ -85,11 +85,11 @@ namespace FileSystemIDandChk.Plugins
 
                 if (MainClass.isDebug)
                 {
-                    Console.WriteLine("FAT: fats_no = {0}", fats_no);
-                    Console.WriteLine("FAT: media_descriptor = 0x{0:X2}", media_descriptor);
-                    Console.WriteLine("FAT: fat32_signature = {0}", StringHandlers.CToString(fat32_signature));
-                    Console.WriteLine("FAT: bps = {0}", bps);
-                    Console.WriteLine("FAT: first_fat_entry = 0x{0:X8}", first_fat_entry);
+                    Console.WriteLine("DEBUG (FAT plugin): fats_no = {0}", fats_no);
+                    Console.WriteLine("DEBUG (FAT plugin): media_descriptor = 0x{0:X2}", media_descriptor);
+                    Console.WriteLine("DEBUG (FAT plugin): fat32_signature = {0}", StringHandlers.CToString(fat32_signature));
+                    Console.WriteLine("DEBUG (FAT plugin): bps = {0}", bps);
+                    Console.WriteLine("DEBUG (FAT plugin): first_fat_entry = 0x{0:X8}", first_fat_entry);
                 }
 
                 if (fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
