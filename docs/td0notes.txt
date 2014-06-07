@@ -1,0 +1,572 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    Teledisk
+
+                               Image File Format
+
+                                     Notes
+
+
+
+
+
+                                  PRELIMINARY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                 Dave Dunfield
+                                 April 2, 2007
+
+                          Last revised: July 28, 2008
+
+
+
+                              Teledisk .TD0 notes
+
+                               TABLE OF CONTENTS
+
+
+                                                                         Page
+
+     1. Introduction                                                        1
+
+        1.1 Acknowlegements                                                 1
+
+     2. Image file Format                                                   2
+
+
+     3. Image Header                                                        2
+
+        3.1 Signature (2 bytes)                                             2
+        3.2 Sequence (1 byte)                                               2
+        3.3 CheckSequence (1 byte)                                          3
+        3.4 Teledisk version (1 byte)                                       3
+        3.5 Data rate (1 byte)                                              3
+        3.6 Drive type (1 byte)                                             3
+        3.7 Stepping (1 byte)                                               3
+        3.8 DOS allocation flag (1 byte)                                    4
+        3.9 Sides (1 byte)                                                  4
+        3.10 Cyclic Redundancy Check (2 bytes)                              4
+
+     4. Comment Header / Data block                                         4
+
+        4.1 Cyclic Redundancy Check (2 bytes)                               4
+        4.2 Data length (2 bytes)                                           4
+        4.3 Year (1 byte)                                                   5
+        4.4 Month (1 byte)                                                  5
+        4.5 Day (1 byte)                                                    5
+        4.6 Hour, Minite, Second (1 byte each)                              5
+        4.7 Comment data block (variable size)                              5
+
+     5. Track Header                                                        6
+
+        5.1 Number of sectors (1 byte)                                      6
+        5.2 Cylinder number (1 byte)                                        6
+        5.3 Side/Head number (1 byte)                                       6
+        5.4 Cyclic Redundancy Check (1 byte)                                6
+
+     6. Sector Header                                                       7
+
+        6.1 Cylinder number (1 byte)                                        7
+        6.2 Side/Head (1 byte)                                              7
+        6.3 Sector number (1 byte)                                          7
+        6.4 Sector size (1 byte)                                            8
+        6.5 Flags                                                           8
+        6.6 Cyclic Redundancy Check (1 byte)                                8
+
+     7. Sector Data Header                                                  9
+
+    Teledisk .TD0 notes                                    Table of Contents
+
+                                                                         Page
+        7.1 Data block size (2 bytes)                                       9
+        7.2 Encoding method (1 byte)                                        9
+    Teledisk .TD0 notes                                              Page: 1
+
+
+    1. Introduction
+
+       Teledisk is a program which reads non-PC format diskettes into  image
+       files for archival and can later recreate a copy of the original disk
+       from the image file.  Once popular for archival of  classic  computer
+       software,  Teledisk has  been  withdrawn  from  the  market  by  it's
+       manufacturer and is no longer  legally  available.  This  presents  a
+       problem for those  people  who  have  data  archived  with  Teledisk,
+       because the file format is proprietary and not  documented  rendering
+       the data useless without the program.
+
+       In my development of ImageDisk  (a replacement for Teledisk),  I have
+       created a utility to convert Teledisk .TD0 images into ImageDisk .IMD
+       format - in doing so,  I have researched the  Teledisk  format,  read
+       other peoples notes,  done some reverse engineering myself,  and come
+       to what I  believe  is  a  somewhat  complete  understanding  of  the
+       contents of a .TD0 image file.
+
+       This document presents my notes  on  the  Teledisk  .TD0  image  file
+       format.
+
+       This document is a work in progress.  If you have any information  to
+       add,  corrections etc.  Please contact me.  I can be reached via  the
+       contact information on my web site.
+
+                       http://www.classiccmp.org/dunfield
+
+       1.1 Acknowlegements
+
+          The following people whom I have never met have saved me  tons  of
+          time by  making  the  results  of  their  related  efforts  freely
+          available.
+
+        Will Krantz    - Wrote a program called wteledisk which converts
+                         TX50 .TD0 into binary files for an emulator.
+                         Published a web page with his notes and source.
+
+        Sergey Erokhin - Provided more details for Wills web page.
+
+        Simon Owen     - Published source code to read some .TD0 files
+                         for his SimCoupe emulator.
+
+        Haruhika       - Published LZSS-Huffman source code which has
+        Okumura          become "the reference" for many implementations.
+    Teledisk .TD0 notes                                              Page: 2
+
+
+    2. Image file Format
+
+       The overall disk image file has this format:
+
+        Image header                (12 bytes)
+        ;If the image was created using "Advanced Compression", everything
+        ;below this line is compressed with LZSS-Huffman encoding.
+        Optional comment header     (10 bytes)
+        Optional comment data       (Variable size)
+          ;For each track on the disk ...
+          Track header              (4 bytes)
+            ;For each sector within the track
+            Sector header           (6 bytes)
+            Optional data header    (3 bytes)
+            Optional data block     (variable size)
+        ;Image ends with Trackheader beginning with 255 (FF hex)
+
+       If the Teledisk image was generated with "Advanced Data Compression",
+       all parts of the file following  "Image Header"  are compressed as  a
+       single block with LZSS-Huffman encoding with the string lookup buffer
+       preset to all spaces  (ASCII  20).  With  "normal"  compression,  the
+       remainder of the file  is  not  compressed/encoded  (other  than  the
+       sector RLE compression).
+
+    3. Image Header
+
+       The image header describes global information about the  disk  image.
+       It is never compressed, and is laid out in the following format:
+
+        Signature                   (2 bytes)
+        Sequence                    (1 byte)
+        Checksequence               (1 byte)
+        Teledisk version            (1 byte)
+        Data rate                   (1 byte)
+        Drive type                  (1 byte)
+        Stepping                    (1 byte)
+        DOS allocation flag         (1 byte)
+        Sides                       (1 byte)
+        Cyclic Redundancy Check     (2 bytes)
+
+       3.1 Signature (2 bytes)
+
+          - Contains 'TD' for normal compression
+
+          - Contains 'td' for advanced compression
+
+       3.2 Sequence (1 byte)
+
+        - Early Teledisk document indicates that this  begins  with  00  and
+          increments for each member of a multi-volume set.
+
+        - TDCHECK reports  "bad header"  if this value is  set  to  anything
+          other than 00.
+    Teledisk .TD0 notes                                              Page: 3
+
+
+       3.3 CheckSequence (1 byte)
+
+        - Early Teledisk document indicates that this must be the  same  for
+          each member of a multi-volume set
+
+       3.4 Teledisk version (1 byte)
+
+        - Encodes the version number of the Teledisk program  which  created
+          the image in the form High-nibble.low-nibble. eg: 15 = 1.5
+
+       3.5 Data rate (1 byte)
+
+        - Encodes the data rate used for the diskette in lower 2 bits.
+
+             0 = 250kbps
+             1 = 300kbps
+             2 = 500kbps
+
+        - High bit indicates single-density diskette  (I believe this is for
+          older versions only which did not support mixed density disks).
+
+       3.6 Drive type (1 byte)
+
+        - Indicates the type of drive the disk was made on.
+
+        - Early Teledisk document indicates the encoding is:
+
+             1 = 360k
+             2 = 1.2M
+             3 = 720k
+             4 = 1.44M
+
+        - Experimentation with TDCHECK indicates  that  the  text  generated
+          from the various encoding is:
+
+             0 = 5.25 96 tpi disk in 48 tpi drive
+             1 = 5.25
+             2 = 5.25 48-tpi
+             3 = 3.5
+             4 = 3.5
+             5 = 8-inch
+             6 = 3.5
+
+        - Use Data rate to determine appropriate drive density.
+
+       3.7 Stepping (1 byte)
+
+        - Encodes step type in lower 2 bits
+
+             0 = Single-Step
+             1 = Double-step
+             2 = Even-only step (96 tpi disk in 48 tpi drive)
+
+        - High bit indicates presence of optional comment block
+    Teledisk .TD0 notes                                              Page: 4
+
+
+       3.8 DOS allocation flag (1 byte)
+
+        - non-zero means the disk was read using the DOS FAT table  to  skip
+          unallocted sectors.
+
+       3.9 Sides (1 byte)
+
+        - Encodes the number of sides read from the disk.
+
+             01 = One
+             anything-else = Two
+
+       3.10 Cyclic Redundancy Check (2 bytes)
+
+          This field contains the error-checking cyclic redundancy check for
+          the header calculated with the polynomial value 41111  (A097  hex)
+          using an input preset value of 0.  The CRC is calculated over  the
+          first 10 bytes of the header, and should match the value stored in
+          this field.
+
+    4. Comment Header / Data block
+
+       The comment block encodes an ASCII comment as well  as  the  creation
+       date.  It's presence is indicated by the high bit of  the  "Stepping"
+       field in the image header being set.
+
+       When present,  it occurs immediately after the Image  header  in  the
+       following format:
+
+        Cyclic Redundancy Check     (2 bytes)
+        Data length                 (2 bytes)
+        Year since 1900             (1 byte)
+        Month                       (1 byte)
+        Day                         (1 byte)
+        Hour                        (1 byte)
+        Minite                      (1 byte)
+        Second                      (1 byte)
+
+       Following the comment header are comment line records,  consisting of
+       ASCII text terminated by NUL (00) bytes.
+
+       4.1 Cyclic Redundancy Check (2 bytes)
+
+          This 16-bit field contains the  error-checking  cyclic  redundancy
+          check for the header calculated with the  polynomial  value  41111
+          (A097 hex) using an input preset value of 0. The CRC is calculated
+          over the entire header block  (beginning at offset 2 - just  after
+          the CRC) and the data records.
+
+       4.2 Data length (2 bytes)
+
+          This is the length of the comment data  block  which  follows  the
+          comment header.  To display the comment data, read and output this
+          many bytes following the header,  translating NUL (00)  bytes into
+          newline sequences.
+    Teledisk .TD0 notes                                              Page: 5
+
+
+       4.3 Year (1 byte)
+
+          Gives the year the image was created as an offset from  1900.  eg:
+          2007 is encoded as 2007 - 1900 = 107 (6B hex).
+
+       4.4 Month (1 byte)
+
+          Gives the month the image was created  using  a  zero  index.  ie:
+          0=January, 11=December.
+
+       4.5 Day (1 byte)
+
+          Gives the day  (of the month)  the image was created using a range
+          of 1-31.
+
+       4.6 Hour, Minite, Second (1 byte each)
+
+          Gives the time of day the image was created using 24-hour time.
+
+       4.7 Comment data block (variable size)
+
+          Contains the ASCII text of the  comment  as  NUL  (00)  terminated
+          lines.  The size of this block is given by  "Data length"  in  the
+          comment header.  To display the comment,  read  and  output  "Data
+          length bytes"  from this block,  translating NUL  (00)  bytes into
+          newline sequences.
+    Teledisk .TD0 notes                                              Page: 6
+
+
+    5. Track Header
+
+       Every disk track recorded in  the  image  will  begin  with  a  track
+       header, which has the following format:
+
+        Number of sectors           (1 byte)
+        Cylinder number             (1 byte)
+        Side/Head number            (1 byte)
+        Cyclic Redundancy Check     (1 byte)
+
+       5.1 Number of sectors (1 byte)
+
+          This field indicates how many sectors are recorded for this track.
+          This also indicates how many sector headers  to  expect  following
+          the track header.
+
+          A number of sectors of 255 (FF hex) indicates the end of the track
+          list.  No other fields occur in this record,  and the CRC  is  not
+          checked.
+
+       5.2 Cylinder number (1 byte)
+
+          This field encodes the physical cylinder  number  (head  position)
+          for this track, in a range of 0-(#tracks on drive-1).
+
+       5.3 Side/Head number (1 byte)
+
+          This field encodes the disk side  (0 or 1)  that this track occurs
+          on in it's lower bit.
+
+          The high bit of this field is  used  to  indicate  the  track  was
+          recorded in single-density.  This allows mixed-density disks to be
+          represented (FM on some tracks, and MFM on others).
+
+          FM disks that I recorded had this bit set for every track, and NOT
+          the FM indicator in bit 7 of the  "Data rate"  field of the  image
+          header.  I cannot confirm this,  but I suspect that early versions
+          of Teledisk did not support mixed density disks, using only the FM
+          bit in the image header.  If this is the case, then a track should
+          be interpreted as single density if either of the two FM indicator
+          bits are set.
+
+       5.4 Cyclic Redundancy Check (1 byte)
+
+          This  8-bit  field  contains  the   lower   byte   of   a   16-bit
+          error-checking cyclic redundancy check for the  header  calculated
+          with the polynomial value 41111  (A097 hex)  using an input preset
+          value of 0.  The CRC is calculated over the first three  bytes  of
+          the header and should match the forth byte.
+
+       Track headers and sector block lists occur until all  tracks  on  the
+       disk have been accounted for.  When the last track record and  sector
+       block list has been read,  a 255  (FF hex)  byte indicates the end of
+       the image.
+    Teledisk .TD0 notes                                              Page: 7
+
+
+    6. Sector Header
+
+       Following the  Track  header  will  be  a  number  of  sector  blocks
+       consisting of a sector header and optional  data  header/data  block.
+       The number of sector blocks is indicated by the  "Number of  sectors"
+       field in the track header.
+
+       Each sector header has the following format:
+
+        Cylinder number             (1 byte)
+        Side/Head                   (1 byte)
+        Sector number               (1 byte)
+        Sector size                 (1 byte)
+        Flags                       (1 byte)
+        Cyclic Redundancy Check     (1 byte)
+
+       6.1 Cylinder number (1 byte)
+
+          This field indicates the logical cylinder number which is  written
+          in the ID field of the disk  sector.  For  most  disk  formats  it
+          matches the Cylinder number indicated in the track header, however
+          this  does  NOT  have  to  be  the  case  -  some  formats  encode
+          non-physical cylinder numbers.
+
+       6.2 Side/Head (1 byte)
+
+          This field indicates the  logical  Side/Head  indicator  which  is
+          written in the ID field of the disk sector.  For most disk formats
+          it matches the Side/Head number indicated  in  the  track  header,
+          however this does NOT have to be the case -  some  formats  encode
+          non-physical Side/Head numbers.
+
+       6.3 Sector number (1 byte)
+
+          This field indicates the logical sector number which is wrtten  in
+          the ID field of the disk sector.  Sector numbers do not have to be
+          in any particular order  (the ordering of the  sectors  determines
+          the interleave factor of the track), do not necessarily begin at 0
+          or 1, and are not necessarily an unbroken series of numbers.  Some
+          formats encode seemingly arbitrary sector numbers.
+
+          Teledisk sometimes creates bogus sectors headers to describe  data
+          that is not in a properly formatted sector.  These  extra  sectors
+          appear to be created with sector numbers begining at 100.
+    Teledisk .TD0 notes                                              Page: 8
+
+
+       6.4 Sector size (1 byte)
+
+          Indicates the size of  the  sector,  according  to  the  following
+          table:
+
+            0 = 128 bytes           4 = 2048 bytes
+            1 = 256 bytes           5 = 4096 bytes
+            2 = 512 bytes           6 = 8192 bytes
+            3 = 1024 bytes
+
+          Note that disk formats exist which  have  different  sector  sizes
+          within the same track,  and Teledisk will encode  them  this  way,
+          however the PC 765  floppy  disk  controller  cannot  format  such
+          tracks, and the disk can not be recreated.
+
+       6.5 Flags
+
+          This is a bit field indicating characteristics that Teledisk noted
+          about the sector when it  was  recorded.  The  field  contain  the
+          logical OR of the following byte values:
+
+             01 = Sector was duplicated within a track
+             02 = Sector was read with a CRC error
+             04 = Sector has a "deleted-data" address mark
+             10 = Sector data was skipped based on DOS allocation [note]
+             20 = Sector had an ID field but not data [note]
+             40 = Sector had data but no ID field (bogus header)
+
+          note:  Bit values 20 or 10 indicate  that  NO  SECTOR  DATA  BLOCK
+          FOLLOWS.
+
+          The meaning of some of these bits was taken  from  early  Teledisk
+          documentation,  and may not be accurate - For example,  I've  seen
+          images where sectors were duplicated within a track and the 01 bit
+          was NOT set.
+
+       6.6 Cyclic Redundancy Check (1 byte)
+
+          This  8-bit  field  contains  the   lower   byte   of   a   16-bit
+          error-checking cyclic redundancy check for the sector header, data
+          header and sector data calculated with the polynomial value  41111
+          (A097 hex) using an input preset value of 0. The CRC is calculated
+          over the first five bytes of the sector header,  the entire sector
+          data header and the sector data block.  The calculated CRC  should
+          match the value stored in the fourth byte of the sector header.
+    Teledisk .TD0 notes                                              Page: 9
+
+
+    7. Sector Data Header
+
+       The sector data header occurs following the sector header  only  when
+       sector data is present.  This is indicated by bits 10 and 20  of  the
+       Flags value NOT being set. When present it has the following format:
+
+        Data block size             (2 bytes)
+        Encoding method             (1 byte)
+
+       7.1 Data block size (2 bytes)
+
+          This indicates the size of the sector data  block,  including  the
+          encoding method (ie: data block size + 1).
+
+       7.2 Encoding method (1 byte)
+
+          This field describes how the sector data is encoded.  It can  have
+          three possible values:
+
+          7.2.1 0 - Raw sector data
+
+             Encoding method == 0 indicates that "sector size"  bytes of raw
+             sector data follow.  This is the actual data  content  for  the
+             sector.
+
+          7.2.2 1 - Repeated 2-byte pattern
+
+             Encoding method == 1 indicates that a repeated  2-byte  pattern
+             is used.  Note that this may occur  multiple  times  until  the
+             entire sector has been  recreated,  as  determined  by  "sector
+             size" in the sector header.
+
+             Each entry consits of two 16-bit values.  The first is a  count
+             value indicating how many times the second (the data value)  is
+             repeated.
+
+          7.2.3 2 - Run Length Encoded data
+
+             Encoding == 2 indicates that an RLE  data  block  occurs.  Note
+             that this may occur multiple times until the entire sector  has
+             been recreated,  as determined by  "sector size"  in the sector
+             header.
+
+             Each entry begins with a 1 byte length value or 00.
+
+             If 00,  then this entry is for a literal block.  The next  byte
+             indicates a length 'n',  and the following 'n' bytes are copied
+             into  the  sector  data  as  raw  bytes  (similar  to  Encoding
+             method==0 except for only a portion of the sector).
+
+             If not 00,  then the length 'l'  is determined as the value * 2
+             (ie:  2-510).  The next byte indicates a repeat  count  'r'.  A
+             block of  'l'  bytes is then  read  once  from  the  file,  and
+             repeated in the sector data 'r' times.
+
+          Sector headers and data blocks occur until  all  sectors  for  the
+          track have been accounted for.
