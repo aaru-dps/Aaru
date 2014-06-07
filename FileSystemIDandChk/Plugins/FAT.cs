@@ -342,7 +342,7 @@ namespace FileSystemIDandChk.Plugins
                 sb.AppendLine("Pre-DOS 2.0 Microsoft FAT12.");
                 sb.AppendLine("***WARNING***");
                 sb.AppendLine("This may be a false positive.");
-                sb.AppendFormat("Disk image identifies disk type as {0}.", imagePlugin.GetDiskType());
+                sb.AppendFormat("Disk image identifies disk type as {0}.", imagePlugin.GetDiskType()).AppendLine();
             }
 			
             information = sb.ToString();

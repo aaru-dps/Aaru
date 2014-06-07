@@ -61,6 +61,9 @@ namespace FileSystemIDandChk.PartPlugins
 			
             partitions = new List<Partition>();
 
+            if (imagePlugin.GetSectorSize() < 512)
+                return false;
+
             byte[] sector = imagePlugin.ReadSector(0);
 
             signature = BitConverter.ToUInt16(sector, 0x1FE);

@@ -207,7 +207,8 @@ namespace FileSystemIDandChk
 					
                     if (partition_scheme == "")
                     {
-                        Console.WriteLine("DEBUG: No partitions found");
+                        if(MainClass.isDebug)
+                            Console.WriteLine("DEBUG: No partitions found");
                         if (!chkFilesystems)
                         {
                             Console.WriteLine("No partitions founds, not searching for filesystems");

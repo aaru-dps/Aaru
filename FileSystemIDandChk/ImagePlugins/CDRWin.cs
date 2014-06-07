@@ -288,7 +288,7 @@ namespace FileSystemIDandChk.ImagePlugins
 
         public CDRWin(PluginBase Core)
         {
-            Name = "CDRWin cuesheet handler";
+            Name = "CDRWin cuesheet";
             PluginUUID = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
             imagePath = "";
         }

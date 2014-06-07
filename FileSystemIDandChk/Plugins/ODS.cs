@@ -60,6 +60,9 @@ namespace FileSystemIDandChk.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if (imagePlugin.GetSectorSize() < 512)
+                return false;
+
             byte[] magic_b = new byte[12];
             string magic;
             byte[] hb_sector = imagePlugin.ReadSector(1 + partitionOffset);
