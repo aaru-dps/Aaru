@@ -6,7 +6,6 @@
 --- Add support for Alcohol images
 --- Add support for Nero images
 --- Add support for cdrdao images
---- Add support for Teledisk images
 --- Add support for dump(8) images
 --- Add support for IMD images
 --- Add support for Kryoflux images
@@ -47,6 +46,7 @@ Filesystem plugins:
 --- Add support for exFAT
 --- Add support for FAT+
 --- Add support for ReFS
+--- Add support for ECMA-67
 
 Partitioning scheme plugins:
 --- Add support for Acorn partitions
@@ -63,3 +63,7 @@ Things to test/debug:
 
 Other things:
 --- Surprise!
+
+Teledisk plugin:
+--- Add support for "advanced compression"
+--- Handle variable sectors per track situation. Teledisk seems to be able to read garbage from previous formattings.
