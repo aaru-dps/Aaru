@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : Plugin.cs
@@ -38,7 +38,7 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     /// <summary>
     /// Abstract class to implement filesystem plugins.

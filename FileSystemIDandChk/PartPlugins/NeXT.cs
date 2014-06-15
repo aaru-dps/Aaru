@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : NeXT.cs
@@ -39,10 +39,10 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Collections.Generic;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Information learnt from XNU source and testing against real disks
-namespace FileSystemIDandChk.PartPlugins
+namespace DiscImageChef.PartPlugins
 {
     class NeXTDisklabel : PartPlugin
     {

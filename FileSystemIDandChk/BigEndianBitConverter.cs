@@ -1,5 +1,5 @@
 ﻿/***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : BigEndianBitConverter.cs
@@ -39,7 +39,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Linq;
 
-namespace FileSystemIDandChk
+namespace DiscImageChef
 {
     /// <summary>
     /// Converts base data types to an array of bytes, and an array of bytes to base

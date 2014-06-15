@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : CDRWin.cs
@@ -42,9 +42,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using FileSystemIDandChk;
+using DiscImageChef;
 
-namespace FileSystemIDandChk.ImagePlugins
+namespace DiscImageChef.ImagePlugins
 {
     class CDRWin : ImagePlugin
     {
@@ -1048,7 +1048,7 @@ namespace FileSystemIDandChk.ImagePlugins
                 if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDRWin plugin): Building offset map");
 
-                partitions = new List<FileSystemIDandChk.PartPlugins.Partition>();
+                partitions = new List<DiscImageChef.PartPlugins.Partition>();
 
                 ulong byte_offset = 0;
                 ulong sector_offset = 0;
@@ -1064,7 +1064,7 @@ namespace FileSystemIDandChk.ImagePlugins
                     if (discimage.tracks[i].sequence == 1 && i != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
-                    PartPlugins.Partition partition = new FileSystemIDandChk.PartPlugins.Partition();
+                    PartPlugins.Partition partition = new DiscImageChef.PartPlugins.Partition();
 
                     if (discimage.tracks[i].pregap > 0)
                     {
@@ -1096,7 +1096,7 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
 
                         partitions.Add(partition);
-                        partition = new FileSystemIDandChk.PartPlugins.Partition();
+                        partition = new DiscImageChef.PartPlugins.Partition();
                     }
 
                     index_zero |= discimage.tracks[i].indexes.TryGetValue(0, out index_zero_offset);
@@ -1134,7 +1134,7 @@ namespace FileSystemIDandChk.ImagePlugins
                         }
 
                         partitions.Add(partition);
-                        partition = new FileSystemIDandChk.PartPlugins.Partition();
+                        partition = new DiscImageChef.PartPlugins.Partition();
                     }
 
                     // Index 01
@@ -1166,14 +1166,14 @@ namespace FileSystemIDandChk.ImagePlugins
                     }
 
                     partitions.Add(partition);
-                    partition = new FileSystemIDandChk.PartPlugins.Partition();
+                    partition = new DiscImageChef.PartPlugins.Partition();
                 }
 
                 // Print offset map
                 if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (CDRWin plugin) printing partition map");
-                    foreach (FileSystemIDandChk.PartPlugins.Partition partition in partitions)
+                    foreach (DiscImageChef.PartPlugins.Partition partition in partitions)
                     {
                         Console.WriteLine("DEBUG (CDRWin plugin): Partition sequence: {0}", partition.PartitionSequence);
                         Console.WriteLine("DEBUG (CDRWin plugin): \tPartition name: {0}", partition.PartitionName);

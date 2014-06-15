@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : FFS.cs
@@ -38,10 +38,10 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Using information from Linux kernel headers
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     public class FFSPlugin : Plugin
     {

@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : LisaFS.cs
@@ -38,12 +38,12 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
-using FileSystemIDandChk.ImagePlugins;
+using DiscImageChef;
+using DiscImageChef.ImagePlugins;
 
 // All information by Natalia Portillo
 // Variable names from Lisa API
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class LisaFS : Plugin
     {

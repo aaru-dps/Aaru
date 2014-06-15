@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : MBR.cs
@@ -38,10 +38,10 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Collections.Generic;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // TODO: Support AAP, AST, SpeedStor and Ontrack extensions
-namespace FileSystemIDandChk.PartPlugins
+namespace DiscImageChef.PartPlugins
 {
     class MBR : PartPlugin
     {

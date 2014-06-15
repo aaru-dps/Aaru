@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : AppleHFSPlus.cs
@@ -38,10 +38,10 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class AppleHFSPlus : Plugin
     {

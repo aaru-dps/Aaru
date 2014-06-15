@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : EndianAwareBinaryReader.cs
@@ -41,7 +41,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace FileSystemIDandChk
+namespace DiscImageChef
 {
     public class EndianAwareBinaryReader : BinaryReader
     {

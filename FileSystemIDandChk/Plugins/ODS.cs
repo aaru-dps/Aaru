@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : ODS.cs
@@ -37,7 +37,7 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Information from VMS File System Internals by Kirby McCoy
 // ISBN: 1-55558-056-4
@@ -48,7 +48,7 @@ using FileSystemIDandChk;
 // There is an ODS with signature "DECFILES11A", yet to be seen
 // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
 // TODO: Implement checksum
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class ODS : Plugin
     {

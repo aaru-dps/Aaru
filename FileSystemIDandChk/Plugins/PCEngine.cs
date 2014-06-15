@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : PCEngine.cs
@@ -38,9 +38,9 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class PCEnginePlugin : Plugin
     {

@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : TeleDisk.cs
@@ -42,7 +42,7 @@ using System.Collections.Generic;
 
 // Created following notes from Dave Dunfield
 // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-namespace FileSystemIDandChk.ImagePlugins
+namespace DiscImageChef.ImagePlugins
 {
     class TeleDisk : ImagePlugin
     {

@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : ISO9660.cs
@@ -39,13 +39,13 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Globalization;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // This is coded following ECMA-119.
 // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
 // TODO: Apple extensiones, requires XA or advance RR interpretation.
 // TODO: Needs a major rewrite
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class ISO9660Plugin : Plugin
     {

@@ -1,5 +1,5 @@
 ﻿/***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : ArrayFill.cs
@@ -30,7 +30,7 @@ Copyright (C) 2014 mykohsu
 //$Id$
 using System;
 
-namespace FileSystemIDandChk
+namespace DiscImageChef
 {
     public static class ArrayHelpers
     {

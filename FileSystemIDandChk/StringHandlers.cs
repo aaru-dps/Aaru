@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : StringHandlers.cs
@@ -39,7 +39,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Text;
 
-namespace FileSystemIDandChk
+namespace DiscImageChef
 {
     public static class StringHandlers
     {

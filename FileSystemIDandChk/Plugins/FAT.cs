@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : FAT.cs
@@ -38,11 +38,11 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // TODO: Implement detecting DOS bootable disks
 // TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class FAT : Plugin
     {

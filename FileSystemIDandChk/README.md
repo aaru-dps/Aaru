@@ -1,5 +1,5 @@
-﻿FileSystemIDandChk v1.10
-=============
+﻿DiscImageChef v1.10
+===================
 
 Filesystem identifier and checker.
 
@@ -8,7 +8,7 @@ Copyright © 2011-2014 Natalia Portillo <claunia@claunia.com>
 Usage
 =====
 
-FileSystemIDandChk.exe 
+DiscImageChef.exe 
 
 And read help.
 

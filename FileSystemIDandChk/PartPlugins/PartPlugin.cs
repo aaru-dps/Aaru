@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : PartPlugin.cs
@@ -39,7 +39,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Collections.Generic;
 
-namespace FileSystemIDandChk.PartPlugins
+namespace DiscImageChef.PartPlugins
 {
     /// <summary>
     /// Abstract class to implement partitioning schemes interpreting plugins.

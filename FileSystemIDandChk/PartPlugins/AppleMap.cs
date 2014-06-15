@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : AppleMap.cs
@@ -39,11 +39,11 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Text;
 using System.Collections.Generic;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Information about structures learnt from Inside Macintosh
 // Constants from image testing
-namespace FileSystemIDandChk.PartPlugins
+namespace DiscImageChef.PartPlugins
 {
     class AppleMap : PartPlugin
     {

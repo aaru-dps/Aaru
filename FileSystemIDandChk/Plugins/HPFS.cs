@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : HPFS.cs
@@ -39,10 +39,10 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 using System.Text;
-using FileSystemIDandChk;
+using DiscImageChef;
 
 // Information from an old unnamed document
-namespace FileSystemIDandChk.Plugins
+namespace DiscImageChef.Plugins
 {
     class HPFS : Plugin
     {

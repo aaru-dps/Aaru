@@ -1,5 +1,5 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : DateHandlers.cs
@@ -38,7 +38,7 @@ Copyright (C) 2011-2014 Claunia.com
 
 using System;
 
-namespace FileSystemIDandChk
+namespace DiscImageChef
 {
     public static class DateHandlers
     {

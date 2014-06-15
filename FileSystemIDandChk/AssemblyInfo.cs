@@ -1,8 +1,8 @@
 /***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
-Filename       : Swapping.cs
+Filename       : AssemblyInfo.cs
 Version        : 1.0
 Author(s)      : Natalia Portillo
  
@@ -41,7 +41,7 @@ using System.Reflection;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("FileSystemIDandChk")]
+[assembly: AssemblyTitle("DiscImageChef")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]

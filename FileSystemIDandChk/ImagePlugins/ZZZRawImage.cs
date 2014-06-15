@@ -1,5 +1,5 @@
 ﻿/***************************************************************************
-FileSystem identifier and checker
+The Disc Image Chef
 ----------------------------------------------------------------------------
  
 Filename       : ZZZRawImage.cs
@@ -40,7 +40,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace FileSystemIDandChk.ImagePlugins
+namespace DiscImageChef.ImagePlugins
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
     class ZZZRawImage : ImagePlugin
