@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>DeMystifyinG the DMG file format</title>
+<style>
+ .output { padding-left : 10px; padding-right: 10px; padding-top: 5px; padding-bottom : 5px; border : 1px solid black; width : 90%; background-color : black ; color : #00FF00; }
+ .typed { color : white }
+ .listing { padding-left : 10px; padding-right : 10px; padding-top: 2px; padding-bottom : 2px;overflow : auto;background-color : #ddebda; margin-left :auto; margin-right : auto; width : 90%}
+ .superscript { color : red  ;vertical-align : super; font-size : 8pt; }
+ .note { border : 1px solid red; padding : 10px; width: 50%; margin-left: auto; margin-right : auto; background-color : yellow; box-shadow : 5px 5px 2px #888;}
+ .boxed { border : 1px solid black; padding : 2px;}
+ figcaption { border-top : 1px solid white; margin-top : 10px; color : white; margin-left: auto; margin-right: auto; font-size : smaller;}
+
+ .listingCaption { border-top : 1px solid black; color : black;}
+
+ figure { border : 1px solid black ; padding: 5px; }
+ article { width : 80% ; margin-left : auto ; margin-right : auto;}
+ .boxeDiv { margin-left : auto; margin-right : auto; border : 1px solid black; background : silver; color : black; padding : 10px; width : 60%; margin-top : 20px; margin-bottom : 20px; box-shadow: 10px 10px 5px #888;}
+
+ h1 { margin-left: auto; margin-right : auto}
+</style>
+</head>
+<body>
+
+<article>
+<h1>Demystifying the DMG File Format</h1>
+<h4>Jonathan Levin, http://newosxbook.com/ - 6/12/13</h4> 
+<section>
+<h2>1. About</h2>
+
+   As part of writing HFSleuth, a "bonus" tool for my book, I decided to implement DMG (disk image support). I realized, however, that the DMG file format (being Apple proprietary) was woefully undocumented. I briefly mention DMGs (pages 589-590), but due to the page constraints of an already large book, I had failed to delve into their format sufficiently. This article, therefore, is an attempt to rectify that shortcoming. The DMG file format has been painstakingly reverse-engineered by several<span class="superscript">[<a href="#ref1">1</a>,<a href="#ref2">2</a>]</span>, and this article/addendum aims to consolidate their hard work into a single document. HFSleuth can operate fully on all known DMG types (to date), and can serve as a complementary tool to Apple's hdiutil(1), or - as it is POSIX portable - even as a replacement for it, on non OS X systems. When set to verbose mode, HFSleuth also provides step by step information as it processes DMGs, and is used in the examples below.
+</section>
+
+<section>
+<h2>2. The Disk Image file format</h2>
+
+   The first noteable fact about the DMG file format is, that there is no DMG file format. DMGs come in a variety of sub-formats, corresponding to the different tools which create them, and their compression schemes. The common denominator of most of these is the existence of a 512-byte trailer at the end of the file. This trailer is identifiable by a magic 32-bit value, 0x6B6F6C79, which is "koly" in ASCII. As other references to this trailer call it the "koly" block, we can do the same. Note, that "most" is not "all": images created with hdiutil(1), for example, can simply be raw dd(1)-like images of the disk layout, with no metadata. In those cases, however, there is nothing special or noteworthy about the file, which can be read as any disk would, by its partition table (commonly APM, or GPT). Images created with the DiscRecording.Framework contain the koly block.
+
+   The koly block, when present, is formatted according to the following:
+
+<figure class="listing">
+<pre>
+<code>
+typedef struct {
+        char     Signature[4];          // Magic ('koly')
+        uint32_t Version;               // Current version is 4
+        uint32_t HeaderSize;            // sizeof(this), always 512
+        uint32_t Flags;                 // Flags
+        uint64_t RunningDataForkOffset; //
+        uint64_t DataForkOffset;        // Data fork offset (usually 0, beginning of file)
+        uint64_t DataForkLength;        // Size of data fork (usually up to the XMLOffset, below)
+        uint64_t RsrcForkOffset;        // Resource fork offset, if any
+        uint64_t RsrcForkLength;        // Resource fork length, if any
+        uint32_t SegmentNumber;         // Usually 1, may be 0
+        uint32_t SegmentCount;          // Usually 1, may be 0
+        uuid_t   SegmentID;             // 128-bit GUID identifier of segment (if SegmentNumber !=0)
+
+	uint32_t DataChecksumType;      // Data fork 
+        uint32_t DataChecksumSize;      //  Checksum Information
+        uint32_t DataChecksum[32];      // Up to 128-bytes (32 x 4) of checksum
+
+        uint64_t XMLOffset;             // Offset of property list in DMG, from beginning
+        uint64_t XMLLength;             // Length of property list
+        uint8_t  Reserved1[120];        // 120 reserved bytes - zeroed
+
+	uint32_t ChecksumType;          // Master
+        uint32_t ChecksumSize;          //  Checksum information
+        uint32_t Checksum[32];          // Up to 128-bytes (32 x 4) of checksum
+
+        uint32_t ImageVariant;          // Commonly 1
+        uint64_t SectorCount;           // Size of DMG when expanded, in sectors
+
+        uint32_t reserved2;             // 0
+        uint32_t reserved3;             // 0 
+        uint32_t reserved4;             // 0
+
+} __attribute__((__packed__)) UDIFResourceFile;
+
+</code>
+</pre>
+
+<figcaption class="listingCaption">Listing 1: The koly block format</figcaption>
+</figure>
+
+ <div class="note">
+   Note: All fields in the koly block (and, in fact, elsewhere in the DMG format) are in big endian ordering. This is to preserve compatibility with older generations of OS X, which were PPC-based. This requires DMG implementations to use macros such as be##_to_cpu (16, 32, and 64).
+ </div>
+
+<br/>
+   The most important elements in the koly block are the fields pointing to the XML plist: This property list, embedded elsewhere in the DMG, contains the DMG block map table. Commonly, the plist is placed in the blocks leading up to the koly block, which fits the simple algorithm to create a DMG: First compress the image blocks, then place the XML plist, and finalize with the koly block. This is shown in figure 1:
+
+<figure>
+<table class="boxed">
+ <tr><td  class="boxed"><br/><br/>The Data Fork:<br/>Disk blocks, compressed in various ways <br/><br/><br/>...<br/></td></tr>
+ <tr><td class="boxed" >XML property list (variable)</td></tr>
+ <tr><td class="boxed" >koly trailer (512 bytes)</td></tr>
+</table>
+<figcaption>Figure 1: The DMG file format</figcaption>
+</figure>
+
+  Using HFSleuth in verbose mode on a DMG will dump the KOLY header, as shown in the following output:
+
+<figure class="output">
+
+<pre>
+<code>
+<span class="prompt">HFSleuth&gt; </span><span class="typed">ver</span>
+Verbose output is on
+<span class="prompt">HFSleuth&gt; </span><span class="typed">fs iTunes11.dmg</span>
+KOLY header found at 200363895:
+	UDIF version 4, Header Size: 512
+	Flags:1
+	Rsrc fork: None
+	Data fork: from 0, spanning 200307220 bytes
+	XML plist: from 200307220, spanning 56675 bytes (to 200363895)
+	Segment #: 1, Count: 1
+	Segment UUID: 626f726e-7743259b-6086eb93-4b42fb65
+	Running Data fork offset 0
+	Sectors: 1022244
+</code>
+</pre>
+<figcaption>Output 1: Using HFSleuth on the iTunes 11.0 DMG</figcaption>
+</figure>
+<br/>
+   This method of creating DMGs also explains why commands such as "file" have a hard time identifying the DMG file type: In the absence of a fixed header, a DMG can start with any type of data (disk or partition headers), which can be further compressed by myriad means. DMG files compressed with BZlib, for example, start with a BZ2 header. They cannot be opened with bunzip2, however, since compression methods are intermingled, and bunzip2 will discard blocks which do not start with a bz2 header. 
+
+
+<br/>
+
+<figure class="output">
+<code>
+<span class="prompt">root@Erudite (/tmp)# </span><span class="typed">file DMG/install_flash_player_osx.dmg </span><br/>
+DMG/install_flash_player_osx.dmg: bzip2 compressed data, block size = 100k<br/>
+<span class="prompt">root@Erudite (/tmp)# </span><span class="typed">hdiutil imageinfo DMG/install_flash_player_osx.dmg | grep Format</span><br/>
+Format Description: UDIF read-only compressed (bzip2)<br/>
+Format: UDBZ
+<br/>
+</code>
+<figcaption>Output 2: a BZ2-compressed DMG</figcaption>
+</figure>
+
+   DMGs compressed with zlib often incorrectly appear as "VAX COFF", due to the zlib header.
+
+<figure class="output">
+<code>
+<span class="prompt">root@Erudite (/tmp)# </span><span class="typed">file DMG/xcode46.dmg </span><br/><br/>
+DMG/xcode46.dmg: VAX COFF executable not stripped - version 376<br/>
+<span class="prompt">root@Erudite (/tmp)#  </span><span class="typed">hdiutil imageinfo DMG/xcode46.dmg | grep Format</span><br/>
+Format Description: UDIF read-only compressed (zlib)<br/>
+Format: UDZO
+<br/>
+</code>
+<figcaption>Output 3: a zLib-compressed DMG</figcaption>
+</figure>
+
+ The XML Property list (which is uncompressed and easily viewable by seeking to the DOCTYPE declaration using more(1) or using tail(1)) is technically the resource fork of the DMG. The property list file contains, at a minimum, a "blkx" key, though it may contain other key/values, most commonly "plst", and sometimes a service level agreement (SLA) which will be displayed by the OS (specifically, /System/Library/PrivateFrameworks/DiskImages.framework/Versions/A/Resources/DiskImages UI Agent.app/Contents/MacOS/DiskImages UI Agent) as a pre-requisite to attaching the DMG<span class="superscript"><a href="#footnote1">*</a></span>.
+
+ Due to XML parser restrictions, data in the property list is 7-bit. This forces all binary (8-bit) data to be encoded using Base-64 encoding (a wiser choice would have been using CDATA blocks). The output of such a property list is shown below:
+
+
+<figure class="listing">
+<pre>
+<code>
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+        &lt;key&gt;resource-fork&lt;/key&gt;
+        &lt;dict&gt;
+                &lt;key&gt;blkx&lt;/key&gt;
+                &lt;array&gt;
+                        &lt;dict&gt;
+                                &lt;key&gt;Attributes&lt;/key&gt;
+                                &lt;string&gt;0x0050&lt;/string&gt;
+                                &lt;key&gt;CFName&lt;/key&gt;
+                                &lt;string&gt;Driver Descriptor Map (DDM : 0)&lt;/string&gt;
+                                &lt;key&gt;Data&lt;/key&gt;
+                                &lt;data&gt;
+                                bWlzaAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA
+                                AAIB/////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                AAIAAAAg6P2c0P9/AAAwGb9f/38AAAAAAAAAAAAAwBi/
+                                X/9/AAAoAAAAAAAAAAAAAAAAAAAAAKAFAAEAAAAYAAAA
+                                AAAAACAkv1//fwAA8Bi/X/9/AACKWZeI/38AACAZv1//
+                                fwAAKAAAAAAAAAAAAAAAAAAAAFhAAgEBAAAAABm/X/9/
+                                AAAAAAACgAAABgAAAAAAAAAAAAAAAAAAAAAAAAABAAAA
+                                AAAAAAAAAAAAAAAAOP////8AAAAAAAAAAAAAAAEAAAAA
+                                AAAAAAAAAAAAAAA4AAAAAAAAAAA=
+                                &lt;/data&gt;
+                                &lt;key&gt;ID&lt;/key&gt;
+                                &lt;string&gt;-1&lt;/string&gt;
+                                &lt;key&gt;Name&lt;/key&gt;
+                                &lt;string&gt;Driver Descriptor Map (DDM : 0)&lt;/string&gt;
+                        &lt;/dict&gt;
+                        &lt;dict&gt;
+                                &lt;key&gt;Attributes&lt;/key&gt;
+                                &lt;string&gt;0x0050&lt;/string&gt;
+                                &lt;key&gt;CFName&lt;/key&gt;
+                                &lt;string&gt;Apple (Apple_partition_map : 1)&lt;/string&gt;
+                                &lt;key&gt;Data&lt;/key&gt;
+  	                 &lt;data&gt;
+                                bWlzaAAAAAEAAAAAAAAAAQAAAAAAAAA/AAAAAAAAAAAA
+                                AAIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                AAIAAAAgk1UtLv9/AAAwGb9f/38AAAAAAAAAAAAAwBi/
+                                X/9/AAAoAAAAAAAAAAAAAAAAAAAAAKAFAAEAAAAYAAAA
+                                AAAAACAkv1//fwAA8Bi/X/9/AACKWZeI/38AACAZv1//
+                                fwAAKAAAAAAAAAAAAAAAAAAAAFhAAgEBAAAAABm/X/9/
+                                AAAAAAACgAAABgAAAAAAAAAAAAAAAAAAAAAAAAA/AAAA
+                                AAAAADgAAAAAAAAAu/////8AAAAAAAAAAAAAAD8AAAAA
+                                AAAAAAAAAAAAAADzAAAAAAAAAAA=
+                                &lt;/data&gt;
+                                &lt;key&gt;ID&lt;/key&gt;
+                                &lt;string&gt;0&lt;/string&gt;
+                                &lt;key&gt;Name&lt;/key&gt;
+                                &lt;string&gt;Apple (Apple_partition_map : 1)&lt;/string&gt;
+                        &lt;/dict&gt;
+                        &lt;dict&gt;
+                                &lt;key&gt;Attributes&lt;/key&gt;
+                                &lt;string&gt;0x0050&lt;/string&gt;
+                                &lt;key&gt;CFName&lt;/key&gt;
+                                &lt;string&gt;DiscRecording 5.0.9d2 (Apple_HFS : 2)&lt;/string&gt;
+                                &lt;key&gt;Data&lt;/key&gt;
+                                &lt;data&gt;
+                                bWlzaAAAAAEAAAAAAAAAQAAAAAAAAIRcAAAAAAAAAAAA
+                                AAQEAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                AAIAAAAgbcaqTv9/AAAwGb9f/38AAAAAAAAAAAAAwBi/
+                                X/9/AAAoAAAAAAAAAAAAAAAAAAAAAKAFAAEAAAAYAAAA
+
+				...
+
+</code>
+</pre>
+
+<figcaption class="listingCaption">Listing 2: Sample XML plist in an APM formatted DMG (Flash installer)</figcaption>
+</figure>
+
+  A detailed discussion of both APM and GPT can be found in chapter 15 of the book<span class="superscript">[3]</span>, as well as Apple's notes on APM<span class="superscript">[4]</span> and GPT<span class="superscript">[5]</span>. What makes the blxx data useful, however, is that it allows an implementation to <i>skip past</i> the partition table data, and isolate the partition of interest directly from the DMG.
+ 
+  The "data" in the blxx header is a structure, which (like its sibling, koly) is also identifiable by a fixed signature - in this case "mish". In Base-64 this encodes as "bWlza", which is readily evident in the previous listing. The mish block is formatted like this:
+
+<figure class="listing">
+<pre>
+<code>
+
+typedef struct {
+        uint32_t Signature;          // Magic ('mish')
+        uint32_t Version;            // Current version is 1
+        uint64_t SectorNumber;       // Starting disk sector in this blkx descriptor
+        uint64_t SectorCount;        // Number of disk sectors in this blkx descriptor
+
+        uint64_t DataOffset;     
+        uint32_t BuffersNeeded;
+        uint32_t BlockDescriptors;   // Number of descriptors
+
+        uint32_t reserved1;
+        uint32_t reserved2;
+        uint32_t reserved3;
+        uint32_t reserved4;
+        uint32_t reserved5;
+        uint32_t reserved6;
+
+        UDIFChecksum checksum;
+
+        uint32_t NumberOfBlockChunks; 
+        BLKXChunkEntry [0];
+} __attribute__((__packed__)) BLKXTable;
+
+// Where each  BLXKRunEntry is defined as follows:
+
+typedef struct {
+        uint32_t EntryType;         // Compression type used or entry type (see next table)
+        uint32_t Comment;           // "+beg" or "+end", if EntryType is comment (0x7FFFFFFE). Else reserved.
+        uint64_t SectorNumber;      // Start sector of this chunk
+        uint64_t SectorCount;       // Number of sectors in this chunk
+        uint64_t CompressedOffset;  // Start of chunk in data fork
+        uint64_t CompressedLength;  // Count of bytes of chunk, in data fork
+} __attribute__((__packed__)) BLKXChunkEntry;
+</code>
+</pre>
+<figcaption class="listingCaption">Listing 3: The mish block format</figcaption>
+</figure>
+
+In other words, for each entry, the chunk of <i>SectorCount</i> sectors, starting at <i>SectorNumber</i> are stored at <i>CompressedLength</i> bytes, at offset <i>CompressedOffset</i> in the data fork. When expanded, each such chunk will take <i>SectorCount * SECTOR_SIZE</i> bytes. Each chunk of blocks in a given entry is stored using the same compression, but different entries can contain different compression methods. 
+
+<div class="boxeDiv">
+Question:
+ 
+  What are two advantages of breaking the image into block chunks, as described above? (Answer at end of document)
+
+</div>
+
+
+The various block chunk entry types are shown below:
+<figure>
+
+<table>
+<caption>Table: DMG blxx types</caption>
+<thead>
+<tr>
+<th>Type</th>
+<th>Scheme</th>
+<th>Meaning</th>
+</tr>
+<tbody>
+
+<tr><td>0x00000000</td><td>---</td><td>Zero-Fill</td></tr>
+<tr><td>0x00000001</td><td>UDRW/UDRO</td><td>RAW or NULL compression (uncompressed)</td></tr>
+<tr><td>0x00000002</td><td>---      </td><td>Ignored/unknown</td></tr>
+<tr><td>0x80000004</td><td>UDCO     </td><td>Apple Data Compression (ADC)</td></tr>
+<tr><td>0x80000005</td><td>UDZO     </td><td>zLib data compression</td></tr>
+<tr><td>0x80000006</td><td>UDBZ     </td><td>bz2lib data compression</td></tr>
+<tr><td>0x7ffffffe</td><td>---      </td><td>No blocks - Comment: +beg and +end</td></tr>
+<tr><td>0xffffffff</td><td>---      </td><td>No blocks - Identifies last blxx entry</td></tr>
+</tbody>
+</table>
+</figure>
+
+Running HFSleuth on a DMG in verbose and debug mode will produce detailed output of the decompression, demonstrating the above:
+
+
+<figure class="output">
+<code>
+<span class="typed">
+..
+</span>
+<br/>
+Decompressing 0x345 blocks, Desc 4<br/>
+1022160 sectors - 523345920 bytes<br/>
+Blk 0 - 0 (512 sectors) - Compressed to 397, 1407 bytes Zlib                   <br/>
+Blk 1 - 512 (512 sectors) - Compressed to 1804, 1167 bytes Zlib<br/>
+Blk 2 - 1024 (512 sectors) - Compressed to 2971, 1167 bytes Zlib<br/>
+Blk 3 - 1536 (512 sectors) - Compressed to 4138, 1167 bytes Zlib<br/>
+Blk 4 - 2048 (512 sectors) - Compressed to 5305, 1167 bytes Zlib<br/>
+Blk 5 - 2560 (512 sectors) - Compressed to 6472, 1167 bytes Zlib<br/>
+Blk 6 - 3072 (512 sectors) - Compressed to 7639, 1167 bytes Zlib<br/>
+Blk 7 - 3584 (512 sectors) - Compressed to 8806, 1167 bytes Zlib<br/>
+Blk 8 - 4096 (512 sectors) - Compressed to 9973, 1167 bytes Zlib<br/>
+...<br/>
+Blk 39 - 19968 (512 sectors) - Compressed to 46202, 1167 bytes Zlib<br/>
+Blk 40 - 20480 (216 sectors) - Compressed to 47369, 506 bytes Zlib<br/>
+Blk 41 - 20696 (103200 sectors) - Compressed to 47875, 0 bytes IGNORE           # zeroed/unused sectors <br/>
+Blk 42 - 123896 (512 sectors) - Compressed to 47875, 7904 bytes Zlib<br/>
+Blk 43 - 124408 (512 sectors) - Compressed to 55779, 1167 bytes Zlib<br/>
+...<br/>
+Blk 828 - 1019624 (512 sectors) - Compressed to 199079734, 250792 bytes Zlib<br/>
+Blk 829 - 1020136 (512 sectors) - Compressed to 199330526, 262144 bytes RAW     # Note 262,144 = 512 * 512<br/>
+Blk 830 - 1020648 (512 sectors) - Compressed to 199592670, 230554 bytes Zlib<br/>
+Blk 831 - 1021160 (512 sectors) - Compressed to 199823224, 238101 bytes Zlib<br/>
+Blk 832 - 1021672 (480 sectors) - Compressed to 200061325, 245760 bytes RAW     # Note 245,760 = 480 * 512<br/>
+Blk 833 - 1022152 (6 sectors) - Compressed to 200307085, 0 bytes IGNORE<br/>
+Blk 834 - 1022158 (1 sectors) - Compressed to 200307085, 135 bytes Zlib<br/>
+Blk 835 - 1022159 (1 sectors) - Compressed to 200307220, 0 bytes IGNORE<br/>
+Blk 836 - 1022160 (0 sectors) - Compressed to 200307220, 0 bytes Terminator<br/>
+decompression done<br/>
+<figcaption>Output 4: Decompressing a DMG image in HFSleuth, debug mode</figcaption>
+</code>
+</figure>
+
+
+Note in the example above the mix of Zlib and RAW compression methods: Zlib uses highly efficient compression algorithms, but sometimes it just makes sense to leave data in raw form (e.g. chunks 829 and 832). In these cases, the "compressed" size is actually the same as the uncompressed size. It's also worth noting that (though it is commonly the case) there is no guarantee that the blocks are compressed in order. 
+
+</section>
+<section>
+<h2>3. Mounting DMGs</h2>
+
+
+	DMGs can be mounted, just like any other file system, though technically this is what is known as a "loopback" mount (i.e. a mount backed by a local file, rather than a device file). To mount a DMG, the system uses the DiskImages kernel extension (KExt), also known as the IOHDIXController.kext. This is clearly visible in both OS X and iOS, using kextstat (or jkextstat, in the latter):
+
+<figure class="output">
+<pre>
+<output>
+Index Refs Address            Size       Wired      Name (Version) &gt;Linked Against&lt;
+    1   77 0xffffff7f80756000 0x686c     0x686c     com.apple.kpi.bsd (12.2.0)
+    2    6 0xffffff7f80741000 0x46c      0x46c      com.apple.kpi.dsep (12.2.0)
+    3  101 0xffffff7f80760000 0x1b7ec    0x1b7ec    com.apple.kpi.iokit (12.2.0)
+    4  106 0xffffff7f8074c000 0x99f8     0x99f8     com.apple.kpi.libkern (12.2.0)
+    5   92 0xffffff7f80742000 0x88c      0x88c      com.apple.kpi.mach (12.2.0)
+    6   39 0xffffff7f80743000 0x500c     0x500c     com.apple.kpi.private (12.2.0)
+    7   60 0xffffff7f80749000 0x23cc     0x23cc     com.apple.kpi.unsupported (12.2.0)
+    8    0 0xffffff7f8146e000 0x41000    0x41000    com.apple.kec.corecrypto (1.0) &gt;7 6 5 4 3 1&lt;
+    9   22 0xffffff7f80d44000 0x9000     0x9000     com.apple.iokit.IOACPIFamily (1.4) &gt;7 6 4 3&lt;
+   10   30 0xffffff7f8088d000 0x25000    0x25000    com.apple.iokit.IOPCIFamily (2.7.2) &gt;7 6 5 4 3&lt;
+   11    2 0xffffff7f81dbf000 0x57000    0x57000    com.apple.driver.AppleACPIPlatform (1.6) &gt;10 9 7 6 5 4 3 1&lt;
+   12    1 0xffffff7f80a9e000 0xe000     0xe000     com.apple.driver.AppleKeyStore (28.21) &gt;7 6 5 4 3 1&lt;
+   13    6 0xffffff7f8077c000 0x25000    0x25000    com.apple.iokit.IOStorageFamily (1.8) &gt;7 6 5 4 3 1&lt;
+   14    0 0xffffff7f80e4d000 0x19000    0x19000    com.apple.driver.DiskImages (344) &gt;13 7 6 5 4 3 1&lt;
+...
+</output>
+</pre>
+</figure>
+
+
+The kext is provided with a number of "PlugIn" kexts, namely:
+
+<ul>
+<li>AppleDiskImagesCryptoEncoding.kext</li>
+<li>AppleDiskImagesKernelBacked.kext  </li>
+<li>AppleDiskImagesReadWriteDiskImage.kext - for UDRO/UDRW</li>
+<li>AppleDiskImagesFileBackingStore.kext</li>
+<li>AppleDiskImagesPartitionBackingStore.kext - Uses the Apple GUID 444D4700-0000-11AA-AA11-00306543ECAC </li>
+<li>AppleDiskImagesSparseDiskImage.kext - for UDSP</li>
+<li>AppleDiskImagesHTTPBackingStore.kext - Allows DMGs to reside on a remote HTTP server. Uses a "KDISocket" with HTTP/1.1 partial GETs (206) to get the chunks it needs from a DMG</li>
+<li>AppleDiskImagesRAMBackingStore.kext</li>
+<li>AppleDiskImagesUDIFDiskImage.kext</li>
+</ul>
+
+</section>
+<section>
+
+   The attachment of a DMG starts in user mode, by an I/O Kit call to IOHDIXController, preparing a dictionary with the following keys:
+
+   <ul>
+    <li>hdik-unique-identifier - A UUID created by the caller (e.g. CFUUIDCreate())</li>
+    <li>image-path - the path to the DMG in question</li>
+  </ul>
+
+   Some types of disk images (sparse, uncompressed, and z-Lib compressed) are natively supported by the kernel and can be mounted directly by it. A good example is the DeveloperDiskImage.dmg found in the iOS SDK. More often than not, however, mounting resorts to user-mode helper processes. This, in fact, is default on OS X (q.v. hdiutil -nokernel vs. hdiutil -kernel). When attaching a DMG, the DiskImages private framework spawns diskimages-helper and hdiejectd. The former is started with a -uuid argument per invocation, allowing the mounting of the same DMG multiple times. If the process is stopped, filesystem operations on its contents will likewise hang (with the exception of those already cached by VFS). You can demonstrate this with a simple experiment by mounting a DMG, sending the corresponding diskimages helper a STOP signal, and performing a filesystem intensive operation, such as an ls -lR, witnessing the hang, then sending a CONT. Further inspection in GDB with a breakpoint on mach_msg will enable you to peek at the Mach messages which are passed between the process and the kernel over the I/O Kit interface. This will show a backtrace similar to:
+
+<figure class="output">
+<code>
+<table>
+<tr>
+<td> #0  0x00007fff8cfd4c0d in mach_msg ()              </td><td>    # Actual message passer</td></tr>
+<tr>
+<td> #1  0x00007fff887e3fbc in io_connect_method ()  </td><td>        # I/O Kit internal connect</td>
+</tr>
+<tr>
+<td> #2  0x00007fff887978ea in IOConnectCallMethod ()     </td><td>  # I/O kit connector, generic argument</td>
+</tr>
+<tr>
+<td> #3  0x00007fff88797ae8 in IOConnectCallStructMethod () </td><td># I/O Kit connector, with structure argument</td>
+</tr>
+<tr>
+<td> #4  0x00007fff86e5b79f in DI_kextDriveGetRequest ()   </td><td> # DiskImages framework function</td>
+</tr>
+</table>
+</code>
+</figure>
+
+Looking at the arguments to DI_kextDriveGetRequest (specifically, $rdx+ 0x20), will reveal a pointer to the data returned from the DMG file by the diskimages-helper.
+
+
+<figure class="output">
+<code>
+(gdb) x/20x $rdx  # Note this is the $rdx value at a breakpoint on DI_kextDriveGetRequest<br/>
+0x103e68c30:	0x4279726f	0x00000001	0x00040208	0x00000000<br/>
+0x103e68c40:	0x00000100	0x00000000	0x2dd13e80	0xffffff80<br/>
+0x103e68c50:	0x03e6b000	0x00000001	0x00200000	0x00000000<br/>
+<br/>
+<br/>
+(gdb) x/s 0x0000000103e6b000     <i>Data from a cat /Volumes/KernelDebugKit/kgmacros</i><br/>
+0x103e6b000:	 "\n# Kernel gdb macros\n#\n#  These gdb macros should be useful during kernel development in\n#<br/>  determining what's going on in the kernel.\n#\n#  All the convenience variables used by these macros begin wit"...<br/>
+</code>
+</figure>
+
+</section>
+
+<section>
+<h1>Commands and support</h1>
+
+	Apple provides extensive support for DMGs, which is only natural given their role in everything, from aspects of OS installation to software distribution. The DMG support is provided by the DiskImages project, which contains both the user mode (hdid, hdiutil) and kernel mode (kexts) required for operation. Lamentably, Apple keeps this as one of the non-open source projects in Darwin.
+
+<ul>
+<li>hdid</li>
+<li>hdiutil</li>
+<li>DiskImages.framework - The private framework lending support to both the above tools, communicating with the KExts (below), as well as the user mode helper processes for mounting images (diskimages-helper and hdiejectd)</li>
+<li>IOHDIXController.kext</li>
+
+</ul>
+</section>
+
+<hr/>
+<section>
+  Answer: Advantages of using per-block compression, rather than a single compression algorithm for entire file: <br/> 
+
+   <ol>
+    <li> Optimize compression for type of data: For example, discard blocks of zeros rather than compressing them, or even leaving data uncompressed</li>
+   <li>Allow an implementation to selectively decompress chunks, rather than the whole image, which may take a lot of filesystem space and/or memory (especially in kernel-mode).</li>
+ </ol>
+
+</section>
+
+
+<section>
+
+<h2>References:</h2>
+
+<ol>
+ <li><a id="ref1">DMG2IMG:</a> <a href="http://vu1tur.eu.org/">http://vu1tur.eu.org</a><br/> </li>
+ <li><a id="ref2">DMG2ISO:</a> <a href="sourceforge.net/projects/dmg2iso/"></a>at sourceforge.net</li>
+ <li><a id="ref3">The book</a> <a href="newosxbook.com/">http://www.newosxbook.com</a></li>
+ <li><a id="ref4">APM:</a> <a href="http://www.informit.com/articles/article.aspx?p=376123&amp;seqNum=3">Discussion at informit.com</a></li>
+ <li><a id="ref5">TN2166: Secrets of the GPT</a> <a href="http://developer.apple.com/technotes/tn2006/tn2166.htm">developer.apple.com</a>
+
+</ol>
+
+</section>
+
+</article>
+</body>
+</html>
+
+
+
+
