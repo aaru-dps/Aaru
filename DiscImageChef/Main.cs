@@ -41,94 +41,152 @@ using System.Collections.Generic;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Plugins;
+using System.Reflection;
 
 namespace DiscImageChef
 {
     class MainClass
     {
         static PluginBase plugins;
-        public static bool chkPartitions;
-        public static bool chkFilesystems;
         public static bool isDebug;
+        public static bool isVerbose;
 
         public static void Main(string[] args)
         {
             plugins = new PluginBase();
-			
-            chkPartitions = true;
-            chkFilesystems = true;
-            // RELEASE
-            isDebug = false;
-            // DEBUG
-            //isDebug = true;
-			
-            Console.WriteLine("Filesystem Identifier and Checker");
-            Console.WriteLine("Copyright (C) 2011-2014 Natalia Portillo");
-			
-            // For debug
-            if (isDebug)
+
+            string invokedVerb = "";
+            object invokedVerbInstance = null;
+
+            var options = new Options();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options,
+                (verb, subOptions) =>
             {
-                plugins.RegisterAllPlugins();
-                Runner("");
+                // if parsing succeeds the verb name and correct instance
+                // will be passed to onVerbCommand delegate (string,object)
+                invokedVerb = verb;
+                invokedVerbInstance = subOptions;
+            }))
+            {
+                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
             }
-            else
+
+            object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            string AssemblyTitle = ((AssemblyTitleAttribute) attributes[0]).Title;
+            attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+            Version AssemblyVersion = typeof(MainClass).Assembly.GetName().Version;
+            string AssemblyCopyright  = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
+
+            Console.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
+            Console.WriteLine("{0}", AssemblyCopyright);
+            Console.WriteLine();
+
+            switch (invokedVerb)
             {
-                if (args.Length == 0)
-                {
-                    Usage();
-                }
-                else if (args.Length == 1)
-                {
-                    plugins.RegisterAllPlugins();
-				
-                    if (args[0] == "--formats")
-                    {
-                        Console.WriteLine("Supported images:");
-                        foreach (KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
-                            Console.WriteLine(kvp.Value.Name);
-                        Console.WriteLine();
-                        Console.WriteLine("Supported filesystems:");
-                        foreach (KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
-                            Console.WriteLine(kvp.Value.Name);
-                        Console.WriteLine();
-                        Console.WriteLine("Supported partitions:");
-                        foreach (KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
-                            Console.WriteLine(kvp.Value.Name);
-                    }
-                    else
-                        Runner(args[0]);
-                }
-                else
-                {
-                    for (int i = 0; i < args.Length - 1; i++)
-                    {
-                        switch (args[i])
-                        {
-                            case "--filesystems":
-                                chkFilesystems = true;
-                                chkPartitions = false;
-                                break;
-                            case "--partitions":
-                                chkFilesystems = false;
-                                chkPartitions = true;
-                                break;
-                            case "--all":
-                                chkFilesystems = true;
-                                chkPartitions = true;
-                                break;
-                            case "--debug":
-                                isDebug = true;
-                                break;
-                        }
-                    }
-				
-                    Runner(args[args.Length - 1]);
-                }    
+                case "analyze":
+                    AnalyzeSubOptions AnalyzeOptions = (AnalyzeSubOptions)invokedVerbInstance;
+                    isDebug = AnalyzeOptions.Debug;
+                    isVerbose = AnalyzeOptions.Verbose;
+                    Analyze(AnalyzeOptions);
+                    break;
+                case "compare":
+                    CompareSubOptions CompareOptions = (CompareSubOptions)invokedVerbInstance;
+                    isDebug = CompareOptions.Debug;
+                    isVerbose = CompareOptions.Verbose;
+                    Compare(CompareOptions);
+                    break;
+                case "checksum":
+                    ChecksumSubOptions ChecksumOptions = (ChecksumSubOptions)invokedVerbInstance;
+                    isDebug = ChecksumOptions.Debug;
+                    isVerbose = ChecksumOptions.Verbose;
+                    Checksum(ChecksumOptions);
+                    break;
+                case "verify":
+                    VerifySubOptions VerifyOptions = (VerifySubOptions)invokedVerbInstance;
+                    isDebug = VerifyOptions.Debug;
+                    isVerbose = VerifyOptions.Verbose;
+                    Verify(VerifyOptions);
+                    break;
+                case "formats":
+                    ListFormats();
+                    break;
+                default:
+                    throw new ArgumentException("Should never arrive here!");
             }
         }
 
-        static void Runner(string filename)
+        static void ListFormats()
         {
+            plugins.RegisterAllPlugins();
+
+            Console.WriteLine("Supported images:");
+            foreach (KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
+                Console.WriteLine(kvp.Value.Name);
+            Console.WriteLine();
+            Console.WriteLine("Supported filesystems:");
+            foreach (KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
+                Console.WriteLine(kvp.Value.Name);
+            Console.WriteLine();
+            Console.WriteLine("Supported partitions:");
+            foreach (KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
+                Console.WriteLine(kvp.Value.Name);
+        }
+
+        static void Compare(CompareSubOptions options)
+        {
+            if (isDebug)
+            {
+                Console.WriteLine("--debug={0}", options.Debug);
+                Console.WriteLine("--verbose={0}", options.Verbose);
+                Console.WriteLine("--input1={0}", options.InputFile1);
+                Console.WriteLine("--input2={0}", options.InputFile2);
+            }
+            throw new NotImplementedException("Comparing not yet implemented.");
+        }
+
+        static void Checksum(ChecksumSubOptions options)
+        {
+            if (isDebug)
+            {
+                Console.WriteLine("--debug={0}", options.Debug);
+                Console.WriteLine("--verbose={0}", options.Verbose);
+                Console.WriteLine("--separated-tracks={0}", options.SeparatedTracks);
+                Console.WriteLine("--whole-disc={0}", options.WholeDisc);
+                Console.WriteLine("--input={0}", options.InputFile);
+                Console.WriteLine("--crc32={0}", options.DoCRC32);
+                Console.WriteLine("--md5={0}", options.DoMD5);
+                Console.WriteLine("--sha1={0}", options.DoSHA1);
+                Console.WriteLine("--fuzzy={0}", options.DoFuzzy);
+            }
+            throw new NotImplementedException("Checksumming not yet implemented.");
+        }
+
+        static void Verify(VerifySubOptions options)
+        {
+            if (isDebug)
+            {
+                Console.WriteLine("--debug={0}", options.Debug);
+                Console.WriteLine("--verbose={0}", options.Verbose);
+                Console.WriteLine("--input={0}", options.InputFile);
+                Console.WriteLine("--verify-disc={0}", options.VerifyDisc);
+                Console.WriteLine("--verify-sectors={0}", options.VerifySectors);
+            }
+            throw new NotImplementedException("Verifying not yet implemented.");
+        }
+
+        static void Analyze(AnalyzeSubOptions options)
+        {
+            if (isDebug)
+            {
+                Console.WriteLine("--debug={0}", options.Debug);
+                Console.WriteLine("--verbose={0}", options.Verbose);
+                Console.WriteLine("--input={0}", options.InputFile);
+                Console.WriteLine("--filesystems={0}", options.SearchForFilesystems);
+                Console.WriteLine("--partitions={0}", options.SearchForPartitions);
+            }
+
+            plugins.RegisterAllPlugins();
+
             List<string> id_plugins;
             Plugin _plugin;
             string information;
@@ -144,7 +202,7 @@ namespace DiscImageChef
                 {
                     if(_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
-                        if (_imageplugin.IdentifyImage(filename))
+                        if (_imageplugin.IdentifyImage(options.InputFile))
                         {
                             _imageFormat = _imageplugin;
                             Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
@@ -160,7 +218,7 @@ namespace DiscImageChef
                     {
                         if(_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                         {
-                            if (_imageplugin.IdentifyImage(filename))
+                            if (_imageplugin.IdentifyImage(options.InputFile))
                             {
                                 _imageFormat = _imageplugin;
                                 Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
@@ -179,7 +237,7 @@ namespace DiscImageChef
 
                 try
                 {
-                    if (!_imageFormat.OpenImage(filename))
+                    if (!_imageFormat.OpenImage(options.InputFile))
                     {
                         Console.WriteLine("Unable to open image format");
                         Console.WriteLine("No error given");
@@ -203,7 +261,7 @@ namespace DiscImageChef
 
                 Console.WriteLine("Image identified as {0}.", _imageFormat.GetImageFormat());
 
-                if (chkPartitions)
+                if (options.SearchForPartitions)
                 {
                     List<Partition> partitions = new List<Partition>();
                     string partition_scheme = "";
@@ -231,7 +289,7 @@ namespace DiscImageChef
                     {
                         if(MainClass.isDebug)
                             Console.WriteLine("DEBUG: No partitions found");
-                        if (!chkFilesystems)
+                        if (!options.SearchForFilesystems)
                         {
                             Console.WriteLine("No partitions founds, not searching for filesystems");
                             return;
@@ -254,7 +312,7 @@ namespace DiscImageChef
                             Console.WriteLine("Partition description:");	
                             Console.WriteLine(partitions[i].PartitionDescription);
 							
-                            if (chkFilesystems)
+                            if (options.SearchForFilesystems)
                             {
                                 Console.WriteLine("Identifying filesystem on partition");
 								
@@ -332,18 +390,6 @@ namespace DiscImageChef
                 if (_plugin.Identify(imagePlugin, partitionOffset))
                     id_plugins.Add(_plugin.Name.ToLower());
             }
-        }
-
-        static void Usage()
-        {
-            Console.WriteLine("Usage: filesystemidandchk [options] file");
-            Console.WriteLine();
-            Console.WriteLine(" --formats     List all suported partition and filesystems");
-            Console.WriteLine(" --debug       Show debug information");
-            Console.WriteLine(" --partitions  Check only for partitions");
-            Console.WriteLine(" --filesystems Check only for filesystems");
-            Console.WriteLine(" --all         Check for partitions and filesystems (default)");
-            Console.WriteLine();
         }
     }
 }
