@@ -5,12 +5,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef", "DiscImageC
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Packages", "Packages.mdproj", "{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine35", "commandline\src\libcmdline\CommandLine35.csproj", "{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Debug|x86.Build.0 = Debug|Any CPU
+		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Release|x86.ActiveCfg = Release|Any CPU
+		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Release|x86.Build.0 = Release|Any CPU
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.ActiveCfg = Debug|x86
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.Build.0 = Debug|x86
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Release|x86.ActiveCfg = Release|x86
