@@ -78,12 +78,19 @@
     <Compile Include="PrintHex.cs" />
     <Compile Include="ImagePlugins\ZZZRawImage.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="Commands\Formats.cs" />
+    <Compile Include="Commands\Analyze.cs" />
+    <Compile Include="Commands\Compare.cs" />
+    <Compile Include="Commands\Checksum.cs" />
+    <Compile Include="Commands\Verify.cs" />
+    <Compile Include="Commands\Commands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Plugins\" />
     <Folder Include="PartPlugins\" />
     <Folder Include="ImagePlugins\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -3,7 +3,7 @@ using CommandLine.Text;
 
 namespace DiscImageChef
 {
-    abstract class CommonSubOptions
+    public abstract class CommonSubOptions
     {
         [Option('v', "verbose", DefaultValue = false, HelpText = "Shows verbose output")]
         public bool Verbose { get; set; }
@@ -12,7 +12,7 @@ namespace DiscImageChef
         public bool Debug { get; set; }
     }
 
-    class AnalyzeSubOptions : CommonSubOptions
+    public class AnalyzeSubOptions : CommonSubOptions
     {
         [Option('p', "partitions", DefaultValue = true,
             HelpText = "Searches and interprets partitions.")]
@@ -26,7 +26,7 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
-    class CompareSubOptions : CommonSubOptions
+    public class CompareSubOptions : CommonSubOptions
     {
         [Option("input1", Required = true, HelpText = "First disc image.")]
         public string InputFile1 { get; set; }
@@ -35,7 +35,7 @@ namespace DiscImageChef
         public string InputFile2 { get; set; }
     }
 
-    class ChecksumSubOptions : CommonSubOptions
+    public class ChecksumSubOptions : CommonSubOptions
     {
         [Option('t', "separated-tracks", DefaultValue = true,
             HelpText = "Checksums each track separately.")]
@@ -65,7 +65,7 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
-    class VerifySubOptions : CommonSubOptions
+    public class VerifySubOptions : CommonSubOptions
     {
         [Option('w', "verify-disc", DefaultValue = true,
             HelpText = "Verify disc image if supported.")]
@@ -79,11 +79,11 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
-    class FormatsSubOptions
+    public class FormatsSubOptions
     {
     }
 
-    class Options
+    public class Options
     {
         public Options()
         {
