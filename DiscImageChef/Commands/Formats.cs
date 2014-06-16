@@ -13,7 +13,7 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            Console.WriteLine("Supported images:");
+            Console.WriteLine("Supported disc image formats:");
             if(MainClass.isVerbose)
                 Console.WriteLine("GUID\t\t\t\t\tPlugin");
             foreach (KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
@@ -35,7 +35,7 @@ namespace DiscImageChef.Commands
                     Console.WriteLine(kvp.Value.Name);
             }
             Console.WriteLine();
-            Console.WriteLine("Supported partitions:");
+            Console.WriteLine("Supported partitioning schemes:");
             if(MainClass.isVerbose)
                 Console.WriteLine("GUID\t\t\t\t\tPlugin");
             foreach (KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
