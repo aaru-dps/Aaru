@@ -106,6 +106,8 @@ namespace DiscImageChef
                     Commands.Verify.doVerify(VerifyOptions);
                     break;
                 case "formats":
+                    FormatsSubOptions FormatsOptions = (FormatsSubOptions)invokedVerbInstance;
+                    isVerbose = FormatsOptions.Verbose;
                     Commands.Formats.ListFormats();
                     break;
                 default:

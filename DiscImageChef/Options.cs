@@ -79,7 +79,7 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
-    public class FormatsSubOptions
+    public class FormatsSubOptions : CommonSubOptions
     {
     }
 
