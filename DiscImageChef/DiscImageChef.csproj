@@ -84,6 +84,7 @@
     <Compile Include="Commands\Checksum.cs" />
     <Compile Include="Commands\Verify.cs" />
     <Compile Include="Commands\Commands.cs" />
+    <Compile Include="ImagePlugins\DetectImageFormat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

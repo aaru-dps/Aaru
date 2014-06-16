@@ -36,44 +36,18 @@ namespace DiscImageChef.Commands
 
             try
             {
-                _imageFormat = null;
+                _imageFormat = ImageFormat.Detect(options.InputFile);
 
-                // Check all but RAW plugin
-                foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
+                if(_imageFormat == null)
                 {
-                    if(_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                    {
-                        if (_imageplugin.IdentifyImage(options.InputFile))
-                        {
-                            _imageFormat = _imageplugin;
-                            Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
-                            break;
-                        }
-                    }
+                    Console.WriteLine("Image format not identified, not proceeding with analysis.");
                 }
-
-                // Check only RAW plugin
-                if (_imageFormat == null)
+                else
                 {
-                    foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
-                    {
-                        if(_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                        {
-                            if (_imageplugin.IdentifyImage(options.InputFile))
-                            {
-                                _imageFormat = _imageplugin;
-                                Console.WriteLine("Image format identified by {0}.", _imageplugin.Name);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Still not recognized
-                if (_imageFormat == null)
-                {
-                    Console.WriteLine("Image format not identified, not proceeding.");
-                    return;
+                    if(MainClass.isVerbose)
+                        Console.WriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
+                    else
+                        Console.WriteLine("Image format identified by {0}.", _imageFormat.Name);
                 }
 
                 try
@@ -99,8 +73,6 @@ namespace DiscImageChef.Commands
                     Console.WriteLine("Error: {0}", ex.Message);
                     return;
                 }
-
-                Console.WriteLine("Image identified as {0}.", _imageFormat.GetImageFormat());
 
                 if (options.SearchForPartitions)
                 {
