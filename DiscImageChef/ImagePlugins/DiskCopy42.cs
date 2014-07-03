@@ -143,6 +143,7 @@ namespace DiscImageChef.ImagePlugins
             byte[] buffer = new byte[0x58];
             byte[] pString = new byte[64];
             stream.Read(buffer, 0, 0x58);
+            stream.Close();
 
             // Incorrect pascal string length, not DC42
             if (buffer[0] > 63)
@@ -221,6 +222,7 @@ namespace DiscImageChef.ImagePlugins
             byte[] buffer = new byte[0x58];
             byte[] pString = new byte[64];
             stream.Read(buffer, 0, 0x58);
+            stream.Close();
 
             // Incorrect pascal string length, not DC42
             if (buffer[0] > 63)
@@ -355,6 +357,8 @@ namespace DiscImageChef.ImagePlugins
 
             stream.Read(buffer, 0, (int)(length * bps));
 
+            stream.Close();
+
             return buffer;
         }
 
@@ -379,6 +383,8 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * bptag));
+
+            stream.Close();
 
             return buffer;
         }

@@ -215,6 +215,7 @@ namespace DiscImageChef.ImagePlugins
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
 
             stream.Read(headerBytes, 0, 12);
+            stream.Close();
 
             header.signature = BitConverter.ToUInt16(headerBytes, 0);
 
@@ -564,6 +565,7 @@ namespace DiscImageChef.ImagePlugins
                         biggestSectorSize = (uint)decodedData.Length;
                 }
             }
+            stream.Close();
             return true;
         }
         

@@ -102,6 +102,7 @@ namespace DiscImageChef.ImagePlugins
         {
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
             stream.Seek(0, SeekOrigin.Begin);
+            stream.Close();
 
             FileInfo fi = new FileInfo(imagePath);
             string extension = Path.GetExtension(imagePath).ToLower();
@@ -293,6 +294,8 @@ namespace DiscImageChef.ImagePlugins
                 stream.Seek((long)(sectorAddress * sectorSize), SeekOrigin.Begin);
 
                 stream.Read(buffer, 0, (int)(length * sectorSize));
+
+                stream.Close();
 
                 return buffer;
 
