@@ -1,4 +1,44 @@
-﻿using System;
+﻿/***************************************************************************
+The Disc Image Chef
+----------------------------------------------------------------------------
+ 
+Filename       : Checksum.cs
+Version        : 1.0
+Author(s)      : Natalia Portillo
+ 
+Component      : Verbs.
+
+Revision       : $Revision$
+Last change by : $Author$
+Date           : $Date$
+ 
+--[ Description ] ----------------------------------------------------------
+ 
+Implements the 'checksum' verb.
+ 
+--[ License ] --------------------------------------------------------------
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+----------------------------------------------------------------------------
+Copyright (C) 2011-2014 Claunia.com
+****************************************************************************/
+//$Id$
+using System;
+using DiscImageChef.ImagePlugins;
+using DiscImageChef.Checksums;
+using System.Collections.Generic;
 
 namespace DiscImageChef.Commands
 {
@@ -14,11 +54,186 @@ namespace DiscImageChef.Commands
                 Console.WriteLine("--whole-disc={0}", options.WholeDisc);
                 Console.WriteLine("--input={0}", options.InputFile);
                 Console.WriteLine("--crc32={0}", options.DoCRC32);
+                Console.WriteLine("--crc64={0}", options.DoCRC64);
                 Console.WriteLine("--md5={0}", options.DoMD5);
+                Console.WriteLine("--ripemd160={0}", options.DoRIPEMD160);
                 Console.WriteLine("--sha1={0}", options.DoSHA1);
-                Console.WriteLine("--fuzzy={0}", options.DoFuzzy);
+                Console.WriteLine("--sha256={0}", options.DoSHA256);
+                Console.WriteLine("--sha384={0}", options.DoSHA384);
+                Console.WriteLine("--sha512={0}", options.DoSHA512);
             }
-            throw new NotImplementedException("Checksumming not yet implemented.");
+            //throw new NotImplementedException("Checksumming not yet implemented.");
+
+            ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
+
+            if (inputFormat == null)
+            {
+                Console.WriteLine("Unable to recognize image format, not checksumming");
+                return;
+            }
+
+            inputFormat.OpenImage(options.InputFile);
+
+            if (options.SeparatedTracks)
+            {
+                try
+                {
+                    List<Track> inputTracks = inputFormat.GetTracks();
+                    foreach (Track currentTrack in inputTracks)
+                    {
+                        CRC32Context crc32ctxTrack = new CRC32Context();
+                        CRC64Context crc64ctxTrack = new CRC64Context();
+                        MD5Context md5ctxTrack = new MD5Context();
+                        RIPEMD160Context ripemd160ctxTrack = new RIPEMD160Context();
+                        SHA1Context sha1ctxTrack = new SHA1Context();
+                        SHA256Context sha256ctxTrack = new SHA256Context();
+                        SHA384Context sha384ctxTrack = new SHA384Context();
+                        SHA512Context sha512ctxTrack = new SHA512Context();
+
+                        if (options.DoCRC32)
+                            crc32ctxTrack.Init();
+                        if (options.DoCRC64)
+                            crc64ctxTrack.Init();
+                        if (options.DoMD5)
+                            md5ctxTrack.Init();
+                        if (options.DoRIPEMD160)
+                            ripemd160ctxTrack.Init();
+                        if (options.DoSHA1)
+                            sha1ctxTrack.Init();
+                        if (options.DoSHA256)
+                            sha256ctxTrack.Init();
+                        if (options.DoSHA384)
+                            sha384ctxTrack.Init();
+                        if (options.DoSHA512)
+                            sha512ctxTrack.Init();
+
+                        ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        Console.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+
+                        for (ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
+                        {
+                            Console.Write("\rHashing sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
+                            byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
+                            if (options.DoCRC32)
+                                crc32ctxTrack.Update(sector);
+                            if (options.DoCRC64)
+                                crc64ctxTrack.Update(sector);
+                            if (options.DoMD5)
+                                md5ctxTrack.Update(sector);
+                            if (options.DoRIPEMD160)
+                                ripemd160ctxTrack.Update(sector);
+                            if (options.DoSHA1)
+                                sha1ctxTrack.Update(sector);
+                            if (options.DoSHA256)
+                                sha256ctxTrack.Update(sector);
+                            if (options.DoSHA384)
+                                sha384ctxTrack.Update(sector);
+                            if (options.DoSHA512)
+                                sha512ctxTrack.Update(sector);
+                        }
+
+                        Console.WriteLine();
+
+                        if (options.DoCRC32)
+                            Console.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
+                        if (options.DoCRC64)
+                            Console.WriteLine("Track {0}'s CRC64 (ECMA): 0x{1}", currentTrack.TrackSequence, crc64ctxTrack.End());
+                        if (options.DoMD5)
+                            Console.WriteLine("Track {0}'s MD5: {1}", currentTrack.TrackSequence, md5ctxTrack.End());
+                        if (options.DoRIPEMD160)
+                            Console.WriteLine("Track {0}'s RIPEMD160: {1}", currentTrack.TrackSequence, ripemd160ctxTrack.End());
+                        if (options.DoSHA1)
+                            Console.WriteLine("Track {0}'s SHA1: {1}", currentTrack.TrackSequence, sha1ctxTrack.End());
+                        if (options.DoSHA256)
+                            Console.WriteLine("Track {0}'s SHA256: {1}", currentTrack.TrackSequence, sha256ctxTrack.End());
+                        if (options.DoSHA384)
+                            Console.WriteLine("Track {0}'s SHA384: {1}", currentTrack.TrackSequence, sha384ctxTrack.End());
+                        if (options.DoSHA512)
+                            Console.WriteLine("Track {0}'s SHA512: {1}", currentTrack.TrackSequence, sha512ctxTrack.End());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (options.Debug)
+                        Console.WriteLine("Could not get tracks because {0}", ex.Message);
+                    else
+                        Console.WriteLine("Unable to get separate tracks, not checksumming them");
+                }
+            }
+
+
+            if (options.WholeDisc)
+            {
+                CRC32Context crc32ctx = new CRC32Context();
+                CRC64Context crc64ctx = new CRC64Context();
+                MD5Context md5ctx = new MD5Context();
+                RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
+                SHA1Context sha1ctx = new SHA1Context();
+                SHA256Context sha256ctx = new SHA256Context();
+                SHA384Context sha384ctx = new SHA384Context();
+                SHA512Context sha512ctx = new SHA512Context();
+
+                if (options.DoCRC32)
+                    crc32ctx.Init();
+                if (options.DoCRC64)
+                    crc64ctx.Init();
+                if (options.DoMD5)
+                    md5ctx.Init();
+                if (options.DoRIPEMD160)
+                    ripemd160ctx.Init();
+                if (options.DoSHA1)
+                    sha1ctx.Init();
+                if (options.DoSHA256)
+                    sha256ctx.Init();
+                if (options.DoSHA384)
+                    sha384ctx.Init();
+                if (options.DoSHA512)
+                    sha512ctx.Init();
+
+                ulong sectors = inputFormat.GetSectors();
+                Console.WriteLine("Sectors {0}", sectors);
+
+                for (ulong i = 0; i < sectors; i++)
+                {
+                    Console.Write("\rHashing sector {0}", i + 1);
+                    byte[] sector = inputFormat.ReadSector(i);
+                    if (options.DoCRC32)
+                        crc32ctx.Update(sector);
+                    if (options.DoCRC64)
+                        crc64ctx.Update(sector);
+                    if (options.DoMD5)
+                        md5ctx.Update(sector);
+                    if (options.DoRIPEMD160)
+                        ripemd160ctx.Update(sector);
+                    if (options.DoSHA1)
+                        sha1ctx.Update(sector);
+                    if (options.DoSHA256)
+                        sha256ctx.Update(sector);
+                    if (options.DoSHA384)
+                        sha384ctx.Update(sector);
+                    if (options.DoSHA512)
+                        sha512ctx.Update(sector);
+                }
+
+                Console.WriteLine();
+
+                if (options.DoCRC32)
+                    Console.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
+                if (options.DoCRC64)
+                    Console.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
+                if (options.DoMD5)
+                    Console.WriteLine("Disk's MD5: {0}", md5ctx.End());
+                if (options.DoRIPEMD160)
+                    Console.WriteLine("Disk's RIPEMD160: {0}", ripemd160ctx.End());
+                if (options.DoSHA1)
+                    Console.WriteLine("Disk's SHA1: {0}", sha1ctx.End());
+                if (options.DoSHA256)
+                    Console.WriteLine("Disk's SHA256: {0}", sha256ctx.End());
+                if (options.DoSHA384)
+                    Console.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
+                if (options.DoSHA512)
+                    Console.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
+            }
         }
     }
 }
