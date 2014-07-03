@@ -41,6 +41,6 @@
         </Package>
       </Packages>
     </Packages>
-    <ReleaseVersion>1.10</ReleaseVersion>
+    <ReleaseVersion>2.0</ReleaseVersion>
   </PropertyGroup>
 </Project>

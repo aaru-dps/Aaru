@@ -10,7 +10,7 @@
     <RootNamespace>DiscImageChef</RootNamespace>
     <AssemblyName>DiscImageChef</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <ReleaseVersion>1.10</ReleaseVersion>
+    <ReleaseVersion>2.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -85,6 +85,15 @@
     <Compile Include="Commands\Verify.cs" />
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="ImagePlugins\DetectImageFormat.cs" />
+    <Compile Include="ImagePlugins\ImageInfo.cs" />
+    <Compile Include="Checksums\MD5Context.cs" />
+    <Compile Include="Checksums\RIPEMD160Context.cs" />
+    <Compile Include="Checksums\SHA1Context.cs" />
+    <Compile Include="Checksums\SHA256Context.cs" />
+    <Compile Include="Checksums\SHA384Context.cs" />
+    <Compile Include="Checksums\SHA512Context.cs" />
+    <Compile Include="Checksums\CRC32Context.cs" />
+    <Compile Include="Checksums\CRC64Context.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +101,7 @@
     <Folder Include="PartPlugins\" />
     <Folder Include="ImagePlugins\" />
     <Folder Include="Commands\" />
+    <Folder Include="Checksums\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

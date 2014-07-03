@@ -69,3 +69,20 @@ Teledisk plugin:
 
 RAW plugin:
 --- Finish support for reading sectors of variable bytes/sector images
+
+Image comparison:
+--- Compare sector tags
+--- Offer the option to see differing values
+--- Optimize and multithread
+
+Image verification:
+--- Implement verification on image plugins to implement this verb
+
+Checksums:
+--- Implement SpamSum fuzzy hashing (aka ssdeep)
+
+Image checksum:
+--- Checksum disk tags
+--- Checksum sector tags
+--- Checksum long sectors
+--- Optimize and multithread
