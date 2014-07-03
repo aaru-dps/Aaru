@@ -108,6 +108,7 @@ namespace DiscImageChef
                 case "formats":
                     FormatsSubOptions FormatsOptions = (FormatsSubOptions)invokedVerbInstance;
                     isVerbose = FormatsOptions.Verbose;
+                    isDebug = FormatsOptions.Debug;
                     Commands.Formats.ListFormats();
                     break;
                 default:
