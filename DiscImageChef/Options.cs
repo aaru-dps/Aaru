@@ -1,4 +1,41 @@
-﻿using CommandLine;
+﻿/***************************************************************************
+The Disc Image Chef
+----------------------------------------------------------------------------
+ 
+Filename       : Options.cs
+Version        : 1.0
+Author(s)      : Natalia Portillo
+ 
+Component      : Main program loop.
+
+Revision       : $Revision$
+Last change by : $Author$
+Date           : $Date$
+ 
+--[ Description ] ----------------------------------------------------------
+ 
+Defines verbs and options.
+ 
+--[ License ] --------------------------------------------------------------
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+----------------------------------------------------------------------------
+Copyright (C) 2011-2014 Claunia.com
+****************************************************************************/
+//$Id$
+using CommandLine;
 using CommandLine.Text;
 
 namespace DiscImageChef
@@ -49,17 +86,33 @@ namespace DiscImageChef
             HelpText = "Calculates CRC32.")]
         public bool DoCRC32 { get; set; }
 
+        [Option("crc64", DefaultValue = false,
+            HelpText = "Calculates CRC64 (ECMA).")]
+        public bool DoCRC64 { get; set; }
+
         [Option('m', "md5", DefaultValue = true,
             HelpText = "Calculates MD5.")]
         public bool DoMD5 { get; set; }
+
+        [Option("ripemd160", DefaultValue = false,
+            HelpText = "Calculates RIPEMD160.")]
+        public bool DoRIPEMD160 { get; set; }
 
         [Option('s', "sha1", DefaultValue = true,
             HelpText = "Calculates SHA1.")]
         public bool DoSHA1 { get; set; }
 
-        [Option('f', "fuzzy", DefaultValue = true,
-            HelpText = "Calculates fuzzy hashing (ssdeep).")]
-        public bool DoFuzzy { get; set; }
+        [Option("sha256", DefaultValue = false,
+            HelpText = "Calculates SHA256.")]
+        public bool DoSHA256 { get; set; }
+
+        [Option("sha384", DefaultValue = false,
+            HelpText = "Calculates SHA384.")]
+        public bool DoSHA384 { get; set; }
+
+        [Option("sha512", DefaultValue = false,
+            HelpText = "Calculates SHA512.")]
+        public bool DoSHA512 { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
