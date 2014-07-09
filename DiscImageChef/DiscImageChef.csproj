@@ -94,6 +94,7 @@
     <Compile Include="Checksums\SHA512Context.cs" />
     <Compile Include="Checksums\CRC32Context.cs" />
     <Compile Include="Checksums\CRC64Context.cs" />
+    <Compile Include="ImagePlugins\Nero.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -175,9 +176,15 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="TODO" />
-    <None Include="LICENSE" />
-    <None Include="README.md" />
+    <None Include="..\TODO">
+      <Link>TODO</Link>
+    </None>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+    </None>
+    <None Include="..\LICENSE">
+      <Link>LICENSE</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\commandline\src\libcmdline\CommandLine35.csproj">
