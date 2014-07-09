@@ -1,10 +1,8 @@
 ﻿Disc image plugins:
---- Add support for no disc image, that is, raw.
 --- Add support for BlindWrite images
 --- Add support for CloneCD images
 --- Add support for DiscJuggler images
 --- Add support for Alcohol images
---- Add support for Nero images
 --- Add support for cdrdao images
 --- Add support for dump(8) images
 --- Add support for IMD images
@@ -67,3 +65,23 @@ Other things:
 Teledisk plugin:
 --- Add support for "advanced compression"
 --- Handle variable sectors per track situation. Teledisk seems to be able to read garbage from previous formattings.
+
+RAW plugin:
+--- Finish support for reading sectors of variable bytes/sector images
+
+Image comparison:
+--- Compare sector tags
+--- Offer the option to see differing values
+--- Optimize and multithread
+
+Image verification:
+--- Implement verification on image plugins to implement this verb
+
+Checksums:
+--- Implement SpamSum fuzzy hashing (aka ssdeep)
+
+Image checksum:
+--- Checksum disk tags
+--- Checksum sector tags
+--- Checksum long sectors
+--- Optimize and multithread
