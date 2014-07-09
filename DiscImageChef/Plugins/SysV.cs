@@ -68,6 +68,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             UInt32 magic;
             string s_fname, s_fpack;
             UInt16 s_nfree, s_ninode;

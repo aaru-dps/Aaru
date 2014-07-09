@@ -60,6 +60,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             if (imagePlugin.GetSectorSize() < 512)
                 return false;
 

@@ -60,6 +60,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
             UInt16 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 

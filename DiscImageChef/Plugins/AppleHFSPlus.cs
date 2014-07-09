@@ -59,6 +59,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             UInt16 drSigWord;
             UInt16 xdrStABNt;
             UInt16 drAlBlSt;

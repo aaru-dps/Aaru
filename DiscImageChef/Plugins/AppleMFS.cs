@@ -59,6 +59,9 @@ namespace DiscImageChef.Plugins
         {
             UInt16 drSigWord;
 
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);

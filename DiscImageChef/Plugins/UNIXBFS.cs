@@ -55,6 +55,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             UInt32 magic;
 
             magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partitionOffset), 0);

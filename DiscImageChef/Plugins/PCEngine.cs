@@ -52,6 +52,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte[] system_descriptor = new byte[23];
             byte[] sector = imagePlugin.ReadSector(1 + partitionOffset);
 

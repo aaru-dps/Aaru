@@ -53,6 +53,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
 
             byte record_type;

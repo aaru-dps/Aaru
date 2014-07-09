@@ -54,6 +54,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
             byte fats_no; // Must be 1 or 2. Dunno if it can be 0 in the wild, but it CANNOT BE bigger than 2
             byte[] fat32_signature = new byte[8]; // "FAT32   "

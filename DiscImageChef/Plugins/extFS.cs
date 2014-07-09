@@ -53,6 +53,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             byte[] sb_sector = imagePlugin.ReadSector(2 + partitionOffset); // Superblock resides at 0x400
 
             UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number

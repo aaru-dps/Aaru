@@ -54,6 +54,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             UInt32 magic1, magic2;
 			
             byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionOffset); // Seek to superblock, on logical sector 16

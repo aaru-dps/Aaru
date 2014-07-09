@@ -75,6 +75,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
         {
+            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+                return false;
+
             UInt16 magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
 
