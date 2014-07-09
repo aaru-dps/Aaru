@@ -88,7 +88,7 @@ namespace DiscImageChef.Plugins
                 return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if (imagePlugin.GetSectors() < 16)
+            if (imagePlugin.GetSectors() <= (16 + partitionOffset))
                 return false;
 
             // Read to Volume Descriptor
@@ -156,10 +156,16 @@ namespace DiscImageChef.Plugins
 
             while (true)
             {
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (ISO9660 Plugin): Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (ISO9660 Plugin): Reading sector {0}", 16 + counter + partitionOffset);
                 byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partitionOffset);
 
                 VDType = vd_sector[0];
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (ISO9660 Plugin): VDType = {0}", VDType);
 
                 if (VDType == 255) // Supposedly we are in the PVD.
                 {
@@ -265,20 +271,27 @@ namespace DiscImageChef.Plugins
 
 
             ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
+            if (MainClass.isDebug)
+                Console.WriteLine("DEBUG (ISO9660 Plugin): VDPathTableStart = {0} + {1} = {2}", i,  partitionOffset, i + partitionOffset);
 
-            byte[] path_table = imagePlugin.ReadSector(i + partitionOffset);
-            Array.Copy(path_table, 2, RootDirectoryLocation, 0, 4);
-            // Check for Rock Ridge
-            byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partitionOffset);
-
-            byte[] SUSPMagic = new byte[2];
-            byte[] RRMagic = new byte[2];
-
-            Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
-            if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
+            // TODO: Check this
+            if ((i + partitionOffset) < imagePlugin.GetSectors())
             {
-                Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
-                RockRidge |= Encoding.ASCII.GetString(RRMagic) == "RR";
+
+                byte[] path_table = imagePlugin.ReadSector(i + partitionOffset);
+                Array.Copy(path_table, 2, RootDirectoryLocation, 0, 4);
+                // Check for Rock Ridge
+                byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partitionOffset);
+
+                byte[] SUSPMagic = new byte[2];
+                byte[] RRMagic = new byte[2];
+
+                Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
+                if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
+                {
+                    Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
+                    RockRidge |= Encoding.ASCII.GetString(RRMagic) == "RR";
+                }
             }
 
             #region SEGA IP.BIN Read and decoding
@@ -292,6 +305,9 @@ namespace DiscImageChef.Plugins
             byte[] ipbin_sector = imagePlugin.ReadSector(0 + partitionOffset);
             Array.Copy(ipbin_sector, 0x000, SegaHardwareID, 0, 16);
 
+            if (MainClass.isDebug)
+                Console.WriteLine("DEBUG (ISO9660 Plugin): SegaHardwareID = \"{0}\"", Encoding.ASCII.GetString(SegaHardwareID));
+
             switch (Encoding.ASCII.GetString(SegaHardwareID))
             {
                 case "SEGADISCSYSTEM  ":
@@ -299,6 +315,9 @@ namespace DiscImageChef.Plugins
                 case "SEGAOS          ":
                     {
                         SegaCD = true; // Ok, this contains SegaCD IP.BIN
+
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): Found SegaCD IP.BIN");
 
                         IPBinInformation.AppendLine("--------------------------------");
                         IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
@@ -373,6 +392,32 @@ namespace DiscImageChef.Plugins
                         Array.Copy(ipbin_sector, 0x1A0, spare_space6, 0, 16);     // 0x20
                         Array.Copy(ipbin_sector, 0x1B0, spare_space7, 0, 64);     // Inside here should be modem information, but I need to get a modem-enabled game
                         Array.Copy(ipbin_sector, 0x1F0, region_codes, 0, 16);     // Region codes, space-filled
+
+                        if(MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.volume_name = \"{0}\"", Encoding.ASCII.GetString(volume_name));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.system_name = \"{0}\"", Encoding.ASCII.GetString(system_name));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.volume_version = \"{0}\"", Encoding.ASCII.GetString(volume_version));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.volume_type = 0x{0}", BitConverter.ToInt32(volume_type, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.system_version = 0x{0}", BitConverter.ToInt32(system_version, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.ip_address = 0x{0}", BitConverter.ToInt32(ip_address, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.ip_loadsize = {0}", BitConverter.ToInt32(ip_loadsize, 0));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.ip_entry_address = 0x{0}", BitConverter.ToInt32(ip_entry_address, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.ip_work_ram_size = {0}", BitConverter.ToInt32(ip_work_ram_size, 0));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.sp_address = 0x{0}", BitConverter.ToInt32(sp_address, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.sp_loadsize = {0}", BitConverter.ToInt32(sp_loadsize, 0));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.sp_entry_address = 0x{0}", BitConverter.ToInt32(sp_entry_address, 0).ToString("X"));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.sp_work_ram_size = {0}", BitConverter.ToInt32(sp_work_ram_size, 0));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.release_date2 = \"{0}\"", Encoding.ASCII.GetString(release_date2));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.developer_code = \"{0}\"", Encoding.ASCII.GetString(developer_code));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.domestic_title = \"{0}\"", Encoding.ASCII.GetString(domestic_title));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.overseas_title = \"{0}\"", Encoding.ASCII.GetString(overseas_title));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.product_code = \"{0}\"", Encoding.ASCII.GetString(product_code));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): segacd_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
+                        }
+
                         // Decoding all data
                         DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
@@ -486,6 +531,9 @@ namespace DiscImageChef.Plugins
                     {
                         Saturn = true;
 
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): Found Sega Saturn IP.BIN");
+
                         IPBinInformation.AppendLine("--------------------------------");
                         IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
                         IPBinInformation.AppendLine("--------------------------------");
@@ -516,6 +564,25 @@ namespace DiscImageChef.Plugins
                         Array.Copy(ipbin_sector, 0x040, region_codes, 0, 16);     // Region codes, space-filled
                         Array.Copy(ipbin_sector, 0x050, peripherals, 0, 16);      // Supported peripherals, see above
                         Array.Copy(ipbin_sector, 0x060, product_name, 0, 112);	  // Game name, space-filled
+
+                        if(MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(maker_id));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(product_no));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(product_version));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.release_datedate = \"{0}\"", Encoding.ASCII.GetString(release_date));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.saturn_media = \"{0}\"", Encoding.ASCII.GetString(saturn_media));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.disc_no = {0}", Encoding.ASCII.GetString(disc_no));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.disc_no_separator = \"{0}\"", Encoding.ASCII.GetString(disc_no_separator));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.disc_total_nos = {0}", Encoding.ASCII.GetString(disc_total_nos));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(spare_space1));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): saturn_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(product_name));
+                        }
+
+
                         // Decoding all data
                         DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
@@ -587,6 +654,9 @@ namespace DiscImageChef.Plugins
                     {
                         Dreamcast = true;
 
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): Found Sega Dreamcast IP.BIN");
+
                         IPBinInformation.AppendLine("--------------------------------");
                         IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
                         IPBinInformation.AppendLine("--------------------------------");
@@ -601,7 +671,7 @@ namespace DiscImageChef.Plugins
                         byte[] disc_total_nos = new byte[1];    // 0x02D, Total number of discs
                         byte[] spare_space2 = new byte[2];	    // 0x02E, "  "
                         byte[] region_codes = new byte[8];      // 0x030, Region codes, space-filled
-                        byte[] peripherals = new byte[4];       // 0x038, Supported peripherals, bitwise
+                        byte[] peripherals = new byte[7];       // 0x038, Supported peripherals, bitwise
                         byte[] product_no = new byte[10];       // 0x03C, Product number
                         byte[] product_version = new byte[6];	// 0x046, Product version
                         byte[] release_date = new byte[8];      // 0x04C, YYYYMMDD
@@ -611,7 +681,7 @@ namespace DiscImageChef.Plugins
                         byte[] product_name = new byte[128];    // 0x078, Game name, space-filled
                         // Reading all data
                         Array.Copy(ipbin_sector, 0x010, maker_id, 0, 16);      // "SEGA ENTERPRISES"
-                        Array.Copy(ipbin_sector, 0x020, dreamcast_crc, 0, 4);         // CRC of product_no and product_version
+                        Array.Copy(ipbin_sector, 0x020, dreamcast_crc, 0, 4);         // CRC of product_no and product_version (hex)
                         Array.Copy(ipbin_sector, 0x024, spare_space1, 0, 1);       // " "
                         Array.Copy(ipbin_sector, 0x025, dreamcast_media, 0, 6);          // "GD-ROM"
                         Array.Copy(ipbin_sector, 0x02B, disc_no, 0, 1);         // Disc number
@@ -619,14 +689,36 @@ namespace DiscImageChef.Plugins
                         Array.Copy(ipbin_sector, 0x02D, disc_total_nos, 0, 1);         // Total number of discs
                         Array.Copy(ipbin_sector, 0x02E, spare_space2, 0, 2);	      // "  "
                         Array.Copy(ipbin_sector, 0x030, region_codes, 0, 8);          // Region codes, space-filled
-                        Array.Copy(ipbin_sector, 0x038, peripherals, 0, 4);     // Supported peripherals, bitwise
-                        Array.Copy(ipbin_sector, 0x03C, product_no, 0, 10);     // Product number
-                        Array.Copy(ipbin_sector, 0x046, product_version, 0, 6);	     // Product version
-                        Array.Copy(ipbin_sector, 0x04C, release_date, 0, 8);     // YYYYMMDD
-                        Array.Copy(ipbin_sector, 0x054, spare_space3, 0, 8);        // "  "
-                        Array.Copy(ipbin_sector, 0x05C, boot_filename, 0, 12);     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
-                        Array.Copy(ipbin_sector, 0x068, producer, 0, 16);     // Game producer, space-filled
-                        Array.Copy(ipbin_sector, 0x078, product_name, 0, 128);     // Game name, space-filled
+                        Array.Copy(ipbin_sector, 0x038, peripherals, 0, 7);     // Supported peripherals, hexadecimal
+                        Array.Copy(ipbin_sector, 0x040, product_no, 0, 10);     // Product number
+                        Array.Copy(ipbin_sector, 0x04A, product_version, 0, 6);	     // Product version
+                        Array.Copy(ipbin_sector, 0x050, release_date, 0, 8);     // YYYYMMDD
+                        Array.Copy(ipbin_sector, 0x058, spare_space3, 0, 8);        // "  "
+                        Array.Copy(ipbin_sector, 0x060, boot_filename, 0, 12);     // Usually "1ST_READ.BIN" or "0WINCE.BIN  "
+                        Array.Copy(ipbin_sector, 0x070, producer, 0, 16);     // Game producer, space-filled
+                        Array.Copy(ipbin_sector, 0x080, product_name, 0, 128);     // Game name, space-filled
+
+                        if(MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(maker_id));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.dreamcast_crc = 0x{0}", Encoding.ASCII.GetString(dreamcast_crc));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(spare_space1));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.dreamcast_media = \"{0}\"", Encoding.ASCII.GetString(dreamcast_media));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.disc_no = {0}", Encoding.ASCII.GetString(disc_no));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.disc_no_separator = \"{0}\"", Encoding.ASCII.GetString(disc_no_separator));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.disc_total_nos = \"{0}\"", Encoding.ASCII.GetString(disc_total_nos));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.spare_space2 = \"{0}\"", Encoding.ASCII.GetString(spare_space2));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(product_no));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(product_version));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.spare_space3 = \"{0}\"", Encoding.ASCII.GetString(spare_space3));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.boot_filename = \"{0}\"", Encoding.ASCII.GetString(boot_filename));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.producer = \"{0}\"", Encoding.ASCII.GetString(producer));
+                            Console.WriteLine("DEBUG (ISO9660 Plugin): dreamcast_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(product_name));
+                        }
+
                         // Decoding all data
                         DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
@@ -671,7 +763,7 @@ namespace DiscImageChef.Plugins
                             }
                         }
 
-                        int iPeripherals = BitConverter.ToInt32(peripherals, 0);
+                        int iPeripherals = int.Parse(Encoding.ASCII.GetString(peripherals), NumberStyles.HexNumber);
 
                         if((iPeripherals & 0x00000010) == 0x00000010)
                             IPBinInformation.AppendLine("Game uses Windows CE.");
