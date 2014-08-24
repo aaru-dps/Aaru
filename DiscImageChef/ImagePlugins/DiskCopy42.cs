@@ -94,7 +94,7 @@ namespace DiscImageChef.ImagePlugins
         // Always 0x02 for MFM disks
         // Unknown for Apple HD20
         // Defined by Sigma Seven's BLU
-        const byte kSignaFmtByteTwiggy = 0x01;
+        const byte kSigmaFmtByteTwiggy = 0x01;
         // 3.5" single side double density GCR and MFM all use same code
         const byte kSonyFmtByte400K = 0x02;
         const byte kSonyFmtByte720K = kSonyFmtByte400K;
@@ -226,7 +226,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if (tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
-                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSignaFmtByteTwiggy)
+                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
@@ -303,7 +303,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if (header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
-                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSignaFmtByteTwiggy)
+                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy)
             {
                 if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
