@@ -46,15 +46,22 @@ namespace DiscImageChef.ImagePlugins
     class ZZZRawImage : ImagePlugin
     {
         #region Internal variables
-
-        UInt64 imageSize;
-        UInt64 sectors;
-        UInt32 sectorSize;
-        DateTime creationTime;
-        DateTime modificationTime;
-        string imageName;
         string rawImagePath;
         bool differentTrackZeroSize;
+        #endregion
+
+        #region Accesible variables
+
+        ImageInfo _imageInfo;
+
+        public ImageInfo ImageInfo
+        {
+            get
+            {
+                return _imageInfo;
+            }
+        }
+
         #endregion
 
         public ZZZRawImage(PluginBase Core)
@@ -62,6 +69,26 @@ namespace DiscImageChef.ImagePlugins
             Name = "Raw Disk Image";
             // Non-random UUID to recognize this specific plugin
             PluginUUID = new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+            _imageInfo = new ImageInfo();
+            _imageInfo.readableSectorTags = new List<SectorTagType>();
+            _imageInfo.readableDiskTags = new List<DiskTagType>();
+            _imageInfo.imageHasPartitions = false;
+            _imageInfo.imageHasSessions = false;
+            _imageInfo.imageVersion = null;
+            _imageInfo.imageApplication = null;
+            _imageInfo.imageApplicationVersion = null;
+            _imageInfo.imageCreator = null;
+            _imageInfo.imageComments = null;
+            _imageInfo.diskManufacturer = null;
+            _imageInfo.diskModel = null;
+            _imageInfo.diskSerialNumber = null;
+            _imageInfo.diskBarcode = null;
+            _imageInfo.diskPartNumber = null;
+            _imageInfo.diskSequence = 0;
+            _imageInfo.lastDiskSequence = 0;
+            _imageInfo.driveManufacturer = null;
+            _imageInfo.driveModel = null;
+            _imageInfo.driveSerialNumber = null;
         }
 
         public override bool IdentifyImage(string imagePath)
@@ -107,7 +134,7 @@ namespace DiscImageChef.ImagePlugins
             FileInfo fi = new FileInfo(imagePath);
             string extension = Path.GetExtension(imagePath).ToLower();
             if (extension == ".iso" && (fi.Length % 2048) == 0)
-                sectorSize = 2048;
+                _imageInfo.sectorSize = 2048;
             else
             {
                 switch (fi.Length)
@@ -117,7 +144,7 @@ namespace DiscImageChef.ImagePlugins
                     case 495872:
                     case 92160:
                     case 133120:
-                        sectorSize = 128;
+                        _imageInfo.sectorSize = 128;
                         break;
                     case 116480:
                     case 287488: // T0S0 = 128bps
@@ -136,136 +163,138 @@ namespace DiscImageChef.ImagePlugins
                     case 80384: // T0S0 = 128bps
                     case 325632: // T0S0 = 128bps, T0S1 = 256bps
                     case 653312: // T0S0 = 128bps, T0S1 = 256bps
-                        sectorSize = 256;
+                        _imageInfo.sectorSize = 256;
                         break;
                     case 81664:
-                        sectorSize = 319;
+                        _imageInfo.sectorSize = 319;
                         break;
                     case 306432: // T0S0 = 128bps
                     case 1146624: // T0S0 = 128bps, T0S1 = 256bps
                     case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                        sectorSize = 512;
+                        _imageInfo.sectorSize = 512;
                         break;
                     case 1222400: // T0S0 = 128bps, T0S1 = 256bps
                     case 1304320: // T0S0 = 128bps, T0S1 = 256bps
                     case 1255168: // T0S0 = 128bps, T0S1 = 256bps
                     case 1261568:
                     case 1310720:
-                        sectorSize = 1024;
+                        _imageInfo.sectorSize = 1024;
                         break;
                     default:
-                        sectorSize = 512;
+                        _imageInfo.sectorSize = 512;
                         break;
                 }
             }
 
-            imageSize = (ulong)fi.Length;
-            creationTime = fi.CreationTimeUtc;
-            modificationTime = fi.LastWriteTimeUtc;
-            imageName = Path.GetFileNameWithoutExtension(imagePath);
+            _imageInfo.imageSize = (ulong)fi.Length;
+            _imageInfo.imageCreationTime = fi.CreationTimeUtc;
+            _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            _imageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
             differentTrackZeroSize = false;
             rawImagePath = imagePath;
 
             switch (fi.Length)
             {
                 case 242944:
-                    sectors = 1898;
+                    _imageInfo.sectors = 1898;
                     break;
                 case 256256:
-                    sectors = 2002;
+                    _imageInfo.sectors = 2002;
                     break;
                 case 495872:
-                    sectors = 3874;
+                    _imageInfo.sectors = 3874;
                     break;
                 case 116480:
-                    sectors = 455;
+                    _imageInfo.sectors = 455;
                     break;
                 case 287488: // T0S0 = 128bps
-                    sectors = 1136;
+                    _imageInfo.sectors = 1136;
                     differentTrackZeroSize = true;
                     break;
                 case 988416: // T0S0 = 128bps
-                    sectors = 3874;
+                    _imageInfo.sectors = 3874;
                     differentTrackZeroSize = true;
                     break;
                 case 995072: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 3900;
+                    _imageInfo.sectors = 3900;
                     differentTrackZeroSize = true;
                     break;
                 case 1021696: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 4004;
+                    _imageInfo.sectors = 4004;
                     differentTrackZeroSize = true;
                     break;
                 case 81664:
-                    sectors = 256;
+                    _imageInfo.sectors = 256;
                     break;
                 case 306432: // T0S0 = 128bps
-                    sectors = 618;
+                    _imageInfo.sectors = 618;
                     differentTrackZeroSize = true;
                     break;
                 case 1146624: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 2272;
+                    _imageInfo.sectors = 2272;
                     differentTrackZeroSize = true;
                     break;
                 case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 2332;
+                    _imageInfo.sectors = 2332;
                     differentTrackZeroSize = true;
                     break;
                 case 1222400: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 1236;
+                    _imageInfo.sectors = 1236;
                     differentTrackZeroSize = true;
                     break;
                 case 1304320: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 1316;
+                    _imageInfo.sectors = 1316;
                     differentTrackZeroSize = true;
                     break;
                 case 1255168: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 1268;
+                    _imageInfo.sectors = 1268;
                     differentTrackZeroSize = true;
                     break;
                 case 80384: // T0S0 = 128bps
-                    sectors = 322;
+                    _imageInfo.sectors = 322;
                     differentTrackZeroSize = true;
                     break;
                 case 325632: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 1280;
+                    _imageInfo.sectors = 1280;
                     differentTrackZeroSize = true;
                     break;
                 case 653312: // T0S0 = 128bps, T0S1 = 256bps
-                    sectors = 2560;
+                    _imageInfo.sectors = 2560;
                     differentTrackZeroSize = true;
                     break;
                 case 1880064: // IBM XDF, 3,5", real number of sectors
-                    sectors = 670;
-                    sectorSize = 8192; // Biggest sector size
+                    _imageInfo.sectors = 670;
+                    _imageInfo.sectorSize = 8192; // Biggest sector size
                     differentTrackZeroSize = true;
                     break;
                 default:
-                    sectors = imageSize / sectorSize;
+                    _imageInfo.sectors = _imageInfo.imageSize / _imageInfo.sectorSize;
                     break;
             }
+
+            _imageInfo.diskType = CalculateDiskType();
 
             return true;
         }
 
         public override bool ImageHasPartitions()
         {
-            return false;
+            return _imageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            return imageSize;
+            return _imageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return sectors;
+            return _imageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return sectorSize;
+            return _imageInfo.sectorSize;
         }
 
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -281,19 +310,19 @@ namespace DiscImageChef.ImagePlugins
             }
             else
             {
-                if (sectorAddress > sectors - 1)
+                if (sectorAddress > _imageInfo.sectors - 1)
                     throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-                if (sectorAddress + length > sectors)
+                if (sectorAddress + length > _imageInfo.sectors)
                     throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
-                byte[] buffer = new byte[length * sectorSize];
+                byte[] buffer = new byte[length * _imageInfo.sectorSize];
 
                 FileStream stream = new FileStream(rawImagePath, FileMode.Open, FileAccess.Read);
 
-                stream.Seek((long)(sectorAddress * sectorSize), SeekOrigin.Begin);
+                stream.Seek((long)(sectorAddress * _imageInfo.sectorSize), SeekOrigin.Begin);
 
-                stream.Read(buffer, 0, (int)(length * sectorSize));
+                stream.Read(buffer, 0, (int)(length * _imageInfo.sectorSize));
 
                 stream.Close();
 
@@ -309,42 +338,48 @@ namespace DiscImageChef.ImagePlugins
 
         public override DateTime GetImageCreationTime()
         {
-            return creationTime;
+            return _imageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return modificationTime;
+            return _imageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageName()
         {
-            return imageName;
+            return _imageInfo.imageName;
         }
 
         public override DiskType GetDiskType()
         {
-            if (sectorSize == 2048)
+            return _imageInfo.diskType;
+        }
+
+        #region Private methods
+        private DiskType CalculateDiskType()
+        {
+            if (_imageInfo.sectorSize == 2048)
             {
-                if (sectors <= 360000)
+                if (_imageInfo.sectors <= 360000)
                     return DiskType.CD;
-                if (sectors <= 2295104)
+                if (_imageInfo.sectors <= 2295104)
                     return DiskType.DVDPR;
-                if (sectors <= 2298496)
+                if (_imageInfo.sectors <= 2298496)
                     return DiskType.DVDR;
-                if (sectors <= 4171712)
+                if (_imageInfo.sectors <= 4171712)
                     return DiskType.DVDRDL;
-                if (sectors <= 4173824)
+                if (_imageInfo.sectors <= 4173824)
                     return DiskType.DVDPRDL;
-                if (sectors <= 24438784)
+                if (_imageInfo.sectors <= 24438784)
                     return DiskType.BDR;
-                if (sectors <= 62500864)
+                if (_imageInfo.sectors <= 62500864)
                     return DiskType.BDRXL;
                 return DiskType.Unknown;
             }
             else
             {
-                switch (imageSize)
+                switch (_imageInfo.imageSize)
                 {
                     case 80384:
                         return DiskType.ECMA_66;
@@ -457,6 +492,7 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
         }
+        #endregion
 
         #region Unsupported features
 
@@ -482,17 +518,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageApplicationVersion;
         }
 
         public override byte[] ReadDiskTag(DiskTagType tag)
@@ -502,62 +538,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageCreator()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageCreator;
         }
 
         public override string   GetImageComments()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageComments;
         }
 
         public override string   GetDiskManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskManufacturer;
         }
 
         public override string   GetDiskModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskModel;
         }
 
         public override string   GetDiskSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskSerialNumber;
         }
 
         public override string   GetDiskBarcode()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskBarcode;
         }
 
         public override string   GetDiskPartNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskPartNumber;
         }
 
         public override int      GetDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveSerialNumber;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()

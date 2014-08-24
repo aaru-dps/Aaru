@@ -284,6 +284,20 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
+        #region Accesible variables
+
+        ImageInfo _imageInfo;
+
+        public ImageInfo ImageInfo
+        {
+            get
+            {
+                return _imageInfo;
+            }
+        }
+
+        #endregion
+
         #region Methods
 
         public CDRWin(PluginBase Core)
@@ -291,7 +305,25 @@ namespace DiscImageChef.ImagePlugins
             Name = "CDRWin cuesheet";
             PluginUUID = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
             imagePath = "";
+            _imageInfo = new ImageInfo();
+            _imageInfo.readableSectorTags = new List<SectorTagType>();
+            _imageInfo.readableDiskTags = new List<DiskTagType>();
+            _imageInfo.imageHasPartitions = true;
+            _imageInfo.imageHasSessions = true;
+            _imageInfo.imageVersion = null;
+            _imageInfo.imageApplicationVersion = null;
+            _imageInfo.imageName = null;
+            _imageInfo.imageCreator = null;
+            _imageInfo.diskManufacturer = null;
+            _imageInfo.diskModel = null;
+            _imageInfo.diskPartNumber = null;
+            _imageInfo.diskSequence = 0;
+            _imageInfo.lastDiskSequence = 0;
+            _imageInfo.driveManufacturer = null;
+            _imageInfo.driveModel = null;
+            _imageInfo.driveSerialNumber = null;
         }
+
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public override bool IdentifyImage(string imagePath)
         {
@@ -1186,6 +1218,106 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
+                foreach (CDRWinTrack track in discimage.tracks)
+                    _imageInfo.imageSize += track.bps * track.sectors;
+                foreach (CDRWinTrack track in discimage.tracks)
+                    _imageInfo.sectors += track.sectors;
+
+                if (discimage.disktype == DiskType.CDG || discimage.disktype == DiskType.CDEG || discimage.disktype == DiskType.CDMIDI)
+                    _imageInfo.sectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
+                else if (discimage.disktype != DiskType.CDROMXA && discimage.disktype != DiskType.CDDA && discimage.disktype != DiskType.CDI && discimage.disktype != DiskType.CDPLUS)
+                    _imageInfo.sectorSize = 2048; // Only data tracks
+                else
+                    _imageInfo.sectorSize = 2352; // All others
+
+                if (discimage.mcn != null)
+                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                if (discimage.cdtextfile != null)
+                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_TEXT);
+
+                // Detect ISOBuster extensions
+                if (discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
+                    _imageInfo.imageApplication = "ISOBuster";
+                else
+                    _imageInfo.imageApplication = "CDRWin";
+
+                FileInfo fi = new FileInfo(discimage.tracks[0].trackfile.datafile);
+
+                _imageInfo.imageCreationTime = fi.CreationTimeUtc;
+                _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+
+                _imageInfo.imageComments = discimage.comment;
+                _imageInfo.diskSerialNumber = discimage.mcn;
+                _imageInfo.diskBarcode = discimage.barcode;
+                _imageInfo.diskType = discimage.disktype;
+
+                foreach(CDRWinTrack track in discimage.tracks)
+                {
+                    switch(track.tracktype)
+                    {
+                        case CDRWinTrackTypeAudio:
+                            {
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+                                break;
+                            }
+                        case CDRWinTrackTypeCDG:
+                            {
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
+                                break;
+                            }
+                        case CDRWinTrackTypeMode2Formless:
+                        case CDRWinTrackTypeCDI:
+                            {
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                break;
+                            }
+                        case CDRWinTrackTypeMode2Raw:
+                        case CDRWinTrackTypeCDIRaw:
+                            {
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                break;
+                            }
+                        case CDRWinTrackTypeMode1Raw:
+                            {
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
+                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -1199,39 +1331,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            // Even if they only have 1 track, there is a partition (track 1)
-            return true;
+            return _imageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            UInt64 size;
-
-            size = 0;
-            foreach (CDRWinTrack track in discimage.tracks)
-                size += track.bps * track.sectors;
-
-            return size;
+            return _imageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            UInt64 sectors;
-
-            sectors = 0;
-            foreach (CDRWinTrack track in discimage.tracks)
-                sectors += track.sectors;
-
-            return sectors;
+            return _imageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            if (discimage.disktype == DiskType.CDG || discimage.disktype == DiskType.CDEG || discimage.disktype == DiskType.CDMIDI)
-                return 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
-            if (discimage.disktype != DiskType.CDROMXA && discimage.disktype != DiskType.CDDA && discimage.disktype != DiskType.CDI && discimage.disktype != DiskType.CDPLUS)
-                return 2048; // Only data tracks
-            return 2352; // All others
+            return _imageInfo.sectorSize;
         }
 
         public override byte[] ReadDiskTag(DiskTagType tag)
@@ -1761,54 +1876,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            return null;
+            return _imageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            // Detect ISOBuster extensions
-            if (discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
-                return "ISOBuster";
-            return "CDRWin";
+            return _imageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+            return _imageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            FileInfo fi = new FileInfo(discimage.tracks[0].trackfile.datafile);
-
-            return fi.CreationTimeUtc;
+            return _imageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            FileInfo fi = new FileInfo(discimage.tracks[0].trackfile.datafile);
-
-            return fi.LastWriteTimeUtc;
+            return _imageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageComments()
         {
-            return discimage.comment;
+            return _imageInfo.imageComments;
         }
 
         public override string GetDiskSerialNumber()
         {
-            return discimage.mcn;
+            return _imageInfo.diskSerialNumber;
         }
 
         public override string GetDiskBarcode()
         {
-            return discimage.barcode;
+            return _imageInfo.diskBarcode;
         }
 
         public override DiskType GetDiskType()
         {
-            return discimage.disktype;
+            return _imageInfo.diskType;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()
@@ -2013,54 +2121,53 @@ namespace DiscImageChef.ImagePlugins
 
         public override int    GetDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskSequence;
         }
 
         public override int    GetLastDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveSerialNumber;
         }
 
         public override string GetDiskPartNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskPartNumber;
         }
 
         public override string GetDiskManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskManufacturer;
         }
 
         public override string GetDiskModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskModel;
         }
 
         public override string   GetImageName()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageName;
         }
 
         public override string   GetImageCreator()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageCreator;
         }
-
         #endregion
     }
 }

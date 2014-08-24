@@ -50,6 +50,8 @@ namespace DiscImageChef.ImagePlugins
         public string Name;
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
+        /// <summary>Image information</summary>
+        public ImageInfo ImageInfo;
 
         protected ImagePlugin()
         {

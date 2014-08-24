@@ -73,6 +73,9 @@ namespace DiscImageChef.Plugins
         {
             try
             {
+                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                    return false;
+
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -156,6 +159,9 @@ namespace DiscImageChef.Plugins
 
             try
             {
+                if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                    return;
+
                 // LisaOS is big-endian
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 

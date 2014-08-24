@@ -117,10 +117,6 @@ namespace DiscImageChef.ImagePlugins
         UInt32 dataOffset;
         // Start of tags in disk image, after data sectors
         UInt32 tagOffset;
-        // Sectors
-        UInt32 sectors;
-        // Bytes per sector, should be 512
-        UInt32 bps;
         // Bytes per tag, should be 12
         UInt32 bptag;
         // Header of opened image
@@ -130,10 +126,44 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
+        #region Accesible variables
+
+        ImageInfo _imageInfo;
+
+        public ImageInfo ImageInfo
+        {
+            get
+            {
+                return _imageInfo;
+            }
+        }
+
+        #endregion
+
         public DiskCopy42(PluginBase Core)
         {
             Name = "Apple DiskCopy 4.2";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+            _imageInfo = new ImageInfo();
+            _imageInfo.readableSectorTags = new List<SectorTagType>();
+            _imageInfo.readableDiskTags = new List<DiskTagType>();
+            _imageInfo.imageHasPartitions = false;
+            _imageInfo.imageHasSessions = false;
+            _imageInfo.imageVersion = "4.2";
+            _imageInfo.imageApplication = "Apple DiskCopy";
+            _imageInfo.imageApplicationVersion = "4.2";
+            _imageInfo.imageCreator = null;
+            _imageInfo.imageComments = null;
+            _imageInfo.diskManufacturer = null;
+            _imageInfo.diskModel = null;
+            _imageInfo.diskSerialNumber = null;
+            _imageInfo.diskBarcode = null;
+            _imageInfo.diskPartNumber = null;
+            _imageInfo.diskSequence = 0;
+            _imageInfo.lastDiskSequence = 0;
+            _imageInfo.driveManufacturer = null;
+            _imageInfo.driveModel = null;
+            _imageInfo.driveSerialNumber = null;
         }
 
         public override bool IdentifyImage(string imagePath)
@@ -291,21 +321,53 @@ namespace DiscImageChef.ImagePlugins
 
             dataOffset = 0x54;
             tagOffset = header.tagSize != 0 ? 0x54 + header.dataSize : 0;
-            bps = 512;
+            _imageInfo.sectorSize = 512;
             bptag = (uint)(header.tagSize != 0 ? 12 : 0);
             dc42ImagePath = imagePath;
 
-            sectors = header.dataSize / 512;
+            _imageInfo.sectors = header.dataSize / 512;
 
             if (header.tagSize != 0)
             {
-                if (header.tagSize / 12 != sectors)
+                if (header.tagSize / 12 != _imageInfo.sectors)
                 {
                     if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (DC42 plugin): header.tagSize / 12 != sectors");
 
                     return false;
                 }
+
+                _imageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
+            }
+
+            _imageInfo.imageSize = _imageInfo.sectors * _imageInfo.sectorSize + _imageInfo.sectors * bptag;
+            _imageInfo.imageCreationTime = fi.CreationTimeUtc;
+            _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            _imageInfo.imageName = header.diskName;
+
+            switch (header.format)
+            {
+                case kSonyFormat400K:
+                    _imageInfo.diskType = DiskType.AppleSonySS;
+                    break;
+                case kSonyFormat800K:
+                    _imageInfo.diskType = DiskType.AppleSonyDS;
+                    break;
+                case kSonyFormat720K:
+                    _imageInfo.diskType = DiskType.DOS_35_DS_DD_9;
+                    break;
+                case kSonyFormat1440K:
+                    _imageInfo.diskType = DiskType.DOS_35_HD;
+                    break;
+                case kSonyFormat1680K:
+                    _imageInfo.diskType = DiskType.DMF;
+                    break;
+                case kSigmaFormatTwiggy:
+                    _imageInfo.diskType = DiskType.AppleFileWare;
+                    break;
+                default:
+                    _imageInfo.diskType = DiskType.Unknown;
+                    break;
             }
 
             return true;
@@ -313,22 +375,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return false;
+            return _imageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            return sectors * bps + sectors * bptag;
+            return _imageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return sectors;
+            return _imageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return bps;
+            return _imageInfo.sectorSize;
         }
 
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -343,19 +405,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            if (sectorAddress > sectors - 1)
+            if (sectorAddress > _imageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > sectors)
+            if (sectorAddress + length > _imageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * bps];
+            byte[] buffer = new byte[length * _imageInfo.sectorSize];
 
             FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
 
-            stream.Seek((long)(dataOffset + sectorAddress * bps), SeekOrigin.Begin);
+            stream.Seek((long)(dataOffset + sectorAddress * _imageInfo.sectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * bps));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.sectorSize));
 
             stream.Close();
 
@@ -370,10 +432,10 @@ namespace DiscImageChef.ImagePlugins
             if (header.tagSize == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if (sectorAddress > sectors - 1)
+            if (sectorAddress > _imageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > sectors)
+            if (sectorAddress + length > _imageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] buffer = new byte[length * bptag];
@@ -396,10 +458,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
         {
-            if (sectorAddress > sectors - 1)
+            if (sectorAddress > _imageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > sectors)
+            if (sectorAddress + length > _imageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] data = ReadSectors(sectorAddress, length);
@@ -408,8 +470,8 @@ namespace DiscImageChef.ImagePlugins
 
             for (uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (bps), buffer, i * (bps + bptag), bps);
-                Array.Copy(tags, i * (bptag), buffer, i * (bps + bptag) + bps, bptag);
+                Array.Copy(data, i * (_imageInfo.sectorSize), buffer, i * (_imageInfo.sectorSize + bptag), _imageInfo.sectorSize);
+                Array.Copy(tags, i * (bptag), buffer, i * (_imageInfo.sectorSize + bptag) + _imageInfo.sectorSize, bptag);
             }
 
             return buffer;
@@ -422,57 +484,37 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            return "4.2";
+            return _imageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            return "Apple DiskCopy";
+            return _imageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            return "4.2";
+            return _imageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            FileInfo fi = new FileInfo(dc42ImagePath);
-
-            return fi.CreationTimeUtc;
+            return _imageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            FileInfo fi = new FileInfo(dc42ImagePath);
-
-            return fi.LastWriteTimeUtc;
+            return _imageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageName()
         {
-            return header.diskName;
+            return _imageInfo.imageName;
         }
 
         public override DiskType GetDiskType()
         {
-            switch (header.format)
-            {
-                case kSonyFormat400K:
-                    return DiskType.AppleSonySS;
-                case kSonyFormat800K:
-                    return DiskType.AppleSonyDS;
-                case kSonyFormat720K:
-                    return DiskType.DOS_35_DS_DD_9;
-                case kSonyFormat1440K:
-                    return DiskType.DOS_35_HD;
-                case kSonyFormat1680K:
-                    return DiskType.DMF;
-                case kSigmaFormatTwiggy:
-                    return DiskType.AppleFileWare;
-                default:
-                    return DiskType.Unknown;
-            }
+            return _imageInfo.diskType;
         }
 
         #region Unsupported features
@@ -484,62 +526,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageCreator()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageCreator;
         }
 
         public override string   GetImageComments()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.imageComments;
         }
 
         public override string   GetDiskManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskManufacturer;
         }
 
         public override string   GetDiskModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskModel;
         }
 
         public override string   GetDiskSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskSerialNumber;
         }
 
         public override string   GetDiskBarcode()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskBarcode;
         }
 
         public override string   GetDiskPartNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskPartNumber;
         }
 
         public override int      GetDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.diskSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return _imageInfo.driveSerialNumber;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()
