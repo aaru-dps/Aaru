@@ -175,10 +175,23 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
+            return Data(data, len, out hash, crc64Poly, crc64Seed);
+        }
+
+        /// <summary>
+        /// Gets the hash of the specified data buffer.
+        /// </summary>
+        /// <param name="data">Data buffer.</param>
+        /// <param name="len">Length of the data buffer to hash.</param>
+        /// <param name="hash">Byte array of the hash value.</param>
+        /// <param name="polynomial">CRC polynomial</param>
+        /// <param name="seed">CRC seed</param>
+        public static string Data(byte[] data, uint len, out byte[] hash, UInt64 polynomial, UInt64 seed)
+        {
             UInt64[] localTable;
             UInt64 localhashInt;
 
-            localhashInt = crc64Seed;
+            localhashInt = seed;
 
             localTable = new UInt64[256];
             for (int i = 0; i < 256; i++)
@@ -186,7 +199,7 @@ namespace DiscImageChef.Checksums
                 UInt64 entry = (UInt64)i;
                 for (int j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
-                        entry = (entry >> 1) ^ crc64Poly;
+                        entry = (entry >> 1) ^ polynomial;
                     else
                         entry = entry >> 1;
                 localTable[i] = entry;

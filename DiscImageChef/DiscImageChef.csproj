@@ -95,6 +95,8 @@
     <Compile Include="Checksums\CRC32Context.cs" />
     <Compile Include="Checksums\CRC64Context.cs" />
     <Compile Include="ImagePlugins\Nero.cs" />
+    <Compile Include="Checksums\CRC16Context.cs" />
+    <Compile Include="Checksums\CDChecksums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
