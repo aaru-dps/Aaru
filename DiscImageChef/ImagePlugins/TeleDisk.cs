@@ -47,6 +47,7 @@ namespace DiscImageChef.ImagePlugins
     class TeleDisk : ImagePlugin
     {
         #region Internal Structures
+
         struct TD0Header
         {
             // "TD" or "td" depending on compression
@@ -122,7 +123,7 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #endregion
-        
+
         #region Internal Constants
 
         // "TD" as little endian uint.
@@ -186,13 +187,18 @@ namespace DiscImageChef.ImagePlugins
         const byte dataBlockRLE = 0x02;
 
         #endregion
-        
+
         #region Internal variables
+
         TD0Header header;
         TDCommentBlockHeader commentHeader;
         byte[] commentBlock;
-        Dictionary<UInt32, byte[]> sectorsData; // LBA, data
+        Dictionary<UInt32, byte[]> sectorsData;
+        // LBA, data
         UInt32 totalDiskSize;
+        bool ADiskCRCHasFailed;
+        List<UInt64> SectorsWhereCRCHasFailed;
+
         #endregion
 
         #region Accesible variables
@@ -231,6 +237,8 @@ namespace DiscImageChef.ImagePlugins
             _imageInfo.driveManufacturer = null;
             _imageInfo.driveModel = null;
             _imageInfo.driveSerialNumber = null;
+            ADiskCRCHasFailed = false;
+            SectorsWhereCRCHasFailed = new List<UInt64>();
         }
 
         public override bool IdentifyImage(string imagePath)
@@ -295,7 +303,7 @@ namespace DiscImageChef.ImagePlugins
 
             return true;
         }
-        
+
         public override bool OpenImage(string imagePath)
         {
             header = new TD0Header();
@@ -346,8 +354,12 @@ namespace DiscImageChef.ImagePlugins
             // This may deny legal images
             
             // That would be much of a coincidence
-            if (header.crc != calculatedHeaderCRC && MainClass.isDebug)
-                Console.WriteLine("DEBUG (TeleDisk plugin): Calculated CRC does not coincide with stored one.");
+            if (header.crc != calculatedHeaderCRC)
+            {
+                ADiskCRCHasFailed = true;
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (TeleDisk plugin): Calculated CRC does not coincide with stored one.");
+            }
 
             if (header.sequence != 0x00)
                 return false;
@@ -390,7 +402,7 @@ namespace DiscImageChef.ImagePlugins
 
                 UInt16 cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
 
-                if(MainClass.isDebug)
+                if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Comment header");
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
@@ -404,23 +416,25 @@ namespace DiscImageChef.ImagePlugins
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.second = {0}", commentHeader.second);
                 }
 
-                for(int i=0;i<commentBlock.Length;i++)
+                ADiskCRCHasFailed |= cmtcrc != commentHeader.crc;
+
+                for (int i = 0; i < commentBlock.Length; i++)
                 {
                     // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
-                    if(commentBlock[i]==0x00)
-                        commentBlock[i]=0x0A;
+                    if (commentBlock[i] == 0x00)
+                        commentBlock[i] = 0x0A;
                 }
 
                 _imageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
 
-                if(MainClass.isDebug)
+                if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Comment");
                     Console.WriteLine("DEBUG (TeleDisk plugin): {0}", _imageInfo.imageComments);
                 }
 
-                _imageInfo.imageCreationTime = new DateTime(commentHeader.year+1900, commentHeader.month+1, commentHeader.day,
-                                            commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
+                _imageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1, commentHeader.day,
+                    commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
             }
 
             FileInfo fi = new FileInfo(imagePath);
@@ -467,6 +481,8 @@ namespace DiscImageChef.ImagePlugins
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tSectors in track: {0}\t", TDTrack.sectors);
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t", TDTrack.crc, TDTrackCalculatedCRC);
                 }
+
+                ADiskCRCHasFailed |= TDTrackCalculatedCRC != TDTrack.crc;
 
                 if (TDTrack.sectors == 0xFF) // End of disk image
                 {
@@ -529,6 +545,17 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
+
+                        byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
+
+                        if (TDSectorCalculatedCRC != TDSector.crc)
+                        {
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (TeleDisk plugin): Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
+                            if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+                            if (!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
+                                SectorsWhereCRCHasFailed.Add((UInt64)LBA);
+                        }
                     }
                     else
                     {
@@ -598,32 +625,32 @@ namespace DiscImageChef.ImagePlugins
             stream.Close();
             return true;
         }
-        
+
         public override bool ImageHasPartitions()
         {
             return _imageInfo.imageHasPartitions;
         }
-        
+
         public override UInt64 GetImageSize()
         {
             return _imageInfo.imageSize;
         }
-        
+
         public override UInt64 GetSectors()
         {
             return _imageInfo.sectors;
         }
-        
+
         public override UInt32 GetSectorSize()
         {
             return _imageInfo.sectorSize;
         }
-        
+
         public override byte[] ReadSector(UInt64 sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
-        
+
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
             if (sectorAddress > (ulong)sectorsData.Count - 1)
@@ -643,7 +670,7 @@ namespace DiscImageChef.ImagePlugins
 
                 byte[] sector;
 
-                if(!sectorsData.TryGetValue((uint)i, out sector))
+                if (!sectorsData.TryGetValue((uint)i, out sector))
                     throw new ImageNotSupportedException(String.Format("Error reading sector {0}", i));
 
                 if (first)
@@ -662,58 +689,97 @@ namespace DiscImageChef.ImagePlugins
 
             return data;
         }
-        
+
         public override byte[] ReadSectorLong(UInt64 sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
-        
+
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
         {
             return ReadSectors(sectorAddress, length);
         }
-        
+
         public override string   GetImageFormat()
         { 
             return "Sydex TeleDisk";
         }
-        
+
         public override string   GetImageVersion()
         {
             return _imageInfo.imageVersion;
         }
-        
+
         public override string   GetImageApplication()
         {
             return _imageInfo.imageApplication;
         }
-        
+
         public override string   GetImageApplicationVersion()
         {
             return _imageInfo.imageApplicationVersion;
         }
-        
+
         public override DateTime GetImageCreationTime()
         {
             return _imageInfo.imageCreationTime;
         }
-        
+
         public override DateTime GetImageLastModificationTime()
         {
             return _imageInfo.imageLastModificationTime;
         }
-        
+
         public override string   GetImageName()
         {
             return _imageInfo.imageName;
         }
-        
+
         public override DiskType GetDiskType()
         {
             return _imageInfo.diskType;
         }
 
+        public override bool? VerifySector(UInt64 sectorAddress)
+        {
+            return !SectorsWhereCRCHasFailed.Contains(sectorAddress);
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        {
+            return null;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                if (SectorsWhereCRCHasFailed.Contains(sectorAddress))
+                    FailingLBAs.Add(sectorAddress);
+
+            return FailingLBAs.Count <= 0;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifyDiskImage()
+        {
+            return ADiskCRCHasFailed;
+        }
+
         #region Private methods
+
         static UInt16 TeleDiskCRC(UInt16 crc, byte[] buffer)
         {
             int counter = 0;
@@ -782,7 +848,7 @@ namespace DiscImageChef.ImagePlugins
 
                             repeatNumber = BitConverter.ToUInt16(encodedData, ins);
                             Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
-                            byte[] decodedPiece = new byte[repeatNumber*2];
+                            byte[] decodedPiece = new byte[repeatNumber * 2];
                             ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
                             Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
                             ins += 4;
@@ -845,7 +911,7 @@ namespace DiscImageChef.ImagePlugins
             return decodedData;
         }
 
-        private DiskType DecodeTeleDiskDiskType()
+        DiskType DecodeTeleDiskDiskType()
         {
             switch (header.driveType)
             {
@@ -858,7 +924,7 @@ namespace DiscImageChef.ImagePlugins
                             case 163840:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if(_imageInfo.sectorSize == 256)
+                                    if (_imageInfo.sectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_40;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_8;
@@ -866,7 +932,7 @@ namespace DiscImageChef.ImagePlugins
                             case 184320:
                                 {
                                     // Atari disk uses 256 bytes/sector
-                                    if(_imageInfo.sectorSize == 256)
+                                    if (_imageInfo.sectorSize == 256)
                                         return DiskType.ATARI_525_DD;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_9;
@@ -874,7 +940,7 @@ namespace DiscImageChef.ImagePlugins
                             case 327680:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if(_imageInfo.sectorSize == 256)
+                                    if (_imageInfo.sectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_80;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_DS_DD_8;
@@ -994,7 +1060,7 @@ namespace DiscImageChef.ImagePlugins
                             case 512512:
                                 {
                                     // DEC disk uses 256 bytes/sector
-                                    if(_imageInfo.sectorSize == 256)
+                                    if (_imageInfo.sectorSize == 256)
                                         return DiskType.RX02;
                                     else // ECMA disks use 128 bytes/sector
                                         return DiskType.ECMA_59;
@@ -1024,140 +1090,141 @@ namespace DiscImageChef.ImagePlugins
 
             }
         }
+
         #endregion
 
         #region Unsupported features
-        
+
         public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadDiskTag(DiskTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override string GetImageCreator()
         {
             return _imageInfo.imageCreator;
         }
-        
+
         public override string   GetImageComments()
         {
             return _imageInfo.imageComments;
         }
-        
+
         public override string   GetDiskManufacturer()
         {
             return _imageInfo.diskManufacturer;
         }
-        
+
         public override string   GetDiskModel()
         {
             return _imageInfo.diskModel;
         }
-        
+
         public override string   GetDiskSerialNumber()
         {
             return _imageInfo.diskSerialNumber;
         }
-        
+
         public override string   GetDiskBarcode()
         {
             return _imageInfo.diskBarcode;
         }
-        
+
         public override string   GetDiskPartNumber()
         {
             return _imageInfo.diskPartNumber;
         }
-        
+
         public override int      GetDiskSequence()
         {
             return _imageInfo.diskSequence;
         }
-        
+
         public override int      GetLastDiskSequence()
         {
             return _imageInfo.lastDiskSequence;
         }
-        
+
         public override string GetDriveManufacturer()
         {
             return _imageInfo.driveManufacturer;
         }
-        
+
         public override string GetDriveModel()
         {
             return _imageInfo.driveModel;
         }
-        
+
         public override string GetDriveSerialNumber()
         {
             return _imageInfo.driveSerialNumber;
         }
-        
+
         public override List<PartPlugins.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override List<Track> GetTracks()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override List<Track> GetSessionTracks(UInt16 session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        
+
         #endregion Unsupported features
     }
 }

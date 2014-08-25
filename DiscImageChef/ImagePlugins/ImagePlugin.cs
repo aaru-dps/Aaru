@@ -108,7 +108,6 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="tag">Tag type to read.</param>
         public abstract byte[] ReadDiskTag(DiskTagType tag);
 
-        // Gets a disk tag
         /// <summary>
         /// Reads a sector's user data.
         /// </summary>
@@ -370,7 +369,50 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <returns>The sessions.</returns>
         public abstract List<Session> GetSessions();
-        // Returns disc sessions
+
+
+        /// <summary>
+        /// Verifies a sector.
+        /// </summary>
+        /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
+        /// <param name="sectorAddress">Sector address (LBA).</param>
+        public abstract bool? VerifySector(UInt64 sectorAddress);
+
+        /// <summary>
+        /// Verifies a sector, relative to track.
+        /// </summary>
+        /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
+        public abstract bool? VerifySector(UInt64 sectorAddress, UInt32 track);
+
+        /// <summary>
+        /// Verifies several sectors.
+        /// </summary>
+        /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
+        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="FailingLBAs">List of incorrect sectors</param>
+        /// <param name="UnknownLBAs">List of uncheckable sectors</param>
+        public abstract bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs);
+
+        /// <summary>
+        /// Verifies several sectors, relative to track.
+        /// </summary>
+        /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
+        /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
+        /// <param name="FailingLBAs">List of incorrect sectors</param>
+        /// <param name="UnknownLBAs">List of uncheckable sectors</param>
+        public abstract bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs);
+
+        /// <summary>
+        /// Verifies disk image internal checksum.
+        /// </summary>
+        /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
+        public abstract bool? VerifyDiskImage();
+
 
         // CD flags bitmask
 
@@ -719,8 +761,9 @@ namespace DiscImageChef.ImagePlugins
         FDFORMAT_35_HD,
 
         // Generic hard disks
-        GENERIC_HDD
-    };
+        GENERIC_HDD}
+
+    ;
 
     /// <summary>
     /// Track (as partitioning element) types.
@@ -738,8 +781,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Data track, compact disc mode 2, form 1</summary>
         CDMode2Form1,
         /// <summary>Data track, compact disc mode 2, form 2</summary>
-        CDMode2Form2
-    };
+        CDMode2Form2}
+
+    ;
 
     /// <summary>
     /// Track defining structure.
@@ -811,8 +855,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>CD track flags, 1 byte</summary>
         CDTrackFlags,
         /// <summary>DVD sector copyright information</summary>
-        DVD_CMI
-    };
+        DVD_CMI}
+
+    ;
 
     /// <summary>
     /// Metadata present for each disk.
@@ -834,8 +879,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>DVD Copyright Management Information</summary>
         DVD_CMI,
         /// <summary>DVD Disc Manufacturer Information</summary>
-        DVD_DMI
-    };
+        DVD_DMI}
+
+    ;
 
     /// <summary>
     /// Feature is supported by image but not implemented yet.

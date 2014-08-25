@@ -373,6 +373,83 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
+        public override bool? VerifySector(UInt64 sectorAddress)
+        {
+            return null;
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        {
+            return null;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifyDiskImage()
+        {
+            byte[] data = new byte[header.dataSize];
+            byte[] tags = new byte[header.tagSize];
+            UInt32 dataChk;
+            UInt32 tagsChk = 0;
+
+            if (MainClass.isDebug)
+                Console.WriteLine("DEBUG (DC42 plugin): Reading data");
+            FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+            datastream.Seek((long)(dataOffset), SeekOrigin.Begin);
+            datastream.Read(data, 0, (int)header.dataSize);
+            datastream.Close();
+
+            if (MainClass.isDebug)
+                Console.WriteLine("DEBUG (DC42 plugin): Calculating data checksum");
+            dataChk = DC42CheckSum(data);
+            if (MainClass.isDebug)
+            {
+                Console.WriteLine("DEBUG (DC42 plugin): Calculated data checksum = 0x{0:X8}", dataChk);
+                Console.WriteLine("DEBUG (DC42 plugin): Stored data checksum = 0x{0:X8}", header.dataChecksum);
+            }
+
+            if (header.tagSize > 0)
+            {
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (DC42 plugin): Reading tags");
+                FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                tagstream.Seek((long)(tagOffset), SeekOrigin.Begin);
+                tagstream.Read(tags, 0, (int)header.tagSize);
+                tagstream.Close();
+
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (DC42 plugin): Calculating data checksum");
+                tagsChk = DC42CheckSum(data);
+                if (MainClass.isDebug)
+                {
+                    Console.WriteLine("DEBUG (DC42 plugin): Calculated data checksum = 0x{0:X8}", tagsChk);
+                    Console.WriteLine("DEBUG (DC42 plugin): Stored data checksum = 0x{0:X8}", header.tagChecksum);
+                }
+            }
+
+            return dataChk == header.dataChecksum && tagsChk == header.tagChecksum;
+        }
+
         public override bool ImageHasPartitions()
         {
             return _imageInfo.imageHasPartitions;
@@ -640,6 +717,25 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #endregion Unsupported features
+
+        #region Private methods
+
+        private static UInt32 DC42CheckSum(byte[] buffer)
+        { 
+            UInt32 dc42chk = 0;
+            if ((buffer.Length & 0x01) == 0x01)
+                return 0xFFFFFFFF;
+
+            for (UInt32 i = 0; i < buffer.Length; i += 2)
+            {
+                dc42chk += (uint)(buffer[i] << 8);
+                dc42chk += buffer[i + 1];
+                dc42chk = (dc42chk >> 1) | (dc42chk << 31);
+            }
+            return dc42chk;
+        }
+
+        #endregion
     }
 }
 

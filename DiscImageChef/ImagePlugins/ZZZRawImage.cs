@@ -46,8 +46,10 @@ namespace DiscImageChef.ImagePlugins
     class ZZZRawImage : ImagePlugin
     {
         #region Internal variables
+
         string rawImagePath;
         bool differentTrackZeroSize;
+
         #endregion
 
         #region Accesible variables
@@ -356,7 +358,45 @@ namespace DiscImageChef.ImagePlugins
             return _imageInfo.diskType;
         }
 
+        public override bool? VerifySector(UInt64 sectorAddress)
+        {
+            return null;
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        {
+            return null;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                UnknownLBAs.Add(i);
+
+            return null;
+        }
+
+        public override bool? VerifyDiskImage()
+        {
+            return null;
+        }
+
         #region Private methods
+
         private DiskType CalculateDiskType()
         {
             if (_imageInfo.sectorSize == 2048)
@@ -492,6 +532,7 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
         }
+
         #endregion
 
         #region Unsupported features

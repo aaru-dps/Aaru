@@ -1251,70 +1251,68 @@ namespace DiscImageChef.ImagePlugins
                 _imageInfo.diskBarcode = discimage.barcode;
                 _imageInfo.diskType = discimage.disktype;
 
-                foreach(CDRWinTrack track in discimage.tracks)
+                foreach (CDRWinTrack track in discimage.tracks)
                 {
-                    switch(track.tracktype)
+                    switch (track.tracktype)
                     {
                         case CDRWinTrackTypeAudio:
                             {
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
                                 break;
                             }
                         case CDRWinTrackTypeCDG:
                             {
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Formless:
                         case CDRWinTrackTypeCDI:
                             {
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Raw:
                         case CDRWinTrackTypeCDIRaw:
                             {
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode1Raw:
                             {
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
-                                if(!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
-                        default:
-                            break;
                     }
                 }
 
@@ -1928,6 +1926,8 @@ namespace DiscImageChef.ImagePlugins
         {
             List<Track> tracks = new List<Track>();
 
+            UInt64 previousStartSector = 0;
+
             foreach (CDRWinTrack cdr_track in discimage.tracks)
             {
                 Track _track = new Track();
@@ -1936,6 +1936,7 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackDescription = cdr_track.title;
                 if (!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
                     cdr_track.indexes.TryGetValue(1, out _track.TrackStartSector);
+                _track.TrackStartSector += previousStartSector;
                 _track.TrackEndSector = _track.TrackStartSector + cdr_track.sectors - 1;
                 _track.TrackPregap = cdr_track.pregap;
                 _track.TrackSession = cdr_track.session;
@@ -1943,6 +1944,7 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackType = CDRWinTrackTypeToTrackType(cdr_track.tracktype);
 
                 tracks.Add(_track);
+                previousStartSector = _track.TrackEndSector + 1;
             }
 
             return tracks;
@@ -1987,6 +1989,85 @@ namespace DiscImageChef.ImagePlugins
         public override List<Session> GetSessions()
         {
             return discimage.sessions;
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress);
+            return Checksums.CDChecksums.CheckCDSector(buffer);
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress, track);
+            return Checksums.CDChecksums.CheckCDSector(buffer);
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length);
+            int bps = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+
+                switch (sectorStatus)
+                {
+                    case null:
+                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if (UnknownLBAs.Count > 0)
+                return null;
+            if (FailingLBAs.Count > 0)
+                return false;
+            return true;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
+            int bps = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+
+                switch (sectorStatus)
+                {
+                    case null:
+                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if (UnknownLBAs.Count > 0)
+                return null;
+            if (FailingLBAs.Count > 0)
+                return false;
+            return true;
+        }
+
+        public override bool? VerifyDiskImage()
+        {
+            return null;
         }
 
         #endregion
@@ -2168,6 +2249,7 @@ namespace DiscImageChef.ImagePlugins
         {
             return _imageInfo.imageCreator;
         }
+
         #endregion
     }
 }

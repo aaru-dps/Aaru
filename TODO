@@ -74,9 +74,6 @@ Image comparison:
 --- Offer the option to see differing values
 --- Optimize and multithread
 
-Image verification:
---- Implement verification on image plugins to implement this verb
-
 Checksums:
 --- Implement SpamSum fuzzy hashing (aka ssdeep)
 

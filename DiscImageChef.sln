@@ -27,6 +27,6 @@ Global
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = DiscImageChef\DiscImageChef.csproj
 		description = The Disc Image Chef.
-		version = 2.0
+		version = 2.1
 	EndGlobalSection
 EndGlobal

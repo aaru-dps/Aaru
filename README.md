@@ -1,4 +1,4 @@
-﻿DiscImageChef v2.00
+﻿DiscImageChef v2.10
 ===================
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
@@ -23,9 +23,9 @@ Features
 * Identifies HFS, HFS+, MFS, BeFS, ext/2/3/4, FAT12/16/32, FFS/UFS/UFS2, HPFS, ISO9660, LisaFS, MinixFS, NTFS, ODS11, Opera, PCEngine, SolarFS, System V and UnixWare boot filesystem.
 * Analyzes a disk image getting information about the disk itself and analyzes partitions and filesystems inside them
 * Can compare two disk images, even different formats, for different sectors and/or metadata
-* Can verify sectors or disk images if supported by the underlying format (well, it will be able to in version 2.1)
+* Can verify sectors or disk images if supported by the underlying format
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
-* Supports CRC32 and CRC64 cyclic redundance checksums as well as MD5, RMD160, SHA1, SHA256, SHA384 and SHA512 hashes.
+* Supports CRC16, CRC32 and CRC64 cyclic redundance checksums as well as MD5, RMD160, SHA1, SHA256, SHA384 and SHA512 hashes.
 
 Changelog
 =========

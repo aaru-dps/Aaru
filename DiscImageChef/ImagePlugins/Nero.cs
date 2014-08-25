@@ -2010,7 +2010,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         break;
                     }
-                    // TODO
+            // TODO
                 case DAOMode.DataM2RawSub:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 case DAOMode.DataRawSub:
@@ -2289,6 +2289,85 @@ namespace DiscImageChef.ImagePlugins
         public override List<Session> GetSessions()
         {
             return imageSessions;
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress);
+            return Checksums.CDChecksums.CheckCDSector(buffer);
+        }
+
+        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress, track);
+            return Checksums.CDChecksums.CheckCDSector(buffer);
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length);
+            int bps = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+
+                switch (sectorStatus)
+                {
+                    case null:
+                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if (UnknownLBAs.Count > 0)
+                return null;
+            if (FailingLBAs.Count > 0)
+                return false;
+            return true;
+        }
+
+        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
+            int bps = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            FailingLBAs = new List<UInt64>();
+            UnknownLBAs = new List<UInt64>();
+
+            for (int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
+
+                switch (sectorStatus)
+                {
+                    case null:
+                        UnknownLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        FailingLBAs.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if (UnknownLBAs.Count > 0)
+                return null;
+            if (FailingLBAs.Count > 0)
+                return false;
+            return true;
+        }
+
+        public override bool? VerifyDiskImage()
+        {
+            return null;
         }
 
         #endregion
