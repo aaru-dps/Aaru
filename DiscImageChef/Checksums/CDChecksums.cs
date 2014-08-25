@@ -340,6 +340,10 @@ namespace DiscImageChef.Checksums
             byte[] CDTextPack2 = new byte[18];
             byte[] CDTextPack3 = new byte[18];
             byte[] CDTextPack4 = new byte[18];
+            byte[] CDSubRWPack1 = new byte[24];
+            byte[] CDSubRWPack2 = new byte[24];
+            byte[] CDSubRWPack3 = new byte[24];
+            byte[] CDSubRWPack4 = new byte[24];
 
             int i = 0;
             for (int j = 0; j < 12; j++)
@@ -350,6 +354,13 @@ namespace DiscImageChef.Checksums
                 CDTextPack2[j] = 0;
                 CDTextPack3[j] = 0;
                 CDTextPack4[j] = 0;
+            }
+            for (int j = 0; j < 24; j++)
+            {
+                CDSubRWPack1[j] = 0;
+                CDSubRWPack2[j] = 0;
+                CDSubRWPack3[j] = 0;
+                CDSubRWPack4[j] = 0;
             }
 
             for (int j = 0; j < 12; j++)
@@ -424,6 +435,24 @@ namespace DiscImageChef.Checksums
                     CDTextPack4[j] = (byte)(CDTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
                 if (j < 18)
                     CDTextPack4[j] = (byte)(CDTextPack4[j] | (subchannel[i++] & 0x3F));
+            }
+
+            i = 0;
+            for (int j = 0; j < 24; j++)
+            {
+                CDSubRWPack1[j] = (byte)(subchannel[i++] & 0x3F);
+            }
+            for (int j = 0; j < 24; j++)
+            {
+                CDSubRWPack2[j] = (byte)(subchannel[i++] & 0x3F);
+            }
+            for (int j = 0; j < 24; j++)
+            {
+                CDSubRWPack3[j] = (byte)(subchannel[i++] & 0x3F);
+            }
+            for (int j = 0; j < 24; j++)
+            {
+                CDSubRWPack4[j] = (byte)(subchannel[i++] & 0x3F);
             }
 
             BigEndianBitConverter.IsLittleEndian = true;
