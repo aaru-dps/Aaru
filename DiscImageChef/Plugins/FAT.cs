@@ -448,7 +448,7 @@ namespace DiscImageChef.Plugins
             /// <summary>0x32, Sector of FAT32PB backup</summary>
             public UInt16 backup_sector;
             /// <summary>0x34, 12 reserved bytes</summary>
-            byte[] reserved;
+            public byte[] reserved;
             /// <summary>0x40, Drive number</summary>
             public byte drive_no;
             /// <summary>0x41, Volume flags</summary>
