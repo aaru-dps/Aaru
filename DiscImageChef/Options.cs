@@ -132,6 +132,28 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
+    public class PrintHexSubOptions : CommonSubOptions
+    {
+        [Option('s', "start", Required = true,
+            HelpText = "Start sector.")]
+        public ulong StartSector { get; set; }
+
+        [Option('l', "length", DefaultValue = (ulong)1,
+            HelpText = "How many sectors to print.")]
+        public ulong Length { get; set; }
+
+        [Option('r', "long-sectors", DefaultValue = false,
+            HelpText = "Print sectors with tags included.")]
+        public bool LongSectors { get; set; }
+
+        [Option('w', "width", DefaultValue = (ushort)32,
+            HelpText = "How many bytes to print per line.")]
+        public ushort WidthBytes { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+    }
+
     public class FormatsSubOptions : CommonSubOptions
     {
     }
@@ -145,6 +167,7 @@ namespace DiscImageChef
             ChecksumVerb = new ChecksumSubOptions();
             VerifyVerb = new VerifySubOptions();
             FormatsVerb = new FormatsSubOptions();
+            PrintHexVerb = new PrintHexSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -158,6 +181,9 @@ namespace DiscImageChef
 
         [VerbOption("verify", HelpText = "Verifies a disc image integrity, and if supported, sector integrity.")]
         public VerifySubOptions VerifyVerb { get; set; }
+
+        [VerbOption("printhex", HelpText = "Prints a sector, in hexadecimal values, to the console.")]
+        public PrintHexSubOptions PrintHexVerb { get; set; }
 
         [VerbOption("formats", HelpText = "Lists all supported disc images, partition schemes and file systems.")]
         public FormatsSubOptions FormatsVerb { get; set; }

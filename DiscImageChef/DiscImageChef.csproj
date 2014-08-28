@@ -98,6 +98,7 @@
     <Compile Include="Checksums\CRC16Context.cs" />
     <Compile Include="Checksums\CDChecksums.cs" />
     <Compile Include="Checksums\ReedSolomon.cs" />
+    <Compile Include="Commands\PrintHex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
