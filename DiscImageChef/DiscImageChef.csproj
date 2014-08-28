@@ -97,6 +97,7 @@
     <Compile Include="ImagePlugins\Nero.cs" />
     <Compile Include="Checksums\CRC16Context.cs" />
     <Compile Include="Checksums\CDChecksums.cs" />
+    <Compile Include="Checksums\ReedSolomon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

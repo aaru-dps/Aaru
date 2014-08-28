@@ -455,6 +455,37 @@ namespace DiscImageChef.Checksums
                 CDSubRWPack4[j] = (byte)(subchannel[i++] & 0x3F);
             }
 
+            if(MainClass.isDebug)
+            {
+                switch(CDSubRWPack1[0])
+                {
+                    case 0x00:
+                        Console.WriteLine("Detected Zero Pack in subchannel");
+                        break;
+                    case 0x08:
+                        Console.WriteLine("Detected Line Graphics Pack in subchannel");
+                        break;
+                    case 0x09:
+                        Console.WriteLine("Detected CD+G Pack in subchannel");
+                        break;
+                    case 0x0A:
+                        Console.WriteLine("Detected CD+EG Pack in subchannel");
+                        break;
+                    case 0x14:
+                        Console.WriteLine("Detected CD-TEXT Pack in subchannel");
+                        break;
+                    case 0x18:
+                        Console.WriteLine("Detected CD+MIDI Pack in subchannel");
+                        break;
+                    case 0x38:
+                        Console.WriteLine("Detected User Pack in subchannel");
+                        break;
+                    default:
+                        Console.WriteLine("Detected unknown Pack type in subchannel: mode {0}, item {1}", Convert.ToString(CDSubRWPack1[0] & 0x38, 2), Convert.ToString(CDSubRWPack1[0] & 0x07, 2));
+                        break;
+                }
+            }
+
             BigEndianBitConverter.IsLittleEndian = true;
 
             UInt16 QSubChannelCRC = BigEndianBitConverter.ToUInt16(QSubChannel, 10);
