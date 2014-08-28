@@ -73,6 +73,9 @@ namespace DiscImageChef.Plugins
         {
             try
             {
+                if(imagePlugin.ImageInfo.readableSectorTags==null)
+                    return false;
+
                 if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     return false;
 
@@ -159,6 +162,9 @@ namespace DiscImageChef.Plugins
 
             try
             {
+                if(imagePlugin.ImageInfo.readableSectorTags==null)
+                    return;
+
                 if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     return;
 
