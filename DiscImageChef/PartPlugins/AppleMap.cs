@@ -96,34 +96,38 @@ namespace DiscImageChef.PartPlugins
                 first_sector = 1;
 
             // Read first entry
-            byte[] APMEntry_sector = imagePlugin.ReadSector(first_sector);
-            APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
-            APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
-            APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
-            APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
-            APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
-            cString = new byte[32];
-            Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
-            APMEntry.name = StringHandlers.CToString(cString);
-            cString = new byte[32];
-            Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
-            APMEntry.type = StringHandlers.CToString(cString);
-            APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
-            APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
-            APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
-            APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
-            APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
-            APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
-            APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
-            APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
-            APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
-            APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
-            cString = new byte[16];
-            Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
-            APMEntry.processor = StringHandlers.CToString(cString);
+            byte[] APMEntry_sector;
+            bool APMFromHDDOnCD = false;
 
-            if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
-                return false;
+            if (sector_size == 2048)
+            {
+                APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector);
+                APMEntry = DecodeAPMEntry(APMEntry_sector);
+
+                if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT)
+                {
+                    sector_size = 512;
+                    APMFromHDDOnCD = true;
+                    if (MainClass.isDebug)
+                        Console.WriteLine("DEBUG (Apple Partition Map Plugin): PM sector size is 512 bytes, but device's 2048");
+                }
+                else
+                {
+                    APMEntry_sector = imagePlugin.ReadSector(first_sector);
+                    APMEntry = DecodeAPMEntry(APMEntry_sector);
+
+                    if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
+                        return false;
+                }
+            }
+            else
+            {
+                APMEntry_sector = imagePlugin.ReadSector(first_sector);
+                APMEntry = DecodeAPMEntry(APMEntry_sector);
+
+                if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
+                    return false;
+            }
 
             if (APMEntry.entries <= 1)
                 return false;
@@ -133,31 +137,12 @@ namespace DiscImageChef.PartPlugins
             for (ulong i = 0; i < apm_entries; i++) // For each partition
             {
                 APMEntry = new AppleMapPartitionEntry();
-                APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
-                APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
-                APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
-                APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
-                APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
-                APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
-                cString = new byte[32];
-                Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
-                APMEntry.name = StringHandlers.CToString(cString);
-                cString = new byte[32];
-                Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
-                APMEntry.type = StringHandlers.CToString(cString);
-                APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
-                APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
-                APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
-                APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
-                APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
-                APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
-                APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
-                APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
-                APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
-                APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
-                cString = new byte[16];
-                Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
-                APMEntry.processor = StringHandlers.CToString(cString);
+                if(APMFromHDDOnCD)
+                    APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
+                else
+                    APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
+
+                APMEntry = DecodeAPMEntry(APMEntry_sector);
 
                 if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
                 {
@@ -207,6 +192,52 @@ namespace DiscImageChef.PartPlugins
             }
 			
             return true;
+        }
+
+        byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        {
+            UInt64 LBA2k = LBA / 4;
+            int Remainder = (int)(LBA % 4);
+
+            byte[] buffer = imagePlugin.ReadSector(LBA2k);
+            byte[] sector = new byte[512];
+
+            Array.Copy(buffer, Remainder * 512, sector, 0, 512);
+
+            return sector;
+        }
+
+        AppleMapPartitionEntry DecodeAPMEntry(byte[] APMEntry_sector)
+        {
+            AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
+            byte[] cString;
+
+            APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
+            APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
+            APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
+            APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
+            APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
+            cString = new byte[32];
+            Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
+            APMEntry.name = StringHandlers.CToString(cString);
+            cString = new byte[32];
+            Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
+            APMEntry.type = StringHandlers.CToString(cString);
+            APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
+            APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
+            APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
+            APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
+            APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
+            APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
+            APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
+            APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
+            APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
+            APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
+            cString = new byte[16];
+            Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
+            APMEntry.processor = StringHandlers.CToString(cString);
+
+            return APMEntry;
         }
 
         public struct AppleMapBootEntry

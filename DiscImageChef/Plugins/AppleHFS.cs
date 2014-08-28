@@ -63,14 +63,47 @@ namespace DiscImageChef.Plugins
             if ((2 + partitionOffset) >= imagePlugin.GetSectors())
                 return false;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
-            UInt16 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+            byte[] mdb_sector;
+            UInt16 drSigWord;
 
-            if (drSigWord == HFS_MAGIC)
+            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
-                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                if (drSigWord == HFS_MAGIC)
+                {
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+
+                    return drSigWord != HFSP_MAGIC;
+                }
+                else
+                {
+                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                    if (drSigWord == HFS_MAGIC)
+                    {
+                        if(MainClass.isDebug)
+                            Console.WriteLine("DEBUG (HFS Plugin): HFS sector size is 512 bytes, but device's 2048");
+
+                        drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
+
+                        return drSigWord != HFSP_MAGIC;
+                    }
+                }
+            }
+            else
+            {
+                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                if (drSigWord == HFS_MAGIC)
+                {
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
 				
-                return drSigWord != HFSP_MAGIC;
+                    return drSigWord != HFSP_MAGIC;
+                }
             }
             return false;
         }
@@ -86,8 +119,46 @@ namespace DiscImageChef.Plugins
 
             byte[] pString;
 
-            byte[] bb_sector = imagePlugin.ReadSector(partitionOffset); // BB's first sector
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset); // MDB sector
+            byte[] bb_sector;
+            byte[] mdb_sector;
+            UInt16 drSigWord;
+
+            bool APMFromHDDOnCD = false;
+
+            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            {
+                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                if (drSigWord == HFS_MAGIC)
+                {
+                    bb_sector = imagePlugin.ReadSector(partitionOffset);
+                }
+                else
+                {
+                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                    if (drSigWord == HFS_MAGIC)
+                    {
+                        bb_sector = Read2048SectorAs512(imagePlugin, partitionOffset);
+                        APMFromHDDOnCD = true;
+                    }
+                    else
+                        return;
+                }
+            }
+            else
+            {
+                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                if (drSigWord == HFS_MAGIC)
+                    bb_sector = imagePlugin.ReadSector(partitionOffset);
+                else
+                    return;
+            }
+
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
             if (MDB.drSigWord != HFS_MAGIC)
                 return;
@@ -181,6 +252,8 @@ namespace DiscImageChef.Plugins
 			
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();
+            if (APMFromHDDOnCD)
+                sb.AppendLine("HFS uses 512 bytes/sector while devices uses 2048 bytes/sector.").AppendLine();
             sb.AppendLine("Master Directory Block:");
             sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
             sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(MDB.drLsMod)).AppendLine();
@@ -289,6 +362,19 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
 			
             return;
+        }
+
+        byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        {
+            UInt64 LBA2k = LBA / 4;
+            int Remainder = (int)(LBA % 4);
+
+            byte[] buffer = imagePlugin.ReadSector(LBA2k);
+            byte[] sector = new byte[512];
+
+            Array.Copy(buffer, Remainder * 512, sector, 0, 512);
+
+            return sector;
         }
 
         struct HFS_MasterDirectoryBlock // Should be sector 2 in volume
