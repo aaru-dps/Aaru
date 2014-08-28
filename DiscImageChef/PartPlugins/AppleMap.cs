@@ -62,8 +62,6 @@ namespace DiscImageChef.PartPlugins
 
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
         {
-            byte[] cString;
-			
             ulong apm_entries;
             uint sector_size;
 
@@ -75,7 +73,7 @@ namespace DiscImageChef.PartPlugins
             partitions = new List<Partition>();
 			
             AppleMapBootEntry APMB = new AppleMapBootEntry();
-            AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
+            AppleMapPartitionEntry APMEntry;
 
             byte[] APMB_sector = imagePlugin.ReadSector(0);
 
@@ -136,7 +134,6 @@ namespace DiscImageChef.PartPlugins
 			
             for (ulong i = 0; i < apm_entries; i++) // For each partition
             {
-                APMEntry = new AppleMapPartitionEntry();
                 if(APMFromHDDOnCD)
                     APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
                 else
@@ -194,7 +191,7 @@ namespace DiscImageChef.PartPlugins
             return true;
         }
 
-        byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
         {
             UInt64 LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);
@@ -207,7 +204,7 @@ namespace DiscImageChef.PartPlugins
             return sector;
         }
 
-        AppleMapPartitionEntry DecodeAPMEntry(byte[] APMEntry_sector)
+        static AppleMapPartitionEntry DecodeAPMEntry(byte[] APMEntry_sector)
         {
             AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
             byte[] cString;

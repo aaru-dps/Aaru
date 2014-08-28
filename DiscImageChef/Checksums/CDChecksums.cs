@@ -328,8 +328,7 @@ namespace DiscImageChef.Checksums
                     return null;
                 }
             }
-            else
-                return null;
+            return null;
         }
 
         static bool? CheckCDSectorSubChannel(byte[] subchannel)

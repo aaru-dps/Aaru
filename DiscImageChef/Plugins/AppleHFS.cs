@@ -77,20 +77,17 @@ namespace DiscImageChef.Plugins
 
                     return drSigWord != HFSP_MAGIC;
                 }
-                else
+                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
+                drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+
+                if (drSigWord == HFS_MAGIC)
                 {
-                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
-                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
+                    if (MainClass.isDebug)
+                        Console.WriteLine("DEBUG (HFS Plugin): HFS sector size is 512 bytes, but device's 2048");
 
-                    if (drSigWord == HFS_MAGIC)
-                    {
-                        if(MainClass.isDebug)
-                            Console.WriteLine("DEBUG (HFS Plugin): HFS sector size is 512 bytes, but device's 2048");
+                    drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
 
-                        drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
-
-                        return drSigWord != HFSP_MAGIC;
-                    }
+                    return drSigWord != HFSP_MAGIC;
                 }
             }
             else
@@ -364,7 +361,7 @@ namespace DiscImageChef.Plugins
             return;
         }
 
-        byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
         {
             UInt64 LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);

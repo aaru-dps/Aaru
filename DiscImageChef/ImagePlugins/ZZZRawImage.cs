@@ -397,7 +397,7 @@ namespace DiscImageChef.ImagePlugins
 
         #region Private methods
 
-        private DiskType CalculateDiskType()
+        DiskType CalculateDiskType()
         {
             if (_imageInfo.sectorSize == 2048)
             {
