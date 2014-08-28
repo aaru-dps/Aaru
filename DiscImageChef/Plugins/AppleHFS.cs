@@ -86,7 +86,7 @@ namespace DiscImageChef.Plugins
 
             byte[] pString;
 
-            byte[] bb_sector = imagePlugin.ReadSector(2 + partitionOffset); // BB's first sector
+            byte[] bb_sector = imagePlugin.ReadSector(partitionOffset); // BB's first sector
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset); // MDB sector
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
             if (MDB.drSigWord != HFS_MAGIC)
