@@ -126,44 +126,30 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        #region Accesible variables
-
-        ImageInfo _imageInfo;
-
-        public ImageInfo ImageInfo
-        {
-            get
-            {
-                return _imageInfo;
-            }
-        }
-
-        #endregion
-
         public DiskCopy42(PluginBase Core)
         {
             Name = "Apple DiskCopy 4.2";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            _imageInfo = new ImageInfo();
-            _imageInfo.readableSectorTags = new List<SectorTagType>();
-            _imageInfo.readableDiskTags = new List<DiskTagType>();
-            _imageInfo.imageHasPartitions = false;
-            _imageInfo.imageHasSessions = false;
-            _imageInfo.imageVersion = "4.2";
-            _imageInfo.imageApplication = "Apple DiskCopy";
-            _imageInfo.imageApplicationVersion = "4.2";
-            _imageInfo.imageCreator = null;
-            _imageInfo.imageComments = null;
-            _imageInfo.diskManufacturer = null;
-            _imageInfo.diskModel = null;
-            _imageInfo.diskSerialNumber = null;
-            _imageInfo.diskBarcode = null;
-            _imageInfo.diskPartNumber = null;
-            _imageInfo.diskSequence = 0;
-            _imageInfo.lastDiskSequence = 0;
-            _imageInfo.driveManufacturer = null;
-            _imageInfo.driveModel = null;
-            _imageInfo.driveSerialNumber = null;
+            ImageInfo = new ImageInfo();
+            ImageInfo.readableSectorTags = new List<SectorTagType>();
+            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.imageHasPartitions = false;
+            ImageInfo.imageHasSessions = false;
+            ImageInfo.imageVersion = "4.2";
+            ImageInfo.imageApplication = "Apple DiskCopy";
+            ImageInfo.imageApplicationVersion = "4.2";
+            ImageInfo.imageCreator = null;
+            ImageInfo.imageComments = null;
+            ImageInfo.diskManufacturer = null;
+            ImageInfo.diskModel = null;
+            ImageInfo.diskSerialNumber = null;
+            ImageInfo.diskBarcode = null;
+            ImageInfo.diskPartNumber = null;
+            ImageInfo.diskSequence = 0;
+            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.driveManufacturer = null;
+            ImageInfo.driveModel = null;
+            ImageInfo.driveSerialNumber = null;
         }
 
         public override bool IdentifyImage(string imagePath)
@@ -321,15 +307,15 @@ namespace DiscImageChef.ImagePlugins
 
             dataOffset = 0x54;
             tagOffset = header.tagSize != 0 ? 0x54 + header.dataSize : 0;
-            _imageInfo.sectorSize = 512;
+            ImageInfo.sectorSize = 512;
             bptag = (uint)(header.tagSize != 0 ? 12 : 0);
             dc42ImagePath = imagePath;
 
-            _imageInfo.sectors = header.dataSize / 512;
+            ImageInfo.sectors = header.dataSize / 512;
 
             if (header.tagSize != 0)
             {
-                if (header.tagSize / 12 != _imageInfo.sectors)
+                if (header.tagSize / 12 != ImageInfo.sectors)
                 {
                     if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (DC42 plugin): header.tagSize / 12 != sectors");
@@ -337,36 +323,36 @@ namespace DiscImageChef.ImagePlugins
                     return false;
                 }
 
-                _imageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
+                ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
             }
 
-            _imageInfo.imageSize = _imageInfo.sectors * _imageInfo.sectorSize + _imageInfo.sectors * bptag;
-            _imageInfo.imageCreationTime = fi.CreationTimeUtc;
-            _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            _imageInfo.imageName = header.diskName;
+            ImageInfo.imageSize = ImageInfo.sectors * ImageInfo.sectorSize + ImageInfo.sectors * bptag;
+            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
+            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            ImageInfo.imageName = header.diskName;
 
             switch (header.format)
             {
                 case kSonyFormat400K:
-                    _imageInfo.diskType = DiskType.AppleSonySS;
+                    ImageInfo.diskType = DiskType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
-                    _imageInfo.diskType = DiskType.AppleSonyDS;
+                    ImageInfo.diskType = DiskType.AppleSonyDS;
                     break;
                 case kSonyFormat720K:
-                    _imageInfo.diskType = DiskType.DOS_35_DS_DD_9;
+                    ImageInfo.diskType = DiskType.DOS_35_DS_DD_9;
                     break;
                 case kSonyFormat1440K:
-                    _imageInfo.diskType = DiskType.DOS_35_HD;
+                    ImageInfo.diskType = DiskType.DOS_35_HD;
                     break;
                 case kSonyFormat1680K:
-                    _imageInfo.diskType = DiskType.DMF;
+                    ImageInfo.diskType = DiskType.DMF;
                     break;
                 case kSigmaFormatTwiggy:
-                    _imageInfo.diskType = DiskType.AppleFileWare;
+                    ImageInfo.diskType = DiskType.AppleFileWare;
                     break;
                 default:
-                    _imageInfo.diskType = DiskType.Unknown;
+                    ImageInfo.diskType = DiskType.Unknown;
                     break;
             }
 
@@ -452,22 +438,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return _imageInfo.imageHasPartitions;
+            return ImageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            return _imageInfo.imageSize;
+            return ImageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return _imageInfo.sectors;
+            return ImageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return _imageInfo.sectorSize;
+            return ImageInfo.sectorSize;
         }
 
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -482,19 +468,19 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            if (sectorAddress > _imageInfo.sectors - 1)
+            if (sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > _imageInfo.sectors)
+            if (sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * _imageInfo.sectorSize];
+            byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
             FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
 
-            stream.Seek((long)(dataOffset + sectorAddress * _imageInfo.sectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * _imageInfo.sectorSize));
+            stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
 
             stream.Close();
 
@@ -509,10 +495,10 @@ namespace DiscImageChef.ImagePlugins
             if (header.tagSize == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if (sectorAddress > _imageInfo.sectors - 1)
+            if (sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > _imageInfo.sectors)
+            if (sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] buffer = new byte[length * bptag];
@@ -535,10 +521,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
         {
-            if (sectorAddress > _imageInfo.sectors - 1)
+            if (sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > _imageInfo.sectors)
+            if (sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] data = ReadSectors(sectorAddress, length);
@@ -547,8 +533,8 @@ namespace DiscImageChef.ImagePlugins
 
             for (uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * (_imageInfo.sectorSize), buffer, i * (_imageInfo.sectorSize + bptag), _imageInfo.sectorSize);
-                Array.Copy(tags, i * (bptag), buffer, i * (_imageInfo.sectorSize + bptag) + _imageInfo.sectorSize, bptag);
+                Array.Copy(data, i * (ImageInfo.sectorSize), buffer, i * (ImageInfo.sectorSize + bptag), ImageInfo.sectorSize);
+                Array.Copy(tags, i * (bptag), buffer, i * (ImageInfo.sectorSize + bptag) + ImageInfo.sectorSize, bptag);
             }
 
             return buffer;
@@ -561,37 +547,37 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            return _imageInfo.imageVersion;
+            return ImageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            return _imageInfo.imageApplication;
+            return ImageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            return _imageInfo.imageApplicationVersion;
+            return ImageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return _imageInfo.imageCreationTime;
+            return ImageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return _imageInfo.imageLastModificationTime;
+            return ImageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageName()
         {
-            return _imageInfo.imageName;
+            return ImageInfo.imageName;
         }
 
         public override DiskType GetDiskType()
         {
-            return _imageInfo.diskType;
+            return ImageInfo.diskType;
         }
 
         #region Unsupported features
@@ -603,62 +589,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageCreator()
         {
-            return _imageInfo.imageCreator;
+            return ImageInfo.imageCreator;
         }
 
         public override string   GetImageComments()
         {
-            return _imageInfo.imageComments;
+            return ImageInfo.imageComments;
         }
 
         public override string   GetDiskManufacturer()
         {
-            return _imageInfo.diskManufacturer;
+            return ImageInfo.diskManufacturer;
         }
 
         public override string   GetDiskModel()
         {
-            return _imageInfo.diskModel;
+            return ImageInfo.diskModel;
         }
 
         public override string   GetDiskSerialNumber()
         {
-            return _imageInfo.diskSerialNumber;
+            return ImageInfo.diskSerialNumber;
         }
 
         public override string   GetDiskBarcode()
         {
-            return _imageInfo.diskBarcode;
+            return ImageInfo.diskBarcode;
         }
 
         public override string   GetDiskPartNumber()
         {
-            return _imageInfo.diskPartNumber;
+            return ImageInfo.diskPartNumber;
         }
 
         public override int      GetDiskSequence()
         {
-            return _imageInfo.diskSequence;
+            return ImageInfo.diskSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            return _imageInfo.lastDiskSequence;
+            return ImageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return _imageInfo.driveManufacturer;
+            return ImageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return _imageInfo.driveModel;
+            return ImageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return _imageInfo.driveSerialNumber;
+            return ImageInfo.driveSerialNumber;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()

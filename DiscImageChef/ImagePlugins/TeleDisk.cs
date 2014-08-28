@@ -201,42 +201,28 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        #region Accesible variables
-
-        ImageInfo _imageInfo;
-
-        public ImageInfo ImageInfo
-        {
-            get
-            {
-                return _imageInfo;
-            }
-        }
-
-        #endregion
-
         public TeleDisk(PluginBase Core)
         {
             Name = "Sydex TeleDisk";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-            _imageInfo = new ImageInfo();
-            _imageInfo.readableSectorTags = new List<SectorTagType>();
-            _imageInfo.readableDiskTags = new List<DiskTagType>();
-            _imageInfo.imageHasPartitions = false;
-            _imageInfo.imageHasSessions = false;
-            _imageInfo.imageApplication = "Sydex TeleDisk";
-            _imageInfo.imageComments = null;
-            _imageInfo.imageCreator = null;
-            _imageInfo.diskManufacturer = null;
-            _imageInfo.diskModel = null;
-            _imageInfo.diskSerialNumber = null;
-            _imageInfo.diskBarcode = null;
-            _imageInfo.diskPartNumber = null;
-            _imageInfo.diskSequence = 0;
-            _imageInfo.lastDiskSequence = 0;
-            _imageInfo.driveManufacturer = null;
-            _imageInfo.driveModel = null;
-            _imageInfo.driveSerialNumber = null;
+            ImageInfo = new ImageInfo();
+            ImageInfo.readableSectorTags = new List<SectorTagType>();
+            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.imageHasPartitions = false;
+            ImageInfo.imageHasSessions = false;
+            ImageInfo.imageApplication = "Sydex TeleDisk";
+            ImageInfo.imageComments = null;
+            ImageInfo.imageCreator = null;
+            ImageInfo.diskManufacturer = null;
+            ImageInfo.diskModel = null;
+            ImageInfo.diskSerialNumber = null;
+            ImageInfo.diskBarcode = null;
+            ImageInfo.diskPartNumber = null;
+            ImageInfo.diskSequence = 0;
+            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.driveManufacturer = null;
+            ImageInfo.driveModel = null;
+            ImageInfo.driveSerialNumber = null;
             ADiskCRCHasFailed = false;
             SectorsWhereCRCHasFailed = new List<UInt64>();
         }
@@ -327,9 +313,9 @@ namespace DiscImageChef.ImagePlugins
             header.sides = headerBytes[9];
             header.crc = BitConverter.ToUInt16(headerBytes, 10);
 
-            _imageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
-            _imageInfo.imageVersion = String.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
-            _imageInfo.imageApplication = _imageInfo.imageVersion;
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageVersion = String.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
+            ImageInfo.imageApplication = ImageInfo.imageVersion;
 
             byte[] headerBytesForCRC = new byte[10];
             Array.Copy(headerBytes, headerBytesForCRC, 10);
@@ -374,7 +360,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.signature == tdAdvCompMagic)
                 throw new NotImplementedException("TeleDisk Advanced Compression support not yet implemented");
 
-            _imageInfo.imageCreationTime = DateTime.MinValue;
+            ImageInfo.imageCreationTime = DateTime.MinValue;
 
             if ((header.stepping & CommentBlockPresent) == CommentBlockPresent)
             {
@@ -425,27 +411,27 @@ namespace DiscImageChef.ImagePlugins
                         commentBlock[i] = 0x0A;
                 }
 
-                _imageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
+                ImageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
 
                 if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Comment");
-                    Console.WriteLine("DEBUG (TeleDisk plugin): {0}", _imageInfo.imageComments);
+                    Console.WriteLine("DEBUG (TeleDisk plugin): {0}", ImageInfo.imageComments);
                 }
 
-                _imageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1, commentHeader.day,
+                ImageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1, commentHeader.day,
                     commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
             }
 
             FileInfo fi = new FileInfo(imagePath);
-            if (_imageInfo.imageCreationTime == DateTime.MinValue)
-                _imageInfo.imageCreationTime = fi.CreationTimeUtc;
-            _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            if (ImageInfo.imageCreationTime == DateTime.MinValue)
+                ImageInfo.imageCreationTime = fi.CreationTimeUtc;
+            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
             if (MainClass.isDebug)
             {
-                Console.WriteLine("DEBUG (TeleDisk plugin): Image created on {0}", _imageInfo.imageCreationTime);
-                Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", _imageInfo.imageLastModificationTime);
+                Console.WriteLine("DEBUG (TeleDisk plugin): Image created on {0}", ImageInfo.imageCreationTime);
+                Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", ImageInfo.imageLastModificationTime);
             }
 
             if (MainClass.isDebug)
@@ -453,9 +439,9 @@ namespace DiscImageChef.ImagePlugins
 
             totalDiskSize = 0;
             byte spt = 0;
-            _imageInfo.imageSize = 0;
+            ImageInfo.imageSize = 0;
             sectorsData = new Dictionary<uint, byte[]>();
-            _imageInfo.sectorSize = 0;
+            ImageInfo.sectorSize = 0;
             while (true)
             {
                 TDTrackHeader TDTrack = new TDTrackHeader();
@@ -534,7 +520,7 @@ namespace DiscImageChef.ImagePlugins
                         stream.Read(dataSizeBytes, 0, 2);
                         TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                         TDData.dataSize--; // Sydex decided to including dataEncoding byte as part of it
-                        _imageInfo.imageSize += TDData.dataSize;
+                        ImageInfo.imageSize += TDData.dataSize;
                         TDData.dataEncoding = (byte)stream.ReadByte();
                         data = new byte[TDData.dataSize];
                         stream.Read(data, 0, TDData.dataSize);
@@ -614,13 +600,13 @@ namespace DiscImageChef.ImagePlugins
                             totalDiskSize += (uint)decodedData.Length;
                         }
                     }
-                    if (decodedData.Length > _imageInfo.sectorSize)
-                        _imageInfo.sectorSize = (uint)decodedData.Length;
+                    if (decodedData.Length > ImageInfo.sectorSize)
+                        ImageInfo.sectorSize = (uint)decodedData.Length;
                 }
             }
 
-            _imageInfo.sectors = (ulong)sectorsData.Count;
-            _imageInfo.diskType = DecodeTeleDiskDiskType();
+            ImageInfo.sectors = (ulong)sectorsData.Count;
+            ImageInfo.diskType = DecodeTeleDiskDiskType();
 
             stream.Close();
             return true;
@@ -628,22 +614,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return _imageInfo.imageHasPartitions;
+            return ImageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            return _imageInfo.imageSize;
+            return ImageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return _imageInfo.sectors;
+            return ImageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return _imageInfo.sectorSize;
+            return ImageInfo.sectorSize;
         }
 
         public override byte[] ReadSector(UInt64 sectorAddress)
@@ -707,37 +693,37 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            return _imageInfo.imageVersion;
+            return ImageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            return _imageInfo.imageApplication;
+            return ImageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            return _imageInfo.imageApplicationVersion;
+            return ImageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return _imageInfo.imageCreationTime;
+            return ImageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return _imageInfo.imageLastModificationTime;
+            return ImageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageName()
         {
-            return _imageInfo.imageName;
+            return ImageInfo.imageName;
         }
 
         public override DiskType GetDiskType()
         {
-            return _imageInfo.diskType;
+            return ImageInfo.diskType;
         }
 
         public override bool? VerifySector(UInt64 sectorAddress)
@@ -924,7 +910,7 @@ namespace DiscImageChef.ImagePlugins
                             case 163840:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if (_imageInfo.sectorSize == 256)
+                                    if (ImageInfo.sectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_40;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_8;
@@ -932,7 +918,7 @@ namespace DiscImageChef.ImagePlugins
                             case 184320:
                                 {
                                     // Atari disk uses 256 bytes/sector
-                                    if (_imageInfo.sectorSize == 256)
+                                    if (ImageInfo.sectorSize == 256)
                                         return DiskType.ATARI_525_DD;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_SS_DD_9;
@@ -940,7 +926,7 @@ namespace DiscImageChef.ImagePlugins
                             case 327680:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if (_imageInfo.sectorSize == 256)
+                                    if (ImageInfo.sectorSize == 256)
                                         return DiskType.ACORN_525_SS_DD_80;
                                     else // DOS disks use 512 bytes/sector
                                         return DiskType.DOS_525_DS_DD_8;
@@ -1060,7 +1046,7 @@ namespace DiscImageChef.ImagePlugins
                             case 512512:
                                 {
                                     // DEC disk uses 256 bytes/sector
-                                    if (_imageInfo.sectorSize == 256)
+                                    if (ImageInfo.sectorSize == 256)
                                         return DiskType.RX02;
                                     else // ECMA disks use 128 bytes/sector
                                         return DiskType.ECMA_59;
@@ -1112,62 +1098,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageCreator()
         {
-            return _imageInfo.imageCreator;
+            return ImageInfo.imageCreator;
         }
 
         public override string   GetImageComments()
         {
-            return _imageInfo.imageComments;
+            return ImageInfo.imageComments;
         }
 
         public override string   GetDiskManufacturer()
         {
-            return _imageInfo.diskManufacturer;
+            return ImageInfo.diskManufacturer;
         }
 
         public override string   GetDiskModel()
         {
-            return _imageInfo.diskModel;
+            return ImageInfo.diskModel;
         }
 
         public override string   GetDiskSerialNumber()
         {
-            return _imageInfo.diskSerialNumber;
+            return ImageInfo.diskSerialNumber;
         }
 
         public override string   GetDiskBarcode()
         {
-            return _imageInfo.diskBarcode;
+            return ImageInfo.diskBarcode;
         }
 
         public override string   GetDiskPartNumber()
         {
-            return _imageInfo.diskPartNumber;
+            return ImageInfo.diskPartNumber;
         }
 
         public override int      GetDiskSequence()
         {
-            return _imageInfo.diskSequence;
+            return ImageInfo.diskSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            return _imageInfo.lastDiskSequence;
+            return ImageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return _imageInfo.driveManufacturer;
+            return ImageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return _imageInfo.driveModel;
+            return ImageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return _imageInfo.driveSerialNumber;
+            return ImageInfo.driveSerialNumber;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()

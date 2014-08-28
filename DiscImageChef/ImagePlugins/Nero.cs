@@ -859,20 +859,6 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        #region Accesible variables
-
-        ImageInfo _imageInfo;
-
-        public ImageInfo ImageInfo
-        {
-            get
-            {
-                return _imageInfo;
-            }
-        }
-
-        #endregion
-
         #region Methods
 
         public Nero(PluginBase Core)
@@ -881,9 +867,9 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
             _imagePath = "";
             imageNewFormat = false;
-            _imageInfo = new ImageInfo();
-            _imageInfo.readableSectorTags = new List<SectorTagType>();
-            _imageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo = new ImageInfo();
+            ImageInfo.readableSectorTags = new List<SectorTagType>();
+            ImageInfo.readableDiskTags = new List<DiskTagType>();
             neroSessions = new Dictionary<ushort, UInt32>();
             neroTracks = new Dictionary<uint, NeroTrack>();
             offsetmap = new Dictionary<uint, ulong>();
@@ -993,9 +979,9 @@ namespace DiscImageChef.ImagePlugins
                 imageTracks = new List<Track>();
                 TrackISRCs = new Dictionary<uint, byte[]>();
 
-                _imageInfo.diskType = DiskType.CD;
-                _imageInfo.sectors = 0;
-                _imageInfo.sectorSize = 0;
+                ImageInfo.diskType = DiskType.CD;
+                ImageInfo.sectors = 0;
+                ImageInfo.sectorSize = 0;
 
                 while (parsing)
                 {
@@ -1110,11 +1096,11 @@ namespace DiscImageChef.ImagePlugins
                                 neroDAOV1.LastTrack = tmpbuffer[21];
                                 neroDAOV1.Tracks = new List<NeroV1DAOEntry>();
 
-                                if (!_imageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
-                                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                                if (!ImageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
+                                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
 
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
 
                                 if (MainClass.isDebug)
                                 {
@@ -1155,8 +1141,8 @@ namespace DiscImageChef.ImagePlugins
 
                                     neroDAOV1.Tracks.Add(_entry);
 
-                                    if (_entry.SectorSize > _imageInfo.sectorSize)
-                                        _imageInfo.sectorSize = _entry.SectorSize;
+                                    if (_entry.SectorSize > ImageInfo.sectorSize)
+                                        ImageInfo.sectorSize = _entry.SectorSize;
 
                                     TrackISRCs.Add(currenttrack, _entry.ISRC);
 
@@ -1168,13 +1154,13 @@ namespace DiscImageChef.ImagePlugins
                                     _neroTrack.Offset = _entry.Index0;
                                     _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
                                     _neroTrack.SectorSize = _entry.SectorSize;
-                                    _neroTrack.StartLBA = _imageInfo.sectors;
+                                    _neroTrack.StartLBA = ImageInfo.sectors;
                                     _neroTrack.Index0 = _entry.Index0;
                                     _neroTrack.Index1 = _entry.Index1;
                                     _neroTrack.Sequence = currenttrack;
                                     neroTracks.Add(currenttrack, _neroTrack);
 
-                                    _imageInfo.sectors += _neroTrack.Sectors;
+                                    ImageInfo.sectors += _neroTrack.Sectors;
 
                                     currenttrack++;
                                 }
@@ -1200,11 +1186,11 @@ namespace DiscImageChef.ImagePlugins
                                 neroDAOV2.LastTrack = tmpbuffer[21];
                                 neroDAOV2.Tracks = new List<NeroV2DAOEntry>();
 
-                                if (!_imageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
-                                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                                if (!ImageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
+                                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
 
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
 
                                 UPC = neroDAOV2.UPC;
 
@@ -1245,8 +1231,8 @@ namespace DiscImageChef.ImagePlugins
 
                                     neroDAOV2.Tracks.Add(_entry);
 
-                                    if (_entry.SectorSize > _imageInfo.sectorSize)
-                                        _imageInfo.sectorSize = _entry.SectorSize;
+                                    if (_entry.SectorSize > ImageInfo.sectorSize)
+                                        ImageInfo.sectorSize = _entry.SectorSize;
 
                                     TrackISRCs.Add(currenttrack, _entry.ISRC);
 
@@ -1258,13 +1244,13 @@ namespace DiscImageChef.ImagePlugins
                                     _neroTrack.Offset = _entry.Index0;
                                     _neroTrack.Sectors = _neroTrack.Length / _entry.SectorSize;
                                     _neroTrack.SectorSize = _entry.SectorSize;
-                                    _neroTrack.StartLBA = _imageInfo.sectors;
+                                    _neroTrack.StartLBA = ImageInfo.sectors;
                                     _neroTrack.Index0 = _entry.Index0;
                                     _neroTrack.Index1 = _entry.Index1;
                                     _neroTrack.Sequence = currenttrack;
                                     neroTracks.Add(currenttrack, _neroTrack);
 
-                                    _imageInfo.sectors += _neroTrack.Sectors;
+                                    ImageInfo.sectors += _neroTrack.Sectors;
 
                                     currenttrack++;
                                 }
@@ -1345,8 +1331,8 @@ namespace DiscImageChef.ImagePlugins
 
                                     neroTAOV1.Tracks.Add(_entry);
 
-                                    if (NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > _imageInfo.sectorSize)
-                                        _imageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                    if (NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
+                                        ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
 
                                     NeroTrack _neroTrack = new NeroTrack();
                                     _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
@@ -1356,13 +1342,13 @@ namespace DiscImageChef.ImagePlugins
                                     _neroTrack.Offset = _entry.Offset;
                                     _neroTrack.Sectors = _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
                                     _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.StartLBA = _imageInfo.sectors;
+                                    _neroTrack.StartLBA = ImageInfo.sectors;
                                     _neroTrack.Index0 = _entry.Offset;
                                     _neroTrack.Index1 = _entry.Offset;
                                     _neroTrack.Sequence = currenttrack;
                                     neroTracks.Add(currenttrack, _neroTrack);
 
-                                    _imageInfo.sectors += _neroTrack.Sectors;
+                                    ImageInfo.sectors += _neroTrack.Sectors;
 
                                     currenttrack++;
                                 }
@@ -1405,8 +1391,8 @@ namespace DiscImageChef.ImagePlugins
 
                                     neroTAOV2.Tracks.Add(_entry);
 
-                                    if (NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > _imageInfo.sectorSize)
-                                        _imageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
+                                    if (NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode) > ImageInfo.sectorSize)
+                                        ImageInfo.sectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
 
                                     NeroTrack _neroTrack = new NeroTrack();
                                     _neroTrack.EndOfTrack = _entry.Offset + _entry.Length;
@@ -1416,13 +1402,13 @@ namespace DiscImageChef.ImagePlugins
                                     _neroTrack.Offset = _entry.Offset;
                                     _neroTrack.Sectors = _neroTrack.Length / NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
                                     _neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DAOMode)_entry.Mode);
-                                    _neroTrack.StartLBA = _imageInfo.sectors;
+                                    _neroTrack.StartLBA = ImageInfo.sectors;
                                     _neroTrack.Index0 = _entry.Offset;
                                     _neroTrack.Index1 = _entry.Offset;
                                     _neroTrack.Sequence = currenttrack;
                                     neroTracks.Add(currenttrack, _neroTrack);
 
-                                    _imageInfo.sectors += _neroTrack.Sectors;
+                                    ImageInfo.sectors += _neroTrack.Sectors;
 
                                     currenttrack++;
                                 }
@@ -1463,7 +1449,7 @@ namespace DiscImageChef.ImagePlugins
                                 if (MainClass.isDebug)
                                     Console.WriteLine("DEBUG (Nero plugin): \tMedia type is {0} ({1})", (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
 
-                                _imageInfo.diskType = NeroMediaTypeToDiskType((NeroMediaTypes)neroMediaTyp.Type);
+                                ImageInfo.diskType = NeroMediaTypeToDiskType((NeroMediaTypes)neroMediaTyp.Type);
 
                                 break;
                             }
@@ -1535,36 +1521,36 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                _imageInfo.imageHasPartitions = true;
-                _imageInfo.imageHasSessions = true;
-                _imageInfo.imageCreator = null;
-                _imageInfo.imageCreationTime = imageInfo.CreationTimeUtc;
-                _imageInfo.imageLastModificationTime = imageInfo.LastWriteTimeUtc;
-                _imageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
-                _imageInfo.imageComments = null;
-                _imageInfo.diskManufacturer = null;
-                _imageInfo.diskModel = null;
-                _imageInfo.diskSerialNumber = null;
-                _imageInfo.diskBarcode = null;
-                _imageInfo.diskPartNumber = null;
-                _imageInfo.driveManufacturer = null;
-                _imageInfo.driveModel = null;
-                _imageInfo.driveSerialNumber = null;
-                _imageInfo.diskSequence = 0;
-                _imageInfo.lastDiskSequence = 0;
+                ImageInfo.imageHasPartitions = true;
+                ImageInfo.imageHasSessions = true;
+                ImageInfo.imageCreator = null;
+                ImageInfo.imageCreationTime = imageInfo.CreationTimeUtc;
+                ImageInfo.imageLastModificationTime = imageInfo.LastWriteTimeUtc;
+                ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+                ImageInfo.imageComments = null;
+                ImageInfo.diskManufacturer = null;
+                ImageInfo.diskModel = null;
+                ImageInfo.diskSerialNumber = null;
+                ImageInfo.diskBarcode = null;
+                ImageInfo.diskPartNumber = null;
+                ImageInfo.driveManufacturer = null;
+                ImageInfo.driveModel = null;
+                ImageInfo.driveSerialNumber = null;
+                ImageInfo.diskSequence = 0;
+                ImageInfo.lastDiskSequence = 0;
                 if (imageNewFormat)
                 {
-                    _imageInfo.imageSize = footerV2.FirstChunkOffset;
-                    _imageInfo.imageVersion = "Nero Burning ROM >= 5.5";
-                    _imageInfo.imageApplication = "Nero Burning ROM";
-                    _imageInfo.imageApplicationVersion = ">= 5.5";
+                    ImageInfo.imageSize = footerV2.FirstChunkOffset;
+                    ImageInfo.imageVersion = "Nero Burning ROM >= 5.5";
+                    ImageInfo.imageApplication = "Nero Burning ROM";
+                    ImageInfo.imageApplicationVersion = ">= 5.5";
                 }
                 else
                 {
-                    _imageInfo.imageSize = footerV1.FirstChunkOffset;
-                    _imageInfo.imageVersion = "Nero Burning ROM <= 5.0";
-                    _imageInfo.imageApplication = "Nero Burning ROM";
-                    _imageInfo.imageApplicationVersion = "<= 5.0";
+                    ImageInfo.imageSize = footerV1.FirstChunkOffset;
+                    ImageInfo.imageVersion = "Nero Burning ROM <= 5.0";
+                    ImageInfo.imageApplication = "Nero Burning ROM";
+                    ImageInfo.imageApplicationVersion = "<= 5.0";
                 }
 
                 if (neroSessions.Count == 0)
@@ -1687,17 +1673,17 @@ namespace DiscImageChef.ImagePlugins
 
         public override UInt64 GetImageSize()
         {
-            return _imageInfo.imageSize;
+            return ImageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return _imageInfo.sectors;
+            return ImageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return _imageInfo.sectorSize;
+            return ImageInfo.sectorSize;
         }
 
         public override byte[] ReadDiskTag(DiskTagType tag)
@@ -2228,37 +2214,37 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageVersion()
         {
-            return _imageInfo.imageVersion;
+            return ImageInfo.imageVersion;
         }
 
         public override string GetImageApplication()
         {
-            return _imageInfo.imageApplication;
+            return ImageInfo.imageApplication;
         }
 
         public override string GetImageApplicationVersion()
         {
-            return _imageInfo.imageApplicationVersion;
+            return ImageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return _imageInfo.imageCreationTime;
+            return ImageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return _imageInfo.imageLastModificationTime;
+            return ImageInfo.imageLastModificationTime;
         }
 
         public override string GetDiskBarcode()
         {
-            return _imageInfo.diskBarcode;
+            return ImageInfo.diskBarcode;
         }
 
         public override DiskType GetDiskType()
         {
-            return _imageInfo.diskType;
+            return ImageInfo.diskType;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()

@@ -284,20 +284,6 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        #region Accesible variables
-
-        ImageInfo _imageInfo;
-
-        public ImageInfo ImageInfo
-        {
-            get
-            {
-                return _imageInfo;
-            }
-        }
-
-        #endregion
-
         #region Methods
 
         public CDRWin(PluginBase Core)
@@ -305,23 +291,23 @@ namespace DiscImageChef.ImagePlugins
             Name = "CDRWin cuesheet";
             PluginUUID = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
             imagePath = "";
-            _imageInfo = new ImageInfo();
-            _imageInfo.readableSectorTags = new List<SectorTagType>();
-            _imageInfo.readableDiskTags = new List<DiskTagType>();
-            _imageInfo.imageHasPartitions = true;
-            _imageInfo.imageHasSessions = true;
-            _imageInfo.imageVersion = null;
-            _imageInfo.imageApplicationVersion = null;
-            _imageInfo.imageName = null;
-            _imageInfo.imageCreator = null;
-            _imageInfo.diskManufacturer = null;
-            _imageInfo.diskModel = null;
-            _imageInfo.diskPartNumber = null;
-            _imageInfo.diskSequence = 0;
-            _imageInfo.lastDiskSequence = 0;
-            _imageInfo.driveManufacturer = null;
-            _imageInfo.driveModel = null;
-            _imageInfo.driveSerialNumber = null;
+            ImageInfo = new ImageInfo();
+            ImageInfo.readableSectorTags = new List<SectorTagType>();
+            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.imageHasPartitions = true;
+            ImageInfo.imageHasSessions = true;
+            ImageInfo.imageVersion = null;
+            ImageInfo.imageApplicationVersion = null;
+            ImageInfo.imageName = null;
+            ImageInfo.imageCreator = null;
+            ImageInfo.diskManufacturer = null;
+            ImageInfo.diskModel = null;
+            ImageInfo.diskPartNumber = null;
+            ImageInfo.diskSequence = 0;
+            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.driveManufacturer = null;
+            ImageInfo.driveModel = null;
+            ImageInfo.driveSerialNumber = null;
         }
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
@@ -1219,37 +1205,37 @@ namespace DiscImageChef.ImagePlugins
                 }
 
                 foreach (CDRWinTrack track in discimage.tracks)
-                    _imageInfo.imageSize += track.bps * track.sectors;
+                    ImageInfo.imageSize += track.bps * track.sectors;
                 foreach (CDRWinTrack track in discimage.tracks)
-                    _imageInfo.sectors += track.sectors;
+                    ImageInfo.sectors += track.sectors;
 
                 if (discimage.disktype == DiskType.CDG || discimage.disktype == DiskType.CDEG || discimage.disktype == DiskType.CDMIDI)
-                    _imageInfo.sectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
+                    ImageInfo.sectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
                 else if (discimage.disktype != DiskType.CDROMXA && discimage.disktype != DiskType.CDDA && discimage.disktype != DiskType.CDI && discimage.disktype != DiskType.CDPLUS)
-                    _imageInfo.sectorSize = 2048; // Only data tracks
+                    ImageInfo.sectorSize = 2048; // Only data tracks
                 else
-                    _imageInfo.sectorSize = 2352; // All others
+                    ImageInfo.sectorSize = 2352; // All others
 
                 if (discimage.mcn != null)
-                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
                 if (discimage.cdtextfile != null)
-                    _imageInfo.readableDiskTags.Add(DiskTagType.CD_TEXT);
+                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_TEXT);
 
                 // Detect ISOBuster extensions
                 if (discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
-                    _imageInfo.imageApplication = "ISOBuster";
+                    ImageInfo.imageApplication = "ISOBuster";
                 else
-                    _imageInfo.imageApplication = "CDRWin";
+                    ImageInfo.imageApplication = "CDRWin";
 
                 FileInfo fi = new FileInfo(discimage.tracks[0].trackfile.datafile);
 
-                _imageInfo.imageCreationTime = fi.CreationTimeUtc;
-                _imageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+                ImageInfo.imageCreationTime = fi.CreationTimeUtc;
+                ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
-                _imageInfo.imageComments = discimage.comment;
-                _imageInfo.diskSerialNumber = discimage.mcn;
-                _imageInfo.diskBarcode = discimage.barcode;
-                _imageInfo.diskType = discimage.disktype;
+                ImageInfo.imageComments = discimage.comment;
+                ImageInfo.diskSerialNumber = discimage.mcn;
+                ImageInfo.diskBarcode = discimage.barcode;
+                ImageInfo.diskType = discimage.disktype;
 
                 foreach (CDRWinTrack track in discimage.tracks)
                 {
@@ -1257,60 +1243,60 @@ namespace DiscImageChef.ImagePlugins
                     {
                         case CDRWinTrackTypeAudio:
                             {
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
                                 break;
                             }
                         case CDRWinTrackTypeCDG:
                             {
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Formless:
                         case CDRWinTrackTypeCDI:
                             {
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Raw:
                         case CDRWinTrackTypeCDIRaw:
                             {
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode1Raw:
                             {
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
-                                if (!_imageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
-                                    _imageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
+                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                     }
@@ -1329,22 +1315,22 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool ImageHasPartitions()
         {
-            return _imageInfo.imageHasPartitions;
+            return ImageInfo.imageHasPartitions;
         }
 
         public override UInt64 GetImageSize()
         {
-            return _imageInfo.imageSize;
+            return ImageInfo.imageSize;
         }
 
         public override UInt64 GetSectors()
         {
-            return _imageInfo.sectors;
+            return ImageInfo.sectors;
         }
 
         public override UInt32 GetSectorSize()
         {
-            return _imageInfo.sectorSize;
+            return ImageInfo.sectorSize;
         }
 
         public override byte[] ReadDiskTag(DiskTagType tag)
@@ -1874,47 +1860,47 @@ namespace DiscImageChef.ImagePlugins
 
         public override string   GetImageVersion()
         {
-            return _imageInfo.imageVersion;
+            return ImageInfo.imageVersion;
         }
 
         public override string   GetImageApplication()
         {
-            return _imageInfo.imageApplication;
+            return ImageInfo.imageApplication;
         }
 
         public override string   GetImageApplicationVersion()
         {
-            return _imageInfo.imageApplicationVersion;
+            return ImageInfo.imageApplicationVersion;
         }
 
         public override DateTime GetImageCreationTime()
         {
-            return _imageInfo.imageCreationTime;
+            return ImageInfo.imageCreationTime;
         }
 
         public override DateTime GetImageLastModificationTime()
         {
-            return _imageInfo.imageLastModificationTime;
+            return ImageInfo.imageLastModificationTime;
         }
 
         public override string   GetImageComments()
         {
-            return _imageInfo.imageComments;
+            return ImageInfo.imageComments;
         }
 
         public override string GetDiskSerialNumber()
         {
-            return _imageInfo.diskSerialNumber;
+            return ImageInfo.diskSerialNumber;
         }
 
         public override string GetDiskBarcode()
         {
-            return _imageInfo.diskBarcode;
+            return ImageInfo.diskBarcode;
         }
 
         public override DiskType GetDiskType()
         {
-            return _imageInfo.diskType;
+            return ImageInfo.diskType;
         }
 
         public override List<PartPlugins.Partition> GetPartitions()
@@ -2202,52 +2188,52 @@ namespace DiscImageChef.ImagePlugins
 
         public override int    GetDiskSequence()
         {
-            return _imageInfo.diskSequence;
+            return ImageInfo.diskSequence;
         }
 
         public override int    GetLastDiskSequence()
         {
-            return _imageInfo.lastDiskSequence;
+            return ImageInfo.lastDiskSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            return _imageInfo.driveManufacturer;
+            return ImageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            return _imageInfo.driveModel;
+            return ImageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            return _imageInfo.driveSerialNumber;
+            return ImageInfo.driveSerialNumber;
         }
 
         public override string GetDiskPartNumber()
         {
-            return _imageInfo.diskPartNumber;
+            return ImageInfo.diskPartNumber;
         }
 
         public override string GetDiskManufacturer()
         {
-            return _imageInfo.diskManufacturer;
+            return ImageInfo.diskManufacturer;
         }
 
         public override string GetDiskModel()
         {
-            return _imageInfo.diskModel;
+            return ImageInfo.diskModel;
         }
 
         public override string   GetImageName()
         {
-            return _imageInfo.imageName;
+            return ImageInfo.imageName;
         }
 
         public override string   GetImageCreator()
         {
-            return _imageInfo.imageCreator;
+            return ImageInfo.imageCreator;
         }
 
         #endregion
