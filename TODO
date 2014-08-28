@@ -56,9 +56,6 @@ Partitioning scheme plugins:
 --- Add support for Sun partitions
 --- Add support for Ultrix partitions
 
-Things to test/debug:
---- After moving to disc images, HFS CDs with 512 bytes/sector are not detected anymore
-
 Other things:
 --- Surprise!
 

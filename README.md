@@ -1,4 +1,4 @@
-﻿DiscImageChef v2.10
+﻿DiscImageChef v2.20
 ===================
 
 Disc Image Chef (because "swiss-army-knife" is used too much)

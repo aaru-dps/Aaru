@@ -10,7 +10,7 @@
     <RootNamespace>DiscImageChef</RootNamespace>
     <AssemblyName>DiscImageChef</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <ReleaseVersion>2.1</ReleaseVersion>
+    <ReleaseVersion>2.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
