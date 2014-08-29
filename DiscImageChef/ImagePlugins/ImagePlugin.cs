@@ -761,9 +761,8 @@ namespace DiscImageChef.ImagePlugins
         FDFORMAT_35_HD,
 
         // Generic hard disks
-        GENERIC_HDD}
-
-    ;
+        GENERIC_HDD
+    };
 
     /// <summary>
     /// Track (as partitioning element) types.
@@ -781,9 +780,8 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Data track, compact disc mode 2, form 1</summary>
         CDMode2Form1,
         /// <summary>Data track, compact disc mode 2, form 2</summary>
-        CDMode2Form2}
-
-    ;
+        CDMode2Form2
+    };
 
     /// <summary>
     /// Track defining structure.
@@ -855,9 +853,8 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>CD track flags, 1 byte</summary>
         CDTrackFlags,
         /// <summary>DVD sector copyright information</summary>
-        DVD_CMI}
-
-    ;
+        DVD_CMI
+    };
 
     /// <summary>
     /// Metadata present for each disk.
@@ -879,9 +876,8 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>DVD Copyright Management Information</summary>
         DVD_CMI,
         /// <summary>DVD Disc Manufacturer Information</summary>
-        DVD_DMI}
-
-    ;
+        DVD_DMI
+    };
 
     /// <summary>
     /// Feature is supported by image but not implemented yet.
