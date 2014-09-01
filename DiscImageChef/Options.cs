@@ -154,6 +154,28 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
+    public class DecodeSubOptions : CommonSubOptions
+    {
+        [Option('s', "start", DefaultValue = (ulong)0,
+            HelpText = "Start sector.")]
+        public ulong StartSector { get; set; }
+
+        [Option('l', "length", DefaultValue = "all",
+            HelpText = "How many sectors to decode, or \"all\".")]
+        public string Length { get; set; }
+
+        [Option('k', "disk-tags", DefaultValue = true,
+            HelpText = "Decode disk tags.")]
+        public bool DiskTags { get; set; }
+
+        [Option('t', "sector-tags", DefaultValue = true,
+            HelpText = "Decode sector tags.")]
+        public bool SectorTags { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+    }
+
     public class FormatsSubOptions : CommonSubOptions
     {
     }
@@ -168,6 +190,7 @@ namespace DiscImageChef
             VerifyVerb = new VerifySubOptions();
             FormatsVerb = new FormatsSubOptions();
             PrintHexVerb = new PrintHexSubOptions();
+            DecodeVerb = new DecodeSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -184,6 +207,9 @@ namespace DiscImageChef
 
         [VerbOption("printhex", HelpText = "Prints a sector, in hexadecimal values, to the console.")]
         public PrintHexSubOptions PrintHexVerb { get; set; }
+
+        [VerbOption("decode", HelpText = "Decodes and pretty prints disk and/or sector tags.")]
+        public DecodeSubOptions DecodeVerb { get; set; }
 
         [VerbOption("formats", HelpText = "Lists all supported disc images, partition schemes and file systems.")]
         public FormatsSubOptions FormatsVerb { get; set; }

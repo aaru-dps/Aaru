@@ -111,6 +111,12 @@ namespace DiscImageChef
                     isVerbose = PrintHexOptions.Verbose;
                     Commands.PrintHex.doPrintHex(PrintHexOptions);
                     break;
+                case "decode":
+                    DecodeSubOptions DecodeOptions = (DecodeSubOptions)invokedVerbInstance;
+                    isDebug = DecodeOptions.Debug;
+                    isVerbose = DecodeOptions.Verbose;
+                    Commands.Decode.doDecode(DecodeOptions);
+                    break;
                 case "formats":
                     FormatsSubOptions FormatsOptions = (FormatsSubOptions)invokedVerbInstance;
                     isVerbose = FormatsOptions.Verbose;

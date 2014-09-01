@@ -99,6 +99,7 @@
     <Compile Include="Checksums\CDChecksums.cs" />
     <Compile Include="Checksums\ReedSolomon.cs" />
     <Compile Include="Commands\PrintHex.cs" />
+    <Compile Include="Commands\Decode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
