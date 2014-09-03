@@ -71,6 +71,25 @@ namespace DiscImageChef
 
             return sb.ToString();
         }
+
+        public static string SpaceTerminatedToString(byte[] SpaceTerminatedString)
+        {
+            int length;
+
+            for (int i = SpaceTerminatedString.Length; i >= 0; i--)
+            {
+                if (i == 0)
+                    return "";
+
+                if (SpaceTerminatedString[i - 1] != 0x20)
+                {
+                    length = i;
+                    break;
+                }
+            }
+
+            return Encoding.ASCII.GetString(SpaceTerminatedString, 0, length);
+        }
     }
 }
 
