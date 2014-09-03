@@ -89,7 +89,7 @@ namespace DiscImageChef
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString)
         {
-            int length;
+            int length = 0;
 
             for (int i = SpacePaddedString.Length; i >= 0; i--)
             {
@@ -102,6 +102,9 @@ namespace DiscImageChef
                     break;
                 }
             }
+
+            if (length == 0)
+                return "";
 
             return Encoding.ASCII.GetString(SpacePaddedString, 0, length);
         }
