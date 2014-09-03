@@ -43,6 +43,11 @@ namespace DiscImageChef
 {
     public static class StringHandlers
     {
+        /// <summary>
+        /// Converts a null-terminated (aka C string) ASCII byte array to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="CString">A null-terminated (aka C string) ASCII byte array</param>
         public static string CToString(byte[] CString)
         {
             StringBuilder sb = new StringBuilder();
@@ -58,6 +63,11 @@ namespace DiscImageChef
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         public static string PascalToString(byte[] PascalString)
         {
             StringBuilder sb = new StringBuilder();
@@ -72,23 +82,28 @@ namespace DiscImageChef
             return sb.ToString();
         }
 
-        public static string SpaceTerminatedToString(byte[] SpaceTerminatedString)
+        /// <summary>
+        /// Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
+        public static string SpacePaddedToString(byte[] SpacePaddedString)
         {
             int length;
 
-            for (int i = SpaceTerminatedString.Length; i >= 0; i--)
+            for (int i = SpacePaddedString.Length; i >= 0; i--)
             {
                 if (i == 0)
                     return "";
 
-                if (SpaceTerminatedString[i - 1] != 0x20)
+                if (SpacePaddedString[i - 1] != 0x20)
                 {
                     length = i;
                     break;
                 }
             }
 
-            return Encoding.ASCII.GetString(SpaceTerminatedString, 0, length);
+            return Encoding.ASCII.GetString(SpacePaddedString, 0, length);
         }
     }
 }
