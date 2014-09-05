@@ -861,6 +861,12 @@ namespace DiscImageChef.ImagePlugins
     /// </summary>
     public enum DiskTagType
     {
+        /// <summary>CD table of contents</summary>
+        CD_TOC,
+        /// <summary>CD session information</summary>
+        CD_SessionInfo,
+        /// <summary>CD full table of contents</summary>
+        CD_FullTOC,
         /// <summary>CD PMA</summary>
         CD_PMA,
         /// <summary>CD Adress-Time-In-Pregroove</summary>
