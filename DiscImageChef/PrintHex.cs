@@ -43,14 +43,21 @@ namespace DiscImageChef
     {
         public static void PrintHexArray(byte[] array, int width)
         {
+            Console.WriteLine(ByteArrayToHexArrayString(array, width));
+        }
+
+        public static string ByteArrayToHexArrayString(byte[] array, int width)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
             int counter = 0;
             int subcounter = 0;
             for (long i = 0; i < array.LongLength; i++)
             {
                 if (counter == 0)
                 {
-                    Console.WriteLine();
-                    Console.Write("{0:X16}   ", i);
+                    sb.AppendLine();
+                    sb.AppendFormat("{0:X16}   ", i);
                 }
                 else
                 {
@@ -66,7 +73,7 @@ namespace DiscImageChef
                     }
                 }
 
-                Console.Write("{0:X2}", array[i]);
+                sb.AppendFormat("{0:X2}", array[i]);
 
                 if (counter == width - 1)
                 {
@@ -76,8 +83,10 @@ namespace DiscImageChef
                 else
                     counter++;
             }
-            Console.WriteLine();
-            Console.WriteLine();
+            sb.AppendLine();
+            sb.AppendLine();
+
+            return sb.ToString();
         }
     }
 }
