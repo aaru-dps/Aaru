@@ -100,6 +100,7 @@
     <Compile Include="Checksums\ReedSolomon.cs" />
     <Compile Include="Commands\PrintHex.cs" />
     <Compile Include="Commands\Decode.cs" />
+    <Compile Include="Decoders\SCSI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -108,6 +109,7 @@
     <Folder Include="ImagePlugins\" />
     <Folder Include="Commands\" />
     <Folder Include="Checksums\" />
+    <Folder Include="Decoders\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

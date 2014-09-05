@@ -876,7 +876,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>DVD Copyright Management Information</summary>
         DVD_CMI,
         /// <summary>DVD Disc Manufacturer Information</summary>
-        DVD_DMI
+        DVD_DMI,
+        /// <summary>SCSI INQUIRY response</summary>
+        SCSI_INQUIRY
     };
 
     /// <summary>

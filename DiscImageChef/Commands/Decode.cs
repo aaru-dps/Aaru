@@ -75,6 +75,20 @@ namespace DiscImageChef.Commands
                     {
                         switch (tag)
                         {
+                            case DiskTagType.SCSI_INQUIRY:
+                                {
+                                    byte[] inquiry = inputFormat.ReadDiskTag(DiskTagType.SCSI_INQUIRY);
+                                    if (inquiry == null)
+                                        Console.WriteLine("Error reading SCSI INQUIRY response from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("SCSI INQUIRY command response:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.SCSI.PrettifySCSIInquiry(inquiry));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
                             default:
                                 Console.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
                                 break;
