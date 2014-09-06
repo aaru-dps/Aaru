@@ -875,14 +875,76 @@ namespace DiscImageChef.ImagePlugins
         CD_TEXT,
         /// <summary>CD Media Catalogue Number</summary>
         CD_MCN,
-        /// <summary>DVD Burst Cutting Area</summary>
-        DVD_BCA,
-        /// <summary>DVD Physical Format Information</summary>
+        /// <summary>DVD/HD DVD Physical Format Information</summary>
         DVD_PFI,
-        /// <summary>DVD Copyright Management Information</summary>
+        /// <summary>DVD Lead-in Copyright Management Information</summary>
         DVD_CMI,
-        /// <summary>DVD Disc Manufacturer Information</summary>
+        /// <summary>DVD disc key</summary>
+        DVD_DiscKey,
+        /// <summary>DVD/HD DVD Burst Cutting Area</summary>
+        DVD_BCA,
+        /// <summary>DVD/HD DVD Lead-in Disc Manufacturer Information</summary>
         DVD_DMI,
+        /// <summary>Media identifier</summary>
+        DVD_MediaIdentifier,
+        /// <summary>Media key block</summary>
+        DVD_MKB,
+        /// <summary>DVD-RAM/HD DVD-RAM DDS information</summary>
+        DVDRAM_DDS,
+        /// <summary>DVD-RAM/HD DVD-RAM Medium status</summary>
+        DVDRAM_MediumStatus,
+        /// <summary>DVD-RAM/HD DVD-RAM Spare area information</summary>
+        DVDRAM_SpareArea,
+        /// <summary>DVD-R/-RW/HD DVD-R RMD in last border-out</summary>
+        DVDR_RMD,
+        /// <summary>Pre-recorded information from DVD-R/-RW lead-in</summary>
+        DVDR_PreRecordedInfo,
+        /// <summary>DVD-R/-RW/HD DVD-R media identifier</summary>
+        DVDR_MediaIdentifier,
+        /// <summary>DVD-R/-RW/HD DVD-R physical format information</summary>
+        DVDR_PFI,
+        /// <summary>ADIP information</summary>
+        DVD_ADIP,
+        /// <summary>HD DVD Lead-in copyright protection information</summary>
+        HDDVD_CPI,
+        /// <summary>HD DVD-R Medium Status</summary>
+        HDDVD_MediumStatus,
+        /// <summary>DVD+/-R DL Layer capacity</summary>
+        DVDDL_LayerCapacity,
+        /// <summary>DVD-R DL Middle Zone start address</summary>
+        DVDDL_MiddleZoneAddress,
+        /// <summary>DVD-R DL Jump Interval Size</summary>
+        DVDDL_JumpIntervalSize,
+        /// <summary>DVD-R DL Start LBA of the manual layer jump</summary>
+        DVDDL_ManualLayerJumpLBA,
+        /// <summary>Blu-ray Disc Information</summary>
+        BD_DI,
+        /// <summary>Blu-ray Burst Cutting Area</summary>
+        BD_BCA,
+        /// <summary>Blu-ray Disc Definition Structure</summary>
+        BD_DDS,
+        /// <summary>Blu-ray Cartridge Status</summary>
+        BD_CartridgeStatus,
+        /// <summary>Blu-ray Status of Spare Area</summary>
+        BD_SpareArea,
+        /// <summary>AACS volume identifier</summary>
+        AACS_VolumeIdentifier,
+        /// <summary>AACS pre-recorded media serial number</summary>
+        AACS_SerialNumber,
+        /// <summary>AACS media identifier</summary>
+        AACS_MediaIdentifier,
+        /// <summary>Lead-in AACS media key block</summary>
+        AACS_MKB,
+        /// <summary>AACS data keys</summary>
+        AACS_DataKeys,
+        /// <summary>LBA extents flagged for bus encryption by AACS</summary>
+        AACS_LBAExtents,
+        /// <summary>CPRM media key block in Lead-in</summary>
+        AACS_CPRM_MKB,
+        /// <summary>Recognized layer formats in hybrid discs</summary>
+        Hybrid_RecognizedLayers,
+        /// <summary>Disc write protection status</summary>
+        MMC_WriteProtection,
         /// <summary>SCSI INQUIRY response</summary>
         SCSI_INQUIRY
     };
