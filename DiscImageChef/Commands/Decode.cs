@@ -89,6 +89,90 @@ namespace DiscImageChef.Commands
                                     }
                                     break;
                                 }
+                            case DiskTagType.CD_ATIP:
+                                {
+                                    byte[] atip = inputFormat.ReadDiskTag(DiskTagType.CD_ATIP);
+                                    if (atip == null)
+                                        Console.WriteLine("Error reading CD ATIP from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD ATIP:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDATIP(atip));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.CD_FullTOC:
+                                {
+                                    byte[] fulltoc = inputFormat.ReadDiskTag(DiskTagType.CD_FullTOC);
+                                    if (fulltoc == null)
+                                        Console.WriteLine("Error reading CD full TOC from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD full TOC:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDFullTOC(fulltoc));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.CD_PMA:
+                                {
+                                    byte[] pma = inputFormat.ReadDiskTag(DiskTagType.CD_PMA);
+                                    if (pma == null)
+                                        Console.WriteLine("Error reading CD PMA from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD PMA:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDPMA(pma));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.CD_SessionInfo:
+                                {
+                                    byte[] sessioninfo = inputFormat.ReadDiskTag(DiskTagType.CD_SessionInfo);
+                                    if (sessioninfo == null)
+                                        Console.WriteLine("Error reading CD session information from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD session information:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDSessionInfo(sessioninfo));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.CD_TEXT:
+                                {
+                                    byte[] cdtext = inputFormat.ReadDiskTag(DiskTagType.CD_TEXT);
+                                    if (cdtext == null)
+                                        Console.WriteLine("Error reading CD-TEXT from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD-TEXT:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDTextLeadIn(cdtext));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.CD_TOC:
+                                {
+                                    byte[] toc = inputFormat.ReadDiskTag(DiskTagType.CD_TOC);
+                                    if (toc == null)
+                                        Console.WriteLine("Error reading CD TOC from disc image");
+                                    else
+                                    {
+                                        Console.WriteLine("CD TOC:");
+                                        Console.WriteLine("================================================================================");
+                                        Console.WriteLine(Decoders.CD.PrettifyCDTOC(toc));
+                                        Console.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
                             default:
                                 Console.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
                                 break;
