@@ -103,6 +103,7 @@
     <Compile Include="Decoders\SCSI.cs" />
     <Compile Include="Decoders\CD.cs" />
     <Compile Include="Decoders\MMC.cs" />
+    <Compile Include="Decoders\BD.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
