@@ -14,7 +14,7 @@ Date           : $Date$
  
 --[ Description ] ----------------------------------------------------------
  
-Decodes Blu-ray and DDCD structures.
+Decodes Blu-ray structures.
  
 --[ License ] --------------------------------------------------------------
  
