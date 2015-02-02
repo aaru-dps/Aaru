@@ -46,8 +46,8 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public class CRC16Context
     {
-        const UInt16 crc16Poly = 0x8408;
-        const UInt16 crc16Seed = 0xFFFF;
+        const UInt16 crc16Poly = 0xA001;
+        const UInt16 crc16Seed = 0x0000;
 
         UInt16[] table;
         UInt16 hashInt;
@@ -80,7 +80,7 @@ namespace DiscImageChef.Checksums
         public void Update(byte[] data, uint len)
         {
             for (int i = 0; i < len; i++)
-                hashInt = (ushort)((hashInt >> 8) ^ table[data[i] ^ hashInt & 0xff]);
+                hashInt = (ushort)((hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xFF)]);
         }
 
         /// <summary>
@@ -98,6 +98,7 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             hashInt ^= crc16Seed;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(hashInt);
         }
 
@@ -109,6 +110,7 @@ namespace DiscImageChef.Checksums
             hashInt ^= crc16Seed;
             StringBuilder crc16Output = new StringBuilder();
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for (int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
             {
                 crc16Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
@@ -156,7 +158,8 @@ namespace DiscImageChef.Checksums
             for (int i = 0; i < fileStream.Length; i++)
                 localhashInt = (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ localhashInt & 0xff]);
 
-            hash = BitConverter.GetBytes(localhashInt);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 
@@ -209,7 +212,8 @@ namespace DiscImageChef.Checksums
             for (int i = 0; i < len; i++)
                 localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff]);
 
-            hash = BitConverter.GetBytes(localhashInt);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 
