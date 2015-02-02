@@ -1,5 +1,10 @@
 2015-02-02  Natalia Portillo  <claunia@claunia.com>
 
+	* Checksums/CRC64Context.cs:
+	  Endian typoness
+
+2015-02-02  Natalia Portillo  <claunia@claunia.com>
+
 	* Checksums/CRC32Context.cs:
 	  Corrected poly and endian issues.
 
