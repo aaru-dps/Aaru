@@ -424,12 +424,12 @@ namespace DiscImageChef.ImagePlugins
                 tagstream.Close();
 
                 if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Calculating data checksum");
-                tagsChk = DC42CheckSum(data);
+                    Console.WriteLine("DEBUG (DC42 plugin): Calculating tag checksum");
+                tagsChk = DC42CheckSum(tags);
                 if (MainClass.isDebug)
                 {
-                    Console.WriteLine("DEBUG (DC42 plugin): Calculated data checksum = 0x{0:X8}", tagsChk);
-                    Console.WriteLine("DEBUG (DC42 plugin): Stored data checksum = 0x{0:X8}", header.tagChecksum);
+                    Console.WriteLine("DEBUG (DC42 plugin): Calculated tag checksum = 0x{0:X8}", tagsChk);
+                    Console.WriteLine("DEBUG (DC42 plugin): Stored tag checksum = 0x{0:X8}", header.tagChecksum);
                 }
             }
 

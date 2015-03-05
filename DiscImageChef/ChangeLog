@@ -1,3 +1,8 @@
+2015-03-05  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/DiskCopy42.cs:
+	  Correct typo in DC42 tag checksumming.
+
 2015-02-02  Natalia Portillo  <claunia@claunia.com>
 
 	* Checksums/CRC64Context.cs:
