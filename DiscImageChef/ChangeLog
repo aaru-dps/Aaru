@@ -1,3 +1,11 @@
+2015-03-21  Natalia Portillo  <claunia@claunia.com>
+
+	* Decoders/DVD.cs:
+	* Decoders/MMC.cs:
+	* DiscImageChef.csproj:
+	* ImagePlugins/ImagePlugin.cs:
+	  Added DVD structures.
+
 2015-03-05  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/DiskCopy42.cs:

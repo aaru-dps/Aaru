@@ -945,6 +945,12 @@ namespace DiscImageChef.ImagePlugins
         Hybrid_RecognizedLayers,
         /// <summary>Disc write protection status</summary>
         MMC_WriteProtection,
+        /// <summary>Disc standard information</summary>
+        MMC_DiscInformation,
+        /// <summary>Disc track resources information</summary>
+        MMC_TrackResourcesInformation,
+        /// <summary>BD-R Pseudo-overwrite information</summary>
+        MMC_POWResourcesInformation,
         /// <summary>SCSI INQUIRY response</summary>
         SCSI_INQUIRY
     };
