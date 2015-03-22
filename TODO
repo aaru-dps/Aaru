@@ -24,7 +24,6 @@ Filesystem plugins:
 --- Add support for PFS3 filesystem
 --- Add support for Acorn filesystems
 --- Add support for Apple DOS filesystems
---- Add support for Apple ProDOS filesystem
 --- Add support for UCSD/Pascal filesystem
 --- Add support for AMSDOS filesystem
 --- Add support for CP/M filesystem

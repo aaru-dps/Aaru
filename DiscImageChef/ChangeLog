@@ -1,3 +1,10 @@
+2015-03-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins/ProDOS.cs:
+	* DiscImageChef.csproj:
+	  Implemented support for Apple ProDOS/SOS filesystem
+	  (untested).
+
 2015-03-21  Natalia Portillo  <claunia@claunia.com>
 
 	* Decoders/DVD.cs:
