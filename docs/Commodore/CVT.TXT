@@ -1,0 +1,137 @@
+
+*** CVT (ConVerT containers)
+*** Document revision: 1.3
+*** Last updated: Oct 1, 2007
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Joe Forster/STA
+
+  These are sequential representations of GEOS files, both  sequential  and
+VLIR. In order to be transmitted and up/downloaded, they must be  converted
+to this intermediate format because the file's INFO block (and record block
+for a VLIR) must be included. Note that the track/sector references at  the
+beginning of each sector are not included here, making the block  size  254
+bytes. Also, any values in track/sector references are invalid,  since  the
+value is sure to change once the file is converted back from CVT to a  GEOS
+format.
+
+  I will not include much of the GEOS file layout details here, as you  can
+read the GEOS.TXT document to get the information.
+
+  With CVT's that contain VLIR files, there  are  four  distinct  sections:
+signature, info, record and data. CVT's that contain non-VLIR  files  (i.e.
+standard GEOS sequential) do not include the record block.
+
+  The first part, which exists in both CVT types, is the  signature  block.
+It contains the complete directory entry and CVT file signature.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 83 00 00 44 45 53 4B 20 54 4F 50 A0 A0 A0 A0 A0   ƒתתDESKתTOP     
+0010: A0 A0 A0 00 00 01 04 58 08 13 0D 23 78 00 50 52      תת..X...#xתPR
+0020: 47 20 66 6F 72 6D 61 74 74 65 64 20 47 45 4F 53   GתformattedתGEOS
+0030: 20 66 69 6C 65 20 56 31 2E 30 00 00 00 00 00 00   תfileתV1.0תתתתתת
+0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+00F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 .. ..   תתתתתתתתתתתתתת..
+
+    Byte:$00-1D: Complete directory entry. Note that the first two bytes of
+                 *any* directory entry are never used,  and  thus  are  not
+                 incuded here either.
+          1E-39: File signature. It can contain "PRG formatted..." or  "SEQ
+                 formatted...". Here we can check that the  CVT  is  really
+                 what it claims.
+          3A-FD: Usually $00
+
+What follows the signature block is the complete GEOS file INFO block.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+00F0: .. .. .. .. .. .. .. .. .. .. .. .. .. .. 03 15   ................
+0100: BF FF FF FF 92 49 01 FF FF 01 80 00 1D BF FF DD   ¿תתת’I.תת.€ת.¿תÝ
+0110: A0 00 5D BF FF C1 A0 00 5D A1 C6 55 A0 29 5D A0    ת]¿תֱ ת]¡ֶU )] 
+0120: C9 41 A1 09 41 B9 D6 41 A8 00 41 BF FF C1 80 00   ֹA¡.A¹ײA¨תA¿תֱ€ת
+0130: 1D 9C 00 15 9C 00 15 80 00 1D 80 00 01 FF FF FF   .ת.ת.€ת.€ת.תתת
+0140: 83 04 01 56 19 55 19 75 51 64 65 73 6B 54 6F 70   ƒ..V.U.uQdeskTop
+0150: 20 41 4D 20 20 56 32 2E 30 00 00 00 00 42 72 69   תAMתתV2.0תתתתBri
+0160: 61 6E 20 44 6F 75 67 68 65 72 74 79 00 00 00 00   anתDoughertyתתתת
+0170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0180: 00 00 00 00 00 4C 2A 5B 4C 59 5D 4C A7 61 4C 3A   תתתתתL*[LY]L§aL:
+0190: 62 AD 8A 84 D0 01 60 20 7E 23 20 9C 55 73 65 20   b­„׀.`ת~#תUseת
+01A0: 74 68 65 20 64 65 73 6B 54 6F 70 20 74 6F 20 6D   theתdeskTopתtoתm
+01B0: 61 6E 61 67 65 20 61 6E 64 20 6D 61 6E 69 70 75   anageתandתmanipu
+01C0: 6C 61 74 65 20 79 6F 75 72 20 66 69 6C 65 73 2E   lateתyourתfiles.
+01D0: 00 03 20 E3 5C 68 85 FB 20 4F 61 20 13 61 20 32   ת.תד\h…ûתOaת.aת2
+01E0: 61 20 F2 5C A9 0C 20 CC 49 A9 2E 85 13 A9 F9 85   aתע\©.תּI©.….©ש…
+01F0: 12 A9 2F 85 15 A9 01 85 14 A9 84 85 .. .. .. ..   .©/….©.….©„…....
+
+  The third block is the RECORD block. In the  sequential  version  of  the
+CVT, this block won't exist. The way  to  tell  if  the  file  is  VLIR  or
+sequential is to look at byte position 23  of  the  directory  entry  (from
+above, it's value is $01). If it's a $00, the file is sequential,  if  it's
+$01 it's VLIR.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+01F0: .. .. .. .. .. .. .. .. .. .. .. .. 43 41 0A 0B   ............CA..
+0200: 0B F4 0A 8C 0B A1 09 70 00 00 00 00 00 00 00 00   .פת.¡תpתתתתתתתת
+0210: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0220: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0230: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0240: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0250: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0260: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0270: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0290: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+02F0: 00 00 00 00 00 00 00 00 00 00 .. .. .. .. .. ..   תתתתתתתתתת......
+
+  Note that the RECORD block is modified  from  the  original  GEOS  entry.
+Instead of containing the track and sector  references,  we  now  have  the
+sector count and the size of the last sector in the chain. Looking over the
+block above, we get the following usage chart:
+
+      Count  Size   Comment
+      -----  ----   --------------------------------------
+       43     41    Sector count=67, last sector index=$41
+       0A     0B    Sector count=10, last sector index=$0B
+       0B     F4    Sector count=11, last sector index=$F4
+       0A     8C    Sector count=10, last sector index=$8C
+       0B     A1    Sector count=11, last sector index=$A1
+       09     70    Sector count=9,  last sector index=$70
+       00     00    No more records.
+
+Two things of interest can be noted from the record block...
+
+  1. When a 00/00 is encountered, the record block is done.
+  2. When a 00/FF is encountered,  the  record  does  not  exist  (see  the
+     GEOS.TXT format for more info on invalid records), but the entry  must
+     still be made in the re-created RECORD block.
+
+  From here on we have the actual data, all of  the  record  chains  strung
+together to form one long file. All of this data must be  broken  apart  to
+form the original records that GEOS expects.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+02F0: .. .. .. .. .. .. .. .. .. .. A9 00 8D EE 04 A4   ..........©תמ.₪
+0300: FE B9 86 84 30 06 29 0F C9 02 D0 12 A4 70 B9 86   ‏¹†„0.).ֹ.׀.₪p¹†
+0310: 84 30 06 29 0F C9 02 D0 05 A9 07 8D A0 1D 20 1E   „0.).ֹ.׀.©. .ת.
+0320: 23 20 04 1A 8A D0 20 20 12 1A 18 A9 00 6D F4 03   #ת..׀תת...©תmפ.
+0330: 8D F4 03 A9 03 6D F5 03 8D F5 03 20 C5 22 20 7C   פ.©.mץ.ץ.תֵ"ת|
+0340: 1B 20 04 1A 20 6B 1A A9 08 8D A0 1D B8 50 53 8D   .ת..תk.©. .¸PS
+0350: EE 04 20 12 1A A2 00 A4 70 20 3F 24 C9 04 B0 3F   מ.ת..¢ת₪pת?$ֹ.°?
+

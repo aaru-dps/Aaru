@@ -1,0 +1,226 @@
+
+*** WRA, WR3 (WRAptor compressed files, and version 3.0 files)
+*** Document revision: 1.4
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Todd Elliott,
+                          Fender Tucker & Doreen Horne (Loadstar)
+
+  Written by Bill Lucier (copyright 1995), distributed by Loadstar (on disk
+and from the website), and  fixed/updated  by  Doreen  Horne,  this  is  an
+uncommon compression format as it is a relatively new program.  It  handles
+PRG, SEQ, USR and GEOS files (Sequential and VLIR), but not REL  files.  As
+of this writing, the latest bug fixed version was 3.0B. It is  the  support
+for compressing GEOS files which makes this program special.
+
+  Many thanks to Fender Tucker (from Loadstar) and Doreen Horne  for  their
+support on the Wraptor format, as well as authorizing the  release  of  the
+source code, and subsequent  documentation  of  the  format.  I  hope  this
+prolongs the life and usefulness of Wraptor.
+
+  Wraptor  utilizes  a  variant  of  the  LZSS   (Lempel-Ziv)   compression
+algorithm, starting at 9 bits per code. The following is a dump of a sample
+WRA file. The four bytes at the beginning of the file, "FF 42  4C  FF"  are
+the signature, and preceed each compressed file in the archive. The "42 4C"
+are the authors initials, "BL".
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: FF 42 4C FF 50 4F 4F 59 41 4E 00 02 00 82 04 60   ˙BL˙POOYAN˙.˙Ç.`
+0010: 80 50 01 16 41 59 0C 14 F0 81 0C 47 49 31 11 40   ÄP..AY..Å.GI1.@
+0020: 9E 4F 2C 90 49 C2 E2 61 3C 82 44 22 94 84 42 C1   ûO,êI¬‚a<ÇD"îÑB¡
+0030: C0 B0 62 00 21 82 02 90 62 0C 61 63 19 43 D4 4D   ¿∞b˙!Ç.êb.ac.C‘M
+0040: 20 92 49 D1 F3 13 41 01 E0 02 78 68 37 1C 0D 40   ˙íI—Û.A.‡.xh7..@
+0050: 14 E1 40 00 DD 0B FF 42 4C FF 50 4F 4F 59 41 4E   .·@˙›.˙BL˙POOYAN
+0060: 2E 4D 41 49 4E 00 02 7E 0C 0A B0 31 31 00 08 00   .MAIN˙.~..∞11˙.˙
+0070: 00 09 40 00 05 2A 00 02 A5 54 3C 81 10 88 00 08   ˙˙@˙.*˙.•T<Å.à˙.
+
+  Byte: $00-03: FF 42 4C FF          - Compressed file signature "˙BL˙"
+         04-xx: 50 4F 4F 59 41 4E 00 - File name "POOYAN", terminated  with
+                                       a $00 (null) byte
+                02                   - File type
+                                         01 = SEQ
+                                         02 = PRG
+                                         03 = USR
+                                         04 = GEOS
+
+  What follows the filetype is compressed file data,  up  until  two  bytes
+before the next signature, or two bytes to the end of the  file,  whichever
+comes first. The two bytes at the end comprise the 16-bit CRC value.
+
+  The Wraptor format does not include information in the header that  would
+normally be considered important for generic decompression, such as:
+
+  1. No original or compressed file sizes
+  2. No offset to show where the next compressed file starts
+  3. No version# info, to know if the decompressor you have is the  correct
+     type to uncompress the file. This is determined by the file extension,
+     with WR3 being the newest. WRA represents version 1.x and 2.x.
+
+
+  The original release of Wraptor  (version  1.x)  contained  a  few  bugs,
+specifically dealing with the compression and decompression of certain GEOS
+filetypes, with all of the other file types (PRG,  SEQ,  USR)  being  fine.
+Version 2.x was released, but more bugs with GEOS files  were  found.  Thus
+version 3.x was released.
+
+  As of version 3.x, the earlier WRA files are no  longer  supported,  only
+the WR3 files. To decode WRA files, you can either use a pre-3.0 version of
+Wraptor, or rename the files to end with WR3 and  see  if  version  3  will
+unwrap them. If they contain a faulty compressed GEOS file, the file  might
+not decompress properly.
+
+
+  You can get a list of files contained in a WRA/WR3 file by using  one  of
+the following two methods:
+
+   1. Decompress each file in succession, a tedious task  at  the  best  of
+      times. This *is* the method WRAptor uses to  display  and  decompress
+      files in its archives, and it is very slow!
+
+   2. Scan the whole file for the "FF 42 4C FF" signature  preceeding  each
+      file, and store the starting offsets. There may  be  the  possibility
+      that this signature will show up in the normal compressed  data,  but
+      the odds are very low.
+
+
+  The Wraptor compression on PRG, SEQ and  USR  files  is  very  simple  to
+decode. GEOS files are the exception  as  they  need  to  be  reconstructed
+exactly as they were, VLIR chains and all. The following C program explains
+how basic decompression works, but not for GEOS:
+
+
+---------------------------------------------------------------------------
+
+/*
+
+   The following code assumes you  have  already  read  in  the  signature,
+   filename+NULL and filetype byte, and simply want to decode the data.
+   There is no provision made to decode the GEOS data, or actually show how
+   to calculate the CRC
+
+*/
+
+void main(void)
+{
+  FILE *readfile, *writefile;
+
+  int i;
+
+  char data, type, tmp, rep_length, read_bitsize;
+  unsigned buff_pointer, dict_offset;
+
+  /* Output stream buffer */
+  char buffer[(unsigned)32768];
+
+  /* Compressed file to decode */
+  readfile=fopen("compress.wra","rb");
+
+  /* Uncompressed output stream */
+  writefile=fopen("uncompressed","wb");
+
+  /* Initial bitsize of the dictionary lookup */
+  read_bitsize=8;
+
+  /* Clear buffer pointer */
+  buff_pointer=0;
+
+  while(1)
+  {
+    /* Get compressed yes/no flag (single bit) from the input stream */
+    type=get_bits(1);
+
+    /* Normal unencoded data, preceeded by a zero bit */
+    if(!type)
+    {
+      /* Get normal 8-bit byte */
+      data=get_bits(8);
+
+      /* Add data to output buffer */
+      buffer[buff_pointer]=data;
+
+      /* Calculate the CRC as we read in the data */
+      calc_crc(data);
+
+      /* Move pointer for next data byte */
+      buff_pointer++;
+
+      /* Has the output buffer filled up? */
+      if(buff_pointer>=(unsigned)32768)
+      {
+        /* Write out the buffer to the output file */
+        /* Here is where we would decode the GEOS file structure */
+        fwrite(buffer, 1, buff_pointer, writefile);
+
+        /* Reset buffer pointer for another block of data */
+        buff_pointer=0;
+      }
+    }
+
+    /* Encoded data, preceeded by a one bit */
+    else
+    {
+      /* Get dictionary offset */
+      dict_offset=get_bits(read_bitsize);
+
+      /* A "0" offset, either an EOF or increase read_bitsize by one */
+      if(!dict_offset)
+      {
+        /* Check next bit */
+        tmp=get_bits(1);
+
+        /* If next bit clear, we are at the end of the compressed file */
+        if(!tmp)
+        {
+          /* Write output buffer to the output file */
+          /* Here is where we would decode the GEOS file structure */
+          fwrite(buffer, 1, buff_pointer,writefile);
+          buff_pointer=0;
+          break;
+        }
+        /* If next bit set, increase read_bitsize by one */
+        else
+        {
+          read_bitsize++;
+        }
+      }
+
+      /* We have a valid offset, get the length */
+      else
+      {
+        /* Length of the stored string, 5 bits */
+        rep_length=get_bits(5);
+
+        /*
+          Copy the data from in the buffer at the dict_offset position  to
+          the end of the buffer
+        */
+
+        for(i=0;i<rep_length;i++)
+        {
+          buffer[buff_pointer]=buffer[dict_offset-1+i];
+          buff_pointer++;
+
+          /* Write buffer to output file */
+          /* Here is where we would decode the GEOS file structure */
+          if(buff_pointer>=(unsigned)32768)
+          {
+            fwrite(buffer, 1, buff_pointer,writefile);
+            buff_pointer=0;
+          }
+        }
+      }
+    }
+  }
+
+  /* Get the two-byte CRC which follows the compressed data stream */
+  get_crc();
+
+  /* Make sure the CRC you read matches the one you calculated */
+  check_crc();
+
+  fclose(readfile);
+  fclose(writefile);
+}
+
+

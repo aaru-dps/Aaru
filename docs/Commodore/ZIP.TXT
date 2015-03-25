@@ -1,0 +1,97 @@
+
+*** ZIP (PKZip compressed files)
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: net documents
+
+  The files seen on the C64 are generally  PKZIP  1.1-compatible  archives,
+using the older IMPLODE algorithm, which are decompressible on the C64/C128
+using various utilities. All versions of PKUNZIP (and compatible  programs)
+will also handle the older archives. The explanation I provide below covers
+up to the newest version PKZIP at the time of writing this document, 2.04g.
+
+  They always start with the 'PK' string at the beginning of the file,  and
+the first filename follows very closely. The example  archive  below  holds
+4-pack ZipCode files, as the filename shows:
+
+       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+       -----------------------------------------------   ----------------
+00000: 50 4B 03 04 14 00 00 00 08 00 00 00 00 00 19 A1   PK..............
+00010: EB 0D C2 45 00 00 50 69 00 00 07 00 00 00 31 21   ..............1!
+00020: 4D 53 48 4F 57 E4 BC 7B 5C 53 47 DA 38 3E 67 CE   MSHOW...........
+
+  Bytes: $00-03: PKZIP local file header signature ($50 $4B $03 $04,  first
+                 two bytes are ASCII "PK"). This signature is used  at  the
+                 beginning of *each* compressed file.
+          04-05: Program version that created archive:
+                  decimal value/10 = major version # (in this case 2)
+                  decimal value%10 = minor version # (in this case .0)
+          06-07: General purpose bit flags:
+                  bit 0:    set - file is encrypted
+                          clear - file is not encrytped
+                  bit 1: if compression method 6 used (imploding)
+                            set - 8K sliding dictionary
+                          clear - 4K sliding dictionary
+                  bit 2: if compression method 6 used (imploding)
+                            set - 3 Shannon-Fano trees were used to  encode
+                                    the sliding dictionary output
+                          clear - 2 Shannon-Fano trees were used
+
+                          For method 8 compression (deflate):
+                           bit 2  bit 1
+                             0      0    Normal (-en) compression
+                             0      1    Maximum (-ex) compression
+                             1      0    Fast (-ef) compression
+                             1      1    Super Fast (-es) compression
+
+                          Note:  Bits  1  and  2  are  undefined   if   the
+                          compression method is any other than 6 or 8.
+                  bit 3: if compression method 8 (deflate)
+                            set - the fields crc-32,  compressed  size  and
+                                  uncompressed size are set to zero in  the
+                                  local header. The correct values are  put
+                                  in  the   data   descriptor   immediately
+                                  following the compressed data.
+
+                  The upper three bits are reserved and used internally  by
+                  the software when processing the zipfile.  The  remaining
+                  bits are unused.
+          08-09: Compression method:
+                  0 - Stored (no compression)
+                  1 - Shrunk
+                  2 - Reduced with compression factor 1
+                  3 - Reduced with compression factor 2
+                  4 - Reduced with compression factor 3
+                  5 - Reduced with compression factor 4
+                  6 - Imploded
+                  7 - Reserved for Tokenizing compression algorithm
+                  8 - Deflated
+          0A-0B: Last modified file time in MSDOS format
+                  Bits 00-04: Seconds/2 (0-58, only even numbers)
+                       05-10: Minutes (0-59)
+                       11-15: Hours (0-23, no AM or PM)
+          0C-0D: Last modified file date in MSDOS format
+                  Bits 00-04: Day (1-31)
+                       05-09: Month (1-12)
+                       10-15: Year minus 1980
+          0E-11: CRC-32 of file (low-high format)
+          12-15: Compressed size of file (low-high format)
+          16-19: Uncompressed size of file (low-high format)
+          1A-1B: Filename length (FL)
+          1C-1D: Extra field length, description (EFL)
+          1E-(1E+FL-1): Filename
+          (1E+FL)-(1E+FL+EFL-1): Extra field
+
+  You will notice that in the above byte layout, there is no mention of C64
+filetype. That particular field seems to be stored in the central directory
+at the end of the ZIP archive.
+
+  There are several other signatures used within the ZIP format.  The  byte
+sequence 50 4B 01 02 is used  to  signify  the  beginning  of  the  central
+directory while the byte sequence 50 4B 05 06 is used to show  the  end  of
+the central directory.
+
+  The above explanation is only included for completeness.  Without  source
+code, it is almost impossible to work with ZIP archives.
+

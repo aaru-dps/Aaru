@@ -1,0 +1,277 @@
+
+*** Introduction to the various Emulator File Formats
+
+***  Compiled by:    Peter Schepers
+***      Started:   August 24, 1996
+*** Last updated:       Nov 7, 2008
+
+---------------------------------------------------------------------------
+
+  There are always questions asked regarding the various file formats which
+are commonly used on either the emulators or the real C64. Most  often  the
+question involves conversion... "What do I do with LNX files?" or "How do I
+make these files work on the C64s emulator?". These  documents  attempt  to
+explain their internal structure, what to do with them, and some  of  their
+respective strengths and weaknesses.
+
+  These documents were compiled and written in an attempt to unify all  the
+other smaller files dealing with Commodore file  types  that  are  floating
+about the net, or that exist with other programs.  They  are  by  no  means
+exhaustive (even though they look like it), but attempts will  be  made  to
+keep them up-to-date, and correct anything which  is  wrong.  If  you  spot
+something that needs correcting please make sure to  email  the  author  so
+that corrections  can  be  made  for  future  releases...  the  address  is
+contained later in this document.
+
+  Some of the information contained in these documents may not be  accurate
+as it could have  been  taken  from  inaccurate  sources,  and  I  have  no
+first-hand experience with said  format.  However,  use  these,  pass  them
+around, upload them, whatever. Just be sure to  leave  them  INTACT,  don't
+remove bits.
+
+  I have attempted to categorize the filetypes involved using  three  basic
+categories: IMAGES, ARCHIVES and CONTAINERS. The definitions  for  each  of
+these categories can be found at the bottom of this document.
+
+  Also, plenty of good information can be  gleaned  from  the  source  code
+contained in the archive CBMConvert, which is on the FTP.FUNET.FI FTP site.
+Contained in it are the sources for UnZipCode, UnLNX, Ark, some  LHA  info,
+etc. It is an invaluable set of utilities put together by both Marko Makela
+and Paul Doherty.
+
+
+  So far, this document covers the following files:
+
+  * D64 images (1541 disks and some variants)
+  * X64 images (for the X64/Vice emulator)
+  * T64 containers (for the C64s emulator)
+  * T64 .FRZ (FRoZen Files, saved emulator sessions for C64s)
+  * PC64 containers (P/S/U/Rxx)
+  * PC64 .C64 (saved emulator sessions for PC64)
+  * D71 images (1571 disks)
+  * D81 images (1581 disks)
+  * D80 (8050) & D82 (8250) floppy images
+  * G64 images (GCR copy of a 1541 disk)
+  * D2M images (FD2000 disks)
+  * DNP images (CMD hard disk native partitions)
+  * F64 (not an image file, but a companion file to D64's)
+  * N64 (64NET's custom files)
+  * L64 (64LAN's custom files)
+  * C64 (PCLINK's custom files)
+  * CRT images (CCS64 ROM cartridges)
+  * 64x (PC64 ROM files)
+  * TAP images (for CCS64, sampled cassette tapes)
+  * VSF VICE snapshots (saved-emulator sessions for VICE)
+  * WAV Audio RIFF files for the PC
+
+  ...as well as the following native C64 types,  some  of  which  are  also
+  supported on the various emulators:
+
+  * Extensive disk file layout (how files are stored on 1541/71/81 disks)
+  * 4-file diskpacked ZipCode archives (or .Z64, 4 or 5 files, #!xxxxx)
+  * 6-file SixPack ZipCode images (or .Z64, #!!xxxx)
+  * Filepacked ZipCode archives (or .Z64, x files, x!xxxxx)
+  * LNX containers (LyNX)
+  * ARK containers & SRK archives (ARKive & compressed ARKive)
+  * LHA & LZH archives (header description only)
+  * SFX archives (SelF-eXtracting LHA/LZH)
+  * SDA archives (Self-Dissolving Archive)
+  * ARC archives (ARChive)
+  * ZIP archives (PKZIP)
+  * CKIT archives (Compression KIT)
+  * CPK containers
+  * WRA & WR3 archives (Wraptor, version 1 to 3)
+  * LBR containers (LiBRary, C64 only, not the C128 CP/M .LBR files)
+  * GEOS VLIR files (Variable Length Index Record)
+  * REL files (RELative)
+  * CVT files (GEOS ConVerT)
+  * SPY containers (SPYne)
+  * C128 Boot Sector layout
+  * Binary & PRG (PRoGram, with load address)
+  
+  Also included is a very basic look at some C64 graphic bitmap formats (in
+BITMAP.TXT), and the  saved  session  layout  of  the  Macintosh-based  C64
+emulator "Power64" (in POWER64.TXT). Thanks to Peter Weighill for the above
+info.
+
+  Joe Forster/STA has written up a description of how the various Commodore
+drives (1541/1571/1581) allocate sectors and directory entries when  saving
+files (under normal mode and under GEOS). It is included as DISK.TXT
+
+  Right now there are several good utilities available to work with most of
+the mentioned formats. The first is 64COPY, my own conversion program.  The
+second is Star Commander, by Joe Forster/STA. Included with his program are
+many smaller utilities such as Star ARK, Star LHA and Star ZIP, which  will
+convert specific formats to D64 images.
+
+                                                 Peter Schepers,
+                                                 University of Waterloo.
+
+                                          Email: schepers@ist.uwaterloo.ca
+
+---------------------------------------------------------------------------
+
+Most recent changes:
+
+Jun  2/04 - Changes to the D2M.TXT document.
+
+Nov 27/05 - Renamed D2M to D2M-DNP.TXT & extensively updated
+          - Updated GEOS.TXT
+          - Updated D80-D82.TXT
+          - Updated CRT.TXT with new CRT types 19-23
+
+Feb 21/06 - Updated CRT.TXT with new CRT types 24-27
+
+Jun 12/07 - Updated CRT.TXT with sample CRT's for types 24-27
+
+Oct  1/07 - Updated VICE_FRZ.TXT with info about the bogus ".S64"  snapshot
+            file extension from the UnQuill package.
+          - Updated D81.TXT doc
+          - Updated D71.TXT doc
+          - Updated G64.TXT doc
+          - Updated CVT.TXT doc
+
+Feb 19/08 - Updated G64.TXT, removed erroneous odd/even tail gap info.
+          - Updated D64.TXT with other SpeedDOS clone names
+
+Nov 7/08 - Updated D64, D71,  D81  &  D80/D82  with  extra  explanation  of
+           oversize directory track images, which contain more  files  than
+           normal.
+
+---------------------------------------------------------------------------
+
+*** Terms and acronyms
+
+  Many strange terms have come along with computers in general, and I  will
+not attempt to explain them all, but some of the ones in this document  may
+not be entirely clear. I will attempt to make things  a  little  easier  by
+explaining some of the more common ones.
+
+
+  <CR> - Short form for a Carriage Return ($0D) symbol.
+
+  <LF> - Short form for a Line Feed ($0A) symbol.
+
+  ARCHIVE - A  file  format  which  contains  other  files,  and  in  which
+            compression is an integral part of the  design.  Some  examples
+            are ZIP, SRK, SDA, ARC, LHA, WRA.
+
+  ASCII - This is an acronym for "American Standard  Code  for  Information
+          Interchange". The standard  is  a  7-bit  code  covering  control
+          codes, punctuation, alphanumeric (A to Z, 0 to 9) as well as math
+          and a few other symbols. Since it is a 7-bit code, it ranges from
+          $00 to $7F (0-127). This leaves the top 128-255 definable by  the
+          vendor. The PC world has corrupted this standard making it 8-bit.
+
+  BAM - An acronym for "Block Availability Map". Here  is  where  the  disk
+        operating system keeps track of  what  sectors  are  allocated  (or
+        available) for each track.
+
+  BLOCK - This refers to sectors which  on  a  logical  level  are  grouped
+          together. On a 1541 disk, it could be a series of sectors  linked
+          together in a file, or a partition on a  1581  disk.  In  the  PC
+          world it represents a "cluster"  of  sectors.  Generally  if  I'm
+          referring to a grouping of sectors thats *not* 256  bytes  large,
+          then I talk in blocks.
+
+  BYTE - A group of 8 bits, the contents of a memory location.
+
+  CHAIN - A series of sectors linked  together.  One  sector  will  have  a
+          pointer to another, and that sector will point to another,  until
+          the chain has no more forward pointers. A file stored on  a  1541
+          disk would be considered a chain of sectors, but it  also  has  a
+          directory entry explaining what the chain is for.
+
+  CONTAINER - A file format which  simply  contains  other  files,  and  no
+              compression takes place. Some examples  are  T64,  P00,  SPY,
+              ARK, LNX.
+
+  FILETYPE - In the Commodore world, this would be the kind of file, be  it
+             SEQ, REL, PRG, USR, GEOS etc. In the  DOS  world,  this  would
+             possibly be the file extension, be it EXE, TXT, DOC. It  tells
+             the user what file it is, making usage easier.
+
+  GCR - An acronym for "Group Code Recording". This is the encoding  method
+        Commodore uses to physically store the information on most  of  the
+        5.25" disks (i.e. 1541). It encodes an  8  bit  sequence  (2  4-bit
+        nybbles) into a 10 bit sequence (2  5-bit  nybbles)  so  that  long
+        repeated sequences of 1's or 0's are avoided. These must be avoided
+        so that the timing of reading/writing to the disk won't become "out
+        of sync". As a user, you would not normally see the GCR information
+        since the drive does all the conversion to normal HEX  data  before
+        it gives it to you.
+
+  HIGH/LOW - The bytes here are stored backwards compared to  the  LOW/HIGH
+             method. See LOW/HIGH for more information.
+
+  IMAGE - A file format which is a PC equivalent of  a  physical  Commodore
+          media. Some examples are D64 (1541), D71 (1571), D81 (1581),  D2M
+          (FD2000), X64.
+
+  LINK - This is the track/sector values, stored in the first two bytes  of
+         a sector, which point to (or "link" to) the t/s  location  of  the
+         next sector. A  series  of  these  links  comprise  a  "chain"  of
+         sectors.
+
+  LOW/HIGH - This is how values are stored when they  exceed  one  byte.  A
+             good example of this is the sector count of  a  D64  file.  To
+             calculate the actual value, take the second value, multiply it
+             by 256 and add the low  value.  You  will  now  get  the  real
+             decimal value. i.e. (HIGH*256)+LOW=result.
+
+             If you look at is as a HEX value, swap the  bytes  around  and
+             put them together for the 16-bit HEX value. i.e. $FE $03 would
+             be $03FE as a 16-bit HEX value.
+
+  LSB/MSB - See LOW/HIGH.
+
+  LSU - This is my own acronym meaning "last  sector  useage".  It  is  the
+        value stored in byte position $01 (the "sector" value  of  the  t/s
+        link) of the last sector of a file. This value is the offset  into
+        the sector where the last byte is stored. It  also  represents  the
+        byte count + 1, since a value of 255 would actually mean  only  254
+        bytes of file data exists (full sector less the  2  bytes  for  t/s
+        chain). Without reasonable knowledge of the disk layout, this  byte
+        can be confusing, and hard to explain.
+
+  NYBBLE - A grouping of 4 bits (half a byte), either the first or  last  4
+           bits of an 8-bit binary number,  or  one  half  of  a  two-digit
+           hexadecimal number.
+
+           Typically, a byte will be broken down into two parts, the top  4
+           bits and the bottom 4 bits. These are referred to as  the  upper
+           and lower  nybble  respectively,  and  are  represented  by  two
+           hexadecimal digits in base 16.
+
+  PETASCII - (or PETSCII) This is Commodore's version  of  ASCII  (the  PET
+             part of the name comes from the  first  computer  to  use  the
+             code, the PET or Personal Electronic Transactor).
+
+             Most of the codes from 0-127 are the same as ASCII, but  there
+             are differences, especially  noticible  when  converting  text
+             from a C64  to  a  DOS  machine.  Where  ASCII  has  uppercase
+             characters, PETASCII has lower  case  ones,  and  vice  versa.
+             Also, the top 128 characters (128 to 255) are quite  different
+             from the PC "standard".
+
+  RLE - An acronym for "Run Length Encoding". This is a simple  compression
+        method, employed by most compression programs,  and  also  used  by
+        some file formats (ZipCode, CPK). It encodes sequences (or  "runs",
+        hence the name "RUN length...") of the same byte (i.e. 00 00 00  00
+        00 00) into a smaller string using a shorter code sequence,  making
+        the resultant file smaller than the original. This is the  simplest
+        form of file compression.
+
+  SECTOR - It is best described as the method that the drive uses to  store
+           the smallest group of bytes physically on the disk. On the  1541
+           this refers to a group of 256 bytes stored together in a  single
+           sector. On a PC disk, this is typically 512 bytes.
+
+  SIGNATURE - A group of bytes, usually near or at the front of  the  file,
+              which are used to identify the type of file. i.e. a PC64 file
+              will always have the signature string "C64file" contained  at
+              the beginning of the file.
+
+  TAR - An acronym for "Tape ARchiver", a UNIX application, and  method  of
+        backing up information.
+

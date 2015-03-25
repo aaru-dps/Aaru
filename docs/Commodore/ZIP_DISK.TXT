@@ -1,0 +1,185 @@
+
+*** DiskPacked ZipCode (4 or 5 file version, 1!xxxxxx, 2!xxxxxx, etc)
+*** Document revision: 1.2
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Paul David Doherty
+
+  This format works directly on D64 images only. It is a compressed form of
+a 1541 disk (or a D64 file) and is typically comprised of 4 files for a  35
+track disk. The 5-file version is for 40-track  images,  and  is  a  Joe
+Forster/STA extension of the standard. This  form  of  the  ZipCode  format
+can't be used to  store  disks  with  errors  on  them,  as  there  are  no
+provisions for error bytes. It is strictly a compressed sector  copy  of  a
+disk.
+
+  The following chart shows the filenames, range of tracks  and  the  total
+sectors that each one contains:
+
+   FileName  Track Range  Block Count
+   --------  -----------  -----------
+   1!xxxxxx     1 - 8     168 sectors
+   2!xxxxxx     9 - 16    168 sectors
+   3!xxxxxx    17 - 25    172 sectors
+   4!xxxxxx    26 - 35    175 sectors
+   5!xxxxxx    36 - 40     85 sectors (valid only for 40 track disk images)
+
+  This format uses sector interleaving to read  the  disk.  It  reads  each
+sector using an interleave of -10 for even #'s sectors (0,2,4...)  and  +11
+for odd numbered sectors (1,3,5...). The actual value for both  interleaves
+varies as we progress further into the disk. At track 18, it goes to -9 for
+evens and +10 for odds, and at track 25 it changes to -8 for evens  and  +9
+for odds. This is important to better understand the layout,  as  it  means
+the sectors  are  *not*  stored  in  order  (0,1,2...),  but  the  changing
+interleave makes reading/writing the sectors much faster. This  also  means
+that in order to reconstruct each track, a buffer of memory the size of the
+largest track (track 1, 21 sectors*256 bytes = 5.25  kbytes)  must  be  set
+aside, and the sector information copied into the  appropriate  area  until
+the whole track is assembled.
+
+Here is a partial HEX dump of the first file and description of the layout.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+      -----------------------------------------------
+0000: FE 03 36 34 41 00 00 41 0B 00 41 01 00 41 0C 00
+0010: 41 02 00 41 0D 00 41 03 00 41 0E 00 41 04 00 41
+0020: 0F 00 41 05 00 41 10 00 41 06 00 81 11 33 02 00
+0030: 2F 80 25 9D FA 66 AF 9B 6A 14 A0 E4 10 CA 18 90
+0040: 7B 67 51 47 92 2B 4C 52 83 78 01 A9 58 D0 31 70
+0050: 34 30 B7 85 2C D4 9F 1C 1F A9 EA EA EA 15 3E 02
+0060: D0 00 41 07 00 41 12 00 41 08 00 41 13 00 41 09
+
+  Byte: $00-01: Load address, low/high byte. If the load address  is  $03FE
+                then we have the DISK ID following  immediately  after.  If
+                it's $0400, then no DISK ID follows.
+         02-03: Disk ID, only if the load address is $0400.
+
+  From here on, the format can vary, depending  on  the  contents  of  each
+sector. The next two bytes contain the track/sector, but  the  track  value
+now includes the compression method, contained on the top two bits...
+
+Bit: 76543210
+     xxyyyyyy
+     ^^|    |
+     | ------
+     |   ^
+     |   |
+     |   |
+     |   These are the track bits.
+     |
+     These are the compression flags
+
+  Since the track range is from 1-35, only the bottom 5 bit are used.  This
+leaves the top two empty, and usable. Here is their usage:
+
+   00 - No compression, the sector is stored in full. The  next  256  bytes
+        contain the full sector information.
+   01 - Sector is filled with *one* character. The next  character  is  the
+        fill byte. Repeat it 256 times, and fill the sector.
+   10 - Sector is compressed using RLE compression (see below for details)
+   11 - Unused
+
+  Lets look at each method of storing a sector with  different  compression
+methods, using the above example...
+
+  00: This is the simplest method, as it entails  no  compression.  All  we
+      have is a track and sector value, and 256 bytes of data follow it.
+
+  01: At byte 04 we have 41 00 00. Breaking down  $41  to  binary  we  have
+      "01000001". The top two bits indicate we  have  type  01  compression
+      (fill sector), and the bottom 6 indicate we have track  1.  The  next
+      byte is the sector ($00), and the next byte is also a $00, indicating
+      this sector is completely filled with $00.
+
+      0000: .. .. .. .. 41 00 00 41 0B 00 41 01 00 41 0C 00
+      0010: 41 02 00 41 0D 00 41 03 00 41 0E 00 41 04 00 41
+
+  10: The RLE encoding takes some explanation. RLE stands for  "Run  Length
+      Encoding", and is simply a means of encoding a  series  of  the  same
+      numbers into a much smaller string (i.e.  encoding  the  1's  in  the
+      string "0456111111111645" into something much shorter).
+
+      Looking at the example below, when we encounter a "10" type, we  have
+      track ($81, meaning track 1), sector ($11), the length of the encoded
+      string $33 (51 decimal) and a REP code, a unique byte used as a  flag
+      to show when we encounter an encoded repeated string. The REP code is
+      a single byte whose value doesn't occur in the decoded sector. It  is
+      typically the first unused value starting from 0, but in practice  it
+      can be anything, it simply must be an unused value.
+
+      0020: .. .. .. .. .. .. .. .. .. .. .. 81 11 33 02 00
+      0030: 2F 80 25 9D FA 66 AF 9B 6A 14 A0 E4 10 CA 18 90
+      0040: 7B 67 51 47 92 2B 4C 52 83 78 01 A9 58 D0 31 70
+      0050: 34 30 B7 85 2C D4 9F 1C 1F A9 EA EA EA 15 3E 02
+      0060: D0 00 .. .. .. .. .. .. .. .. .. .. .. .. .. ..
+
+      We know with this example that the encoded  data  is  51  bytes  long
+      ($33), and with a REP code of $02, whenever we encounter  a  $02,  we
+      have an encoded sequence. If we do  not  encounter  a  $02,  we  have
+      normal bytes. In the above sequence, we do not encounter a $02  until
+      $005F, so all the rest are normal bytes,  which  would  go  into  the
+      sector starting at position $00.
+
+      Once we hit a $02, the next two bytes are encoded this way...  repeat
+      count ($D0, decimal 208) and byte to repeat ($00).  So  we  fill  the
+      next 208 ($D0) bytes with $00's.
+
+      If you add up what we had before the $02, it was 48 bytes  long,  add
+      this to the 208 bytes and we have a  full  sector  of  256  bytes.  A
+      256-byte sector stored in 55 (51 + 4 byte header) bytes represents  a
+      good savings.
+
+      Notice the byte sequence in the above example 'EA  EA  EA'.  Why  was
+      this not encoded? Simple. The encoding sequence (REP,  LENGTH,  CHAR)
+      takes three bytes. It would not make any sense  to  encode  something
+      which is no shorter than  the  original  string.  ZipCode  will  only
+      encode a repeated string of 4 bytes or longer.
+
+      Now, lets break down the above sample into its encoded parts, to  see
+      how its made...
+
+      0000: FE 03          - Load Address
+      0002: 36 34          - Disk ID
+      0004: 41 00 00       - T/S 1,00, fill $00
+      0007: 41 0B 00       - T/S 1,11, fill $00
+      000A: 41 01 00       - T/S 1,01, fill $00
+      000D: 41 0C 00       - T/S 1,12, fill $00
+      0010: 41 02 00       - T/S 1,02, fill $00
+      0013: 41 0D 00       - T/S 1,13, fill $00
+      0016: 41 03 00       - T/S 1,03, fill $00
+      0019: 41 0E 00       - T/S 1,14, fill $00
+      001C: 41 04 00       - T/S 1,04, fill $00
+      001F: 41 0F 00       - T/S 1,15, fill $00
+      0022: 41 05 00       - T/S 1,05, fill $00
+      0025: 41 10 00       - T/S 1,16, fill $00
+      0028: 41 06 00       - T/S 1,06, fill $00
+      002B: 81 11 33 02    - T/S 1,17, RLE, length 51 bytes, REP byte $02
+            00 2F 80 25    - Normal data
+            9D FA 66 AF
+            9B 6A 14 A0
+            E4 10 CA 18
+            90 7B 67 51
+            47 92 2B 4C
+            52 83 78 01
+            A9 58 D0 31
+            70 34 30 B7
+            85 2C D4 9F
+            1C 1F A9 EA
+            EA EA 15 3E
+      005F: 02 D0 00       - REP byte found, repeat 208, fill with $00
+      0062: 41 07 00       - T/S 1,07, fill $00
+      0065: 41 12 00       - T/S 1,18, fill $00
+
+  This listing is basically what you would see if you ran CheckZipCode from
+inside 64COPY. It will dump out the ZipCode files  into  their  constituent
+parts, so you can see how the file is made, and if any errors exist.
+
+  The 4 and 5 file ZipCode format can't be used to store disks with  errors
+on them, as there are no provisions for  error  bytes.  It  is  strictly  a
+compressed sector copy of a disk.
+
+  There is no benefit for using ZipCode as it is only used for making disks
+easier to upload/download (for a BBS) or store. It is not a format that any
+of the emulators use directly. You can find utilites for the PC to undo and
+create the images, if you need to.
+

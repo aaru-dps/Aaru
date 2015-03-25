@@ -1,0 +1,125 @@
+
+*** LBR (LiBRary containers, C64 version only)
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/samples: Joe Forster/STA
+
+  There are two different types of LBR files, one for the C64 and one  more
+commonly used by CP/M (in this case on the  C128).  This  explanation  only
+deals with the C64 type.
+
+  This is a native C64 format, slightly similar in  structure  to  ARK/LNX.
+There exists a program on the C64 called  "Library  10.0"  which  seems  to
+maintain these containers. From the information in the  program  (which  is
+written in BASIC with a small ML subroutine), it appears  the  program  was
+really meant for up/downloading files from BBS's.  From  looking  over  the
+text in Library V7.0, the author appears to be Mike Swanson,  or  at  least
+the author of that version.
+
+  The container starts out with a 3 byte signature ("DWB"), the  file  size
+and file types are stored in  ASCII  with  a  single  space  padding  their
+start/end, and all strings and numbers are terminated with a <CR>.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 44 57 42 20 39 20 0D 53 55 50 45 52 20 44 4F 53   DWBú9úúSUPERúDOS
+0010: 0D 50 0D 20 31 35 30 37 20 0D 44 4D 43 20 31 2E   úPúú1507úúDMCú1.
+0020: 32 2F 47 52 41 46 46 49 54 59 0D 50 0D 20 32 30   2/GRAFFITYúPúú20
+0030: 32 34 31 20 0D 42 2E 44 45 4C 54 41 20 5A 41 4B   241úúB.DELTAúZAK
+0040: 20 2E 44 4D 43 0D 50 0D 20 32 37 30 32 20 0D 42   ú.DMCúPúú2702úúB
+0050: 2E 52 4F 43 4B 20 5A 41 4B 31 20 2E 44 4D 43 0D   .ROCKúZAK1ú.DMCú
+0060: 50 0D 20 32 38 38 36 20 0D 49 4E 46 4F 52 4D 41   Púú2886úúINFORMA
+0070: 54 49 4F 4E 2E 2E 2E 0D 50 0D 20 38 38 34 38 20   TION...úPúú8848ú
+0080: 0D 42 2E 4B 49 44 44 49 4E 47 20 20 20 2E 44 4D   úB.KIDDINGúúú.DM
+0090: 43 0D 50 0D 20 32 38 39 31 20 0D 42 2E 47 41 4C   CúPúú2891úúB.GAL
+00A0: 57 41 59 20 5A 41 4B 2E 44 4D 43 0D 50 0D 20 32   WAYúZAK.DMCúPúú2
+00B0: 38 36 30 20 0D 42 2E 41 20 4D 55 53 49 43 20 20   860úúB.AúMUSICúú
+00C0: 20 2E 44 4D 43 0D 50 0D 20 33 31 33 37 20 0D 47   ú.DMCúPúú3137úúG
+00D0: 2E 50 41 43 4D 41 4E 49 41 20 20 2E 44 4D 43 0D   .PACMANIAúú.DMCú
+00E0: 50 0D 20 33 32 36 32 20 0D 01 08 0B 08 00 00 9E   Púú3262úúúúúúúúž
+
+  The first 3 bytes are the signature to the file, "DWB", perhaps the  true
+authors initials...
+
+0000: 44 57 42 .. .. .. .. .. .. .. .. .. .. .. .. ..   DWB.............
+
+  Following this is the number of entries in the directory (9). See how  it
+has a space preceeding it, trailing it, and  a  <CR>  at  the  end  of  the
+string.
+
+0000: .. .. .. 20 39 20 0D .. .. .. .. .. .. .. .. ..   ...ú9ú..........
+
+  Following this we have the first directory  entry.  The  file  is  "Super
+DOS", it is a program file ("P"), and it is 1507 bytes long. The  filenames
+are not stored with any shift-space padding (like most other  formats),  so
+the directory entries vary widely in size. The filename does get terminated
+with a <CR>. From my experiments with the Library program,  it  does  *not*
+support REL files.
+
+0000: .. .. .. .. .. .. .. 53 55 50 45 52 20 44 4F 53   .......SUPERúDOS
+0010: 0D 50 0D 20 31 35 30 37 20 0D .. .. .. .. .. ..   .P.ú1507ú.......
+
+  Following this are the remaining directory entries.
+
+0010: .. .. .. .. .. .. .. .. .. .. 44 4D 43 20 31 2E   ..........DMCú1.
+0020: 32 2F 47 52 41 46 46 49 54 59 0D 50 0D 20 32 30   2/GRAFFITY.P.ú20
+0030: 32 34 31 20 0D .. .. .. .. .. .. .. .. .. .. ..   241ú............
+ ...
+00C0: .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. 47   ...............G
+00D0: 2E 50 41 43 4D 41 4E 49 41 20 20 2E 44 4D 43 0D   .PACMANIAúú.DMC.
+00E0: 50 0D 20 33 32 36 32 20 0D .. .. .. .. .. .. ..   P.ú3262ú.......
+
+  If it is not obvious yet, there is no way to know where the first  file's
+data starts in the container until the whole directory has been  read.  The
+byte following the <CR> of the last entry it is the first byte of the first
+entry.
+
+00E0: .. .. .. .. .. .. .. .. .. 01 08 0B 08 00 00 9E   .............úúž
+
+  From the starting location of the file file's data, you can now calculate
+where all the other entries start by using the file size, contained in each
+directory entry. In this case, the first file starts at $00E9 (offset 233).
+The second will then start at $06CC (1740).
+
+06C0: .. .. .. .. .. .. .. .. .. .. .. .. 01 08 0B 08  .................
+
+  64COPY supports this format on a read-only basis, allowing you to convert
+the files contained to another format.
+
+---------------------------------------------------------------------------
+
+What it takes to support LBR:
+
+  Except for a simple layout, and a 3-byte signature to identify the  file,
+a few obvious deficiencies exist in the LBR layout which can  make  support
+difficult.
+
+  Reading LBR files, in order to copy files out, is relatively  easy.  Once
+the directory is read we know all the file sizes, and we  also  know  where
+the first file starts. It is a simple matter to figure out where each  file
+actually starts in the LBR from this information.
+
+  Writing LBR is more difficult as it would appear that you must  know  the
+size of each file *before* you create the LBR header. It would also  appear
+that the whole directory must be created before *any* file copying can take
+place. When copying files from a D64 to an LBR, you don't know the  *exact*
+file size as they are stored in sectors. You would need to scan the  source
+file, tracing the sectors until the last one to determine its size.
+
+  Unlike LNX/ARK, the size of the directory is not made to  fit  blocks  of
+254 bytes (for easy 1541 usage), and the files are not aligned to 254  byte
+boundaries. This makes deleting files more difficult  as  no  matter  which
+file gets deleted, the whole file will have to be re-written.
+
+  The lack of a consistent directory entry size (like D64's 32 bytes)  also
+makes working with LBR inconvenient. Many of the file formats for  the  C64
+and the emulators suffer from this lack of a  well-defined  layout.  It  is
+understandable, however, why  formats  like  LBR  (and  LNX)  create  their
+entries in ASCII rather than binary as it's easier to use BASIC and  output
+a number in ASCII (delimited with a <CR>) than to calculate and output  the
+value in binary format.
+
+  The last negative for LBR is it doesn't support REL or  GEOS  files,  but
+thats not so important.
+

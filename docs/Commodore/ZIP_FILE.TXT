@@ -1,0 +1,165 @@
+
+*** FilePacked ZipCode (A!xxxxxx, B!xxxxxx, etc)
+*** Document revision: 1.4
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Joe Forster/STA
+
+  This is another rarely seen format, and is very similar to the Diskpacked
+(4-pack) Zipcode in structure. It is comprised of a series of files denoted
+by A!xxxxxx and B!xxxxxx, with letters instead  of  numbers  as  the  first
+characters of the filename. It also contains one other file called X!xxxxxx
+which contains a directory of the files stored in the overall archive. Here
+is the layout of the files:
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: FF 03 A6 11 0A 01 08 0E 08 CE 07 9E 20 28 32 30   úú¦úúúúúúÎúú(20
+0010: 36 34 29 00 00 00 78 A9 34 85 01 A2 05 BD 42 08   64)úúúx©4…ú¢ú½Bú
+0020: 9D 2D 00 CA 10 F7 9A A0 00 C6 32 CE 2C 08 B1 31   -úÊú÷š úÆ2Î,ú±1
+0030: 99 00 00 C8 D0 F8 A5 32 C9 08 D0 ED B9 48 08 99   ™úúÈĞø¥2ÉúĞí¹Hú™
+0040: 00 01 C8 D0 F7 4C 00 01 01 08 46 4D F3 BB B1 2F   úúÈĞ÷LúúúúFMó»±/
+
+  Bytes: 00-01: Load Address, low/high format, usually $FF $03, or $03FF)
+            02: Number of sectors in the file (maximum 166, or $A6)
+         03-??: Zipcoded sector data starts here
+
+  If 166 sectors was not enough to store the file then more x!xxxxxx  files
+are needed, and the layout is the same. This makes the resulting file  size
+of each section approximately the same as the 4-pack zipcode would  be,  as
+166 sectors is 1/4 of a normal D64 (664 sector) disk.
+
+  The sector information is zipcoded  in  the  same  manner  as  Diskpacked
+4-pack Zipcodes, but the sector size (excluding the t/s link) is 254 bytes,
+not 256 as in 4-pack zipcode. The compression is still stored  in  the  top
+two bits of the track link, and the remainder of the sector (254 bytes)  is
+encoded. Each block of the file is stored  in  full,  even  the  last  one,
+though it is rarely completely used.
+
+  Bits
+  ----
+   00 - No compression, the sector is stored in full. The  next  254  bytes
+        contains the remainder of the sector information.
+   01 - Sector is filled with *one* character. The next  character  is  the
+        fill byte. Repeat it 254 times, and fill the sector.
+   10 - Sector is compressed using RLE compression (see 4-pack ZipCode  for
+        details)
+   11 - Unused
+
+  If the track is decoded as $00, then we are on  the  last  block  of  the
+file, and the sector represents the number of bytes used.
+
+
+  The special file, X!xxxxxx, as mentioned above, contains a listing of all
+the files in the archive. It has most of the information that the  D64/1541
+entry would. Here is the layout:
+
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 01 08 0B 08 00 00 9E 32 30 36 31 00 00 00 A0 00   úúúúúú2061úúú ú
+0010: 8C 20 D0 8C 21 D0 B9 C7 08 F0 06 20 D2 FF C8 D0   ŒúĞŒ!Ğ¹ÇúğúúÒúÈĞ
+0020: F5 85 FF 85 FB A0 0A 84 FC 85 FD 85 FE A0 11 B1   õ…ú…û ú„ü…ı…ş ú±
+0030: FB 48 AA C8 B1 FB 48 A8 20 4B 09 20 41 09 8A 20   ûHªÈ±ûH¨úKúúAúŠú
+0040: 41 09 98 20 41 09 68 AA 68 18 65 FD 85 FD 8A 65   Aú˜úAúhªhúeı…ıŠe
+0050: FE 85 FE 20 39 09 20 3C 09 A0 00 B1 FB C9 A0 F0   ş…şú9úú<ú ú±ûÉ ğ
+0060: 08 20 41 09 C8 C0 10 D0 F2 20 3C 09 C0 13 F0 06   úúAúÈÀúĞòú<úÀúğú
+0070: 20 39 09 C8 D0 F6 A0 10 B1 FB 29 7F 20 41 09 20   ú9úÈĞö ú±û)úAúú
+0080: 3F 09 A5 FB 18 69 15 85 FB 90 02 E6 FC E6 FF A5   ?ú¥ûúiú…ûúæüæú¥
+0090: FF CD FF 09 D0 97 AA A0 00 20 4B 09 8E 08 09 8C   úÍúúĞ—ª úúKúúúŒ
+00A0: 09 09 A6 FD A4 FE 20 4B 09 8D 1A 09 8E 1B 09 8C   úú¦ı¤şúKúúúúúŒ
+00B0: 1C 09 AD FE 09 09 30 8D 2D 09 A0 00 B9 F7 08 F0   úú­şúú0-ú ú¹÷úğ
+00C0: 06 20 41 09 C8 D0 F5 60 93 9B 11 11 11 11 11 11   úúAúÈĞõ`“›úúúúúú
+00D0: 11 11 11 11 11 11 11 11 11 11 48 4F 4C 44 20 53   úúúúúúúúúúHOLDúS
+00E0: 54 4F 50 20 54 4F 20 50 41 55 53 45 20 4C 49 53   TOPúTOúPAUSEúLIS
+00F0: 54 49 4E 47 3A 0D 0D 00 0D 0D 54 4F 54 41 4C 20   TING:úúúúúTOTALú
+0100: 46 49 4C 45 53 20 20 3D 20 30 30 0D 54 4F 54 41   FILESúú=ú00úTOTA
+0110: 4C 20 42 4C 4F 43 4B 53 20 3D 20 30 30 30 0D 50   LúBLOCKSú=ú000úP
+0120: 41 43 4B 45 44 20 46 49 4C 45 53 20 3D 20 30 0D   ACKEDúFILESú=ú0ú
+0130: 05 5B 5A 43 20 49 49 5D 0D 00 A9 20 2C A9 22 2C   ú[ZCúII]úú©ú,©",
+0140: A9 0D 20 D2 FF A5 91 C9 7F F0 FA 60 8E 92 09 8C   ©úúÒú¥‘Éğú`’úŒ
+0150: 93 09 A0 02 A9 30 99 96 09 88 10 FA A2 02 AD 92   “ú ú©0™–úˆúú¢ú­’
+0160: 09 38 FD 8F 09 8D 94 09 AD 93 09 E9 00 8D 95 09   ú8ıú”ú­“úéú•ú
+0170: 90 11 AD 94 09 8D 92 09 AD 95 09 8D 93 09 FE 96   ú­”ú’ú­•ú“úş–
+0180: 09 D0 DB CA 10 D8 AD 98 09 AE 97 09 AC 96 09 60   úĞÛÊúØ­˜ú®—ú¬–ú`
+0190: 01 0A 64 00 00 00 00 31 32 33 00 00 00 00 00 00   úúdúúúú123úúúúúú
+01A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   úúúúúúúúúúúúúúúú
+01B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   úúúúúúúúúúúúúúúú
+01C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   úúúúúúúúúúúúúúúú
+01D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   úúúúúúúúúúúúúúúú
+01E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   úúúúúúúúúúúúúúúú
+01F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04   úúúúúúúúúúúúúúúú
+0200: 0E 4D 55 53 49 43 20 53 45 4C 45 43 54 4F 52 A0   úMUSICúSELECTOR 
+0210: A0 D0 B6 00 11 00 31 30 30 31 20 4C 45 54 54 45    Ğ¶úúú1001úLETTE
+0220: 52 20 2D 56 2D A0 D0 72 00 13 00 4E 45 57 20 4D   Rú-V- ĞrúúúNEWúM
+0230: 41 49 4C 2F 44 44 A0 A0 A0 A0 A0 D0 1E 00 19 00   AIL/DD     Ğúúúú
+0240: 4A 41 43 4B 20 54 48 45 20 4E 49 50 50 45 52 A0   JACKúTHEúNIPPER 
+0250: D0 C0 00 1A 06 54 55 52 4E 45 52 20 49 49 A0 A0   ĞÀúúúTURNERúII  
+0260: A0 A0 A0 A0 A0 D0 2B 00 07 00 53 43 52 45 45 4E        Ğ+úúúSCREEN
+0270: 20 20 30 A0 A0 A0 A0 A0 A0 A0 D3 07 00 05 00 53   úú0       ÓúúúúS
+0280: 43 52 45 45 4E 20 20 31 A0 A0 A0 A0 A0 A0 A0 D3   CREENúú1       Ó
+0290: 0C 00 05 01 53 43 52 45 45 4E 20 20 32 A0 A0 A0   úúúúSCREENúú2   
+02A0: A0 A0 A0 A0 D3 0B 00 04 00 53 43 52 45 45 4E 20       ÓúúúúSCREENú
+02B0: 20 33 A0 A0 A0 A0 A0 A0 A0 D3 02 00 04 01 53 43   ú3       ÓúúúúSC
+02C0: 52 45 45 4E 20 20 34 A0 A0 A0 A0 A0 A0 A0 D3 03   REENúú4       Óú
+02D0: 00 04 03 53 43 52 45 45 4E 20 20 35 A0 A0 A0 A0   úúúSCREENúú5    
+02E0: A0 A0 A0 D3 07 00 04 07 53 43 52 45 45 4E 20 20      ÓúúúúSCREENúú
+02F0: 36 A0 A0 A0 A0 A0 A0 A0 D3 08 00 03 00 53 43 52   6       ÓúúúúSCR
+0300: 45 45 4E 20 20 37 A0 A0 A0 A0 A0 A0 A0 D3 07 00   EENúú7       Óúú
+0310: 03 01 53 43 52 45 45 4E 20 20 38 A0 A0 A0 A0 A0   úúSCREENúú8     
+0320: A0 A0 D3 0B 00 03 09 .. .. .. .. .. .. .. .. ..     Óúúúú.........
+
+  Bytes: 0000-01FE: BASIC program which lists the contents of  the  archive
+                    (a SYS 2061 call to an ML program)
+              01FF: Number of archive (x!xxxxxx)  files.  Since  the  upper
+                    value is  4,  we  have  A!xxxxxx,  B!xxxxxx,  C!xxxxxx,
+                    D!xxxxxx and X!xxxxxx.
+              0200: Number of C64 files contained in the directory (14)
+              0201: Start of the directory
+
+  Each file has a directory entry in the X!xxxxxx file, starting at  $0201,
+each 21 bytes long, and laid out as follows:
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0200: .. 4D 55 53 49 43 20 53 45 4C 45 43 54 4F 52 A0   .MUSICúSELECTOR 
+0210: A0 D0 B6 00 11 00 31 30 30 31 20 4C 45 54 54 45    Ğ¶úúú1001úLETTE
+0220: 52 20 2D 56 2D A0 D0 72 00 13 00 4E 45 57 20 4D   Rú-V- ĞrúúúNEWúM
+0230: 41 49 4C 2F 44 44 A0 A0 A0 A0 A0 D0 1E 00 19 00   AIL/DD     Ğúúúú
+0240: 4A 41 43 4B 20 54 48 45 20 4E 49 50 50 45 52 A0   JACKúTHEúNIPPER 
+0250: D0 C0 00 1A 06 54 55 52 4E 45 52 20 49 49 A0 A0   ĞÀúúúTURNERúII  
+0260: A0 A0 A0 A0 A0 D0 2B 00 07 00 53 43 52 45 45 4E        Ğ+úúúSCREEN
+0270: 20 20 30 A0 A0 A0 A0 A0 A0 A0 D3 07 00 05 00 53   úú0       ÓúúúúS
+0280: 43 52 45 45 4E 20 20 31 A0 A0 A0 A0 A0 A0 A0 D3   CREENúú1       Ó
+0290: 0C 00 05 01 53 43 52 45 45 4E 20 20 32 A0 A0 A0   úúúúSCREENúú2   
+02A0: A0 A0 A0 A0 D3 0B 00 04 00 53 43 52 45 45 4E 20       ÓúúúúSCREENú
+02B0: 20 33 A0 A0 A0 A0 A0 A0 A0 D3 02 00 04 01 53 43   ú3       ÓúúúúSC
+02C0: 52 45 45 4E 20 20 34 A0 A0 A0 A0 A0 A0 A0 D3 03   REENúú4       Óú
+02D0: 00 04 03 53 43 52 45 45 4E 20 20 35 A0 A0 A0 A0   úúúSCREENúú5    
+02E0: A0 A0 A0 D3 07 00 04 07 53 43 52 45 45 4E 20 20      ÓúúúúSCREENúú
+02F0: 36 A0 A0 A0 A0 A0 A0 A0 D3 08 00 03 00 53 43 52   6       ÓúúúúSCR
+0300: 45 45 4E 20 20 37 A0 A0 A0 A0 A0 A0 A0 D3 07 00   EENúú7       Óúú
+0310: 03 01 53 43 52 45 45 4E 20 20 38 A0 A0 A0 A0 A0   úúSCREENúú8     
+0320: A0 A0 D3 0B 00 03 09 .. .. .. .. .. .. .. .. ..     Óúúúú.........
+
+  Bytes:$00-0F: 16 character filename (PETASCII, padded with $A0)
+            10: Filetype: (the character "P" "S" or "U"  OR'd  with  0x80).
+                This means that the write-protect and splat bits are  *not*
+                transferred, neither are custom file types, and REL is  not
+                allowed either.
+         11-12: Length of the file in sectors (0 for no size)
+         13-14: Original starting track/sector of the file
+
+  In order to extract *one* specific file,  you  would  have  to  read  the
+entire archive until you came across the directory entry that  you  wanted,
+then process that specific file. This format does not  contain  any  offset
+references in the central directory for each file, just the  original  file
+size, which means that we don't know anything about where a file  might  be
+in the archive, since the original sector size doesn't apply as the  stored
+file in compressed.
+
+  Since this format seems to be uncommon, I can't see any benefit of  using
+it over LNX as a  native  C64  file.  The  only  plus  is  it  uses  simple
+compression, whereas LNX does not. However, LNX only uses one file for  the
+entire file set stored.
+

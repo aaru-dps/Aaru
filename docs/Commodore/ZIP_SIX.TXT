@@ -1,0 +1,372 @@
+
+*** SixPack Zipcode (6-file version, 1!!xxxxx, 2!!xxxxx, etc)
+*** Document revision: 1.4
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Paul David Doherty,
+                          Wolfgang Moser
+
+  This is another rare form of ZipCode, spanning six files, and  hence  the
+use of the name SixPack. Notice how the filename uses two  "!!"  characters
+in it, versus one for the other 4-file or filepacked zipcode formats.
+
+                Name      Track Range
+              --------    -----------
+              1!!xxxxx       1 - 6
+              2!!xxxxx       7 - 12
+              3!!xxxxx      13 - 18
+              4!!xxxxx      19 - 25
+              5!!xxxxx      26 - 32
+              6!!xxxxx      33 - 35 (or 40 for 40-track images)
+
+  The format for these is *nothing* like the  4-pack,  as  it  contains  no
+compression or track/sector references. Rather,  all  the  sector  data  is
+stored in GCR code (Group Code Recording). GCR is the method used to  store
+information, at the lowest level, on a 1541  diskette.  It  converts  4-bit
+nybbles (2 nybbles per byte, upper 4 bits and lower 4 bits) into an encoded
+5-bit GCR code. The conversion chart for 4-bit to 5-bit  conversion  is  as
+follows:
+
+          Hex   Binary    GCR (dec)    Hex   Binary    GCR (dec)
+          ---   ------   ----------    ---   ------   ----------
+           0 -   0000  - 01010 (10)     8 -   1000  - 01001 (9)
+           1 -   0001  - 01011 (11)     9 -   1001  - 11001 (25)
+           2 -   0010  - 10010 (18)     A -   1010  - 11010 (26)
+           3 -   0011  - 10011 (19)     B -   1011  - 11011 (27)
+           4 -   0100  - 01110 (14)     C -   1100  - 01101 (13)
+           5 -   0101  - 01111 (15)     D -   1101  - 11101 (29)
+           6 -   0110  - 10110 (22)     E -   1110  - 11110 (30)
+           7 -   0111  - 10111 (23)     F -   1111  - 10101 (21)
+
+If you look over the GCR table, there are two details that should be noted.
+
+  1. You *cannot* combine any group of GCR nybbles into a sequence of  bits
+     that contain more than 8 consecutive 1-bits. At least  ten  (or  more)
+     consecutive 1-bits is used for a SYNC mark,  used  to  tell  the  disk
+     controller that sector data is coming up. (In actual  fact,  the  1541
+     records an overkill of 40 sequential 1-bits to the disk as a SYNC mark
+     to ensure the controller can find the mark!).
+
+     Note that some documents refer to a minimum of 12 bits  needed  for  a
+     SYNC mark. This is likely why Commodore chose to use 40 bits  for  the
+     standard mark, as the overkill makes it almost impossible to miss.
+
+  2. There will never be any more than two consecutive 0-bits. This is done
+     to insure the accuracy of clocking data back to the  1541  controller.
+     Too many zero bits, and the clock  will  go  out  of  sync  and  start
+     clocking in phantom '1' bits.
+
+  Using the above table, let's convert some numbers.  For  reasons  I  will
+explain later, we must work in groups of four bytes  in  order  to  convert
+normal HEX to GCR.
+
+     Using these HEX numbers...
+
+     0D  F5  E4  37
+
+     now, split these values into nybbles and convert to binary...
+
+       0   D       F   5       E   4       3   7
+     ---- ----   ---- ----   ---- ----   ---- ----
+     0000 1101   1111 0101   1110 0100   0011 0111
+
+     convert nybbles to GCR using the conversion table...
+
+     0000  1101    1111  0101    1110  0100    0011  0111
+     ----- -----   ----- -----   ----- -----   ----- -----
+     01010 11101   10101 01111   11110 01110   10011 10111
+
+     now, recombine the bit into groups of 8...
+
+     01010 11101   10101 01111   11110 01110   10011 10111
+     |       ||          ||         ||          ||       |
+     | byte 1||  byte 2  ||  byte 3 ||  byte 4  || byte 5|
+     |       ||          ||         ||          ||       |
+      -------  ----------  ---------  ----------  -------
+     01010111   01101010   11111111    00111010   01110111
+
+     and convert back to HEX...
+
+     01010111   01101010   11111111    00111010   01110111
+     --------   --------   --------    --------   --------
+        57         6A         FF          3A         77
+
+  So, now we have converted a group of 4 bytes into 5 GCR bytes. The reason
+we must encode in groups of 4 is that it is the *minimum* number  of  bytes
+which, when converted to GCR bits, is  divisible  by  8  bits  without  any
+remainder... 1 byte would be 10 bits, 2 bytes would be 20, 3 bytes would be
+30, but 4 bytes is 40 bits, divisible by 8 since it leaves us with 5 groups
+of 8 bits.
+
+  Now that we have a foundation of GCR encoding, we can  begin  to  analyse
+the layout of the 6-pack zipcode. Below is a sample of the beginning of the
+first file (1!!xxxxx):
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: FF 03 24 52 55 25 29 4B 9A E7 25 55 55 52 55 35   ˙˙$RU%)KöÁ%UURU5
+0010: 2D 4B 9A E7 25 55 55 52 54 A5 49 4B 9A E7 25 55   -KöÁ%UURT•IKöÁ%U
+0020: 55 52 54 B5 4D 4B 9A E7 25 55 55 52 55 65 39 4B   URTµMKöÁ%UURUe9K
+0030: 9A E7 25 55 55 52 55 75 3D 4B 9A E7 25 55 55 52   öÁ%UURUu=KöÁ%UUR
+0040: 54 E5 59 4B 9A E7 25 55 55 52 54 F5 5D 4B 9A E7   TÂYKöÁ%UURTı]KöÁ
+0050: 25 55 55 52 55 A5 25 4B 9A E7 25 55 55 52 55 B5   %UURU•%KöÁ%UURUµ
+0060: 65 4B 9A E7 25 55 55 52 54 95 69 4B 9A E7 25 55   eKöÁ%UURTïiKöÁ%U
+0070: 55 52 55 95 6D 4B 9A E7 25 55 55 52 55 E5 35 4B   URUïmKöÁ%UURUÂ5K
+0080: 9A E7 25 55 55 52 55 55 75 4B 9A E7 25 55 55 52   öÁ%UURUUuKöÁ%UUR
+0090: 54 D5 79 4B 9A E7 25 55 55 52 55 D5 55 4B 9A E7   T’yKöÁ%UURU’UKöÁ
+00A0: 25 55 55 52 57 25 A9 4B 9A E7 25 55 55 52 57 35   %UURW%©KöÁ%UURW5
+00B0: AD 4B 9A E7 25 55 55 52 56 A5 C9 4B 9A E7 25 55   ≠KöÁ%UURV•…KöÁ%U
+00C0: 55 52 56 B5 CD 4B 9A E7 25 55 55 52 57 65 B9 4B   URVµÕKöÁ%UURWeπK
+00D0: 9A E7 25 55 55 29 0F 05 C0 99 00 02 C8 D0 D4 A9   öÁ%UU)˙˙¿ô˙˙»–‘©
+00E0: 02 8D 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ˙ç˙˙˙˙˙˙˙˙˙˙˙˙˙˙
+00F0: 00 00 00 00 00 00 00 00 00 41 4D 45 3A 20 31 32   ˙˙˙˙˙˙˙˙˙AME:˙12
+0100: 33 34 15 D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5 2D   34˙‘µ-KR‘µ-KR‘µ-
+0110: 4B 52 D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5 2D 4B   KR‘µ-KR‘µ-KR‘µ-K
+0120: 52 D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5 2D 4B 52   R‘µ-KR‘µ-KR‘µ-KR
+0130: D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4   ‘µ-KR‘µ-KR‘µ-KR‘
+0140: B5 2D 4B 52 D4 B5 29 4D 55 55 D4 A5 2D 4B 52 D4   µ-KR‘µ)MUU‘•-KR‘
+0150: B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5 2D 4B 52 D4 B5   µ-KR‘µ-KR‘µ-KR‘µ
+
+  Each file starts with a 3-byte signature, $FF, $03, and then either a $24
+for a 35 track image, or a $29 for a 40 track image.
+
+0000: FF 03 24 .. .. .. .. .. .. .. .. .. .. .. .. ..
+
+  Track  information  follows,  and  is  comprised  of  a  256  byte  track
+descriptor block (mostly GCR encoded), followed by  sector  information  at
+326 bytes/sector. The track descriptor contains the header  information  of
+each sector in that track, as well as the number of sectors encoded on that
+track.
+
+  The descriptor block is broken up into groups of 10 bytes. Each of  these
+groups contains the header information of a sector  stored  in  the  track.
+Sectors are stored in the header  in  linear  order,  but  not  necessarily
+starting at sector 0. If the numbers doesn't start at  sector  0,  then  it
+will go something like this: 4, 5, 6, 7, 8...16, 17, 18, 19, 20, 0,  1,  2,
+3. Since this track started on sector 4, notice the wrap-around from sector
+20 back to 0 and up to 3.
+
+
+Here is the layout from the above sample block...
+
+ Pos Byte CGR Contents                    Normal Contents (decoded)
+ --- ---- -----------------------------  --------------------------------
+                                         Sig Chk Sec Trk Id2 Id1 OffBytes
+  0   00: 52 55 25 29 4B 9A E7 25 55 55   08  02  00  01  31  32  0F  0F
+  1   0A: 52 55 35 2D 4B 9A E7 25 55 55   08  03  01  01  31  32  0F  0F
+  2   14: 52 54 A5 49 4B 9A E7 25 55 55   08  00  02  01  31  32  0F  0F
+  3   1E: 52 54 B5 4D 4B 9A E7 25 55 55   08  01  03  01  31  32  0F  0F
+  4   28: 52 55 65 39 4B 9A E7 25 55 55   08  06  04  01  31  32  0F  0F
+  5   32: 52 55 75 3D 4B 9A E7 25 55 55   08  07  05  01  31  32  0F  0F
+  6   3C: 52 54 E5 59 4B 9A E7 25 55 55   08  04  06  01  31  32  0F  0F
+  7   46: 52 54 F5 5D 4B 9A E7 25 55 55   08  05  07  01  31  32  0F  0F
+  8   50: 52 55 A5 25 4B 9A E7 25 55 55   08  0A  08  01  31  32  0F  0F
+  9   5A: 52 55 B5 65 4B 9A E7 25 55 55   08  0B  09  01  31  32  0F  0F
+  10  64: 52 54 95 69 4B 9A E7 25 55 55   08  08  0A  01  31  32  0F  0F
+  11  6E: 52 55 95 6D 4B 9A E7 25 55 55   08  09  0B  01  31  32  0F  0F
+  12  78: 52 55 E5 35 4B 9A E7 25 55 55   08  0E  0C  01  31  32  0F  0F
+  13  82: 52 55 55 75 4B 9A E7 25 55 55   08  0F  0D  01  31  32  0F  0F
+  14  8C: 52 54 D5 79 4B 9A E7 25 55 55   08  0C  0E  01  31  32  0F  0F
+  15  96: 52 55 D5 55 4B 9A E7 25 55 55   08  0D  0F  01  31  32  0F  0F
+  16  A0: 52 57 25 A9 4B 9A E7 25 55 55   08  12  10  01  31  32  0F  0F
+  17  AA: 52 57 35 AD 4B 9A E7 25 55 55   08  13  11  01  31  32  0F  0F
+  18  B4: 52 56 A5 C9 4B 9A E7 25 55 55   08  10  12  01  31  32  0F  0F
+  19  BE: 52 56 B5 CD 4B 9A E7 25 55 55   08  11  13  01  31  32  0F  0F
+  20  C8: 52 57 65 B9 4B 9A E7 25 55 55   08  16  14  01  31  32  0F  0F
+
+      D2: 29 0F 05 C0 99 00 02 C8 D0 D4   garbage
+      DC: A9 02 8D 00 00 00 00 00 00 00   garbage
+      E6: 00 00 00 00 00 00 00 00 00 00   garbage
+      F0: 00 00 00 00 00 00               garbage
+      F6: 41 4D 45 3A 20 31 32 33 34      garbage "AME: 1234"
+      FF: 15                              Number of valid sectors contained
+                                          with this track ($15=21 dec)
+
+  Each sector header block is  laid  out  in  the  following  order  (after
+decoding the 10 GCR bytes to 8 normal bytes):
+
+  Byte:   $00 - Header block descriptor value $08 (SIG value)
+           01 - Header checksum (EOR of bytes 02-05) (CHK value)
+           02 - Sector number (SEC)
+           03 - Track number (TRK)
+           04 - Second byte of disk ID (ID2)
+           05 - First byte of disk ID (ID1)
+        06-07 - "OFF" bytes ($0F's). These "fill" up the header to make  it
+                a multiple of 4 bytes, necessary in order to convert it  to
+                GCR (as six bytes would be too short to convert)
+
+  The entries for Sectors 17-20 will only  be  valid  if  the  track  being
+operated on has that many sectors in it. If the value at $FF is  $00,  then
+we have an empty track (bad track from the original  disk,  and  the  whole
+track should be set to error code 21). When this happens,  all  the  sector
+header info in the track descriptor block will be invalid. If we  only  use
+up to sector 16 (for tracks 31 and up), then all  the  info  following  the
+entry for sector 16 will be invalid. Invalid data  can  be  anything,  just
+ignore it.
+
+  All of the sixpack files I have either created or  received  contain  the
+string "AME: 1234" at the end of the track descriptor block. It is likely a
+"garbage" string, and can be useful in locating the descriptor blocks  when
+manually looking over the sixpack files with a HEX editor, but it shouldn't
+be used in any other capacity. You also can't easily tell  what  track  you
+are on, but given the track ranges covered by each  file,  and  the  sector
+count at the end of the descriptor block, it is possible to figure it out.
+
+  Each sector is 326 bytes long (GCR encoded), and each track is 256  bytes
++ (# of sectors/track * 326) bytes. Track 1 would be 256 +  (21  *  326)  =
+7102 bytes. The sector information stored in a specific interleave pattern,
+depending on the track we are on (unlike  the  entries  in  the  descriptor
+block, which are stored in linear order). Note that if this was a 40  track
+image, the interleave pattern for the last set of tracks would apply up  to
+track 40 instead of 35.
+
+  Note that the numbers referred to in the "Sector Data Interleave" portion
+of the table do *not* refer to actual sector numbers, but correspond to the
+group position in the header descriptor block. Thus header group  0  is  at
+interleave position 0, header group 1 is stored at interleave  position  8,
+etc. The header and sector data must be recombined this way before decoding
+the header to see what the real sector value is.
+
+  Track    Sector Data interleave reading pattern
+  -----    ----------------------------------------------------
+   1-17 -  0,8,16,3,11,19,6,14,1,9,17,4,12,20,7,15,2,10,18,5,13
+  18-24 -  0,8,16,5,13,2,10,18,7,15,4,12,1,9,17,6,14,3,11
+  25-30 -  0,8,16,6,14,4,12,2,10,1,9,17,7,15,5,13,3,11
+  31-40 -  0,8,16,7,15,6,14,5,13,4,12,3,11,2,10,1,9
+
+  The data within each sector is in two sections, and  is  stored  *out  of
+order*. This is partially due to the way the 1541 reads the data. The first
+256 GCR bytes are read into a buffer, then the remaining 70 GCR  bytes  are
+read into an "overflow" buffer. In the Sixpack image, the last 70 bytes (of
+the 326) are first, then the first 256 bytes follow, for  reasons  left  up
+the author of the sixpack format. You need to re-arrange the data to be  in
+the correct order before decoding it. We actually  only  decode  325  bytes
+(from 0-324, this 325 bytes, divisible by 5), so the last byte is left out.
+Once decoded, we have the following information:
+
+   Bytes:    $000 - Data block descriptor value $07
+          001-100 - Normal sector info
+              101 - Sector checksum (EOR of the data block, from 001-100)
+          102-103 - "OFF" bytes ($00's), used to "fill" up the  sector,  to
+                    make it a multiple of 4 bytes.
+
+  ZipCode disks are usually used to transfer  disks  which  contain  errors
+(copy-protected disks). It also is used for those disks which  use  unusual
+fastloaders such  as  Vorpal  or  Warp25,  which  use  different  low-level
+encoding methods.
+
+  The offset for each track into its respective  file  can  vary.  Assuming
+that the image contains no errors, we can look at each file  and  calculate
+the offset position of where each track should be.
+
+   File 1!!  Offset           File 2!!  Offset
+   --------  -------------    --------  -------------
+   Track 1   $0003 (3)        Track 7   $0003 (3)
+   Track 2   $1BC1 (7105)     Track 8   $1BC1 (7105)
+   Track 3   $377F (14207)    Track 9   $377F (14207)
+   Track 4   $533D (21309)    Track 10  $533D (21309)
+   Track 5   $6EFB (28411)    Track 11  $6EFB (28411)
+   Track 6   $8AB9 (35513)    Track 12  $8AB9 (35513)
+
+   File 3!!  Offset           File 4!!  Offset
+   --------  -------------    --------  -------------
+   Track 13  $0003 (3)        Track 19  $0003 (3)
+   Track 14  $1BC1 (7105)     Track 20  $1935 (6453)
+   Track 15  $377F (14207)    Track 21  $3267 (12903)
+   Track 16  $533D (21309)    Track 22  $4B99 (19353)
+   Track 17  $6EFB (28411)    Track 23  $64CB (25803)
+   Track 18  $8AB9 (35513)    Track 24  $7DFD (32253)
+                              Track 25  $972F (38703)
+
+   File 5!!  Offset           File 6!!  Offset
+   --------  -------------    --------  -------------
+   Track 26  $0003 (3)        Track 33  $0003 (3)
+   Track 27  $17EF (6127)     Track 34  $16A9 (5801)
+   Track 28  $2FDB (12251)    Track 35  $2D4F (11599)
+   Track 29  $47C7 (18375)    Track 36  $43F5 (17397)
+   Track 30  $5FB3 (24499)    Track 37  $5A9B (23195)
+   Track 31  $779F (30623)    Track 38  $7141 (28993)
+   Track 32  $8E45 (36421)    Track 39  $87E7 (34791)
+                              Track 40  $9E8D (40589)
+
+
+  Looking at the error codes for a normal 1541 disk, let's look at how some
+of the errors can be stored in the ZipCode images. The following  chart  is
+in reverse order of appearance, with the first errors  being  the  earliest
+detected.
+
+  Note that the description of the error may not  be  *completely*  correct
+compared to how the drive DOS actually works, but serves  as  a  reasonable
+explanation in understanding where the error comes from.
+
+  Err#    Error description and method
+  ----    -----------------------------------------------------------------
+   21     No SYNC character
+
+          Before we can read any sector from a track, the drive  will  look
+          for a special "sync" marker, a minimum series of 10 1-bits. If  a
+          sync  marker  is  not  found,  the  track  is  presumed  bad   or
+          unformatted.  The  SixPack  will  not  contain  any  sector  data
+          following the 256-byte header as there is no track data to store.
+          The sector count byte in the track descriptor block will  be  set
+          to zero.
+
+
+   20     Header block descriptor not found
+
+          This applies to individual sectors where the header ID ($08, from
+          above) isn't seen where it should be. The actual header is  still
+          read and stored, and the data should still be there.
+
+
+   27     Header block checksum error
+
+          The checksum stored in the sector header block doesn't correspond
+          to the checksum calculated for the header. The data block  should
+          still be there.
+
+
+   29     Disk ID mismatch
+
+          The ID's contained in the sector header  block  don't  match  the
+          disk master ID (from the header block of track 18/0, not the  one
+          at offset $A2/A3 of the sector data). The  data  block  is  still
+          present.
+
+
+   22     Data block descriptor not found
+
+          If the special value $07, preceeding the sector data  isn't  seen
+          where it should be, this error is  generated.  The  SixPack  will
+          still contain the sector data.
+
+
+   23     Data block checksum error
+
+          This one comes from the checksum value stored  after  the  sector
+          data. If the checksum present  doesn't  match  the  checksum  you
+          calculate, this error is  generated.  The  data  block  is  still
+          present in the SixPack.
+
+
+  When decoding these files, and attempting to determine what errors exist,
+here are a few tips to work by...
+
+  1. Any errors detected in the track descriptor block (20, 27,  29)  occur
+     in linear order (sector 0,1,2,3, etc)
+
+  2. Any error detected in the data block (22, 23) is *out* of  order,  and
+     follows the previously laid-out  sector  interleave  pattern  for  the
+     given track.
+
+
+  The real strength of  this  format  is  its  usefulness  in  transmitting
+error-protected and non-standard low-level fast-loaded disks. If  the  disk
+you wish to transmit has no errors, using this format would be a  waste  as
+almost *any* other format will use much less space.
+
+  One caveat to this  format  is  the  unforgiving  nature  of  the  6-pack
+creation utility on the C64. The one I used would generate a bad sector  if
+it encountered a sector that was only slightly bad, but would normally read
+back fine on the 1541 (due to the drive's error-correcting nature).
+

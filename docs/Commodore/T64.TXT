@@ -1,0 +1,221 @@
+
+*** T64 (Tape containers for C64s)
+*** Document revision: 1.5
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Miha Peternel
+
+  This format, designed  by  Miha  Peternel,  is  for  use  with  his  C64s
+emulator. It has a very structured directory with each entry taking  up  32
+bytes, and a reasonably well-documented format.
+
+  It has a large header  at  the  beginning  of  the  file  used  for  file
+signature, tape name, number of directory entries, used  entries,  and  the
+remainder for actual tape directory entries.
+
+  Following immediately after the end of the directory comes the  data  for
+each file. Each directory entry includes the information of where its  data
+starts in the file (referenced to the beginning of the file),  as  well  as
+the starting and ending C64 load addresses. From  these  addresses  we  can
+determine how long the stored file is (end-start).
+
+  Unfortunately, in the early days of the C64s emulator,  before  Miha  had
+his MAKETAPE utility ready, another program called CONV64 was on the scene,
+and it created faulty T64 files. The ending load address was usually set to
+$C3C6 regardless of file size. Be aware that these files  are  still  quite
+common on the Web and FTP sites.
+
+Here is a HEX dump of the first few bytes of a standard T64 file:
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+        -----------------------------------------------   ----------------
+000000: 43 36 34 53 20 74 61 70 65 20 69 6D 61 67 65 20   C64S.tape.image.
+000010: 66 69 6C 65 00 00 00 00 00 00 00 00 00 00 00 00   file............
+000020: 01 01 90 01 05 00 00 00 43 36 34 53 20 44 45 4D   ........C64S.DEM
+000030: 4F 20 54 41 50 45 20 20 20 20 20 20 20 20 20 20   O.TAPE..........
+000040: 01 01 01 08 85 1F 00 00 00 04 00 00 00 00 00 00   ................
+000050: 53 50 59 4A 4B 45 52 48 4F 45 4B 20 20 20 20 20   SPYJKERHOEK.....
+000060: 01 01 01 08 B0 CA 00 00 84 1B 00 00 00 00 00 00   ................
+000070: 49 4D 50 4F 53 53 49 42 4C 45 20 4D 49 53 53 2E   IMPOSSIBLE MISS.
+...
+0003E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+0003F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+000400: 1A 08 E4 07 9E 32 30 38 30 14 14 14 14 14 14 14   ................
+
+  The first 32 bytes ($000000-00001F) represent the signature of the  file,
+telling us it is a tape container for C64S. Note that it is padded with $00
+to make the signature 32 bytes long.
+
+000000: 43 36 34 53 20 74 61 70 65 20 69 6D 61 67 65 20   C64S.tape.image.
+000010: 66 69 6C 65 00 00 00 00 00 00 00 00 00 00 00 00   file............
+
+  It is important that the string "C64" be at the  beginning  of  the  file
+because it is the string which is common enough to be used to identify  the
+file type. There are several variations of  this  string  like  "C64S  tape
+file" or "C64 tape image file". The string is stored in ASCII.
+
+  The next 32 bytes contain all the info about the directory  size,  number
+of used entries, tape container name, tape version#, etc.
+
+000020: 01 01 90 01 05 00 00 00 43 36 34 53 20 44 45 4D   ........C64S.DEM
+000030: 4F 20 54 41 50 45 20 20 20 20 20 20 20 20 20 20   O TAPE..........
+
+Bytes:$20-21: Tape version number of either $0100 or $0101. I am  not  sure
+              what differences exist between versions.
+       22-23: Maximum  number  of  entries  in  the  directory,  stored  in
+              low/high byte order (in this case $0190 = 400 total)
+       24-25: Total number of used entries, once again  in  low/high  byte.
+              Used = $0005 = 5 entries.
+       26-27: Not used
+       28-3F: Tape container name, 24 characters, padded with $20 (space)
+
+  The next 32 bytes (and  on  until  the  end  of  the  directory)  contain
+individual directory entries.
+
+000040: 01 01 01 08 85 1F 00 00 00 04 00 00 00 00 00 00   ................
+000050: 53 50 59 4A 4B 45 52 48 4F 45 4B 20 20 20 20 20   SPYJKERHOEK.....
+000060: 01 01 01 08 B0 CA 00 00 84 1B 00 00 00 00 00 00   ................
+000070: 49 4D 50 4F 53 53 49 42 4C 45 20 4D 49 53 53 2E   IMPOSSIBLE MISS.
+
+Bytes   $40: C64s filetype
+                  0 = free (usually)
+                  1 = Normal tape file
+                  3 = Memory Snapshot, v .9, uncompressed
+              2-255 = Reserved (for memory snapshots)
+         41: 1541 file type (0x82 for PRG, 0x81 for  SEQ,  etc).  You  will
+             find it can vary  between  0x01,  0x44,  and  the  normal  D64
+             values. In reality any value that is not a $00 is  seen  as  a
+             PRG file. When this value is a $00 (and the previous  byte  at
+             $40 is >1), then the file is a special T64 "FRZ" (frozen) C64s
+             session snapshot.
+      42-43: Start address (or Load address). This is the first  two  bytes
+             of the C64 file which is usually the load  address  (typically
+             $01 $08). If the file is a snapshot, the address will be 0.
+      44-45: End address (actual end address in memory,  if  the  file  was
+             loaded into a C64). If  the  file  is  a  snapshot,  then  the
+             address will be a 0.
+      46-47: Not used
+      48-4B: Offset into the conatiner file (from the beginning)  of  where
+             the C64 file starts (stored as low/high byte)
+      4C-4F: Not used
+      50-5F: C64 filename (in PETASCII, padded with $20, not $A0)
+
+  Typically, an empty entry will have no contents at all, and not just have
+the first byte set to $00. If you only set the C64s filetype  byte  to  $00
+and then use the file in C64S, you will see  the  entry  is  still  in  the
+directory.
+
+0003E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+0003F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+
+  Starting at $000400 (assuming a directory with 30 entries)  we  now  have
+actual file data.
+
+000400: 1A 08 E4 07 9E 32 30 38 30 14 14 14 14 14 14 14   .....2080.......
+
+---------------------------------------------------------------------------
+
+What it takes to support T64:
+
+  This format has some advantages over D64's in that there is  very  little
+wasted space, except for the empty directory entries. It is laid  out  very
+logically, with entries and headers all being in 32-byte chunks, making for
+easy support. There is also a signature, and the directory size  can  be  a
+large as you need for expansion.
+
+  One large drawback is it is not  meant  to  support  multi-file  programs
+under C64s. If you have a program which requires several  sub-files  to  be
+loaded, under C64s a T64 file will not work. It would be best to use a  D64
+in this case.
+
+  When removing a file from a T64, you must  remove  the  entry  completely
+from the directory. Failure to do  so  results  in  the  file  still  being
+visible to C64s. It is not even good enough to set the whole entry to zero,
+but it must be *removed*.
+
+  The directory also contains the load start and end addresses. Why?  Since
+T64 was designed for C64s, having the load address was something useful  to
+show when selecting files inside of C64s. However, the  end  address  would
+have been better if it was replaced with "file size", so you  could  easier
+determine the file size for display.
+
+  While the directory design allows for C64 file types to be used, it would
+appear to be a waste as T64 really only supports loadable files  (PRG)  and
+nothing else. REL is out of the question.
+
+  Also, since the filename entries are not padded with A0  characters  (but
+rather with spaces), filenames can't have trailing spaces.
+
+  As mentioned previously, there are faulty T64 files around with the 'end load
+address' value set to $C3C6. In order to work around this bug,  here's  how
+to work with T64 files without relying on this value:
+
+  1. Read in the entire T64 header, ignoring the 'end load address' value
+
+  2. Sort the list by ascending order of offset into the T64
+
+  3. Determine the difference in size (in bytes)  between  the  first  file
+     offset and the next one. Remember to add in  the  two  'load  address'
+     bytes that are stored in the directory as they are part of the file.
+
+  4. You should now have your file size, and therefore be able to calculate
+     the 'end load address' value given the load address.
+
+
+---------------------------------------------------------------------------
+
+Overall Good/Bad of T64 Files:
+
+  Good
+  ----
+  * The header  is  *adequately*  defined  (but  some  improvement  in  the
+    description would be good)
+
+  * Supports a 16 character filename
+
+  * Has a verifiable file signature
+
+  * The format is extendible (can add delete to even a full container,  the
+    central directory doesn't have a small file limit)
+
+  * If you pack the T64 directory full, you minimize the DOS cluster  slack
+    space loss, since the file size is variable
+
+  * Has a description field in the header
+
+  * Can have loadable files with the same name(?)
+
+
+
+  Bad
+  ---
+
+  * Filenames can't have spaces at the ends due to the  padding  characters
+    being spaces ($20) and not the standard $A0 character
+
+  * It is not designed to  support  multi-load  programs.  Unless  all  the
+    emulators start supporting this, it would not be a  good  idea  to  use
+    them this way.
+
+  * Doesn't practically support >63 files (this is a  limitation  of  C64s,
+    nothing more)
+
+  * No directory customization, as zero-length files not  allowed  (minimum
+    filesize is 2 bytes)
+
+  * No actual file size for contained files is stored, so you need to use a
+    poor method to determine the file size based on the load addresses
+
+  * Can't easily re-write contained files as they are  blocked  in  by  the
+    files around them
+
+  * No REL file support, as format really only supports PRG's
+
+  * Header could have been  laid  out  better,  to  make  it  a  much  more
+    versatile format than it is now
+
+  * Can't have $00's in a filename(?)
+
+  * Even though you can set  the  directory  entry  to  be  the  real  1541
+    filetype (SEQ, USR, PRG), C64s still sees them as PRG's (?)
+

@@ -1,0 +1,42 @@
+
+*** CKIT (Compression KIT compressed files)
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Paul David Doherty,
+                          Todd Elliott
+
+  Written by Eugene F. Barker and Ryan Vander  Stoep,  this  archiver  does
+whole-disk archiving from the various Commodore drives (1541/1571/1581), as
+well as the larger CMD drives (hard disks). The  latest  known  version  is
+"CKIT-94", meaning it was released  in  1994.  The  compressor  program  is
+commercial  and  dongle  protected,  but  the  decompressor  is  publically
+available. From reports I have received the compression used is RLE,  which
+is not generally very good and it is also  not  very  fast.  One  point  in
+CKIT's favor is that  it  supports  all  the  presently  available  storage
+devices (CMD hard disks, Commodore 15xx floppy drives).
+
+  The file extension for single disk files (i.e.  when  a  compressed  disk
+archive only takes up one archive file) is "C4-". If an compressed  archive
+takes more than 1 file, the extension changes to "C4A" for  the  first  and
+"C`A" for the second. I do  not  know  what  the  extensions  will  be  for
+compressed files taking more than two files, but CKIT  does  allow  for  an
+archive to span up to 27 disks.
+
+  The header of the compressed file always starts  with  the  string  "MMS"
+(with a  space  and  $00  null  termination)  which  stands  for  "Mad  Man
+Software", the company which makes the product.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 4D 4D 53 20 00 58 58 21 90 89 A0 00 60 00 04 00   MMS˙˙XX!êâ†˙`˙.˙
+0010: 00 29 5A EC 94 03 40 06 20 2F BF D5 20 B4 68 81   ˙)ZÏî.@.˙/ø’˙¥hÅ
+0020: A0 8D 10 B4 10 AF 15 03 61 08 07 50 00 10 80 68   †ç.¥.Ø..a..P˙.Äh
+0030: 8A 88 08 91 03 32 1A 0F B7 30 1D 94 D0 7B 28 80   äà.ë.2..∑0.î–{(Ä
+
+  Byte: $0000-0004 - ASCII string "MMS " with null termination.
+         0005-0006 - Original Disk ID
+         0007-???? - Compressed data
+
+Any other information on this format would be greatly appreciated.
+

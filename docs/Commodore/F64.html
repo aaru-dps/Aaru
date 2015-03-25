@@ -1,0 +1,404 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<!-- DW6 -->
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<title>Decoding the F64 Filetype</title>
+
+<link rel="stylesheet" href="2col_leftNav.css" type="text/css">
+
+<style type="text/css">
+
+<!--
+
+.style1 {font-size: small}
+
+.style2 {font-size: small; font-weight: bold; }
+
+.style3 {font-size: large; font-weight: bold; }
+
+.style4 {font-size: x-large; font-weight: bold; }
+
+.style99 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: x-small;
+	font-weight: bold;
+	color: #000000;
+}
+-->
+
+</style>
+
+
+
+</head>
+
+<!-- The structure of this file is exactly the same as 2col_rightNav.html;
+
+     the only difference between the two is the stylesheet they use -->
+
+<body> 
+
+<div id="masthead"> 
+
+  <h1 class="style4" id="siteName">64Copy Central</h1> 
+
+</div> 
+
+<span class="style4">
+
+<!-- end masthead --> 
+
+</span>
+
+<div id="content"> 
+
+  <a name="#top"></a><h2 class="style3" id="pageName">Decoding the F64 filetype</h2> 
+
+  <div class="feature">
+
+    <p align="right" class="style1">Written by Peter Schepers on March 12, 2004 - Last updated Oct 4, 2007</p>
+
+    <p class="style2">Some History</p>
+
+    <p class=style1>Already several years ago (likely around 2000) I was asked to include F64 error conversion in <a href="personal.html"><b>64COPY</b></a>. The trouble was that F64&rsquo;s were very rare, and at that time I had no samples of them. They were only available from one specific CD called C64CD96, or the Unicorn CD. It was compiled by the <a
+
+href="http://www.whiz-zards.com/"><b>Whiz-zards</b></a> from the Netherlands using a program called FCOPY-PC which required special cabling between a PC, C64 and the 1541. Needless to say it didn&rsquo;t seem too critical to try to include the conversion since only one source of them existed. However, the CD holds over 5500 D64 images, and all of them have an F64 file.&nbsp;</p>
+
+    <p class=style1> I contacted Joe Forster/STA to inquire if he had any experience with F64. He did not, but immediately acquired the software and set out looking over the code. We exchanged a few emails, and came up with a few educated guesses about some of the layout, but much of it was still a mystery. Joe wrote up the <b><a href="http://sta.c64.org/">F64Check program</a></b> (available from his site) to aid in the discovery of the layout.</p>
+
+    <p class=style1>One 64COPY user (and I wish I could remember who it was) sent me the C64CD96 CD to help me in the decoding. After writing my own CheckF64 routine, I isolated all the disk images with errors, especially the ones with &lsquo;L&rsquo;, &lsquo;F&rsquo; and &lsquo;H&rsquo;. </p>
+
+    <p class=style1>The F64 format was likely developed by the Whiz-zards as an extension to the D64 format. The error byte version of the D64 was not likely in wide use then, so they came up with their own. They hacked the FCOPY-III copying software so that all it did was read an entire disk, and send the sector data and the on-screen C64 error codes (along with two extra bytes) back the PC. It sounded like a good idea, but there were some big limitations to this approach:</p>
+
+    <ul>
+
+      <li class="style1">FCOPY III can&rsquo;t detect an error 29, and therefore neither does FCOPY-PC</li>
+
+      <li class="style1">It doesn&rsquo;t differentiate between error 20 (bad ID) and 27 (bad checksum, both header errors)</li>
+
+    </ul>
+
+    <p class=style1>Error 29 requires that you know the master ID&rsquo;s of the disk you are reading but FCOPY-III doesn&rsquo;t read them from track 18 before copying the disk. Error 20 and 27 are both header errors, so there wasn&rsquo;t a need to show them differently. FCOPY-III simply wrote out the headers and sectors as it had read them. So while it reported that &ldquo;an error&rdquo; had occurred while reading a track/sector by writing an error code to the C64 screen, what made the error (the header itself) special was hidden in the header or sector data. The Whiz-zards didn&rsquo;t take this into account and so it is hard to know what error to use (27 or 20) when the &lsquo;H&rsquo; code is encountered.</p>
+
+    <p class=style1>The layout of the F64 file is deceptively simple. There&rsquo;s 2 bytes at the beginning of the file which are the master disk format ID&rsquo;s and then each sector has a 3-byte description: an error byte and two others which appear to be the low-level data block ID and data block checksum. The hard part was to understand what the error code meant, if the two bytes following the error code changed depending on the error code, and how to recombine the codes to produce a reasonably accurate destination file.</p>
+
+    <p class=style1>&nbsp;</p>
+
+    <p class=style2>Some Time Later</p>
+
+    <p class=style1>Around January 2004 I started the daunting task of writing the conversion code which would handle most of the remaining formats that 64COPY was not converting yet, specifically between the GCR formats, as well as the F64/D64 combination. Doing this required that the F64 error bytes be understood. I checked Joe&rsquo;s website, acquired the latest version of his F64 documentation, but I didn&rsquo;t agree with it as some of the error codes and the errors they were assigned to didn&rsquo;t make sense with some of my early experiments.</p>
+
+    <p class=style1>On <a
+
+href="http://d81.de/"><b>Wolfgang Moser&rsquo;s</b></a> site is contained source code for various hacked editions of FCOPY, and FCOPY-PC. They are not very well commented, but they certainly helped. Pouring over them helped link the &lsquo;L&rsquo; and &lsquo;F&rsquo; errors together, and they also commented on the &lsquo;P&rsquo; and &lsquo;S&rsquo; codes, but that was all I could get out of them. I never worked with 1541 drive code at the level that FCOPY does, so I didn&rsquo;t fully understand what the code was doing.</p>
+
+    <p class=style1>At this point I realized I would need to construct the setup necessary for using Markus Brenner&rsquo;s <a href="http://markus.brenner.de/"><b>MNIB</b></a> utility, Joe Forsters/STA <a href="http://sta.c64.org/"><b>Star Commander</b></a> and the Whiz-zards <b><a href="DOWNLOAD/FCOPYPC.ZIP">FCOPY-PC</a></b>. I would have to pull my C64 out of mothballs, build all the cables, install parallel ports in my 1541&rsquo;s (all three of them, just to be safe), and acquire all the software that would be needed to fulfill this task. I went to Joe&rsquo;s page again, downloaded all the utilities I thought I would need, and also printed off all the cable building documents I would need. His site is an invaluable resource!</p>
+
+    <p class=style1><a href="1541par.html"><strong>Installing the parallel port in a 1541</strong></a> is not too hard if you know how to solder, follow good ESD (electro-static discharge) procedures and have access to the needed parts. Being a 20-year veteran hardware technician made things easier, and the ports were neatly installed in a few hours. The book <a href="ccisa.html"><strong>The Complete Commodore Innerspace Anthology</strong></a> from the publisher of Transactor magazine is also a very handy reference when needing to check on anything Commodore, and in this case checking the chip pinouts in the drive to make sure I was soldering to the right pins on the VIA. </p>
+
+    <p class=style1><strong><a href="f64cable.html"> Building the FCOPY-PC cable</a></strong> is a little more difficult in that it needs more components (3 connectors, two cables and 4 resistors) but it was easily done. <strong><a href="xep1541.html">Building the XEP1541 parallel cable</a></strong> from the PC to the 1541 that MNIB and Star Commander needed to be able to read disks was the most difficult, but still doable. Star Commander doesn&rsquo;t <i>require</i> this cable, but it definitely works much faster with it. The XEP cable requires a few specialized Schottky barrier rectifier diodes, but any reputable electronics supply shop can get them. Otherwise, simply buy the cable from Joe&rsquo;s site. <strong><a href="c64par.html">Building the parallel cable from the C64 to the 1541</a></strong> that FCOPY-PC and FCOPY-III need can be the most difficult because you need a user port connector, not something readily available anymore. I managed to pull one off of an old C64 user-port cartridge I had kept all these years.</p>
+
+    <p class=style1>One word of warning: the documentation that comes with FCOPY-PC for building the parallel cable (from the 1541 drive to the C64) is <b>wrong</b>. Do not use it, as it connects to the incorrect pins on the VIA in the drive! Joe&rsquo;s Star Commander site documents the proper way to build a parallel port into the drive, including the correct pins on the VIA, and how to build a cable to the PC.</p>
+
+    <p class=style1>After getting all the cables built, getting all the software together and finding my stash of original C64 disks, I was ready to roll. I shut down my home PC (a Pentium 3, 800Mhz Intel CPU with ASUS CUSL2 board), hooked up the XE1541 parallel cable to the drive, and started Star Commander. It didn&rsquo;t work! It kind-of talked to the drive, but would hang all the time. I pulled out my X1541 cable that I had built several years ago&hellip; it didn&rsquo;t work, same problem. Frustration was setting in.</p>
+
+    <p class=style1>I checked the configuration settings for Star Commander, I changed the parallel port modes (SPP, ECP, EPP), but nothing worked. I spent several hours diagnosing and checking but nothing could talk to the drive properly. Even MNIB didn&rsquo;t work, although it claimed to see the drive and the parallel cable. Joe&rsquo;s XEP1541 documentation does mention that the parallel port on some mainboards won&rsquo;t work with this cable, and you need the XA1541 or XAP1541 cable instead. I didn&rsquo;t want to build another cable as the XAP variant requires some very specialized transistors. I decided that using another machine would be easier. I borrowed a Pentium 233Mhz and it worked fine! Things were finally getting somewhere. (Someday, maybe, I will build the XAP cable and test it, or try to find out why my mainboard doesn&rsquo;t like the XEP and X cables.)</p>
+
+    <p class=style1>I MNIB&rsquo;d all the sample disks I had, and created a 1541 disk with the FCOPY software for the C64. Using the <a href="http://www.viceteam.org/"><b>VICE C64 emulator</b></a>, I typed in the sample programs from the book <a href="icd.html"><strong>Inside Commodore DOS</strong></a> by Immers/Neufeld for creating errors on a 1541 floppy disk. (I will put this floppy image on-line at another time as I&rsquo;ve not completely debugged the programs). I figured these programs would prove invaluable as I could create all the errors I need and see what the FCOPY-PC error codes would be.</p>
+
+    <p class=style1>Things look like they are going good, right? Nope. Now my C64 proved to be very unstable, and it would crash after only a few minutes of operation. FCOPY would start copying for at most a track and then crash. As I used to be a Commodore-authorized service depot, I still had my <a href="diagnostic.html"><strong>C64 diagnostic setup</strong></a> (user-port connection, diagnostic cartridge and port connectors). It also would hang after a few minutes with no errors found. I attempted to find another C64 to work with but they are rare, and the surplus/thrift stores in my area didn&rsquo;t have anything anymore. Frustration level is starting to rise again! I realized I would have to fix my C64 before I could continue.</p>
+
+    <p class=style1>Once again, I went digging through my parts drawers to find my stash of C64 chips. I started to replace them one by one&hellip; 6510, 6581, PAL. Things improved a bit, but the machine would stil hang after about 4 minutes. FCOPY-PC worked a little better (it read a few tracks), but still hung. I finally changed the VIC-II chip and now the system worked!!! Time to go to work!</p>
+
+    <p class=style1>I started <a href="floppies.html"><strong>FCOPY&rsquo;ing all my disks</strong></a>, and was surprised at how many errors they had. Using a parallel connection to the drive was a joy as tracks can be read at an amazing rate! It took a few minutes before I realized that the 1541 I was using was badly out of alignment as disks that I knew were ok were full of various errors. My second drive didn&rsquo;t work at all (red LED stays on), but my third one worked great. I re-copied the disks and started getting some good results. I also MNIB&rsquo;d the disks for comparison. The error codes were starting to make sense. I was also very glad that I hadn&rsquo;t sold all of Commodore equipment as I had planned to a few months before.</p>
+
+    <p class=style1>Now I needed a floppy disk that had an established error pattern. I formatted a clean 1541 disk, ran the error-creation programs I had typed in earlier and created an error disk. <a href="fcopypc.html"><strong>I copied it with FCOPY-PC and watched the error pattern</strong></a>. It appeared I had finally established the errors for &lsquo;+&rsquo;, &lsquo;L&rsquo;, &lsquo;I&rsquo;, &lsquo;C&rsquo; and somewhat for &lsquo;H&rsquo;, but I still didn&rsquo;t know what &lsquo;F&rsquo; was, nor &lsquo;P&rsquo; and &lsquo;S&rsquo;. I had also mistakenly assigned the &lsquo;-&lsquo; code to error 29 as the only two sectors on my &ldquo;created&rdquo; disk with the &lsquo;-&lsquo; code did have error 29 assigned to them.</p>
+
+    <p class=style1>I started to write up the changes to my <a href="formats/F64.TXT"><strong>F64.TXT</strong></a> document, but I realized I had made a mistake assigning error 29 to the &lsquo;-&lsquo; code. Many F64 files had &lsquo;-&lsquo; errors and they couldn&rsquo;t possibly all be error 29! After playing with FCOPY III, the program that FCOPY-PC is based on, I came to the conclusion that error 29 is not detected. An analysis of the sector data being sent back revealed that the &lsquo;-&lsquo; code actually refers to a sector that is filled with $01, like a standard 1541 clean-formatted disk. When this code occurs, very little data is sent back to the C64. This is almost a form of &ldquo;compression&rdquo;, allowing FCOPY to copy an entire disk into C64 memory (no disk swaps), provided that most of the disk is empty.</p>
+
+    <p class=style1>I also noticed that one of my sample disks had an &lsquo;F&rsquo; error that covered several tracks but I still didn&rsquo;t know what it was. I MNIB&rsquo;d the disk, and on the &lsquo;F&rsquo; tracks MNIB reported &lsquo;Fexact match&rsquo; (a very strange response), but the MNIB output was the same for an &lsquo;L&rsquo; track. I started wondering if this was a <b>killer track</b>, one that has all SYNC marks, but MNIB wasn&rsquo;t outputting the correct track data.</p>
+
+    <p class=style1>On March 19, 2004 I modified one of the error creation programs to generate a killer track (all SYNC) instead of generating an error 21 (no SYNC). I ran it on a clean formatted disk and used both FCOPY-III and MNIB to read the disk. It confirms that the 'F' code is indeed the killer track error code. This means that my original theory regarding this code was right and I believe this finally ends my investigation of the F64 format. </p>
+
+    <p class=style1>&nbsp;</p>
+
+    <p class=style2>Where Things Were Left Off </p>
+
+    <p class=style1>This is the condition I have left things. I have basically decoded all the errors except &lsquo;P&rsquo; and &lsquo;S&rsquo;. I don&rsquo;t believe they are read-error codes, but instead are related to verification when writing the destination disk, and are therefore not applicable.</p>
+
+    <p class=style1>One thing has always bothered me from when I first encountered the F64 file, and I wonder if anyone can answer it: Why the severe lack of documentation about the F64 format in the first place? Why would a cracking group like the Whiz-zards take the time to create an elaborate cable setup and application suite to create a special auxiliary file for D64&rsquo;s and create/sell a CD with over 5500 D64 images on it without actually documenting how to use the F64 file, especially for emulator authors? And why would they not see the inherent limitations of using FCOPY III in the first place with respect to error 29 and 20/27? These limitations should have been addressed.</p>
+
+    <p class=style1>I hope I haven&rsquo;t put anyone to sleep with the length of this write-up, but F64 proved to be one of the most difficult formats to decode, and it is still not entirely understood. As time and sample disks allow, I will attempt to find out even more. My <a
+
+href="DOWNLOAD/FORMATS.ZIP"><b>FORMATS.ZIP</b></a> archive contains the new write-up, or you can <a href="formats/F64.TXT"><b>view it from here</b></a>.</p>
+
+    <p class=style1>&nbsp;</p>
+
+    <p class=style2>Below is the chart I now use to decode F64 files.</p>
+
+    <table width="623" border="1">
+
+      <tr class="style1">
+
+        <td width="92" class="style1"><div align="center" class="style2"><strong>Error Code </strong></div></td>
+
+        <td width="515" class="style1"><strong class="style2">Description</strong></td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">+</div></td>
+
+        <td class="style1">Sector ok and has data</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">-</div></td>
+
+        <td class="style1">Sector ok, but empty (filled with $01)</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">C</div></td>
+
+        <td class="style1">Error 23 &ldquo;data checksum&rdquo; (use the second and third bytes to reconstruct the sector)</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">L</div></td>
+
+        <td class="style1">Error 21 &ldquo;track has no SYNC mark&rdquo;</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">I</div></td>
+
+        <td class="style1">Error 22 &ldquo;data ID missing&rdquo; (use the second and third bytes to reconstruct the sector)</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">H</div></td>
+
+        <td class="style1">Error 20/27 &ldquo;Header ID missing&rdquo; or &ldquo;Bad header checksum&rdquo;</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">F</div></td>
+
+        <td class="style1">Killer track (full of SYNC)</td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">S</div></td>
+
+        <td class="style1">???, likely a verify error </td>
+
+      </tr>
+
+      <tr class="style1">
+
+        <td class="style1"><div align="center">P</div></td>
+
+        <td class="style1">???, likely a verify error </td>
+
+      </tr>
+
+    </table>
+
+    <p class=style1>&nbsp;</p>
+
+    <p class=style2>Update, June 8, 2004</p>
+
+    <p class=style1>A user from the Netherlands (Tijs Haeyen?) emailed me after reading this page, wondering why I had gone through all the trouble when I could have simply created a D64/F64 image set with the errors that I want to test, written them to a floppy, then analysed the floppy with MNIB. I didn't understand at first what he meant as how could I write the disk when I couldn't create it, but he proceeded to remind me that the FCOPY-PC utility has the menu option to write out a D64/F64 pair back to a disk. Duh! I didn't even see this option. I could generate an F64 file replete with errors and things likely would have been so much easier. However, I haven't taken up the advice yet.</p>
+
+    <p class=style1>&nbsp;</p>
+
+    <p class=style2>Update, Oct 4, 2007</p>
+
+    <p class=style1>I received a letter from a member of the Whiz-zards (Guido Gouweloos aka 'Unicorn') from the Netherlands in late 2005 detailing some of the history of FCopy-PC and partially answering my questions. I tried mailing this person with more questions but have never heard back since. I will now include this email (edited) as it fleshes out the history and development of FCopy-PC. His email doesn't fully answer all my questions, at least not to the depth I would like, but it's all I have. My questions that he tackled are in italics:</p>
+
+    <p class="style1">&quot;Hi Peter, I just came over your article about F64 files and FCopyPC. My name is Guido Gouweloos, <em><strong>Unicorn</strong></em> of The Whiz-Zards Association. Nice to see you article and all the time you put in this little piece of software that I designed a long way back.</p>
+
+    <p class="style1">I'd like to give you some history about FcopyPC. In the first place you should know I only had the idea of the program, I designed the basic functionality and I tested the program (PC and C64). Marco Edzes (Merlin of TWA) adapted FCopy and wrote the C++ PC software. I wrote some tools for F64 and D64 files, but I doubt everything was on the C64CD96 (the disc I compiled). At least I wrote a little program that's not on c64cd96 to display the full F64 on screen. I used the program to make another c64cd, but I never finished that one.</p>
+
+    <p class="style1">Somewhere in 1993, I got the idea to copy all my C64 disks to PC/Amiga, only to have that done before the dics would fade away under the influence of magnetic fields etc. I started copying my discs using a transfer program on the Amiga. If I am right this came with one of the commercial c64 emulator packages available. This hooked up a 1541 to an Amiga. This program was very slow (took 10-20 minutes per disk side). I did some hundreds of disks with that program, that also locked up the drive from time to time. And also disks with errors did not work after all. (Also disks without errors sometimes did not work). I did not have Star Commander at that time, and I am not sure if it was out then.</p>
+
+    <p class="style1">In that time a still had contact with an old TWA (The Whiz-zards Association) member that was the hardware guru: Marco Edzes. I knew him still from our C64 days (that mostly are from 1984 to 1989). I also knew he made his own 256KB C64 back in the 80's. And I knew he made an adaption of one of the Fcopy programs especially for this 256KB C64. The Fcopy program could read a disk at once, switching between the 64KB banks to put all disk-data in memory, and write back the disk afterwards. He also made a Fcopy version for 2 disk drives (both parallel if I am correct). This is on the c64cd96 too, called 'Double Fcopy'. I think sources are all on the D64 files somewhere.</p>
+
+    <p class="style1">I discussed the idea with Marco about a Fcopy program that could do disk transfers to a PC and back. Fcopy looked like a good start, because of the way it handles error copying. Marco thought this way a nice thing to built and he started making it. After a short time he came over to my house with the first version and cable. I started copying and it seemed to work OK. The first version of FcopyPC did not split into 2 separate files. If I remember right I wrote some kind of little tool to extract a D64 from this first file format.</p>
+
+    <p class="style1">I transferred around 100 disks from C64 to PC and back, just to test the copy program. Some disks did not seem to work. This was caused by the diskID that was read by the drive on disk insert/reading of the disk. This ID was gone after the copy. Marco fixed this and also made the new version split the files into D64 and F64 at once. The F64 file is just a header, with the diskID, followed by all the data that was generated by Fcopy at the time of read (screen display and some codes per sector). This data was used to transfer the disk back to C64 the way Fcopy would write a disk the original Fcopy Way. So the F64 structure is just a header + ID + dump of the codes Fcopy keeps in memory during copy.</p>
+
+    <p class="style2"><em>Why the severe lack of documentation about the F64 format in the first place?</em></p>
+
+    <p class="style1">The only documented versions of Fcopy are the TWA versions. Maybe some guys adapted this over the years, I don't know. As far as I know Marco is the only one who documented some of the source code to make his 256KB version (and Double Fcopy).</p>
+
+    <p class="style1">D64 was not enough to store information in (diskID for example could be different than the Track 18 ID). All extra data Fcopy needed/generated was put into a single file called F64.</p>
+
+    <p class="style2"><em>Why would a cracking group like the Whiz-zards take the time to create an elaborate cable setup and application suite to create a special auxiliary file for D64's and create/sell a CD with over 5500 D64 images on it without actually documenting how to use the F64 file, especially for emulator authors?</em></p>
+
+    <p class="style1">I described the reason earlier. FCopyPC was built to copy over 1500 disks (3000 disk sides) on a fast and easy way to PC and back to C64. It was nice to have the D64 to run them in an emulator. But them main reason for the program was speed and the trust of having a good copy both ways. Since almost all of my old disks were copied with Fcopy, Copy 1.5 or 15sec copy. most of the un-copyable errors you talk about would have been destroyed already by the first copy from c64 to c64 disks. Fcopy was the best choice for that time, also because Marco had a lot of knowledge about the program (and all sources available). To be honest: I don't even know what c64 disk-to-disk copy programs have been used after 1989.</p>
+
+    <p class="style1">I remember contacting one or two of the emulator guys back then, about implementing the diskID that some programs need (or just need to be cracked better). I also told them the ID was in the F64 files I generated. They were not interested back then.</p>
+
+    <p class="style2"><em>...and why would they not see the inherent limitations of using FCOPY III in the first place with respect to error 29 and 20/27? These limitations should have been addressed.</em></p>
+
+    <p class="style1">I guess this was just because we didn't know. Both Marco and I stopped with the C64 around 1989. We were used to FcopyPC back then, and we figured that would be the best and easiest way to go for a parallel tranfer program. Then again, all my disks were from before 1990 and already copied with Fcopy on the C64. I also did put all my 72 tapes (60 minutes per tape) back to disk and transferred them top PC. (Disk 2250 en up on the C64CD96). No errors on those disks.</p>
+
+    <p class="style1">I was programming some small games for Amiga in 1993, and did my study Higher Computer Science. Marco was also doing some kind of electronics study and even went a year to the UK, just after he made the FcopyPC program.</p>
+
+    <p class="style1">What I don't understand is the cable description on the CD is being wrong. Several people built the cable, never got complaints from them. Anyway Marco designed and built it for me, he also made the schematics description that's on the CD.</p>
+
+    <p class="style1">Hope some of your questions have been solved. I think it's just funny to see the FcopyPC program still being around on then internet. Wondering if anyone is using it anyway. If you have any questions feel free to ask. Although I can tell you more about the story around the creation, than the technical detailt.</p>
+
+    <p class="style1">Regards,
+
+      Guido.&quot;</p>
+
+    <p class="style1"><a href="#top"><strong>Back to top</strong></a></p>
+
+    <hr width="100%">
+
+    <p class="style1" align="left">Email the author: <a href="mailto:schepers@uwaterloo.ca">Peter Schepers</a> | Last updated: Oct 4, 2007</p>
+
+  </div> 
+
+</div> 
+
+<!--end content --> 
+
+<div id="navBar">
+
+  <div id="sectionLinks">
+
+  <h3>Site Index</h3>
+
+    <ul> 
+
+          <li><a href="personal.html">64Copy Home</a></li> 
+
+          <li><a href="news.html">64Copy Development News</a></li>
+
+          <li><a href="download.html">Software Downloads page</a></li>
+
+          <li><a href="transmag.html">Transactor Magazines Scans</a></li>
+
+          <li><a href="formats.html">View the Formats docs</a></li> 
+
+          <li><a href="F64.html">Decoding the F64 filetype</a></li>
+          <li><a href="diagnostic.html">Commodore Diagnostic Setup</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="FAQ.html">64Copy FAQ</a></li>
+      <li><a href="./MJK/index.html">Marc-Jano Knopp Site</a></li>
+      <li><a href="aboutme.html">About the author</a><br />
+      </li>
+    </ul>
+</div>
+ <div id="sectionLinks">
+  <h3><br />
+    Cables, ROM's & Troubleshooting</h3>
+    <ul> 
+      <li><a href="cables.html">Buy or Build X-series Cables</a></li>
+      <li><a href="pick.html">Choosing a Cable</a></li>
+      <li><a href="imaging.html">DOS Boot Imaging CD for 1541/71</a></li>
+      <li><a href="trouble.html">Troubleshooting Cables Under DOS</a></li>
+      <li><a href="mnib.html">Working with MNIB/NIBTOOLS</a></li>
+      <li><a href="roms.html">C64/1541 ROMs</a></li>
+      <li><a href="sockets.html">ROM Socket Adapters</a></li>
+    </ul> 
+  </div> 
+
+  <div id="sectionLinks"> 
+
+    <h3><br />
+    Special Links</h3>
+
+    <ul> 
+
+      <li><a href="http://www.fairlight.to" target="_blank">Fairlight</a></li>
+
+      <li><a href="http://sta.c64.org" target="_blank">Star Commander</a></li> 
+
+      <li><a href="http://markus.brenner.de" target="_blank">Markus Brenner (MNIB) </a></li> 
+
+      <li><a href="http://arnold.c64.org" target="_blank">Arnold C64 Archive</a></li> 
+
+      <li><a href="http://www.zimmers.net" target="_blank">Bo Zimmerman </a></li> 
+
+      <li><a href="http://www.csbruce.com/~csbruce/cbm" target="_blank">Craig Bruce</a></li>
+
+      <li><a href="http://d81.de" target="_blank">Wolfgang Moser</a></li>
+
+      <li><a href="http://rittwage.com/c64pp/dp.php?pg=home" target="_blank">C= Preservation Project (NIBTOOLS)</a></li>
+
+    </ul> 
+
+  </div> 
+
+  <div id="sectionLinks">
+    <h3><br />
+    Emulator Links</h3>
+
+    <ul> 
+
+          <li><a href="http://www.viceteam.org" target="_blank">Vice Emulator</a></li>
+
+          <li><a href="http://www.computerbrains.com" target="_blank">CCS64 Emulator</a></li>
+
+    </ul> 
+
+  </div> 
+
+</div> 
+
+
+
+<form name="_xclick" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+<input type="hidden" name="cmd" value="_xclick">
+
+<input type="hidden" name="business" value="schepers@uwaterloo.ca">
+
+<input type="hidden" name="item_name" value="64Copy development">
+
+<input type="hidden" name="currency_code" value="CAD">
+
+<input type="hidden" name="amount" value="25.00">
+
+<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-butcc-donate.gif" hspace="20" vspace="20" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+
+</form>  
+
+
+
+<!--end navbar --> 
+
+
+
+</body>
+
+</html>
+

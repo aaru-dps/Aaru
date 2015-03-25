@@ -1,0 +1,102 @@
+
+*** CPK
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Andre Fachat
+
+  This format, created by Andre Fachat, was not designed for the  emulators
+specifically, but was made primarily for Andre's own purposes.
+
+  It is a very basic format using simple RLE compression,  with  each  file
+following in sequential order (as Andre put it, "its similar to a UNIX  TAR
+file"). There is no central directory, none of the files are byte  aligned,
+and it uses compression so every file will be different.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 01 40 41 2E 41 4E 4C 2C 50 00 01 08 24 08 64 00   .@A.ANL,Pú..$.dú
+0010: 99 22 93 20 20 20 41 4E 4C 45 49 54 55 4E 47 20   ™"“úúúANLEITUNGú
+0020: 5A 55 4D 20 40 41 53 53 45 4D 42 4C 45 52 00 4E   ZUMú@ASSEMBLERúN
+0030: 08 6E 00 99 22 11 40 41 53 53 20 49 53 54 20 45   .nú™".@ASSúISTúE
+0040: 49 4E 20 32 2D 50 41 53 53 2D 41 53 53 45 4D 42   INú2-PASS-ASSEMB
+0050: 4C 45 52 2E 20 44 45 52 00 78 08 78 00 99 22 11   LER.úDERúx.xú™".
+
+  The first byte of the file is the version byte. Presently,  only  $01  is
+supported.
+
+0000: 01 .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..   ................
+
+  The filename  follows,  stored  in  standard  PETASCII,  and  no  padding
+characters ($A0) are included.
+
+0000: .. 40 41 2E 41 4E 4C .. .. .. .. .. .. .. .. ..   .@A.ANL.........
+
+  The filetype is attached to the end of the filename in the form of  ',x',
+where x is the filetype used (P,S,U), and it is in PETASCII upper case. The
+filename ends with a $00 (null terminated). REL files are  *not*  supported
+as there is no provision made for the RECORD size byte.
+
+  Note that not *all* CPK files will have the ",x" extension added  on.  If
+it doesn't exist, assume that the file is a "PRG" type.
+
+0000: .. .. .. .. .. .. .. 2C 50 00 .. .. .. .. .. ..   .......,Pú......
+
+Following the filename, we get program data.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: .. .. .. .. .. .. .. .. .. .. 01 08 24 08 64 00   ............$.dú
+0010: 99 22 93 20 20 20 41 4E 4C 45 49 54 55 4E 47 20   ™"“úúúANLEITUNGú
+ ...
+0270: 00 83 0A E6 00 99 22 11 20 20 31 32 33 F7 08 20   úƒúæú™".úú123÷.ú
+0280: 2D 44 45 5A 49 4D 41 4C 00 A4 0A F0 00 99 22 11   -DEZIMALú¤úðú™".
+0290: 20 20 24 33 34 35 F7 07 20 2D 48 45 58 41 44 45   úú$345÷.ú-HEXADE
+
+  The data requires some explanation as it uses RLE (Run  Length  Encoding)
+compression. When creating CPK files, data in the file to be compressed  is
+scanned for runs of repeating bytes, and when a string of 3 or more (up  to
+255) is found, then the following sequence of bytes is output...
+
+  $F7 $xx $yy - where F7 is the code used for "encoded  sequence  follows",
+                $xx is the number of times to repeat the byte  and  $yy  is
+                the byte to repeat. Using the sample below, we see  the  F7
+                code, then a "repeat 7 times the number $20"
+
+0290: .. .. .. .. .. .. F7 07 20 .. .. .. .. .. .. ..   ......÷.ú.......
+
+  Using $F7 as the encoder byte presents one problem: When encoding a file,
+and we encounter an $F7, what does the packer do? Simple, it  gets  encoded
+into $F7 $xx $F7 meaning repeat $F7 for as many times as is needed (if  its
+only 1 $F7, then the value for $xx  is  $01).  The  code  'F7'  was  chosen
+because it is not a 6502 opcode, a BASIC token, or any commonly used  byte,
+but *not* because it has the least statistical probability of occuring.
+
+  The stored program ends when the string $F7  $00  is  encountered,  since
+this sequence can not occur in the file naturally. If you  need  to  search
+through a CPK file for the filenames, do a  hex  search  for  all  $F7  $00
+sequences, since they preceed all filenames except the first.
+
+  The end of a CPK file can be found two different ways:
+
+    1. When an EOF (end of file) occurs, after an $F7  $00  byte  sequence.
+       This is the normal method.
+    2. When a filename of $00 occurs, meaning there is no filename, just  a
+       null termination. This is not much used anymore.
+
+  Using method #1 for ending the file  is  more  common  because  it  makes
+adding files to the CPK file very easy. All you have to do  as  append  the
+new filename/data to the container. Using method #2 means you have to check
+and see if the last three characters are $F7 $00 $00, and start writing the
+new file into the container starting after the first $00.
+
+  In order to extract *one* specific file, you would need to read the whole
+file until you find the filename you want, then output that file  only.  As
+this format has no central directory and no file location references, there
+is no other way to do it.
+
+  This format has not been used for some time now, as when it came out  D64
+and T64 were also being developed and  accepted  into  common  use.  It  is
+unlikely you will find *any* files in this format.  64COPY  V3.2  (and  up)
+does support extraction of these files just in case any are encountered.
+

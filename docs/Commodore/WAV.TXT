@@ -1,0 +1,145 @@
+
+*** WAV (RIFF audio files) Resource Interchange File Format
+*** Document revision: 1.1
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Various net documents
+
+  The WAV file is a variant of  the  RIFF  format,  specifically  used  for
+audio. RIFF is a generic format used mainly for video (AVI) and  audio.  It
+is built up with "chunks" which contain a chunk ID and a chunk size.
+
+  Below is a dump of a sample WAV file showing the header.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+      -----------------------------------------------  ----------------
+0000: 52 49 46 46 D4 45 CC 01 57 41 56 45 66 6D 74 20  RIFFװEּתWAVEfmtת
+0010: 10 00 00 00 01 00 02 00 44 AC 00 00 10 B1 02 00  תתתתתתתתD¬תתת±תת
+0020: 04 00 10 00 64 61 74 61 B0 45 CC 01 95 00 6D FF  תתתתdata°Eּת•תmת
+0030: 97 00 77 FF 6E 00 25 FF 58 00 14 FF 75 00 ED FE  —תwתnת%תXתתתuתם‏
+0040: 62 00 33 FE 2C 00 07 FE C4 FF 7A FE 53 FF C3 FE  bת3‏,תת‏ִתz‏Sתֳ‏
+0050: 91 FF 83 FE 21 00 91 FE EB 00 0D FF FF 00 57 FF  ‘תƒ‏!ת‘‏כתתתתתWת
+0060: 98 00 C4 FF 9F 00 79 00 60 00 DD 00 07 00 1D 01  ˜תִתתyת`תÝתתתתת
+
+
+     $0000-0003: Chunk ID  "RIFF"  in  ASCII  ("RIFX"  files  identify  the
+                 samples audio data in hi/lo format instead of  the  normal
+                 lo/hi format)
+
+      0004-0007: Chunk size (lo/hi) $01CC45D4=30,164,452 is the total  size
+                 minus 8 (these first 8  bytes  are  not  included  in  the
+                 overall size)
+
+      0008-000B: Chunk format "WAVE". This format requires two subchunks to
+                 exist, "fmt " and "data".
+
+      000C-000F: Subchunk1 ID "fmt ". This describes the format of the next
+                 DATA subchunk.
+
+      0010-0013: Subchunk size (lo/hi) $00000010 (usually  this  value  for
+                 PCM audio)
+
+      0014-0015: Audio format (1=PCM, 2 and higher are custom) ($0001)
+                 - $0001 = standard PCM
+                 - $0101 = IBM mu-law (custom)
+                 - $0102 = IBM a-law (custom)
+                 - $0103 = IBM AVC ADPCM (custom)
+
+      0016-0017: Number of channels (1=mono, 2=stereo, etc) ($0002)
+
+      0018-001B: Sample rate per second (lo/hi) $0000AC44 = 44100
+
+      001C-001F: Byte rate per second (=sample rate * number of channels  *
+                 (bits per channel/8)) $0002B110 = 176400
+
+      0020-0021: Block Align (=number of  channels  *  bits  per  sample/8)
+                 ($0004).
+
+      0022-0023: Bits per sample (8=8 bits, 16=16  bits)  ($0010).  Samples
+                 not using the entire bit range allocated  should  set  the
+                 unused bits off.
+
+      0024-0027:  Subchunk2  ID  "data".  This  chunk  contains  the  audio
+                 samples. There can be more than one in a WAV file.
+
+      0028-002B: Subchunk2 size (lo/hi) ($01CC45B0=30,164,400)
+
+      002C-xxxx: Audio data (lo/hi),  stored  as  2's  complimented  signed
+                 integers in the following order:
+
+                   Sample 1: Channel1 (left)   ($0095=+149)
+                   Sample 1: Channel2 (right)  ($FF6D=-)
+                   Sample 2: Channel1 (left)   ($0097=+151)
+                   Sample 2: Channel2 (right)  ($FF77=-)
+                   Sample 3: Channel1 (left)   ($006E=+110)
+                   Sample 3: Channel2 (right)  ($FF25=-)
+
+Notes: 8-bit samples are stored as  unsigned  chars,  with  values  ranging
+       ranging from 0-255. 16-bit samples are stored  as  signed  integers,
+       with values ranging from -32768 to 32767
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+2D402C: 4C 49 53 54 40 00 00 00 49 4E 46 4F 49 53 46 54  LIST@תתתINFOISFT
+2D403C: 15 00 00 00 53 6F 6E 79 20 53 6F 75 6E 64 20 46  תתתתSonyתSoundתF
+2D404C: 6F 72 67 65 20 37 2E 30 00 00 49 45 4E 47 02 00  orgeת7.0תתIENGתת
+2D405C: 00 00 20 00 49 43 52 44 0B 00 00 00 32 30 30 33  תתתתICRDתתתת2003
+2D406C: 2D 31 30 2D 31 37 00 02 .. .. .. .. .. .. .. ..  -10-17תת........
+
+  Above is a dump of the end of a WAV file, with the LIST information chunk
+shown. The four bytes (40  00  00  00)  immediately  following  the  "LIST"
+identifier show the size of the LIST chunk, in LO/HI format. In this  case,
+the chunk size is $00000040, or 64 bytes.
+
+
+          00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+          -----------------------------------------------  ----------------
+02F488AC: 63 75 65 20 C4 00 00 00 08 00 00 00 01 00 00 00  cueתִתתתתתתתתתתת
+02F488BC: 00 C0 21 00 64 61 74 61 00 00 00 00 00 00 00 00  תְ!תdataתתתתתתתת
+02F488CC: 00 C0 21 00 02 00 00 00 00 40 11 00 64 61 74 61  תְ!תתתתתת@תתdata
+02F488DC: 00 00 00 00 00 00 00 00 00 40 11 00 03 00 00 00  תתתתתתתתת@תתתתתת
+02F488EC: 00 00 3A 00 64 61 74 61 00 00 00 00 00 00 00 00  תת:תdataתתתתתתתת
+02F488FC: 00 00 3A 00 04 00 00 00 00 00 59 00 64 61 74 61  תת:תתתתתתתYתdata
+02F4890C: 00 00 00 00 00 00 00 00 00 00 59 00 05 00 00 00  תתתתתתתתתתYתתתתת
+02F4891C: 00 C0 6C 00 64 61 74 61 00 00 00 00 00 00 00 00  תְlתdataתתתתתתתת
+02F4892C: 00 C0 6C 00 06 00 00 00 00 40 84 00 64 61 74 61  תְlתתתתתת@„תdata
+02F4893C: 00 00 00 00 00 00 00 00 00 40 84 00 07 00 00 00  תתתתתתתתת@„תתתתת
+02F4894C: 00 80 9A 00 64 61 74 61 00 00 00 00 00 00 00 00  ת€תdataתתתתתתתת
+02F4895C: 00 80 9A 00 08 00 00 00 00 00 AC 00 64 61 74 61  ת€תתתתתתת¬תdata
+02F4896C: 00 00 00 00 00 00 00 00 00 00 AC 00 4C 49 53 54  תתתתתתתתתת¬תLIST
+02F4897C: 84 00 00 00 61 64 74 6C 6C 61 62 6C 07 00 00 00  „תתתadtllablתתתת
+02F4898C: 01 00 00 00 30 31 00 00 6C 61 62 6C 07 00 00 00  תתתת01תתlablתתתת
+02F4899C: 02 00 00 00 30 32 00 00 6C 61 62 6C 07 00 00 00  תתתת02תתlablתתתת
+02F489AC: 03 00 00 00 30 33 00 00 6C 61 62 6C 07 00 00 00  תתתת03תתlablתתתת
+02F489BC: 04 00 00 00 30 34 00 00 6C 61 62 6C 07 00 00 00  תתתת04תתlablתתתת
+02F489CC: 05 00 00 00 30 35 00 00 6C 61 62 6C 07 00 00 00  תתתת05תתlablתתתת
+02F489DC: 06 00 00 00 30 36 00 00 6C 61 62 6C 07 00 00 00  תתתת06תתlablתתתת
+02F489EC: 07 00 00 00 30 37 00 00 6C 61 62 6C 07 00 00 00  תתתת07תתlablתתתת
+02F489FC: 08 00 00 00 30 38 00 00 .. .. .. .. .. .. .. ..  תתתת08תת........
+
+  Above is the "cue " chunk layout, also at  the  end  of  the  WAV.  These
+describe cue points (or markers) placed in the WAV file.
+
+
+  To analyse a WAV file quickly is very easy:
+
+    1. Examine the initial chunk ID (RIFF) and its size. The size should be
+       the filesize-8.
+
+    2. Check for the WAVE chunk ID next. If it's not there then  you  don't
+       have a proper WAV file.
+
+    3. Now you can start checking the  individual  sub-chunks.  Read  in  8
+       bytes. The first four are the sub-chunk ID and the last four are the
+       sub-chunk size. If you want to check the contents of  the  sub-chunk
+       thats up to you.
+
+    4. If you seek forward in the file the size of the sub-chunk  you  will
+       find yourself at the next sub-chunk.
+
+
+  WAV files can also have other sub-chunk ID's such as FACT, ASFP and LIST.
+I will not get into the specifics of these. There are other more  extensive
+documents on the web that describe the WAV and RIFF format much better than
+I can.
+

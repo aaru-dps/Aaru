@@ -1,0 +1,136 @@
+
+*** ARK (ARKive containers)
+*** SRK (compressed ARKive archives, very rare)
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: unknown
+
+  Written  by  Edward  Rohr,  the  ARKive  program  went  through   several
+revisions, with the last known being version 3.0.  It  was  intended  as  a
+replacement for LNX as the author explained he had too many bad experiences
+with LyNX destroying his data. Version 3 was also the only one  to  support
+creation and extraction of the compressed SRK archives.
+
+  The ARK format bears a strong resemblance to LNX files in  that  all  the
+files are simply stored one after the other, and are block aligned to  take
+up multiples of 254 bytes (256 on a real 1541). However, there is no  BASIC
+program at the beginning telling you to "Use XXX to  dissolve  this  file",
+and therefore there is no reconizeable signature to determine if  the  file
+is actually an ARK. ARK's can contain up to 255 files, but this  number  is
+restricted by the limitations of the drive  being  used  for  addition  and
+extraction.
+
+  SRK is the compressed version of ARK. The layout of the directory is  the
+same as below,  only  the  files  themselves  (except  for  REL)  might  be
+compressed. As I only seen one file (which was damaged), and my attempts to
+create one with ARKive 3.0 failed badly, I can't comment on the compression
+used. The biggest difference is the files contained inside the SRK are  not
+block-aligned since they are compressed, and therefore must be decompressed
+to create the destination file, rather than just "unlinked".
+
+  The structure of the directory is very simple, where all entries take  up
+29 bytes (unlike LNX's variable size). Below is a sample of  an  ARK  file,
+with a few of its directory entries...
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 1F 82 9F 42 4F 4F 54 A0 A0 A0 A0 A0 A0 A0 A0 A0   .‚ŸBOOT         
+0010: A0 A0 A0 00 00 00 00 00 00 00 00 00 01 00 82 F1      úúúúúúúúú.ú‚ñ
+0020: 53 55 50 45 52 20 4B 4F 4E 47 A0 A0 A0 A0 A0 A0   SUPERúKONG      
+0030: 00 00 00 00 00 00 00 00 00 79 00 82 FB 41 54 4F   úúúúúúúúúyú‚ûATO
+0040: 4D 49 43 20 48 41 4E 44 42 41 4C 4C A0 00 00 00   MICúHANDBALL úúú
+0050: 00 00 00 00 00 00 0F 00 82 FE 58 45 52 4F 4E 53   úúúúúú.ú‚þXERONS
+0060: A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 00 00 00 00 00 00             úúúúúú
+0070: 00 00 00 2A 00 82 FF 57 45 54 20 50 41 49 4E 54   úúú*ú‚úWETúPAINT
+0080: A0 A0 A0 A0 A0 A0 A0 00 00 00 00 00 00 00 00 00          úúúúúúúúú
+0090: 12 00 82 5A 47 52 4F 55 4E 44 20 53 4E 49 50 45   .ú‚ZGROUNDúSNIPE
+
+  Byte:   $00: Number of files in the ARKive ($1F = 31 files)
+        01-1D: First directory entry (29 bytes per entry)
+           01: File Attribute (same as a D64 attribute)
+               Typical values for this location are:
+                 $80 - DEL
+                  81 - SEQ
+                  82 - PRG
+                  83 - USR
+                  84 - REL
+               Bit 0-2: The actual filetype
+                         000 (0) - DEL
+                         001 (1) - SEQ
+                         010 (2) - PRG
+                         011 (3) - USR
+                         100 (4) - REL
+                        Values 5-15 are illegal types.
+                 Bit 3: Not used
+                 Bit 4: Compressed flag (only for SRK).  If  set,  file  is
+                        compressed. Not used in ARK files.
+                 Bit 5: Not used
+                 Bit 6: Locked flag (Set produces ">" locked files)
+                 Bit 7: Closed flag  (not  set  produces  "*",  or  "splat"
+                        files)
+           02: LSU byte (see "INTRO.TXT" document for description of "LSU")
+        03-12: 16-byte filename (in PETASCII, padded with $A0)
+           13: REL file RECORD size
+        14-19: Unused (can contain the unused locations from the D64 entry)
+           1A: REL file side sector block count (side sector info contained
+               at end of file)
+           1B: Number of bytes+1 used in the last side sector entry
+        1C-1D: Length of file, in sectors (low/high byte order)
+        1E-3A: Second directory entry
+        3B-57: Third directory entry
+        58-74: Fourth directory entry
+        75-91: Fifth directory entry
+        ...
+
+  The starting  location  of  the  file  information  takes  only  a  small
+calculation to find out. As we have 31 entries, the total byte size of  the
+directory is 31 * 29 + 1 = 900 bytes (the 1 comes from the  first  byte  of
+the file, which represents the # of entries). Now,  we  take  the  900  and
+divide it by 254 to see the number of blocks, 900/254 = 3.543. If there  is
+any remainder, we always round up to the nearest  integer,  which  in  this
+case makes it 4 blocks. So now we know that the file information starts  at
+4*254 = 1016 ($03F8 offset)
+
+  REL files are stored like a normal  file  except  the  side  sectors  are
+stored directly following the normal file data.  It  would  seem  that  the
+actual contents of the side sectors are unimportant (except for the  RECORD
+length), just that the correct number of blocks exist.
+
+  Seeing as no emulator that I know of supports ARK format, I can't see any
+usefulness in using it. It does have a better directory structure than  LNX
+as each entry has a consistent byte size (versus LNX's variable size).
+
+  There are also a few utilities for UnARK'ing on the  PC.  It  would  seem
+that LNX is the better supported format (although I think it shouldn't be),
+on both the C64 and  the  emulators.  64COPY  supports  these  files  on  a
+read-only basis, allowing you  to  convert  them  to  another  format,  but
+nothing else. Star Commander also contains a  utility  called  Star  Arkive
+which will un-Arkive these files into a D64 image.
+
+---------------------------------------------------------------------------
+
+What it takes to support ARK:
+
+  ARK shares many features with LNX. It has a directory size that is always
+a multiple of 254 bytes, and the files contained are also block aligned  to
+254 byte boundaries. The directory entries also have room  for  the  unused
+part of the D64 entry, used for  time/date  stamps,  and  it  supports  REL
+files. Unlike LNX, this format uses a consistent 29-byte  directory  entry,
+which is a very great advantage.
+
+  However, it has a few drawbacks as well.  It  contains  no  recognizeable
+signature, and can only hold up to 255 files. The most  annoying  thing  is
+there is no provision for having a multi-block directory, with only  a  few
+entries (which by the way LNX allows for).  This  means  I  cannot  have  a
+directory with only 2 entries, yet have the directory take up 2 blocks.
+
+  For the 1541, this limitation makes no difference, but on a PC it makes a
+world of difference. If I wanted to add files to an existing ARK file on  a
+PC, I might have to increase the directory by several blocks, and on  a  PC
+that takes some work.
+
+  This also means that I cannot cancel a "copy"  operation  in  the  middle
+because I may end with a directory with too many blocks for the  number  of
+entries it contains.
+

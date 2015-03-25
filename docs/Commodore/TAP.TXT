@@ -1,0 +1,75 @@
+
+*** TAP (raw C64 cassette TAPE images)
+*** Document revision: 1.1
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Per Hakan Sundell,
+                          Markus Brenner
+
+  Designed by Per Hakan Sundell (author of the CCS64 C64 emulator) in 1997,
+this format attempts to duplicate the data stored on a C64  cassette  tape,
+bit for bit. Since it is simply a representation of  the  raw  serial  data
+from a tape, it should handle *any* custom tape loaders that exist.
+
+  The TAP images are generally very large, being a minimum of eight  times,
+and up to sixteen times as large as what a raw PRG file would be.  This  is
+due to the way the data is stored, with each bit of the original  file  now
+being one byte large in the TAP file. The layout is fairly simple,  with  a
+small 14-byte header followed by file data.
+
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 43 36 34 2D 54 41 50 45 2D 52 41 57 00 00 00 00   C64-TAPE-RAWתתתת
+0010: 51 21 08 00 2F 0F 0D 31 64 1D 26 0D 07 21 0A 12   Q!תת/תת1dת&תת!תת
+0020: 4A 2F 2C 34 07 18 0D 31 07 04 23 04 0D 42 0D 1E   J/,4תתת1תת#תתBתת
+0030: 34 04 42 0D 20 15 5E 04 0D 18 61 0D 26 29 34 0D   4תBתתת^תתתaת&)4ת
+0040: 23 0D 07 0A 3F 55 04 0A 13 3F 07 0D 12 2B 18 0A   #תתת?Uתתת?תתת+תת
+
+    Bytes: $0000-000B: File signature "C64-TAPE-RAW"
+                 000C: TAP version (see below for description)
+                        $00 - Original layout
+                         01 - Updated
+            000D-000F: Future expansion
+            0010-0013: File  data  size  (not  including  this  header,  in
+                       LOW/HIGH format) i.e. This image is $00082151  bytes
+                       long.
+            0014-xxxx: File data
+
+  In TAP version $00 files, each data byte in the file data area represents
+the length of a pulse, when the C64's hardware  will  trigger  again.  This
+pulse length is determined by the following formula:
+
+    pulse length (in seconds) = (8 * data byte) / (clock cycles)
+
+  Therefore, a data value of $2F (47 in decimal) would be:
+
+    (47 * 8) / 985248 = .00038975 seconds.
+
+  A data value of $00 represents an "overflow" condition, any pulse  length
+which is more that 255 * 8 in length.
+
+  The value of "clock cylces" from above  (985248)  is  based  on  the  PAL
+value.  Since  this  file  format  was  developed  in  Europe,   which   is
+predominantly PAL video, this is only logical.  The  NTSC  value  would  be
+1022730, which is very close to  the  PAL,  and  therefore  won't  cause  a
+compatability problem converting European and NTSC tapes. I would stick  to
+using the PAL value just in case.
+
+
+  In TAP version $01 files, the data value of  $00  has  been  re-coded  to
+represent values greater than 255 * 8. When a  $00  is  encountered,  three
+bytes will follow which are the actual time (in cycles) of a pulse, and the
+above formula does not apply.  The  three  bytes  are  stored  in  LOW/HIGH
+format.
+
+
+  The actual interpretation of the serial data takes a little more work  to
+explain.  The  typical  ROM  tape  loader  (and  the  turbo  loaders)  will
+initialize a timer with a specified value and start it  counting  down.  If
+either the tape data changes or the timer runs out, an IRQ will occur.  The
+loader will determine which condition caused the  IRQ.  If  the  tape  data
+changed before the timer ran out, we have a short pulse, or a "0"  bit.  If
+the timer ran out first, we have a long pulse, or a  "1"  bit.  Doing  this
+continuously and we decode the entire file.
+

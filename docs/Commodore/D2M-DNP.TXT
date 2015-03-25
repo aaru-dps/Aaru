@@ -1,0 +1,689 @@
+
+*** D2M (Electronic form of a CMD FD2000 1.56 Mb floppy disk)
+*** DNP (Electronic form of a CMD hard Disk Native Partition)
+*** Document revision: 1.3
+*** Last updated: Nov 27, 2005
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Torsten Hinrichs (sample files),
+                          Malte Munde (sample files),
+                          Wolfgang Moser,
+                          Roberto Muscedere,
+                          Bo Zimmerman (sample DNP files)
+
+  Much of the information contained in this document has been  gathered  by
+dissecting FD2000 floppy images (in D2M format) and DNP hard  disk  images,
+comparing them, and arriving at some well-educated conclusions. Comparisons
+to some other disk types (D81, D64) have  helped  immeasurably.  Therefore,
+some of the information presented here might not be accurate or complete.
+
+  CMD devices  are  incredibly  compatible.  The  FD2000  is  is  backwards
+compatible to the Commodore 1581 floppy, contains the JiffyDos  fastloader,
+and even supports the GEOS OS. Inserting a native-formatted  FD2000  floppy
+keeps the drive in its native mode support, but inserting a  1581-formatted
+disk will put the drive into  "1581  compatible"  mode.  It  even  supports
+"emulated" partitions of 1541, 1571  and  1581  disks  on  native-formatted
+disks.
+
+  The D2M image is considered a "container"  image  as  it  contains  other
+image types like D64, D71, D81 and native partitions as well. The container
+nature makes supporting D2M more difficult than other image types.
+
+  The extension DNP was arrived at after discussions between  Bo  Zimmerman
+and this  document  author.  It  stands  for  CM(D)  (N)ative  (P)artition.
+Unfortunately we could not assign it CMD as that would  conflict  with  the
+Windows OS CMD interpeter batch files.
+
+  There are several different ways to view the layout of  FD2000  floppies.
+At the controller level, the disk has 81 tracks (physically numbered  0  to
+80), 10 sectors-per-track, 2 disk sides with  1024  bytes  per  sector.  In
+Commodore  logical  terms,  it  has  81  tracks  (1  to  81  logical),   80
+sectors-per-track with 256 bytes per sector, totalling 6480 sectors  total.
+This makes the disk 1.56Mb in  size.  The  last  track  (81,  image  offset
+$190000) is reserved and should not be used for data  storage.  This  makes
+the file size 1658880 without error bytes attached, or 1665360  bytes  with
+error bytes attached.
+
+  Seeing as the disk is 6480  sectors  large,  we  need  6480  error  bytes
+attached to the end of the image for an extended image type. About the only
+use for the error bytes is when emulating 1541 or 1571 drive types,  and  a
+bad sector for copy protection is needed. The job codes these  error  bytes
+represent only really apply the 1541 and 1571 drives.
+
+  While it may seem logical to interact with the disk with  81  tracks,  it
+fails in practice and the reason is simple. Internally, all track &  sector
+links in the native and emulated partitions (not system) refer to the  disk
+as a 256 sector/track so you must work with the disk this way.  This  means
+the FD2000 image actually has 26 tracks, 25 for the  image  and  a  partial
+track 26 (80 sectors only)  for  the  system  partition.  Coding  a  proper
+support structure for one CMD device image like D2M  means  that  it  would
+also be easy to make it work for any other image like DNP (except  for  the
+lack of a system partition).
+
+  So, what does it mean when track 2 sector 233 ($02/$E9) is  accessed?  To
+answer this,  we  need  to  convert  the  track  and  sector  numbers  into
+HEXADECIMAL, because calculating the resulting offset location become  very
+simple. Taking the example above (track 2 sector 233), convert them to  HEX
+numbers...
+
+     track 2   -> $02
+    sector 233 -> $E9
+
+  subtract 1 from the track value (because all track references are from 1,
+not zero), attach the sector value to the end, and then attach a $00 to the
+end...
+
+    ($track-1):$sector:$00  or  $01E900.
+
+  This is the offset value into the existing partition to  access  track  1
+sector 233.
+
+  Additionally, each partition internally always starts from track  1.  How
+is this possible? Well, the system partition table specifies what offset  a
+partition starts at (in system blocks), and once inside the partition,  all
+track references now start at 1. This means *you* must keep  track  of  the
+offset where each partition exists once you are inside. As  a  bonus,  this
+also means that moving a partition from one disk to another should be  very
+simple because all the track/sector references and  chains  are  "relative"
+and do not have to be adjusted.
+
+  CMD devices like the FD2000 floppy and CMD hard disks contain  a  "system
+partition" (described later) which stores up to 31 user-created  partitions
+(also called segments), with the types defined below. One of the partitions
+will be set as the default so that when the disk is inserted in the floppy,
+the default partition will be entered automatically.  The  first  entry  is
+always set as the "system" entry.
+
+  There are several different types of partitions, which are...
+
+   Type  Description                 Size
+   ----  --------------------------- -----------------------------------
+    00   No partition                0
+    01   Native partition            variable (min 256 512-byte blocks)
+    02   Emulated 1541 drive (D64)   342 512-byte blocks (684 sectors)
+    03   Emulated 1571 drive (D71)   684 512-byte blocks (1368 sectors)
+    04   Emulated 1581 drive (D81)   1600 512-byte blocks (3200 sectors)
+   255   System partition (track 81)
+
+  The emulated drive partitions are a direct sector copy of the disk  type.
+This means the track/sector references are just as a normal disk would  be,
+even though the FD2000 doesn't normally do things this way. If you were  to
+sector-by-sector copy the data out from this emulated partition  to  a  new
+file, you would have a D64 (or D71/D81) image file in all respects.
+
+  There are two things to watch out for if you intend to copy the data from
+emulated partitions out to a real disk. Both the 1541 and the 1571  contain
+extra "filler" sectors on the end. The 1541  contains  one,  and  the  1571
+contains two. A partial explanation for this behaviour is that  the  FD2000
+system partition works with 512-byte blocks, meaning all partitions must be
+even numbers (in 256-byte blocks). Therefore the 1541 size  is  incremented
+to the next logical size (684) to make is an even value. The 1571 is simply
+a doubling of the 1541 size, even though this means it now  contains  *two*
+extra filler sectors (which are now completely unnecessary).
+
+  For more information on the layout of 1541 (D64), 1571 (D71), 1581 (D81),
+GEOS, REL or any  of  the  specific  file  types  on  the  disks,  see  the
+appropriate documentation which should be included with this one.
+
+  It is the native partition type which is the most powerful to use because
+it is capable of so much, being a greatly improved  disk  format  over  the
+D64.
+
+
+
+
+The System Partition (D2M/D4M images only)
+------------------------------------------
+
+  Every CMD storage device contains a system partition,  but  not  all  the
+images do. The D2M and D4M images do contain the system partition, but  the
+DNP image does not as it is only a copy of  the  native  partition  portion
+from a CMD hard disk. Therefore this section  only  refers  to  the  floppy
+(D2M) images.
+
+  The system partition exists at track 26 (offset $190000), and  is  broken
+up into several different  areas.  With  only  80  sectors  on  this  track
+(instead of the normal 256), there is potentially  a  lot  of  information.
+However, only sector 5 and 8-11 seem to be used.
+
+  The system partition contains no BAM map. In order to add new partitions,
+a pseudo-map would need to be built based on the existing partition entries
+starting positions and sizes to know where there is empty space on the disk
+for more partitions.
+
+  Sector 5 (offset $190500) holds the  DevBlock,  the  "device  information
+block". Most of the information here is unknown,  but  it  likely  contains
+information about the device itself, and possibly which partition is set as
+the default. This block should be duplicated as-is when  generating  a  D2M
+image file as it does not appear to change across any of  the  images  that
+have been seen.
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+190500: 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190510: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190520: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190530: FF FF FF FF FF FF FF FF 00 00 FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190540: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190550: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190560: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190570: 00 0C FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190580: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+190590: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+1905A0: FF FF FF FF FF FF FF FF 00 80 FF FF FF FF FF FF  תתתתתתתתת€תתתתתת
+1905B0: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+1905C0: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+1905D0: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+1905E0: 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1905F0: 43 4D 44 20 46 44 20 53 45 52 49 45 53 20 20 20  CMDתFDתSERIESתתת
+
+     Byte:$00-EF: unknown
+           F0-FF: Disk identifier string (in ASCII, padded with $20)
+
+
+  Sectors 8-11 (offset $190800-190BFF) hold the system partition  directory
+containing information for as many as 31 separate partitions.  The  example
+below shows the 4 allowed partition types along with the required  "SYSTEM"
+entry. All partition entries are 32 bytes long but the first two bytes  are
+not used for the entry.
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+190800: 01 01 FF 00 00 53 59 53 54 45 4D A0 A0 A0 A0 A0  תתתתתSYSTEM     
+190810: A0 A0 A0 A0 A0 00 00 00 00 00 00 00 00 00 00 00       תתתתתתתתתתת
+190820: 00 00 04 00 00 31 35 38 31 2F 50 41 52 54 49 54  תתתתת1581/PARTIT
+190830: 49 4F 4E A0 A0 00 00 00 00 00 00 00 00 00 06 40  ION  תתתתתתתתתת@
+190840: 00 00 03 00 00 31 35 37 31 50 41 52 54 49 54 49  תתתתת1571PARTITI
+190850: 4F 4E A0 A0 A0 00 06 40 00 00 00 00 00 00 02 AC  ON   תת@תתתתתתת¬
+190860: 00 00 02 00 00 31 35 34 31 50 41 52 54 49 54 49  תתתתת1541PARTITI
+190870: 4F 4E A0 A0 A0 00 08 EC 00 00 00 00 00 00 01 56  ON   תתלתתתתתתתV
+190880: 00 00 01 00 00 4E 41 54 49 56 2D 50 41 52 54 49  תתתתתNATIV-PARTI
+190890: 54 49 4F 4E A0 00 0A 42 00 00 00 00 00 00 02 00  TION תתBתתתתתתתת
+1908A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1908B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1908C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1908D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1908E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1908F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190900: 01 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190910: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190920: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190930: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190940: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190950: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190960: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190970: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190990: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+1909F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A00: 01 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190A90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AB0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AC0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AD0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AE0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190AF0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B00: 00 FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190B90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BB0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BC0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BD0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BE0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+190BF0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+
+  Notice that the chain links are 1/1, 1/2, 1/3, and ends with  a  $00/$FF.
+What is happening here is the drive is using  26/5  as  the  start  of  the
+system partition, which now make 26/5 appear as logical  1/0.  This  is  an
+example of partitions starting at  track  1  internally  even  though  they
+physically reside elsewhere. Therefore, even though  the  system  partition
+starts at 26/5, this is actually logical track/sector 1/0 and you  need  to
+keep track of the starting offset of this partition so that accesses  still
+start as 26/5.
+
+  The first entry is the root name. This entry must exist first...
+
+190800: 01 01 FF 00 00 53 59 53 54 45 4D A0 A0 A0 A0 A0  תתתתתSYSTEM     
+190810: A0 A0 A0 A0 A0 00 00 00 00 00 00 00 00 00 00 00       תתתתתתתתתתת
+
+     Byte:$00-01: track/sector reference to next partition block
+              02: Partition type (255=system partition)
+           03-04: unknown, set to $00
+           05-14: root name (16 characters, padded with $A0)
+           15-1F: set to $00
+
+  The next entry is the first partition...
+
+190820: 00 00 04 00 00 31 35 38 31 2F 50 41 52 54 49 54  תתתתת1581/PARTIT
+190830: 49 4F 4E A0 A0 00 00 00 00 00 00 00 00 00 06 40  ION  תתתתתתתתתת@
+
+     Byte:$00-01: not used
+              02: Partition type
+                   00 - No partition
+                   01 - Native FD2000 partition
+                   02 - Emulated 1541 disk (D64)
+                   03 - Emulated 1571 disk (D71)
+                   04 - Emulated 1581 disk (D81)
+           03-04: unknown, set to $00
+           05-14: Partition name (16 bytes, padded with $A0)
+              15: unknown, set to $00
+           16-17: Starting offset to partition, in hi/lo format (note  that
+                  these blocks are 512-byte blocks)
+           18-1D: unknown, set to $00
+           1E-1F: Partition size, in hi/lo format (note that  these  blocks
+                  are again 512-bytes in size)
+
+  *Note: the "partition size" and "starting offset" values are  some  other
+examples of the oddities of the FD2000 layout. They are counted in 512-byte
+sectors, not the standard 256-byte sectors of other Commodore  disks.  What
+this means is you must double the value to get the actual size in  256-byte
+sectors.
+
+  In the case of emulated drive partitions, the size is already  known,  as
+it is a sector-for-sector duplicate of the emulated disk. An emulated  1541
+disk will have one extra sector at the end of the image because  it  is  an
+odd size (683) and the size must always be even,  being  multiples  of  512
+bytes.
+
+  The third partition example from above ("1571PARTITION")  shows  a  block
+offset of $0640 and a block size of $02AC.  Since  these  are  in  512-byte
+blocks, we need to double them to  get  the  real  256-byte  sector  values
+($0C80 and $0558). This means that this partition  starts  at  file  offset
+$0C8000, and is $0558 (or 1368) sectors large. The file offset number  must
+be remembered as all references within the partition must be added  to  the
+above offset value to get the real offset into the D2M image.
+
+
+
+Native Partitions (D2M and DNP images)
+--------------------------------------
+
+  All partitions inside of a D2M image must start on a 512  byte  boundary,
+and end on one as well. The minimum size for  a  native  partition  is  256
+system blocks (or 512 sectors in 256-byte sectors). Part of the reason  for
+the minimum size is the number of blocks  that  the  BAM  and  other  areas
+allocate (35 blocks) even before you get a chance to do anything.
+
+  Keep in mind that a DNP image does not contain a system partition but  is
+only the native partition from  a  CMD  hard  disk.  It  is  therefore  not
+considered a "container" image type. The maximum track size for DNP is 255.
+This puts the upper limit on this image at 16,711,680 bytes.  To  determine
+the track size of a DNP image, simply divide the image size  by  65536.  If
+there is any remainder, this means there is a partial track stored  at  the
+top so increment the track size by one.
+
+  The first sector ($01/$00) of a native partition is reserved for the C128
+boot block. CMD designed the drive this way, allocating  the  first  sector
+automatically, so the partition HEX dump will start  at  the  next  sector,
+$01/$01.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+      -----------------------------------------------  ----------------
+0000: 01 24 48 00 53 55 42 44 49 52 31 38 A0 A0 A0 A0  ת$HתSUBDIR18    
+0010: A0 A0 A0 A0 A0 A0 54 49 A0 31 48 A0 A0 00 00 00        TI 1H  תתת
+0020: 01 23 01 01 01 22 02 00 00 00 00 00 00 00 00 00  ת#תתת"תתתתתתתתתת
+0030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+00A0: 00 00 00 00 00 00 00 00 00 00 00 01 25 47 45 4F  תתתתתתתתתתתת%GEO
+00B0: 53 20 66 6F 72 6D 61 74 20 56 31 2E 31 00 00 00  SתformatתV1.1תתת
+00C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+00D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+00E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+00F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+
+     Byte:$00-01: Track/sector reference to root directory  block  of  this
+                  partition ($01/$24).
+              02: Disk format type ("H")
+              03: unknown, set to $00
+           04-15: Disk name (16 characters, padded with $A0)
+           16-17: Disk ID's ("TI")
+              18: Set to $A0
+              19: DOS Version ("1")
+              1A: Disk format type ("H")
+           1B-1C: Set to $A0
+           1D-1F: unknown, set to $00
+           20-21: Track/Sector pointer to present directory header block
+           22-23: Track/Sector pointer to  parent  directory  header  block
+                  (set to $00/$00 when at the top of the directory)
+           24-25: Track/Sector pointer to dir entry in  previous  directory
+                  (set to $00/$00 when at the top of the directory)
+              26: Index pointer to dir entry in parent  directory  (set  to
+                  $00 if at the top of the directory)
+           27-AA: unknown, set to $00
+           AB-AC: GEOS border sector
+           AD-BC: GEOS format string (GEOS format Vx.x)
+           BD-FF: Unknown, set to 00
+
+  The references at $20 through $26 take a  little  more  explanation.  The
+track/sector link at $20-$21 points to the header of the present directory.
+This way when you are in the directory listing, you know where  the  header
+block is, and it can be accessed to find out how to go back one  level,  or
+change the header name, etc.
+
+  The t/s link at $22-23 points back to the immediately previous  directory
+(parent entry), allowing you to go backwards up the directory tree one step
+at a time. Note that there is no value for a jump back  to  the  top  level
+directory. This value is known only when you enter the partition.
+
+  The t/s link at $24-25 points to the  sector  where  the  entry  for  the
+present directory name exists (one level up), and the value at $26  is  the
+real index into this sector pointing directly at the name.  This  entry  is
+important because if you add extra entries  to  a  directory,  forcing  the
+addition of another sector, the parent entry must be  updated  with  a  new
+block count. The reference at $24-26 tells you  exactly  where  the  parent
+entry is.
+
+  If the directory header contains the GEOS format signature at offset $AD,
+then the directory is ready for GEOS use. See  the  GEOS.TXT  document  for
+more  explanation  of  GEOS  features.  It  is  not   known   if   children
+subdirectories under a parent which is GEOS formatted  must  also  be  GEOS
+format. However, each directory, regardless of where it is, uses  it's  own
+GEOS border sector if it is formatted for GEOS.
+
+
+  The BAM map for a native partition starts at track 1 sector 2 and extends
+up to sector 33. Why is it 32 sectors long? A native partition supports  up
+to 255 tracks (at 256 sectors per track). Doing the math,  this  makes  the
+BAM table 8160 bytes long, or approximately 32 sectors. A native  partition
+inside of a D2M image can only go up to track 25 of 255 due to the physical
+size limits of the D2M, so most of the table  is  unused  and  filled  with
+$FF's. However, a DNP image can use up to 255 tracks,  so  the  entire  BAM
+will be used.
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+000200: 00 00 48 B7 4A 4F C0 00 19 00 00 00 00 00 00 00  תתH·JOְתתתתתתתתת
+000210: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000220: 00 00 00 00 0F FF FF FF 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000230: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000240: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000250: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000260: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000270: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000290: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0002A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0002B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0002C0: 00 00 00 00 00 00 00 00 00 00 00 00 40 00 00 00  תתתתתתתתתתתת@תתת
+0002D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0002E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0002F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+  ..
+000500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000510: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000520: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000530: 00 00 00 00 00 00 00 07 FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+000540: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+000550: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  תתתתתתתתתתתתתתתת
+
+     Byte:$00-01: unknown, set to $00
+              02: Disk format type ("H")
+              03  1's complement of format type ("H" EOR $FF)
+           04-05: Disk ID's ("JO")
+              06: unknown (seems to be the same value from the 1581  image,
+                  I/O byte)
+                    bit 7 set   - Verify on
+                    bit 7 clear - Verify off
+                    bit 6 set   - Check header CRC
+                    bit 6 clear - Don't check header CRC
+              07: unknown, set to $00
+              08: Last available track # in partition ($19=#25)
+           09-1F: unknown, set to $00
+           20-FF: BAM for tracks 1-7
+
+
+      BAM block    Covers tracks
+    ------------   ------------------------------
+     1 (#01/#02)    01-07 (starts at offset $20)
+     2 (#01/#03)    08-15 (starts at offset $00)
+     3 (#01/#04)    16-23          ''
+     4 (#01/#05)    24-31          ''
+       ...           ...
+    30 (#01/#31)   232-239         ''
+    31 (#01/#32)   240-247         ''
+    32 (#01/#33)   248-255         ''
+
+    Track  Offset Range
+    -----  --------------
+      01   $000220-00023F
+      02   $000240-00025F
+      03   $000260-00027F
+      04   $000280-00029F
+      ..
+     253   $0021A0-0021BF
+     254   $0021C0-0021DF
+     255   $0021E0-0021FF
+
+
+  The BAM bit breakdown is not  very  complicated.  Each  track  allocation
+takes exactly 32 bytes. Looking at the above  entry,  we  can  extract  the
+entry for track 1 (all 256 sectors), which starts at  track  1,  sector  2,
+offset $20 ($000220)...
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+000220: 00 00 00 00 0F FF FF FF 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+000230: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+
+  Each byte represents 8 sectors. The first series of six bytes are  broken
+down as follows...
+
+      Byte 0     Byte 1     Byte 2     Byte 3     Byte 4     Byte 5
+     76543210   76543210   76543210   76543210   76543210   76543210
+     --------   --------   --------   --------   --------   --------
+     00000000   00000000   00000000   00000000   00001111   11111111
+     ³      ³   ³      ³   ³      ³   ³      ³   ³      ³   ³      ³
+     ³      ³   ³      ³   ³      ³   ³      ³   ³      ³   ³      ³
+     ³      ³   ³      ³   ³      ³   ³      ³   ³      ³   ³      ³
+     ³      ³   ³      ³   ³      ³   ³      ³   ³      ³   ³      ³
+     ³    Sec 7 ³   Sec 15 ³   Sec 23 ³   Sec 31 ³   Sec 39 ³   Sec 47
+    Sec 0      Sec 8     Sec 16    Sec 24     Sec 32     Sec 40
+
+  Byte #0 covers sector 0-7, #1 covers 8-15 and so on. A '1' bit means  the
+sector is free, and a '0' bit means the sector is allocated (used). For  an
+empty partition, sectors 0-34 are always allocated. Note that  even  though
+sector 0 is not used (completely empty), it is still allocated.
+
+
+  Looking back to the first sector of the partition block, it had the  next
+t/s link set as $01/$22 (offset $002200), so  here  is  the  dump  of  that
+sector, which is the first directory block. This block is very  similar  in
+layout to a normal disk (D64, etc) containing GEOS files.
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+002200: 01 23 86 01 40 45 43 48 4F 20 48 41 57 4B A0 A0  ת#†ת@ECHOתHAWK  
+002210: A0 A0 A0 A0 A0 00 00 00 00 60 01 02 15 13 02 00       תתתת`תתתתתת
+002220: 00 00 86 02 32 50 4C 55 52 41 4C A0 A0 A0 A0 A0  תת†ת2PLURAL     
+002230: A0 A0 A0 A0 A0 00 00 00 00 60 01 02 15 19 02 00       תתתת`תתתתתת
+002240: 00 00 86 03 04 52 45 41 43 54 4F 52 A0 A0 A0 A0  תת†תתREACTOR    
+002250: A0 A0 A0 A0 A0 00 00 00 00 60 01 02 15 20 04 00       תתתת`תתתתתת
+002260: 00 00 86 04 D8 54 48 45 20 54 52 41 49 4E A0 A0  תת†ת״THEתTRAIN  
+002270: A0 A0 A0 A0 A0 00 00 00 00 60 01 0A 10 23 03 00       תתתת`תתת#תת
+002280: 00 00 86 06 62 49 4E 46 49 4C 54 52 41 54 4F 52  תת†תbINFILTRATOR
+002290: A0 A0 A0 A0 A0 00 00 00 00 60 01 0A 10 2B 06 00       תתתת`תתת+תת
+0022A0: 00 00 86 08 FE 53 54 4F 4E 45 20 41 47 45 A0 A0  תת†ת‏STONEתAGE  
+0022B0: A0 A0 A0 A0 A0 00 00 00 00 60 01 0A 12 04 05 00       תתתת`תתתתתת
+0022C0: 00 00 86 0A D6 4E 49 43 4B 20 46 41 4C 44 4F 20  תת†תײNICKתFALDOת
+0022D0: 47 4F 4C 46 A0 00 00 00 00 60 01 0A 12 09 02 00  GOLF תתתת`תתתתתת
+0022E0: 00 00 86 0A D8 52 2D 54 59 50 45 A0 A0 A0 A0 A0  תת†ת״R-TYPE     
+0022F0: A0 A0 A0 A0 A0 00 00 00 00 60 01 0A 12 0D 05 00       תתתת`תתתתתת
+
+     Byte:$00-01: T/S link to next directory block (set to $00/$FF if  it's
+                  the last sector of the directory)
+              02: Entry type. Typical values for this location are:
+                   $00 - Scratched (deleted file entry)
+                    80 - DEL file
+                    81 - SEQ file
+                    82 - PRG file
+                    83 - USR file
+                    84 - REL file
+                    85 - 1581 partition (only in emulated 1581 disks)
+                    86 - Native FD2000 subdirectory
+                   Bit:0-3: The actual filetype
+                            000 (0) - DEL
+                            001 (1) - SEQ
+                            010 (2) - PRG
+                            011 (3) - USR
+                            100 (4) - REL
+                            101 (5) - 1581 partition
+                            110 (6) - FD2000 subdirectory
+                            Values 7-15 are illegal
+                         4: Not used
+                         5: Used only during SAVE-@ replacement (?)
+                         6: Locked flag (if set produces ">" locked files)
+                         7: Closed flag (Not set produces "*",  or  "splat"
+                            files)
+            03-04: Track/sector location of first sector of entry
+            05-14: 16 character filename (in PETASCII, padded with $A0)
+            15-16: Starting track/sector of REL super-side-sector info  (If
+                   GEOS file, t/s link to info block)
+               17: REL record length (if GEOS  file,  GEOS  file  structure
+                   descriptor, $00=sequential, $01=VLIR file)
+               18: unknown, set to  $00  (If  GEOS  file,  GEOS  file  type
+                   descriptor)
+            19-1D: File time/date stamp (seconds are not stored).  This  is
+                   the same timestamp that GEOS uses.
+                     19: Year (add 1900 for real year)
+                     1A: Month (1=JAN, 2=FEB etc)
+                     1B: Day (#1-#31)
+                     1C: Hour (24 hour time, #00-#23)
+                     1D: Minute (#00-#59)
+            1E-1F: Size in sectors, low/high byte order ($1E + $1F *  256).
+                   The filesize in bytes is <= #sectors * 254
+            20-3F: Second dir entry. From now on the  first  two  bytes  of
+                   each entry in the sector should be $00/$00, as they  are
+                   unused.
+            40-5F: Third dir entry
+            60-7F: Fourth dir entry
+            80-9F: Fifth dir entry
+            A0-BF: Sixth dir entry
+            C0-DF: Seventh dir entry
+            E0-FF: Eighth dir entry
+
+  The above "size" at $1E-1F can either be the sector  count  of  the  file
+entry (file size), or the directory size if it's a directory. If  it  is  a
+directory, it counts both the header and directory blocks but not any files
+or subsequent subdirectory blocks. This value will increment if  any  extra
+directory blocks that need to be allocated to store more files/directories.
+
+  Directory space is allocated dynamically, so the size will vary depending
+on how many entries are in the subdirectory, and how many blocks the  whole
+directory takes. It might help to think of the native  partition  directory
+structure and capabilities as you would on a MSDOS machine. They  are  both
+dynamic, and appear to support as many subdirectories as disk space allows.
+There does not appear to be any limit on how many directory levels deep one
+can go. The "xxx blocks free" that would be seen after a directory  listing
+would apply across the entire partition, as does the BAM for the partition.
+
+  Also note the timestamp on bytes $19-1D. The FD2000 drive has a  built-in
+real-time clock, allowing for an  accurate  time/date  stamp  on  file  and
+directory creation. It is the same stamp that GEOS has used for years.  For
+more info on GEOS files, read the GEOS.TXT document.
+
+
+  Looking back at the first directory block, it had the entry  "ECHO  HAWK"
+set as a subdirectory, with it's T/S location as $01/$40 (offset  $004000),
+and it's block size as 2. Here is the dump  of  the  first  block  of  that
+subdirectory.
+
+        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+        -----------------------------------------------  ----------------
+004000: 01 41 48 00 45 43 48 4F 20 48 41 57 4B A0 A0 A0  תAHתECHOתHAWK   
+004010: A0 A0 A0 A0 A0 A0 4A 4F A0 31 48 A0 A0 00 00 00        JO 1H  תתת
+004020: 01 40 01 01 01 22 02 00 00 00 00 00 00 00 00 00  ת@תתת"תתתתתתתתתת
+004030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+004090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+0040F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  תתתתתתתתתתתתתתתת
+
+     Byte:$00-01: Track/sector link to next directory  block  ($01/$41,  or
+                  $004100)
+              02: Disk format type ("H")
+              03: unknown, set to $00
+           04-15: Directory name (16 characters, padded with $A0)
+           16-17: Disk ID's ("JO")
+              18: Set to $A0
+              19: DOS version ("1")
+              1A: Disk format type ("H")
+           1B-1C: Set to $A0
+           1D-1F: unknown, set to $00
+           20-21: Track/Sector pointer to present  directory  header  block
+                  ($01/$40, points to itself)
+           22-23: Track/Sector pointer to  parent  directory  header  block
+                  ($01/$01, points to previous directory)
+           24-25: Track/Sector pointer to dir entry in  previous  directory
+                  ($01/$22)
+              26: Index pointer to dir entry in parent  directory ($02)
+           27-FF: unknown, set to $00
+
+  Each directory is preceeded by this "header" block,  including  the  root
+(from above). This block is necessary because it is the only location which
+can hold the "directory" name,  and  all  the  track/sector  pointers  into
+various levels of the directory structure.
+
+
+  From here, we go to the next block of the directory, holding  the  actual
+file listing, possibly with more subdirectories. This is block #2  (out  of
+2) of the entry total. The layout  and  description  is  the  same  as  the
+previous example of the first directory block.
+
+
+
+
+Creating A D2M Image
+--------------------
+
+  Follow these steps to create a  D2M  image.  These  instructions  do  not
+describe how to create a partition entry or subdirectories. For this  info,
+you will need to read the above information very carefully.
+
+  1. Create a new file, and write out 6480 256-byte blocks of zero's.
+
+  2. If you need error bytes, write out another 6480 bytes of  $01's.  This
+     is the job code for "no error".
+
+  3. Copy the DevBlock exactly, as shown previously (located in an existing
+     image at track 26, sector 5, or offset $190500).
+
+  4. Create the system partition  as  described  above  (track  26,  sector
+     8-11).
+
+  5. Make sure the "SYSTEM" entry exists as the first entry in  the  system
+     partition.
+

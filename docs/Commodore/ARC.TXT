@@ -1,0 +1,59 @@
+
+*** ARC (compressed ARChive)
+*** Document revision: 1.4
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Chris Smeets (source code)
+
+  The name is likely a shortened version  of  "ARChive".  It  is  a  direct
+relative of SDA, as SDA's are simply self-dissolving ARC  files.  ARC  does
+not contain the dissolving code on the front of the file.  Do  not  confuse
+these ARC files with C64 ARKive files (made with the  ARKIVE  program),  or
+with PC .ARC files, as they are all completely different. Below is  a  dump
+of the first 48 bytes of an ARC file...
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 02 01 20 9D 47 01 00 01 00 50 01 41 FE 3A 21 FE   ..˙ùG.˙.˙P.A˛:!˛
+0010: 00 01 FE 00 02 FE 03 02 A9 00 20 90 FF A9 02 A6   ˙.˛˙.˛..©˙˙ê˙©.¶
+0020: BA A0 01 20 BA FF A9 04 A2 35 A0 02 20 BD FF A2   ∫†.˙∫˙©.¢5†.˙Ω˙¢
+
+       Byte:   $00 - ARChive version
+                     $01 = original
+                      02 = extended header
+                01 - Compression mode
+                     $00 - Stored
+                      01 - Packed
+                      02 - Squeezed
+                      03 - Crunched (ARC version 2 only)
+                      04 - Squeezed and packed (ARC version 2 only)
+                      05 - Crunched in 1 pass (ARC version 2 only)
+             02-03 - Checksum (low/high format)
+             04-06 - Original file size  in  bytes  (low/med/high  format).
+                     This value is not valid if the compression mode  (from
+                     above) is 5, a one pass crunch)
+             07-08 - Number of blocks compressed file takes (low/high,  254
+                     bytes/block)
+                09 - Filetype ("P", "S",  "U",  "R",  uppercase  in  ASCII,
+                     lowercase in PETASCII )
+                0A - Filename length
+      0B-0B+length - Filename (in PETASCII, no longer than  16  characters)
+       0B+length+1 - Relative file record length (only for ARC version 2)
+       0B+length+2 - Date (2 bytes, in MSDOS format, only in ARC vers. 2)
+
+  The header can also have some extra fields, depending on what version the
+archive is. Version 1 archives do not  have  the  RECORD  length  and  DATE
+fields, meaning they cannot contain REL files. The RECORD  length  is  only
+used when the filetype is REL.
+
+  Immediately following the filename (for version 1 archives)  is  the  RLE
+control byte, and then follows the LZ table and compressed data.
+
+  Watch out for "extra" data at the end of the file, typically many  $00's.
+Some files which exist have this, and it makes reading the  contained  file
+list more difficult.
+
+  64COPY can unpack ARC files easily, and just hitting return on them  will
+open the archive. Simply select what files you want to  extract,  and  copy
+them out.
+

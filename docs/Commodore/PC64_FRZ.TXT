@@ -1,0 +1,46 @@
+
+*** C64 (PC64 saved-session file)
+*** Document revision: 1.4
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Wolfgang Lorenz
+
+  These are files created when you save a C64 window under PC64 (DOS only).
+It consists of a 64k memory dump, color ram dump, I/O ports,  the  name  of
+the ROMs you were using at the time, and user-setable options. Typical size
+is around 69091 bytes.
+
+       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+       -----------------------------------------------
+00000: 43 36 34 49 6D 61 67 65 00 .. .. .. .. .. .. ..   C64Image........
+ ...
+00000: .. .. .. .. .. .. .. .. .. 2F 37 00 AA B1 91 B3
+00010: 22 22 00 00 4C 00 FF 00 04 00 00 00 00 00 00 19
+00020: 16 00 0A 76 A3 00 00 00 00 00 00 76 A3 B3 BD 00
+00030: 00 00 00 00 01 08 03 08 03 08 03 08 00 A0 00 00
+ ...
+10000: .. .. .. .. .. .. .. .. .. 0E 0E 0E 0E 0E 0E 0E
+10010: 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E
+10020: 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E
+10030: 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E
+ ...
+10400: .. .. .. .. .. .. .. .. .. 0E 0E 0E 0E 06 06 06
+10410: 06 00 00 00 00 00 00 00 00 00 00 C8 00 20 34 37
+10420: 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+10430: 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
+10440: 20 20 20 20 20 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E 0E
+ ...
+
+  Byte: $00000-00008: The signature "C64Image" followed by a $00. Note  the
+                      varying case of the text.
+         00009-10008: Main memory of the C64 (64K, $0000-FFFF)
+         10009-10408: Color memory (1k, $D800-DBFF)
+         10409-?????: I/O memory and user-selectable options (ROM  version,
+                      etc). The ????? means the end  of  the  file  is  not
+                      known, since these files can vary in length.
+
+  Since these files are only supported by PC64 for DOS (*NOT*  for  Win95),
+it is not worth getting too much into  the  layout.  I  was  attempting  to
+decipher the layout of the I/O ports and options area but decided it wasn't
+worth it.
+

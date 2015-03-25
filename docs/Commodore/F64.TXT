@@ -1,0 +1,196 @@
+
+*** F64 (a companion file to certain D64's)
+*** Document revision: 1.6
+*** Last updated: March 19, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Christian Link,
+                          Joe Forster/STA
+
+  Created by a program called FCOPY-PC, written by M. Edzes  in  the  early
+1990's and based on a hack of  the  1541  copy  program  called  FCOPY  III
+written by Thomas Templemann, these files contain  some  extra  information
+about the associated D64 files like the low-level disk ID, sector checksum,
+valid sector flag and sector header ID. These files are very rare, and  are
+only found on a CD called "C64 CD 96",  also  known  as  the  "Unicorn"  CD
+available from the Whiz-zards group. 
+
+  Some of what you are about to read is pure conjecture on the part of  the
+author to explain what these files are. Some of the  explanation  regarding
+this file description comes from documentation provided by Joe Forster/STA,
+and much of it  comes  from  the  experiments  that  the  author  of  these
+documents has conducted.
+
+  They all appear to be the same size, 2051 bytes, and seem to  start  with
+the DISK ID from  the  D64  image.  The  F64  definition  only  encompasses
+standard 35-track disk images.  No  consideration  was  made  for  40-track
+images.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 30 34 .. .. .. .. .. .. .. .. .. .. .. .. .. ..   04..............
+
+  Here the DISK ID is "04", and is likely obtained from the  sector  header
+ID for track 18/0 (not the one visible on the BAM sector).
+
+  Once we take into account the first two bytes, this leaves the  remaining
+2049 bytes. Dividing this number  by  683  (the  number  of  sectors  in  a
+standard 35 track D64 image) leaves us a grouping of 3  bytes  per  sector.
+Below is a dump of the first few bytes  of  the  F64  files,  and  we  will
+examine a few of the 3-byte descriptions.
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: .. .. 2D 07 01 2B 07 8D 2B 07 47 2B 07 AE 2B 07   ..-˙˙+˙ç+˙G+˙Æ+˙
+0010: 80 2B 07 C3 2B 07 1C 2B 07 4E 2B 07 EC 2B 07 47   Ä+˙√+˙˙+˙N+˙Ï+˙G
+0020: 2B 07 FE 2B 07 5F 2B 07 69 2B 07 F3 2B 07 90 2B   +˙˛+˙_+˙i+˙Û+˙ê+
+0030: 07 22 2B 07 4D 2D 07 01 2D 07 01 2D 07 01 2D 07   ˙"+˙M-˙˙-˙˙-˙˙-˙
+
+  The first sector has a description of "2D 07 01".
+
+  Byte: 00 - "2D". This is the sector status code, representing whether the
+             sector is ok, empty, or contains an error. This value  can  be
+             one  of  the  following  characters  (excluding  the   quotes)
+             "+-?HLICFSP". The number in brackets following the "error  xx"
+             is the value used for a D64 error block.
+
+             '+' (0x2B) : The sector is ok (D64 code 1)
+
+             '-' (0x2D) : The sector is ok  (D64  code  1),  but  is  empty
+                          (contains the $xx $01 $01... format pattern)
+
+             '?' (0x3F) : The sector cannot be found. No evidence  that  it
+                          exists at all. Convert this to 'H' error 20  (D64
+                          code 2)
+
+             'H' (0x48) : Error 20 (D64 code 2). No header ID can be  found
+                          for the sector.
+
+             'L' (0x4C) : Error 21 (D64 code 3). There is no SYNC  mark  on
+                          the track.
+
+             'I' (0x49) : Error 22 (D64 code 4). The data  descriptor  byte
+                          (byte $01) has an  incorrect  value.  This  error
+                          will also come with a invalid value for byte $01.
+
+             'C' (0x43) : Error 23 (D64 code 5). The data block checksum is
+                          wrong.  This  error  will  also  come   with   an
+                          incorrect value for byte $02.
+
+             'F' (0x46) : Means a "killer track" (whole track  filled  with
+                          SYNC marks). Only one sample disk has this  error
+                          on it.
+
+             'H' (0x48) : Error 27 (D64 code 9). The sector header checksum
+                          is wrong. Note that 'H' also represents Error 20.
+
+             'S' (0x53) : Unknown. No sample files  exist  and  the  source
+                          code doesn't  explain  it.  Possibly  a  "verify"
+                          error, which isn't useful here.
+
+             'P' (0x50) : Unknown. No sample files exist,  and  the  source
+                          code  doesn't  explain   it.   Possibly   another
+                          "verify" error, which isn't useful here.
+
+        01 - "07". This is the "data descriptor byte" meaning the sector is
+             OK, and exists. If it was a value other than $07, we  have  an
+             error 22 ("data block not found").
+
+        02 - "01". This is the data block checksum for the  sector.  It  is
+             arrived at by XOR'ing all 256 data bytes, from position 00  to
+             position FF.
+
+  The second sector has a description of "2B 07 8D". From the above layout,
+this means the sector data is ok, the data header is ok ("07"), and  has  a
+checksum of "8D" (calculated and verified from the D64).
+
+  One aspect that is unknown is the nature of the sector data when no  data
+is sent. Only three codes send valid sector data ('+', 'C'  and  'I').  The
+rest send an "empty" sector (filled with $01). However, the first  byte  is
+not always $4B as it would be with a standard 1541 format. I've  seen  $01,
+$41 (A) and $4B (K). If they represent something, I don't know.
+
+  The two bytes following the F64 code should  be  incorporated  back  into
+sector when an attempt is made to convert an F64/D64 image to  a  GCR-based
+image (G64, ZipCode Sixpack). However, not all is understood about  how  to
+actually do that because they have not been fully decoded yet. The 'I'  and
+'C' codes are easy as the ID and checksum values can be used  to  construct
+the data portion. However, constructing the header  (for  error  code  'H')
+from the two bytes is more difficult as they always seem to be ID  $07  and
+checksum $01.
+
+  It is important to note that error 29 cannot be represented by  F64,  and
+this is a serious limitation.  There  is  no  way  to  do  so  because  the
+individual sector ID's are not stored in the F64 file. Not  only  that  but
+the original program FCOPY III that FCOPY-PC is  based  on  doesn't  detect
+them either. FCOPY III simply reads the header, if possible, and copies  it
+to a destination disk. No checking of the header  ID's  was  done  (because
+track 18/0 is not read prior to copying the disk). Error 29 is  actually  a
+valid header since there is both a header ID and a valid checksum.
+
+  Also important is the dual nature of the 'H' header error code  for  both
+error 20 and 27. In tests that were conducted using both single-sector  and
+full-track errors of 20 and  27,  it  is  somewhat  possible  to  tell  the
+difference on full-track errors only. Full track error 20  always  puts  an
+'H'  code  on  sector  0,  and  '?'  codes  for  the  rest  of  the  track.
+Single-sector error 20's are always an 'H'.  Full-track  error  27s  always
+have the 'H' code _not_ on sector 0, and the rest of the track filled  with
+'?' codes. This is by no means a definitive way to  tell  them  apart,  but
+simply based on observation.
+
+-----
+
+  Below are the  notes  that  I  took  regarding  the  error  codes  as  my
+investigation proceeded. It might prove to be an interesting read.
+
+
+
+  According to the FCOPY source code, these errors have valid  sector  data
+sent:
+
+  + : Sector is OK (no errors) and read intact. It doesn't  have  to  match
+      the BAM entry and it sometimes exists when the sector is filled  with
+      0x01, appearing to be empty.
+
+  C : Error 23 "Bad Data Checksum". Always with a  ID  7  and  a  bad  data
+      checksum value. Use the data ID and the checksum when constructing  a
+      sector destined for GCR,
+
+  I : Error 22 "Data ID not found". Both the ID and checksum values can  be
+      anything and the sector doesn't always seem to have any  useful  data
+      in it. Source code says "header chksum" bad.
+
+  According to the source code, these errors have no valid sector data sent
+(sends an empty sector, xx 01 01 01...):
+
+  - : Sector has no data in it (xx 01 01) but it doesn't  always  mean  the
+      sector is not used and it doesn't have to match the BAM. You  do  not
+      have to use the values in the ID  and  checksum  bytes  as  they  are
+      valid.
+
+  H : Error 20 "Header ID not found" &  Error  27  "Bad  Header  Checksum".
+      Always with an ID 7 and a checksum of  1.  Source  simply  says  "bad
+      header". Didn't find the 0x52 header ID  or  because  there's  a  bad
+      checksum the contents of the header  are  unreliable  and  discarded.
+      Error 27 covers the entire track, but  error  20  can  exist  on  one
+      sector. When an entire track of error 20 occurs, the 'H' error is  on
+      the first sector. When an entire track of 27 occurs, 'H' is somewhere
+      else (typically sector 3-4)
+
+  L : Error 21 "No SYNC mark found". Always on sector 0,  and  preceeds  an
+      entire track of '?'. Is with ID 7 and checksum 1)
+
+  ? : No sector header/data could be read,  no  evidence  that  the  sector
+      existed. Doesn't have to fill a track. Is typically  with  ID  7  and
+      checksum 1. Recommend to change this to an error 20, except when with
+      an 'L' or 'F' code.
+
+  F : Always on sector 0 and preceeds an entire track of  '?'.  Looks  very
+      similar to L (Disk1932 from the CD 64CD96 is the only sample  of  'F'
+      errors). This could be a 'killer track'
+
+  S : Haven't seen it yet. Source only refers to it. Might  be  a  "verify"
+      error
+
+  P : Haven't seen it yet. Source only refers to it. Might  be  a  "verify"
+      error
+

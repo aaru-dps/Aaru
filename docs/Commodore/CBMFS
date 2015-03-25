@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="client-nojs">
+<head>
+<title>CBMFS - Just Solve the File Format Problem</title>
+<meta charset="UTF-8" />
+<meta name="generator" content="MediaWiki 1.19.2" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch_desc.php" title="Just Solve the File Format Problem (en)" />
+<link rel="EditURI" type="application/rsd+xml" href="http://fileformats.archiveteam.org/api.php?action=rsd" />
+<link rel="copyright" href="http://creativecommons.org/publicdomain/zero/1.0/" />
+<link rel="alternate" type="application/atom+xml" title="Just Solve the File Format Problem Atom feed" href="/index.php?title=Special:RecentChanges&amp;feed=atom" />
+<link rel="stylesheet" href="http://fileformats.archiveteam.org/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*" />
+<meta name="ResourceLoaderDynamicStyles" content="" />
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}
+
+/* cache key: justsolve:resourceloader:filter:minify-css:7:c88e2bcd56513749bec09a7e29cb3ffa */
+</style>
+
+<script src="http://fileformats.archiveteam.org/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"CBMFS","wgTitle":"CBMFS","wgCurRevisionId":17112,"wgArticleId":3282,"wgIsArticle":true,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["File Formats","Electronic File Formats","Filesystem","FormatInfo without extensions","FormatInfo without mimetypes","Commodore computers"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgRelevantPageName":"CBMFS","wgRestrictionEdit":[],"wgRestrictionMove":[]});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function($){mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":1,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"highlightbroken":1,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":0,"rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":1,"showtoolbar":1,"skin":"vector","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,
+"watchlistdays":3,"watchlisthideanons":0,"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"en","language":"en","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false});;},{},{});mw.loader.implement("user.tokens",function($){mw.user.tokens.set({"editToken":"+\\","watchToken":false});;},{},{});
+
+/* cache key: justsolve:resourceloader:filter:minify-js:7:9983699ab6150ffa89a90653b2338ac8 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax"]);
+}</script>
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/skins/vector/csshover.min.htc")}</style><![endif]--></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-CBMFS skin-vector action-view">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<!-- content -->
+		<div id="content" class="mw-body">
+			<a id="top"></a>
+			<div id="mw-js-message" style="display:none;"></div>
+						<!-- firstHeading -->
+			<h1 id="firstHeading" class="firstHeading">
+				<span dir="auto">CBMFS</span>
+			</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id="bodyContent">
+								<!-- tagline -->
+				<div id="siteSub">From Just Solve the File Format Problem</div>
+				<!-- /tagline -->
+								<!-- subtitle -->
+				<div id="contentSub"></div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id="jump-to-nav" class="mw-jump">
+					Jump to: <a href="#mw-head">navigation</a>,
+					<a href="#p-search">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodycontent -->
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><table class="infobox formatinfo" border="0" style="float: right; border: 1px solid #666666; max-width: 25%; overflow: hidden; background-color: #F8E0F7; padding: 0.25em; margin: 0.25em 1em;">
+<tr>
+<th colspan="2"><a href="/wiki/File_Formats" title="File Formats">File Format</a></th>
+</tr>
+
+<tr>
+<th>Name</th>
+<td>CBMFS</td>
+</tr>
+
+
+<tr>
+<th> Ontology
+</th>
+<td>
+<ul><li>
+<a href="/wiki/Electronic_File_Formats" title="Electronic File Formats">Electronic File Formats</a>
+<ul><li>
+<a href="/wiki/Filesystem" title="Filesystem">Filesystem</a>
+<ul><li>
+<strong class="selflink">CBMFS</strong>
+</li></ul>
+</li></ul>
+</li></ul>
+</td>
+</tr>
+
+
+
+</table>
+<p>The <b>CBM File System</b> was used by disk drives made by Commodore Business Machines for the  PET, VIC-20, C64 and C128 range of computers. These drives were called 'intelligent peripherals' meaning the DOS (Disk Operating System) was run in the drive itself, not on the computer the drive was attached to.
+</p><p>The most popular CBM drive was the <a href="/wiki/Commodore_1541_disk" title="Commodore 1541 disk">1541</a>, which supported 35 tracks using <a href="/wiki/GCR_encoding" title="GCR encoding">GCR encoding</a>.  A later drive, the <a href="/wiki/Commodore_1571_disk" title="Commodore 1571 disk">1571</a> disk, used a double-sided format for twice the space. 3 1/2" disks were later introduced to the Commodore via the <a href="/wiki/Commodore_1581_disk" title="Commodore 1581 disk">1581</a> format, which used a variant of CBMFS (see <a href="/wiki/Commodore_1581_filesystem" title="Commodore 1581 filesystem">Commodore 1581 filesystem</a>).
+</p>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#D64_File_Format"><span class="tocnumber">1</span> <span class="toctext">D64 File Format</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Physical_media"><span class="tocnumber">2</span> <span class="toctext">Physical media</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#CBM_DOS_Directory_Structure"><span class="tocnumber">3</span> <span class="toctext">CBM DOS Directory Structure</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Variations_on_the_D64_layout"><span class="tocnumber">4</span> <span class="toctext">Variations on the D64 layout</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#What_it_takes_to_support_D64"><span class="tocnumber">5</span> <span class="toctext">What it takes to support D64</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Utilities"><span class="tocnumber">6</span> <span class="toctext">Utilities</span></a></li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="D64_File_Format"> D64 File Format </span></h2>
+<p>The <a href="/wiki/D64" title="D64">D64</a> format is most frequently used to capture 1541 disk images, it consists of a sector-for-sector copy of a 1540/1541 disk.  The standard D64 is a 174848 byte file comprised of 256 byte sectors arranged in 35 tracks with a varying number of  sectors  per  track for a total of 683 sectors. Track counting starts at 1, not 0, and goes  up
+to 35. Sector counting starts at 0, not 1, for the first sector,  therefore a track with 21 sectors will go from 0 to 20.
+</p>
+<h2> <span class="mw-headline" id="Physical_media"> Physical media </span></h2>
+<p>The original media (a 5.25" disk) has the tracks  laid  out  in  circles, with track 1 on the very outside of the disk  (closest  to  the  sides)  to track 35 being on the inside of the disk (closest to the inner  hub  ring). Commodore, in their infinite wisdom, varied the number of sectors per track and data densities across the disk to optimize available storage, resulting in the chart below. It shows the sectors/track for a  standard  D64.  Since the outside diameter of a circle is  the  largest  (versus  closer  to  the center), the outside tracks have the largest amount of storage.
+</p>
+<pre>       Track   Sectors/track   # Sectors   Storage in Bytes
+       -----   -------------   ---------   ----------------
+        1-17        21            357           7820
+       18-24        19            133           7170
+       25-30        18            108           6300
+       31-40(*)     17             85           6020
+                                  ---
+                                  683 (for a 35 track image)
+</pre>
+<pre> Track #Sect #SectorsIn D64 Offset   Track #Sect #SectorsIn D64 Offset
+ ----- ----- ---------- ----------   ----- ----- ---------- ----------
+   1     21       0       $00000      21     19     414       $19E00
+   2     21      21       $01500      22     19     433       $1B100
+   3     21      42       $02A00      23     19     452       $1C400
+   4     21      63       $03F00      24     19     471       $1D700
+   5     21      84       $05400      25     18     490       $1EA00
+   6     21     105       $06900      26     18     508       $1FC00
+   7     21     126       $07E00      27     18     526       $20E00
+   8     21     147       $09300      28     18     544       $22000
+   9     21     168       $0A800      29     18     562       $23200
+  10     21     189       $0BD00      30     18     580       $24400
+  11     21     210       $0D200      31     17     598       $25600
+  12     21     231       $0E700      32     17     615       $26700
+  13     21     252       $0FC00      33     17     632       $27800
+  14     21     273       $11100      34     17     649       $28900
+  15     21     294       $12600      35     17     666       $29A00
+  16     21     315       $13B00      36(*)  17     683       $2AB00
+  17     21     336       $15000      37(*)  17     700       $2BC00
+  18     19     357       $16500      38(*)  17     717       $2CD00
+  19     19     376       $17800      39(*)  17     734       $2DE00
+  20     19     395       $18B00      40(*)  17     751       $2EF00
+</pre>
+<pre> (*)Tracks 36-40 apply to 40-track images only
+</pre>
+<h2> <span class="mw-headline" id="CBM_DOS_Directory_Structure">CBM DOS Directory Structure </span></h2>
+<p>The directory track should be contained totally on track 18. Sectors 1-18
+contain the entries and sector 0 contains the BAM (Block Availability  Map)
+and disk name/ID. Since the directory is only 18 sectors large (19 less one
+for the BAM), and each sector can contain only  8  entries  (32  bytes  per
+entry), the maximum number of directory entries is 18 * 8 = 144. The  first
+directory sector is always 18/1, even though the t/s pointer at 18/0 (first
+two bytes) might point somewhere else.  It  then  follows  the  same  chain
+structure as a normal file, using a sector interleave of 3. This makes  the
+chain links go 18/1, 18/4, 18/7 etc.
+</p><p>Note that you can extend the directory off  of  track  18,  but  only  when
+reading the disk or image. Attempting to write to a directory sector not on
+track 18 will cause directory corruption.
+</p><p>Each directory sector has the following layout (18/1 partial dump):
+</p>
+<pre>   00: 12 04 81 11 00 4E 41 4D 45 53 20 26 20 50 4F 53 &lt;- notice the T/S link
+   10: 49 54 A0 A0 A0 00 00 00 00 00 00 00 00 00 15 00 &lt;- to 18/4 ($12/$04)
+   20: 00 00 84 11 02 41 44 44 49 54 49 4F 4E 41 4C 20 &lt;- and how its not here
+   30: 49 4E 46 4F A0 11 0C FE 00 00 00 00 00 00 61 01 &lt;- ($00/$00)
+</pre>
+<p>The first two bytes of the sector ($12/$04) indicate the location of  the
+next track/sector of the directory (18/4). If the track is set to $00, then
+it is the last sector of the directory. It is possible,  however  unlikely,
+that the directory may *not* be competely on track 18 (some disks do  exist
+like this). Just follow the chain anyhow.
+</p><p>When the directory is done, the track value will be $00. The sector  link
+should contain a value of $FF, meaning the whole sector is  allocated,  but
+the actual value doesn't matter. The drive will return  all  the  available
+entries anyways. This is a breakdown of a  standard  directory  sector  and
+entry:
+</p>
+<pre> Bytes: $00-1F: First directory entry
+         00-01: Track/Sector location of next directory sector ($00 $00 if
+                not the first entry in the sector)
+            02: File type.
+                Typical values for this location are:
+                  $00 - Scratched (deleted file entry)
+                   80 - DEL
+                   81 - SEQ
+                   82 - PRG
+                   83 - USR
+                   84 - REL
+                Bit 0-3: The actual filetype
+                         000 (0) - DEL
+                         001 (1) - SEQ
+                         010 (2) - PRG
+                         011 (3) - USR
+                         100 (4) - REL
+                         Values 5-15 are illegal, but if used will produce
+                         very strange results. The 1541 is inconsistent in
+                         how it treats these bits. Some routines use all 4
+                         bits, others ignore bit 3,  resulting  in  values
+                         from 0-7.
+                Bit   4: Not used
+                Bit   5: Used only during SAVE-@ replacement
+                Bit   6: Locked flag (Set produces "&gt;" locked files)
+                Bit   7: Closed flag  (Not  set  produces  "*", or "splat"
+                         files)
+         03-04: Track/sector location of first sector of file
+         05-14: 16 character filename (in PETASCII, padded with $A0)
+         15-16: Track/Sector location of first side-sector block (REL file
+                only)
+            17: REL file record length (REL file only, max. value 254)
+         18-1D: Unused (except with GEOS disks)
+         1E-1F: File size in sectors, low/high byte  order  ($1E+$1F*256).
+                The approx. filesize in bytes is &lt;= #sectors * 254
+         20-3F: Second dir entry. From now on the first two bytes of  each
+                entry in this sector  should  be  $00  $00,  as  they  are
+                unused.
+         40-5F: Third dir entry
+         60-7F: Fourth dir entry
+         80-9F: Fifth dir entry
+         A0-BF: Sixth dir entry
+         C0-DF: Seventh dir entry
+         E0-FF: Eighth dir entry
+</pre>
+<p>Files, on a standard 1541, are stored using an interleave of 10. Assuming a
+starting track/sector of 17/0, the chain  would  run  17/0,  17/10,  17/20,
+17/8, 17/18, etc.
+</p><p>Note: No GEOS entries are listed in the above description. See <a href="/wiki/GEOS_VLIR" title="GEOS VLIR">GEOS VLIR</a> for GEOS info.
+</p><p><br />
+The layout of the BAM area (sector 18/0) is a bit more complicated...
+</p>
+<pre>     00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+     -----------------------------------------------
+ 00: 12 01 41 00 12 FF F9 17 15 FF FF 1F 15 FF FF 1F
+ 10: 15 FF FF 1F 12 FF F9 17 00 00 00 00 00 00 00 00
+ 20: 00 00 00 00 0E FF 74 03 15 FF FF 1F 15 FF FF 1F
+ 30: 0E 3F FC 11 07 E1 80 01 15 FF FF 1F 15 FF FF 1F
+ 40: 15 FF FF 1F 15 FF FF 1F 0D C0 FF 07 13 FF FF 07
+ 50: 13 FF FF 07 11 FF CF 07 13 FF FF 07 12 7F FF 07
+ 60: 13 FF FF 07 0A 75 55 01 00 00 00 00 00 00 00 00
+ 70: 00 00 00 00 00 00 00 00 01 08 00 00 03 02 48 00
+ 80: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01
+ 90: 53 48 41 52 45 57 41 52 45 20 31 20 20 A0 A0 A0
+ A0: A0 A0 56 54 A0 32 41 A0 A0 A0 A0 00 00 00 00 00
+ B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+</pre>
+<pre> Bytes:$00-01: Track/Sector location of the first directory sector (should
+               be set to 18/1 but it doesn't matter, and don't trust  what
+               is there, always go to 18/1 for first directory entry)
+           02: Disk DOS version type (see note below)
+                 $41 ("A")
+           03: Unused
+        04-8F: BAM entries for each track, in groups  of  four  bytes  per
+               track, starting on track 1 (see below for more details)
+        90-9F: Disk Name (padded with $A0)
+        A0-A1: Filled with $A0
+        A2-A3: Disk ID
+           A4: Usually $A0
+        A5-A6: DOS type, usually "2A"
+        A7-AA: Filled with $A0
+        AB-FF: Normally unused ($00), except for 40 track extended format,
+               see the following two entries:
+        AC-BF: DOLPHIN DOS track 36-40 BAM entries (only for 40 track)
+        C0-D3: SPEED DOS track 36-40 BAM entries (only for 40 track)
+</pre>
+<p>Note: The BAM entries for SPEED, DOLPHIN and  ProLogic  DOS  use  the  same layout as standard BAM entries.
+</p><p>One of the interesting things from the BAM sector is the byte  at  offset
+$02, the DOS version byte. If it is set to anything other than $41 or  $00,
+then we have what is called "soft write protection". Any attempt  to  write
+to the disk will return the "DOS Version" error code 73  ,"CBM  DOS  V  2.6
+1541". The 1541 is simply telling  you  that  it  thinks  the  disk  format
+version is incorrect. This message will normally come  up  when  you  first
+turn on the 1541 and read the error channel. If you write a $00  or  a  $41
+into 1541 memory location $00FF (for device 0),  then  you  can  circumvent
+this type of write-protection, and change the DOS version back to  what  it
+should be.
+</p><p>The BAM entries require a bit (no pun intended) more of a breakdown. Take
+the first entry at bytes $04-$07 ($12 $FF $F9 $17). The first byte ($12) is
+the number of free sectors on that track. Since we are looking at the track
+1 entry, this means it has 18 (decimal) free sectors. The next three  bytes
+represent the bitmap of which sectors are used/free. Since it is 3 bytes (8
+bits/byte) we have 24 bits of storage. Remember that at  most,  each  track
+only has 21 sectors, so there are a few unused bits.
+</p>
+<pre>  Bytes: 04-07: 12 FF F9 17   Track 1 BAM
+         08-0B: 15 FF FF FF   Track 2 BAM
+         0C-0F: 15 FF FF 1F   Track 3 BAM
+         ...
+         8C-8F: 11 FF FF 01   Track 35 BAM
+</pre>
+<p>These entries must be viewed in binary to make any sense. We will use the
+first entry (track 1) at bytes 04-07:
+</p>
+<pre>    FF=11111111, F9=11111001, 17=00010111
+</pre>
+<p>In order to make any sense from the binary notation, flip the bits around.
+</p>
+<pre>                  111111 11112222
+       01234567 89012345 67890123
+       --------------------------
+       11111111 10011111 11101000
+       ^                     ^
+   sector 0              sector 20
+</pre>
+<p>Since we are on the first track, we have 21 sectors, and only use  up  to
+the bit 20 position. If a bit is on (1), the  sector  is  free.  Therefore,
+track 1 has sectors 9,10 and 19 used, all the rest are free.  Any  leftover
+bits that refer to sectors that don't exist, like bits 21-23 in  the  above
+example, are set to allocated.
+</p><p>Each filetype has its own unique properties, but most follow  one  simple
+structure. The first file sector is pointed to by the directory and follows
+a t/s chain, until the track value reaches  $00.  When  this  happens,  the
+value in the sector link location indicates how much of the sector is used.
+For example, the following chain indicates a file 6 sectors long, and  ends
+when we encounter the $00/$34 chain. At this point the last sector occupies
+from bytes $02-$34.
+</p>
+<pre>   1       2       3       4       5       6
+ ----    -----   -----   -----   -----   -----
+ 17/0    17/10   17/20   17/1    17/11    0/52
+(11/00) (11/0A) (11/14) (11/01) (11/0B)  (0/34)
+</pre>
+<h2> <span class="mw-headline" id="Variations_on_the_D64_layout"> Variations on the D64 layout </span></h2>
+<p>These are some variations of the D64 layout:
+</p><p>1. Standard 35 track layout but with 683 error bytes added on to the  end
+of the file. Each byte of the  error  info  corresponds  to  a  single
+sector stored in the D64, indicating if the  sector  on  the  original
+disk contained an error. The first byte is for track 1/0, and the last
+byte is for track 35/16.
+</p><p>2. A 40 track layout, following the same layout as a 35 track  disk,  but 
+with 5 extra tracks. These contain 17 sectors each, like tracks 31-35.
+Some of the PC utilities do allow you to create and  work  with  these
+files. This can also have error bytes attached like variant #1.
+</p><p>3. The Commodore 128 allowed for "auto-boot" disks. With  this,  t/s  1/0
+holds a specific byte sequence which the computer recognizes  as  boot
+code. See the document C128BOOT.TXT for more info.
+</p><p><br />
+Below is a small chart detailing the standard file sizes of  D64  images,
+35 or 40 tracks, with or without error bytes.
+</p>
+<pre>    Disk type                  Size
+    ---------                  ------
+    35 track, no errors        174848
+    35 track, 683 error bytes  175531
+    40 track, no errors        196608
+    40 track, 768 error bytes  197376
+</pre>
+<p><br />
+The following table (provided by Wolfgang Moser) outlines the differences
+between the standard 1541 DOS and the various "speeder" DOS's  that  exist.
+The 'header 7/8' category is the 'fill bytes' as  the  end  of  the  sector
+header of  a  real  1541  disk  See  <a href="/wiki/G64" title="G64">G64</a>  for  a  better
+explanation of these bytes.
+</p>
+<pre>       Disk format             |Tracks|Header 7/8|Dos type|DiskDos
+                               |      |allsechdrs|        |vs.type
+      ============================================================
+       Original CBM DOS v2.6   |  35  | $0f  $0f |  "2A"  |$41/'A'
+      ------------------------------------------------------------
+       SpeedDOS+               |  40  | $0f  $0f |  "2A"  |$41/'A'
+      ------------------------------------------------------------
+       ProfessionalDOS Initial |  35  | $0f  $0f |  "2A"  |$41/'A'
+         (Version 1/Prototype) |  40  | $0f  $0f |  "2A"  |$41/'A'
+      ------------------------------------------------------------
+       ProfDOS Release         |  40  | $0f  $0f |  "4A"  |$41/'A'
+      ------------------------------------------------------------
+       Dolphin-DOS 2.0/3.0     |  35  | $0f  $0f |  "2A"  |$41/'A'
+       Dolphin-DOS 2.0/3.0     |  40  | $0d  $0f |  "2A"  |$41/'A'
+      ------------------------------------------------------------
+       PrologicDOS 1541        |  35  | $0f  $0f |  "2A"  |$41/'A'
+       PrologicDOS 1541        |  40  | $0f  $0f |  "2P"  |$50/'P'
+       ProSpeed 1571 2.0       |  35  | $0f  $0f |  "2A"  |$41/'A'
+       ProSpeed 1571 2.0       |  40  | $0f  $0f |  "2P"  |$50/'P'
+      ------------------------------------------------------------
+</pre>
+<p><br />
+The location of the extra BAM information in sector 18/0,  for  40  track
+images, will be different depending on what standard the  disks  have  been
+formatted with. SPEED DOS stores them from $C0 to $D3, DOLPHIN  DOS  stores
+them from $AC to $BF and PrologicDOS stored them right after  the  existing
+BAM entries from $90-A3. PrologicDOS also  moves  the  disk  label  and  ID
+forward from the standard location of $90 to $A4. 64COPY and Star Commander
+let you select from several different types of extended  disk  formats  you
+want to create/work with.
+</p><p>All three of the speeder DOS's mentioned above don't alter  the  standard
+sector interleave of 10 for files and 3 for directories. The reason is that
+they use a memory cache installed in the drive which reads the entire track
+in one pass. This alleviates the need for custom interleave values. They do
+seem to alter the algorithm that finds the next available  free  sector  so
+that the interleave value can deviate from 10 under certain  circumstances,
+but I don't know why they would bother.
+</p><p><br />
+Below is a HEX dump of a Speed DOS BAM sector. Note the location of the
+extra BAM info from $C0-D3.
+</p>
+<pre>       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+       -----------------------------------------------  ----------------
+ 0070: 12 FF FF 03 12 FF FF 03 12 FF FF 03 11 FF FF 01 &#160;????????????????
+ 0080: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 0090: A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 &#160;????????????????
+ 00A0: A0 A0 30 30 A0 32 41 A0 A0 A0 A0 00 00 00 00 00 &#160;??00?2A?????????
+ 00B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &#160;????????????????
+ 00C0: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 00D0: 11 FF FF 01 00 00 00 00 00 00 00 00 00 00 00 00 &#160;????????????????
+</pre>
+<p><br />
+Below is a HEX dump of a Dolphin DOS BAM sector. Note the location of the
+extra BAM info from $AC-BF.
+</p>
+<pre>       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+       -----------------------------------------------  ----------------
+ 0070: 12 FF FF 03 12 FF FF 03 12 FF FF 03 11 FF FF 01 &#160;????????????????
+ 0080: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 0090: A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 &#160;????????????????
+ 00A0: A0 A0 30 30 A0 32 41 A0 A0 A0 A0 00 11 FF FF 01 &#160;??00?2A?????????
+ 00B0: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 00C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &#160;????????????????
+ 00D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &#160;???????????????? 
+</pre>
+<p><br />
+Below is a HEX dump of a PrologicDOS BAM sector. Note that the disk  name
+and ID are now located at $A4 instead of starting at $90.
+</p>
+<pre>       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F       ASCII
+       -----------------------------------------------  ----------------
+ 0070: 12 FF FF 03 12 FF FF 03 12 FF FF 03 11 FF FF 01 &#160;????????????????
+ 0080: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 0090: 11 FF FF 01 11 FF FF 01 11 FF FF 01 11 FF FF 01 &#160;????????????????
+ 00A0: 11 FF FF 01 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 &#160;????????????????
+ 00B0: A0 A0 A0 A0 A0 A0 30 30 A0 32 50 A0 A0 A0 A0 00 &#160;??????00?2P?????
+ 00C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &#160;????????????????
+ 00ED: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &#160;????????????????
+</pre>
+<p><br />
+</p><p>Here is the meaning of the error bytes added onto the end of any extended
+D64. The CODE is the same as that generated by the 1541 drive controller...
+it reports these numbers, not the error code we usually see when  an  error
+occurs.
+</p><p>Some of what comes  below  is  taken  from  Immers/Neufeld  book  "Inside
+Commodore DOS". Note the descriptions are not  completely  accurate  as  to
+what the drive DOS is actually doing to seek/read/decode/write sectors, but
+serve as simple examples only. The "type" field is where the error  usually
+occurs, whether it's searching for any SYNC mark, any header ID, any  valid
+header, or reading a sector.
+</p><p>These first errors are "seek" errors, where the disk controller is simply
+reading headers and looking at descriptor bytes, checksums, format ID's and
+reporting what errors it sees. These errors do *not* necessarily  apply  to
+the exact sector being looked for. This fact  makes  duplication  of  these
+errors very unreliable.
+</p>
+<pre>   Code  Error  Type   1541 error description
+   ----  -----  ----   ------------------------------
+    03    21    Seek   No SYNC sequence found.
+                       Each  sector  data  block  and  header  block   are
+                       preceeded by SYNC marks. If *no* sync  sequence  is
+                       found within 20 milliseconds (only ~1/10 of a  disk
+                       rotation!) then this error is generated. This error
+                       used to mean the entire track is bad, but  it  does
+                       not have to be the case. Only a small area  of  the
+                       track needs to be without  a  SYNC  mark  and  this
+                       error will be generated.
+                       Converting this error to a D64 is very  problematic
+                       because it depends on where the physical head is on
+                       the disk when a read attempt is made. If it  is  on
+                       valid header/sectors then it  won't  occur.  If  it
+                       happens over an area without SYNC  marks,  it  will
+                       happen.
+    02    20    Seek   Header descriptor byte not found (HEX $08, GCR $52)
+                       Each sector is preceeded by an  8-byte  GCR  header
+                       block, which starts with the value  $52  (GCR).  If
+                       this value is not found  after  90  attempts,  this
+                       error is generated.
+                       Basically, what a track  has  is  SYNC  marks,  and
+                       possibly valid data blocks,  but  no  valid  header
+                       descriptors.
+    09    27    Seek   Checksum error in header block
+                       The  header  block  contains  a   checksum   value,
+                       calculated by XOR'ing the TRACK,  SECTOR,  ID1  and
+                       ID2 values. If this checksum is wrong,  this  error
+                       is generated.
+    0B    29    Seek   Disk sector ID mismatch
+                       The ID's from the header  block  of  the  currently
+                       read sector are compared against the ones from  the
+                       low-level header of 18/0. If there is  a  mismatch,
+                       this error is generated.
+    02    20    Seek   Header block not found
+                       This error can be reported again when searching for
+                       the correct header block. An image of the header is
+                       built and searched for, but not found after 90 read
+                       attempts.  Note  the  difference  from  the   first
+                       occurance. The first one only searches for a  valid
+                       ID, not the whole header.
+</pre>
+<p>Note that error 20 occurs twice during this phase. The first time is when
+a header ID is being searched for, the second is  when  the  proper  header
+pattern for the sector being searched for is not found.
+</p><p>From this point on, all the errors apply to the specific sector  you  are
+looking for. If a read passed all the previous checks, then we are  at  the
+sector being searched for.
+</p><p>Note that the entire sector is read before  these  errors  are  detected.
+Therefore the data, checksum and off bytes are available.
+</p>
+<pre>   Code  Error  Type   1541 error description
+   ----  -----  ----   ------------------------------
+    04    22    Read   Data descriptor byte not found (HEX $07, GCR $55)
+                       Each sector data block is preceeded  by  the  value
+                       $07, the "data block" descriptor. If this value  is
+                       not there, this error is  generated.  Each  encoded
+                       sector  has  actually  260  bytes.  First  is   the
+                       descriptor byte, then  follows  the  256  bytes  of
+                       data, a checksum, and two "off" bytes.
+    05    23    Read   Checksum error in data block
+                       The checksum of  the  data  read  of  the  disk  is
+                       calculated, and compared against the one stored  at
+                       the end of the sector. If  there's  a  discrepancy,
+                       this error is generated.
+    0F    74    Read   Drive Not Ready (no disk in drive or no device 1)
+</pre>
+<p>These errors only  apply  when  writing  to  a  disk.  I  don't  see  the
+usefulness of having these as they cannot be present when only *reading*  a
+disk.
+</p>
+<pre>   Code  Error  Type   1541 error description
+   ----  -----  ----   ------------------------------
+    06    24    Write  Write verify (on format)
+    07    25    Write  Write verify error
+                       Once the GCR-encoded sector  is  written  out,  the
+                       drive waits for the sector to come around again and
+                       verifies the whole 325-byte GCR block.  Any  errors
+                       encountered will generate this error.
+    08    26    Write  Write protect on
+                       Self explanatory. Remove the write-protect tab, and
+                       try again.
+    0A    28    Write  Write error
+                       In actual fact, this error never occurs, but it  is
+                       included for completeness.
+</pre>
+<p>This is not an error at all, but when gets reported when the  read  of  a
+sector is ok.
+</p>
+<pre>   Code  Error  Type   1541 error description
+   ----  -----  ----   ------------------------------
+    01    00    N/A    No error.
+                       Self explanatory. No errors were  detected  in  the
+                       reading and decoding of the sector.
+</pre>
+<p>The advantage with using the 35 track D64  format,  regardless  of  error
+bytes, is that it can be converted directly back to a 1541 disk  by  either
+using the proper cable and software on the PC, or send it down to  the  C64
+and writing it back to a 1541. It is the best documented format since it is
+also native to the C64, with many books explaining the disk layout and  the
+internals of the 1541.
+</p><p><br />
+</p>
+<h2> <span class="mw-headline" id="What_it_takes_to_support_D64"> What it takes to support D64 </span></h2>
+<p>The D64 layout is reasonably robust,  being  that  it  is  an  electronic
+representation of a physical 1541  disk.  It  shares  *most*  of  the  1541
+attributes and it supports all file formats, since all C64 files came  from
+here. The only file I have found that can't be copied to a D64 is a T64 FRZ
+(FRoZen files), since you lose the extra file type attribute.
+</p><p>Since the D64 layout seems to be an exact byte copy of a 1541 floppy,  it
+would appear to be the perfect format for *any* emulator. However, it  does
+not contain certain vital bits of information that, as a user, you normally
+don't have access to.
+</p><p>Preceeding each sector on a real  1541  disk  is  a  header  block  which
+contains the sector ID bytes and checksum. From the  information  contained
+in the header, the drive determines if there's  an  error  on  that  header
+(27-checksum error, 29-disk ID mismatch). The sector itself  also  contains
+info (data block signature, checksum) that result in  error  detection  (23
+checksum, 22 data block not present, etc). The error bytes had to be  added
+on to the D64 image, "extending"  the  format  to  take  into  account  the
+missing info.
+</p><p>The disk ID is important in the copy protection of  some  programs.  Some
+programs fail to work properly since the D64 doesn't  contain  these  ID's.
+These bytes would be an addition to the format which has  never  been  done
+and would be difficult to do. (As an aside, the  4-pack  ZipCode  files  do
+contain the original master disk ID, but these are lost in  the  conversion
+of a ZipCode to a D64. Only storing *one* of the ID's is  not  enough,  all
+the sector ID's should be kept.)
+</p><p>The extended track 1541 disks also presented  a  problem,  as  there  are
+several different formats (and how/where to store the extra BAM entries  in
+a sector that was not designed for  them,  yet  still  remain  compatible).
+Because of the additions to the format (error bytes and  40  tracks)  there
+exists 4 different types of D64's, all recognizeable by their size.
+</p><p>It is also the only format that uses the sector count for the  file  size
+rather than  actual  bytes  used.  This  can  present  some  problems  when
+converting/copying the to another format because you may have to  know  the
+size before you begin (see LBR format).
+</p><p>It also contains no consistent signature, useful for recognizing  if  D64
+is really what it claims to be. In order to determine if a file is  a  D64,
+you must check the file size.
+</p><p>(Content taken from <a rel="nofollow" class="external text" href="http://unusedino.de/ec64/technical/formats/d64.html">D64.TXT</a> in Peter Scheper's excellent compendium of C64 file format information).
+</p>
+<h2> <span class="mw-headline" id="Utilities"> Utilities </span></h2>
+<ul><li> <a rel="nofollow" class="external text" href="http://style64.org/dirmaster">DirMaster: reads C64 disk images / archives / files in Windows</a>
+</li></ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 108/1000000
+Post-expand include size: 1225/2097152 bytes
+Template argument size: 272/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key justsolve:pcache:idhash:3282-0!*!0!!en!*!* and timestamp 20150324234932 -->
+</div>				<!-- /bodycontent -->
+								<!-- printfooter -->
+				<div class="printfooter">
+				Retrieved from "<a href="http://fileformats.archiveteam.org/index.php?title=CBMFS&amp;oldid=17112">http://fileformats.archiveteam.org/index.php?title=CBMFS&amp;oldid=17112</a>"				</div>
+				<!-- /printfooter -->
+												<!-- catlinks -->
+				<div id='catlinks' class='catlinks'><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="/wiki/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="/wiki/Category:File_Formats" title="Category:File Formats">File Formats</a></li><li><a href="/wiki/Category:Electronic_File_Formats" title="Category:Electronic File Formats">Electronic File Formats</a></li><li><a href="/wiki/Category:Filesystem" title="Category:Filesystem">Filesystem</a></li><li><a href="/wiki/Category:Commodore_computers" title="Category:Commodore computers">Commodore computers</a></li></ul></div><div id="mw-hidden-catlinks" class="mw-hidden-catlinks mw-hidden-cats-hidden">Hidden categories: <ul><li><a href="/wiki/Category:FormatInfo_without_extensions" title="Category:FormatInfo without extensions">FormatInfo without extensions</a></li><li><a href="/wiki/Category:FormatInfo_without_mimetypes" title="Category:FormatInfo without mimetypes">FormatInfo without mimetypes</a></li></ul></div></div>				<!-- /catlinks -->
+												<div class="visualClear"></div>
+				<!-- debughtml -->
+								<!-- /debughtml -->
+			</div>
+			<!-- /bodyContent -->
+		</div>
+		<!-- /content -->
+		<!-- header -->
+		<div id="mw-head" class="noprint">
+			
+<!-- 0 -->
+<div id="p-personal" class="">
+	<h5>Personal tools</h5>
+	<ul>
+		<li id="pt-login"><a href="/index.php?title=Special:UserLogin&amp;returnto=CBMFS" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in / create account</a></li>
+	</ul>
+</div>
+
+<!-- /0 -->
+			<div id="left-navigation">
+				
+<!-- 0 -->
+<div id="p-namespaces" class="vectorTabs">
+	<h5>Namespaces</h5>
+	<ul>
+					<li  id="ca-nstab-main" class="selected"><span><a href="/wiki/CBMFS"  title="View the content page [c]" accesskey="c">Page</a></span></li>
+					<li  id="ca-talk" class="new"><span><a href="/index.php?title=Talk:CBMFS&amp;action=edit&amp;redlink=1"  title="Discussion about the content page [t]" accesskey="t">Discussion</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-variants" class="vectorMenu emptyPortlet">
+	<h4>
+		</h4>
+	<h5><span>Variants</span><a href="#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+			</div>
+			<div id="right-navigation">
+				
+<!-- 0 -->
+<div id="p-views" class="vectorTabs">
+	<h5>Views</h5>
+	<ul>
+					<li id="ca-view" class="selected"><span><a href="/wiki/CBMFS" >Read</a></span></li>
+					<li id="ca-viewsource"><span><a href="/index.php?title=CBMFS&amp;action=edit"  title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li>
+					<li id="ca-history" class="collapsible"><span><a href="/index.php?title=CBMFS&amp;action=history"  title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-cactions" class="vectorMenu emptyPortlet">
+	<h5><span>Actions</span><a href="#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id="p-search">
+	<h5><label for="searchInput">Search</label></h5>
+	<form action="/index.php" id="searchform">
+				<div>
+			<input type="search" name="search" title="Search Just Solve the File Format Problem [f]" accesskey="f" id="searchInput" />			<input type="submit" name="go" value="Go" title="Go to a page with this exact name if exists" id="searchGoButton" class="searchButton" />			<input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton" />					<input type='hidden' name="title" value="Special:Search"/>
+		</div>
+	</form>
+</div>
+
+<!-- /2 -->
+			</div>
+		</div>
+		<!-- /header -->
+		<!-- panel -->
+			<div id="mw-panel" class="noprint">
+				<!-- logo -->
+					<div id="p-logo"><a style="background-image: url(/thumbsup.png);" href="/wiki/Main_Page"  title="Visit the main page"></a></div>
+				<!-- /logo -->
+				
+<!-- navigation -->
+<div class="portal" id='p-navigation'>
+	<h5>Navigation</h5>
+	<div class="body">
+		<ul>
+			<li id="n-mainpage-description"><a href="/wiki/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li>
+			<li id="n-File-formats"><a href="/wiki/File_Formats">File formats</a></li>
+			<li id="n-Formats-by-extension"><a href="/wiki/Category:File_formats_by_extension">Formats by extension</a></li>
+			<li id="n-Still-more-extensions"><a href="/wiki/Category:File_Format_Extension">Still more extensions</a></li>
+			<li id="n-Software"><a href="/wiki/Software">Software</a></li>
+			<li id="n-Glossary"><a href="/wiki/Glossary">Glossary</a></li>
+			<li id="n-Library"><a href="/wiki/Library">Library</a></li>
+			<li id="n-Sources"><a href="/wiki/Sources">Sources</a></li>
+			<li id="n-Categories"><a href="/wiki/Category:Top_Level_Categories">Categories</a></li>
+			<li id="n-portal"><a href="/wiki/Just_Solve_the_File_Format_Problem:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+			<li id="n-recentchanges"><a href="/wiki/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li>
+			<li id="n-randompage"><a href="/wiki/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- TOOLBOX -->
+<div class="portal" id='p-tb'>
+	<h5>Toolbox</h5>
+	<div class="body">
+		<ul>
+			<li id="t-whatlinkshere"><a href="/wiki/Special:WhatLinksHere/CBMFS" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+			<li id="t-recentchangeslinked"><a href="/wiki/Special:RecentChangesLinked/CBMFS" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+			<li id="t-specialpages"><a href="/wiki/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li>
+			<li><a href="/index.php?title=CBMFS&amp;printable=yes" rel="alternate">Printable version</a></li>
+			<li id="t-permalink"><a href="/index.php?title=CBMFS&amp;oldid=17112" title="Permanent link to this revision of the page">Permanent link</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /TOOLBOX -->
+
+<!-- LANGUAGES -->
+
+<!-- /LANGUAGES -->
+			</div>
+		<!-- /panel -->
+		<!-- footer -->
+		<div id="footer">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last modified on 22 April 2014, at 02:18.</li>
+											<li id="footer-info-viewcount">This page has been accessed 2,051 times.</li>
+											<li id="footer-info-copyright">Content is available under <a class="external" href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons 0</a>.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="/wiki/Just_Solve_the_File_Format_Problem:Privacy_policy" title="Just Solve the File Format Problem:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="/wiki/Just_Solve_the_File_Format_Problem:About" title="Just Solve the File Format Problem:About">About Just Solve the File Format Problem</a></li>
+											<li id="footer-places-disclaimer"><a href="/wiki/Just_Solve_the_File_Format_Problem:General_disclaimer" title="Just Solve the File Format Problem:General disclaimer">Disclaimers</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+					<li id="footer-copyrightico">
+						<a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="http://www.mediawiki.org/w/skins/common/images/cc-0.png" alt="Creative Commons 0" width="88" height="31" /></a>
+					</li>
+					<li id="footer-poweredbyico">
+						<a href="//www.mediawiki.org/"><img src="/skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" width="88" height="31" /></a>
+					</li>
+				</ul>
+						<div style="clear:both"></div>
+		</div>
+		<!-- /footer -->
+		<script src="http://fileformats.archiveteam.org/load.php?debug=false&amp;lang=en&amp;modules=skins.vector&amp;only=scripts&amp;skin=vector&amp;*"></script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.user","mediawiki.page.ready"], null, true);
+}</script>
+<!-- Served in 0.069 secs. -->
+	</body>
+</html>

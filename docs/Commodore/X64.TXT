@@ -1,0 +1,94 @@
+
+*** X64 (X64 and VICE emulator image files)
+*** Document revision: 1.3
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: Jouko Valta
+
+  This file type, created by Teemu Rantanen, is used on the X64 emulator (a
+UNIX-based emulator) which has been superceeded by VICE. Both Vice and  X64
+support the X64 file standard, with Vice also supporting  the  regular  D64
+and T64 files.
+
+  X64 is not a specific type of file, but rather  encompasses  *all*  known
+C64 disk types (hard disk, floppies, etc). An X64 is created by  prepending
+a 64-byte header to  an  existing  image  (1541,  1571,  etc)  and  setting
+specific bytes which describe what type of image follows. This  header  has
+undergone some revision, and this description file is  based  on  the  1.02
+version, which was the last known at the time of writing.
+
+  The most common X64 file you will  see  is  the  D64  variety,  typically
+174912 bytes long (174848 for the D64 and 64 bytes for the header, assuming
+no error bytes are appended). The header layout (as used in 64COPY)  is  as
+follows:
+
+      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F        ASCII
+      -----------------------------------------------   ----------------
+0000: 43 15 41 64 01 02 01 23 00 00 00 00 00 00 00 00   C.Ad...#תתתתתתתת
+0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   תתתתתתתתתתתתתתתת
+0040: XX XX XX                     <- standard C64 image starts here....
+
+   Bytes:$00-03: This is the "Magic header" ($43 $15 $41 $64)
+             04: Header version major ($01)
+             05: Header version minor ($01, now its up to $02)
+             06: Device type represented ($00)
+                  $00=1540 See note below...
+                  $01=1541 (Default)
+                  $02=1542
+                  $03=1551
+                  $04=1570
+                  $05=1571
+                  $06=1572
+                  $08=1581
+                  $10=2031,4031
+                  $11=2040,3040
+                  $12=2041
+                  $18=4040
+                  $20=8050
+                  $21=8060
+                  $22=8061
+                  $30=SFD-1001
+                  $31=8250
+                  $32=8280
+             07: Maximum tracks in image (only in version 1.02 or greater)
+                  1540/41/70:  35
+                        1571:  35
+                        1581:  80 (Logical single-sided disk)
+             08: Number of disk sides in image. This value must be $00  for
+                 all 1541 and 1581 formats.
+                  $00=No second side
+                  $01=Second side
+             09: Error data flag. I assume that if this  location  has  any
+                 non-zero value in it, this will indicate the existance  of
+                 the error bytes. For a description of the error bytes, see
+                 the D64 topic dealing with extended formats.
+          0A-1F: Unused, set to $00
+          20-3E: Disk image description (in ASCII or ISO Latin/1)
+             3F: Always set to $00
+            40-: Standard C64 file begins here
+
+  The first four bytes used for the device type at  position  $06  ($00  to
+$03) are functionally the same, and are compatible with  older  version  of
+X64 files. Some old X64 files might have $00 for the device  type  (instead
+of $01), but it makes no real difference.
+
+  As most instances of X64 files will be strictly 1541 images, bytes  08-3F
+are set to zero, and some versions of the  X64  emulator  don't  use  bytes
+08-3F.
+
+  There is no advantage for PC users to use this format since virtually  no
+PC emulator that I know of uses them, and for the most  part,  it  provides
+the same functionality as a D64 file.
+
+  In order to read a generic X64 file, first you must determine that it  is
+an X64, and then determine the type of file it  contains.  In  effect,  you
+have  to  double-decode  the  file,  which  makes  support  a  little  more
+difficult. Also, you would have to be able to work with *all* of the  types
+of drives that X64 supports, a daunting task.
+
+  Its only advantage is that  is  encompasses  all  of  the  standard  disk
+formats on the C64. If other disk types  were  common  (like  1581  or  CMD
+disks), then this format might be more popular.
+

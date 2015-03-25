@@ -1,0 +1,138 @@
+
+*** S20 (Phau Zeh VIC-20 emulator saved-session files)
+*** Document revision: 1.2
+*** Last updated: March 11, 2004
+*** Compiler/Editor: Peter Schepers
+*** Contributors/sources: unknown
+
+  This file is created when you save a  session  in  the  Phau  Zeh  VIC-20
+emulator (written by Arne Bockholdt). Like all emulator  saved-session,  it
+contains all zero-page RAM, CPU registers, RAM and I/O registers. In  order
+for the Phau Zeh emulator to recognize its saved-sessions, it must be saved
+with the "S20" extension.
+
+  This document is based on the 0.9.5 revision of the S20  layout,  so  the
+actual 1.0 release might be different. The minimum S20 file  size  is  9286
+bytes (based on an un-enpanded VIC-20)  and  the  largest  is  36934  bytes
+(based on a fully-expanded VIC-20).
+
+   Bytes: $0000-000E - S20 signature string "VIC-20 SNAPSHOT"
+                000F - S20 revision
+                         $01 - version 0.9.5
+                          00, 02-FF - Reserved
+                0010 - Machine
+                         $00 - Original VIC-20
+                          01 - Phau Zeh
+                          02 - V20
+                          03 - Mac VIC-20 emulator
+                          04-FF - Future Expansion (set to $00)
+                0011 - Miscellaneous Info. If Byte $16 is set  to  1  (Phau
+                       Zeh emu), it is sub-version of the emulator.
+                         With $16 set to 1:
+                         $01 - PZL
+                          02 - PZW
+                          00, 03-FF - Future expansion (set to $00)
+           0012-0013 - Future Expansion (set to $00)
+           0014-0015 - Memory areas saved (in HI-LO format). The  bit  will
+                       be set if the memory area is saved,  clear  if  not.
+                       Each bit of this  word  represents  a  4Kb  area  of
+                       memory. The ROM memory locations  should  always  be
+                       clear (not saved), and positions 1 and 9 must always
+                       be set and saved.
+                         Bit: 00 - RAM $0400-0FFF (only 3Kb for this one)
+                              01 - RAM $1000-1FFF
+                              02 - RAM $2000-2FFF
+                              ...
+                              15 - RAM $F000-FFFF
+           0016-0017 - VIC-20 ROM memory (in HI-LO format). The bit will be
+                       set if the ROM area is saved, clear if not. Each bit
+                       represents 4Kb of ROM. VIC-20 ROM  memory  locations
+                       should be set to 1, and setting  bits  0  and  1  on
+                       would make no sense as  ROM  can't  exist  in  those
+                       areas.
+                         Bit: 00 - ROM $0000-0FFF
+                              01 - ROM $1000-1FFF
+                              02 - ROM $2000-2FFF
+                              ...
+                              15 - ROM $F000-FFFF
+                0018 - RAM expansion installed
+                        $00 - No expansion
+                         03 - 3Kb installed
+                         08 - 8Kb installed
+                         10 - 16Kb installed
+                         18 - 24Kb installed
+                         All other values invalid (future expansion)
+                0019 - Future expansion (set to $00)
+
+           001A-001B - 6502 Instruction Pointer (HI-LO format)
+                001C - 6502 Flag register
+                        Bit 0 - Carry Flag
+                            1 - Zero Flag
+                            2 - Interrupt Flag
+                            3 - Decimal Flag
+                            4 - Break Flag
+                            5 - Always set to 1
+                            6 - Overflow Flag
+                            7 - Sign Flag
+                001D - 6502 Stack Pointer
+                001E - 6502 A Register
+                001F - 6502 X Register
+                0020 - 6502 Y Register
+                0021 - NMI status
+                        Bit 0 - Set if NMI info valid, clear otherwise
+                            7 - Clear if NMI low, set if NMI high
+                            All other bits unused.
+
+           0022-0023 - VIA1 Timer 1 Value (HI-LO format)
+           0024-0025 - VIA1 Timer 1 Latch (HI-LO format)
+           0026-0027 - VIA1 Timer 2 Value (HI-LO format)
+                0028 - VIA1 Timer 2 Latch
+           0029-002A - VIA2 Timer 1 Value (HI-LO format)
+           002B-002C - VIA2 Timer 1 Latch (HI-LO format)
+           002D-002E - VIA2 Timer 2 Value (HI-LO format)
+                002F - VIA2 Timer 2 Latch
+                0030 - Set Interrupt Flag Status bits. 0 = don't set  flag,
+                       1 = set flag.
+                         Bit 0 - VIA1 Timer 1
+                             1 - VIA1 Timer 2
+                             2 - VIA2 Timer 1
+                             3 - VIA2 Timer 2
+                             All other bits clear (future expansion)
+                0031 - Future Expansion (set to $00)
+                0032 - VIA  Port  Register  Status.  Tells  emulator  which
+                       registers are saved in the file.
+                        $00 - Nothing saved (not recommended)
+                         01 - IR ports saved to the following 4 bytes
+                         02 - OR ports saved to the following 4 bytes
+                         03-FF - Future expansion
+                0033 - VIA1 IRA or ORA (depends on the value in $0032)
+                0034 - VIA1 IRB or ORB (depends on the value in $0032)
+                0035 - VIA2 IRA or ORA (depends on the value in $0032)
+                0036 - VIA2 IRB or ORB (depends on the value in $0032)
+           0037-003A - Future expansion (set to $00)
+
+                003B - Video Mode
+                        $00 - PAL (6561)
+                         01 - NTSC (6560)
+                         02-FF - Reserved
+           003C-003D - Current scanline
+                         PAL: 0-311
+                        NTSC: 0-260
+                003E - Cycles since  last  scanline  change.  This  is  the
+                       number of cycles passed since the lasy scanline  was
+                       drawn, or the scanline counter was incremented.
+                         PAL: 0-70
+                        NTSC: 0-64
+           003F-0042 - Future expansion (set to $00)
+
+           0043-0442 - Zero Page RAM $0000-03FF (must be in file)
+
+           0443-1042 - RAM locations $0400-0FFF  contents  (optional,  only
+                       when $0014-0015 bit 0 is set)
+           1043-2042 
+       (or)0443-1442 - RAM locations $1000-1FFF (must be in file)
+                 ... - (4Kb RAM  blocks  continue,  depending  on  the  bit
+                       pattern set in $0014-0015)
+
+         (END-2)-END - Last three bytes set to $FF.
+
