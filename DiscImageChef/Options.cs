@@ -86,6 +86,10 @@ namespace DiscImageChef
             HelpText = "Calculates Adler-32.")]
         public bool DoAdler32 { get; set; }
 
+        [Option("crc16", DefaultValue = true,
+            HelpText = "Calculates CRC16.")]
+        public bool DoCRC16 { get; set; }
+
         [Option('c', "crc32", DefaultValue = true,
             HelpText = "Calculates CRC32.")]
         public bool DoCRC32 { get; set; }
