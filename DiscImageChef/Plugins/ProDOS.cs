@@ -65,8 +65,8 @@ namespace DiscImageChef.Plugins
 
         const byte ProDOSVersion1 = 0x00;
 
-        const UInt32 ProDOSYearMask = 0xFF000000;
-        const UInt32 ProDOSMonthMask = 0xE00000;
+        const UInt32 ProDOSYearMask = 0xFE000000;
+        const UInt32 ProDOSMonthMask = 0x1E00000;
         const UInt32 ProDOSDayMask = 0x1F0000;
         const UInt32 ProDOSHourMask = 0x1F00;
         const UInt32 ProDOSMinuteMask = 0x3F;
@@ -133,6 +133,7 @@ namespace DiscImageChef.Plugins
 
             byte[] temporal;
             int year, month, day, hour, minute;
+            UInt16 temp_timestamp_left, temp_timestamp_right;
             UInt32 temp_timestamp;
 
             rootDirectoryKeyBlock.zero = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
@@ -144,16 +145,24 @@ namespace DiscImageChef.Plugins
             rootDirectoryKeyBlock.header.volume_name = Encoding.ASCII.GetString(temporal);
             rootDirectoryKeyBlock.header.reserved = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
-            // This is wrong as I don't know year epoch
-            // May also be wrong because documentation shows it as a 32 bit integer
-            // but does not say if it treats as 16 bit (probably) little endian
-            // pair or as a 32 bit little endian integer.
-            temp_timestamp = BitConverter.ToUInt32(rootDirectoryKeyBlockBytes, 0x1C);
-            year = (int)((temp_timestamp & ProDOSYearMask) >> 24);
+            temp_timestamp_left = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
+            temp_timestamp_right = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1E);
+            temp_timestamp = (uint)((temp_timestamp_left << 16) + temp_timestamp_right);
+            year = (int)((temp_timestamp & ProDOSYearMask) >> 25);
             month = (int)((temp_timestamp & ProDOSMonthMask) >> 21);
             day = (int)((temp_timestamp & ProDOSDayMask) >> 16);
             hour = (int)((temp_timestamp & ProDOSHourMask) >> 8);
             minute = (int)(temp_timestamp & ProDOSMinuteMask);
+            year += 1900;
+            if (year < 1940)
+                year += 100;
+            if (MainClass.isDebug)
+            {
+                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
+                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
+                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp = 0x{0:X8}", temp_timestamp);
+                Console.WriteLine("DEBUG (ProDOS plugin): Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year, month, day, hour, minute);
+            }
             rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
 
             rootDirectoryKeyBlock.header.version = rootDirectoryKeyBlockBytes[0x20];

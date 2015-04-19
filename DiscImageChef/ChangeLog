@@ -1,5 +1,10 @@
 2015-04-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/ProDOS.cs:
+	  Corrected datetime field handling in ProDOS filesystem.
+
+2015-04-19  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugins/2MG.cs:
 	* DiscImageChef.csproj:
 	* ImagePlugins/Apple2MG.cs:
