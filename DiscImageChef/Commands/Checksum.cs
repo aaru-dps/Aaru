@@ -63,6 +63,7 @@ namespace DiscImageChef.Commands
                 Console.WriteLine("--sha256={0}", options.DoSHA256);
                 Console.WriteLine("--sha384={0}", options.DoSHA384);
                 Console.WriteLine("--sha512={0}", options.DoSHA512);
+                Console.WriteLine("--spamsum={0}", options.DoSpamSum);
             }
             //throw new NotImplementedException("Checksumming not yet implemented.");
 
@@ -95,6 +96,7 @@ namespace DiscImageChef.Commands
                         SHA256Context sha256ctxTrack = new SHA256Context();
                         SHA384Context sha384ctxTrack = new SHA384Context();
                         SHA512Context sha512ctxTrack = new SHA512Context();
+                        SpamSumContext ssctxTrack = new SpamSumContext();
 
                         if (options.DoAdler32)
                             adler32ctxTrack.Init();
@@ -120,6 +122,8 @@ namespace DiscImageChef.Commands
                             sha384ctxTrack.Init();
                         if (options.DoSHA512)
                             sha512ctxTrack.Init();
+                        if (options.DoSpamSum)
+                            ssctxTrack.Init();
 
                         ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         Console.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
@@ -152,6 +156,8 @@ namespace DiscImageChef.Commands
                                 sha384ctxTrack.Update(sector);
                             if (options.DoSHA512)
                                 sha512ctxTrack.Update(sector);
+                            if (options.DoSpamSum)
+                                ssctxTrack.Update(sector);
                         }
 
                         Console.WriteLine();
@@ -180,6 +186,8 @@ namespace DiscImageChef.Commands
                             Console.WriteLine("Track {0}'s SHA384: {1}", currentTrack.TrackSequence, sha384ctxTrack.End());
                         if (options.DoSHA512)
                             Console.WriteLine("Track {0}'s SHA512: {1}", currentTrack.TrackSequence, sha512ctxTrack.End());
+                        if (options.DoSpamSum)
+                            Console.WriteLine("Track {0}'s SpamSum: {1}", currentTrack.TrackSequence, ssctxTrack.End());
                     }
                 }
                 catch (Exception ex)
@@ -206,6 +214,7 @@ namespace DiscImageChef.Commands
                 SHA256Context sha256ctx = new SHA256Context();
                 SHA384Context sha384ctx = new SHA384Context();
                 SHA512Context sha512ctx = new SHA512Context();
+                SpamSumContext ssctx = new SpamSumContext();
 
                 if (options.DoAdler32)
                     adler32ctx.Init();
@@ -231,6 +240,8 @@ namespace DiscImageChef.Commands
                     sha384ctx.Init();
                 if (options.DoSHA512)
                     sha512ctx.Init();
+                if (options.DoSpamSum)
+                    ssctx.Init();
 
                 ulong sectors = inputFormat.GetSectors();
                 Console.WriteLine("Sectors {0}", sectors);
@@ -263,6 +274,8 @@ namespace DiscImageChef.Commands
                         sha384ctx.Update(sector);
                     if (options.DoSHA512)
                         sha512ctx.Update(sector);
+                    if (options.DoSpamSum)
+                        ssctx.Update(sector);
                 }
 
                 Console.WriteLine();
@@ -291,6 +304,8 @@ namespace DiscImageChef.Commands
                     Console.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
                 if (options.DoSHA512)
                     Console.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
+                if (options.DoSpamSum)
+                    Console.WriteLine("Disk's SpamSum: {0}", ssctx.End());
             }
         }
     }

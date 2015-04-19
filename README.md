@@ -90,6 +90,7 @@ Supported checksums
 * RMD160
 * SHA-1
 * SHA-2 (256, 384 and 512 bits)
+* SpamSum (fuzzy hashing)
 
 Changelog
 =========

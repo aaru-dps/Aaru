@@ -70,9 +70,6 @@ Image comparison:
 --- Offer the option to see differing values
 --- Optimize and multithread
 
-Checksums:
---- Implement SpamSum fuzzy hashing (aka ssdeep)
-
 Image checksum:
 --- Checksum disk tags
 --- Checksum sector tags

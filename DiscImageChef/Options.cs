@@ -130,6 +130,10 @@ namespace DiscImageChef
             HelpText = "Calculates SHA512.")]
         public bool DoSHA512 { get; set; }
 
+        [Option('f', "spamsum", DefaultValue = true,
+            HelpText = "Calculates SpamSum fuzzy hash.")]
+        public bool DoSpamSum { get; set; }
+
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
     }
