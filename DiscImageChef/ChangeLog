@@ -1,5 +1,12 @@
 2015-04-19  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugins/2MG.cs:
+	* DiscImageChef.csproj:
+	* ImagePlugins/Apple2MG.cs:
+	  Implement support for Apple 2IMG disk images.
+
+2015-04-19  Natalia Portillo  <claunia@claunia.com>
+
 	* Options.cs:
 	* Commands/Checksum.cs:
 	* DiscImageChef.csproj:

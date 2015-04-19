@@ -109,6 +109,7 @@
     <Compile Include="Checksums\Adler32Context.cs" />
     <Compile Include="Checksums\FletcherContext.cs" />
     <Compile Include="Checksums\SpamSumContext.cs" />
+    <Compile Include="ImagePlugins\Apple2MG.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

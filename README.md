@@ -36,6 +36,7 @@ Supported disk image formats
 * Apple DiskCopy 4.2
 * TeleDisk (without compression)
 * Nero Burning ROM (both image formats)
+* Apple 2IMG (used with Apple // emulators)
 
 Supported partitioning schemes
 ==============================
