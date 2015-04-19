@@ -84,6 +84,8 @@ Supported checksums
 * CRC-16
 * CRC-32
 * CRC-64
+* Fletcher-16
+* Fletcher-32
 * MD5
 * RMD160
 * SHA-1

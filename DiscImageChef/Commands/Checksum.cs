@@ -87,6 +87,8 @@ namespace DiscImageChef.Commands
                         CRC16Context crc16ctxTrack = new CRC16Context();
                         CRC32Context crc32ctxTrack = new CRC32Context();
                         CRC64Context crc64ctxTrack = new CRC64Context();
+                        Fletcher16Context fletcher16ctxTrack = new Fletcher16Context();
+                        Fletcher32Context fletcher32ctxTrack = new Fletcher32Context();
                         MD5Context md5ctxTrack = new MD5Context();
                         RIPEMD160Context ripemd160ctxTrack = new RIPEMD160Context();
                         SHA1Context sha1ctxTrack = new SHA1Context();
@@ -102,6 +104,10 @@ namespace DiscImageChef.Commands
                             crc32ctxTrack.Init();
                         if (options.DoCRC64)
                             crc64ctxTrack.Init();
+                        if (options.DoFletcher16)
+                            fletcher16ctxTrack.Init();
+                        if (options.DoFletcher32)
+                            fletcher32ctxTrack.Init();
                         if (options.DoMD5)
                             md5ctxTrack.Init();
                         if (options.DoRIPEMD160)
@@ -130,6 +136,10 @@ namespace DiscImageChef.Commands
                                 crc32ctxTrack.Update(sector);
                             if (options.DoCRC64)
                                 crc64ctxTrack.Update(sector);
+                            if (options.DoFletcher16)
+                                fletcher16ctxTrack.Update(sector);
+                            if (options.DoFletcher32)
+                                fletcher32ctxTrack.Update(sector);
                             if (options.DoMD5)
                                 md5ctxTrack.Update(sector);
                             if (options.DoRIPEMD160)
@@ -154,6 +164,10 @@ namespace DiscImageChef.Commands
                             Console.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
                         if (options.DoCRC64)
                             Console.WriteLine("Track {0}'s CRC64 (ECMA): 0x{1}", currentTrack.TrackSequence, crc64ctxTrack.End());
+                        if (options.DoFletcher16)
+                            Console.WriteLine("Track {0}'s Fletcher-16: 0x{1}", currentTrack.TrackSequence, fletcher16ctxTrack.End());
+                        if (options.DoFletcher32)
+                            Console.WriteLine("Track {0}'s Fletcher-32: 0x{1}", currentTrack.TrackSequence, fletcher32ctxTrack.End());
                         if (options.DoMD5)
                             Console.WriteLine("Track {0}'s MD5: {1}", currentTrack.TrackSequence, md5ctxTrack.End());
                         if (options.DoRIPEMD160)
@@ -184,6 +198,8 @@ namespace DiscImageChef.Commands
                 CRC16Context crc16ctx = new CRC16Context();
                 CRC32Context crc32ctx = new CRC32Context();
                 CRC64Context crc64ctx = new CRC64Context();
+                Fletcher16Context fletcher16ctx = new Fletcher16Context();
+                Fletcher32Context fletcher32ctx = new Fletcher32Context();
                 MD5Context md5ctx = new MD5Context();
                 RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
                 SHA1Context sha1ctx = new SHA1Context();
@@ -199,6 +215,10 @@ namespace DiscImageChef.Commands
                     crc32ctx.Init();
                 if (options.DoCRC64)
                     crc64ctx.Init();
+                if (options.DoFletcher16)
+                    fletcher16ctx.Init();
+                if (options.DoFletcher32)
+                    fletcher32ctx.Init();
                 if (options.DoMD5)
                     md5ctx.Init();
                 if (options.DoRIPEMD160)
@@ -227,6 +247,10 @@ namespace DiscImageChef.Commands
                         crc32ctx.Update(sector);
                     if (options.DoCRC64)
                         crc64ctx.Update(sector);
+                    if (options.DoFletcher16)
+                        crc64ctx.Update(sector);
+                    if (options.DoFletcher32)
+                        crc64ctx.Update(sector);
                     if (options.DoMD5)
                         md5ctx.Update(sector);
                     if (options.DoRIPEMD160)
@@ -251,6 +275,10 @@ namespace DiscImageChef.Commands
                     Console.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
                 if (options.DoCRC64)
                     Console.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
+                if (options.DoFletcher16)
+                    Console.WriteLine("Disk's Fletcher-16: 0x{0}", fletcher16ctx.End());
+                if (options.DoFletcher32)
+                    Console.WriteLine("Disk's Fletcher-32: 0x{0}", fletcher32ctx.End());
                 if (options.DoMD5)
                     Console.WriteLine("Disk's MD5: {0}", md5ctx.End());
                 if (options.DoRIPEMD160)

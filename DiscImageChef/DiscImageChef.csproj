@@ -107,6 +107,7 @@
     <Compile Include="Decoders\DVD.cs" />
     <Compile Include="Plugins\ProDOS.cs" />
     <Compile Include="Checksums\Adler32Context.cs" />
+    <Compile Include="Checksums\FletcherContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

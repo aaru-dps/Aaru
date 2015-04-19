@@ -2,6 +2,14 @@
 
 	* Options.cs:
 	* Commands/Checksum.cs:
+	* DiscImageChef.csproj:
+	* Checksums/FletcherContext.cs:
+	  Implemented Fletcher-16 and Fletcher-32 checksum algorithms.
+
+2015-04-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Options.cs:
+	* Commands/Checksum.cs:
 	  Added CRC16 to checksum command.
 
 2015-04-19  Natalia Portillo  <claunia@claunia.com>
