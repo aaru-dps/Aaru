@@ -1,3 +1,11 @@
+2015-04-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Options.cs:
+	* Commands/Checksum.cs:
+	* DiscImageChef.csproj:
+	* Checksums/Adler32Context.cs:
+	  Added Adler-32 checksum
+
 2015-03-22  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/ProDOS.cs:

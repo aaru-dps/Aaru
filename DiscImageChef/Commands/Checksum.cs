@@ -53,6 +53,7 @@ namespace DiscImageChef.Commands
                 Console.WriteLine("--separated-tracks={0}", options.SeparatedTracks);
                 Console.WriteLine("--whole-disc={0}", options.WholeDisc);
                 Console.WriteLine("--input={0}", options.InputFile);
+                Console.WriteLine("--adler32={0}", options.DoAdler32);
                 Console.WriteLine("--crc32={0}", options.DoCRC32);
                 Console.WriteLine("--crc64={0}", options.DoCRC64);
                 Console.WriteLine("--md5={0}", options.DoMD5);
@@ -81,6 +82,7 @@ namespace DiscImageChef.Commands
                     List<Track> inputTracks = inputFormat.GetTracks();
                     foreach (Track currentTrack in inputTracks)
                     {
+                        Adler32Context adler32ctxTrack = new Adler32Context();
                         CRC32Context crc32ctxTrack = new CRC32Context();
                         CRC64Context crc64ctxTrack = new CRC64Context();
                         MD5Context md5ctxTrack = new MD5Context();
@@ -90,6 +92,8 @@ namespace DiscImageChef.Commands
                         SHA384Context sha384ctxTrack = new SHA384Context();
                         SHA512Context sha512ctxTrack = new SHA512Context();
 
+                        if (options.DoAdler32)
+                            adler32ctxTrack.Init();
                         if (options.DoCRC32)
                             crc32ctxTrack.Init();
                         if (options.DoCRC64)
@@ -114,6 +118,8 @@ namespace DiscImageChef.Commands
                         {
                             Console.Write("\rHashing sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
                             byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
+                            if (options.DoAdler32)
+                                adler32ctxTrack.Update(sector);
                             if (options.DoCRC32)
                                 crc32ctxTrack.Update(sector);
                             if (options.DoCRC64)
@@ -134,6 +140,8 @@ namespace DiscImageChef.Commands
 
                         Console.WriteLine();
 
+                        if (options.DoAdler32)
+                            Console.WriteLine("Track {0}'s Adler-32: 0x{1}", currentTrack.TrackSequence, adler32ctxTrack.End());
                         if (options.DoCRC32)
                             Console.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
                         if (options.DoCRC64)
@@ -164,6 +172,7 @@ namespace DiscImageChef.Commands
 
             if (options.WholeDisc)
             {
+                Adler32Context adler32ctx = new Adler32Context();
                 CRC32Context crc32ctx = new CRC32Context();
                 CRC64Context crc64ctx = new CRC64Context();
                 MD5Context md5ctx = new MD5Context();
@@ -173,6 +182,8 @@ namespace DiscImageChef.Commands
                 SHA384Context sha384ctx = new SHA384Context();
                 SHA512Context sha512ctx = new SHA512Context();
 
+                if (options.DoAdler32)
+                    adler32ctx.Init();
                 if (options.DoCRC32)
                     crc32ctx.Init();
                 if (options.DoCRC64)
@@ -197,6 +208,8 @@ namespace DiscImageChef.Commands
                 {
                     Console.Write("\rHashing sector {0}", i + 1);
                     byte[] sector = inputFormat.ReadSector(i);
+                    if (options.DoAdler32)
+                        adler32ctx.Update(sector);
                     if (options.DoCRC32)
                         crc32ctx.Update(sector);
                     if (options.DoCRC64)
@@ -217,6 +230,8 @@ namespace DiscImageChef.Commands
 
                 Console.WriteLine();
 
+                if (options.DoAdler32)
+                    Console.WriteLine("Disk's Adler-32: 0x{0}", adler32ctx.End());
                 if (options.DoCRC32)
                     Console.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
                 if (options.DoCRC64)

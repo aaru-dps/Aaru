@@ -106,6 +106,7 @@
     <Compile Include="Decoders\BD.cs" />
     <Compile Include="Decoders\DVD.cs" />
     <Compile Include="Plugins\ProDOS.cs" />
+    <Compile Include="Checksums\Adler32Context.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

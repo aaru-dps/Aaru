@@ -80,6 +80,7 @@ Supported file systems
 
 Supported checksums
 ===================
+* Adler-32
 * CRC-16
 * CRC-32
 * CRC-64
