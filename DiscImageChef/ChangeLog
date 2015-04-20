@@ -1,3 +1,9 @@
+2015-04-20  Natalia Portillo  <claunia@claunia.com>
+
+	* PartPlugins/RDB.cs:
+	* DiscImageChef.csproj:
+	  Implemented support for Amiga RDB.
+
 2015-04-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/ProDOS.cs:

@@ -47,6 +47,7 @@ Supported partitioning schemes
 * UNIX VTOC inside MBR
 * Apple Partition Map
 * NeXT disklabel
+* Amiga Rigid Disk Block (RDB)
 
 Supported file systems
 ======================
