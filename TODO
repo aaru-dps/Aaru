@@ -19,7 +19,6 @@
 --- Add support foe QEMU QED images
 
 Filesystem plugins:
---- Add support for AmigaOS filesystems
 --- Add support for SFS filesystem
 --- Add support for PFS3 filesystem
 --- Add support for Acorn filesystems

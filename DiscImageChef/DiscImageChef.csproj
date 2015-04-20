@@ -111,6 +111,7 @@
     <Compile Include="Checksums\SpamSumContext.cs" />
     <Compile Include="ImagePlugins\Apple2MG.cs" />
     <Compile Include="PartPlugins\RDB.cs" />
+    <Compile Include="Plugins\AmigaDOS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

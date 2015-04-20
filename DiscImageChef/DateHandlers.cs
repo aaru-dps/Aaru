@@ -47,6 +47,7 @@ namespace DiscImageChef
         static readonly DateTime UNIXEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         // Day 0 of Julian Date system
         static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
+        static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
 
         public static DateTime MacToDateTime(ulong MacTimeStamp)
         {
@@ -144,6 +145,13 @@ namespace DiscImageChef
         {
             double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
             return JulianEpoch.AddMilliseconds(delta);
+        }
+
+        public static DateTime AmigaToDateTime(UInt32 days, UInt32 minutes, UInt32 ticks)
+        {
+            DateTime temp = AmigaEpoch.AddDays(days);
+            temp = temp.AddMinutes(minutes);
+            return temp.AddMilliseconds(ticks * 20);
         }
     }
 }

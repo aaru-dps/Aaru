@@ -79,6 +79,9 @@ Supported file systems
 * Xenix file system
 * Coherent UNIX file system
 * UnixWare boot file system
+* Amiga Original File System, with international characters, directory cache and multi-user patches
+* Amiga Fast File System, with international characters, directory cache and multi-user patches
+* Amiga Fast File System v2, untested
 
 Supported checksums
 ===================
