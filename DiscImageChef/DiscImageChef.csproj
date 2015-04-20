@@ -112,6 +112,7 @@
     <Compile Include="ImagePlugins\Apple2MG.cs" />
     <Compile Include="PartPlugins\RDB.cs" />
     <Compile Include="Plugins\AmigaDOS.cs" />
+    <Compile Include="PartPlugins\Atari.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

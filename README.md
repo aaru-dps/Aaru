@@ -48,6 +48,7 @@ Supported partitioning schemes
 * Apple Partition Map
 * NeXT disklabel
 * Amiga Rigid Disk Block (RDB)
+* Atari AHDI and ICDPro
 
 Supported file systems
 ======================

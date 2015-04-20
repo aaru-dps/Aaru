@@ -1,5 +1,11 @@
 2015-04-20  Natalia Portillo  <claunia@claunia.com>
 
+	* PartPlugins/Atari.cs:
+	* DiscImageChef.csproj:
+	  Implemented support for Atari partitions.
+
+2015-04-20  Natalia Portillo  <claunia@claunia.com>
+
 	* DateHandlers.cs:
 	* Plugins/AmigaDOS.cs:
 	* DiscImageChef.csproj:
