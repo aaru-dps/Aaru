@@ -261,7 +261,7 @@ namespace DiscImageChef.Plugins
             rootBlk.hashTable = new uint[rootBlk.hashTableSize];
 
             for (int i = 0; i < rootBlk.hashTableSize; i++)
-                rootBlk.hashTable[i] = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x18 + i*4);
+                rootBlk.hashTable[i] = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x18 + i * 4);
 
             rootBlk.bitmapFlag = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 0));
             rootBlk.bitmapPages = new uint[25];
@@ -274,7 +274,7 @@ namespace DiscImageChef.Plugins
             rootBlk.rMins = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 112));
             rootBlk.rTicks = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 116));
 
-            Array.Copy(RootBlockSector, 0x18+rootBlk.hashTableSize*4+120, diskName, 0, 32);
+            Array.Copy(RootBlockSector, 0x18 + rootBlk.hashTableSize * 4 + 120, diskName, 0, 32);
             rootBlk.diskName = StringHandlers.PascalToString(diskName);
 
             rootBlk.reserved1 = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 152));
@@ -324,12 +324,12 @@ namespace DiscImageChef.Plugins
                     break;
             }
 
-            if((bootBlk.diskType & 0x6D754600) == 0x6D754600)
+            if ((bootBlk.diskType & 0x6D754600) == 0x6D754600)
                 sbInformation.Append(", with multi-user patches");
 
             sbInformation.AppendLine();
 
-            if((bootBlk.diskType & 0xFF) == 6 || (bootBlk.diskType & 0xFF) == 7)
+            if ((bootBlk.diskType & 0xFF) == 6 || (bootBlk.diskType & 0xFF) == 7)
                 sbInformation.AppendLine("AFFS v2, following information may be completely incorrect or garbage.");
 
             sbInformation.AppendFormat("Volume name: {0}", rootBlk.diskName).AppendLine();
@@ -340,7 +340,7 @@ namespace DiscImageChef.Plugins
             if (rootBlk.bitmapExtensionBlock != 0x00000000 && rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
                 sbInformation.AppendFormat("Bitmap extension at block {0}", rootBlk.bitmapExtensionBlock).AppendLine();
 
-            if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
+            if ((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
             sbInformation.AppendFormat("Volume created on {0}", DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks)).AppendLine();

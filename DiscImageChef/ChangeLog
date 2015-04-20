@@ -1,5 +1,11 @@
 2015-04-20  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/AmigaDOS.cs:
+	* PartPlugins/Atari.cs:
+	  Style corrections.
+
+2015-04-20  Natalia Portillo  <claunia@claunia.com>
+
 	* PartPlugins/Atari.cs:
 	  Added support for NetBSD partition identifiers.
 

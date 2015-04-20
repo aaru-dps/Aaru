@@ -145,7 +145,7 @@ namespace DiscImageChef.PartPlugins
 
                     if (table.entries[i].start <= imagePlugin.GetSectors())
                     {
-                        if(MainClass.isDebug)
+                        if (MainClass.isDebug)
                         {
                             if ((table.entries[i].start + table.entries[i].length) > imagePlugin.GetSectors())
                                 Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");
@@ -225,7 +225,7 @@ namespace DiscImageChef.PartPlugins
                             validTable = true;
                             if (extendedTable.entries[j].start <= imagePlugin.GetSectors())
                             {
-                                if(MainClass.isDebug)
+                                if (MainClass.isDebug)
                                 {
                                     if ((extendedTable.entries[j].start + extendedTable.entries[j].length) > imagePlugin.GetSectors())
                                         Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");
@@ -296,7 +296,7 @@ namespace DiscImageChef.PartPlugins
                     {
                         if (table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
-                            if(MainClass.isDebug)
+                            if (MainClass.isDebug)
                             {
                                 if ((table.icdEntries[i].start + table.icdEntries[i].length) > imagePlugin.GetSectors())
                                     Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");
