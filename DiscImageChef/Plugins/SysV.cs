@@ -66,9 +66,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
@@ -103,13 +103,13 @@ namespace DiscImageChef.Plugins
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if (imagePlugin.GetSectors() <= (partitionOffset + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
+            if (imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
                 return false;
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
             for (int i = 0; i <= 16; i++)
             {
-                byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partitionOffset, sb_size_in_sectors);
+                byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partitionStart, sb_size_in_sectors);
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
@@ -159,7 +159,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -186,7 +186,7 @@ namespace DiscImageChef.Plugins
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
             for (start = 0; start <= 16; start++)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 			
                 if (magic == XENIX_MAGIC)
@@ -266,7 +266,7 @@ namespace DiscImageChef.Plugins
             {
                 byte[] xenix_strings = new byte[6];
                 XenixSuperBlock xnx_sb = new XenixSuperBlock();
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
 				
                 xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
                 xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
@@ -347,7 +347,7 @@ namespace DiscImageChef.Plugins
 
             if (sysv)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 UInt16 pad0, pad1, pad2;
                 byte[] sysv_strings = new byte[6];
 
@@ -468,7 +468,7 @@ namespace DiscImageChef.Plugins
 
             if (coherent)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 CoherentSuperBlock coh_sb = new CoherentSuperBlock();
                 byte[] coh_strings = new byte[6];
 
@@ -514,7 +514,7 @@ namespace DiscImageChef.Plugins
 
             if (sys7th)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionOffset, sb_size_in_sectors);
+                sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 UNIX7thEditionSuperBlock v7_sb = new UNIX7thEditionSuperBlock();
                 byte[] sys7_strings = new byte[6];
 

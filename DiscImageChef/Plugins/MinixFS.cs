@@ -73,13 +73,13 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt16 magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
 			
@@ -93,7 +93,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -103,7 +103,7 @@ namespace DiscImageChef.Plugins
             int filenamesize;
             string minixVersion;
             UInt16 magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
 

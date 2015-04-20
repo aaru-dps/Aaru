@@ -63,22 +63,22 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
             UInt32 magic_be;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
             if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
-            sb_sector = imagePlugin.ReadSector(1 + partitionOffset);
+            sb_sector = imagePlugin.ReadSector(1 + partitionStart);
 				
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
@@ -88,7 +88,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
             byte[] name_bytes = new byte[32];
@@ -97,7 +97,7 @@ namespace DiscImageChef.Plugins
 			
             BeSuperBlock besb = new BeSuperBlock();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
             BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
 
@@ -108,7 +108,7 @@ namespace DiscImageChef.Plugins
             }
             else
             {
-                sb_sector = imagePlugin.ReadSector(1 + partitionOffset);
+                sb_sector = imagePlugin.ReadSector(1 + partitionStart);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 				
                 if (besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector

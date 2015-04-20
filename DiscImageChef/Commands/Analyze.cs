@@ -167,7 +167,7 @@ namespace DiscImageChef.Commands
                             {
                                 Console.WriteLine("Identifying filesystem on partition");
 
-                                IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector);
+                                IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors);
                                 if (id_plugins.Count == 0)
                                     Console.WriteLine("Filesystem not identified");
                                 else if (id_plugins.Count > 1)
@@ -179,7 +179,7 @@ namespace DiscImageChef.Commands
                                         if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                         {
                                             Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, out information);
+                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
                                             Console.Write(information);
                                         }
                                     }
@@ -188,7 +188,7 @@ namespace DiscImageChef.Commands
                                 {
                                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                                     Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, out information);
+                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
                                     Console.Write(information);
                                 }
                             }
@@ -198,7 +198,7 @@ namespace DiscImageChef.Commands
 
                 if (checkraw)
                 {
-                    IdentifyFilesystems(_imageFormat, out id_plugins, 0);
+                    IdentifyFilesystems(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors()-1);
                     if (id_plugins.Count == 0)
                         Console.WriteLine("Filesystem not identified");
                     else if (id_plugins.Count > 1)
@@ -210,7 +210,7 @@ namespace DiscImageChef.Commands
                             if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                             {
                                 Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                                _plugin.GetInformation(_imageFormat, 0, out information);
+                                _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
                                 Console.Write(information);
                             }
                         }
@@ -219,7 +219,7 @@ namespace DiscImageChef.Commands
                     {
                         plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                         Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                        _plugin.GetInformation(_imageFormat, 0, out information);
+                        _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
                         Console.Write(information);
                     }
                 }
@@ -232,7 +232,7 @@ namespace DiscImageChef.Commands
             }
         }
 
-        static void IdentifyFilesystems(ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionOffset)
+        static void IdentifyFilesystems(ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionStart, ulong partitionEnd)
         {
             id_plugins = new List<string>();
             PluginBase plugins = new PluginBase();
@@ -240,7 +240,7 @@ namespace DiscImageChef.Commands
 
             foreach (Plugin _plugin in plugins.PluginsList.Values)
             {
-                if (_plugin.Identify(imagePlugin, partitionOffset))
+                if (_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
                     id_plugins.Add(_plugin.Name.ToLower());
             }
         }

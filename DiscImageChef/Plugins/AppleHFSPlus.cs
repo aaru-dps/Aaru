@@ -57,9 +57,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt16 drSigWord;
@@ -70,7 +70,7 @@ namespace DiscImageChef.Plugins
             byte[] vh_sector;
             ulong hfsp_offset;
 
-            vh_sector = imagePlugin.ReadSector(2 + partitionOffset); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
 			
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 			
@@ -98,7 +98,7 @@ namespace DiscImageChef.Plugins
                 hfsp_offset = 0;
             }
 			
-            vh_sector = imagePlugin.ReadSector(2 + partitionOffset + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
 				
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0);
             if (drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
@@ -106,7 +106,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -120,7 +120,7 @@ namespace DiscImageChef.Plugins
             bool wrapped;
             byte[] vh_sector;
 			
-            vh_sector = imagePlugin.ReadSector(2 + partitionOffset); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 			
@@ -151,7 +151,7 @@ namespace DiscImageChef.Plugins
                 wrapped = false;
             }
 			
-            vh_sector = imagePlugin.ReadSector(2 + partitionOffset + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
 				
             HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x000);
             if (HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)

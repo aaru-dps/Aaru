@@ -53,24 +53,24 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
 
-            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partitionOffset), 0);
+            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partitionStart), 0);
 
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
             StringBuilder sb = new StringBuilder();
-            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] sb_strings = new byte[6];
 
             BFSSuperBlock bfs_sb = new BFSSuperBlock();

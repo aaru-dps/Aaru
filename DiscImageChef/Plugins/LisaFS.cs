@@ -69,7 +69,7 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
         }
 
-        public override bool Identify(ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace DiscImageChef.Plugins
             }
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();

@@ -52,9 +52,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
@@ -63,8 +63,8 @@ namespace DiscImageChef.Plugins
             UInt32 first_fat_entry; // No matter FAT size we read 4 bytes for checking
             UInt16 bps, rsectors;
 
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionOffset);
-            byte[] fat_sector = imagePlugin.ReadSector(1 + partitionOffset);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] fat_sector = imagePlugin.ReadSector(1 + partitionStart);
 
             bool bpb_found = true;
 
@@ -77,8 +77,8 @@ namespace DiscImageChef.Plugins
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if (rsectors == 0)
                 rsectors = 1;
-            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionOffset))
-                fat_sector = imagePlugin.ReadSector(rsectors + partitionOffset); // First FAT entry
+            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+                fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
 			else
                 bpb_found=false;
 
@@ -116,7 +116,7 @@ namespace DiscImageChef.Plugins
             else
             {
                 // This may create a lot of false positives, need to do extensive checkins...
-                fat_sector = imagePlugin.ReadSector(1 + partitionOffset);
+                fat_sector = imagePlugin.ReadSector(1 + partitionStart);
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0);
                 byte fat_id = fat_sector[0];
 
@@ -172,7 +172,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -185,8 +185,8 @@ namespace DiscImageChef.Plugins
             string fat32_signature;
             UInt16 bps, rsectors;
 
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionOffset);
-            byte[] fat_sector = imagePlugin.ReadSector(1 + partitionOffset);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] fat_sector = imagePlugin.ReadSector(1 + partitionStart);
 
             bool bpb_found = true;
 
@@ -201,8 +201,8 @@ namespace DiscImageChef.Plugins
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if (rsectors == 0)
                 rsectors = 1;
-            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionOffset))
-                fat_sector = imagePlugin.ReadSector(rsectors + partitionOffset); // First FAT entry
+            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+                fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
                 bpb_found=false;
 

@@ -55,21 +55,21 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             UInt16 drSigWord;
 
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
 			
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -81,8 +81,8 @@ namespace DiscImageChef.Plugins
             byte[] pString = new byte[16];
             byte[] variable_size;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
-            byte[] bb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] bb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
             if (MDB.drSigWord != MFS_MAGIC)

@@ -1,5 +1,32 @@
 2015-04-20  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins/BFS.cs:
+	* Plugins/ODS.cs:
+	* Plugins/FFS.cs:
+	* Plugins/FAT.cs:
+	* Plugins/NTFS.cs:
+	* Plugins/HPFS.cs:
+	* Plugins/SysV.cs:
+	* Plugins/Opera.cs:
+	* Plugins/extFS.cs:
+	* Plugins/LisaFS.cs:
+	* Plugins/ProDOS.cs:
+	* Plugins/ext2FS.cs:
+	* Plugins/Plugin.cs:
+	* Plugins/SolarFS.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleMFS.cs:
+	* Plugins/AppleHFS.cs:
+	* Commands/Analyze.cs:
+	* Plugins/AppleHFSPlus.cs:
+	  Give not only partition starting sector but also ending
+	  sector to filesystems.
+
+2015-04-20  Natalia Portillo  <claunia@claunia.com>
+
 	* PartPlugins/RDB.cs:
 	* DiscImageChef.csproj:
 	  Implemented support for Amiga RDB.

@@ -51,12 +51,12 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038);
 			
@@ -65,7 +65,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -93,7 +93,7 @@ namespace DiscImageChef.Plugins
                 return;
             }
 
-            byte[] sb_sector = imagePlugin.ReadSectors(2 + partitionOffset, sb_size_in_sectors);
+            byte[] sb_sector = imagePlugin.ReadSectors(2 + partitionStart, sb_size_in_sectors);
             supblk.inodes = BitConverter.ToUInt32(sb_sector, 0x000);
             supblk.blocks = BitConverter.ToUInt32(sb_sector, 0x004);
             supblk.reserved_blocks = BitConverter.ToUInt32(sb_sector, 0x008);

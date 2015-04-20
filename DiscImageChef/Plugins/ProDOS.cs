@@ -89,13 +89,13 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if (imagePlugin.GetSectors() < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionStart);
 
             UInt16 prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
             if (prePointer != 0)
@@ -121,12 +121,12 @@ namespace DiscImageChef.Plugins
             return total_blocks <= imagePlugin.GetSectors();
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partitionOffset);
+            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partitionStart);
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock();
             rootDirectoryKeyBlock.header = new ProDOSRootDirectoryHeader();

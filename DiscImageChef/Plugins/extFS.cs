@@ -51,25 +51,25 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionOffset); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
 
             UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
 			
             return magic == extFSMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
             StringBuilder sb = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionOffset); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
             extFSSuperBlock ext_sb = new extFSSuperBlock();
 
             ext_sb.inodes = BitConverter.ToUInt32(sb_sector, 0x000);

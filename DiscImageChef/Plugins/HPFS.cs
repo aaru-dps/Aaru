@@ -52,14 +52,14 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic1, magic2;
 			
-            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionOffset); // Seek to superblock, on logical sector 16
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
             magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
             magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
 			
@@ -68,7 +68,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -81,9 +81,9 @@ namespace DiscImageChef.Plugins
             byte[] oem_name = new byte[8];
             byte[] volume_name = new byte[11];
 			
-            byte[] hpfs_bpb_sector = imagePlugin.ReadSector(0 + partitionOffset); // Seek to BIOS parameter block, on logical sector 0
-            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionOffset); // Seek to superblock, on logical sector 16
-            byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partitionOffset); // Seek to spareblock, on logical sector 17
+            byte[] hpfs_bpb_sector = imagePlugin.ReadSector(0 + partitionStart); // Seek to BIOS parameter block, on logical sector 0
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
+            byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partitionStart); // Seek to spareblock, on logical sector 17
 
             hpfs_bpb.jmp1 = hpfs_bpb_sector[0x000];
             hpfs_bpb.jmp2 = BitConverter.ToUInt16(hpfs_bpb_sector, 0x001);

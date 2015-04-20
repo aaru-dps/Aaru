@@ -58,9 +58,10 @@ namespace DiscImageChef.Plugins
         /// Identifies the filesystem in the specified LBA
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partitionOffset">Partition offset (LBA).</param>
+        /// <param name="partitionStart">Partition start sector (LBA).</param>
+        /// <param name="partitionEnd">Partition end sector (LBA).</param>
         /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
-        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset);
+        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd);
 
         /// <summary>
         /// Gets information about the identified filesystem.
@@ -68,7 +69,7 @@ namespace DiscImageChef.Plugins
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitionOffset">Partition offset (LBA).</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information);
+        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information);
 	}
 }
 

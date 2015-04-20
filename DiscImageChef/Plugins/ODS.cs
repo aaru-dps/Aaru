@@ -58,9 +58,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             if (imagePlugin.GetSectorSize() < 512)
@@ -68,7 +68,7 @@ namespace DiscImageChef.Plugins
 
             byte[] magic_b = new byte[12];
             string magic;
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionOffset);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionStart);
 
             Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
             magic = Encoding.ASCII.GetString(magic_b);
@@ -76,7 +76,7 @@ namespace DiscImageChef.Plugins
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -86,7 +86,7 @@ namespace DiscImageChef.Plugins
             homeblock.min_class = new byte[20];
             homeblock.max_class = new byte[20];
 			
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionOffset);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionStart);
 			
             homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
             homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);

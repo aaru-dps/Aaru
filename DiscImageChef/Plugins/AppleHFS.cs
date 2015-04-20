@@ -58,9 +58,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] mdb_sector;
@@ -68,7 +68,7 @@ namespace DiscImageChef.Plugins
 
             if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if (drSigWord == HFS_MAGIC)
@@ -77,7 +77,7 @@ namespace DiscImageChef.Plugins
 
                     return drSigWord != HFSP_MAGIC;
                 }
-                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
+                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if (drSigWord == HFS_MAGIC)
@@ -92,7 +92,7 @@ namespace DiscImageChef.Plugins
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if (drSigWord == HFS_MAGIC)
@@ -105,7 +105,7 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
@@ -124,21 +124,21 @@ namespace DiscImageChef.Plugins
 
             if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if (drSigWord == HFS_MAGIC)
                 {
-                    bb_sector = imagePlugin.ReadSector(partitionOffset);
+                    bb_sector = imagePlugin.ReadSector(partitionStart);
                 }
                 else
                 {
-                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionOffset);
+                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                     if (drSigWord == HFS_MAGIC)
                     {
-                        bb_sector = Read2048SectorAs512(imagePlugin, partitionOffset);
+                        bb_sector = Read2048SectorAs512(imagePlugin, partitionStart);
                         APMFromHDDOnCD = true;
                     }
                     else
@@ -147,11 +147,11 @@ namespace DiscImageChef.Plugins
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionOffset);
+                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if (drSigWord == HFS_MAGIC)
-                    bb_sector = imagePlugin.ReadSector(partitionOffset);
+                    bb_sector = imagePlugin.ReadSector(partitionStart);
                 else
                     return;
             }

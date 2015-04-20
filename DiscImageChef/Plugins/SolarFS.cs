@@ -51,15 +51,15 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte signature; // 0x29
             string fs_type; // "SOL_FS  "
 
-            byte[] bpb = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] bpb = imagePlugin.ReadSector(0 + partitionStart);
 
             byte[] fs_type_b = new byte[8];
 
@@ -72,12 +72,12 @@ namespace DiscImageChef.Plugins
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
             StringBuilder sb = new StringBuilder();
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] bpb_strings;
 
             SolarOSParameterBlock BPB = new SolarOSParameterBlock();

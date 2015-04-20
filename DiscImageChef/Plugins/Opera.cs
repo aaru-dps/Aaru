@@ -51,12 +51,12 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
             byte record_type;
             byte[] sync_bytes = new byte[5];
@@ -72,12 +72,12 @@ namespace DiscImageChef.Plugins
 			
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
             StringBuilder SuperBlockMetadata = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
             OperaSuperBlock sb = new OperaSuperBlock();
             byte[] cString = new byte[32];

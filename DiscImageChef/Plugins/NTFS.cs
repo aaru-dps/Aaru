@@ -51,9 +51,9 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] eigth_bytes = new byte[8];
@@ -61,7 +61,7 @@ namespace DiscImageChef.Plugins
             UInt16 spfat, signature2;
             string oem_name;
 			
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
 			
             Array.Copy(ntfs_bpb, 0x003, eigth_bytes, 0, 8);
             oem_name = StringHandlers.CToString(eigth_bytes);
@@ -90,13 +90,13 @@ namespace DiscImageChef.Plugins
 			
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
 			
             StringBuilder sb = new StringBuilder();
 			
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionOffset);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
 			
             NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
 			

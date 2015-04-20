@@ -50,20 +50,20 @@ namespace DiscImageChef.Plugins
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionOffset) >= imagePlugin.GetSectors())
+            if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] system_descriptor = new byte[23];
-            byte[] sector = imagePlugin.ReadSector(1 + partitionOffset);
+            byte[] sector = imagePlugin.ReadSector(1 + partitionStart);
 
             Array.Copy(sector, 0x20, system_descriptor, 0, 23);
 
             return Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionOffset, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
         }
