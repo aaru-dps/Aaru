@@ -50,8 +50,10 @@ namespace DiscImageChef.PartPlugins
         const UInt32 TypeBigGEMDOS = 0x0042474D;
         const UInt32 TypeExtended = 0x0058474D;
         const UInt32 TypeLinux = 0x004C4E58;
-        const UInt32 TypeLinuxSwap = 0x00535750;
+        const UInt32 TypeSwap = 0x00535750;
         const UInt32 TypeRAW = 0x00524157;
+        const UInt32 TypeNetBSD = 0x004E4244;
+        const UInt32 TypeNetBSDSwap = 0x004E4253;
 
         public AtariPartitions(PluginBase Core)
         {
@@ -137,7 +139,7 @@ namespace DiscImageChef.PartPlugins
                 UInt32 type = table.entries[i].type & 0x00FFFFFF;
 
                 if (type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
-                   type == TypeLinuxSwap || type == TypeRAW)
+                    type == TypeSwap || type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap)
                 {
                     validTable = true;
 
@@ -178,11 +180,17 @@ namespace DiscImageChef.PartPlugins
                             case TypeLinux:
                                 part.PartitionDescription = "Linux partition";
                                 break;
-                            case TypeLinuxSwap:
-                                part.PartitionDescription = "Linux swap partition";
+                            case TypeSwap:
+                                part.PartitionDescription = "Swap partition";
                                 break;
                             case TypeRAW:
                                 part.PartitionDescription = "RAW partition";
+                                break;
+                            case TypeNetBSD:
+                                part.PartitionDescription = "NetBSD partition";
+                                break;
+                            case TypeNetBSDSwap:
+                                part.PartitionDescription = "NetBSD swap partition";
                                 break;
                             default:
                                 part.PartitionDescription = "Unknown partition type";
@@ -212,7 +220,7 @@ namespace DiscImageChef.PartPlugins
                         UInt32 extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
 
                         if (extendedType == TypeGEMDOS || extendedType == TypeBigGEMDOS || extendedType == TypeLinux ||
-                            extendedType == TypeLinuxSwap || extendedType == TypeRAW)
+                            extendedType == TypeSwap || extendedType == TypeRAW || extendedType == TypeNetBSD || extendedType == TypeNetBSDSwap)
                         {
                             validTable = true;
                             if (extendedTable.entries[j].start <= imagePlugin.GetSectors())
@@ -252,11 +260,17 @@ namespace DiscImageChef.PartPlugins
                                     case TypeLinux:
                                         part.PartitionDescription = "Linux partition";
                                         break;
-                                    case TypeLinuxSwap:
-                                        part.PartitionDescription = "Linux swap partition";
+                                    case TypeSwap:
+                                        part.PartitionDescription = "Swap partition";
                                         break;
                                     case TypeRAW:
                                         part.PartitionDescription = "RAW partition";
+                                        break;
+                                    case TypeNetBSD:
+                                        part.PartitionDescription = "NetBSD partition";
+                                        break;
+                                    case TypeNetBSDSwap:
+                                        part.PartitionDescription = "NetBSD swap partition";
                                         break;
                                     default:
                                         part.PartitionDescription = "Unknown partition type";
@@ -278,7 +292,7 @@ namespace DiscImageChef.PartPlugins
                     UInt32 type = table.icdEntries[i].type & 0x00FFFFFF;
 
                     if (type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
-                        type == TypeLinuxSwap || type == TypeRAW)
+                        type == TypeSwap || type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap)
                     {
                         if (table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
@@ -317,11 +331,17 @@ namespace DiscImageChef.PartPlugins
                                 case TypeLinux:
                                     part.PartitionDescription = "Linux partition";
                                     break;
-                                case TypeLinuxSwap:
-                                    part.PartitionDescription = "Linux swap partition";
+                                case TypeSwap:
+                                    part.PartitionDescription = "Swap partition";
                                     break;
                                 case TypeRAW:
                                     part.PartitionDescription = "RAW partition";
+                                    break;
+                                case TypeNetBSD:
+                                    part.PartitionDescription = "NetBSD partition";
+                                    break;
+                                case TypeNetBSDSwap:
+                                    part.PartitionDescription = "NetBSD swap partition";
                                     break;
                                 default:
                                     part.PartitionDescription = "Unknown partition type";
