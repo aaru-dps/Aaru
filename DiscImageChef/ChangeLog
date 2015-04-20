@@ -1,5 +1,10 @@
 2015-04-20  Natalia Portillo  <claunia@claunia.com>
 
+	* PartPlugins/RDB.cs:
+	  Typo submerged in infinite loop for non-RDB disks.
+
+2015-04-20  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins/BFS.cs:
 	* Plugins/ODS.cs:
 	* Plugins/FFS.cs:

@@ -915,6 +915,8 @@ namespace DiscImageChef.PartPlugins
                     foundRDB = true;
                     break;
                 }
+                    
+                RDBBlock++;
             }
 
             if (!foundRDB)
