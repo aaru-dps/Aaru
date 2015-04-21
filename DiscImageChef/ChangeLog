@@ -1,3 +1,8 @@
+2015-04-21  Natalia Portillo  <claunia@claunia.com>
+
+	* BigEndianBitConverter.cs:
+	  Added support for bigendian UUID/Guid
+
 2015-04-20  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins/AmigaDOS.cs:

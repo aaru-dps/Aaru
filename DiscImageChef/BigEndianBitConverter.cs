@@ -645,5 +645,16 @@ namespace DiscImageChef
         {
             return !IsLittleEndian ? BitConverter.ToUInt64(value, startIndex) : BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(UInt64) - startIndex);
         }
+
+        public static Guid ToGuid(byte[] value, int startIndex)
+        {
+            return new Guid(BigEndianBitConverter.ToUInt32(value, 0 + startIndex),
+                BigEndianBitConverter.ToUInt16(value, 4 + startIndex), 
+                BigEndianBitConverter.ToUInt16(value, 6 + startIndex),
+                value[8 + startIndex + 0], value[8 + startIndex + 1],
+                value[8 + startIndex + 2], value[8 + startIndex + 3],
+                value[8 + startIndex + 5], value[8 + startIndex + 5],
+                value[8 + startIndex + 6], value[8 + startIndex + 7]);
+        }
     }
 }
