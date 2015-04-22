@@ -13,7 +13,7 @@
 --- Add support for Apple UDIF images
 --- Add support for XPACK images
 --- Add support for QEMU QCOW and QCOW2 images
---- Add support for VHD and VHDX images
+--- Add support for VHDX images
 --- Add support for VirtualBox images
 --- Add support for VMWare images
 --- Add support foe QEMU QED images

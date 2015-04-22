@@ -37,6 +37,7 @@ Supported disk image formats
 * TeleDisk (without compression)
 * Nero Burning ROM (both image formats)
 * Apple 2IMG (used with Apple // emulators)
+* Virtual PC fixed size disk images
 
 Supported partitioning schemes
 ==============================

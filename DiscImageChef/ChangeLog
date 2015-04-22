@@ -1,3 +1,9 @@
+2015-04-22  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/VHD.cs:
+	* DiscImageChef.csproj:
+	  Implemented support for Virtual PC fixed size disk images.
+
 2015-04-21  Natalia Portillo  <claunia@claunia.com>
 
 	* BigEndianBitConverter.cs:

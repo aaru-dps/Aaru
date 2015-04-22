@@ -113,6 +113,7 @@
     <Compile Include="PartPlugins\RDB.cs" />
     <Compile Include="Plugins\AmigaDOS.cs" />
     <Compile Include="PartPlugins\Atari.cs" />
+    <Compile Include="ImagePlugins\VHD.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
