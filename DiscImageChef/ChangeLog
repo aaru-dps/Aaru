@@ -1,6 +1,12 @@
 2015-04-22  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/VHD.cs:
+	* ImagePlugins/Apple2MG.cs:
+	  Style changes
+
+2015-04-22  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/VHD.cs:
 	* DiscImageChef.csproj:
 	  Implemented support for Virtual PC fixed size disk images.
 

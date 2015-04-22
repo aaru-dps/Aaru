@@ -51,6 +51,7 @@ namespace DiscImageChef.ImagePlugins
     public class VHD : ImagePlugin
     {
         #region Internal Structures
+
         struct HardDiskFooter
         {
             /// <summary>
@@ -149,91 +150,93 @@ namespace DiscImageChef.ImagePlugins
         struct DynamicDiskHeader
         {
             /// <summary>
-            /// Header magic, <see cref="DynamicCookie"/> 
+            /// Offset 0x00, Header magic, <see cref="DynamicCookie"/> 
             /// </summary>
             public UInt64 cookie;
             /// <summary>
-            /// Offset to next structure on disk image.
+            /// Offset 0x08, Offset to next structure on disk image.
             /// Currently unused, 0xFFFFFFFF
             /// </summary>
             public UInt64 dataOffset;
             /// <summary>
-            /// Offset of the Block Allocation Table (BAT)
+            /// Offset 0x10, Offset of the Block Allocation Table (BAT)
             /// </summary>
             public UInt64 tableOffset;
             /// <summary>
-            /// Version of this header
+            /// Offset 0x18, Version of this header
             /// </summary>
             public UInt32 headerVersion;
             /// <summary>
-            /// Maximum entries present in the BAT
+            /// Offset 0x1C, Maximum entries present in the BAT
             /// </summary>
             public UInt32 maxTableEntries;
             /// <summary>
-            /// Size of a block in bytes
+            /// Offset 0x20, Size of a block in bytes
             /// Should always be a power of two of 512
             /// </summary>
             public UInt32 blockSize;
             /// <summary>
-            /// Checksum of this header
+            /// Offset 0x24, Checksum of this header
             /// </summary>
             public UInt32 checksum;
             /// <summary>
-            /// UUID of parent disk image for differencing type
+            /// Offset 0x28, UUID of parent disk image for differencing type
             /// </summary>
             public Guid parentID;
             /// <summary>
-            /// Timestamp of parent disk image
+            /// Offset 0x38, Timestamp of parent disk image
             /// </summary>
             public UInt32 parentTimestamp;
             /// <summary>
-            /// Reserved
+            /// Offset 0x3C, Reserved
             /// </summary>
             public UInt32 reserved;
             /// <summary>
-            /// 512 bytes UTF-16 of paren disk image filename
+            /// Offset 0x40, 512 bytes UTF-16 of parent disk image filename
             /// </summary>
             public string parentName;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry1;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x258, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry2;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x270, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry3;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x288, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry4;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x2A0, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry5;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x2B8, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry6;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x2D0, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry7;
             /// <summary>
-            /// Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
+            /// Offset 0x2E8, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
             public ParentLocatorEntry locatorEntry8;
             /// <summary>
-            /// 256 reserved bytes
+            /// Offset 0x300, 256 reserved bytes
             /// </summary>
             public byte[] reserved2;
         }
+
         #endregion
 
         #region Internal Constants
+
         /// <summary>
         /// File magic number, "conectix"
         /// </summary>
@@ -365,9 +368,11 @@ namespace DiscImageChef.ImagePlugins
         /// Stores a Mac OS X URI (RFC-2396) absolute path in UTF-8, "MacX"
         /// </summary>
         const UInt32 platformCodeMacintoshURI = 0x4D616358;
+
         #endregion
 
         #region Internal variables
+
         HardDiskFooter thisFooter;
         HardDiskFooter parentFooter;
         DynamicDiskHeader thisDynamic;
@@ -376,6 +381,7 @@ namespace DiscImageChef.ImagePlugins
         DateTime parentDateTime;
         string thisPath;
         string parentPath;
+
         #endregion
 
         public VHD(PluginBase Core)
@@ -405,6 +411,7 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region public methods
+
         public override bool IdentifyImage(string imagePath)
         {
             FileStream imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
@@ -534,7 +541,7 @@ namespace DiscImageChef.ImagePlugins
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.originalSize = {0}", thisFooter.originalSize);
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.currentSize = {0}", thisFooter.currentSize);
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})", thisFooter.diskGeometry,
-                    (thisFooter.diskGeometry&0xFFFF0000)>>16, (thisFooter.diskGeometry&0xFF00)>>8, (thisFooter.diskGeometry&0xFF));
+                    (thisFooter.diskGeometry & 0xFFFF0000) >> 16, (thisFooter.diskGeometry & 0xFF00) >> 8, (thisFooter.diskGeometry & 0xFF));
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.diskType = 0x{0:X8}", thisFooter.diskType);
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.checksum = 0x{0:X8}", thisFooter.checksum);
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.uniqueId = {0}", thisFooter.uniqueId);
@@ -542,7 +549,7 @@ namespace DiscImageChef.ImagePlugins
                 Console.WriteLine("DEBUG (VirtualPC plugin): footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
             }
 
-            if(thisFooter.version == Version1)
+            if (thisFooter.version == Version1)
                 ImageInfo.imageVersion = "1.0";
             else
                 throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
@@ -579,7 +586,7 @@ namespace DiscImageChef.ImagePlugins
                 case CreatorVirtualServer:
                     {
                         ImageInfo.imageApplication = "Microsoft Virtual Server";
-                        switch(thisFooter.creatorVersion)
+                        switch (thisFooter.creatorVersion)
                         {
                             case VersionVirtualServer2004:
                                 ImageInfo.imageApplicationVersion = "2004";
@@ -596,7 +603,7 @@ namespace DiscImageChef.ImagePlugins
                         {
                             case CreatorMacintosh:
                             case CreatorMacintoshOld:
-                                switch(thisFooter.creatorVersion)
+                                switch (thisFooter.creatorVersion)
                                 {
                                     case VersionVirtualPCMac:
                                         ImageInfo.imageApplication = "Connectix Virtual PC";
@@ -608,7 +615,7 @@ namespace DiscImageChef.ImagePlugins
                                 }
                                 break;
                             case CreatorWindows:
-                                switch(thisFooter.creatorVersion)
+                                switch (thisFooter.creatorVersion)
                                 {
                                     case VersionVirtualPCMac:
                                         ImageInfo.imageApplication = "Connectix Virtual PC";
@@ -644,7 +651,7 @@ namespace DiscImageChef.ImagePlugins
 
             thisPath = imagePath;
             ImageInfo.imageSize = thisFooter.currentSize;
-            ImageInfo.sectors = thisFooter.currentSize/512;
+            ImageInfo.sectors = thisFooter.currentSize / 512;
             ImageInfo.sectorSize = 512;
 
             FileInfo fi = new FileInfo(imagePath);
@@ -685,21 +692,25 @@ namespace DiscImageChef.ImagePlugins
         {
             return false;
         }
+
         public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
+
         public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
+
         public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
+
         public override string GetImageFormat()
         {
-            switch(thisFooter.diskType)
+            switch (thisFooter.diskType)
             {
                 case typeFixed:
                     return "Virtual PC fixed size disk image";
@@ -711,6 +722,7 @@ namespace DiscImageChef.ImagePlugins
                     return "Virtual PC disk image";
             }
         }
+
         public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
@@ -793,9 +805,11 @@ namespace DiscImageChef.ImagePlugins
                     }
             }
         }
+
         #endregion
 
         #region private methods
+
         UInt32 VHDChecksum(byte[] data)
         {
             UInt32 checksum = 0;
@@ -803,125 +817,156 @@ namespace DiscImageChef.ImagePlugins
                 checksum += b;
             return ~checksum;
         }
+
         #endregion
 
         #region Unsupported features
+
         public override string GetImageComments()
         {
             return null;
         }
+
         public override byte[] ReadDiskTag(DiskTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override string GetDiskManufacturer()
         {
             return null;
         }
+
         public override string GetDiskModel()
         {
             return null;
         }
+
         public override string GetDiskSerialNumber()
         {
             return null;
         }
+
         public override string GetDiskBarcode()
         {
             return null;
         }
+
         public override string GetDiskPartNumber()
         {
             return null;
         }
+
         public override int GetDiskSequence()
         {
             return 0;
         }
+
         public override int GetLastDiskSequence()
         {
             return 0;
         }
+
         public override string GetDriveManufacturer()
         {
             return null;
         }
+
         public override string GetDriveModel()
         {
             return null;
         }
+
         public override string GetDriveSerialNumber()
         {
             return null;
         }
+
         public override System.Collections.Generic.List<DiscImageChef.PartPlugins.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override System.Collections.Generic.List<Track> GetTracks()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override System.Collections.Generic.List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override System.Collections.Generic.List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override System.Collections.Generic.List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
+
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
@@ -930,14 +975,17 @@ namespace DiscImageChef.ImagePlugins
                 UnknownLBAs.Add(i);
             return null;
         }
+
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifyDiskImage()
         {
             return null;
         }
+
         #endregion
     }
 }

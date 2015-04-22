@@ -122,6 +122,7 @@ namespace DiscImageChef.ImagePlugins
         #endregion
 
         #region Internal Constants
+
         /// <summary>
         /// Magic number, "2IMG"
         /// </summary>
@@ -158,11 +159,14 @@ namespace DiscImageChef.ImagePlugins
         public const UInt32 LockedDisk = 0x80000000;
         public const UInt32 ValidVolumeNumber = 0x00000100;
         public const UInt32 VolumeNumberMask = 0x000000FF;
+
         #endregion
 
         #region Internal variables
+
         A2IMGHeader ImageHeader;
         string a2mgImagePath;
+
         #endregion
 
         public Apple2MG(PluginBase Core)
@@ -214,7 +218,7 @@ namespace DiscImageChef.ImagePlugins
             // There seems to be incorrect endian in some images on the wild
             if (datasize == 0x00800C00)
                 datasize = 0x000C8000;
-            if (dataoff+datasize > stream.Length)
+            if (dataoff + datasize > stream.Length)
                 return false;
 
             UInt32 commentoff = BitConverter.ToUInt32(header, 0x20);
@@ -222,7 +226,7 @@ namespace DiscImageChef.ImagePlugins
                 return false;
 
             UInt32 commentsize = BitConverter.ToUInt32(header, 0x24);
-            if (commentoff+commentsize > stream.Length)
+            if (commentoff + commentsize > stream.Length)
                 return false;
 
             UInt32 creatoroff = BitConverter.ToUInt32(header, 0x28);
@@ -230,11 +234,9 @@ namespace DiscImageChef.ImagePlugins
                 return false;
 
             UInt32 creatorsize = BitConverter.ToUInt32(header, 0x2C);
-            if (creatoroff+creatorsize > stream.Length)
-                return false;
-
-            return true;
+            return creatoroff + creatorsize <= stream.Length;
         }
+
         public override bool OpenImage(string imagePath)
         {
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
@@ -309,10 +311,7 @@ namespace DiscImageChef.ImagePlugins
             else if (ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
                 ImageHeader.dataSize = ImageHeader.blocks * 256;
 
-            if (ImageHeader.imageFormat == ProDOSSectorOrder)
-                ImageInfo.sectorSize = 512;
-            else
-                ImageInfo.sectorSize = 256;
+            ImageInfo.sectorSize = ImageHeader.imageFormat == ProDOSSectorOrder ? 512 : 256;
 
             ImageInfo.sectors = ImageHeader.blocks;
             ImageInfo.imageSize = ImageHeader.dataSize;
@@ -365,54 +364,67 @@ namespace DiscImageChef.ImagePlugins
 
             return true;
         }
+
         public override bool ImageHasPartitions()
         {
             return false;
         }
+
         public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
+
         public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
+
         public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
+
         public override string GetImageFormat()
         {
             return "Apple 2IMG";
         }
+
         public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
         }
+
         public override string GetImageApplication()
         {
             return ImageInfo.imageApplication;
         }
+
         public override string GetImageApplicationVersion()
         {
             return ImageInfo.imageApplicationVersion;
         }
+
         public override string GetImageCreator()
         {
             return ImageInfo.imageCreator;
         }
+
         public override DateTime GetImageCreationTime()
         {
             return ImageInfo.imageCreationTime;
         }
+
         public override DateTime GetImageLastModificationTime()
         {
             return ImageInfo.imageLastModificationTime;
         }
+
         public override string GetImageName()
         {
             return ImageInfo.imageName;
         }
+
         public override string GetImageComments()
         {
             return ImageInfo.imageComments;
@@ -466,118 +478,147 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Unsupported features
+
         public override byte[] ReadDiskTag(DiskTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override string GetDiskManufacturer()
         {
             return null;
         }
+
         public override string GetDiskModel()
         {
             return null;
         }
+
         public override string GetDiskSerialNumber()
         {
             return null;
         }
+
         public override string GetDiskBarcode()
         {
             return null;
         }
+
         public override string GetDiskPartNumber()
         {
             return null;
         }
+
         public override int GetDiskSequence()
         {
             return 0;
         }
+
         public override int GetLastDiskSequence()
         {
             return 0;
         }
+
         public override string GetDriveManufacturer()
         {
             return null;
         }
+
         public override string GetDriveModel()
         {
             return null;
         }
+
         public override string GetDriveSerialNumber()
         {
             return null;
         }
-        public override System.Collections.Generic.List<DiscImageChef.PartPlugins.Partition> GetPartitions()
+
+        public override List<DiscImageChef.PartPlugins.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        public override System.Collections.Generic.List<Track> GetTracks()
+
+        public override List<Track> GetTracks()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        public override System.Collections.Generic.List<Track> GetSessionTracks(Session session)
+
+        public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        public override System.Collections.Generic.List<Track> GetSessionTracks(ushort session)
+
+        public override List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
-        public override System.Collections.Generic.List<Session> GetSessions()
+
+        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
+
         public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             FailingLBAs = new List<ulong>();
@@ -586,14 +627,17 @@ namespace DiscImageChef.ImagePlugins
                 UnknownLBAs.Add(i);
             return null;
         }
+
         public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
+
         public override bool? VerifyDiskImage()
         {
             return null;
         }
+
         #endregion
     }
 }
