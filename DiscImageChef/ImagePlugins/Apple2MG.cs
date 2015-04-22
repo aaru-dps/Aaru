@@ -311,7 +311,7 @@ namespace DiscImageChef.ImagePlugins
             else if (ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
                 ImageHeader.dataSize = ImageHeader.blocks * 256;
 
-            ImageInfo.sectorSize = ImageHeader.imageFormat == ProDOSSectorOrder ? 512 : 256;
+            ImageInfo.sectorSize = (uint)(ImageHeader.imageFormat == ProDOSSectorOrder ? 512 : 256);
 
             ImageInfo.sectors = ImageHeader.blocks;
             ImageInfo.imageSize = ImageHeader.dataSize;

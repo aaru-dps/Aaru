@@ -1,5 +1,10 @@
 2015-04-22  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugins/Apple2MG.cs:
+	  Casting typo
+
+2015-04-22  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugins/VHD.cs:
 	* ImagePlugins/Apple2MG.cs:
 	  Style changes
