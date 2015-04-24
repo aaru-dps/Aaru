@@ -1,6 +1,11 @@
 2015-04-24  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/VHD.cs:
+	  Syntax cleaning.
+
+2015-04-24  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/VHD.cs:
 	  Implemented support for Virtual PC differencing (undo) disk
 	  images.
 

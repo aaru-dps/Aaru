@@ -1178,7 +1178,7 @@ namespace DiscImageChef.ImagePlugins
 
         #region private methods
 
-        UInt32 VHDChecksum(byte[] data)
+        static UInt32 VHDChecksum(byte[] data)
         {
             UInt32 checksum = 0;
             foreach (byte b in data)
@@ -1300,27 +1300,27 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override System.Collections.Generic.List<DiscImageChef.PartPlugins.Partition> GetPartitions()
+        public override List<DiscImageChef.PartPlugins.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override System.Collections.Generic.List<Track> GetTracks()
+        public override List<Track> GetTracks()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override System.Collections.Generic.List<Track> GetSessionTracks(Session session)
+        public override List<Track> GetSessionTracks(Session session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override System.Collections.Generic.List<Track> GetSessionTracks(ushort session)
+        public override List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override System.Collections.Generic.List<Session> GetSessions()
+        public override List<Session> GetSessions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
