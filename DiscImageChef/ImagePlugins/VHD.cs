@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -126,23 +127,23 @@ namespace DiscImageChef.ImagePlugins
         struct ParentLocatorEntry
         {
             /// <summary>
-            /// Describes the platform specific type this entry belongs to
+            /// Offset 0x00, Describes the platform specific type this entry belongs to
             /// </summary>
             public UInt32 platformCode;
             /// <summary>
-            /// Describes the number of 512 bytes sectors used by this entry
+            /// Offset 0x04, Describes the number of 512 bytes sectors used by this entry
             /// </summary>
             public UInt32 platformDataSpace;
             /// <summary>
-            /// Describes this entry's size in bytes
+            /// Offset 0x08, Describes this entry's size in bytes
             /// </summary>
             public UInt32 platformDataLength;
             /// <summary>
-            /// Reserved
+            /// Offset 0x0c, Reserved
             /// </summary>
             public UInt32 reserved;
             /// <summary>
-            /// Offset on disk image this entry resides on
+            /// Offset 0x10, Offset on disk image this entry resides on
             /// </summary>
             public UInt64 platformDataOffset;
         }
@@ -198,39 +199,18 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
             /// </summary>
-            public ParentLocatorEntry locatorEntry1;
-            /// <summary>
-            /// Offset 0x258, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry2;
-            /// <summary>
-            /// Offset 0x270, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry3;
-            /// <summary>
-            /// Offset 0x288, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry4;
-            /// <summary>
-            /// Offset 0x2A0, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry5;
-            /// <summary>
-            /// Offset 0x2B8, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry6;
-            /// <summary>
-            /// Offset 0x2D0, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry7;
-            /// <summary>
-            /// Offset 0x2E8, Parent disk image locator entry, <see cref="ParentLocatorEntry"/> 
-            /// </summary>
-            public ParentLocatorEntry locatorEntry8;
+            public ParentLocatorEntry[] locatorEntries;
             /// <summary>
             /// Offset 0x300, 256 reserved bytes
             /// </summary>
             public byte[] reserved2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BATSector
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public UInt32[] blockPointer;
         }
 
         #endregion
@@ -381,6 +361,8 @@ namespace DiscImageChef.ImagePlugins
         DateTime parentDateTime;
         string thisPath;
         string parentPath;
+        UInt32[] blockAllocationTable;
+        UInt32 bitmapSize;
 
         #endregion
 
@@ -659,20 +641,173 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageLastModificationTime = thisDateTime;
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
            
+            if (thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
+            {
+                imageStream.Seek((long)thisFooter.offset, SeekOrigin.Begin);
+                byte[] dynamicBytes = new byte[1024];
+                imageStream.Read(dynamicBytes, 0, 1024);
+
+                UInt32 dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
+
+                dynamicBytes[0x24] = 0;
+                dynamicBytes[0x25] = 0;
+                dynamicBytes[0x26] = 0;
+                dynamicBytes[0x27] = 0;
+
+                UInt32 dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
+
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (VirtualPC plugin): Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
+
+                if (dynamicChecksum != dynamicChecksumCalculated)
+                    throw new ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+
+                thisDynamic = new DynamicDiskHeader();
+                thisDynamic.locatorEntries = new ParentLocatorEntry[8];
+                thisDynamic.reserved2 = new byte[256];
+
+                for (int i = 0; i < 8; i++)
+                    thisDynamic.locatorEntries[i] = new ParentLocatorEntry();
+
+                thisDynamic.cookie = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x00);
+                thisDynamic.dataOffset = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x08);
+                thisDynamic.tableOffset = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x10);
+                thisDynamic.headerVersion = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x18);
+                thisDynamic.maxTableEntries = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x1C);
+                thisDynamic.blockSize = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x20);
+                thisDynamic.checksum = dynamicChecksum;
+                thisDynamic.parentID = BigEndianBitConverter.ToGuid(dynamicBytes, 0x28);
+                thisDynamic.parentTimestamp = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x38);
+                thisDynamic.reserved = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x3C);
+                thisDynamic.parentName = Encoding.BigEndianUnicode.GetString(dynamicBytes, 0x40, 512);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    thisDynamic.locatorEntries[i].platformCode = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x00 + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataSpace = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x04 + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataLength = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x08 + 24 * i);
+                    thisDynamic.locatorEntries[i].reserved = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x0C + 24 * i);
+                    thisDynamic.locatorEntries[i].platformDataOffset = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x240 + 0x10 + 24 * i);
+                }
+
+                Array.Copy(dynamicBytes, 0x300, thisDynamic.reserved2, 0, 256);
+
+                parentDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                parentDateTime = parentDateTime.AddSeconds(thisDynamic.parentTimestamp);
+
+                if (MainClass.isDebug)
+                {
+                    Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+                    sha1Ctx.Init();
+                    sha1Ctx.Update(thisDynamic.reserved2);
+
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.cookie = 0x{0:X8}", thisDynamic.cookie);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.dataOffset = {0}", thisDynamic.dataOffset);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.tableOffset = {0}", thisDynamic.tableOffset);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.headerVersion = 0x{0:X8}", thisDynamic.headerVersion);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.maxTableEntries = {0}", thisDynamic.maxTableEntries);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.blockSize = {0}", thisDynamic.blockSize);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.checksum = 0x{0:X8}", thisDynamic.checksum);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentID = {0}", thisDynamic.parentID);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentTimestamp = 0x{0:X8} ({1})", thisDynamic.parentTimestamp, parentDateTime);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.reserved = 0x{0:X8}", thisDynamic.reserved);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i, thisDynamic.locatorEntries[i].platformCode,
+                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic.locatorEntries[i].platformCode)));
+                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataSpace = {1}", i, thisDynamic.locatorEntries[i].platformDataSpace);
+                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataLength = {1}", i, thisDynamic.locatorEntries[i].platformDataLength);
+                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i, thisDynamic.locatorEntries[i].reserved);
+                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataOffset = {1}", i, thisDynamic.locatorEntries[i].platformDataOffset);
+                    }
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentName = \"{0}\"", thisDynamic.parentName);
+                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
+                }
+
+                if (thisDynamic.headerVersion != Version1)
+                    throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+
+                DateTime startTime = DateTime.UtcNow;
+
+                blockAllocationTable = new uint[thisDynamic.maxTableEntries];
+
+                // Safe and slow code. It takes 76,572 ms to fill a 30720 entries BAT
+                /*
+                byte[] bat = new byte[thisDynamic.maxTableEntries * 4];
+                imageStream.Seek((long)thisDynamic.tableOffset, SeekOrigin.Begin);
+                imageStream.Read(bat, 0, (int)(thisDynamic.maxTableEntries * 4));
+                for (int i = 0; i < thisDynamic.maxTableEntries; i++)
+                    blockAllocationTable[i] = BigEndianBitConverter.ToUInt32(bat, 4 * i);
+
+                if (MainClass.isDebug)
+                {
+                    DateTime endTime = DateTime.UtcNow;
+                    Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime-startTime).TotalSeconds);
+                }
+                */
+
+                // How many sectors uses the BAT
+                UInt32 batSectorCount = (uint)Math.Ceiling(((double)thisDynamic.maxTableEntries * 4) / 512);
+
+                byte[] batSectorBytes = new byte[512];
+                BATSector batSector = new BATSector();
+
+                // Unsafe and fast code. It takes 4 ms to fill a 30720 entries BAT
+                for (int i = 0; i < batSectorCount; i++)
+                {
+                    imageStream.Seek((long)thisDynamic.tableOffset + i * 512, SeekOrigin.Begin);
+                    imageStream.Read(batSectorBytes, 0, 512);
+                    // This does the big-endian trick but reverses the order of elements also
+                    Array.Reverse(batSectorBytes);
+                    GCHandle handle = GCHandle.Alloc(batSectorBytes, GCHandleType.Pinned);
+                    batSector = (BATSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BATSector));
+                    handle.Free();
+                    // This restores the order of elements
+                    Array.Reverse(batSector.blockPointer);
+                    if (blockAllocationTable.Length >= (i * 512) / 4 + 512 / 4)
+                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, 512 / 4);
+                    else
+                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, blockAllocationTable.Length - (i * 512) / 4);
+                }
+
+                if (MainClass.isDebug)
+                {
+                    DateTime endTime = DateTime.UtcNow;
+                    Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime - startTime).TotalSeconds);
+                }
+
+                // Too noisy
+                /*
+                if (MainClass.isDebug)
+                {
+                    for (int i = 0; i < thisDynamic.maxTableEntries; i++)
+                        Console.WriteLine("DEBUG (VirtualPC plugin): blockAllocationTable[{0}] = {1}", i, blockAllocationTable[i]);
+                }*/
+
+                // Get the roundest number of sectors needed to store the block bitmap
+                bitmapSize = (uint)Math.Ceiling((double)(
+                    // How many sectors do a block store
+                    (thisDynamic.blockSize / 512)
+                    // 1 bit per sector on the bitmap
+                    / 8
+                    // and aligned to 512 byte boundary
+                    / 512));
+                if (MainClass.isDebug)
+                    Console.WriteLine("DEBUG (VirtualPC plugin): Bitmap is {0} sectors", bitmapSize);
+            }
+
             switch (thisFooter.diskType)
             {
                 case typeFixed:
+                case typeDynamic:
                     {
                         // Nothing to do here, really.
                         imageStream.Close();
                         return true;
                     }
-                case typeDynamic:
-                    {
-                        throw new NotImplementedException("(VirtualPC plugin): Dynamic disk images not yet supported");
-                    }
                 case typeDifferencing:
                     {
+                        
                         throw new NotImplementedException("(VirtualPC plugin): Differencing disk images not yet supported");
                     }
                 case typeDeprecated1:
@@ -785,9 +920,62 @@ namespace DiscImageChef.ImagePlugins
                         thisStream.Close();
                         return data;
                     }
+            // Contrary to Microsoft's specifications that tell us to check the bitmap
+            // and in case of unused sector just return zeros, as blocks are allocated
+            // as a whole, this would waste time and miss cache, so we read any sector
+            // as long as it is in the block.
                 case typeDynamic:
                     {
-                        throw new NotImplementedException("(VirtualPC plugin): Dynamic disk images not yet supported");
+                        // Block number for BAT searching
+                        UInt32 blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                        // Sector number inside of block
+                        UInt32 sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+                        // How many sectors before reaching end of block
+                        UInt32 remainingInBlock = (thisDynamic.blockSize / 512) - sectorInBlock;
+
+                        // Data that can be read in this block
+                        byte[] prefix;
+                        // Data that needs to be read from another block
+                        byte[] suffix = null;
+
+                        // How many sectors to read from this block
+                        UInt32 sectorsToReadHere;
+
+                        // Asked to read more sectors than are remaining in block
+                        if (length > remainingInBlock)
+                        {
+                            suffix = ReadSectors(sectorAddress + remainingInBlock, length - remainingInBlock);
+                            sectorsToReadHere = remainingInBlock;
+                        }
+                        else
+                            sectorsToReadHere = length;
+
+                        // Offset of sector in file
+                        UInt32 sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                        prefix = new byte[sectorsToReadHere * 512];
+
+                        // 0xFFFFFFFF means unallocated
+                        if (sectorOffset != 0xFFFFFFFF)
+                        {
+                            thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+                            thisStream.Seek((long)(sectorOffset * 512), SeekOrigin.Begin);
+                            thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
+                            thisStream.Close();
+                        }
+                        // If it is unallocated, just fill with zeroes
+                        else
+                            Array.Clear(prefix, 0, prefix.Length);
+
+                        // If we needed to read from another block, join all the data
+                        if (suffix != null)
+                        {
+                            byte[] data = new byte[512 * length];
+                            Array.Copy(prefix, 0, data, 0, prefix.Length);
+                            Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
+                            return data;
+                        }
+
+                        return prefix;
                     }
                 case typeDifferencing:
                     {

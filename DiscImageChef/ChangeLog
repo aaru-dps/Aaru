@@ -1,3 +1,8 @@
+2015-04-24  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/VHD.cs:
+	  Add support for dynamic disk images.
+
 2015-04-22  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/Apple2MG.cs:
