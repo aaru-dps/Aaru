@@ -354,15 +354,14 @@ namespace DiscImageChef.ImagePlugins
         #region Internal variables
 
         HardDiskFooter thisFooter;
-        HardDiskFooter parentFooter;
         DynamicDiskHeader thisDynamic;
-        DynamicDiskHeader parentDynamic;
         DateTime thisDateTime;
         DateTime parentDateTime;
         string thisPath;
-        string parentPath;
         UInt32[] blockAllocationTable;
         UInt32 bitmapSize;
+        byte[][] locatorEntriesData;
+        ImagePlugin parentImage;
 
         #endregion
 
@@ -785,9 +784,9 @@ namespace DiscImageChef.ImagePlugins
                 }*/
 
                 // Get the roundest number of sectors needed to store the block bitmap
-                bitmapSize = (uint)Math.Ceiling((double)(
+                bitmapSize = (uint)Math.Ceiling((
                     // How many sectors do a block store
-                    (thisDynamic.blockSize / 512)
+                    ((double)thisDynamic.blockSize / 512)
                     // 1 bit per sector on the bitmap
                     / 8
                     // and aligned to 512 byte boundary
@@ -807,8 +806,106 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case typeDifferencing:
                     {
-                        
-                        throw new NotImplementedException("(VirtualPC plugin): Differencing disk images not yet supported");
+                        locatorEntriesData = new byte[8][];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (thisDynamic.locatorEntries[i].platformCode != 0x00000000)
+                            {
+                                locatorEntriesData[i] = new byte[thisDynamic.locatorEntries[i].platformDataLength];
+                                imageStream.Seek((long)thisDynamic.locatorEntries[i].platformDataOffset, SeekOrigin.Begin);
+                                imageStream.Read(locatorEntriesData[i], 0, (int)thisDynamic.locatorEntries[i].platformDataLength);
+
+                                if (MainClass.isDebug)
+                                {
+                                    switch (thisDynamic.locatorEntries[i].platformCode)
+                                    {
+                                        case platformCodeWindowsAbsolute:
+                                        case platformCodeWindowsRelative:
+                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.ASCII.GetString(locatorEntriesData[i]));
+                                            break;
+                                        case platformCodeWindowsAbsoluteU:
+                                        case platformCodeWindowsRelativeU:
+                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.BigEndianUnicode.GetString(locatorEntriesData[i]));
+                                            break;
+                                        case platformCodeMacintoshURI:
+                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.UTF8.GetString(locatorEntriesData[i]));
+                                            break;
+                                        default:
+                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] =", i);
+                                            PrintHex.PrintHexArray(locatorEntriesData[i], 64);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+
+                        int currentLocator = 0;
+                        bool locatorFound = false;
+                        string parentPath = null;
+
+                        while (!locatorFound && currentLocator < 8)
+                        {
+                            switch (thisDynamic.locatorEntries[currentLocator].platformCode)
+                            {
+                                case platformCodeWindowsAbsolute:
+                                case platformCodeWindowsRelative:
+                                    parentPath = Encoding.ASCII.GetString(locatorEntriesData[currentLocator]);
+                                    break;
+                                case platformCodeWindowsAbsoluteU:
+                                case platformCodeWindowsRelativeU:
+                                    parentPath = Encoding.BigEndianUnicode.GetString(locatorEntriesData[currentLocator]);
+                                    break;
+                                case platformCodeMacintoshURI:
+                                    parentPath = Uri.UnescapeDataString(Encoding.UTF8.GetString(locatorEntriesData[currentLocator]));
+                                    if (parentPath.StartsWith("file://localhost", StringComparison.InvariantCulture))
+                                        parentPath = parentPath.Remove(0, 16);
+                                    else
+                                    {
+                                        if (MainClass.isDebug)
+                                            Console.WriteLine("DEBUG (VirtualPC plugin) Unsupported protocol classified found in URI parent path: \"{0}\"", parentPath);
+                                        parentPath = null;
+                                    }
+                                    break;
+                            }
+
+                            if (parentPath != null)
+                            {
+                                if (MainClass.isDebug)
+                                    Console.WriteLine("DEBUG (VirtualPC plugin) Possible parent path: \"{0}\"", parentPath);
+
+                                locatorFound |= File.Exists(parentPath);
+
+                                if (!locatorFound)
+                                    parentPath = null;
+                            }
+                            currentLocator++;
+                        }
+
+                        if (!locatorFound || parentPath == null)
+                            throw new FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
+                        else
+                        {
+                            PluginBase plugins = new PluginBase();
+                            plugins.RegisterAllPlugins();
+                            if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
+                                throw new SystemException("(VirtualPC plugin): Unable to open myself");
+
+                            if (!parentImage.IdentifyImage(parentPath))
+                                throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
+
+                            if (!parentImage.OpenImage(parentPath))
+                                throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
+
+                            // While specification says that parent and child disk images should contain UUID relationship
+                            // in reality it seems that old differencing disk images stored a parent UUID that, nonetheless
+                            // the parent never stored itself. So the only real way to know that images are related is
+                            // because the parent IS found and SAME SIZE. Ugly...
+                            // More funny even, tested parent images show an empty host OS, and child images a correct one.
+                            if (parentImage.GetSectors() != GetSectors())
+                                throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
+                        }
+
+                        return true;
                     }
                 case typeDeprecated1:
                 case typeDeprecated2:
@@ -900,17 +997,90 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSector(ulong sectorAddress)
         {
-            return ReadSectors(sectorAddress, 1);
+            switch (thisFooter.diskType)
+            {
+                case typeDifferencing:
+                    {
+                        // Block number for BAT searching
+                        UInt32 blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                        // Sector number inside of block
+                        UInt32 sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+
+                        byte[] bitmap = new byte[bitmapSize * 512];
+
+                        // Offset of block in file
+                        UInt32 blockOffset = blockAllocationTable[blockNumber] * 512;
+
+                        int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
+                        int bitmapBit = (int)(sectorInBlock % 8);
+
+                        FileStream thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+
+                        thisStream.Seek(blockOffset, SeekOrigin.Begin);
+                        thisStream.Read(bitmap, 0, (int)bitmapSize * 512);
+
+                        thisStream.Close();
+
+                        byte mask = (byte)(1 << (7 - bitmapBit));
+                        bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
+
+                        /*
+                        if (MainClass.isDebug)
+                        {
+                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapSize = {0}", bitmapSize);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): blockNumber = {0}", blockNumber);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): sectorInBlock = {0}", sectorInBlock);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): blockOffset = {0}", blockOffset);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapByte = {0}", bitmapByte);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapBit = {0}", bitmapBit);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): mask = 0x{0:X2}", mask);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): dirty = 0x{0}", dirty);
+                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmap = ");
+                            PrintHex.PrintHexArray(bitmap, 64);
+                        }
+                        */
+
+                        // Sector has been written, read from child image
+                        if (dirty)
+                        {
+                            /* Too noisy
+                            if (MainClass.isDebug)
+                                Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is dirty", sectorAddress);
+                            */
+
+                            byte[] data = new byte[512];
+                            UInt32 sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                            thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+
+                            thisStream.Seek((long)(sectorOffset * 512), SeekOrigin.Begin);
+                            thisStream.Read(data, 0, 512);
+
+                            thisStream.Close();
+
+                            return data;
+                        }
+
+                        /* Too noisy
+                        if (MainClass.isDebug)
+                            Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is clean", sectorAddress);
+                        */
+
+                        // Read sector from parent image
+                        return parentImage.ReadSector(sectorAddress);
+                    }
+                default:
+                    return ReadSectors(sectorAddress, 1);
+            }
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            FileStream thisStream;
-
             switch (thisFooter.diskType)
             {
                 case typeFixed:
                     {
+                        FileStream thisStream;
+
                         byte[] data = new byte[512 * length];
                         thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
 
@@ -926,6 +1096,8 @@ namespace DiscImageChef.ImagePlugins
             // as long as it is in the block.
                 case typeDynamic:
                     {
+                        FileStream thisStream;
+
                         // Block number for BAT searching
                         UInt32 blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
                         // Sector number inside of block
@@ -979,7 +1151,15 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case typeDifferencing:
                     {
-                        throw new NotImplementedException("(VirtualPC plugin): Differencing disk images not yet supported");
+                        // As on differencing images, each independent sector can be read from child or parent
+                        // image, we must read sector one by one
+                        byte[] fullData = new byte[512 * length];
+                        for (ulong i = 0; i < length; i++)
+                        {
+                            byte[] oneSector = ReadSector(sectorAddress + i);
+                            Array.Copy(oneSector, 0, fullData, (int)(i * 512), 512);
+                        }
+                        return fullData;
                     }
                 case typeDeprecated1:
                 case typeDeprecated2:

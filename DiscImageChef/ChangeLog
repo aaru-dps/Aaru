@@ -1,6 +1,12 @@
 2015-04-24  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugins/VHD.cs:
+	  Implemented support for Virtual PC differencing (undo) disk
+	  images.
+
+2015-04-24  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/VHD.cs:
 	  Add support for dynamic disk images.
 
 2015-04-22  Natalia Portillo  <claunia@claunia.com>
