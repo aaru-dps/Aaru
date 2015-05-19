@@ -99,6 +99,12 @@ namespace DiscImageChef
                     isVerbose = ChecksumOptions.Verbose;
                     Commands.Checksum.doChecksum(ChecksumOptions);
                     break;
+                case "entropy":
+                    EntropySubOptions entropyOptions = (EntropySubOptions)invokedVerbInstance;
+                    isDebug = entropyOptions.Debug;
+                    isVerbose = entropyOptions.Verbose;
+                    Commands.Entropy.doEntropy(entropyOptions);
+                    break;
                 case "verify":
                     VerifySubOptions VerifyOptions = (VerifySubOptions)invokedVerbInstance;
                     isDebug = VerifyOptions.Debug;

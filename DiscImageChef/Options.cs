@@ -138,6 +138,24 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
+    public class EntropySubOptions : CommonSubOptions
+    {
+        [Option('p', "duplicated-sectors", DefaultValue = true,
+            HelpText = "Calculates how many sectors are duplicated (have same exact data in user area).")]
+        public bool DuplicatedSectors { get; set; }
+
+        [Option('t', "separated-tracks", DefaultValue = true,
+            HelpText = "Calculates entropy for each track separately.")]
+        public bool SeparatedTracks { get; set; }
+
+        [Option('w', "whole-disc", DefaultValue = true,
+            HelpText = "Calculates entropy for  the whole disc.")]
+        public bool WholeDisc { get; set; }
+
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+    }
+
     public class VerifySubOptions : CommonSubOptions
     {
         [Option('w', "verify-disc", DefaultValue = true,
@@ -207,6 +225,7 @@ namespace DiscImageChef
             AnalyzeVerb = new AnalyzeSubOptions();
             CompareVerb = new CompareSubOptions();
             ChecksumVerb = new ChecksumSubOptions();
+            EntropyVerb = new EntropySubOptions();
             VerifyVerb = new VerifySubOptions();
             FormatsVerb = new FormatsSubOptions();
             PrintHexVerb = new PrintHexSubOptions();
@@ -221,6 +240,9 @@ namespace DiscImageChef
 
         [VerbOption("checksum", HelpText = "Checksums an image.")]
         public ChecksumSubOptions ChecksumVerb { get; set; }
+
+        [VerbOption("entropy", HelpText = "Calculates entropy and/or duplicated sectors of an image.")]
+        public EntropySubOptions EntropyVerb { get; set; }
 
         [VerbOption("verify", HelpText = "Verifies a disc image integrity, and if supported, sector integrity.")]
         public VerifySubOptions VerifyVerb { get; set; }
