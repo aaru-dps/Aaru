@@ -1,3 +1,10 @@
+2015-05-23  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugins/CDRWin.cs:
+	  Solved CDRWin plugin not working on .NET Framework and in
+	  Mono 4.0. Seems a bug in the framework implementation
+	  nonetheless, this workarounds satisfactorily.
+
 2015-05-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Main.cs:

@@ -457,7 +457,14 @@ namespace DiscImageChef.ImagePlugins
                 cuetracks = new CDRWinTrack[track_count];
 
                 line = 0;
-                cueStream.BaseStream.Seek(0, SeekOrigin.Begin);
+                // Mono <= 3.5 allowed this to work, with .Peek() NOT returning EOF.
+                // However .NET framework has always returned EOF even with this rewind.
+                // Mono 4.0 copied their bug (feature?)
+                //cueStream.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                // Forcing me to do
+                cueStream.Close();
+                cueStream = new StreamReader(imagePath);
 
                 while (cueStream.Peek() >= 0)
                 {
