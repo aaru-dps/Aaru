@@ -115,6 +115,7 @@
     <Compile Include="PartPlugins\Atari.cs" />
     <Compile Include="ImagePlugins\VHD.cs" />
     <Compile Include="Commands\Entropy.cs" />
+    <Compile Include="Decoders\Floppy.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
