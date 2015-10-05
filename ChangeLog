@@ -1,0 +1,7 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Partition.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.CommonTypes.csproj:
+	  Moved disc image plugins to a separate library.
+
