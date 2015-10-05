@@ -1,0 +1,13 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Linux/Enums.cs:
+	* Linux/Extern.cs:
+	* Linux/Structs.cs:
+	* Windows/Enums.cs:
+	* Windows/Extern.cs:
+	* Windows/Structs.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Devices.csproj:
+	  Added IOCTL skeletons.
+
