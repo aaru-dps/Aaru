@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>DiscImageChef.Checksums</RootNamespace>
+    <AssemblyName>DiscImageChef.Checksums</AssemblyName>
+    <ReleaseVersion>2.2</ReleaseVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpamSumContext.cs" />
+    <Compile Include="Adler32Context.cs" />
+    <Compile Include="CDChecksums.cs" />
+    <Compile Include="CRC16Context.cs" />
+    <Compile Include="CRC32Context.cs" />
+    <Compile Include="CRC64Context.cs" />
+    <Compile Include="FletcherContext.cs" />
+    <Compile Include="MD5Context.cs" />
+    <Compile Include="ReedSolomon.cs" />
+    <Compile Include="RIPEMD160Context.cs" />
+    <Compile Include="SHA1Context.cs" />
+    <Compile Include="SHA256Context.cs" />
+    <Compile Include="SHA384Context.cs" />
+    <Compile Include="SHA512Context.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+      <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
+      <Name>DiscImageChef.Helpers</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
