@@ -2487,17 +2487,17 @@ namespace DiscImageChef.Decoders
 
             if (SCSIInquiryResponse.Length < 36)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (SCSI INQUIRY Decoder): INQUIRY response is less than minimum of 36 bytes, decoded data can be incorrect, proceeding anyway.");
-                else
+                //else
                     return null;
             }
 
             if (SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 4)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (SCSI INQUIRY Decoder): INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, proceeding anyway.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
-                else
+                //else
                     return null;
             }
 
@@ -2819,7 +2819,7 @@ namespace DiscImageChef.Decoders
                 sb.AppendLine("Device supports TCQ queue");
             if (response.IUS)
                 sb.AppendLine("Device supports information unit transfers");
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 if (response.VS1)
                     sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
@@ -4292,7 +4292,7 @@ namespace DiscImageChef.Decoders
                 }
             }
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 1, bits 6 to 0 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 5, bits 2 to 1 = 0x{0:X2}", response.Reserved2).AppendLine();

@@ -19,12 +19,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Partitions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Filesystems", "DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj", "{D7016DF2-5A5E-4524-B40D-BA2D59576688}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Decoders", "DiscImageChef.Decoders\DiscImageChef.Decoders.csproj", "{0BEB3088-B634-4289-AE17-CDF2D25D00D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BEB3088-B634-4289-AE17-CDF2D25D00D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BEB3088-B634-4289-AE17-CDF2D25D00D5}.Debug|x86.Build.0 = Debug|Any CPU
+		{0BEB3088-B634-4289-AE17-CDF2D25D00D5}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BEB3088-B634-4289-AE17-CDF2D25D00D5}.Release|x86.Build.0 = Release|Any CPU
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Debug|x86.Build.0 = Debug|Any CPU
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Release|x86.ActiveCfg = Release|Any CPU

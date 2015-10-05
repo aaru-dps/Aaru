@@ -131,7 +131,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (AACS Volume Identifier): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (AACS Volume Identifier): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
@@ -176,7 +176,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (AACS Media Serial Number): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (AACS Media Serial Number): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
@@ -221,7 +221,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (AACS Media Identifier): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (AACS Media Identifier): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
@@ -266,7 +266,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (AACS Media Key Block): Reserved = 0x{0:X2}", response.Reserved).AppendLine();
             }
@@ -311,7 +311,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (AACS Data Keys): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (AACS Data Keys): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
@@ -416,7 +416,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (CPRM Media Key Block): Reserved1 = 0x{0:X2}", response.Reserved).AppendLine();
             }
@@ -578,7 +578,7 @@ namespace DiscImageChef.Decoders
             if (response.SWPP)
                 sb.AppendLine("Software write protection is set until power down");
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("DEBUG (Write Protection Status): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("DEBUG (Write Protection Status): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();

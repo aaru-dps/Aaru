@@ -203,7 +203,7 @@ namespace DiscImageChef.Decoders
 
             if (decoded.DataLength + 2 != CDTOCResponse.Length)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDTOC Decoder): Expected CDTOC size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDTOCResponse.Length);
                 return null;
             }
@@ -287,7 +287,7 @@ namespace DiscImageChef.Decoders
                     else
                         sb.AppendLine("Digital copy of track is prohibited");
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         sb.AppendFormat("Reserved1: {0:X2}", descriptor.Reserved1).AppendLine();
                         sb.AppendFormat("Reserved2: {0:X2}", descriptor.Reserved2).AppendLine();
@@ -322,7 +322,7 @@ namespace DiscImageChef.Decoders
 
             if (decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDSessionInfo Decoder): Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDSessionInfoResponse.Length);
                 return null;
             }
@@ -406,7 +406,7 @@ namespace DiscImageChef.Decoders
                     else
                         sb.AppendLine("Digital copy of track is prohibited");
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         sb.AppendFormat("Reserved1: {0:X2}", descriptor.Reserved1).AppendLine();
                         sb.AppendFormat("Reserved2: {0:X2}", descriptor.Reserved2).AppendLine();
@@ -441,7 +441,7 @@ namespace DiscImageChef.Decoders
 
             if (decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDFullTOC Decoder): Expected CDFullTOC size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDFullTOCResponse.Length);
                 return null;
             }
@@ -600,7 +600,7 @@ namespace DiscImageChef.Decoders
                                     case 0xC1:
                                         {
                                             sb.AppendFormat("Copy of information of A1 from ATIP found");
-                                            if (MainClass.isDebug)
+                                            //if (MainClass.isDebug)
                                             {
                                                 sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
                                                 sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
@@ -674,7 +674,7 @@ namespace DiscImageChef.Decoders
 
             if (decoded.DataLength + 2 != CDPMAResponse.Length)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDPMA Decoder): Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDPMAResponse.Length);
                 return null;
             }
@@ -708,14 +708,14 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("Reserved1: 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("Reserved2: 0x{0:X2}", response.Reserved2).AppendLine();
             }
             foreach (CDPMADescriptors descriptor in response.PMADescriptors)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     sb.AppendFormat("Reserved1: 0x{0:X2}", descriptor.Reserved).AppendLine();
                 sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
                 sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
@@ -751,7 +751,7 @@ namespace DiscImageChef.Decoders
 
             if (CDATIPResponse.Length != 32)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDATIP Decoder): Expected CDATIP size (32 bytes) is not received size ({0} bytes), not decoding", CDATIPResponse.Length);
                 return null;
             }
@@ -912,7 +912,7 @@ namespace DiscImageChef.Decoders
 
             if (decoded.DataLength + 2 != CDTextResponse.Length)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CD-TEXT Decoder): Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDTextResponse.Length);
                 return null;
             }
@@ -942,7 +942,7 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 sb.AppendFormat("Reserved1: 0x{0:X2}", response.Reserved1).AppendLine();
                 sb.AppendFormat("Reserved2: 0x{0:X2}", response.Reserved2).AppendLine();

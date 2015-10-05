@@ -49,23 +49,12 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\PrintHex.cs" />
     <Compile Include="Commands\Decode.cs" />
-    <Compile Include="Decoders\SCSI.cs" />
-    <Compile Include="Decoders\CD.cs" />
-    <Compile Include="Decoders\MMC.cs" />
-    <Compile Include="Decoders\BD.cs" />
-    <Compile Include="Decoders\DVD.cs" />
     <Compile Include="Commands\Entropy.cs" />
-    <Compile Include="Decoders\Floppy.cs" />
     <Compile Include="DetectImageFormat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Plugins\" />
-    <Folder Include="PartPlugins\" />
-    <Folder Include="ImagePlugins\" />
     <Folder Include="Commands\" />
-    <Folder Include="Checksums\" />
-    <Folder Include="Decoders\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -177,6 +166,10 @@
     <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
       <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
       <Name>DiscImageChef.Filesystems</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
+      <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

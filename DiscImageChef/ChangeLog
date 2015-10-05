@@ -1,5 +1,17 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Decoders/BD.cs:
+	* Decoders/CD.cs:
+	* Decoders/DVD.cs:
+	* Decoders/MMC.cs:
+	* Decoders/SCSI.cs:
+	* Decoders/Floppy.cs:
+	* ImagePlugins/2MG.cs:
+	* DiscImageChef.csproj:
+	  Move decoders to a separate library.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugins.cs:
 	* Plugins/BFS.cs:
 	* Plugins/FFS.cs:

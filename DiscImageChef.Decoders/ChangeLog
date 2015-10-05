@@ -1,0 +1,12 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* CD.cs:
+	* BD.cs:
+	* MMC.cs:
+	* DVD.cs:
+	* SCSI.cs:
+	* Floppy.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Move decoders to a separate library.
+
