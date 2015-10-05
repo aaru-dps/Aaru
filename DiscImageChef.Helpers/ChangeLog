@@ -1,0 +1,13 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* PrintHex.cs:
+	* Swapping.cs:
+	* ArrayFill.cs:
+	* DateHandlers.cs:
+	* StringHandlers.cs:
+	* BigEndianBitConverter.cs:
+	* EndianAwareBinaryReader.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Helpers.csproj:
+	  Move helpers to a separate library.
+

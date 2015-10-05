@@ -40,7 +40,7 @@ using System;
 
 namespace DiscImageChef
 {
-    static class Swapping
+    public static class Swapping
     {
         public static byte[] SwapTenBytes(byte[] source)
         {

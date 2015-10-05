@@ -1,0 +1,6 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.sln:
+	  Move helpers to a separate library.
+	Move checksums to a separate library.
+

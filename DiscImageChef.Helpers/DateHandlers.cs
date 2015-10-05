@@ -79,7 +79,7 @@ namespace DiscImageChef
             fourcharvalue[1] = VDDateTime[1];
             fourcharvalue[2] = VDDateTime[2];
             fourcharvalue[3] = VDDateTime[3];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): year = \"{0}\"", StringHandlers.CToString(fourcharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(fourcharvalue), out year))
                 year = 0;
@@ -87,7 +87,7 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[4];
             twocharvalue[1] = VDDateTime[5];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): month = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out month))
                 month = 0;
@@ -95,7 +95,7 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[6];
             twocharvalue[1] = VDDateTime[7];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): day = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out day))
                 day = 0;
@@ -103,7 +103,7 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[8];
             twocharvalue[1] = VDDateTime[9];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): hour = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hour))
                 hour = 0;
@@ -111,7 +111,7 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[10];
             twocharvalue[1] = VDDateTime[11];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): minute = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out minute))
                 minute = 0;
@@ -119,7 +119,7 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[12];
             twocharvalue[1] = VDDateTime[13];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): second = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out second))
                 second = 0;
@@ -127,13 +127,13 @@ namespace DiscImageChef
 			
             twocharvalue[0] = VDDateTime[14];
             twocharvalue[1] = VDDateTime[15];
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): hundredths = \"{0}\"", StringHandlers.CToString(twocharvalue));
             if (!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hundredths))
                 hundredths = 0;
 //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (ISO9600ToDateTime handler): decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);", year, month, day, hour, minute, second, hundredths * 10);
             DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);
 			

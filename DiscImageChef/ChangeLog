@@ -1,3 +1,31 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Swapping.cs:
+	* PrintHex.cs:
+	* ArrayFill.cs:
+	* DateHandlers.cs:
+	* StringHandlers.cs:
+	* DiscImageChef.csproj:
+	* BigEndianBitConverter.cs:
+	* EndianAwareBinaryReader.cs:
+	  Move helpers to a separate library.
+
+	* Checksums/MD5Context.cs:
+	* Checksums/ReedSolomon.cs:
+	* Checksums/SHA1Context.cs:
+	* Checksums/CDChecksums.cs:
+	* Checksums/CRC32Context.cs:
+	* Checksums/CRC16Context.cs:
+	* Checksums/CRC64Context.cs:
+	* Checksums/SHA512Context.cs:
+	* Checksums/SHA384Context.cs:
+	* Checksums/SHA256Context.cs:
+	* Checksums/Adler32Context.cs:
+	* Checksums/SpamSumContext.cs:
+	* Checksums/FletcherContext.cs:
+	* Checksums/RIPEMD160Context.cs:
+	  Move checksums to a separate library.
+
 2015-08-25  Natalia Portillo  <claunia@claunia.com>
 
 	* Decoders/Floppy.cs:

@@ -40,7 +40,6 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Plugins\AppleMFS.cs" />
-    <Compile Include="Swapping.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins.cs" />
     <Compile Include="Plugins\ISO9660.cs" />
@@ -61,21 +60,15 @@
     <Compile Include="Plugins\Symbian.cs" />
     <Compile Include="Plugins\extFS.cs" />
     <Compile Include="Plugins\ext2FS.cs" />
-    <Compile Include="DateHandlers.cs" />
-    <Compile Include="EndianAwareBinaryReader.cs" />
-    <Compile Include="StringHandlers.cs" />
     <Compile Include="Plugins\MinixFS.cs" />
     <Compile Include="Plugins\SolarFS.cs" />
     <Compile Include="Plugins\UNIXBFS.cs" />
     <Compile Include="Plugins\SysV.cs" />
     <Compile Include="ImagePlugins\ImagePlugin.cs" />
     <Compile Include="ImagePlugins\CDRWin.cs" />
-    <Compile Include="BigEndianBitConverter.cs" />
     <Compile Include="ImagePlugins\DiskCopy42.cs" />
     <Compile Include="Plugins\LisaFS.cs" />
     <Compile Include="ImagePlugins\TeleDisk.cs" />
-    <Compile Include="ArrayFill.cs" />
-    <Compile Include="PrintHex.cs" />
     <Compile Include="ImagePlugins\ZZZRawImage.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Commands\Formats.cs" />
@@ -86,18 +79,7 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="ImagePlugins\DetectImageFormat.cs" />
     <Compile Include="ImagePlugins\ImageInfo.cs" />
-    <Compile Include="Checksums\MD5Context.cs" />
-    <Compile Include="Checksums\RIPEMD160Context.cs" />
-    <Compile Include="Checksums\SHA1Context.cs" />
-    <Compile Include="Checksums\SHA256Context.cs" />
-    <Compile Include="Checksums\SHA384Context.cs" />
-    <Compile Include="Checksums\SHA512Context.cs" />
-    <Compile Include="Checksums\CRC32Context.cs" />
-    <Compile Include="Checksums\CRC64Context.cs" />
     <Compile Include="ImagePlugins\Nero.cs" />
-    <Compile Include="Checksums\CRC16Context.cs" />
-    <Compile Include="Checksums\CDChecksums.cs" />
-    <Compile Include="Checksums\ReedSolomon.cs" />
     <Compile Include="Commands\PrintHex.cs" />
     <Compile Include="Commands\Decode.cs" />
     <Compile Include="Decoders\SCSI.cs" />
@@ -106,9 +88,6 @@
     <Compile Include="Decoders\BD.cs" />
     <Compile Include="Decoders\DVD.cs" />
     <Compile Include="Plugins\ProDOS.cs" />
-    <Compile Include="Checksums\Adler32Context.cs" />
-    <Compile Include="Checksums\FletcherContext.cs" />
-    <Compile Include="Checksums\SpamSumContext.cs" />
     <Compile Include="ImagePlugins\Apple2MG.cs" />
     <Compile Include="PartPlugins\RDB.cs" />
     <Compile Include="Plugins\AmigaDOS.cs" />
@@ -212,6 +191,14 @@
     <ProjectReference Include="..\commandline\src\libcmdline\CommandLine35.csproj">
       <Project>{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}</Project>
       <Name>CommandLine35</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
+      <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
+      <Name>DiscImageChef.Checksums</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+      <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
+      <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

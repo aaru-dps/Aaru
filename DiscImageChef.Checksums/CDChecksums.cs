@@ -163,18 +163,18 @@ namespace DiscImageChef.Checksums
                 channel[0x00A] == 0xFF &&
                 channel[0x00B] == 0x00)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDChecksums): Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if (channel[0x00F] == 0x00) // mode (1 byte)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                     for (int i = 0x010; i < 0x930; i++)
                     {
                         if (channel[i] != 0x00)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDChecksums): Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                             return false;
                         }
@@ -183,7 +183,7 @@ namespace DiscImageChef.Checksums
                 }
                 else if (channel[0x00F] == 0x01) // mode (1 byte)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     if (channel[0x814] != 0x00 || // reserved (8 bytes)
@@ -195,7 +195,7 @@ namespace DiscImageChef.Checksums
                         channel[0x81A] != 0x00 ||
                         channel[0x81B] != 0x00)
                     {
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDChecksums): Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                         return false;
                     }
@@ -216,10 +216,10 @@ namespace DiscImageChef.Checksums
                     bool FailedECC_Q = CheckECC(address, data2, 52, 43, 86, 88, ecc_q);
 
                     if (FailedECC_P)
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check", channel[0x00C], channel[0x00D], channel[0x00E]);
                     if (FailedECC_Q)
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check", channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     if (FailedECC_P || FailedECC_Q)
@@ -234,7 +234,7 @@ namespace DiscImageChef.Checksums
 
                     if (CalculatedEDC != StoredEDC)
                     {
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDChecksums): Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                         return false;
                     }
@@ -243,14 +243,14 @@ namespace DiscImageChef.Checksums
                 }
                 else if (channel[0x00F] == 0x02) // mode (1 byte)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     if ((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
                     {
                         if (channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] || channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDChecksums): Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                         }
 
@@ -263,7 +263,7 @@ namespace DiscImageChef.Checksums
 
                         if (CalculatedEDC != StoredEDC && StoredEDC != 0x00000000)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDChecksums): Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
                         }
@@ -272,7 +272,7 @@ namespace DiscImageChef.Checksums
                     {
                         if (channel[0x010] != channel[0x014] || channel[0x011] != channel[0x015] || channel[0x012] != channel[0x016] || channel[0x013] != channel[0x017])
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDChecksums): Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}", channel[0x00C], channel[0x00D], channel[0x00E]);
                         }
 
@@ -295,10 +295,10 @@ namespace DiscImageChef.Checksums
                         bool FailedECC_Q = CheckECC(address, data2, 52, 43, 86, 88, ecc_q);
 
                         if (FailedECC_P)
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDChecksums): Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check", channel[0x00C], channel[0x00D], channel[0x00E]);
                         if (FailedECC_Q)
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDChecksums): Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check", channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
 
                         if (FailedECC_P || FailedECC_Q)
@@ -313,7 +313,7 @@ namespace DiscImageChef.Checksums
 
                         if (CalculatedEDC != StoredEDC)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDChecksums): Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}", channel[0x00C], channel[0x00D], channel[0x00E], CalculatedEDC, StoredEDC);
                             return false;
                         }
@@ -323,7 +323,7 @@ namespace DiscImageChef.Checksums
                 }
                 else
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}", channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
                     return null;
                 }
@@ -454,8 +454,8 @@ namespace DiscImageChef.Checksums
                 CDSubRWPack4[j] = (byte)(subchannel[i++] & 0x3F);
             }
 
-            if(MainClass.isDebug)
-            {
+            //if(MainClass.isDebug)
+            //{
                 switch(CDSubRWPack1[0])
                 {
                     case 0x00:
@@ -483,7 +483,7 @@ namespace DiscImageChef.Checksums
                         Console.WriteLine("Detected unknown Pack type in subchannel: mode {0}, item {1}", Convert.ToString(CDSubRWPack1[0] & 0x38, 2), Convert.ToString(CDSubRWPack1[0] & 0x07, 2));
                         break;
                 }
-            }
+            //}
 
             BigEndianBitConverter.IsLittleEndian = true;
 
@@ -494,7 +494,7 @@ namespace DiscImageChef.Checksums
 
             if (QSubChannelCRC != CalculatedQCRC)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDChecksums): Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}", CalculatedQCRC, QSubChannelCRC);
                 status = false;
             }
@@ -508,7 +508,7 @@ namespace DiscImageChef.Checksums
 
                 if (CDTextPack1CRC != CalculatedCDTP1CRC && CDTextPack1CRC != 0)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDChecksums): CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}", CDTextPack1CRC, CalculatedCDTP1CRC);
                 status = false;
                 }
@@ -524,7 +524,7 @@ namespace DiscImageChef.Checksums
 
                 if (CDTextPack2CRC != CalculatedCDTP2CRC && CDTextPack2CRC != 0)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}", CDTextPack2CRC, CalculatedCDTP2CRC);
                     status = false;
                 }
@@ -540,7 +540,7 @@ namespace DiscImageChef.Checksums
 
                 if (CDTextPack3CRC != CalculatedCDTP3CRC && CDTextPack3CRC != 0)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}", CDTextPack3CRC, CalculatedCDTP3CRC);
                     status = false;
                 }
@@ -556,7 +556,7 @@ namespace DiscImageChef.Checksums
 
                 if (CDTextPack4CRC != CalculatedCDTP4CRC && CDTextPack4CRC != 0)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (CDChecksums): CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}", CDTextPack4CRC, CalculatedCDTP4CRC);
                     status = false;
                 }

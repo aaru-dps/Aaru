@@ -1,0 +1,20 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* MD5Context.cs:
+	* SHA1Context.cs:
+	* ReedSolomon.cs:
+	* CDChecksums.cs:
+	* CRC64Context.cs:
+	* CRC16Context.cs:
+	* CRC32Context.cs:
+	* SHA256Context.cs:
+	* SHA512Context.cs:
+	* SHA384Context.cs:
+	* SpamSumContext.cs:
+	* Adler32Context.cs:
+	* FletcherContext.cs:
+	* RIPEMD160Context.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Checksums.csproj:
+	  Move checksums to a separate library.
+

@@ -443,7 +443,7 @@ namespace DiscImageChef.Checksums
                                 lambda[j] ^= Alpha_to[modnn(u + tmp)];
                         }
                     }
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         /* find roots of the erasure location polynomial */
                         for (i = 1; i <= no_eras; i++)
@@ -572,7 +572,7 @@ namespace DiscImageChef.Checksums
                     }
                 }
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("\n Final error positions:\t");
                     for (i = 0; i < count; i++)
@@ -630,7 +630,7 @@ namespace DiscImageChef.Checksums
                     }
                     if (den == 0)
                     {
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("\n ERROR: denominator = 0\n");
                         }
