@@ -45,7 +45,7 @@ namespace DiscImageChef.Plugins
 {
     class SolarFS : Plugin
     {
-        public SolarFS(PluginBase Core)
+        public SolarFS()
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
@@ -100,7 +100,7 @@ namespace DiscImageChef.Plugins
             Array.Copy(bpb_sector, 0x35, bpb_strings, 0, 8);
             BPB.fs_type = StringHandlers.CToString(bpb_strings);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 BPB.x86_jump = new byte[3];
                 Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);

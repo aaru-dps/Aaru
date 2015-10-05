@@ -1,6 +1,35 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins.cs:
+	* Plugins/BFS.cs:
+	* Plugins/FFS.cs:
+	* Plugins/ODS.cs:
+	* Plugins/FAT.cs:
+	* Plugins/NTFS.cs:
+	* Plugins/HPFS.cs:
+	* Plugins/SysV.cs:
+	* Plugins/extFS.cs:
+	* Plugins/Opera.cs:
+	* Plugins/Plugin.cs:
+	* Plugins/LisaFS.cs:
+	* Plugins/ext2FS.cs:
+	* Plugins/ProDOS.cs:
+	* Plugins/SolarFS.cs:
+	* Plugins/Symbian.cs:
+	* Plugins/UNIXBFS.cs:
+	* Plugins/ISO9660.cs:
+	* Plugins/MinixFS.cs:
+	* Plugins/AmigaDOS.cs:
+	* Plugins/PCEngine.cs:
+	* Plugins/AppleMFS.cs:
+	* Plugins/AppleHFS.cs:
+	* DiscImageChef.csproj:
+	* Plugins/AppleHFSPlus.cs:
+	  Move filesystems to a separate library.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins.cs:
 	* PartPlugins/MBR.cs:
 	* PartPlugins/RDB.cs:
 	* PartPlugins/NeXT.cs:

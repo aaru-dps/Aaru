@@ -63,7 +63,7 @@ namespace DiscImageChef.Plugins
         const UInt16 FILEID_ERASED = 0x7FFF;
         const UInt16 FILEID_MAX = FILEID_ERASED;
 
-        public LisaFS(PluginBase Core)
+        public LisaFS()
         {
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
@@ -92,7 +92,7 @@ namespace DiscImageChef.Plugins
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
                     UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (LisaFS plugin): Sector {0}, file ID 0x{1:X4}", i, fileid);
 
                     if (fileid == FILEID_MDDF)
@@ -107,7 +107,7 @@ namespace DiscImageChef.Plugins
                         mddf.blocksize = BigEndianBitConverter.ToUInt16(sector, 0x7C);
                         mddf.datasize = BigEndianBitConverter.ToUInt16(sector, 0x7E);
 
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("DEBUG (LisaFS plugin): Current sector = {0}", i);
                             Console.WriteLine("DEBUG (LisaFS plugin): mddf.mddf_block = {0}", mddf.mddf_block);
@@ -149,7 +149,7 @@ namespace DiscImageChef.Plugins
             }
             catch (Exception ex)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (LisaFS plugin): Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
                 return false;
             }
@@ -181,7 +181,7 @@ namespace DiscImageChef.Plugins
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
                     UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (LisaFS plugin): Sector {0}, file ID 0x{1:X4}", i, fileid);
 
                     if (fileid == FILEID_MDDF)
@@ -272,7 +272,7 @@ namespace DiscImageChef.Plugins
                         mddf.vol_sequence = BigEndianBitConverter.ToUInt16(sector, 0x136);
                         mddf.vol_left_mounted = sector[0x138];
 
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("mddf.unknown1 = 0x{0:X2} ({0})", mddf.unknown1);
                             Console.WriteLine("mddf.unknown2 = 0x{0:X2} ({0})", mddf.unknown2);
@@ -400,7 +400,7 @@ namespace DiscImageChef.Plugins
             }
             catch (Exception ex)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (LisaFS plugin): Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
                 return;
             }

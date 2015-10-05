@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.CommonTypes",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Partitions", "DiscImageChef.Partitions\DiscImageChef.Partitions.csproj", "{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Filesystems", "DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj", "{D7016DF2-5A5E-4524-B40D-BA2D59576688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -41,6 +43,10 @@ Global
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.Build.0 = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.ActiveCfg = Release|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.Build.0 = Release|Any CPU
+		{D7016DF2-5A5E-4524-B40D-BA2D59576688}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7016DF2-5A5E-4524-B40D-BA2D59576688}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7016DF2-5A5E-4524-B40D-BA2D59576688}.Release|x86.ActiveCfg = Release|Any CPU
+		{D7016DF2-5A5E-4524-B40D-BA2D59576688}.Release|x86.Build.0 = Release|Any CPU
 		{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}.Debug|x86.Build.0 = Debug|Any CPU
 		{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}.Release|x86.ActiveCfg = Release|Any CPU

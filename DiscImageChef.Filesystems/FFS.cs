@@ -45,7 +45,7 @@ namespace DiscImageChef.Plugins
 {
     public class FFSPlugin : Plugin
     {
-        public FFSPlugin(PluginBase Core)
+        public FFSPlugin()
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
@@ -379,7 +379,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);                    // 0x055C magic number
             ufs_sb.fs_space = ufs_sb_sectors[0x0560];                    // 0x0560 list of blocks for each rotation
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("ufs_sb offset: 0x{0:X8}", sb_offset);
                 Console.WriteLine("fs_link_42bsd: 0x{0:X8}", ufs_sb.fs_link_42bsd);

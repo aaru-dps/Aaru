@@ -45,7 +45,7 @@ namespace DiscImageChef.Plugins
 {
     class OperaFS : Plugin
     {
-        public OperaFS(PluginBase Core)
+        public OperaFS()
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");

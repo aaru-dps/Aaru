@@ -52,7 +52,7 @@ namespace DiscImageChef.Plugins
         // "H+"
         const UInt16 HFSBB_MAGIC = 0x4C4B;
         // "LK"
-        public AppleHFS(PluginBase Core)
+        public AppleHFS()
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
@@ -82,7 +82,7 @@ namespace DiscImageChef.Plugins
 
                 if (drSigWord == HFS_MAGIC)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (HFS Plugin): HFS sector size is 512 bytes, but device's 2048");
 
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature

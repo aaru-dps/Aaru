@@ -1,0 +1,29 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* ODS.cs:
+	* FFS.cs:
+	* FAT.cs:
+	* BFS.cs:
+	* SysV.cs:
+	* HPFS.cs:
+	* NTFS.cs:
+	* Opera.cs:
+	* extFS.cs:
+	* ext2FS.cs:
+	* ProDOS.cs:
+	* Plugin.cs:
+	* LisaFS.cs:
+	* Symbian.cs:
+	* ISO9660.cs:
+	* SolarFS.cs:
+	* MinixFS.cs:
+	* UNIXBFS.cs:
+	* AppleMFS.cs:
+	* AppleHFS.cs:
+	* AmigaDOS.cs:
+	* PCEngine.cs:
+	* AppleHFSPlus.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Filesystems.csproj:
+	  Move filesystems to a separate library.
+

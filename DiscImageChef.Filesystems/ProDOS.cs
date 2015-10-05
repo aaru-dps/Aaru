@@ -83,7 +83,7 @@ namespace DiscImageChef.Plugins
         const byte ProDOSEntryLength = 0x27;
         const byte ProDOSEntriesPerBlock = 0x0D;
 
-        public ProDOSPlugin(PluginBase Core)
+        public ProDOSPlugin()
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
@@ -156,7 +156,7 @@ namespace DiscImageChef.Plugins
             year += 1900;
             if (year < 1940)
                 year += 100;
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
                 Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
@@ -210,7 +210,7 @@ namespace DiscImageChef.Plugins
             if ((rootDirectoryKeyBlock.header.access & ProDOSBackupAttribute) == ProDOSBackupAttribute)
                 sbInformation.AppendLine("Volume must be backed up");
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 if ((rootDirectoryKeyBlock.header.access & ProDOSReservedAttributeMask) != 0)
                     sbInformation.AppendFormat("DEBUG(ProDOS plugin): Reserved attributes are set: {0:X2}", rootDirectoryKeyBlock.header.access).AppendLine();

@@ -51,7 +51,7 @@ namespace DiscImageChef.Plugins
         // "H+"
         const UInt16 HFSX_MAGIC = 0x4858;
         // "HX"
-        public AppleHFSPlus(PluginBase Core)
+        public AppleHFSPlus()
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");

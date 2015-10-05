@@ -57,7 +57,7 @@ namespace DiscImageChef.Plugins
         const UInt32 BEFS_CLEAN = 0x434C454E;
         const UInt32 BEFS_DIRTY = 0x44495254;
 
-        public BeFS(PluginBase Core)
+        public BeFS()
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");

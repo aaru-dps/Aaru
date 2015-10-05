@@ -46,7 +46,7 @@ namespace DiscImageChef.Plugins
 {
     class AmigaDOSPlugin : Plugin
     {
-        public AmigaDOSPlugin(PluginBase Core)
+        public AmigaDOSPlugin()
         {
             Name = "Amiga DOS filesystem";
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
@@ -199,12 +199,12 @@ namespace DiscImageChef.Plugins
                 return false;
 
             ulong root_ptr = BigEndianBitConverter.ToUInt32(sector, 0x08);
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Bootblock points to {0} as Rootblock", root_ptr);
 
             root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart;
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Nonetheless, going to block {0} for Rootblock", root_ptr);
 
             if (root_ptr >= imagePlugin.GetSectors())
@@ -242,7 +242,7 @@ namespace DiscImageChef.Plugins
             bootBlk.bootCode = new byte[BootBlockSectors.Length - 0x0C];
             Array.Copy(BootBlockSectors, 0x0C, bootBlk.bootCode, 0, BootBlockSectors.Length - 0x0C);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Stored boot blocks checksum is 0x{0:X8}", bootBlk.checksum);
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Probably incorrect calculated boot blocks checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
@@ -290,7 +290,7 @@ namespace DiscImageChef.Plugins
             rootBlk.extension = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 192));
             rootBlk.sec_type = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 196));
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Stored root block checksum is 0x{0:X8}", rootBlk.checksum);
                 Console.WriteLine("DEBUG (AmigaDOS plugin): Probably incorrect calculated root block checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));

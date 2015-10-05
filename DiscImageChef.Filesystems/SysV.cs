@@ -60,7 +60,7 @@ namespace DiscImageChef.Plugins
         const UInt16 V7_NICFREE = 50;
         const UInt32 V7_MAXSIZE = 0x00FFFFFF;
 
-        public SysVfs(PluginBase Core)
+        public SysVfs()
         {
             Name = "UNIX System V filesystem";
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");

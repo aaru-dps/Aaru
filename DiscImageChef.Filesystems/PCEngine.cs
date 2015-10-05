@@ -44,7 +44,7 @@ namespace DiscImageChef.Plugins
 {
     class PCEnginePlugin : Plugin
     {
-        public PCEnginePlugin(PluginBase Core)
+        public PCEnginePlugin()
         {
             Name = "PC Engine CD Plugin";
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");

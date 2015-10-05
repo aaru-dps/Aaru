@@ -49,7 +49,7 @@ namespace DiscImageChef.Plugins
         // "LK"
         const UInt16 MFSBB_MAGIC = 0x4C4B;
 
-        public AppleMFS(PluginBase Core)
+        public AppleMFS()
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");

@@ -67,7 +67,7 @@ namespace DiscImageChef.Plugins
         const UInt16 MINIX3_CIGAM = 0x5A4D;
         // Minix v3, 60 char filenames
 
-        public MinixFS(PluginBase Core)
+        public MinixFS()
         {
             Name = "Minix Filesystem";
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");

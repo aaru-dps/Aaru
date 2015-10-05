@@ -39,28 +39,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Plugins\AppleMFS.cs" />
-    <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins.cs" />
-    <Compile Include="Plugins\ISO9660.cs" />
-    <Compile Include="Plugins\PCEngine.cs" />
-    <Compile Include="Plugins\Opera.cs" />
-    <Compile Include="Plugins\AppleHFS.cs" />
-    <Compile Include="Plugins\FAT.cs" />
-    <Compile Include="Plugins\FFS.cs" />
-    <Compile Include="Plugins\AppleHFSPlus.cs" />
-    <Compile Include="Plugins\BFS.cs" />
-    <Compile Include="Plugins\HPFS.cs" />
-    <Compile Include="Plugins\NTFS.cs" />
-    <Compile Include="Plugins\ODS.cs" />
-    <Compile Include="Plugins\Symbian.cs" />
-    <Compile Include="Plugins\extFS.cs" />
-    <Compile Include="Plugins\ext2FS.cs" />
-    <Compile Include="Plugins\MinixFS.cs" />
-    <Compile Include="Plugins\SolarFS.cs" />
-    <Compile Include="Plugins\UNIXBFS.cs" />
-    <Compile Include="Plugins\SysV.cs" />
-    <Compile Include="Plugins\LisaFS.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Commands\Formats.cs" />
     <Compile Include="Commands\Analyze.cs" />
@@ -75,8 +54,6 @@
     <Compile Include="Decoders\MMC.cs" />
     <Compile Include="Decoders\BD.cs" />
     <Compile Include="Decoders\DVD.cs" />
-    <Compile Include="Plugins\ProDOS.cs" />
-    <Compile Include="Plugins\AmigaDOS.cs" />
     <Compile Include="Commands\Entropy.cs" />
     <Compile Include="Decoders\Floppy.cs" />
     <Compile Include="DetectImageFormat.cs" />
@@ -196,6 +173,10 @@
     <ProjectReference Include="..\DiscImageChef.Partitions\DiscImageChef.Partitions.csproj">
       <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
       <Name>DiscImageChef.Partitions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
+      <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
+      <Name>DiscImageChef.Filesystems</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

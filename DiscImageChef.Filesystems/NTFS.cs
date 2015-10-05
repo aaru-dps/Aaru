@@ -45,7 +45,7 @@ namespace DiscImageChef.Plugins
 {
     class NTFS : Plugin
     {
-        public NTFS(PluginBase Core)
+        public NTFS()
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");

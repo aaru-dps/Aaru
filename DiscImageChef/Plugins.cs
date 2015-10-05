@@ -98,7 +98,7 @@ namespace DiscImageChef
                 }
             }
 
-            assembly = Assembly.GetExecutingAssembly();
+            assembly = Assembly.GetAssembly(typeof(Plugin));
 
             foreach (Type type in assembly.GetTypes())
             {
@@ -106,7 +106,7 @@ namespace DiscImageChef
                 {
                     if (type.IsSubclassOf(typeof(Plugin)))
                     {
-                        Plugin plugin = (Plugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        Plugin plugin = (Plugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }

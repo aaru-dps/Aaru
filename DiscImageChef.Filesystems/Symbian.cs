@@ -171,7 +171,7 @@ namespace DiscImageChef.Plugins
 			ZU
 		};
 		
-		public SymbianIS(PluginBase Core)
+		public SymbianIS()
         {
             base.Name = "Symbian Installation File Plugin";
             base.PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe48dbd");

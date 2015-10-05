@@ -47,7 +47,7 @@ namespace DiscImageChef.Plugins
     {
         const UInt32 BFS_MAGIC = 0x1BADFACE;
 
-        public BFS(PluginBase Core)
+        public BFS()
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
@@ -87,7 +87,7 @@ namespace DiscImageChef.Plugins
             Array.Copy(bfs_sb_sector, 0x22, sb_strings, 0, 6);
             bfs_sb.s_volume = StringHandlers.CToString(sb_strings);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("(BFS) bfs_sb.s_magic: 0x{0:X8}", bfs_sb.s_magic);
                 Console.WriteLine("(BFS) bfs_sb.s_start: 0x{0:X8}", bfs_sb.s_start);

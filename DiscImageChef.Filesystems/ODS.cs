@@ -52,7 +52,7 @@ namespace DiscImageChef.Plugins
 {
     class ODS : Plugin
     {
-        public ODS(PluginBase Core)
+        public ODS()
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");

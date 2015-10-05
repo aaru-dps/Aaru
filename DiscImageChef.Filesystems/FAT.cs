@@ -46,7 +46,7 @@ namespace DiscImageChef.Plugins
 {
     class FAT : Plugin
     {
-        public FAT(PluginBase Core)
+        public FAT()
         {
             Name = "Microsoft File Allocation Table";
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
@@ -86,7 +86,7 @@ namespace DiscImageChef.Plugins
             {
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0); // Easier to manage
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (FAT plugin): fats_no = {0}", fats_no);
                     Console.WriteLine("DEBUG (FAT plugin): media_descriptor = 0x{0:X2}", media_descriptor);

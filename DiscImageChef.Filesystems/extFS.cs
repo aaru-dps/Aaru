@@ -45,7 +45,7 @@ namespace DiscImageChef.Plugins
 {
     class extFS : Plugin
     {
-        public extFS(PluginBase Core)
+        public extFS()
         {
             Name = "Linux extended Filesystem";
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");

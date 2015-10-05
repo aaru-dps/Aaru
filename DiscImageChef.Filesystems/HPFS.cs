@@ -46,7 +46,7 @@ namespace DiscImageChef.Plugins
 {
     class HPFS : Plugin
     {
-        public HPFS(PluginBase Core)
+        public HPFS()
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
