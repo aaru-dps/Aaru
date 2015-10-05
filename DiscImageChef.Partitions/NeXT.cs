@@ -56,7 +56,7 @@ namespace DiscImageChef.PartPlugins
         // 180
         const UInt16 disktabEntrySize = 0x2C;
         // 44
-        public NeXTDisklabel(PluginBase Core)
+        public NeXTDisklabel()
         {
             Name = "NeXT Disklabel";
             PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");

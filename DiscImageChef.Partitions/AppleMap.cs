@@ -54,7 +54,7 @@ namespace DiscImageChef.PartPlugins
         // "TS", old entry magic
         const UInt16 APM_OLDENT = 0x5453;
 
-        public AppleMap(PluginBase Core)
+        public AppleMap()
         {
             Name = "Apple Partition Map";
             PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
@@ -106,7 +106,7 @@ namespace DiscImageChef.PartPlugins
                 {
                     sector_size = 512;
                     APMFromHDDOnCD = true;
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Apple Partition Map Plugin): PM sector size is 512 bytes, but device's 2048");
                 }
                 else

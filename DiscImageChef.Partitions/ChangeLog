@@ -1,0 +1,12 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* MBR.cs:
+	* RDB.cs:
+	* NeXT.cs:
+	* Atari.cs:
+	* AppleMap.cs:
+	* PartPlugin.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Partitions.csproj:
+	  Move partitions plugins to a separate library.
+

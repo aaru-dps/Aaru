@@ -55,7 +55,7 @@ namespace DiscImageChef.PartPlugins
         const UInt32 TypeNetBSD = 0x004E4244;
         const UInt32 TypeNetBSDSwap = 0x004E4253;
 
-        public AtariPartitions(PluginBase Core)
+        public AtariPartitions()
         {
             Name = "Atari partitions";
             PluginUUID = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
@@ -102,7 +102,7 @@ namespace DiscImageChef.PartPlugins
             table.badLength = BigEndianBitConverter.ToUInt32(sector, 506);
             table.checksum = BigEndianBitConverter.ToUInt16(sector, 510);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
                 sha1Ctx.Init();
@@ -145,7 +145,7 @@ namespace DiscImageChef.PartPlugins
 
                     if (table.entries[i].start <= imagePlugin.GetSectors())
                     {
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             if ((table.entries[i].start + table.entries[i].length) > imagePlugin.GetSectors())
                                 Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");
@@ -225,7 +225,7 @@ namespace DiscImageChef.PartPlugins
                             validTable = true;
                             if (extendedTable.entries[j].start <= imagePlugin.GetSectors())
                             {
-                                if (MainClass.isDebug)
+                                //if (MainClass.isDebug)
                                 {
                                     if ((extendedTable.entries[j].start + extendedTable.entries[j].length) > imagePlugin.GetSectors())
                                         Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");
@@ -296,7 +296,7 @@ namespace DiscImageChef.PartPlugins
                     {
                         if (table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                             {
                                 if ((table.icdEntries[i].start + table.icdEntries[i].length) > imagePlugin.GetSectors())
                                     Console.WriteLine("DEBUG (Atari plugin): WARNING: End of partition goes beyond device size");

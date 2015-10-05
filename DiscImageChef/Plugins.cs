@@ -60,7 +60,9 @@ namespace DiscImageChef
 
         public void RegisterAllPlugins()
         {
-            Assembly assembly = Assembly.GetAssembly(typeof(ImagePlugin));
+            Assembly assembly; 
+
+            assembly = Assembly.GetAssembly(typeof(ImagePlugin));
 
             foreach (Type type in assembly.GetTypes())
             {
@@ -70,6 +72,24 @@ namespace DiscImageChef
                     {
                         ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterImagePlugin(plugin);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            }
+
+            assembly = Assembly.GetAssembly(typeof(PartPlugin));
+
+            foreach (Type type in assembly.GetTypes())
+            {
+                try
+                {
+                    if (type.IsSubclassOf(typeof(PartPlugin)))
+                    {
+                        PartPlugin plugin = (PartPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        RegisterPartPlugin(plugin);
                     }
                 }
                 catch (Exception exception)
@@ -89,12 +109,6 @@ namespace DiscImageChef
                         Plugin plugin = (Plugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
                         RegisterPlugin(plugin);
                     }
-                    else if (type.IsSubclassOf(typeof(PartPlugin)))
-                    {
-                        PartPlugin partplugin = (PartPlugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
-                        RegisterPartPlugin(partplugin);
-                    }
-					
                 }
                 catch (Exception exception)
                 {

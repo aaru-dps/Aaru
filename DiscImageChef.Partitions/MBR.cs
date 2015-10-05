@@ -47,7 +47,7 @@ namespace DiscImageChef.PartPlugins
     {
         const UInt16 MBRSignature = 0xAA55;
 
-        public MBR(PluginBase Core)
+        public MBR()
         {
             Name = "Master Boot Record";
             PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");

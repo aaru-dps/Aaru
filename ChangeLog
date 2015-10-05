@@ -1,6 +1,11 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.sln:
+	  Move partitions plugins to a separate library.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.sln:
 	  Moved disc image plugins to a separate library.
 
 2015-10-05  Natalia Portillo  <claunia@claunia.com>

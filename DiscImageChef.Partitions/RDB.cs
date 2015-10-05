@@ -271,7 +271,7 @@ namespace DiscImageChef.PartPlugins
         /// </summary>
         const UInt32 FlagsNoAutomount = 0x00000002;
 
-        public AmigaRigidDiskBlock(PluginBase Core)
+        public AmigaRigidDiskBlock()
         {
             Name = "Amiga Rigid Disk Block";
             PluginUUID = new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
@@ -904,12 +904,12 @@ namespace DiscImageChef.PartPlugins
                 byte[] tmpSector = imagePlugin.ReadSector(RDBBlock);
                 UInt32 magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Possible magic at block {0} is 0x{1:X8}", RDBBlock, magic);
 
                 if (magic == RigidDiskBlockMagic)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Amiga RDB plugin): Found RDB magic at block {0}", RDBBlock);
                     
                     foundRDB = true;
@@ -1001,7 +1001,7 @@ namespace DiscImageChef.PartPlugins
             RDB.reserved24 = BigEndianBitConverter.ToUInt32(sector, 0xF8);
             RDB.reserved25 = BigEndianBitConverter.ToUInt32(sector, 0xFC);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (Amiga RDB plugin): RDB.magic = 0x{0:X8}", RDB.magic);
                 Console.WriteLine("DEBUG (Amiga RDB plugin): RDB.size = {0} longs, {1} bytes", RDB.size, RDB.size * 4);
@@ -1067,7 +1067,7 @@ namespace DiscImageChef.PartPlugins
             nextBlock = RDB.badblock_ptr;
             while (nextBlock != 0xFFFFFFFF)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Going to block {0} in search of a BadBlock block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
@@ -1076,7 +1076,7 @@ namespace DiscImageChef.PartPlugins
                 if (magic != BadBlockListMagic)
                     break;
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Found BadBlock block");
 
                 BadBlockList chainEntry = new BadBlockList();
@@ -1090,7 +1090,7 @@ namespace DiscImageChef.PartPlugins
                 ulong entries = (chainEntry.size - 6) / 2;
                 chainEntry.blockPairs = new BadBlockEntry[entries];
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (Amiga RDB plugin): chainEntry.magic = 0x{0:X8}", chainEntry.magic);
                     Console.WriteLine("DEBUG (Amiga RDB plugin): chainEntry.size = {0} longs, {1} bytes", chainEntry.size, chainEntry.size * 4);
@@ -1105,7 +1105,7 @@ namespace DiscImageChef.PartPlugins
                     chainEntry.blockPairs[i].badBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
                     chainEntry.blockPairs[i].goodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Amiga RDB plugin): Bad block at {0} replaced with good block at {1}",
                             chainEntry.blockPairs[i].badBlock, chainEntry.blockPairs[i].goodBlock);
                 }
@@ -1119,7 +1119,7 @@ namespace DiscImageChef.PartPlugins
             nextBlock = RDB.partition_ptr;
             while (nextBlock != 0xFFFFFFFF)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Going to block {0} in search of a PartitionEntry block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
@@ -1128,7 +1128,7 @@ namespace DiscImageChef.PartPlugins
                 if (magic != PartitionBlockMagic)
                     break;
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Found PartitionEntry block");
 
                 PartitionEntry partEntry = new PartitionEntry();
@@ -1183,7 +1183,7 @@ namespace DiscImageChef.PartPlugins
                 partEntry.dosEnvVec.control = BigEndianBitConverter.ToUInt32(sector, 0xC8);
                 partEntry.dosEnvVec.bootBlocks = BigEndianBitConverter.ToUInt32(sector, 0xCC);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (Amiga RDB plugin): partEntry.magic = 0x{0:X8}", partEntry.magic);
                     Console.WriteLine("DEBUG (Amiga RDB plugin): partEntry.size = {0} longs, {1} bytes", partEntry.size, partEntry.size * 4);
@@ -1245,7 +1245,7 @@ namespace DiscImageChef.PartPlugins
             nextBlock = RDB.fsheader_ptr;
             while (nextBlock != 0xFFFFFFFF)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
@@ -1254,7 +1254,7 @@ namespace DiscImageChef.PartPlugins
                 if (magic != FilesystemHeaderMagic)
                     break;
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (Amiga RDB plugin): Found FileSystemHeader block");
 
                 FileSystemHeader FSHD = new FileSystemHeader();
@@ -1282,7 +1282,7 @@ namespace DiscImageChef.PartPlugins
                 FSHD.dnode.seglist_ptr = BigEndianBitConverter.ToUInt32(sector, 0x48);
                 FSHD.dnode.global_vec = BigEndianBitConverter.ToUInt32(sector, 0x4C);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (Amiga RDB plugin): FSHD.magic = 0x{0:X8}", FSHD.magic);
                     Console.WriteLine("DEBUG (Amiga RDB plugin): FSHD.size = {0} longs, {1} bytes", FSHD.size, FSHD.size * 4);
@@ -1313,7 +1313,7 @@ namespace DiscImageChef.PartPlugins
                 sha1Ctx.Init();
                 while (nextBlock != 0xFFFFFFFF)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Amiga RDB plugin): Going to block {0} in search of a LoadSegment block", nextBlock);
 
                     sector = imagePlugin.ReadSector(nextBlock);
@@ -1322,7 +1322,7 @@ namespace DiscImageChef.PartPlugins
                     if (magicSeg != LoadSegMagic)
                         break;
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Amiga RDB plugin): Found LoadSegment block");
 
                     thereAreLoadSegments = true;
@@ -1335,7 +1335,7 @@ namespace DiscImageChef.PartPlugins
                     loadSeg.loadData = new byte[(loadSeg.size - 5) * 4];
                     Array.Copy(sector, 0x14, loadSeg.loadData, 0, (loadSeg.size - 5) * 4);
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         Console.WriteLine("DEBUG (Amiga RDB plugin): loadSeg.magic = 0x{0:X8}", loadSeg.magic);
                         Console.WriteLine("DEBUG (Amiga RDB plugin): loadSeg.size = {0} longs, {1} bytes", loadSeg.size, loadSeg.size * 4);
@@ -1352,7 +1352,7 @@ namespace DiscImageChef.PartPlugins
                 if (thereAreLoadSegments)
                 {
                     string loadSegSHA1 = sha1Ctx.End();
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (Amiga RDB plugin): LoadSegment data SHA1: {0}", loadSegSHA1);
                 }
 

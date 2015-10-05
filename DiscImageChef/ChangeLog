@@ -1,6 +1,18 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins.cs:
+	* PartPlugins/MBR.cs:
+	* PartPlugins/RDB.cs:
+	* PartPlugins/NeXT.cs:
+	* DiscImageChef.csproj:
+	* PartPlugins/Atari.cs:
+	* PartPlugins/AppleMap.cs:
+	* PartPlugins/PartPlugin.cs:
+	  Move partitions plugins to a separate library.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins.cs:
 	* PartPlugins/RDB.cs:
 	* PartPlugins/MBR.cs:
 	* ImagePlugins/VHD.cs:
