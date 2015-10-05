@@ -114,13 +114,13 @@ namespace DiscImageChef.Commands
 
                 if (options.SearchForPartitions)
                 {
-                    List<Partition> partitions = new List<Partition>();
+                    List<CommonTypes.Partition> partitions = new List<CommonTypes.Partition>();
                     string partition_scheme = "";
 
                     // TODO: Solve possibility of multiple partition schemes (CUE + MBR, MBR + RDB, CUE + APM, etc)
                     foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
                     {
-                        List<Partition> _partitions;
+                        List<CommonTypes.Partition> _partitions;
 
                         if (_partplugin.GetInformation(_imageFormat, out _partitions))
                         {

@@ -1,0 +1,15 @@
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* VHD.cs:
+	* Nero.cs:
+	* CDRWin.cs:
+	* TeleDisk.cs:
+	* Apple2MG.cs:
+	* ImageInfo.cs:
+	* DiskCopy42.cs:
+	* ImagePlugin.cs:
+	* ZZZRawImage.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.DiscImages.csproj:
+	  Moved disc image plugins to a separate library.
+

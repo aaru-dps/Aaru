@@ -169,7 +169,7 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        public Apple2MG(PluginBase Core)
+        public Apple2MG()
         {
             Name = "Apple 2IMG";
             PluginUUID = new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
@@ -273,12 +273,12 @@ namespace DiscImageChef.ImagePlugins
             if (ImageHeader.dataSize == 0x00800C00)
             {
                 ImageHeader.dataSize = 0x000C8000;
-                if (MainClass.isDebug)
+                ////if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (2MG plugin): Detected incorrect endian on data size field, correcting.");
             }
 
-            if (MainClass.isDebug)
-            {
+            ////if (MainClass.isDebug)
+            //{
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.headerSize = {0}", ImageHeader.headerSize);
@@ -296,7 +296,7 @@ namespace DiscImageChef.ImagePlugins
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved2 = 0x{0:X8}", ImageHeader.reserved2);
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
                 Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
-            }
+            //}
 
             if (ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 && ImageHeader.imageFormat != ProDOSSectorOrder)
                 return false;
@@ -584,7 +584,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override List<DiscImageChef.PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

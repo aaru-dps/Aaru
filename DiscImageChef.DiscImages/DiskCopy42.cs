@@ -126,7 +126,7 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        public DiskCopy42(PluginBase Core)
+        public DiskCopy42()
         {
             Name = "Apple DiskCopy 4.2";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
@@ -181,7 +181,7 @@ namespace DiscImageChef.ImagePlugins
             tmp_header.valid = buffer[0x52];
             tmp_header.reserved = buffer[0x53];
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (DC42 plugin): tmp_header.diskName = \"{0}\"", tmp_header.diskName);
                 Console.WriteLine("DEBUG (DC42 plugin): tmp_header.dataSize = {0} bytes", tmp_header.dataSize);
@@ -205,7 +205,7 @@ namespace DiscImageChef.ImagePlugins
             if (tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
                 tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
 
                 return false;
@@ -214,7 +214,7 @@ namespace DiscImageChef.ImagePlugins
             if (tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
                 tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
 
                 return false;
@@ -222,7 +222,7 @@ namespace DiscImageChef.ImagePlugins
 
             if (tmp_header.fmtByte == kInvalidFmtByte)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("Image says it's unformatted");
 
                 return false;
@@ -258,7 +258,7 @@ namespace DiscImageChef.ImagePlugins
             header.valid = buffer[0x52];
             header.reserved = buffer[0x53];
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (DC42 plugin): header.diskName = \"{0}\"", header.diskName);
                 Console.WriteLine("DEBUG (DC42 plugin): header.dataSize = {0} bytes", header.dataSize);
@@ -282,7 +282,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
                 header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Unknown header.format = 0x{0:X2} value", header.format);
 
                 return false;
@@ -291,7 +291,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
                 header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
                 return false;
@@ -299,7 +299,7 @@ namespace DiscImageChef.ImagePlugins
 
             if (header.fmtByte == kInvalidFmtByte)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Image says it's unformatted");
 
                 return false;
@@ -317,7 +317,7 @@ namespace DiscImageChef.ImagePlugins
             {
                 if (header.tagSize / 12 != ImageInfo.sectors)
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (DC42 plugin): header.tagSize / 12 != sectors");
 
                     return false;
@@ -398,17 +398,17 @@ namespace DiscImageChef.ImagePlugins
             UInt32 dataChk;
             UInt32 tagsChk = 0;
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (DC42 plugin): Reading data");
             FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
             datastream.Seek((long)(dataOffset), SeekOrigin.Begin);
             datastream.Read(data, 0, (int)header.dataSize);
             datastream.Close();
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (DC42 plugin): Calculating data checksum");
             dataChk = DC42CheckSum(data);
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (DC42 plugin): Calculated data checksum = 0x{0:X8}", dataChk);
                 Console.WriteLine("DEBUG (DC42 plugin): Stored data checksum = 0x{0:X8}", header.dataChecksum);
@@ -416,17 +416,17 @@ namespace DiscImageChef.ImagePlugins
 
             if (header.tagSize > 0)
             {
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Reading tags");
                 FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
                 tagstream.Seek((long)(tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
                 tagstream.Close();
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (DC42 plugin): Calculating tag checksum");
                 tagsChk = DC42CheckSum(tags);
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (DC42 plugin): Calculated tag checksum = 0x{0:X8}", tagsChk);
                     Console.WriteLine("DEBUG (DC42 plugin): Stored tag checksum = 0x{0:X8}", header.tagChecksum);
@@ -647,7 +647,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override List<PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

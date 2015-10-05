@@ -342,7 +342,7 @@ namespace DiscImageChef.ImagePlugins
         /// reads can be relative to them.
         /// </summary>
         /// <returns>The partitions.</returns>
-        public abstract List<PartPlugins.Partition> GetPartitions();
+        public abstract List<CommonTypes.Partition> GetPartitions();
 
         /// <summary>
         /// Gets the disc track extents (start, length).

@@ -60,7 +60,7 @@ namespace DiscImageChef
 
         public void RegisterAllPlugins()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = Assembly.GetAssembly(typeof(ImagePlugin));
 
             foreach (Type type in assembly.GetTypes())
             {
@@ -68,9 +68,22 @@ namespace DiscImageChef
                 {
                     if (type.IsSubclassOf(typeof(ImagePlugin)))
                     {
-                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });
+                        ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterImagePlugin(plugin);
                     }
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            }
+
+            assembly = Assembly.GetExecutingAssembly();
+
+            foreach (Type type in assembly.GetTypes())
+            {
+                try
+                {
                     if (type.IsSubclassOf(typeof(Plugin)))
                     {
                         Plugin plugin = (Plugin)type.GetConstructor(new [] { typeof(PluginBase) }).Invoke(new object[] { this });

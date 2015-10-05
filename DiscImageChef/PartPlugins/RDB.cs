@@ -889,9 +889,9 @@ namespace DiscImageChef.PartPlugins
             public byte[] loadData;
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             ulong RDBBlock = 0;
             bool foundRDB = false;
@@ -1363,7 +1363,7 @@ namespace DiscImageChef.PartPlugins
             ulong sequence = 0;
             foreach (PartitionEntry RDBEntry in PartitionEntries)
             {
-                Partition entry = new Partition();
+                CommonTypes.Partition entry = new CommonTypes.Partition();
 
                 entry.PartitionDescription = AmigaDOSTypeToDescriptionString(RDBEntry.dosEnvVec.dosType);
                 entry.PartitionName = RDBEntry.driveName;

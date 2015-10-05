@@ -1,5 +1,29 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Plugins.cs:
+	* PartPlugins/RDB.cs:
+	* PartPlugins/MBR.cs:
+	* ImagePlugins/VHD.cs:
+	* PartPlugins/NeXT.cs:
+	* Commands/Analyze.cs:
+	* ImagePlugins/Nero.cs:
+	* DiscImageChef.csproj:
+	* DetectImageFormat.cs:
+	* PartPlugins/Atari.cs:
+	* ImagePlugins/CDRWin.cs:
+	* PartPlugins/AppleMap.cs:
+	* ImagePlugins/Apple2MG.cs:
+	* ImagePlugins/TeleDisk.cs:
+	* PartPlugins/PartPlugin.cs:
+	* ImagePlugins/ImageInfo.cs:
+	* ImagePlugins/DiskCopy42.cs:
+	* ImagePlugins/ImagePlugin.cs:
+	* ImagePlugins/ZZZRawImage.cs:
+	* ImagePlugins/DetectImageFormat.cs:
+	  Moved disc image plugins to a separate library.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Swapping.cs:
 	* PrintHex.cs:
 	* ArrayFill.cs:

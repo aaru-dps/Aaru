@@ -53,13 +53,13 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
             byte cyl_sect1, cyl_sect2; // For decoding cylinder and sector
             UInt16 signature;
             ulong counter = 0;
 			
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             if (imagePlugin.GetSectorSize() < 512)
                 return false;
@@ -153,7 +153,7 @@ namespace DiscImageChef.PartPlugins
                                     // TODO: Handle disklabels bigger than 1 sector or search max no_parts
                                     for (int j = 0; j < no_parts; j++)
                                     {
-                                        Partition part = new Partition();
+                                        CommonTypes.Partition part = new CommonTypes.Partition();
                                         byte bsd_type;
 
                                         part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 4);
@@ -254,7 +254,7 @@ namespace DiscImageChef.PartPlugins
 
                                             if ((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
                                             {
-                                                Partition part = new Partition();
+                                                CommonTypes.Partition part = new CommonTypes.Partition();
                                                 // TODO: Check if device bps == disklabel bps
                                                 part.PartitionStartSector = vtoc_ent.start;
                                                 part.PartitionSectors = vtoc_ent.length;
@@ -292,7 +292,7 @@ namespace DiscImageChef.PartPlugins
                                 {
                                     for (int j = 0; j < 16; j++)
                                     {
-                                        Partition part = new Partition();
+                                        CommonTypes.Partition part = new CommonTypes.Partition();
                                         part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
                                         part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
                                         part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize(); // 68+4+j*12
@@ -323,7 +323,7 @@ namespace DiscImageChef.PartPlugins
 								
                                     if (type == 0x81)
                                     {
-                                        Partition part = new Partition();
+                                        CommonTypes.Partition part = new CommonTypes.Partition();
                                         minix_subs = true;
                                         part.PartitionDescription = "Minix subpartition";
                                         part.PartitionType = "Minix";
@@ -348,7 +348,7 @@ namespace DiscImageChef.PartPlugins
 				
                 if (valid)
                 {
-                    Partition part = new Partition();
+                    CommonTypes.Partition part = new CommonTypes.Partition();
                     if (entry.lba_start > 0 && entry.lba_sectors > 0)
                     {
                         part.PartitionStartSector = entry.lba_start;
@@ -455,7 +455,7 @@ namespace DiscImageChef.PartPlugins
                                                 // TODO: Handle disklabels bigger than 1 sector or search max no_parts
                                                 for (int j = 0; j < no_parts; j++)
                                                 {
-                                                    Partition part = new Partition();
+                                                    CommonTypes.Partition part = new CommonTypes.Partition();
                                                     byte bsd_type;
 											
                                                     part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 4);
@@ -556,7 +556,7 @@ namespace DiscImageChef.PartPlugins
 
                                                         if ((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
                                                         {
-                                                            Partition part = new Partition();
+                                                            CommonTypes.Partition part = new CommonTypes.Partition();
                                                             // TODO: Check if device bps == disklabel bps
                                                             part.PartitionStartSector = vtoc_ent.start;
                                                             part.PartitionSectors = vtoc_ent.length;
@@ -594,7 +594,7 @@ namespace DiscImageChef.PartPlugins
                                             {
                                                 for (int j = 0; j < 16; j++)
                                                 {
-                                                    Partition part = new Partition();
+                                                    CommonTypes.Partition part = new CommonTypes.Partition();
                                                     part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
                                                     part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
                                                     part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize(); // 68+4+j*12
@@ -625,7 +625,7 @@ namespace DiscImageChef.PartPlugins
 
                                                 if (type == 0x81)
                                                 {
-                                                    Partition part = new Partition();
+                                                    CommonTypes.Partition part = new CommonTypes.Partition();
                                                     minix_subs = true;
                                                     part.PartitionDescription = "Minix subpartition";
                                                     part.PartitionType = "Minix";
@@ -651,7 +651,7 @@ namespace DiscImageChef.PartPlugins
 							
                             if (ext_valid)
                             {
-                                Partition part = new Partition();
+                                CommonTypes.Partition part = new CommonTypes.Partition();
                                 if (entry2.lba_start > 0 && entry2.lba_sectors > 0)
                                 {
                                     part.PartitionStartSector = entry2.lba_start;

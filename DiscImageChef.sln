@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Checksums", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Helpers", "DiscImageChef.Helpers\DiscImageChef.Helpers.csproj", "{F8BDF57B-1571-4CD0-84B3-B422088D359A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.DiscImages", "DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj", "{74032CBC-339B-42F3-AF6F-E96C261F3E6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.CommonTypes", "DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj", "{F2B84194-26EB-4227-B1C5-6602517E85AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +25,10 @@ Global
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Debug|x86.Build.0 = Debug|Any CPU
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Release|x86.ActiveCfg = Release|Any CPU
 		{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}.Release|x86.Build.0 = Release|Any CPU
+		{74032CBC-339B-42F3-AF6F-E96C261F3E6A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74032CBC-339B-42F3-AF6F-E96C261F3E6A}.Debug|x86.Build.0 = Debug|Any CPU
+		{74032CBC-339B-42F3-AF6F-E96C261F3E6A}.Release|x86.ActiveCfg = Release|Any CPU
+		{74032CBC-339B-42F3-AF6F-E96C261F3E6A}.Release|x86.Build.0 = Release|Any CPU
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.ActiveCfg = Debug|x86
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Debug|x86.Build.0 = Debug|x86
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Release|x86.ActiveCfg = Release|x86
@@ -31,6 +39,10 @@ Global
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.Build.0 = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.ActiveCfg = Release|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.Build.0 = Release|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Debug|x86.Build.0 = Debug|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Release|x86.ActiveCfg = Release|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Release|x86.Build.0 = Release|Any CPU
 		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Debug|x86.Build.0 = Debug|Any CPU
 		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Release|x86.ActiveCfg = Release|Any CPU

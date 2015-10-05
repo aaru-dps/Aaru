@@ -52,7 +52,7 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        public ZZZRawImage(PluginBase Core)
+        public ZZZRawImage()
         {
             Name = "Raw Disk Image";
             // Non-random UUID to recognize this specific plugin
@@ -623,7 +623,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override List<PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

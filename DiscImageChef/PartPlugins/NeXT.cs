@@ -62,7 +62,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
             byte[] cString;
             bool magic_found;
@@ -77,7 +77,7 @@ namespace DiscImageChef.PartPlugins
             else
                 sector_size = imagePlugin.GetSectorSize();
 			
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             entry_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
             magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
@@ -133,7 +133,7 @@ namespace DiscImageChef.PartPlugins
 
                     if (entry.sectors > 0 && entry.sectors < 0xFFFFFFFF && entry.start < 0xFFFFFFFF)
                     {
-                        Partition part = new Partition();
+                        CommonTypes.Partition part = new CommonTypes.Partition();
                         StringBuilder sb = new StringBuilder();
 						
                         part.PartitionLength = (ulong)entry.sectors * sector_size;

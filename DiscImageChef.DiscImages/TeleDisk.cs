@@ -201,7 +201,7 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        public TeleDisk(PluginBase Core)
+        public TeleDisk()
         {
             Name = "Sydex TeleDisk";
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
@@ -255,7 +255,7 @@ namespace DiscImageChef.ImagePlugins
             Array.Copy(headerBytes, headerBytesForCRC, 10);
             UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.sequence = 0x{0:X2}", header.sequence);
@@ -321,7 +321,7 @@ namespace DiscImageChef.ImagePlugins
             Array.Copy(headerBytes, headerBytesForCRC, 10);
             UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
             
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
                 Console.WriteLine("DEBUG (TeleDisk plugin): header.sequence = 0x{0:X2}", header.sequence);
@@ -343,7 +343,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.crc != calculatedHeaderCRC)
             {
                 ADiskCRCHasFailed = true;
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (TeleDisk plugin): Calculated CRC does not coincide with stored one.");
             }
 
@@ -388,7 +388,7 @@ namespace DiscImageChef.ImagePlugins
 
                 UInt16 cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Comment header");
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
@@ -413,7 +413,7 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Comment");
                     Console.WriteLine("DEBUG (TeleDisk plugin): {0}", ImageInfo.imageComments);
@@ -428,13 +428,13 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageCreationTime = fi.CreationTimeUtc;
             ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (TeleDisk plugin): Image created on {0}", ImageInfo.imageCreationTime);
                 Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", ImageInfo.imageLastModificationTime);
             }
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
                 Console.WriteLine("DEBUG (TeleDisk plugin): Parsing image");
 
             totalDiskSize = 0;
@@ -459,7 +459,7 @@ namespace DiscImageChef.ImagePlugins
 
                 TDTrackCalculatedCRC = (byte)(TeleDiskCRC(0, TDTrackForCRC) & 0xFF);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (TeleDisk plugin): Track follows");
                     Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack cylinder: {0}\t", TDTrack.cylinder);
@@ -472,7 +472,7 @@ namespace DiscImageChef.ImagePlugins
 
                 if (TDTrack.sectors == 0xFF) // End of disk image
                 {
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         Console.WriteLine("DEBUG (TeleDisk plugin): End of disk image arrived");
                         Console.WriteLine("DEBUG (TeleDisk plugin): Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
@@ -503,7 +503,7 @@ namespace DiscImageChef.ImagePlugins
                     TDSector.flags = (byte)stream.ReadByte();
                     TDSector.crc = (byte)stream.ReadByte();
 
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                     {
                         Console.WriteLine("DEBUG (TeleDisk plugin): \tSector follows");
                         Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark cylinder: {0}", TDSector.cylinder);
@@ -524,7 +524,7 @@ namespace DiscImageChef.ImagePlugins
                         TDData.dataEncoding = (byte)stream.ReadByte();
                         data = new byte[TDData.dataSize];
                         stream.Read(data, 0, TDData.dataSize);
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData size (in-image): {0}", TDData.dataSize);
                             Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
@@ -536,7 +536,7 @@ namespace DiscImageChef.ImagePlugins
 
                         if (TDSectorCalculatedCRC != TDSector.crc)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (TeleDisk plugin): Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
                             if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
                             if (!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
@@ -574,7 +574,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         ArrayHelpers.ArrayFill(decodedData, (byte)0);
                     }
-                    if (MainClass.isDebug)
+                    //if (MainClass.isDebug)
                         Console.WriteLine("DEBUG (TeleDisk plugin): \t\tLBA: {0}", LBA);
 
                     if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
@@ -583,13 +583,13 @@ namespace DiscImageChef.ImagePlugins
                         {
                             if ((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
                             {
-                                if (MainClass.isDebug)
+                                //if (MainClass.isDebug)
                                     Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
                                         TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
                             }
                             else
                             {
-                                if (MainClass.isDebug)
+                                //if (MainClass.isDebug)
                                     Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
                                         TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
                             }
@@ -840,7 +840,7 @@ namespace DiscImageChef.ImagePlugins
                             ins += 4;
                             outs += decodedPiece.Length;
                         }
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Input data size: {0} bytes", encodedData.Length);
                             Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Processed input: {0} bytes", ins);
@@ -881,7 +881,7 @@ namespace DiscImageChef.ImagePlugins
                                 outs += Piece.Length;
                             }
                         }
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Input data size: {0} bytes", encodedData.Length);
                             Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Processed input: {0} bytes", ins);
@@ -967,7 +967,7 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.ECMA_78_2;
                             default:
                                 {
-                                    if (MainClass.isDebug)
+                                    //if (MainClass.isDebug)
                                         Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 5,25\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
@@ -1012,7 +1012,7 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.SHARP_35;
                             default:
                                 {
-                                    if (MainClass.isDebug)
+                                    //if (MainClass.isDebug)
                                         Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 3,5\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
@@ -1061,7 +1061,7 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.ECMA_69_26;
                             default:
                                 {
-                                    if (MainClass.isDebug)
+                                    //if (MainClass.isDebug)
                                         Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 8\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
@@ -1069,7 +1069,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 default:
                     {
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (TeleDisk plugin): Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
                         return DiskType.Unknown;
                     }
@@ -1156,7 +1156,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override List<PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

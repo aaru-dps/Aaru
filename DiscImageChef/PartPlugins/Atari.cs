@@ -61,9 +61,9 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             if (imagePlugin.GetSectorSize() < 512)
                 return false;
@@ -155,7 +155,7 @@ namespace DiscImageChef.PartPlugins
                         if (sectorSize == 2448 || sectorSize == 2352)
                             sectorSize = 2048;
 
-                        Partition part = new Partition();
+                        CommonTypes.Partition part = new CommonTypes.Partition();
                         part.PartitionLength = table.entries[i].length * sectorSize;
                         part.PartitionSectors = table.entries[i].length;
                         part.PartitionSequence = partitionSequence;
@@ -235,7 +235,7 @@ namespace DiscImageChef.PartPlugins
                                 if (sectorSize == 2448 || sectorSize == 2352)
                                     sectorSize = 2048;
 
-                                Partition part = new Partition();
+                                CommonTypes.Partition part = new CommonTypes.Partition();
                                 part.PartitionLength = extendedTable.entries[j].length * sectorSize;
                                 part.PartitionSectors = extendedTable.entries[j].length;
                                 part.PartitionSequence = partitionSequence;
@@ -306,7 +306,7 @@ namespace DiscImageChef.PartPlugins
                             if (sectorSize == 2448 || sectorSize == 2352)
                                 sectorSize = 2048;
 
-                            Partition part = new Partition();
+                            CommonTypes.Partition part = new CommonTypes.Partition();
                             part.PartitionLength = table.icdEntries[i].length * sectorSize;
                             part.PartitionSectors = table.icdEntries[i].length;
                             part.PartitionSequence = partitionSequence;

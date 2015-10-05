@@ -64,12 +64,7 @@
     <Compile Include="Plugins\SolarFS.cs" />
     <Compile Include="Plugins\UNIXBFS.cs" />
     <Compile Include="Plugins\SysV.cs" />
-    <Compile Include="ImagePlugins\ImagePlugin.cs" />
-    <Compile Include="ImagePlugins\CDRWin.cs" />
-    <Compile Include="ImagePlugins\DiskCopy42.cs" />
     <Compile Include="Plugins\LisaFS.cs" />
-    <Compile Include="ImagePlugins\TeleDisk.cs" />
-    <Compile Include="ImagePlugins\ZZZRawImage.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Commands\Formats.cs" />
     <Compile Include="Commands\Analyze.cs" />
@@ -77,9 +72,6 @@
     <Compile Include="Commands\Checksum.cs" />
     <Compile Include="Commands\Verify.cs" />
     <Compile Include="Commands\Commands.cs" />
-    <Compile Include="ImagePlugins\DetectImageFormat.cs" />
-    <Compile Include="ImagePlugins\ImageInfo.cs" />
-    <Compile Include="ImagePlugins\Nero.cs" />
     <Compile Include="Commands\PrintHex.cs" />
     <Compile Include="Commands\Decode.cs" />
     <Compile Include="Decoders\SCSI.cs" />
@@ -88,13 +80,12 @@
     <Compile Include="Decoders\BD.cs" />
     <Compile Include="Decoders\DVD.cs" />
     <Compile Include="Plugins\ProDOS.cs" />
-    <Compile Include="ImagePlugins\Apple2MG.cs" />
     <Compile Include="PartPlugins\RDB.cs" />
     <Compile Include="Plugins\AmigaDOS.cs" />
     <Compile Include="PartPlugins\Atari.cs" />
-    <Compile Include="ImagePlugins\VHD.cs" />
     <Compile Include="Commands\Entropy.cs" />
     <Compile Include="Decoders\Floppy.cs" />
+    <Compile Include="DetectImageFormat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -199,6 +190,14 @@
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj">
+      <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
+      <Name>DiscImageChef.DiscImages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
+      <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

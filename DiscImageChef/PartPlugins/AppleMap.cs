@@ -60,7 +60,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
             ulong apm_entries;
             uint sector_size;
@@ -70,7 +70,7 @@ namespace DiscImageChef.PartPlugins
             else
                 sector_size = imagePlugin.GetSectorSize();
 			
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 			
             AppleMapBootEntry APMB = new AppleMapBootEntry();
             AppleMapPartitionEntry APMEntry;
@@ -143,7 +143,7 @@ namespace DiscImageChef.PartPlugins
 
                 if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
                 {
-                    Partition _partition = new Partition();
+                    CommonTypes.Partition _partition = new CommonTypes.Partition();
                     StringBuilder sb = new StringBuilder();
 					
                     _partition.PartitionSequence = i;

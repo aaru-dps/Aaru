@@ -252,7 +252,7 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<UInt32, UInt64> offsetmap;
         // Dictionary, index is track #, value is TrackFile
         CDRWinDisc discimage;
-        List<PartPlugins.Partition> partitions;
+        List<CommonTypes.Partition> partitions;
 
         #endregion
 
@@ -286,7 +286,7 @@ namespace DiscImageChef.ImagePlugins
 
         #region Methods
 
-        public CDRWin(PluginBase Core)
+        public CDRWin()
         {
             Name = "CDRWin cuesheet";
             PluginUUID = new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
@@ -479,7 +479,7 @@ namespace DiscImageChef.ImagePlugins
 
                     if (MatchDiskType.Success && !intrack)
                     {
-                        if (MainClass.isDebug)
+                        ////if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDRWin plugin): Found REM ORIGINAL MEDIA TYPE at line {0}", line);
                         discimage.disktypestr = MatchDiskType.Groups[1].Value;
                     }
@@ -489,7 +489,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                     else if (MatchSession.Success)
                     {
-                        if (MainClass.isDebug)
+                        ////if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDRWin plugin): Found REM SESSION at line {0}", line);
                         currentsession = Byte.Parse(MatchSession.Groups[1].Value);
 
@@ -497,19 +497,19 @@ namespace DiscImageChef.ImagePlugins
                     }
                     else if (MatchLBA.Success)
                     {
-                        if (MainClass.isDebug)
+                        ////if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDRWin plugin): Found REM MSF at line {0}", line);
                         // Just ignored
                     }
                     else if (MatchLeadOut.Success)
                     {
-                        if (MainClass.isDebug)
+                        ////if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDRWin plugin): Found REM LEAD-OUT at line {0}", line);
                         // Just ignored
                     }
                     else if (MatchComment.Success)
                     {
-                        if (MainClass.isDebug)
+                        ////if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (CDRWin plugin): Found REM at line {0}", line);
                         if (discimage.comment == "")
                             discimage.comment = MatchComment.Groups[1].Value; // First comment
@@ -538,7 +538,7 @@ namespace DiscImageChef.ImagePlugins
 
                         if (MatchArranger.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found ARRANGER at line {0}", line);
                             if (intrack)
                                 currenttrack.arranger = MatchArranger.Groups[1].Value;
@@ -547,7 +547,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchBarCode.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found UPC_EAN at line {0}", line);
                             if (!intrack)
                                 discimage.barcode = MatchBarCode.Groups[1].Value;
@@ -556,7 +556,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchCDText.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found CDTEXTFILE at line {0}", line);
                             if (!intrack)
                                 discimage.cdtextfile = MatchCDText.Groups[1].Value;
@@ -565,7 +565,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchComposer.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found COMPOSER at line {0}", line);
                             if (intrack)
                                 currenttrack.arranger = MatchComposer.Groups[1].Value;
@@ -574,7 +574,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchDiskID.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found DISC_ID at line {0}", line);
                             if (!intrack)
                                 discimage.disk_id = MatchDiskID.Groups[1].Value;
@@ -583,7 +583,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchFile.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found FILE at line {0}", line);
 
                             if (currenttrack.sequence != 0)
@@ -664,7 +664,7 @@ namespace DiscImageChef.ImagePlugins
                             }
 
                             // File does exist, process it
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): File \"{0}\" found", currentfile.datafile);
 
                             switch (currentfile.filetype)
@@ -686,14 +686,14 @@ namespace DiscImageChef.ImagePlugins
                         else if (MatchFlags.Success)
                         {
                             // TODO: Implement FLAGS support.
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found FLAGS at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found FLAGS field in incorrect place at line {0}", line));
                         }
                         else if (MatchGenre.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found GENRE at line {0}", line);
                             if (intrack)
                                 currenttrack.genre = MatchGenre.Groups[1].Value;
@@ -702,7 +702,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchIndex.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found INDEX at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found INDEX before a track {0}", line));
@@ -720,7 +720,7 @@ namespace DiscImageChef.ImagePlugins
                                     {
                                         cuetracks[currenttrack.sequence - 2].sectors = offset - currentfileoffsetsector;
                                         currentfile.offset += cuetracks[currenttrack.sequence - 2].sectors * cuetracks[currenttrack.sequence - 2].bps;
-                                        if (MainClass.isDebug)
+                                        ////if (MainClass.isDebug)
                                         {
                                             Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 553", currentfile.offset);
                                             Console.WriteLine("DEBUG (CDRWin plugin): cuetracks[currenttrack.sequence-2].sectors = {0}", cuetracks[currenttrack.sequence - 2].sectors);
@@ -731,7 +731,7 @@ namespace DiscImageChef.ImagePlugins
 
                                 if ((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))) && currenttrack.sequence == 1)
                                 {
-                                    if (MainClass.isDebug)
+                                    ////if (MainClass.isDebug)
                                         Console.WriteLine("DEBUG (CDRWin plugin): Sets currentfile.offset to {0} at line 559", offset * currenttrack.bps);
                                     currentfile.offset = offset * currenttrack.bps;
                                 }
@@ -742,7 +742,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchISRC.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found ISRC at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found ISRC before a track {0}", line));
@@ -750,7 +750,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchMCN.Success)
                         {
-                            if (MainClass.isDebug)
+                            ////if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found CATALOG at line {0}", line);
                             if (!intrack)
                                 discimage.mcn = MatchMCN.Groups[1].Value;
@@ -759,7 +759,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchPerformer.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found PERFORMER at line {0}", line);
                             if (intrack)
                                 currenttrack.performer = MatchPerformer.Groups[1].Value;
@@ -768,7 +768,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchPostgap.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found POSTGAP at line {0}", line);
                             if (intrack)
                             {
@@ -779,7 +779,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchPregap.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found PREGAP at line {0}", line);
                             if (intrack)
                             {
@@ -790,7 +790,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchSongWriter.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found SONGWRITER at line {0}", line);
                             if (intrack)
                                 currenttrack.songwriter = MatchSongWriter.Groups[1].Value;
@@ -799,7 +799,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchTitle.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found TITLE at line {0}", line);
                             if (intrack)
                                 currenttrack.title = MatchTitle.Groups[1].Value;
@@ -808,7 +808,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchTrack.Success)
                         {
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Found TRACK at line {0}", line);
                             if (currentfile.datafile == "")
                                 throw new FeatureUnsupportedImageException(String.Format("Found TRACK field before a file is defined at line {0}", line));
@@ -825,7 +825,7 @@ namespace DiscImageChef.ImagePlugins
                             currenttrack = new CDRWinTrack();
                             currenttrack.indexes = new Dictionary<int, ulong>();
                             currenttrack.sequence = uint.Parse(MatchTrack.Groups[1].Value);
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (CDRWin plugin): Setting currenttrack.sequence to {0}", currenttrack.sequence);
                             currentfile.sequence = currenttrack.sequence;
                             currenttrack.bps = CDRWinTrackTypeToBytesPerSector(MatchTrack.Groups[2].Value);
@@ -946,7 +946,7 @@ namespace DiscImageChef.ImagePlugins
                         discimage.disktype = DiskType.CD;
                 }
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     // DEBUG information
                     Console.WriteLine("DEBUG (CDRWin plugin): Disc image parsing results");
@@ -1070,10 +1070,10 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (CDRWin plugin): Building offset map");
 
-                partitions = new List<DiscImageChef.PartPlugins.Partition>();
+                partitions = new List<CommonTypes.Partition>();
 
                 ulong byte_offset = 0;
                 ulong sector_offset = 0;
@@ -1089,7 +1089,7 @@ namespace DiscImageChef.ImagePlugins
                     if (discimage.tracks[i].sequence == 1 && i != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
-                    PartPlugins.Partition partition = new DiscImageChef.PartPlugins.Partition();
+                    CommonTypes.Partition partition = new CommonTypes.Partition();
 
                     if (discimage.tracks[i].pregap > 0)
                     {
@@ -1121,7 +1121,7 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         partitions.Add(partition);
-                        partition = new DiscImageChef.PartPlugins.Partition();
+                        partition = new CommonTypes.Partition();
                     }
 
                     index_zero |= discimage.tracks[i].indexes.TryGetValue(0, out index_zero_offset);
@@ -1159,7 +1159,7 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         partitions.Add(partition);
-                        partition = new DiscImageChef.PartPlugins.Partition();
+                        partition = new CommonTypes.Partition();
                     }
 
                     // Index 01
@@ -1191,14 +1191,14 @@ namespace DiscImageChef.ImagePlugins
                     }
 
                     partitions.Add(partition);
-                    partition = new DiscImageChef.PartPlugins.Partition();
+                    partition = new CommonTypes.Partition();
                 }
 
                 // Print offset map
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Console.WriteLine("DEBUG (CDRWin plugin) printing partition map");
-                    foreach (DiscImageChef.PartPlugins.Partition partition in partitions)
+                    foreach (CommonTypes.Partition partition in partitions)
                     {
                         Console.WriteLine("DEBUG (CDRWin plugin): Partition sequence: {0}", partition.PartitionSequence);
                         Console.WriteLine("DEBUG (CDRWin plugin): \tPartition name: {0}", partition.PartitionName);
@@ -1910,7 +1910,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.diskType;
         }
 
-        public override List<PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             return partitions;
         }

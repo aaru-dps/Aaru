@@ -365,7 +365,7 @@ namespace DiscImageChef.ImagePlugins
 
         #endregion
 
-        public VHD(PluginBase Core)
+        public VHD()
         {
             Name = "VirtualPC";
             PluginUUID = new Guid("8014d88f-64cd-4484-9441-7635c632958a");
@@ -459,7 +459,7 @@ namespace DiscImageChef.ImagePlugins
             UInt32 headerCalculatedChecksum = VHDChecksum(header);
             UInt32 footerCalculatedChecksum = VHDChecksum(footer);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Console.WriteLine("DEBUG (VirtualPC plugin): Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", headerChecksum, headerCalculatedChecksum);
                 Console.WriteLine("DEBUG (VirtualPC plugin): Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", footerChecksum, footerCalculatedChecksum);
@@ -503,7 +503,7 @@ namespace DiscImageChef.ImagePlugins
             thisDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             thisDateTime = thisDateTime.AddSeconds(thisFooter.timestamp);
 
-            if (MainClass.isDebug)
+            //if (MainClass.isDebug)
             {
                 Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
                 sha1Ctx.Init();
@@ -655,7 +655,7 @@ namespace DiscImageChef.ImagePlugins
 
                 UInt32 dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (VirtualPC plugin): Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
 
                 if (dynamicChecksum != dynamicChecksumCalculated)
@@ -694,7 +694,7 @@ namespace DiscImageChef.ImagePlugins
                 parentDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 parentDateTime = parentDateTime.AddSeconds(thisDynamic.parentTimestamp);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
                     sha1Ctx.Init();
@@ -738,7 +738,7 @@ namespace DiscImageChef.ImagePlugins
                 for (int i = 0; i < thisDynamic.maxTableEntries; i++)
                     blockAllocationTable[i] = BigEndianBitConverter.ToUInt32(bat, 4 * i);
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     DateTime endTime = DateTime.UtcNow;
                     Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime-startTime).TotalSeconds);
@@ -769,7 +769,7 @@ namespace DiscImageChef.ImagePlugins
                         Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, blockAllocationTable.Length - (i * 512) / 4);
                 }
 
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     DateTime endTime = DateTime.UtcNow;
                     Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime - startTime).TotalSeconds);
@@ -777,7 +777,7 @@ namespace DiscImageChef.ImagePlugins
 
                 // Too noisy
                 /*
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                 {
                     for (int i = 0; i < thisDynamic.maxTableEntries; i++)
                         Console.WriteLine("DEBUG (VirtualPC plugin): blockAllocationTable[{0}] = {1}", i, blockAllocationTable[i]);
@@ -791,7 +791,7 @@ namespace DiscImageChef.ImagePlugins
                     / 8
                     // and aligned to 512 byte boundary
                     / 512));
-                if (MainClass.isDebug)
+                //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (VirtualPC plugin): Bitmap is {0} sectors", bitmapSize);
             }
 
@@ -815,7 +815,7 @@ namespace DiscImageChef.ImagePlugins
                                 imageStream.Seek((long)thisDynamic.locatorEntries[i].platformDataOffset, SeekOrigin.Begin);
                                 imageStream.Read(locatorEntriesData[i], 0, (int)thisDynamic.locatorEntries[i].platformDataLength);
 
-                                if (MainClass.isDebug)
+                                //if (MainClass.isDebug)
                                 {
                                     switch (thisDynamic.locatorEntries[i].platformCode)
                                     {
@@ -861,7 +861,7 @@ namespace DiscImageChef.ImagePlugins
                                         parentPath = parentPath.Remove(0, 16);
                                     else
                                     {
-                                        if (MainClass.isDebug)
+                                        //if (MainClass.isDebug)
                                             Console.WriteLine("DEBUG (VirtualPC plugin) Unsupported protocol classified found in URI parent path: \"{0}\"", parentPath);
                                         parentPath = null;
                                     }
@@ -870,7 +870,7 @@ namespace DiscImageChef.ImagePlugins
 
                             if (parentPath != null)
                             {
-                                if (MainClass.isDebug)
+                                //if (MainClass.isDebug)
                                     Console.WriteLine("DEBUG (VirtualPC plugin) Possible parent path: \"{0}\"", parentPath);
 
                                 locatorFound |= File.Exists(parentPath);
@@ -885,10 +885,11 @@ namespace DiscImageChef.ImagePlugins
                             throw new FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
                         else
                         {
-                            PluginBase plugins = new PluginBase();
+                            parentImage = new VHD();
+/*                            PluginBase plugins = new PluginBase();
                             plugins.RegisterAllPlugins();
                             if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
-                                throw new SystemException("(VirtualPC plugin): Unable to open myself");
+                                throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
 
                             if (!parentImage.IdentifyImage(parentPath))
                                 throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
@@ -1025,7 +1026,7 @@ namespace DiscImageChef.ImagePlugins
                         bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
 
                         /*
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                         {
                             Console.WriteLine("DEBUG (VirtualPC plugin): bitmapSize = {0}", bitmapSize);
                             Console.WriteLine("DEBUG (VirtualPC plugin): blockNumber = {0}", blockNumber);
@@ -1044,7 +1045,7 @@ namespace DiscImageChef.ImagePlugins
                         if (dirty)
                         {
                             /* Too noisy
-                            if (MainClass.isDebug)
+                            //if (MainClass.isDebug)
                                 Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is dirty", sectorAddress);
                             */
 
@@ -1061,7 +1062,7 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         /* Too noisy
-                        if (MainClass.isDebug)
+                        //if (MainClass.isDebug)
                             Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is clean", sectorAddress);
                         */
 
@@ -1300,7 +1301,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override List<DiscImageChef.PartPlugins.Partition> GetPartitions()
+        public override List<CommonTypes.Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
