@@ -1,6 +1,11 @@
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	  Added SASI commands.
+
+2015-10-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	* Linux/Enums.cs:
 	* Linux/Extern.cs:
 	* Linux/Structs.cs:
