@@ -1,5 +1,15 @@
 2015-10-06  Natalia Portillo  <claunia@claunia.com>
 
+	* Linux/Enums.cs:
+	* Linux/Extern.cs:
+	* Linux/Structs.cs:
+	  Filled Linux enums.
+
+	* Windows/Enums.cs:
+	  Typo
+
+2015-10-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Windows/Extern.cs:
 	* Windows/Structs.cs:
 	  Struct de-class

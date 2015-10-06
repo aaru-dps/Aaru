@@ -236,8 +236,5 @@ namespace DiscImageChef.Devices.Windows
         /// </summary>
         IOCTL_SCSI_GET_ADDRESS = 0x41018
     }
-    /// <summary>
-    /// AAAAA
-    /// </summary>
 }
 
