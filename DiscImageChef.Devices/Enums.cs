@@ -4,6 +4,818 @@ namespace DiscImageChef.Devices
 {
     public static class Enums
     {
+        #region ATA Commands
+        public enum AtaCommands : byte
+        {
+            #region Commands defined on Western Digital WD1000 Winchester Disk Controller
+            /// <summary>
+            /// Formats a track
+            /// </summary>
+            FormatTrack = 0x50,
+            /// <summary>
+            /// Reads sectors
+            /// </summary>
+            ReadOld = 0x20,
+            /// <summary>
+            /// Reads sectors using DMA
+            /// </summary>
+            ReadDmaOld = 0x28,
+            /// <summary>
+            /// Calibrates the position of the heads
+            /// Includes all commands from 0x10 to 0x1F
+            /// </summary>
+            Restore = 0x10,
+            /// <summary>
+            /// Seeks to a certain cylinder
+            /// </summary>
+            Seek = 0x70,
+            /// <summary>
+            /// Writes sectors
+            /// </summary>
+            WriteOld = 0x30,
+            #endregion Commands defined on Western Digital WD1000 Winchester Disk Controller
+
+            #region Commands defined on ATA rev. 4c
+            /// <summary>
+            /// Acknowledges media change
+            /// </summary>
+            AckMediaChange = 0xDB,
+            /// <summary>
+            /// Sends vendor-specific information that may be required in order to pass diagnostics
+            /// </summary>
+            PostBoot = 0xDC,
+            /// <summary>
+            /// Prepares a removable drive to respond to boot
+            /// </summary>
+            PreBoot = 0xDD,
+            /// <summary>
+            /// Checks drive power mode
+            /// </summary>
+            CheckPowerMode = 0xE5,
+            /// <summary>
+            /// Checks drive power mode
+            /// </summary>
+            CheckPowerModeAlternate = 0x98,
+            /// <summary>
+            /// Locks the door of the drive
+            /// </summary>
+            DoorLock = 0xDE,
+            /// <summary>
+            /// Unlocks the door of the drive
+            /// </summary>
+            DoorUnLock = 0xDF,
+            /// <summary>
+            /// Executes internal drive diagnostics
+            /// </summary>
+            ExecuteDriveDiagnostic = 0x90,
+            /// <summary>
+            /// Gets a sector containing drive identification and capabilities
+            /// </summary>
+            IdentifyDrive = 0xEC,
+            /// <summary>
+            /// Requests the drive to enter idle status
+            /// </summary>
+            Idle = 0xE3,
+            /// <summary>
+            /// Requests the drive to enter idle status
+            /// </summary>
+            IdleAlternate = 0x97,
+            /// <summary>
+            /// Requests the drive to enter idle status immediately
+            /// </summary>
+            IdleImmediate = 0xE1,
+            /// <summary>
+            /// Requests the drive to enter idle status immediately
+            /// </summary>
+            IdleImmediateAlternate = 0x95,
+            /// <summary>
+            /// Changes heads and sectors per cylinder for the drive
+            /// </summary>
+            InitializeDriveParameters = 0x91,
+            /// <summary>
+            /// Does nothing
+            /// </summary>
+            Nop = 0x00,
+            /// <summary>
+            /// Reads sectors using PIO transfer
+            /// </summary>
+            Read = 0x21,
+            /// <summary>
+            /// Reads the content of the drive's buffer
+            /// </summary>
+            ReadBuffer = 0xE4,
+            /// <summary>
+            /// Reads sectors using DMA transfer
+            /// </summary>
+            ReadDma = 0xC9,
+            /// <summary>
+            /// Reads sectors using DMA transfer, retrying on error
+            /// </summary>
+            ReadDmaRetry = 0xC8,
+            /// <summary>
+            /// Reads a sector including ECC bytes without checking them
+            /// </summary>
+            ReadLong = 0x23,
+            /// <summary>
+            /// Reads a sector including ECC bytes without checking them, retrying on error
+            /// </summary>
+            ReadLongRetry = 0x22,
+            /// <summary>
+            /// Reads multiple sectors generating interrupts at block transfers
+            /// </summary>
+            ReadMultiple = 0xC4,
+            /// <summary>
+            /// Reads sectors using PIO transfer, retrying on error
+            /// </summary>
+            ReadRetry = 0x20,
+            /// <summary>
+            /// Verifies sectors readability without transferring them
+            /// </summary>
+            ReadVerify = 0x41,
+            /// <summary>
+            /// Verifies sectors readability without transferring them, retrying on error
+            /// </summary>
+            ReadVerifyRetry = 0x40,
+            /// <summary>
+            /// Moves the heads to cylinder 0
+            /// </summary>
+            Recalibrate = Restore,
+            /// <summary>
+            /// Sets drive parameters
+            /// </summary>
+            SetFeatures = 0xEF,
+            /// <summary>
+            /// Enables <see cref="ReadMultiple"/> and <see cref="WriteMultiple"/> and sets the block length for these commands
+            /// </summary>
+            SetMultipleMode = 0xC6,
+            /// <summary>
+            /// Causes the drive to stop and sleep until a hardware or software reset
+            /// </summary>
+            Sleep = 0xE6,
+            /// <summary>
+            /// Causes the drive to stop and sleep until a hardware or software reset
+            /// </summary>
+            SleepAlternate = 0x99,
+            /// <summary>
+            /// Sets the drive to enter Standby mode
+            /// </summary>
+            Standby = 0xE2,
+            /// <summary>
+            /// Sets the drive to enter Standby mode
+            /// </summary>
+            StandbyAlternate = 0x96,
+            /// <summary>
+            /// Sets the drive to enter Standby mode, immediately
+            /// </summary>
+            StandbyImmediate = 0xE0,
+            /// <summary>
+            /// Sets the drive to enter Standby mode, immediately
+            /// </summary>
+            StandbyImmediateAlternate = 0x94,
+            /// <summary>
+            /// Writes sectors using PIO transfer
+            /// </summary>
+            Write = 0x31,
+            /// <summary>
+            /// Writes data to the drive's sector buffer
+            /// </summary>
+            WriteBuffer = 0xE8,
+            /// <summary>
+            /// Writes sectors using DMA transfer
+            /// </summary>
+            WriteDma = 0xCB,
+            /// <summary>
+            /// Writes sectors using DMA transfer, retrying on error
+            /// </summary>
+            WriteDmaRetry = 0xCA,
+            /// <summary>
+            /// Writes sectors with custom ECC
+            /// </summary>
+            WriteLong = 0x33,
+            /// <summary>
+            /// Writes sectors with custom ECC, retrying on error
+            /// </summary>
+            WriteLongRetry = 0x32,
+            /// <summary>
+            /// Writes several sectors at once setting interrupts on end of block
+            /// </summary>
+            WriteMultiple = 0xC5,
+            /// <summary>
+            /// Writes the same data to several sector
+            /// </summary>
+            WriteSame = 0xE9,
+            /// <summary>
+            /// Writes sectors using PIO transfer, retrying on error
+            /// </summary>
+            WriteRetry = 0x30,
+            /// <summary>
+            /// Writes sectors verifying them immediately after write
+            /// </summary>
+            WriteVerify = 0x3C,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_8x = 0x80,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_9A = 0x9A,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_C0 = 0xC0,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_C1 = 0xC1,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_C2 = 0xC2,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_C3 = 0xC3,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F0 = 0xF0,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F1 = 0xF1,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F2 = 0xF2,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F3 = 0xF3,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F4 = 0xF4,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F5 = 0xF5,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F6 = 0xF6,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F7 = 0xF7,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F8 = 0xF8,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_F9 = 0xF9,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FA = 0xFA,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FB = 0xFB,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FC = 0xFC,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FD = 0xFD,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FE = 0xFE,
+            /// <summary>
+            /// Unknown vendor command
+            /// </summary>
+            Vendor_FF = 0xFF,
+            #endregion Commands defined on ATA rev. 4c
+
+            #region Commands defined on ATA-2 rev. 4c
+            /// <summary>
+            /// Alters the device microcode
+            /// </summary>
+            DownloadMicrocode = 0x92,
+            /// <summary>
+            /// Ejects the removable medium on the device
+            /// </summary>
+            MediaEject = 0xED,
+            #endregion Commands defined on ATA-2 rev. 4c
+
+            #region Commands defined on ATA-3 rev. 7b
+            /// <summary>
+            /// Gets a sector containing drive identification and capabilities
+            /// </summary>
+            IdentifyDriveDma = 0xEE,
+            /// <summary>
+            /// Disables the security lock
+            /// </summary>
+            SecurityDisablePassword = 0xF6,
+            /// <summary>
+            /// Enables usage of <see cref="SecurityEraseUnit"/> command
+            /// </summary>
+            SecurityErasePrepare = 0xF3,
+            /// <summary>
+            /// Erases all user data and isables the security lock
+            /// </summary>
+            SecurityEraseUnit = 0xF4,
+            /// <summary>
+            /// Sets the security freeze lock preventing any security command from working until hardware reset
+            /// </summary>
+            SecurityFreezeLock = 0xF5,
+            /// <summary>
+            /// Sets the device user or master password
+            /// </summary>
+            SecuritySetPassword = 0xF1,
+            /// <summary>
+            /// Unlocks device
+            /// </summary>
+            SecurityUnlock = 0xF2,
+            /// <summary>
+            /// SMART operations
+            /// </summary>
+            Smart = 0xB0,
+            #endregion Commands defined on ATA-3 rev. 7b
+
+            #region Commands defined on CompactFlash Specification
+            /// <summary>
+            /// Pre-erases and conditions data sectors
+            /// </summary>
+            EraseSectors = 0xC0,
+            /// <summary>
+            /// Requests extended error information
+            /// </summary>
+            RequestSense = 0x03,
+            /// <summary>
+            /// Provides a way to determine the exact number of times a sector has been erases and programmed
+            /// </summary>
+            TranslateSector = 0x87,
+            /// <summary>
+            /// For CompactFlash cards that do not support security mode, this commands is equal to <see cref="Nop"/>
+            /// For those that do, this command is equal to <see cref="SecurityFreezeLock"/>
+            /// </summary>
+            WearLevel = 0xF5,
+            /// <summary>
+            /// Writes a block of sectors without erasing them previously
+            /// </summary>
+            WriteMultipleWithoutErase = 0xCD,
+            /// <summary>
+            /// Writes sectors without erasing them previously
+            /// </summary>
+            WriteWithoutErase = 0x38,
+            #endregion Commands defined on CompactFlash Specification
+
+            #region Commands defined on ATA/ATAPI-4 rev. 18
+            /// <summary>
+            /// Resets a device
+            /// </summary>
+            DeviceReset = 0x08,
+            /// <summary>
+            /// Requests the device to flush the write cache and write it to the media
+            /// </summary>
+            FlushCache = 0xE7,
+            /// <summary>
+            /// Gets media status
+            /// </summary>
+            GetMediaStatus = 0xDA,
+            /// <summary>
+            /// Gets a sector containing drive identification and capabilities, for ATA devices
+            /// </summary>
+            IdentifyDevice = IdentifyDrive,
+            /// <summary>
+            /// Gets a sector containing drive identification and capabilities, for ATAPI devices
+            /// </summary>
+            IdentifyPacketDevice = 0xA1,
+            /// <summary>
+            /// Locks the media on the device
+            /// </summary>
+            MediaLock = DoorLock,
+            /// <summary>
+            /// Unlocks the media on the device
+            /// </summary>
+            MediaUnLock = DoorUnLock,
+            /// <summary>
+            /// Sends a command packet
+            /// </summary>
+            Packet = 0xA0,
+            /// <summary>
+            /// Queues a read of sectors
+            /// </summary>
+            ReadDmaQueued = 0xC7,
+            /// <summary>
+            /// Returns the native maximum address in factory default condition
+            /// </summary>
+            ReadNativeMaxAddress = 0xF8,
+            /// <summary>
+            /// Used to provide data transfer and/or status of a previous command (queue or packet)
+            /// </summary>
+            Service = 0xA2,
+            /// <summary>
+            /// Redefines the maximum user-accessible address space
+            /// </summary>
+            SetMaxAddress = 0xF9,
+            /// <summary>
+            /// Queues a write of sectors
+            /// </summary>
+            WriteDmaQueued = 0xCC,
+            #endregion Commands defined on ATA/ATAPI-4 rev. 18
+
+            #region Commands defined on ATA/ATAPI-6 rev. 3b
+            /// <summary>
+            /// Determines if the device supports the Media Card Pass Through Command feature set
+            /// </summary>
+            CheckMediaCardType = 0xD1,
+            /// <summary>
+            /// Device Configuration Overlay feature set
+            /// </summary>
+            DevideConfiguration = 0xB1,
+            /// <summary>
+            /// Requests the device to flush the write cache and write it to the media (48-bit)
+            /// </summary>
+            FlushCacheExt = 0xEA,
+            /// <summary>
+            /// Reads sectors using DMA transfer, retrying on error (48-bit)
+            /// </summary>
+            ReadDmaExt = 0x25,
+            /// <summary> (48-bit)
+            /// Queues a read of sectors
+            /// </summary>
+            ReadDmaQueuedExt = 0x26,
+            /// <summary>
+            /// Reads sectors using PIO transfer, retrying on error (48-bit)
+            /// </summary>
+            ReadExt = 0x24,
+            /// <summary>
+            /// Returns the indicated log to the host (48-bit)
+            /// </summary>
+            ReadLogExt = 0x2F,
+            /// <summary>
+            /// Reads multiple sectors generating interrupts at block transfers (48-bit)
+            /// </summary>
+            ReadMultipleExt = 0x29,
+            /// <summary>
+            /// Returns the native maximum address in factory default condition (48-bit)
+            /// </summary>
+            ReadNativeMaxAddressExt = 0x27,
+            /// <summary>
+            /// Verifies sectors readability without transferring them, retrying on error (48-bit)
+            /// </summary>
+            ReadVerifyExt = 0x42,
+            /// <summary>
+            /// Sends a SET MAX subcommand, <see cref="AtaSetMaxSubCommands"/>
+            /// </summary>
+            SetMaxCommands = 0xF9,
+            /// <summary>
+            /// Redefines the maximum user-accessible address space (48-bit)
+            /// </summary>
+            SetMaxAddressExt = 0x37,
+            /// <summary>
+            /// Writes sectors using DMA transfer, retrying on error (48-bit)
+            /// </summary>
+            WriteDmaExt = 0x35,
+            /// <summary>
+            /// Queues a write of sectors (48-bit)
+            /// </summary>
+            WriteDmaQueuedExt = 0x36,
+            /// <summary>
+            /// Writes sectors using PIO transfer, retrying on error (48-bit)
+            /// </summary>
+            WriteExt = 0x34,
+            /// <summary>
+            /// Writes data to the indicated log (48-bit)
+            /// </summary>
+            WriteLogExt = 0x3F,
+            /// <summary>
+            /// Writes several sectors at once setting interrupts on end of block (48-bit)
+            /// </summary>
+            WriteMultipleExt = 0x39,
+            #endregion Commands defined on ATA/ATAPI-6 rev. 3b
+
+            #region Commands defined on ATA/ATAPI-7 rev. 4b
+            /// <summary>
+            /// Configurates the operating parameters for a stream
+            /// </summary>
+            ConfigureStream = 0x51,
+            /// <summary>
+            /// Reads data on an alloted time using DMA
+            /// </summary>
+            ReadStreamDmaExt = 0x2A,
+            /// <summary>
+            /// Reads data on an alloted time using PIO
+            /// </summary>
+            ReadStreamExt = 0x2B,
+            /// <summary>
+            /// Writes data on an alloted time using DMA
+            /// </summary>
+            WriteStreamDmaExt = 0x3A,
+            /// <summary>
+            /// Writes data on an alloted time using PIO
+            /// </summary>
+            WriteStreamExt = 0x3B,
+            #endregion Commands defined on ATA/ATAPI-7 rev. 4b
+
+            #region Commands defined on ATA/ATAPI-8 rev. 3f
+            /// <summary>
+            /// Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands"/> 
+            /// </summary>
+            NonVolatileCacheCommand = 0xB6,
+            /// <summary>
+            /// Retrieves security protocol information or the results from <see cref="TrustedSend"/> commands
+            /// </summary>
+            TrustedReceive = 0x5C,
+            /// <summary>
+            /// Retrieves security protocol information or the results from <see cref="TrustedSend"/> commands, using DMA transfers
+            /// </summary>
+            TrustedReceiveDma = 0x5D,
+            /// <summary>
+            /// Sends one or more Security Protocol commands
+            /// </summary>
+            TrustedSend = 0x5E,
+            /// <summary>
+            /// Sends one or more Security Protocol commands, using DMA transfers
+            /// </summary>
+            TrustedSendDma = 0x5F,
+            /// <summary>
+            /// Writes sectors using DMA transfer, retrying on error (48-bit), not returning until the operation is complete
+            /// </summary>
+            WriteDmaFuaExt = 0x3D,
+            /// <summary>
+            /// Queues a write of sectors (48-bit), not returning until the operation is complete
+            /// </summary>
+            WriteDmaQueuedFuaExt = 0x3E,
+            /// <summary>
+            /// Writes several sectors at once setting interrupts on end of block (48-bit), not returning until the operation is complete
+            /// </summary>
+            WriteMultipleFuaExt = 0xCE,
+            /// <summary>
+            /// Writes a sector that will give an uncorrectable error on any read operation
+            /// </summary>
+            WriteUncorrectableExt = 0x45,
+            #endregion Commands defined on ATA/ATAPI-8 rev. 3f
+
+            #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+            /// <summary>
+            /// Provides information for device optimization
+            /// In SSDs, this contains trimming
+            /// </summary>
+            DataSetManagement = 0x06,
+            /// <summary>
+            /// Alters the device microcode, using DMA transfers
+            /// </summary>
+            DownloadMicrocodeDma = 0x93,
+            /// <summary>
+            /// Reads the content of the drive's buffer, using DMA transfers
+            /// </summary>
+            ReadBufferDma = 0xE9,
+            /// <summary>
+            /// Reads sectors using NCQ
+            /// </summary>
+            ReadFpDmaQueued = 0x60,
+            /// <summary>
+            /// Returns the indicated log to the host (48-bit)
+            /// </summary>
+            ReadLogDmaExt = 0x47,
+            /// <summary>
+            /// Requests SPC-4 style error data
+            /// </summary>
+            RequestSenseDataExt = 0x0B,
+            SanitizeCommands = 0xB4,
+            /// <summary>
+            /// Executes a Security Protocol command that does not require a transfer of data
+            /// </summary>
+            TrustedNonData = 0x5B,
+            /// <summary>
+            /// Writes data to the drive's sector buffer, using DMA transfers
+            /// </summary>
+            WriteBufferDma = 0xE8,
+            /// <summary>
+            /// Writes sectors using NCQ
+            /// </summary>
+            WriteFpDmaQueued = 0x61,
+            #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
+            #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+            /// <summary>
+            /// Sends <see cref="AtaNCQQueueManagementSubcommands"/>
+            /// </summary>
+            NCQQueueManagement = 0x63,
+            /// <summary>
+            /// Sets the device date and time
+            /// </summary>
+            SetDateAndTimeExt = 0x77
+            #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+        }
+        #endregion ATA Commands
+
+        #region ATA SMART SubCommands
+        public enum AtaSmartSubCommands : byte
+        {
+            #region Commands defined on ATA-3 rev. 7b
+            /// <summary>
+            /// Disables all SMART capabilities
+            /// </summary>
+            Disable = 0xD9,
+            /// <summary>
+            /// Enables/disables SMART attribute autosaving
+            /// </summary>
+            EnableDisableAttributeAutosave = 0xD2,
+            /// <summary>
+            /// Enables all SMART capabilities
+            /// </summary>
+            Enable = 0xD8,
+            /// <summary>
+            /// Returns the device's SMART attributes thresholds
+            /// </summary>
+            ReadAttributeThresholds = 0xD1,
+            /// <summary>
+            /// Returns the device's SMART attributes values
+            /// </summary>
+            ReadAttributeValues = 0xD0,
+            /// <summary>
+            /// Communicates device reliability status
+            /// </summary>
+            ReturnStatus = 0xDA,
+            /// <summary>
+            /// Saves any attribute values immediately
+            /// </summary>
+            SaveAttributeValues = 0xD3,
+            #endregion Commands defined on ATA-3 rev. 7b
+
+            #region Commands defined on ATA/ATAPI-4 rev. 18
+            /// <summary>
+            /// Causes the device to immediately initiate a SMART data collection and saves it to the device
+            /// </summary>
+            ExecuteOfflineImmediate = 0xD4,
+            /// <summary>
+            /// Returns the device's SMART attributes values
+            /// </summary>
+            ReadData = ReadAttributeValues,
+            #endregion Commands defined on ATA/ATAPI-4 rev. 18
+
+            #region Commands defined on ATA/ATAPI-5 rev. 3
+            /// <summary>
+            /// Returns the indicated log to the host
+            /// </summary>
+            ReadLog = 0xD5,
+            /// <summary>
+            /// Writes data to the indicated log
+            /// </summary>
+            WriteLog = 0xD6
+            #endregion Commands defined on ATA/ATAPI-5 rev. 3
+        }
+        #endregion ATA SMART SubCommands
+
+        #region ATA Device Configuration Overlay SubCommands
+        public enum AtaDeviceConfigurationSubCommands : byte
+        {
+            #region Commands defined on ATA/ATAPI-6 rev. 3b
+            /// <summary>
+            /// Disables any change made by <see cref="Set"/> 
+            /// </summary>
+            Restore = 0xC0,
+            /// <summary>
+            /// Prevents any <see cref="AtaDeviceConfigurationSubCommands"/> from working until a power down cycle.
+            /// </summary>
+            FreezeLock = 0xC1,
+            /// <summary>
+            /// Indicates the selectable commands, modes, and feature sets the device supports
+            /// </summary>
+            Identify = 0xC2,
+            /// <summary>
+            /// Modifies the commands, modes and features sets the device will obey to
+            /// </summary>
+            Set = 0xC3
+            #endregion Commands defined on ATA/ATAPI-6 rev. 3b
+        }
+        #endregion ATA Device Configuration Overlay SubCommands
+
+        #region ATA SET MAX SubCommands
+        public enum AtaSetMaxSubCommands : byte
+        {
+            #region Commands defined on ATA/ATAPI-6 rev. 3b
+            /// <summary>
+            /// Redefines the maximum user-accessible address space
+            /// </summary>
+            Address = 0x00,
+            /// <summary>
+            /// Disables any other <see cref="AtaSetMaxSubCommands"/> until power cycle
+            /// </summary>
+            FreezeLock = 0x04,
+            /// <summary>
+            /// Disables any other <see cref="AtaSetMaxSubCommands"/> except <see cref="UnLock"/> and <see cref="FreezeLock"/> until power cycle
+            /// </summary>
+            Lock = 0x02,
+            /// <summary>
+            /// Sets the device password
+            /// </summary>
+            SetPassword = 0x01,
+            /// <summary>
+            /// Disables <see cref="Lock"/> 
+            /// </summary>
+            UnLock = 0x03,
+            #endregion Commands defined on ATA/ATAPI-6 rev. 3b
+        }
+        #endregion ATA SET MAX SubCommands
+
+        #region ATA Non Volatile Cache SubCommands
+        public enum AtaNonVolatileCacheSubCommands : byte
+        {
+            #region Commands defined on ATA/ATAPI-8 rev. 3f
+            /// <summary>
+            /// Adds the specified LBA to the Non Volatile Cache
+            /// </summary>
+            AddLbaToNvCache = 0x10,
+            /// <summary>
+            /// Ensures there is enough free space in the Non Volatile Cache
+            /// </summary>
+            FlushNvCache = 0x14,
+            /// <summary>
+            /// Requests a list of LBAs actually stored in the Non Volatile Cache
+            /// </summary>
+            QueryNvCachePinnedSet = 0x12,
+            /// <summary>
+            /// Requests a list of LBAs accessed but not in the Non Volatile Cache
+            /// </summary>
+            QueryNvCacheMisses = 0x13,
+            /// <summary>
+            /// Removes the specified LBA from the Non Volatile Cache Pinned Set
+            /// </summary>
+            RemoveLbaFromNvCache = 0x11,
+            /// <summary>
+            /// Disables the Non Volatile Cache Power Mode
+            /// <see cref="SetNvCachePowerMode"/> 
+            /// </summary>
+            ReturnFromNvCachePowerMode = 0x01,
+            /// <summary>
+            /// Enables the Non Volatile Cache Power Mode, so the device tries to serve all accesses from the Non Volatile Cache
+            /// </summary>
+            SetNvCachePowerMode = 0x00
+            #endregion Commands defined on ATA/ATAPI-8 rev. 3f
+        }
+        #endregion ATA Non Volatile Cache SubCommands
+
+        #region ATA Sanitize SubCommands
+        public enum AtaSanitizeSubCommands : ushort
+        {
+            #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+            /// <summary>
+            /// Causes a block erase on all user data
+            /// </summary>
+            BlockEraseExt = 0x0012,
+            /// <summary>
+            /// Changes the internal encryption keys. Renders user data unusable
+            /// </summary>
+            CryptoScrambleExt = 0x0011,
+            /// <summary>
+            /// Fills user data with specified pattern
+            /// </summary>
+            OverwriteExt = 0x0014,
+            /// <summary>
+            /// Disables all <see cref="AtaSanitizeSubCommands"/> except <see cref="Status"/>
+            /// </summary>
+            FreezeLockExt = 0x0020,
+            /// <summary>
+            /// Gets the status of the sanitizing
+            /// </summary>
+            Status = 0x0000,
+            #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
+            #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+            /// <summary>
+            /// Disables the <see cref="FreezeLockExt"/> command
+            /// </summary>
+            AntiFreezeLockExt = 0x0040
+            #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+        }
+        #endregion ATA Sanitize SubCommands
+
+        #region ATA NCQ Queue Management SubCommands
+        public enum AtaNCQQueueManagementSubcommands : byte
+        {
+            #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+            /// <summary>
+            /// Aborts pending NCQ commands
+            /// </summary>
+            AbortNCQQueue = 0x00,
+            /// <summary>
+            /// Controls how NCQ Streaming commands are processed by the device
+            /// </summary>
+            DeadlineHandling = 0x01,
+            #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+        }
+        #endregion ATA NCQ Queue Management SubCommands
+
         /// <summary>
         /// SASI commands
         /// Commands 0x00 to 0x1F are 6-byte

@@ -1,6 +1,11 @@
 2015-10-06  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	  Added ATA/ATAPI commands.
+
+2015-10-06  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	  Added SCSI commands.
 
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
