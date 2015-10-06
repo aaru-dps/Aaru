@@ -12,8 +12,7 @@ namespace DiscImageChef.Devices.Windows
             [MarshalAs(UnmanagedType.U4)] FileAccess access,
             [MarshalAs(UnmanagedType.U4)] FileShare share,
             IntPtr securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
-            //[MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
-            uint creationDisposition,
+            [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
             [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
             IntPtr templateFile);
 

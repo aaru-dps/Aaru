@@ -1,5 +1,10 @@
 2015-10-06  Natalia Portillo  <claunia@claunia.com>
 
+	* Windows/Extern.cs:
+	  Typo
+
+2015-10-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Windows/Enums.cs:
 	* Windows/Extern.cs:
 	* Windows/Structs.cs:
