@@ -1,5 +1,12 @@
 2015-10-06  Natalia Portillo  <claunia@claunia.com>
 
+	* Windows/Enums.cs:
+	* Windows/Extern.cs:
+	* Windows/Structs.cs:
+	  Completed Windows enumerations.
+
+2015-10-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Enums.cs:
 	  Added ATA/ATAPI commands.
 

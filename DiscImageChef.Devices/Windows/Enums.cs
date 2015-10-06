@@ -1,24 +1,243 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Windows
 {
-    static class Enums
+    [Flags]
+    enum FileAttributes : uint
     {
-        internal const uint FILE_SHARE_READ = 0x1;
-        internal const uint FILE_SHARE_WRITE = 0x1;
-
-        internal const uint OPEN_EXISTING = 0x3;
-
-        internal const uint FILE_ATTRIBUTE_NORMAL = 0x80;
-
-        internal const uint GENERIC_READ = 0x80000000;
-        internal const uint GENERIC_WRITE = 0x40000000;
-
-        internal const byte SCSI_IOCTL_DATA_OUT = 0; //Give data to SCSI device (e.g. for writing)
-        internal const byte SCSI_IOCTL_DATA_IN       =       1; //Get data from SCSI device (e.g. for reading)
-        internal const byte SCSI_IOCTL_DATA_UNSPECIFIED =    2; //No data (e.g. for ejecting)
-
-        internal const uint IOCTL_SCSI_PASS_THROUGH_DIRECT = 0x4D014;
+        /// <summary>
+        /// FILE_ATTRIBUTE_ARCHIVE
+        /// </summary>
+        Archive = 0x20,
+        /// <summary>
+        /// FILE_ATTRIBUTE_COMPRESSED
+        /// </summary>
+        Compressed = 0x800,
+        /// <summary>
+        /// FILE_ATTRIBUTE_DEVICE
+        /// </summary>
+        Device = 0x40,
+        /// <summary>
+        /// FILE_ATTRIBUTE_DIRECTORY
+        /// </summary>
+        Directory = 0x10,
+        /// <summary>
+        /// FILE_ATTRIBUTE_ENCRYPTED
+        /// </summary>
+        Encrypted = 0x4000,
+        /// <summary>
+        /// FILE_ATTRIBUTE_HIDDEN
+        /// </summary>
+        Hidden = 0x02,
+        /// <summary>
+        /// FILE_ATTRIBUTE_INTEGRITY_STREAM
+        /// </summary>
+        IntegrityStream = 0x8000,
+        /// <summary>
+        /// FILE_ATTRIBUTE_NORMAL
+        /// </summary>
+        Normal = 0x80,
+        /// <summary>
+        /// FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
+        /// </summary>
+        NotContentIndexed = 0x2000,
+        /// <summary>
+        /// FILE_ATTRIBUTE_NO_SCRUB_DATA
+        /// </summary>
+        NoScrubData = 0x20000,
+        /// <summary>
+        /// FILE_ATTRIBUTE_OFFLINE
+        /// </summary>
+        Offline = 0x1000,
+        /// <summary>
+        /// FILE_ATTRIBUTE_READONLY
+        /// </summary>
+        Readonly = 0x01,
+        /// <summary>
+        /// FILE_ATTRIBUTE_REPARSE_POINT
+        /// </summary>
+        ReparsePoint = 0x400,
+        /// <summary>
+        /// FILE_ATTRIBUTE_SPARSE_FILE
+        /// </summary>
+        SparseFile = 0x200,
+        /// <summary>
+        /// FILE_ATTRIBUTE_SYSTEM
+        /// </summary>
+        System = 0x04,
+        /// <summary>
+        /// FILE_ATTRIBUTE_TEMPORARY
+        /// </summary>
+        Temporary = 0x100,
+        /// <summary>
+        /// FILE_ATTRIBUTE_VIRTUAL
+        /// </summary>
+        Virtual = 0x10000
     }
+
+    [Flags]
+    enum FileAccess : uint
+    {
+        /// <summary>
+        /// FILE_READ_DATA
+        /// </summary>
+        ReadData = 0x0001,
+        /// <summary>
+        /// FILE_LIST_DIRECTORY
+        /// </summary>
+        ListDirectory = ReadData,
+        /// <summary>
+        /// FILE_WRITE_DATA
+        /// </summary>
+        WriteData = 0x0002,
+        /// <summary>
+        /// FILE_ADD_FILE
+        /// </summary>
+        AddFile = WriteData,
+        /// <summary>
+        /// FILE_APPEND_DATA
+        /// </summary>
+        AppendData = 0x0004,
+        /// <summary>
+        /// FILE_ADD_SUBDIRECTORY
+        /// </summary>
+        AddSubdirectory = AppendData,
+        /// <summary>
+        /// FILE_CREATE_PIPE_INSTANCE
+        /// </summary>
+        CreatePipeInstance = AppendData,
+        /// <summary>
+        /// FILE_READ_EA
+        /// </summary>
+        ReadEA = 0x0008,
+        /// <summary>
+        /// FILE_WRITE_EA
+        /// </summary>
+        WriteEA = 0x0010,
+        /// <summary>
+        /// FILE_EXECUTE
+        /// </summary>
+        Execute = 0x0020,
+        /// <summary>
+        /// FILE_TRAVERSE
+        /// </summary>
+        Traverse = Execute,
+        /// <summary>
+        /// FILE_DELETE_CHILD
+        /// </summary>
+        DeleteChild = 0x0040,
+        /// <summary>
+        /// FILE_READ_ATTRIBUTES
+        /// </summary>
+        ReadAttributes = 0x0080,
+        /// <summary>
+        /// FILE_WRITE_ATTRIBUTES
+        /// </summary>
+        WriteAttributes = 0x0100,
+        /// <summary>
+        /// GENERIC_READ
+        /// </summary>
+        GenericRead = 0x80000000,
+        /// <summary>
+        /// GENERIC_WRITE
+        /// </summary>
+        GenericWrite = 0x40000000,
+        /// <summary>
+        /// GENERIC_EXECUTE
+        /// </summary>
+        GenericExecute = 0x20000000,
+        /// <summary>
+        /// GENERIC_ALL
+        /// </summary>
+        GenericAll = 0x10000000
+    }
+
+    [Flags]
+    enum FileShare : uint
+    {
+        /// <summary>
+        /// FILE_SHARE_NONE
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// FILE_SHARE_READ
+        /// </summary>
+        Read = 0x01,
+        /// <summary>
+        /// FILE_SHARE_WRITE
+        /// </summary>
+        Write = 0x02,
+        /// <summary>
+        /// FILE_SHARE_DELETE
+        /// </summary>
+        Delete = 0x03
+    }
+
+    [Flags]
+    enum FileMode : uint
+    {
+        /// <summary>
+        /// NEW
+        /// </summary>
+        New = 0x01,
+        /// <summary>
+        /// CREATE_ALWAYS
+        /// </summary>
+        CreateAlways = 0x02,
+        /// <summary>
+        /// OPEN_EXISTING
+        /// </summary>
+        OpenExisting = 0x03,
+        /// <summary>
+        /// OPEN_ALWAYS
+        /// </summary>
+        OpenAlways = 0x04,
+        /// <summary>
+        /// TRUNCATE_EXISTING
+        /// </summary>
+        TruncateExisting = 0x05
+    }
+
+    /// <summary>
+    /// Direction of SCSI transfer
+    /// </summary>
+    enum ScsiIoctlDirection : byte
+    {
+        /// <summary>
+        /// From host to device
+        /// SCSI_IOCTL_DATA_OUT
+        /// </summary>
+        Out = 0,
+        /// <summary>
+        /// From device to host
+        /// SCSI_IOCTL_DATA_IN
+        /// </summary>
+        In = 1,
+        /// <summary>
+        /// Unspecified direction, or bidirectional, or no data
+        /// SCSI_IOCTL_DATA_UNSPECIFIED
+        /// </summary>
+        Unspecified = 2
+    }
+
+    enum WindowsIoctl : uint
+    {
+        /// <summary>
+        /// ScsiPassThrough
+        /// </summary>
+        IOCTL_SCSI_PASS_THROUGH = 0x4D004,
+        /// <summary>
+        /// ScsiPassThroughDirect
+        /// </summary>
+        IOCTL_SCSI_PASS_THROUGH_DIRECT = 0x4D014,
+        /// <summary>
+        /// ScsiGetAddress
+        /// </summary>
+        IOCTL_SCSI_GET_ADDRESS = 0x41018
+    }
+    /// <summary>
+    /// AAAAA
+    /// </summary>
 }
 

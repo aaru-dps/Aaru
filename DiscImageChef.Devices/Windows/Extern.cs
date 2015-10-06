@@ -9,15 +9,12 @@ namespace DiscImageChef.Devices.Windows
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(
             [MarshalAs(UnmanagedType.LPTStr)] string filename,
-            //            [MarshalAs(UnmanagedType.U4)] FileAccess access,
-            uint access,
-            //[MarshalAs(UnmanagedType.U4)] FileShare share,
-            uint share,
+            [MarshalAs(UnmanagedType.U4)] FileAccess access,
+            [MarshalAs(UnmanagedType.U4)] FileShare share,
             IntPtr securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
             //[MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
             uint creationDisposition,
-            //[MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
-            uint flagsAndAttributes,
+            [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
             IntPtr templateFile);
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]

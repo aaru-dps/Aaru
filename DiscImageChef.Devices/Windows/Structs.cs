@@ -15,7 +15,8 @@ namespace DiscImageChef.Devices.Windows
             public byte Lun;
             public byte CdbLength;
             public byte SenseInfoLength;
-            public byte DataIn;
+            [MarshalAs(UnmanagedType.U1)]
+            public ScsiIoctlDirection DataIn;
             public uint DataTransferLength;
             public uint TimeOutValue;
             public IntPtr DataBuffer;
