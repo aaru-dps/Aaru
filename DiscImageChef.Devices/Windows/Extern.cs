@@ -20,9 +20,9 @@ namespace DiscImageChef.Devices.Windows
         public static extern bool DeviceIoControl(
             SafeFileHandle hDevice,
             uint IoControlCode,
-            ref Structs.SCSI_PASS_THROUGH_DIRECT_AND_SENSE_BUFFER InBuffer,
+            ref ScsiPassThroughDirectAndSenseBuffer InBuffer,
             uint nInBufferSize,
-            ref Structs.SCSI_PASS_THROUGH_DIRECT_AND_SENSE_BUFFER OutBuffer,
+            ref ScsiPassThroughDirectAndSenseBuffer OutBuffer,
             uint nOutBufferSize,
             ref uint pBytesReturned,
             IntPtr Overlapped
