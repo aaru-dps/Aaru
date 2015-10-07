@@ -16,13 +16,25 @@ namespace DiscImageChef.Devices.Windows
             [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
             IntPtr templateFile);
 
-        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool DeviceIoControl(
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint="ioctl", CharSet = CharSet.Auto)]
+        public static extern bool DeviceIoControlScsi(
             SafeFileHandle hDevice,
             uint IoControlCode,
             ref ScsiPassThroughDirectAndSenseBuffer InBuffer,
             uint nInBufferSize,
             ref ScsiPassThroughDirectAndSenseBuffer OutBuffer,
+            uint nOutBufferSize,
+            ref uint pBytesReturned,
+            IntPtr Overlapped
+        );
+
+        [DllImport("Kernel32.dll", SetLastError = true, EntryPoint="ioctl", CharSet = CharSet.Auto)]
+        public static extern bool DeviceIoControlAta(
+            SafeFileHandle hDevice,
+            uint IoControlCode,
+            ref AtaPassThroughDirect InBuffer,
+            uint nInBufferSize,
+            ref AtaPassThroughDirect OutBuffer,
             uint nOutBufferSize,
             ref uint pBytesReturned,
             IntPtr Overlapped

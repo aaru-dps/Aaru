@@ -32,5 +32,39 @@ namespace DiscImageChef.Devices.Linux
         public uint duration;      /* [o] */
         public SgInfo info;          /* [o] */
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct hd_drive_task_hdr
+    {
+        public byte data;
+        public byte feature;
+        public byte sector_count;
+        public byte sector_number;
+        public byte low_cylinder;
+        public byte high_cylinder;
+        public byte device_head;
+        public byte command;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct hd_drive_task_array
+    {
+        public byte command;
+        public byte features;
+        public byte sector_count;
+        public byte sector_number;
+        public byte low_cylinder;
+        public byte high_cylinder;
+        public byte device_head;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct hd_drive_cmd
+    {
+        public byte command;
+        public byte sector;
+        public byte feature;
+        public byte nsector;
+    }
 }
 

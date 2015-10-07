@@ -223,6 +223,8 @@ namespace DiscImageChef.Devices.Windows
 
     enum WindowsIoctl : uint
     {
+        IOCTL_ATA_PASS_THROUGH = 0x4D02C,
+        IOCTL_ATA_PASS_THROUGH_DIRECT = 0x4D030,
         /// <summary>
         /// ScsiPassThrough
         /// </summary>
@@ -236,5 +238,33 @@ namespace DiscImageChef.Devices.Windows
         /// </summary>
         IOCTL_SCSI_GET_ADDRESS = 0x41018
     }
-}
 
+    [Flags]
+    enum AtaFlags : ushort
+    {
+        /// <summary>
+        /// ATA_FLAGS_DRDY_REQUIRED
+        /// </summary>
+        DrdyRequired = 0x01,
+        /// <summary>
+        /// ATA_FLAGS_DATA_IN
+        /// </summary>
+        DataIn = 0x02,
+        /// <summary>
+        /// ATA_FLAGS_DATA_OUT
+        /// </summary>
+        DataOut = 0x04,
+        /// <summary>
+        /// ATA_FLAGS_48BIT_COMMAND
+        /// </summary>
+        ExtendedCommand = 0x08,
+        /// <summary>
+        /// ATA_FLAGS_USE_DMA
+        /// </summary>
+        DMA = 0x10,
+        /// <summary>
+        /// ATA_FLAGS_NO_MULTIPLE
+        /// </summary>
+        NoMultiple = 0x20
+    }
+}

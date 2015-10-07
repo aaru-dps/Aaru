@@ -18,6 +18,12 @@ namespace DiscImageChef.Devices.Linux
 
         [DllImport("libc", EntryPoint="ioctl", SetLastError = true)]
         internal static extern int ioctlSg(int fd, ulong request, ref sg_io_hdr_t value);
+
+        [DllImport("libc", EntryPoint="ioctl", SetLastError = true)]
+        internal static extern int ioctlHdTaskfile(int fd, ulong request, ref hd_drive_task_hdr value);
+
+        [DllImport("libc", EntryPoint="ioctl", SetLastError = true)]
+        internal static extern int ioctlHdTask(int fd, ulong request, ref byte[] value);
     }
 }
 
