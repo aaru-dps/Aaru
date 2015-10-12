@@ -41,6 +41,17 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
+        /// <summary>
+        /// Sends a SCSI command to this device
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="cdb">SCSI CDB</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="senseBuffer">Buffer with the SCSI sense</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="direction">SCSI command transfer direction</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
         {
             return Command.SendScsiCommand(platformID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);

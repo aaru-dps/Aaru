@@ -45,6 +45,10 @@ namespace DiscImageChef.Devices
         Interop.PlatformID platformID;
         object fd;
 
+        /// <summary>
+        /// Gets the Platform ID for this device
+        /// </summary>
+        /// <value>The Platform ID</value>
         public Interop.PlatformID PlatformID
         {
             get
@@ -53,6 +57,10 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Gets the file handle representing this device
+        /// </summary>
+        /// <value>The file handle</value>
         public object FileHandle
         {
             get
@@ -61,6 +69,10 @@ namespace DiscImageChef.Devices
             }
         }
 
+        /// <summary>
+        /// Gets or sets the standard timeout for commands sent to this device
+        /// </summary>
+        /// <value>The timeout in seconds</value>
         public uint Timeout
         {
             get;

@@ -2,6 +2,19 @@
 
 	* Enums.cs:
 	* Command.cs:
+	* Linux/Command.cs:
+	* Device/Commands.cs:
+	* Windows/Command.cs:
+	* Device/Variables.cs:
+	* Device/Destructor.cs:
+	* Device/Constructor.cs:
+	* Device/ScsiCommands.cs:
+	  Added XML documentation.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Command.cs:
 	* Device/Commands.cs:
 	* Device/Variables.cs:
 	* Device/Destructor.cs:

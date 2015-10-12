@@ -43,6 +43,9 @@ namespace DiscImageChef.Devices
     public static class Enums
     {
         #region ATA Commands
+        /// <summary>
+        /// All known ATA commands
+        /// </summary>
         public enum AtaCommands : byte
         {
             #region Commands defined on Western Digital WD1000 Winchester Disk Controller
@@ -657,6 +660,9 @@ namespace DiscImageChef.Devices
         #endregion ATA Commands
 
         #region ATA SMART SubCommands
+        /// <summary>
+        /// All known ATA SMART sub-commands
+        /// </summary>
         public enum AtaSmartSubCommands : byte
         {
             #region Commands defined on ATA-3 rev. 7b
@@ -715,6 +721,9 @@ namespace DiscImageChef.Devices
         #endregion ATA SMART SubCommands
 
         #region ATA Device Configuration Overlay SubCommands
+        /// <summary>
+        /// All known ATA DEVICE CONFIGURATION sub-commands
+        /// </summary>
         public enum AtaDeviceConfigurationSubCommands : byte
         {
             #region Commands defined on ATA/ATAPI-6 rev. 3b
@@ -739,6 +748,9 @@ namespace DiscImageChef.Devices
         #endregion ATA Device Configuration Overlay SubCommands
 
         #region ATA SET MAX SubCommands
+        /// <summary>
+        /// All known ATA SET MAX sub-commands
+        /// </summary>
         public enum AtaSetMaxSubCommands : byte
         {
             #region Commands defined on ATA/ATAPI-6 rev. 3b
@@ -767,6 +779,9 @@ namespace DiscImageChef.Devices
         #endregion ATA SET MAX SubCommands
 
         #region ATA Non Volatile Cache SubCommands
+        /// <summary>
+        /// All known ATA NV CACHE sub-commands
+        /// </summary>
         public enum AtaNonVolatileCacheSubCommands : byte
         {
             #region Commands defined on ATA/ATAPI-8 rev. 3f
@@ -804,6 +819,9 @@ namespace DiscImageChef.Devices
         #endregion ATA Non Volatile Cache SubCommands
 
         #region ATA Sanitize SubCommands
+        /// <summary>
+        /// All known ATA SANITIZE sub-commands
+        /// </summary>
         public enum AtaSanitizeSubCommands : ushort
         {
             #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
@@ -839,6 +857,9 @@ namespace DiscImageChef.Devices
         #endregion ATA Sanitize SubCommands
 
         #region ATA NCQ Queue Management SubCommands
+        /// <summary>
+        /// All known ATA NCQ QUEUE MANAGEMENT sub-commands
+        /// </summary>
         public enum AtaNCQQueueManagementSubcommands : byte
         {
             #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
@@ -855,7 +876,7 @@ namespace DiscImageChef.Devices
         #endregion ATA NCQ Queue Management SubCommands
 
         /// <summary>
-        /// SASI commands
+        /// All known SASI commands
         /// Commands 0x00 to 0x1F are 6-byte
         /// Commands 0x20 to 0x3F are 10-byte
         /// Commands 0x40 to 0x5F are 8-byte
@@ -1199,6 +1220,9 @@ namespace DiscImageChef.Devices
         #endregion SASI Commands
 
         #region SCSI Commands
+        /// <summary>
+        /// All known SCSI and ATAPI commands
+        /// </summary>
         public enum ScsiCommands : byte
         {
             #region SCSI Primary Commands (SPC)
@@ -2347,6 +2371,9 @@ namespace DiscImageChef.Devices
         }
         #endregion SCSI Commands
 
+        /// <summary>
+        /// SCSI command transfer direction
+        /// </summary>
         public enum ScsiDirection
         {
             /// <summary>

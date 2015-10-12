@@ -42,6 +42,10 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
+        /// <summary>
+        /// Opens the device for sending direct commands
+        /// </summary>
+        /// <param name="devicePath">Device path</param>
         public Device(string devicePath)
         {
             platformID = Interop.DetectOS.GetRealPlatformID();

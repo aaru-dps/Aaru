@@ -44,6 +44,18 @@ namespace DiscImageChef.Devices.Linux
 {
     static class Command
     {
+        /// <summary>
+        /// Sends a SCSI command
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="cdb">SCSI CDB</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="senseBuffer">Buffer with the SCSI sense</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="direction">SCSI command transfer direction</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         internal static int SendScsiCommand(int fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiIoctlDirection direction, out double duration, out bool sense)
         {
             senseBuffer = null;

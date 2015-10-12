@@ -41,22 +41,50 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device using default device timeout.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer)
         {
             return ScsiInquiry(out buffer, out senseBuffer, Timeout);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device using default device timeout.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, out double duration)
         {
             return ScsiInquiry(out buffer, out senseBuffer, Timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout)
         {
             double duration;
             return ScsiInquiry(out buffer, out senseBuffer, timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer = new byte[5];
@@ -80,22 +108,54 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="page">The Extended Vital Product Data</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page)
         {
             return ScsiInquiry(out buffer, out senseBuffer, page, Timeout);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="page">The Extended Vital Product Data</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, out double duration)
         {
             return ScsiInquiry(out buffer, out senseBuffer, page, Timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device with an Extended Vital Product Data page.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="page">The Extended Vital Product Data</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout)
         {
             double duration;
             return ScsiInquiry(out buffer, out senseBuffer, page, timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the SCSI INQUIRY command to the device with an Extended Vital Product Data page.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="page">The Extended Vital Product Data</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout, out double duration)
         {
             buffer = new byte[5];

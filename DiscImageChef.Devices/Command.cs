@@ -44,6 +44,18 @@ namespace DiscImageChef.Devices
 {
     public static class Command
     {
+        /// <summary>
+        /// Sends a SCSI command
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="cdb">SCSI CDB</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="senseBuffer">Buffer with the SCSI sense</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="direction">SCSI command transfer direction</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
@@ -51,6 +63,19 @@ namespace DiscImageChef.Devices
             return SendScsiCommand(ptID, (SafeFileHandle)fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
         }
 
+        /// <summary>
+        /// Sends a SCSI command
+        /// </summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="ptID">Platform ID for executing the command</param>
+        /// <param name="fd">File handle</param>
+        /// <param name="cdb">SCSI CDB</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="senseBuffer">Buffer with the SCSI sense</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="direction">SCSI command transfer direction</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
         {
             switch (ptID)
