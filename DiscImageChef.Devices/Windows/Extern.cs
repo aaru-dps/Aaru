@@ -17,9 +17,9 @@ namespace DiscImageChef.Devices.Windows
             IntPtr templateFile);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint="ioctl", CharSet = CharSet.Auto)]
-        public static extern bool DeviceIoControlScsi(
+        internal static extern bool DeviceIoControlScsi(
             SafeFileHandle hDevice,
-            uint IoControlCode,
+            WindowsIoctl IoControlCode,
             ref ScsiPassThroughDirectAndSenseBuffer InBuffer,
             uint nInBufferSize,
             ref ScsiPassThroughDirectAndSenseBuffer OutBuffer,
@@ -29,9 +29,9 @@ namespace DiscImageChef.Devices.Windows
         );
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint="ioctl", CharSet = CharSet.Auto)]
-        public static extern bool DeviceIoControlAta(
+        internal static extern bool DeviceIoControlAta(
             SafeFileHandle hDevice,
-            uint IoControlCode,
+            WindowsIoctl IoControlCode,
             ref AtaPassThroughDirect InBuffer,
             uint nInBufferSize,
             ref AtaPassThroughDirect OutBuffer,
@@ -41,7 +41,7 @@ namespace DiscImageChef.Devices.Windows
         );
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool CloseHandle(SafeFileHandle hDevice);
+        internal static extern bool CloseHandle(SafeFileHandle hDevice);
     }
 }
 

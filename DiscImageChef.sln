@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Decoders", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Devices", "DiscImageChef.Devices\DiscImageChef.Devices.csproj", "{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Interop", "DiscImageChef.Interop\DiscImageChef.Interop.csproj", "{9183F2E0-A879-4F23-9EE3-C6908F1332B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -51,6 +53,10 @@ Global
 		{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}.Release|x86.Build.0 = Release|x86
 		{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.Build.0 = Debug|Any CPU
+		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.ActiveCfg = Release|Any CPU
+		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.Build.0 = Release|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.Build.0 = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.ActiveCfg = Release|Any CPU

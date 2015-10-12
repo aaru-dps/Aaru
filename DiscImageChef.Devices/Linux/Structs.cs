@@ -10,11 +10,11 @@ namespace DiscImageChef.Devices.Linux
         /// Always 'S' for SG v3
         /// </summary>
         public int interface_id;           /* [i] 'S' (required) */
-        public int dxfer_direction;        /* [i] */
+        public ScsiIoctlDirection dxfer_direction;        /* [i] */
         public byte cmd_len;      /* [i] */
         public byte mx_sb_len;    /* [i] */
         public ushort iovec_count; /* [i] */
-        public ScsiIoctlDirection dxfer_len;     /* [i] */
+        public uint dxfer_len;     /* [i] */
         public IntPtr dxferp;              /* [i], [*io] */
         public IntPtr cmdp;       /* [i], [*i]  */
         public IntPtr sbp;        /* [i], [*o]  */

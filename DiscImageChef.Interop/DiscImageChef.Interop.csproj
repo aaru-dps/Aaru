@@ -5,12 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</ProjectGuid>
+    <ProjectGuid>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Devices</RootNamespace>
-    <AssemblyName>DiscImageChef.Devices</AssemblyName>
+    <RootNamespace>DiscImageChef.Interop</RootNamespace>
+    <AssemblyName>DiscImageChef.Interop</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ReleaseVersion>2.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,35 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Linux\Extern.cs" />
-    <Compile Include="Linux\Structs.cs" />
-    <Compile Include="Linux\Enums.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Windows\Extern.cs" />
-    <Compile Include="Windows\Structs.cs" />
-    <Compile Include="Windows\Enums.cs" />
-    <Compile Include="Windows\Command.cs" />
-    <Compile Include="Linux\Command.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="DetectOS.cs" />
+    <Compile Include="PlatformID.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Linux\" />
-    <Folder Include="Windows\" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
-      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
-      <Name>DiscImageChef.Interop</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
