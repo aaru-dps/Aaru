@@ -1,5 +1,10 @@
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Interop.csproj:
+	  Added standard header.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
 	* DetectOS.cs:
 	* PlatformID.cs:
 	* DiscImageChef.Interop.csproj:

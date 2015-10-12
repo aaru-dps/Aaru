@@ -1,5 +1,19 @@
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
 
+	* Enums.cs:
+	* Command.cs:
+	* Linux/Enums.cs:
+	* Linux/Extern.cs:
+	* Linux/Command.cs:
+	* Linux/Structs.cs:
+	* Windows/Enums.cs:
+	* Windows/Extern.cs:
+	* Windows/Command.cs:
+	* Windows/Structs.cs:
+	  Added standard header.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
 	* Linux/Command.cs:
 	* Windows/Command.cs:
 	* DiscImageChef.Devices.csproj:

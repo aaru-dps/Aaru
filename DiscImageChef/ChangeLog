@@ -1,3 +1,8 @@
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* DetectImageFormat.cs:
+	  Added standard header.
+
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Decoders/BD.cs:

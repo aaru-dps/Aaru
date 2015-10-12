@@ -1,6 +1,11 @@
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.sln:
+	  Added standard header.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.sln:
 	  Added code to detect OS.
 
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
