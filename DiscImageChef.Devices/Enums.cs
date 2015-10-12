@@ -2346,6 +2346,31 @@ namespace DiscImageChef.Devices
             VariableSizedCDB = 0x7F
         }
         #endregion SCSI Commands
+
+        public enum ScsiDirection
+        {
+            /// <summary>
+            /// No data transfer happens
+            /// </summary>
+            None,
+            /// <summary>
+            /// From host to device
+            /// </summary>
+            Out,
+            /// <summary>
+            /// From device to host
+            /// </summary>
+            In,
+            /// <summary>
+            /// Bidirectional device/host
+            /// </summary>
+            Bidirectional,
+            /// <summary>
+            /// Unspecified
+            /// </summary>
+            Unspecified
+        }
+
     }
 }
 

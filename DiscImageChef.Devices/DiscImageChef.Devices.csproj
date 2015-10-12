@@ -45,11 +45,17 @@
     <Compile Include="Windows\Command.cs" />
     <Compile Include="Linux\Command.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="Device\Constructor.cs" />
+    <Compile Include="Device\Variables.cs" />
+    <Compile Include="Device\Destructor.cs" />
+    <Compile Include="Device\Commands.cs" />
+    <Compile Include="Device\ScsiCommands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Linux\" />
     <Folder Include="Windows\" />
+    <Folder Include="Device\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

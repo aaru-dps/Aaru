@@ -37,13 +37,71 @@
 // //$Id$
 
 using System;
+using DiscImageChef.Interop;
+using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices
 {
-    public class Command
+    public static class Command
     {
-        public Command()
+        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
         {
+            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+
+            return SendScsiCommand(ptID, (SafeFileHandle)fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
+        }
+
+        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
+        {
+            switch (ptID)
+            {
+                case Interop.PlatformID.Win32NT:
+                    {
+                        Windows.ScsiIoctlDirection dir;
+
+                        switch (direction)
+                        {
+                            case Enums.ScsiDirection.In:
+                                dir = Windows.ScsiIoctlDirection.In;
+                                break;
+                            case Enums.ScsiDirection.Out:
+                                dir = Windows.ScsiIoctlDirection.Out;
+                                break;
+                            default:
+                                dir = Windows.ScsiIoctlDirection.Unspecified;
+                                break;
+                        }
+
+                        return Windows.Command.SendScsiCommand((SafeFileHandle)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
+                    }
+                case Interop.PlatformID.Linux:
+                    {
+                        Linux.ScsiIoctlDirection dir;
+
+                        switch (direction)
+                        {
+                            case Enums.ScsiDirection.In:
+                                dir = Linux.ScsiIoctlDirection.In;
+                                break;
+                            case Enums.ScsiDirection.Out:
+                                dir = Linux.ScsiIoctlDirection.Out;
+                                break;
+                            case Enums.ScsiDirection.Bidirectional:
+                                dir = Linux.ScsiIoctlDirection.Unspecified;
+                                break;
+                            case Enums.ScsiDirection.None:
+                                dir = Linux.ScsiIoctlDirection.None;
+                                break;
+                            default:
+                                dir = Linux.ScsiIoctlDirection.Unknown;
+                                break;
+                        }
+
+                        return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
+                    }
+                default:
+                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+            }
         }
     }
 }

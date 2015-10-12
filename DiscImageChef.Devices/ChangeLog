@@ -2,6 +2,21 @@
 
 	* Enums.cs:
 	* Command.cs:
+	* Device/Commands.cs:
+	* Device/Variables.cs:
+	* Device/Destructor.cs:
+	* Device/Constructor.cs:
+	* DiscImageChef.Devices.csproj:
+	  Added device class.
+
+	* Device/ScsiCommands.cs:
+	  Added device class.
+	Added SCSI INQUIRY.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Command.cs:
 	* Linux/Enums.cs:
 	* Linux/Extern.cs:
 	* Linux/Command.cs:
