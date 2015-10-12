@@ -1,5 +1,19 @@
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
 
+	* Linux/Command.cs:
+	* Windows/Command.cs:
+	* DiscImageChef.Devices.csproj:
+	  Added per-platform send SCSI method.
+
+	* Linux/Extern.cs:
+	* Windows/Extern.cs:
+	  Enhanced externs.
+
+	* Linux/Structs.cs:
+	  Typo.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
 	* Command.cs:
 	  Add skeleton for send SCSI command method.
 

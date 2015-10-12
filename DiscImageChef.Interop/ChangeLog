@@ -2,6 +2,13 @@
 
 	* DetectOS.cs:
 	* PlatformID.cs:
+	* DiscImageChef.Interop.csproj:
+	  Added code to detect OS.
+
+2015-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* DetectOS.cs:
+	* PlatformID.cs:
 	* Properties/AssemblyInfo.cs:
 	* DiscImageChef.Interop.csproj:
 	  Added code to detect OS.
