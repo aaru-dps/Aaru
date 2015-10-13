@@ -1,3 +1,10 @@
+2015-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI.cs:
+	  Correct size miscalculation.
+	Do not print "Device claims no standard", generates too much
+	  noise.
+
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* CD.cs:
