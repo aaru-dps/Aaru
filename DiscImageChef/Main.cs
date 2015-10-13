@@ -129,6 +129,12 @@ namespace DiscImageChef
                     isDebug = FormatsOptions.Debug;
                     Commands.Formats.ListFormats();
                     break;
+                case "device-info":
+                    DeviceInfoSubOptions DeviceInfoOptions = (DeviceInfoSubOptions)invokedVerbInstance;
+                    isVerbose = DeviceInfoOptions.Verbose;
+                    isDebug = DeviceInfoOptions.Debug;
+                    Commands.DeviceInfo.doDeviceInfo(DeviceInfoOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }

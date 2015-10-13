@@ -214,6 +214,12 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
+    public class DeviceInfoSubOptions : CommonSubOptions
+    {
+        [Option('i', "device", Required = true, HelpText = "Device path.")]
+        public string DevicePath { get; set; }
+    }
+
     public class FormatsSubOptions : CommonSubOptions
     {
     }
@@ -230,6 +236,7 @@ namespace DiscImageChef
             FormatsVerb = new FormatsSubOptions();
             PrintHexVerb = new PrintHexSubOptions();
             DecodeVerb = new DecodeSubOptions();
+            DeviceInfoVerb = new DeviceInfoSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -255,6 +262,9 @@ namespace DiscImageChef
 
         [VerbOption("formats", HelpText = "Lists all supported disc images, partition schemes and file systems.")]
         public FormatsSubOptions FormatsVerb { get; set; }
+
+        [VerbOption("device-info", HelpText = "Gets information about a device.")]
+        public DeviceInfoSubOptions DeviceInfoVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

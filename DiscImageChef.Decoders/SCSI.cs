@@ -2493,7 +2493,7 @@ namespace DiscImageChef.Decoders
                     return null;
             }
 
-            if (SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 4)
+            if (SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 5)
             {
                 //if (MainClass.isDebug)
                     Console.WriteLine("DEBUG (SCSI INQUIRY Decoder): INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, proceeding anyway.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
@@ -2873,7 +2873,7 @@ namespace DiscImageChef.Decoders
                         switch (VersionDescriptor & 0x001F)
                         {
                             case 0x00:
-                                sb.AppendLine("Device claims no standard");
+                                //sb.AppendLine("Device claims no standard");
                                 break;
                             default:
                                 sb.AppendFormat("Device claims unknown version 0x{0:X2} of no standard", VersionDescriptor & 0x001F).AppendLine();

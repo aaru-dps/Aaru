@@ -37,6 +37,7 @@
 // //$Id$
 using System;
 using Microsoft.Win32.SafeHandles;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices
 {
@@ -50,6 +51,7 @@ namespace DiscImageChef.Devices
         {
             platformID = Interop.DetectOS.GetRealPlatformID();
             Timeout = 15;
+            error = false;
 
             switch (platformID)
             {
@@ -61,15 +63,27 @@ namespace DiscImageChef.Devices
                             IntPtr.Zero, Windows.FileMode.OpenExisting,
                             Windows.FileAttributes.Normal, IntPtr.Zero);
 
-                        throw new NotImplementedException();
-                        //break;
+                        if (((SafeFileHandle)fd).IsInvalid)
+                        {
+                            error = true;
+                            lastError = Marshal.GetLastWin32Error();
+                        }
+
+                        //throw new NotImplementedException();
+                        break;
                     }
                 case Interop.PlatformID.Linux:
                     {
-                        fd = Linux.Extern.open(devicePath, Linux.FileFlags.ReadWrite);
+                        fd = Linux.Extern.open(devicePath, Linux.FileFlags.Readonly | Linux.FileFlags.NonBlocking);
 
-                        throw new NotImplementedException();
-                        //break;
+                        if ((int)fd < 0)
+                        {
+                            error = true;
+                            lastError = Marshal.GetLastWin32Error();
+                        }
+
+                        //throw new NotImplementedException();
+                        break;
                     }
                 default:
                     throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", platformID));

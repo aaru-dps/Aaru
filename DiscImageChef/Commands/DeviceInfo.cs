@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Variables.cs
+// Filename       : DeviceInfo.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -36,73 +36,54 @@
 // ****************************************************************************/
 // //$Id$
 using System;
-using Microsoft.Win32.SafeHandles;
+using DiscImageChef.Devices;
+using System.IO;
 
-namespace DiscImageChef.Devices
+namespace DiscImageChef.Commands
 {
-    public partial class Device
+    public static class DeviceInfo
     {
-        Interop.PlatformID platformID;
-        object fd;
-        bool error;
-        int lastError;
-
-        /// <summary>
-        /// Gets the Platform ID for this device
-        /// </summary>
-        /// <value>The Platform ID</value>
-        public Interop.PlatformID PlatformID
+        public static void doDeviceInfo(DeviceInfoSubOptions options)
         {
-            get
+            if (MainClass.isDebug)
             {
-                return platformID;
+                Console.WriteLine("--debug={0}", options.Debug);
+                Console.WriteLine("--verbose={0}", options.Verbose);
+                Console.WriteLine("--device={0}", options.DevicePath);
             }
-        }
 
-        /// <summary>
-        /// Gets the file handle representing this device
-        /// </summary>
-        /// <value>The file handle</value>
-        public object FileHandle
-        {
-            get
+            if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
+                options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
             {
-                return fd;
+                options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
             }
-        }
 
-        /// <summary>
-        /// Gets or sets the standard timeout for commands sent to this device
-        /// </summary>
-        /// <value>The timeout in seconds</value>
-        public uint Timeout
-        {
-            get;
-            set;
-        }
+            Device dev = new Device(options.DevicePath);
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="DiscImageChef.Devices.Device"/> is in error.
-        /// </summary>
-        /// <value><c>true</c> if error; otherwise, <c>false</c>.</value>
-        public bool Error
-        {
-            get
+            if (dev.Error)
             {
-                return error;
+                Console.WriteLine("Error {0} opening device.", dev.LastError);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Gets the last error number.
-        /// </summary>
-        /// <value>The last error.</value>
-        public int LastError
-        {
-            get
+            byte[] senseBuf;
+            byte[] inqBuf;
+
+            bool sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+
+            if(sense)
             {
-                return lastError;
+                Console.WriteLine("SCSI error. Sense decoding not yet implemented.");
+
+                #if DEBUG
+                FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
+                senseFs.Write(senseBuf, 0, senseBuf.Length);
+                #endif
             }
+            else
+                Console.WriteLine("SCSI OK");
+
+            Console.WriteLine("{0}", Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
         }
     }
 }

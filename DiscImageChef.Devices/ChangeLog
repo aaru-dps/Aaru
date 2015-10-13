@@ -1,3 +1,17 @@
+2015-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Constructor.cs:
+	  Add OS error detection and handling.
+	On Linux move to opening O_RDONLY and O_NONBLOCK to allow
+	  opening read-only media and removable drives without media.
+
+	* Device/Variables.cs:
+	* Device/ScsiCommands.cs:
+	  Add OS error detection and handling.
+
+	* DiscImageChef.Devices.csproj:
+	  Downgraded .NET version.
+
 2015-10-12  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

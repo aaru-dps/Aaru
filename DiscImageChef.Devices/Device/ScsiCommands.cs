@@ -92,7 +92,8 @@ namespace DiscImageChef.Devices
             byte[] cdb = { (byte)Enums.ScsiCommands.Inquiry, 0, 0, 0, 5, 0 };
             bool sense;
 
-            SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
 
             if (sense)
                 return true;
@@ -103,7 +104,8 @@ namespace DiscImageChef.Devices
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
 
             return sense;
         }
@@ -163,7 +165,8 @@ namespace DiscImageChef.Devices
             byte[] cdb = { (byte)Enums.ScsiCommands.Inquiry, 1, page, 0, 5, 0 };
             bool sense;
 
-            SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
 
             if (sense)
                 return true;
@@ -174,7 +177,8 @@ namespace DiscImageChef.Devices
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
 
             return sense;
         }
