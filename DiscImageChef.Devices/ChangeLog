@@ -1,3 +1,11 @@
+2015-10-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Linux/Enums.cs:
+	* Linux/Extern.cs:
+	* Linux/Structs.cs:
+	  Since libata, ATA/ATAPI commands should be sent using
+	  libata's SCSI/ATA Translation Layer, so remove HDIO ioctls.
+
 2015-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Constructor.cs:

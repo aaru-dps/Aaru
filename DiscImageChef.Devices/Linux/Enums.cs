@@ -148,15 +148,8 @@ namespace DiscImageChef.Devices.Linux
     enum LinuxIoctl : ulong
     {
         // SCSI IOCtls
-        SG_EMULATED_HOST = 0x2203,
         SG_GET_VERSION_NUM = 0x2282,
         SG_IO = 0x2285,
-        SG_GET_SCSI_ID = 0x2276,
-
-        // ATA IOCtls
-        HDIO_DRIVE_CMD = 0x031F,
-        HDIO_DRIVE_TASK = 0x031E,
-        HDIO_DRIVE_TASKFILE = 0x031D
     }
 
     [Flags]

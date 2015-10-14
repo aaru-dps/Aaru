@@ -184,5 +184,21 @@ namespace DiscImageChef.Interop
                     }
             }
         }
+
+        /// <summary>
+        /// Checks if the underlying runtime runs in 64-bit mode
+        /// </summary>
+        public static bool Is64Bit()
+        {
+            return IntPtr.Size == 8;
+        }
+
+        /// <summary>
+        /// Checks if the underlying runtime runs in 32-bit mode
+        /// </summary>
+        public static bool Is32Bit()
+        {
+            return IntPtr.Size == 4;
+        }
     }
 }
