@@ -2398,6 +2398,87 @@ namespace DiscImageChef.Devices
             Unspecified
         }
 
+        #region SCSI's ATA Command Pass-Through
+        public enum AtaProtocol : byte
+        {
+            /// <summary>
+            /// Requests a device hard reset (pin 1)
+            /// </summary>
+            HardReset = 0,
+            /// <summary>
+            /// Requests a device soft reset (COMRESET issue)
+            /// </summary>
+            SoftReset = 1,
+            /// <summary>
+            /// No data is to be transfered
+            /// </summary>
+            NonData = 3,
+            /// <summary>
+            /// Requests a host->device transfer using PIO
+            /// </summary>
+            PioIn = 4,
+            /// <summary>
+            /// Requests a device->host transfer using PIO
+            /// </summary>
+            PioOut = 5,
+            /// <summary>
+            /// Requests a DMA transfer
+            /// </summary>
+            Dma = 6,
+            /// <summary>
+            /// Requests to queue a DMA transfer
+            /// </summary>
+            DmaQueued = 7,
+            /// <summary>
+            /// Requests device diagnostics
+            /// </summary>
+            DeviceDiagnostic = 8,
+            /// <summary>
+            /// Requets device reset
+            /// </summary>
+            DeviceReset = 9,
+            /// <summary>
+            /// Requests a host->device transfer using UltraDMA
+            /// </summary>
+            UDmaIn = 10,
+            /// <summary>
+            /// Requests a device->host transfer using UltraDMA
+            /// </summary>
+            UDmaOut = 11,
+            /// <summary>
+            /// Unknown Serial ATA
+            /// </summary>
+            FPDma = 12,
+            /// <summary>
+            /// Requests the Extended ATA Status Return Descriptor
+            /// </summary>
+            ReturnResponse = 15
+        }
+
+        /// <summary>
+        /// Indicates the STL which ATA register contains the length of data to
+        /// be transfered
+        /// </summary>
+        public enum AtaTransferRegister : byte
+        {
+            /// <summary>
+            /// There is no transfer
+            /// </summary>
+            NoTransfer = 0,
+            /// <summary>
+            /// FEATURE register contains the data length
+            /// </summary>
+            Feature = 1,
+            /// <summary>
+            /// SECTOR_COUNT register contains the data length
+            /// </summary>
+            SectorCount = 2,
+            /// <summary>
+            /// The STPSIU contains the data length
+            /// </summary>
+            SPTSIU = 3
+        }
+        #endregion SCSI's ATA Command Pass-Through
     }
 }
 

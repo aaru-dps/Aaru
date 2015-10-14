@@ -98,6 +98,248 @@ namespace DiscImageChef.Devices.Linux
 
             return error;
         }
+
+        static ScsiIoctlDirection AtaProtocolToScsiDirection(Enums.AtaProtocol protocol)
+        {
+            switch (protocol)
+            {
+                case Enums.AtaProtocol.DeviceDiagnostic:
+                case Enums.AtaProtocol.DeviceReset:
+                case Enums.AtaProtocol.HardReset:
+                case Enums.AtaProtocol.NonData:
+                case Enums.AtaProtocol.SoftReset:
+                case Enums.AtaProtocol.ReturnResponse:
+                    return ScsiIoctlDirection.None;
+                case Enums.AtaProtocol.PioIn:
+                case Enums.AtaProtocol.UDmaIn:
+                    return ScsiIoctlDirection.Out;
+                case Enums.AtaProtocol.PioOut:
+                case Enums.AtaProtocol.UDmaOut:
+                    return ScsiIoctlDirection.In;
+                default:
+                    return ScsiIoctlDirection.Unspecified;
+            }
+        }
+
+        internal static int SendAtaCommand(int fd, Structs.AtaRegistersCHS registers,
+            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new Structs.AtaErrorRegistersCHS();
+
+            if (buffer == null)
+                return -1;
+
+            byte[] cdb = new byte[12];
+            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
+               protocol != Enums.AtaProtocol.NonData)
+            {
+                switch (protocol)
+                {
+                    case Enums.AtaProtocol.PioIn:
+                    case Enums.AtaProtocol.UDmaIn:
+                        cdb[2] = 0x08;
+                        break;
+                    default:
+                        cdb[2] = 0x00;
+                        break;
+                }
+
+                if (transferBlocks)
+                    cdb[2] |= 0x04;
+
+                cdb[2] |= (byte)((int)transferRegister & 0x03);
+            }
+
+            cdb[3] = registers.feature;
+            cdb[4] = registers.sectorCount;
+            cdb[5] = registers.sector;
+            cdb[6] = registers.cylinderHigh;
+            cdb[7] = registers.cylinderLow;
+            cdb[8] = registers.deviceHead;
+            cdb[9] = registers.command;
+
+            byte[] senseBuffer;
+            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
+
+            // Now get error registers
+            byte[] returnCdb = new byte[12];
+            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
+            byte[] returnBuffer = new byte[14];
+            bool returnSense;
+            double returnDuration;
+
+            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
+            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+                return error;
+
+            errorRegisters.error = returnBuffer[3];
+            errorRegisters.sectorCount = returnBuffer[5];
+            errorRegisters.sector = returnBuffer[7];
+            errorRegisters.cylinderHigh = returnBuffer[9];
+            errorRegisters.cylinderLow = returnBuffer[11];
+            errorRegisters.deviceHead = returnBuffer[12];
+            errorRegisters.status = returnBuffer[13];
+
+            sense |= error != 0;
+
+            return error;
+        }
+
+        internal static int SendAtaCommand(int fd, Structs.AtaRegistersLBA28 registers,
+            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new Structs.AtaErrorRegistersLBA28();
+
+            if (buffer == null)
+                return -1;
+
+            byte[] cdb = new byte[12];
+            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
+                protocol != Enums.AtaProtocol.NonData)
+            {
+                switch (protocol)
+                {
+                    case Enums.AtaProtocol.PioIn:
+                    case Enums.AtaProtocol.UDmaIn:
+                        cdb[2] = 0x08;
+                        break;
+                    default:
+                        cdb[2] = 0x00;
+                        break;
+                }
+
+                if (transferBlocks)
+                    cdb[2] |= 0x04;
+
+                cdb[2] |= (byte)((int)transferRegister & 0x03);
+            }
+
+            cdb[3] = registers.feature;
+            cdb[4] = registers.sectorCount;
+            cdb[5] = registers.lbaLow;
+            cdb[6] = registers.lbaMid;
+            cdb[7] = registers.lbaHigh;
+            cdb[8] = registers.deviceHead;
+            cdb[9] = registers.command;
+
+            byte[] senseBuffer;
+            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
+
+            // Now get error registers
+            byte[] returnCdb = new byte[12];
+            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
+            byte[] returnBuffer = new byte[14];
+            bool returnSense;
+            double returnDuration;
+
+            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
+            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+                return error;
+
+            errorRegisters.error = returnBuffer[3];
+            errorRegisters.sectorCount = returnBuffer[5];
+            errorRegisters.lbaLow = returnBuffer[7];
+            errorRegisters.lbaMid = returnBuffer[9];
+            errorRegisters.lbaHigh = returnBuffer[11];
+            errorRegisters.deviceHead = returnBuffer[12];
+            errorRegisters.status = returnBuffer[13];
+
+            sense |= error != 0;
+
+            return error;
+        }
+
+        internal static int SendAtaCommand(int fd, Structs.AtaRegistersLBA48 registers,
+            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            duration = 0;
+            sense = false;
+            errorRegisters = new Structs.AtaErrorRegistersLBA48();
+
+            if (buffer == null)
+                return -1;
+
+            byte[] cdb = new byte[16];
+            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
+            cdb[1] |= 0x01;
+            cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
+                protocol != Enums.AtaProtocol.NonData)
+            {
+                switch (protocol)
+                {
+                    case Enums.AtaProtocol.PioIn:
+                    case Enums.AtaProtocol.UDmaIn:
+                        cdb[2] = 0x08;
+                        break;
+                    default:
+                        cdb[2] = 0x00;
+                        break;
+                }
+
+                if (transferBlocks)
+                    cdb[2] |= 0x04;
+
+                cdb[2] |= (byte)((int)transferRegister & 0x03);
+            }
+
+            cdb[3] = (byte)((registers.feature & 0xFF00) >> 8);
+            cdb[4] = (byte)(registers.feature & 0xFF);
+            cdb[5] = (byte)((registers.sectorCount & 0xFF00) >> 8);
+            cdb[6] = (byte)(registers.sectorCount & 0xFF);
+            cdb[7] = (byte)((registers.lbaLow & 0xFF00) >> 8);
+            cdb[8] = (byte)(registers.lbaLow & 0xFF);
+            cdb[9] = (byte)((registers.lbaMid & 0xFF00) >> 8);
+            cdb[10] = (byte)(registers.lbaMid & 0xFF);
+            cdb[11] = (byte)((registers.lbaHigh & 0xFF00) >> 8);
+            cdb[12] = (byte)(registers.lbaHigh & 0xFF);
+            cdb[13] = registers.deviceHead;
+            cdb[14] = registers.command;
+
+            byte[] senseBuffer;
+            int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
+
+            // Now get error registers
+            byte[] returnCdb = new byte[16];
+            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
+            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
+            byte[] returnBuffer = new byte[14];
+            bool returnSense;
+            double returnDuration;
+
+            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
+            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+                return error;
+
+            errorRegisters.error = returnBuffer[3];
+
+            errorRegisters.sectorCount = (ushort)((returnBuffer[4] << 8) + returnBuffer[5]);
+            errorRegisters.lbaLow = (ushort)((returnBuffer[6] << 8) + returnBuffer[7]);
+            errorRegisters.lbaMid = (ushort)((returnBuffer[8] << 8) + returnBuffer[9]);
+            errorRegisters.lbaHigh = (ushort)((returnBuffer[10] << 8) + returnBuffer[11]);
+            errorRegisters.deviceHead = returnBuffer[12];
+            errorRegisters.status = returnBuffer[13];
+
+            sense |= error != 0;
+
+            return error;
+        }
     }
 }
 

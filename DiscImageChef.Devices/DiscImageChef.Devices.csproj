@@ -50,6 +50,7 @@
     <Compile Include="Device\Destructor.cs" />
     <Compile Include="Device\Commands.cs" />
     <Compile Include="Device\ScsiCommands.cs" />
+    <Compile Include="Structs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

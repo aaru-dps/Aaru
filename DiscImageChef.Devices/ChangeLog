@@ -1,5 +1,21 @@
 2015-10-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Structs.cs:
+	* DiscImageChef.Devices.csproj:
+	  Added structs with ATA registers.
+
+	* Command.cs:
+	* Device/Commands.cs:
+	  Added ATA commands.
+
+	* Enums.cs:
+	  Added SCSI's ATA Command Pass-Through enumerations.
+
+	* Linux/Command.cs:
+	  Added ATA commands using libATA's SATL.
+
+2015-10-14  Natalia Portillo  <claunia@claunia.com>
+
 	* Linux/Enums.cs:
 	* Linux/Extern.cs:
 	* Linux/Structs.cs:

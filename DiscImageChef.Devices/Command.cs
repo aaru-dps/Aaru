@@ -128,6 +128,102 @@ namespace DiscImageChef.Devices
                     throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
             }
         }
+
+        public static int SendAtaCommand(object fd, Structs.AtaRegistersCHS registers,
+            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
+                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
+
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersCHS registers,
+            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            switch (ptID)
+            {
+                case Interop.PlatformID.Win32NT:
+                    {
+                        throw new NotImplementedException();
+                    }
+                case Interop.PlatformID.Linux:
+                    {
+                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+                    }
+                default:
+                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+            }
+        }
+
+        public static int SendAtaCommand(object fd, Structs.AtaRegistersLBA28 registers,
+            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
+                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
+
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersLBA28 registers,
+            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            switch (ptID)
+            {
+                case Interop.PlatformID.Win32NT:
+                    {
+                        throw new NotImplementedException();
+                    }
+                case Interop.PlatformID.Linux:
+                    {
+                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+                    }
+                default:
+                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+            }
+        }
+
+        public static int SendAtaCommand(object fd, Structs.AtaRegistersLBA48 registers,
+            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+
+            return SendAtaCommand(ptID, fd, registers, out errorRegisters, protocol,
+                transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
+
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersLBA48 registers,
+            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
+            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            switch (ptID)
+            {
+                case Interop.PlatformID.Win32NT:
+                    {
+                        throw new NotImplementedException();
+                    }
+                case Interop.PlatformID.Linux:
+                    {
+                        return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                            transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
+                    }
+                default:
+                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+            }
+        }
     }
 }
 

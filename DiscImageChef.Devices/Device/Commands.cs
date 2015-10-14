@@ -56,6 +56,30 @@ namespace DiscImageChef.Devices
         {
             return Command.SendScsiCommand(platformID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
         }
+
+        public int SendAtaCommand(Structs.AtaRegistersCHS registers, out Structs.AtaErrorRegistersCHS errorRegisters,
+            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
+
+        public int SendAtaCommand(Structs.AtaRegistersLBA28 registers, out Structs.AtaErrorRegistersLBA28 errorRegisters,
+            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
+
+        public int SendAtaCommand(Structs.AtaRegistersLBA48 registers, out Structs.AtaErrorRegistersLBA48 errorRegisters,
+            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+            bool transferBlocks, out double duration, out bool sense)
+        {
+            return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
     }
 }
 
