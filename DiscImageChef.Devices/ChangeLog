@@ -1,5 +1,12 @@
 2015-10-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/Commands.cs:
+	* Device/AtaCommands.cs:
+	* Device/AtapiCommands.cs:
+	  Added XML documentation.
+
+2015-10-14  Natalia Portillo  <claunia@claunia.com>
+
 	* Device/AtaCommands.cs:
 	  Added ATA IDENTIFY DEVICE command.
 

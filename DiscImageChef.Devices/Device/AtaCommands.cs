@@ -41,22 +41,50 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
+        /// <summary>
+        /// Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="statusRegisters">Status registers.</param>
         public bool AtaIdentify(out byte[] buffer, out Structs.AtaErrorRegistersCHS statusRegisters)
         {
             return AtaIdentify(out buffer, out statusRegisters, Timeout);
         }
 
+        /// <summary>
+        /// Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="statusRegisters">Status registers.</param>
+        /// <param name="duration">Duration.</param>
         public bool AtaIdentify(out byte[] buffer, out Structs.AtaErrorRegistersCHS statusRegisters, out double duration)
         {
             return AtaIdentify(out buffer, out statusRegisters, Timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the ATA IDENTIFY DEVICE command to the device
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="statusRegisters">Status registers.</param>
+        /// <param name="timeout">Timeout.</param>
         public bool AtaIdentify(out byte[] buffer, out Structs.AtaErrorRegistersCHS statusRegisters, uint timeout)
         {
             double duration;
             return AtaIdentify(out buffer, out statusRegisters, timeout, out duration);
         }
 
+        /// <summary>
+        /// Sends the ATA IDENTIFY DEVICE command to the device
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters"/> contains the error registers.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="statusRegisters">Status registers.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
         public bool AtaIdentify(out byte[] buffer, out Structs.AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
         {
             buffer = new byte[512];
