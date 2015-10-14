@@ -6,7 +6,7 @@
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
-// Component      : Component
+// Component      : Direct device access
 //
 // Revision       : $Revision$
 // Last change by : $Author$
@@ -14,7 +14,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-// Description
+// Contains enumerations that are common to all operating systems
 //
 // --[ License ] --------------------------------------------------------------
 //

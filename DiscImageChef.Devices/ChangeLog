@@ -1,5 +1,21 @@
 2015-10-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/AtaCommands.cs:
+	  Added ATA IDENTIFY DEVICE command.
+
+	* Device/AtapiCommands.cs:
+	  Added ATAPI IDENTIFY PACKET DEVICE command.
+
+	* Structs.cs:
+	* Device/ScsiCommands.cs:
+	  Added header description.
+
+	* DiscImageChef.Devices.csproj:
+	  Added ATA IDENTIFY DEVICE command.
+	Added ATAPI IDENTIFY PACKET DEVICE command.
+
+2015-10-14  Natalia Portillo  <claunia@claunia.com>
+
 	* Structs.cs:
 	* DiscImageChef.Devices.csproj:
 	  Added structs with ATA registers.
