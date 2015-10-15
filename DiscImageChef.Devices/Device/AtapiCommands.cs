@@ -97,6 +97,10 @@ namespace DiscImageChef.Devices
                 ref buffer, timeout, false, out duration, out sense);
             error = lastError != 0;
 
+            #if DEBUG
+            Console.WriteLine("ATA IDENTIFY PACKET DEVICE took {0} ms.", duration);
+            #endif
+
             return sense;
         }
     }

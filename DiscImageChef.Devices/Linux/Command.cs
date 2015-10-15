@@ -112,10 +112,10 @@ namespace DiscImageChef.Devices.Linux
                     return ScsiIoctlDirection.None;
                 case Enums.AtaProtocol.PioIn:
                 case Enums.AtaProtocol.UDmaIn:
-                    return ScsiIoctlDirection.Out;
+                    return ScsiIoctlDirection.In;
                 case Enums.AtaProtocol.PioOut:
                 case Enums.AtaProtocol.UDmaOut:
-                    return ScsiIoctlDirection.In;
+                    return ScsiIoctlDirection.Out;
                 default:
                     return ScsiIoctlDirection.Unspecified;
             }
@@ -133,8 +133,8 @@ namespace DiscImageChef.Devices.Linux
             if (buffer == null)
                 return -1;
 
-            byte[] cdb = new byte[12];
-            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            byte[] cdb = new byte[16];
+            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
             if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
                protocol != Enums.AtaProtocol.NonData)
@@ -156,38 +156,32 @@ namespace DiscImageChef.Devices.Linux
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
 
-            cdb[3] = registers.feature;
-            cdb[4] = registers.sectorCount;
-            cdb[5] = registers.sector;
-            cdb[6] = registers.cylinderHigh;
-            cdb[7] = registers.cylinderLow;
-            cdb[8] = registers.deviceHead;
-            cdb[9] = registers.command;
+            cdb[2] |= 0x20;
+
+            cdb[4] = registers.feature;
+            cdb[6] = registers.sectorCount;
+            cdb[8] = registers.sector;
+            cdb[10] = registers.cylinderLow;
+            cdb[12] = registers.cylinderHigh;
+            cdb[13] = registers.deviceHead;
+            cdb[14] = registers.command;
 
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            // Now get error registers
-            byte[] returnCdb = new byte[12];
-            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
-            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
-            byte[] returnBuffer = new byte[14];
-            bool returnSense;
-            double returnDuration;
-
-            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
-            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
-            errorRegisters.error = returnBuffer[3];
-            errorRegisters.sectorCount = returnBuffer[5];
-            errorRegisters.sector = returnBuffer[7];
-            errorRegisters.cylinderHigh = returnBuffer[9];
-            errorRegisters.cylinderLow = returnBuffer[11];
-            errorRegisters.deviceHead = returnBuffer[12];
-            errorRegisters.status = returnBuffer[13];
+            errorRegisters.error = senseBuffer[11];
 
-            sense |= error != 0;
+            errorRegisters.sectorCount = senseBuffer[13];
+            errorRegisters.sector = senseBuffer[15];
+            errorRegisters.cylinderLow = senseBuffer[17];
+            errorRegisters.cylinderHigh = senseBuffer[19];
+            errorRegisters.deviceHead = senseBuffer[20];
+            errorRegisters.status = senseBuffer[21];
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
             return error;
         }
@@ -204,8 +198,8 @@ namespace DiscImageChef.Devices.Linux
             if (buffer == null)
                 return -1;
 
-            byte[] cdb = new byte[12];
-            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
+            byte[] cdb = new byte[16];
+            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
             if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
                 protocol != Enums.AtaProtocol.NonData)
@@ -227,38 +221,32 @@ namespace DiscImageChef.Devices.Linux
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
 
-            cdb[3] = registers.feature;
-            cdb[4] = registers.sectorCount;
-            cdb[5] = registers.lbaLow;
-            cdb[6] = registers.lbaMid;
-            cdb[7] = registers.lbaHigh;
-            cdb[8] = registers.deviceHead;
-            cdb[9] = registers.command;
+            cdb[2] |= 0x20;
+
+            cdb[4] = registers.feature;
+            cdb[6] = registers.sectorCount;
+            cdb[8] = registers.lbaLow;
+            cdb[10] = registers.lbaMid;
+            cdb[12] = registers.lbaHigh;
+            cdb[13] = registers.deviceHead;
+            cdb[14] = registers.command;
 
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            // Now get error registers
-            byte[] returnCdb = new byte[12];
-            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough;
-            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
-            byte[] returnBuffer = new byte[14];
-            bool returnSense;
-            double returnDuration;
-
-            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
-            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
-            errorRegisters.error = returnBuffer[3];
-            errorRegisters.sectorCount = returnBuffer[5];
-            errorRegisters.lbaLow = returnBuffer[7];
-            errorRegisters.lbaMid = returnBuffer[9];
-            errorRegisters.lbaHigh = returnBuffer[11];
-            errorRegisters.deviceHead = returnBuffer[12];
-            errorRegisters.status = returnBuffer[13];
+            errorRegisters.error = senseBuffer[11];
 
-            sense |= error != 0;
+            errorRegisters.sectorCount = senseBuffer[13];
+            errorRegisters.lbaLow = senseBuffer[15];
+            errorRegisters.lbaMid = senseBuffer[17];
+            errorRegisters.lbaHigh = senseBuffer[19];
+            errorRegisters.deviceHead = senseBuffer[20];
+            errorRegisters.status = senseBuffer[21];
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
             return error;
         }
@@ -299,6 +287,8 @@ namespace DiscImageChef.Devices.Linux
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
 
+            cdb[2] |= 0x20;
+
             cdb[3] = (byte)((registers.feature & 0xFF00) >> 8);
             cdb[4] = (byte)(registers.feature & 0xFF);
             cdb[5] = (byte)((registers.sectorCount & 0xFF00) >> 8);
@@ -315,26 +305,19 @@ namespace DiscImageChef.Devices.Linux
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            // Now get error registers
-            byte[] returnCdb = new byte[16];
-            returnCdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
-            returnCdb[1] = (byte)(((byte)Enums.AtaProtocol.ReturnResponse << 1) & 0x1E);
-            byte[] returnBuffer = new byte[14];
-            bool returnSense;
-            double returnDuration;
-
-            SendScsiCommand(fd, returnCdb, ref returnBuffer, out senseBuffer, timeout, ScsiIoctlDirection.In, out returnDuration, out returnSense);
-            if (returnBuffer[0] != 0x09 && returnBuffer[1] != 0x0C)
+            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
-            errorRegisters.error = returnBuffer[3];
+            errorRegisters.error = senseBuffer[11];
 
-            errorRegisters.sectorCount = (ushort)((returnBuffer[4] << 8) + returnBuffer[5]);
-            errorRegisters.lbaLow = (ushort)((returnBuffer[6] << 8) + returnBuffer[7]);
-            errorRegisters.lbaMid = (ushort)((returnBuffer[8] << 8) + returnBuffer[9]);
-            errorRegisters.lbaHigh = (ushort)((returnBuffer[10] << 8) + returnBuffer[11]);
-            errorRegisters.deviceHead = returnBuffer[12];
-            errorRegisters.status = returnBuffer[13];
+            errorRegisters.sectorCount = (ushort)((senseBuffer[12] << 8) + senseBuffer[13]);
+            errorRegisters.lbaLow = (ushort)((senseBuffer[14] << 8) + senseBuffer[15]);
+            errorRegisters.lbaMid = (ushort)((senseBuffer[16] << 8) + senseBuffer[17]);
+            errorRegisters.lbaHigh = (ushort)((senseBuffer[18] << 8) + senseBuffer[19]);
+            errorRegisters.deviceHead = senseBuffer[20];
+            errorRegisters.status = senseBuffer[21];
+
+            sense = errorRegisters.error != 0 || (errorRegisters.status & 0xA5) != 0;
 
             sense |= error != 0;
 

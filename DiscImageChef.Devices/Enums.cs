@@ -2414,11 +2414,11 @@ namespace DiscImageChef.Devices
             /// </summary>
             NonData = 3,
             /// <summary>
-            /// Requests a host->device transfer using PIO
+            /// Requests a device->host transfer using PIO
             /// </summary>
             PioIn = 4,
             /// <summary>
-            /// Requests a device->host transfer using PIO
+            /// Requests a host->device transfer using PIO
             /// </summary>
             PioOut = 5,
             /// <summary>
@@ -2438,11 +2438,11 @@ namespace DiscImageChef.Devices
             /// </summary>
             DeviceReset = 9,
             /// <summary>
-            /// Requests a host->device transfer using UltraDMA
+            /// Requests a device->host transfer using UltraDMA
             /// </summary>
             UDmaIn = 10,
             /// <summary>
-            /// Requests a device->host transfer using UltraDMA
+            /// Requests a host->device transfer using UltraDMA
             /// </summary>
             UDmaOut = 11,
             /// <summary>

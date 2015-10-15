@@ -1,3 +1,18 @@
+2015-10-15  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/AtaCommands.cs:
+	* Device/ScsiCommands.cs:
+	* Device/AtapiCommands.cs:
+	  Added duration debug printfs.
+
+	* Enums.cs:
+	  Corrected device<->host direction.
+
+	* Linux/Command.cs:
+	  Corrected device<->host direction.
+	Changed to workaround how ATA Pass-Through is really
+	  implemented in Linux.
+
 2015-10-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Commands.cs:

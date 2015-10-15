@@ -84,6 +84,71 @@ namespace DiscImageChef.Commands
                 Console.WriteLine("SCSI OK");
 
             Console.WriteLine("{0}", Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
+
+            Structs.AtaErrorRegistersCHS errorRegisters;
+
+            byte[] ataBuf;
+            sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
+
+            FileStream fs;
+
+            if (sense)
+            {
+                
+                if ((errorRegisters.status & 0x01) == 0x01
+                   && (errorRegisters.error & 0x04) == 0x04
+                   && errorRegisters.cylinderHigh == 0xEB
+                   && errorRegisters.cylinderLow == 0x14)
+                {
+                    Console.WriteLine("ATA error, but ATAPI signature detected.");
+                    sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
+
+                    if (sense)
+                    {
+                        Console.WriteLine("ATAPI error");
+
+                        #if DEBUG
+                        Console.WriteLine("STATUS = 0x{0:X2}", errorRegisters.status);
+                        Console.WriteLine("ERROR = 0x{0:X2}", errorRegisters.error);
+                        Console.WriteLine("NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                        Console.WriteLine("SECTOR = 0x{0:X2}", errorRegisters.sector);
+                        Console.WriteLine("CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                        Console.WriteLine("CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                        Console.WriteLine("DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                        Console.WriteLine("COMMAND = 0x{0:X2}", errorRegisters.command);
+                        Console.WriteLine("Error code = {0}", dev.LastError);
+                        #endif
+                    }
+                    else
+                    {
+                        fs = File.Open("atapi_identify.bin", FileMode.OpenOrCreate);
+                        fs.Write(ataBuf, 0, ataBuf.Length);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ATA error");
+
+                    #if DEBUG
+                    Console.WriteLine("STATUS = 0x{0:X2}", errorRegisters.status);
+                    Console.WriteLine("ERROR = 0x{0:X2}", errorRegisters.error);
+                    Console.WriteLine("NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                    Console.WriteLine("SECTOR = 0x{0:X2}", errorRegisters.sector);
+                    Console.WriteLine("CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                    Console.WriteLine("CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                    Console.WriteLine("DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                    Console.WriteLine("COMMAND = 0x{0:X2}", errorRegisters.command);
+                    Console.WriteLine("Error code = {0}", dev.LastError);
+                    #endif
+                }
+            }
+            else
+            {
+                Console.WriteLine("ATA OK");
+
+                fs = File.Open("ata_identify.bin", FileMode.OpenOrCreate);
+                fs.Write(ataBuf, 0, ataBuf.Length);
+           }
         }
     }
 }

@@ -107,6 +107,10 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
+            #if DEBUG
+            Console.WriteLine("SCSI INQUIRY took {0} ms.", duration);
+            #endif
+
             return sense;
         }
 
@@ -179,6 +183,10 @@ namespace DiscImageChef.Devices
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
+
+            #if DEBUG
+            Console.WriteLine("SCSI INQUIRY took {0} ms.", duration);
+            #endif
 
             return sense;
         }

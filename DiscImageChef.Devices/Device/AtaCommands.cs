@@ -93,9 +93,13 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)Enums.AtaCommands.IdentifyDevice;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, Enums.AtaProtocol.PioOut, Enums.AtaTransferRegister.NoTransfer,
+            lastError = SendAtaCommand(registers, out statusRegisters, Enums.AtaProtocol.PioIn, Enums.AtaTransferRegister.SectorCount,
                 ref buffer, timeout, false, out duration, out sense);
             error = lastError != 0;
+
+            #if DEBUG
+            Console.WriteLine("ATA IDENTIFY DEVICE took {0} ms.", duration);
+            #endif
 
             return sense;
         }

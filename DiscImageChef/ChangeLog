@@ -1,3 +1,8 @@
+2015-10-15  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Added ATA and ATAPI identify commands.
+
 2015-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Main.cs:
