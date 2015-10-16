@@ -1,3 +1,10 @@
+2015-10-16  Natalia Portillo  <claunia@claunia.com>
+
+	* ATA.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Added structure for ATA/ATAPI IDENTIFY [PACKET] DEVICE
+	  response
+
 2015-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI.cs:
