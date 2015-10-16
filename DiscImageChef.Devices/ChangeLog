@@ -1,3 +1,8 @@
+2015-10-16  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	  Added command clash in XML documentation
+
 2015-10-15  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/AtaCommands.cs:

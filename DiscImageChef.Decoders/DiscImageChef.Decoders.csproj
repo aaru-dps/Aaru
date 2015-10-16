@@ -41,6 +41,7 @@
     <Compile Include="Floppy.cs" />
     <Compile Include="MMC.cs" />
     <Compile Include="SCSI.cs" />
+    <Compile Include="ATA.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

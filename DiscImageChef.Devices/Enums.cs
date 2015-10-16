@@ -2254,6 +2254,7 @@ namespace DiscImageChef.Devices
             #region ATA Command Pass-Through
             /// <summary>
             /// Sends a 24-bit ATA command to the device
+            /// Clashes with <see cref="Blank"/>
             /// ATA CPT rev. 8a
             /// </summary>
             AtaPassThrough = 0xA1,
