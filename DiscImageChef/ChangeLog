@@ -1,3 +1,8 @@
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.csproj:
+	  Implement ATA/ATAPI IDENTIFY decoder.
+
 2015-10-15  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
