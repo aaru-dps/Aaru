@@ -1,5 +1,10 @@
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceInfo.cs:
+	  Added ATA/ATAPI IDENTIFY DEVICE decoder
+
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.csproj:
 	  Implement ATA/ATAPI IDENTIFY decoder.
 

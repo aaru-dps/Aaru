@@ -90,8 +90,6 @@ namespace DiscImageChef.Commands
             byte[] ataBuf;
             sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
 
-            FileStream fs;
-
             if (sense)
             {
                 
@@ -121,8 +119,8 @@ namespace DiscImageChef.Commands
                     }
                     else
                     {
-                        fs = File.Open("atapi_identify.bin", FileMode.OpenOrCreate);
-                        fs.Write(ataBuf, 0, ataBuf.Length);
+                        Console.WriteLine("ATAPI OK");
+                        Console.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
                     }
                 }
                 else
@@ -145,9 +143,7 @@ namespace DiscImageChef.Commands
             else
             {
                 Console.WriteLine("ATA OK");
-
-                fs = File.Open("ata_identify.bin", FileMode.OpenOrCreate);
-                fs.Write(ataBuf, 0, ataBuf.Length);
+                Console.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
            }
         }
     }
