@@ -42,6 +42,7 @@ namespace DiscImageChef.Decoders
 {
     /// <summary>
     /// Information from the following standards:
+    /// T9/375-D revision 10l
     /// T10/995-D revision 10
     /// T10/1236-D revision 20
     /// T10/1416-D revision 23
@@ -169,9 +170,9 @@ namespace DiscImageChef.Decoders
             /// </summary>
             SCSIANSINoVersion = 0x00,
             /// <summary>
-            /// Device complies with an obsolete ANSI standard
+            /// Device complies with ANSI X3.131:1986
             /// </summary>
-            SCSIANSIObsolete = 0x01,
+            SCSIANSI1986Version = 0x01,
             /// <summary>
             /// Device complies with ANSI X3.131:1994
             /// </summary>
@@ -2511,7 +2512,7 @@ namespace DiscImageChef.Decoders
             if (SCSIInquiryResponse.Length >= 2)
             {
                 decoded.RMB = Convert.ToBoolean((SCSIInquiryResponse[1] & 0x80));
-                decoded.Reserved1 = (byte)(SCSIInquiryResponse[1] & 0x7F);
+                decoded.DeviceTypeModifier = (byte)(SCSIInquiryResponse[1] & 0x7F);
             }
             if (SCSIInquiryResponse.Length >= 3)
             {
@@ -2558,7 +2559,7 @@ namespace DiscImageChef.Decoders
                 decoded.Linked = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x08));
                 decoded.TranDis = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x04));
                 decoded.CmdQue = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x02));
-                decoded.VS2 = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x01));
+                decoded.SftRe = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x01));
             }
             if (SCSIInquiryResponse.Length >= 16)
             {
@@ -2723,8 +2724,8 @@ namespace DiscImageChef.Decoders
                 case SCSIANSIVersions.SCSIANSINoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ANSI standard");
                     break;
-                case SCSIANSIVersions.SCSIANSIObsolete:
-                    sb.AppendLine("Device claims to comply with an obsolete SCSI ANSI standard");
+                case SCSIANSIVersions.SCSIANSI1986Version:
+                    sb.AppendLine("Device claims to comply with ANSI X3.131:1986");
                     break;
                 case SCSIANSIVersions.SCSIANSI1994Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.131:1994");
@@ -2819,12 +2820,12 @@ namespace DiscImageChef.Decoders
                 sb.AppendLine("Device supports TCQ queue");
             if (response.IUS)
                 sb.AppendLine("Device supports information unit transfers");
+            if (response.SftRe)
+                sb.AppendLine("Device implements RESET as a soft reset");
             //if (MainClass.isDebug)
             {
                 if (response.VS1)
                     sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
-                if (response.VS2)
-                    sb.AppendLine("Vendor specific bit 0 on byte 7 of INQUIRY response is set");
             }
 
             switch ((SCSITGPSValues)response.TPGS)
@@ -4294,7 +4295,7 @@ namespace DiscImageChef.Decoders
 
             //if (MainClass.isDebug)
             {
-                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 1, bits 6 to 0 = 0x{0:X2}", response.Reserved1).AppendLine();
+                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
                 sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 5, bits 2 to 1 = 0x{0:X2}", response.Reserved2).AppendLine();
                 sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 56, bits 7 to 4 = 0x{0:X2}", response.Reserved3).AppendLine();
                 sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
@@ -4356,10 +4357,10 @@ namespace DiscImageChef.Decoders
             /// </summary>
             public bool RMB;
             /// <summary>
-            /// Reserved
+            /// SCSI-1 vendor-specific qualification codes
             /// Byte 1, bits 6 to 0
             /// </summary>
-            public byte Reserved1;
+            public byte DeviceTypeModifier;
             /// <summary>
             /// ISO/IEC SCSI Standard Version
             /// Byte 2, bits 7 to 6, mask = 0xC0, >> 6
@@ -4511,10 +4512,10 @@ namespace DiscImageChef.Decoders
             /// </summary>
             public bool CmdQue;
             /// <summary>
-            /// Vendor-specific
+            /// Indicates that the devices responds to RESET with soft reset
             /// Byte 7, bit 0
             /// </summary>
-            public bool VS2;
+            public bool SftRe;
             /// <summary>
             /// Vendor identification
             /// Bytes 8 to 15
