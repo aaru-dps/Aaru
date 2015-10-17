@@ -1,5 +1,10 @@
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
+	* Enums.cs:
+	  Added information from T10/536 rev. 4a (ZBC)
+
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
 	* Device/AtaCommands.cs:
 	* Device/AtapiCommands.cs:
 	  Corrected typos that resulted in device reset :p

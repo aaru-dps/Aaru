@@ -2273,9 +2273,18 @@ namespace DiscImageChef.Devices
             Write6 = Write,
             #endregion 6-byte CDB aliases
 
-            #region SCSI Commands with unknown meaning, mostly vendor specific
+            #region SCSI Zoned Block Commands
+            /// <summary>
+            /// ZBC commands with host->device information
+            /// </summary>
             ZbcOut = 0x94,
-            ZbcOut2 = 0x95,
+            /// <summary>
+            /// ZBC commands with device->host information
+            /// </summary>
+            ZbcIn = 0x95,
+            #endregion
+
+            #region SCSI Commands with unknown meaning, mostly vendor specific
             SetCdSpeedUnk = 0xB8,
             WriteCdMsf = 0xA2,
             WriteCd = 0xAA,
@@ -2480,6 +2489,33 @@ namespace DiscImageChef.Devices
             SPTSIU = 3
         }
         #endregion SCSI's ATA Command Pass-Through
+
+        /// <summary>
+        /// ZBC sub-commands, mask 0x1F
+        /// </summary>
+        public enum ZBCSubCommands : byte
+        {
+            /// <summary>
+            /// Returns list with zones of specified types
+            /// </summary>
+            ReportZones = 0x00,
+            /// <summary>
+            /// Closes a zone
+            /// </summary>
+            CloseZone = 0x01,
+            /// <summary>
+            /// Finishes a zone
+            /// </summary>
+            FinishZone = 0x02,
+            /// <summary>
+            /// Opens a zone
+            /// </summary>
+            OpenZone = 0x03,
+            /// <summary>
+            /// Resets zone's write pointer to zone start
+            /// </summary>
+            ResetWritePointer = 0x04
+        }
     }
 }
 
