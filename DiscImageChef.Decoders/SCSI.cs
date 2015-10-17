@@ -47,6 +47,7 @@ namespace DiscImageChef.Decoders
     /// T10/1236-D revision 20
     /// T10/1416-D revision 23
     /// T10/1731-D revision 16
+    /// T10/502 revision 05
     /// </summary>
     public static class SCSI
     {
@@ -158,6 +159,10 @@ namespace DiscImageChef.Decoders
             /// Security Manager Device
             /// </summary>
             SCSISecurityManagerDevice = 0x13,
+            /// <summary>
+            /// Host managed zoned block device
+            /// </summary>
+            SCSIZonedBlockDEvice = 0x14,
             /// <summary>
             /// Well known logical unit
             /// </summary>
@@ -2107,6 +2112,9 @@ namespace DiscImageChef.Decoders
                 case SCSIPeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
                     sb.AppendLine("Security Manager Device");
                     break;
+                case SCSIPeripheralDeviceTypes.SCSIZonedBlockDEvice: //0x14
+                    sb.AppendLine("Host managed zoned block device");
+                    break;
                 case SCSIPeripheralDeviceTypes.SCSIPDTWellKnownDevice: //0x1E,
                     sb.AppendLine("Well known logical unit");
                     break;
@@ -2323,8 +2331,26 @@ namespace DiscImageChef.Decoders
                     case 0x008B:
                         sb.AppendLine("Device complies with SAM-4 T10/1683-D revision 14");
                         break;
+                    case 0x0090:
+                        sb.AppendLine("Device complies with SAM-4 ANSI INCITS 447-2008");
+                        break;
+                    case 0x0092:
+                        sb.AppendLine("Device complies with SAM-4 ISO/IEC 14776-414");
+                        break;
                     case 0x00A0:
                         sb.AppendLine("Device complies with SAM-5 (no version claimed)");
+                        break;
+                    case 0x00A2:
+                        sb.AppendLine("Device complies with SAM-5 T10/2104-D revision 4");
+                        break;
+                    case 0x00A4:
+                        sb.AppendLine("Device complies with SAM-5 T10/2104-D revision 20");
+                        break;
+                    case 0x00A6:
+                        sb.AppendLine("Device complies with SAM-5 T10/2104-D revision 21");
+                        break;
+                    case 0x00C0:
+                        sb.AppendLine("Device complies with SAM-6 (no version claimed)");
                         break;
                     case 0x0120:
                         sb.AppendLine("Device complies with SPC (no version claimed)");
@@ -2384,10 +2410,10 @@ namespace DiscImageChef.Decoders
                         sb.AppendLine("Device complies with SES ANSI INCITS 305-1998");
                         break;
                     case 0x01DD:
-                        sb.AppendLine("Device complies with SES T10/1212 revision 08b w/ Amendment ANSI INCITS.305/ AM1-2000");
+                        sb.AppendLine("Device complies with SES T10/1212 revision 08b w/ Amendment ANSI INCITS.305/AM1-2000");
                         break;
                     case 0x01DE:
-                        sb.AppendLine("Device complies with SES ANSI INCITS 305-1998 w/ Amendment ANSI INCITS.305/ AM1-2000");
+                        sb.AppendLine("Device complies with SES ANSI INCITS 305-1998 w/ Amendment ANSI INCITS.305/AM1-2000");
                         break;
                     case 0x01E0:
                         sb.AppendLine("Device complies with SCC-2 (no version claimed)");
@@ -2503,6 +2529,9 @@ namespace DiscImageChef.Decoders
                     case 0x0314:
                         sb.AppendLine("Device complies with SPC-3 ANSI INCITS 408-2005");
                         break;
+                    case 0x0316:
+                        sb.AppendLine("Device complies with SPC-3 ISO/IEC 14776-453");
+                        break;
                     case 0x0320:
                         sb.AppendLine("Device complies with SBC-2 (no version claimed)");
                         break;
@@ -2599,11 +2628,26 @@ namespace DiscImageChef.Decoders
                     case 0x03EB:
                         sb.AppendLine("Device complies with SES-2 T10/1559-D revision 20");
                         break;
+                    case 0x03F0:
+                        sb.AppendLine("Device complies with SES-2 ANSI INCITS 448-2008");
+                        break;
+                    case 0x03F2:
+                        sb.AppendLine("Device complies with SES-2 ISO/IEC 14776-372");
+                        break;
                     case 0x0400:
                         sb.AppendLine("Device complies with SSC-3 (no version claimed)");
                         break;
                     case 0x0403:
                         sb.AppendLine("Device complies with SSC-3 T10/1611-D revision 04a");
+                        break;
+                    case 0x0407:
+                        sb.AppendLine("Device complies with SSC-3 T10/1611-D revision 05");
+                        break;
+                    case 0x0409:
+                        sb.AppendLine("Device complies with SSC-3 ANSI INCITS 467-2011");
+                        break;
+                    case 0x040B:
+                        sb.AppendLine("Device complies with SSC-3 ISO/IEC 14776-333:2013");
                         break;
                     case 0x0420:
                         sb.AppendLine("Device complies with MMC-5 (no version claimed)");
@@ -2626,14 +2670,47 @@ namespace DiscImageChef.Decoders
                     case 0x0444:
                         sb.AppendLine("Device complies with OSD-2 T10/1729-D revision 4");
                         break;
+                    case 0x0446:
+                        sb.AppendLine("Device complies with OSD-2 T10/1729-D revision 5");
+                        break;
+                    case 0x0448:
+                        sb.AppendLine("Device complies with OSD-2 ANSI INCITS 458-2011");
+                        break;
                     case 0x0460:
                         sb.AppendLine("Device complies with SPC-4 (no version claimed)");
                         break;
                     case 0x0461:
-                        sb.AppendLine("Device complies with SPC-4 T10/1731-D revision 16");
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 16");
+                        break;
+                    case 0x0462:
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 18");
+                        break;
+                    case 0x0463:
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 23");
+                        break;
+                    case 0x0466:
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 36");
+                        break;
+                    case 0x0468:
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 37");
+                        break;
+                    case 0x0469:
+                        sb.AppendLine("Device complies with SPC-4 T10/BSR INCITS 513 revision 37a");
+                        break;
+                    case 0x046C:
+                        sb.AppendLine("Device complies with SPC-4 ANSI INCITS 513-2015");
                         break;
                     case 0x0480:
                         sb.AppendLine("Device complies with SMC-3 (no version claimed)");
+                        break;
+                    case 0x0482:
+                        sb.AppendLine("Device complies with SMC-3 T10/1730-D revision 15");
+                        break;
+                    case 0x0484:
+                        sb.AppendLine("Device complies with SMC-3 T10/1730-D revision 16");
+                        break;
+                    case 0x0486:
+                        sb.AppendLine("Device complies with SMC-3 ANSI INCITS 484-2012");
                         break;
                     case 0x04A0:
                         sb.AppendLine("Device complies with ADC-2 (no version claimed)");
@@ -2650,11 +2727,86 @@ namespace DiscImageChef.Decoders
                     case 0x04C0:
                         sb.AppendLine("Device complies with SBC-3 (no version claimed)");
                         break;
+                    case 0x04C3:
+                        sb.AppendLine("Device complies with SBC-3 T10/BSR INCITS 514 revision 35");
+                        break;
+                    case 0x04C5:
+                        sb.AppendLine("Device complies with SBC-3 T10/BSR INCITS 514 revision 36");
+                        break;
+                    case 0x04C8:
+                        sb.AppendLine("Device complies with SBC-3 ANSI INCITS 514-2014");
+                        break;
                     case 0x04E0:
                         sb.AppendLine("Device complies with MMC-6 (no version claimed)");
                         break;
+                    case 0x04E3:
+                        sb.AppendLine("Device complies with MMC-6 T10/1836-D revision 02b");
+                        break;
+                    case 0x04E5:
+                        sb.AppendLine("Device complies with MMC-6 T10/1836-D revision 02g");
+                        break;
+                    case 0x04E6:
+                        sb.AppendLine("Device complies with MMC-6 ANSI INCITS 468-2010");
+                        break;
+                    case 0x04E7:
+                        sb.AppendLine("Device complies with MMC-6 ANSI INCITS 468-2010 + MMC-6/AM1 ANSI INCITS 468-2010/AM 1");
+                        break;
                     case 0x0500:
                         sb.AppendLine("Device complies with ADC-3 (no version claimed)");
+                        break;
+                    case 0x0502:
+                        sb.AppendLine("Device complies with ADC-3 T10/1895-D revision 04");
+                        break;
+                    case 0x0504:
+                        sb.AppendLine("Device complies with ADC-3 T10/1895-D revision 05");
+                        break;
+                    case 0x0506:
+                        sb.AppendLine("Device complies with ADC-3 T10/1895-D revision 05a");
+                        break;
+                    case 0x050A:
+                        sb.AppendLine("Device complies with ADC-3 ANSI INCITS 497-2012");
+                        break;
+                    case 0x0520:
+                        sb.AppendLine("Device complies with SSC-4 (no version claimed)");
+                        break;
+                    case 0x0523:
+                        sb.AppendLine("Device complies with SSC-4 T10/BSR INCITS 516 revision 2");
+                        break;
+                    case 0x0525:
+                        sb.AppendLine("Device complies with SSC-4 T10/BSR INCITS 516 revision 3");
+                        break;
+                    case 0x0527:
+                        sb.AppendLine("Device complies with SSC-4 ANSI INCITS 516-2013");
+                        break;
+                    case 0x0560:
+                        sb.AppendLine("Device complies with OSD-3 (no version claimed)");
+                        break;
+                    case 0x0580:
+                        sb.AppendLine("Device complies with SES-3 (no version claimed)");
+                        break;
+                    case 0x05A0:
+                        sb.AppendLine("Device complies with SSC-5 (no version claimed)");
+                        break;
+                    case 0x05C0:
+                        sb.AppendLine("Device complies with SPC-5 (no version claimed)");
+                        break;
+                    case 0x05E0:
+                        sb.AppendLine("Device complies with SFSC (no version claimed)");
+                        break;
+                    case 0x05E3:
+                        sb.AppendLine("Device complies with SFSC BSR INCITS 501 revision 01");
+                        break;
+                    case 0x0600:
+                        sb.AppendLine("Device complies with SBC-4 (no version claimed)");
+                        break;
+                    case 0x0620:
+                        sb.AppendLine("Device complies with ZBC (no version claimed)");
+                        break;
+                    case 0x0622:
+                        sb.AppendLine("Device complies with ZBC BSR INCITS 536 revision 02");
+                        break;
+                    case 0x0640:
+                        sb.AppendLine("Device complies with ADC-4 (no version claimed)");
                         break;
                     case 0x0820:
                         sb.AppendLine("Device complies with SSA-TL2 (no version claimed)");
@@ -2809,8 +2961,35 @@ namespace DiscImageChef.Decoders
                     case 0x0A20:
                         sb.AppendLine("Device complies with ADT-2 (no version claimed)");
                         break;
+                    case 0x0A22:
+                        sb.AppendLine("Device complies with ADT-2 T10/1742-D revision 06");
+                        break;
+                    case 0x0A27:
+                        sb.AppendLine("Device complies with ADT-2 T10/1742-D revision 08");
+                        break;
+                    case 0x0A28:
+                        sb.AppendLine("Device complies with ADT-2 T10/1742-D revision 09");
+                        break;
+                    case 0x0A2B:
+                        sb.AppendLine("Device complies with ADT-2 ANSI INCITS 472-2011");
+                        break;
                     case 0x0A40:
                         sb.AppendLine("Device complies with FCP-4 (no version claimed)");
+                        break;
+                    case 0x0A42:
+                        sb.AppendLine("Device complies with FCP-4 T10/1828-D revision 01");
+                        break;
+                    case 0x0A44:
+                        sb.AppendLine("Device complies with FCP-4 T10/1828-D revision 02");
+                        break;
+                    case 0x0A45:
+                        sb.AppendLine("Device complies with FCP-4 T10/1828-D revision 02b");
+                        break;
+                    case 0x0A46:
+                        sb.AppendLine("Device complies with FCP-4 ANSI INCITS 481-2012");
+                        break;
+                    case 0x0A60:
+                        sb.AppendLine("Device complies with ADT-3 (no version claimed)");
                         break;
                     case 0x0AA0:
                         sb.AppendLine("Device complies with SPI (no version claimed)");
@@ -2825,7 +3004,7 @@ namespace DiscImageChef.Decoders
                         sb.AppendLine("Device complies with SPI T10/0855-D revision 15a with SPI Amnd revision 3a");
                         break;
                     case 0x0ABC:
-                        sb.AppendLine("Device complies with SPI ANSI INCITS 253-1995 with SPI Amnd ANSI INCITS 253/ AM1-1998");
+                        sb.AppendLine("Device complies with SPI ANSI INCITS 253-1995 with SPI Amnd ANSI INCITS 253/AM1-1998");
                         break;
                     case 0x0AC0:
                         sb.AppendLine("Device complies with Fast-20 (no version claimed)");
@@ -2932,11 +3111,59 @@ namespace DiscImageChef.Decoders
                     case 0x0C11:
                         sb.AppendLine("Device complies with SAS-1.1 ANSI INCITS 417-2006");
                         break;
+                    case 0x0C12:
+                        sb.AppendLine("Device complies with SAS-1.1 ISO/IEC 14776-151");
+                        break;
                     case 0x0C20:
                         sb.AppendLine("Device complies with SAS-2 (no version claimed)");
                         break;
                     case 0x0C23:
                         sb.AppendLine("Device complies with SAS-2 T10/1760-D revision 14");
+                        break;
+                    case 0x0C27:
+                        sb.AppendLine("Device complies with SAS-2 T10/1760-D revision 15");
+                        break;
+                    case 0x0C28:
+                        sb.AppendLine("Device complies with SAS-2 T10/1760-D revision 16");
+                        break;
+                    case 0x0C2A:
+                        sb.AppendLine("Device complies with SAS-2 ANSI INCITS 457-2010");
+                        break;
+                    case 0x0C40:
+                        sb.AppendLine("Device complies with SAS-2.1 (no version claimed)");
+                        break;
+                    case 0x0C48:
+                        sb.AppendLine("Device complies with SAS-2.1 T10/2125-D revision 04");
+                        break;
+                    case 0x0C4A:
+                        sb.AppendLine("Device complies with SAS-2.1 T10/2125-D revision 06");
+                        break;
+                    case 0x0C4B:
+                        sb.AppendLine("Device complies with SAS-2.1 T10/2125-D revision 07");
+                        break;
+                    case 0x0C4E:
+                        sb.AppendLine("Device complies with SAS-2.1 ANSI INCITS 478-2011");
+                        break;
+                    case 0x0C4F:
+                        sb.AppendLine("Device complies with SAS-2.1 ANSI INCITS 478-2011 w/ Amnd 1 ANSI INCITS 478/AM1-2014");
+                        break;
+                    case 0x0C52:
+                        sb.AppendLine("Device complies with SAS-2.1 ISO/IEC 14776-153");
+                        break;
+                    case 0x0C60:
+                        sb.AppendLine("Device complies with SAS-3 (no version claimed)");
+                        break;
+                    case 0x0C63:
+                        sb.AppendLine("Device complies with SAS-3 T10/BSR INCITS 519 revision 05a");
+                        break;
+                    case 0x0C65:
+                        sb.AppendLine("Device complies with SAS-3 T10/BSR INCITS 519 revision 06");
+                        break;
+                    case 0x0C68:
+                        sb.AppendLine("Device complies with SAS-3 ANSI INCITS 519-2014");
+                        break;
+                    case 0x0C80:
+                        sb.AppendLine("Device complies with SAS-4 (no version claimed)");
                         break;
                     case 0x0D20:
                         sb.AppendLine("Device complies with FC-PH (no version claimed)");
@@ -2945,7 +3172,7 @@ namespace DiscImageChef.Decoders
                         sb.AppendLine("Device complies with FC-PH ANSI INCITS 230-1994");
                         break;
                     case 0x0D3C:
-                        sb.AppendLine("Device complies with FC-PH ANSI INCITS 230-1994 with Amnd 1 ANSI INCITS 230/ AM1-1996");
+                        sb.AppendLine("Device complies with FC-PH ANSI INCITS 230-1994 with Amnd 1 ANSI INCITS 230/AM1-1996");
                         break;
                     case 0x0D40:
                         sb.AppendLine("Device complies with FC-AL (no version claimed)");
@@ -2964,6 +3191,9 @@ namespace DiscImageChef.Decoders
                         break;
                     case 0x0D64:
                         sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999 with Amnd 2 AM2-2006");
+                        break;
+                    case 0x0D65:
+                        sb.AppendLine("Device complies with FC-AL-2 ISO/IEC 14165-122 with AM1 & AM2");
                         break;
                     case 0x0D7C:
                         sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999");
@@ -2989,6 +3219,9 @@ namespace DiscImageChef.Decoders
                     case 0x0DBC:
                         sb.AppendLine("Device complies with FC-FS ANSI INCITS 373-2003");
                         break;
+                    case 0x0DBD:
+                        sb.AppendLine("Device complies with FC-FS ISO/IEC 14165-251");
+                        break;
                     case 0x0DC0:
                         sb.AppendLine("Device complies with FC-PI (no version claimed)");
                         break;
@@ -3011,7 +3244,7 @@ namespace DiscImageChef.Decoders
                         sb.AppendLine("Device complies with FC-FS-2 ANSI INCITS 242-2007");
                         break;
                     case 0x0E03:
-                        sb.AppendLine("Device complies with FC-FS-2 ANSI INCITS 242-2007 with AM1 ANSI INCITS 242/ AM1-2007");
+                        sb.AppendLine("Device complies with FC-FS-2 ANSI INCITS 242-2007 with AM1 ANSI INCITS 242/AM1-2007");
                         break;
                     case 0x0E20:
                         sb.AppendLine("Device complies with FC-LS (no version claimed)");
@@ -3034,11 +3267,26 @@ namespace DiscImageChef.Decoders
                     case 0x0E60:
                         sb.AppendLine("Device complies with FC-PI-3 (no version claimed)");
                         break;
+                    case 0x0E62:
+                        sb.AppendLine("Device complies with FC-PI-3 T11/1625-D revision 2.0");
+                        break;
+                    case 0x0E68:
+                        sb.AppendLine("Device complies with FC-PI-3 T11/1625-D revision 2.1");
+                        break;
+                    case 0x0E6A:
+                        sb.AppendLine("Device complies with FC-PI-3 T11/1625-D revision 4.0");
+                        break;
+                    case 0x0E6E:
+                        sb.AppendLine("Device complies with FC-PI-3 ANSI INCITS 460-2011");
+                        break;
                     case 0x0E80:
                         sb.AppendLine("Device complies with FC-PI-4 (no version claimed)");
                         break;
                     case 0x0E82:
                         sb.AppendLine("Device complies with FC-PI-4 T11/1647-D revision 8.0");
+                        break;
+                    case 0x0E88:
+                        sb.AppendLine("Device complies with FC-PI-4 ANSI INCITS 450-2009");
                         break;
                     case 0x0EA0:
                         sb.AppendLine("Device complies with FC 10GFC (no version claimed)");
@@ -3049,8 +3297,11 @@ namespace DiscImageChef.Decoders
                     case 0x0EA3:
                         sb.AppendLine("Device complies with FC 10GFC ISO/IEC 14165-116");
                         break;
+                    case 0x0EA5:
+                        sb.AppendLine("Device complies with FC 10GFC ISO/IEC 14165-116 with AM1");
+                        break;
                     case 0x0EA6:
-                        sb.AppendLine("Device complies with FC 10GFC ANSI INCITS 364-2003 with AM1 ANSI INCITS 364/ AM1-2007");
+                        sb.AppendLine("Device complies with FC 10GFC ANSI INCITS 364-2003 with AM1 ANSI INCITS 364/AM1-2007");
                         break;
                     case 0x0EC0:
                         sb.AppendLine("Device complies with FC-SP-2 (no version claimed)");
@@ -3058,11 +3309,83 @@ namespace DiscImageChef.Decoders
                     case 0x0EE0:
                         sb.AppendLine("Device complies with FC-FS-3 (no version claimed)");
                         break;
+                    case 0x0EE2:
+                        sb.AppendLine("Device complies with FC-FS-3 T11/1861-D revision 0.9");
+                        break;
+                    case 0x0EE7:
+                        sb.AppendLine("Device complies with FC-FS-3 T11/1861-D revision 1.0");
+                        break;
+                    case 0x0EE9:
+                        sb.AppendLine("Device complies with FC-FS-3 T11/1861-D revision 1.10");
+                        break;
+                    case 0x0EEB:
+                        sb.AppendLine("Device complies with FC-FS-3 ANSI INCITS 470-2011");
+                        break;
                     case 0x0F00:
                         sb.AppendLine("Device complies with FC-LS-2 (no version claimed)");
                         break;
+                    case 0x0F03:
+                        sb.AppendLine("Device complies with FC-LS-2 T11/2103-D revision 2.11");
+                        break;
+                    case 0x0F05:
+                        sb.AppendLine("Device complies with FC-LS-2 T11/2103-D revision 2.21");
+                        break;
+                    case 0x0F07:
+                        sb.AppendLine("Device complies with FC-LS-2 ANSI INCITS 477-2011");
+                        break;
+                    case 0x0F20:
+                        sb.AppendLine("Device complies with FC-PI-5 (no version claimed)");
+                        break;
+                    case 0x0F27:
+                        sb.AppendLine("Device complies with FC-PI-5 T11/2118-D revision 2.00");
+                        break;
+                    case 0x0F28:
+                        sb.AppendLine("Device complies with FC-PI-5 T11/2118-D revision 3.00");
+                        break;
+                    case 0x0F2A:
+                        sb.AppendLine("Device complies with FC-PI-5 T11/2118-D revision 6.00");
+                        break;
+                    case 0x0F2B:
+                        sb.AppendLine("Device complies with FC-PI-5 T11/2118-D revision 6.10");
+                        break;
+                    case 0x0F2E:
+                        sb.AppendLine("Device complies with FC-PI-5 ANSI INCITS 479-2011");
+                        break;
+                    case 0x0F40:
+                        sb.AppendLine("Device complies with FC-PI-6 (no version claimed)");
+                        break;
+                    case 0x0F60:
+                        sb.AppendLine("Device complies with FC-FS-4 (no version claimed)");
+                        break;
+                    case 0x0F80:
+                        sb.AppendLine("Device complies with FC-LS-3 (no version claimed)");
+                        break;
+                    case 0x12A0:
+                        sb.AppendLine("Device complies with FC-SCM (no version claimed)");
+                        break;
+                    case 0x12A3:
+                        sb.AppendLine("Device complies with FC-SCM T11/1824DT revision 1.0");
+                        break;
+                    case 0x12A5:
+                        sb.AppendLine("Device complies with FC-SCM T11/1824DT revision 1.1");
+                        break;
+                    case 0x12A7:
+                        sb.AppendLine("Device complies with FC-SCM T11/1824DT revision 1.4");
+                        break;
+                    case 0x12AA:
+                        sb.AppendLine("Device complies with FC-SCM INCITS TR-47 2012");
+                        break;
                     case 0x12C0:
                         sb.AppendLine("Device complies with FC-DA-2 (no version claimed)");
+                        break;
+                    case 0x12C3:
+                        sb.AppendLine("Device complies with FC-DA-2 T11/1870DT revision 1.04");
+                        break;
+                    case 0x12C5:
+                        sb.AppendLine("Device complies with FC-DA-2 T11/1870DT revision 1.06");
+                        break;
+                    case 0x12C9:
+                        sb.AppendLine("Device complies with FC-DA-2 INCITS TR-49 2012");
                         break;
                     case 0x12E0:
                         sb.AppendLine("Device complies with FC-DA (no version claimed)");
@@ -3072,6 +3395,9 @@ namespace DiscImageChef.Decoders
                         break;
                     case 0x12E8:
                         sb.AppendLine("Device complies with FC-DA ANSI INCITS TR-36 2004");
+                        break;
+                    case 0x12E9:
+                        sb.AppendLine("Device complies with FC-DA ISO/IEC 14165-341");
                         break;
                     case 0x1300:
                         sb.AppendLine("Device complies with FC-Tape (no version claimed)");
@@ -3148,8 +3474,11 @@ namespace DiscImageChef.Decoders
                     case 0x161C:
                         sb.AppendLine("Device complies with ATA/ATAPI-7 ANSI INCITS 397-2005");
                         break;
+                    case 0x161E:
+                        sb.AppendLine("Device complies with ATA/ATAPI-7 ISO/IEC 24739");
+                        break;
                     case 0x1620:
-                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-AAM Architecture Model (no version claimed)");
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-AAM (no version claimed)");
                         break;
                     case 0x1621:
                         sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-APT Parallel Transport (no version claimed)");
@@ -3159,6 +3488,12 @@ namespace DiscImageChef.Decoders
                         break;
                     case 0x1623:
                         sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-ACS ATA/ATAPI Command Set (no version claimed)");
+                        break;
+                    case 0x1628:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-AAM ANSI INCITS 451-2008");
+                        break;
+                    case 0x162A:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-ACS ANSI INCITS 452-2009 w/ Amendment 1");
                         break;
                     case 0x1728:
                         sb.AppendLine("Device complies with Universal Serial Bus Specification, Revision 1.1");
@@ -3171,6 +3506,30 @@ namespace DiscImageChef.Decoders
                         break;
                     case 0x1740:
                         sb.AppendLine("Device complies with UAS (no version claimed)");
+                        break;
+                    case 0x1743:
+                        sb.AppendLine("Device complies with UAS T10/2095-D revision 02");
+                        break;
+                    case 0x1747:
+                        sb.AppendLine("Device complies with UAS T10/2095-D revision 04");
+                        break;
+                    case 0x1748:
+                        sb.AppendLine("Device complies with UAS ANSI INCITS 471-2010");
+                        break;
+                    case 0x1749:
+                        sb.AppendLine("Device complies with UAS ISO/IEC 14776-251:2014");
+                        break;
+                    case 0x1761:
+                        sb.AppendLine("Device complies with ACS-2 (no version claimed)");
+                        break;
+                    case 0x1762:
+                        sb.AppendLine("Device complies with ACS-2 ANSI INCITS 482-2013");
+                        break;
+                    case 0x1765:
+                        sb.AppendLine("Device complies with ACS-3 (no version claimed)");
+                        break;
+                    case 0x1780:
+                        sb.AppendLine("Device complies with UAS-2 (no version claimed)");
                         break;
                     case 0x1EA0:
                         sb.AppendLine("Device complies with SAT (no version claimed)");
@@ -3188,7 +3547,112 @@ namespace DiscImageChef.Decoders
                         sb.AppendLine("Device complies with SAT-2 (no version claimed)");
                         break;
                     case 0x1EC4:
-                        sb.AppendLine("Device complies with SAT-2 T10/1826-D revision 6");
+                        sb.AppendLine("Device complies with SAT-2 T10/1826-D revision 06");
+                        break;
+                    case 0x1EC8:
+                        sb.AppendLine("Device complies with SAT-2 T10/1826-D revision 09");
+                        break;
+                    case 0x1ECA:
+                        sb.AppendLine("Device complies with SAT-2 ANSI INCITS 465-2010");
+                        break;
+                    case 0x1EE0:
+                        sb.AppendLine("Device complies with SAT-3 (no version claimed)");
+                        break;
+                    case 0x1EE2:
+                        sb.AppendLine("Device complies with SAT-3 T10/BSR INCITS 517 revision 4");
+                        break;
+                    case 0x1EE4:
+                        sb.AppendLine("Device complies with SAT-3 T10/BSR INCITS 517 revision 7");
+                        break;
+                    case 0x1EE8:
+                        sb.AppendLine("Device complies with SAT-3 ANSI INCITS 517-2015");
+                        break;
+                    case 0x1F00:
+                        sb.AppendLine("Device complies with SAT-4 (no version claimed)");
+                        break;
+                    case 0x20A0:
+                        sb.AppendLine("Device complies with SPL (no version claimed)");
+                        break;
+                    case 0x20A3:
+                        sb.AppendLine("Device complies with SPL T10/2124-D revision 6a");
+                        break;
+                    case 0x20A5:
+                        sb.AppendLine("Device complies with SPL T10/2124-D revision 7");
+                        break;
+                    case 0x20A7:
+                        sb.AppendLine("Device complies with SPL ANSI INCITS 476-2011");
+                        break;
+                    case 0x20A8:
+                        sb.AppendLine("Device complies with SPL ANSI INCITS 476-2011 + SPL AM1 INCITS 476/AM1 2012");
+                        break;
+                    case 0x20AA:
+                        sb.AppendLine("Device complies with SPL ISO/IEC 14776-261:2012");
+                        break;
+                    case 0x20C0:
+                        sb.AppendLine("Device complies with SPL-2 (no version claimed)");
+                        break;
+                    case 0x20C2:
+                        sb.AppendLine("Device complies with SPL-2 T10/BSR INCITS 505 revision 4");
+                        break;
+                    case 0x20C4:
+                        sb.AppendLine("Device complies with SPL-2 T10/BSR INCITS 505 revision 5");
+                        break;
+                    case 0x20C8:
+                        sb.AppendLine("Device complies with SPL-2 ANSI INCITS 505-2013");
+                        break;
+                    case 0x20E0:
+                        sb.AppendLine("Device complies with SPL-3 (no version claimed)");
+                        break;
+                    case 0x20E4:
+                        sb.AppendLine("Device complies with SPL-3 T10/BSR INCITS 492 revision 6");
+                        break;
+                    case 0x20E6:
+                        sb.AppendLine("Device complies with SPL-3 T10/BSR INCITS 492 revision 7");
+                        break;
+                    case 0x20E8:
+                        sb.AppendLine("Device complies with SPL-3 ANSI INCITS 492-2015");
+                        break;
+                    case 0x2100:
+                        sb.AppendLine("Device complies with SPL-4 (no version claimed)");
+                        break;
+                    case 0x21E0:
+                        sb.AppendLine("Device complies with SOP (no version claimed)");
+                        break;
+                    case 0x21E4:
+                        sb.AppendLine("Device complies with SOP T10/BSR INCITS 489 revision 4");
+                        break;
+                    case 0x21E6:
+                        sb.AppendLine("Device complies with SOP T10/BSR INCITS 489 revision 5");
+                        break;
+                    case 0x21E8:
+                        sb.AppendLine("Device complies with SOP ANSI INCITS 489-2014");
+                        break;
+                    case 0x2200:
+                        sb.AppendLine("Device complies with PQI (no version claimed)");
+                        break;
+                    case 0x2204:
+                        sb.AppendLine("Device complies with PQI T10/BSR INCITS 490 revision 6");
+                        break;
+                    case 0x2206:
+                        sb.AppendLine("Device complies with PQI T10/BSR INCITS 490 revision 7");
+                        break;
+                    case 0x2208:
+                        sb.AppendLine("Device complies with PQI ANSI INCITS 490-2014");
+                        break;
+                    case 0x2220:
+                        sb.AppendLine("Device complies with SOP-2 (no version claimed)");
+                        break;
+                    case 0x2240:
+                        sb.AppendLine("Device complies with PQI-2 (no version claimed)");
+                        break;
+                    case 0xFFC0:
+                        sb.AppendLine("Device complies with IEEE 1667 (no version claimed)");
+                        break;
+                    case 0xFFC1:
+                        sb.AppendLine("Device complies with IEEE 1667-2006");
+                        break;
+                    case 0xFFC2:
+                        sb.AppendLine("Device complies with IEEE 1667-2009");
                         break;
                     default:
                         sb.AppendFormat("Device complies with unknown standard code 0x{0:X4}", VersionDescriptor).AppendLine();

@@ -1,6 +1,11 @@
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI.cs:
+	  Added information from SPC-5.
+
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI.cs:
 	  Updated to lastest T10 vendor list.
 
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
