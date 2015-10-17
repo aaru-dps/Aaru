@@ -74,7 +74,7 @@ namespace DiscImageChef.Decoders
             SCSIPQVendorMask = 0x04
         }
 
-        enum SCSIPeripheralDeviceTypes : byte
+        public enum SCSIPeripheralDeviceTypes : byte
         {
             /// <summary>
             /// Direct-access device
