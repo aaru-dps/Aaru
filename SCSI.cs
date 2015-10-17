@@ -46,6 +46,7 @@ namespace DiscImageChef.Decoders
     /// T10/995-D revision 10
     /// T10/1236-D revision 20
     /// T10/1416-D revision 23
+    /// T10/1731-D revision 16
     /// </summary>
     public static class SCSI
     {
@@ -154,6 +155,10 @@ namespace DiscImageChef.Decoders
             /// </summary>
             SCSIPDTADCDevice = 0x12,
             /// <summary>
+            /// Security Manager Device
+            /// </summary>
+            SCSISecurityManagerDevice = 0x13,
+            /// <summary>
             /// Well known logical unit
             /// </summary>
             SCSIPDTWellKnownDevice = 0x1E,
@@ -186,9 +191,13 @@ namespace DiscImageChef.Decoders
             /// </summary>
             SCSIANSI2001Version = 0x04,
             /// <summary>
-            /// Device complies with SPC3, T10, 2005.
+            /// Device complies with ANSI X3.408:2005.
             /// </summary>
-            SCSIANSI2005Version = 0x05
+            SCSIANSI2005Version = 0x05,
+            /// <summary>
+            /// Device complies with SPC-4
+            /// </summary>
+            SCSIANSI2008Version = 0x06
         }
 
         enum SCSIECMAVersions : byte
@@ -242,6 +251,7 @@ namespace DiscImageChef.Decoders
             SAM2 = 0x0040,
             SAM3 = 0x0060,
             SAM4 = 0x0080,
+            SAM5 = 0x00A0,
             SPC = 0x0120,
             MMC = 0x0140,
             SCC = 0x0160,
@@ -271,6 +281,8 @@ namespace DiscImageChef.Decoders
             SPC4 = 0x0460,
             SMC3 = 0x0480,
             ADC2 = 0x04A0,
+            MMC6 = 0x04E0,
+            ADC3 = 0x0500,
             SSA_TL2 = 0x0820,
             SSA_TL1 = 0x0840,
             SSA_S3P = 0x0860,
@@ -287,8 +299,9 @@ namespace DiscImageChef.Decoders
             ADT = 0x09E0,
             FCP3 = 0x0A00,
             ADT2 = 0x0A20,
+            FCP4 = 0x0A40,
             SPI = 0x0AA0,
-            Fast20 = 0xAC0,
+            Fast20 = 0x0AC0,
             SPI2 = 0x0AE0,
             SPI3 = 0x0B00,
             EPI = 0x0B20,
@@ -306,6 +319,13 @@ namespace DiscImageChef.Decoders
             FC_FS2 = 0x0E00,
             FC_LS = 0x0E20,
             FC_SP = 0x0E40,
+            FC_PI3 = 0x0E60,
+            FC_PI4 = 0x0E80,
+            FC_10GFC = 0x0EA0,
+            FC_SP2 = 0x0EC0,
+            FC_FS3 = 0x0EE0,
+            FC_LS2 = 0x0F00,
+            FC_DA2 = 0x12C0,
             FC_DA = 0x12E0,
             FC_Tape = 0x1300,
             FC_FLA = 0x1320,
@@ -2708,6 +2728,9 @@ namespace DiscImageChef.Decoders
                 case SCSIPeripheralDeviceTypes.SCSIPDTADCDevice: //0x12,
                     sb.AppendLine("Automation/Drive Interface");
                     break;
+                case SCSIPeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
+                    sb.AppendLine("Security Manager Device");
+                    break;
                 case SCSIPeripheralDeviceTypes.SCSIPDTWellKnownDevice: //0x1E,
                     sb.AppendLine("Well known logical unit");
                     break;
@@ -2725,19 +2748,22 @@ namespace DiscImageChef.Decoders
                     sb.AppendLine("Device does not claim to comply with any SCSI ANSI standard");
                     break;
                 case SCSIANSIVersions.SCSIANSI1986Version:
-                    sb.AppendLine("Device claims to comply with ANSI X3.131:1986");
+                    sb.AppendLine("Device claims to comply with ANSI X3.131:1986 (SCSI-1)");
                     break;
                 case SCSIANSIVersions.SCSIANSI1994Version:
-                    sb.AppendLine("Device claims to comply with ANSI X3.131:1994");
+                    sb.AppendLine("Device claims to comply with ANSI X3.131:1994 (SCSI-2)");
                     break;
                 case SCSIANSIVersions.SCSIANSI1997Version:
-                    sb.AppendLine("Device claims to comply with ANSI X3.301:1997");
+                    sb.AppendLine("Device claims to comply with ANSI X3.301:1997 (SPC-1)");
                     break;
                 case SCSIANSIVersions.SCSIANSI2001Version:
-                    sb.AppendLine("Device claims to comply with ANSI X3.351:2001");
+                    sb.AppendLine("Device claims to comply with ANSI X3.351:2001 (SPC-2)");
                     break;
                 case SCSIANSIVersions.SCSIANSI2005Version:
-                    sb.AppendLine("Device claims to comply with ANSI X3.???:2005");
+                    sb.AppendLine("Device claims to comply with ANSI X3.408:2005 (SPC-3)");
+                    break;
+                case SCSIANSIVersions.SCSIANSI2008Version:
+                    sb.AppendLine("Device claims to comply with ANSI X3.408:2005 (SPC-4)");
                     break;
                 default:
                     sb.AppendFormat("Device claims to comply with unknown SCSI ANSI standard value 0x{0:X2})", response.ANSIVersion).AppendLine();
