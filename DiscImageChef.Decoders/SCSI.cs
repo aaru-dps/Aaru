@@ -244,1280 +244,6 @@ namespace DiscImageChef.Decoders
             SCSIClockingSTandDT = 0x03,
         }
 
-        enum SCSIVersionDescriptorStandardMask : ushort
-        {
-            NoStandard = 0x0000,
-            SAM = 0x0020,
-            SAM2 = 0x0040,
-            SAM3 = 0x0060,
-            SAM4 = 0x0080,
-            SAM5 = 0x00A0,
-            SPC = 0x0120,
-            MMC = 0x0140,
-            SCC = 0x0160,
-            SBC = 0x0180,
-            SMC = 0x01A0,
-            SES = 0x01C0,
-            SCC2 = 0x01E0,
-            SSC = 0x0200,
-            RBC = 0x0220,
-            MMC2 = 0x0240,
-            SPC2 = 0x0260,
-            OCRW = 0x0280,
-            MMC3 = 0x02A0,
-            RMC = 0x02C0,
-            SMC2 = 0x02E0,
-            SPC3 = 0x0300,
-            SBC2 = 0x0320,
-            OSD = 0x0340,
-            SSC2 = 0x0360,
-            BCC = 0x0380,
-            MMC4 = 0x03A0,
-            ADC = 0x03C0,
-            SES2 = 0x03E0,
-            SSC3 = 0x0400,
-            MMC5 = 0x0420,
-            OSD2 = 0x0440,
-            SPC4 = 0x0460,
-            SMC3 = 0x0480,
-            ADC2 = 0x04A0,
-            MMC6 = 0x04E0,
-            ADC3 = 0x0500,
-            SSA_TL2 = 0x0820,
-            SSA_TL1 = 0x0840,
-            SSA_S3P = 0x0860,
-            SSA_S2P = 0x0880,
-            SIP = 0x08A0,
-            FCP = 0x08C0,
-            SBP2 = 0x08E0,
-            FCP2 = 0x0900,
-            SST = 0x0920,
-            SRP = 0x0940,
-            iSCSI = 0x0960,
-            SBP3 = 0x0980,
-            ADP = 0x09C0,
-            ADT = 0x09E0,
-            FCP3 = 0x0A00,
-            ADT2 = 0x0A20,
-            FCP4 = 0x0A40,
-            SPI = 0x0AA0,
-            Fast20 = 0x0AC0,
-            SPI2 = 0x0AE0,
-            SPI3 = 0x0B00,
-            EPI = 0x0B20,
-            SPI4 = 0x0B40,
-            SPI5 = 0x0B60,
-            SAS = 0x0BE0,
-            SAS11 = 0x0C00,
-            FC_PH = 0x0D20,
-            FC_AL = 0x0D40,
-            FC_AL2 = 0x0D60,
-            FC_PH3 = 0x0D80,
-            FC_FS = 0x0DA0,
-            FC_PI = 0x0DC0,
-            FC_PI2 = 0x0DE0,
-            FC_FS2 = 0x0E00,
-            FC_LS = 0x0E20,
-            FC_SP = 0x0E40,
-            FC_PI3 = 0x0E60,
-            FC_PI4 = 0x0E80,
-            FC_10GFC = 0x0EA0,
-            FC_SP2 = 0x0EC0,
-            FC_FS3 = 0x0EE0,
-            FC_LS2 = 0x0F00,
-            FC_DA2 = 0x12C0,
-            FC_DA = 0x12E0,
-            FC_Tape = 0x1300,
-            FC_FLA = 0x1320,
-            FC_PLDA = 0x1340,
-            SSA_PH2 = 0x1360,
-            SSA_PH3 = 0x1380,
-            IEEE1394 = 0x14A0,
-            IEEE1394a = 0x14C0,
-            IEEE1394b = 0x14E0,
-            ATA_ATAPI6 = 0x15E0,
-            ATA_ATAPI7 = 0x1600,
-            ATA_ATAPI8 = 0x1620,
-            USB = 0x1720,
-            SAT = 0x1EA0
-        }
-
-        enum SCSIVersionDescriptorSAMMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0994 revision 18
-            /// </summary>
-            T10_0994_r18 = 0x001B,
-            /// <summary>
-            /// ANSI X3.270:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSAM2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1157-D revision 23
-            /// </summary>
-            T10_1157_r23 = 0x0014,
-            /// <summary>
-            /// T10/1157-D revision 24
-            /// </summary>
-            T10_1157_r24 = 0x0015,
-            /// <summary>
-            /// ANSI INCITS 366-2003
-            /// </summary>
-            ANSI_2003 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSAM3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1561-D revision 7
-            /// </summary>
-            T10_1561_r07 = 0x0002,
-            /// <summary>
-            /// T10/1561-D revision 13
-            /// </summary>
-            T10_1561_r13 = 0x0015,
-            /// <summary>
-            /// T10/1157-D revision 14
-            /// </summary>
-            T10_1561_r14 = 0x0016,
-            /// <summary>
-            /// ANSI INCITS 402-2005
-            /// </summary>
-            ANSI_2005 = 0x0017
-        }
-
-        enum SCSIVersionDescriptorSPCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0995 revision 11a
-            /// </summary>
-            T10_0995_r11a = 0x001B,
-            /// <summary>
-            /// ANSI X3.301:1997
-            /// </summary>
-            ANSI_1997 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorMMCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1048 revision 10a
-            /// </summary>
-            T10_1048_r10a = 0x001B,
-            /// <summary>
-            /// ANSI X3.304:1997
-            /// </summary>
-            ANSI_1997 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSCCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1047 revision 06c
-            /// </summary>
-            T10_1048_r06c = 0x001B,
-            /// <summary>
-            /// ANSI X3.276:1997
-            /// </summary>
-            ANSI_1997 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSBCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0996 revision 08c
-            /// </summary>
-            T10_0996_r08c = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.306:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSMCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0999 revision 10a
-            /// </summary>
-            T10_0999_r10a = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.314:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSESMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1212 revision 08b
-            /// </summary>
-            T10_1212_r08b = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.305:1998
-            /// </summary>
-            ANSI_1998 = 0x001C,
-            /// <summary>
-            /// T10/1212 revision 08b with ANSI NCITS.305/AM1:2000
-            /// </summary>
-            T10_1212_r08b_2000 = 0x001D,
-            /// <summary>
-            /// ANSI NCITS.305:1998 with ANSI NCITS.305/AM1:2000
-            /// </summary>
-            ANSI_1998_2000 = 0x001E
-        }
-
-        enum SCSIVersionDescriptorSCC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1125 revision 04
-            /// </summary>
-            T10_1125_r04 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.318:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0997 revision 17
-            /// </summary>
-            T10_0997_r17 = 0x0001,
-            /// <summary>
-            /// T10/0997 revision 22
-            /// </summary>
-            T10_0997_r22 = 0x0007,
-            /// <summary>
-            /// ANSI NCITS.335:2000
-            /// </summary>
-            ANSI_2000 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorRBCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1240 revision 10a
-            /// </summary>
-            T10_1240_r10a = 0x0018,
-            /// <summary>
-            /// ANSI NCITS.330:2000
-            /// </summary>
-            ANSI_2000 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorMMC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1228 revision 11
-            /// </summary>
-            T10_1228_r11 = 0x0015,
-            /// <summary>
-            /// T10/1228 revision 11a
-            /// </summary>
-            T10_1228_r11a = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.333:2000
-            /// </summary>
-            ANSI_2000 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSPC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1236 revision 12
-            /// </summary>
-            T10_1236_r12 = 0x0007,
-            /// <summary>
-            /// T10/1236 revision 18
-            /// </summary>
-            T10_1236_r18 = 0x0009,
-            /// <summary>
-            /// T10/1236 revision 19
-            /// </summary>
-            T10_1236_r19 = 0x0015,
-            /// <summary>
-            /// T10/1236 revision 20
-            /// </summary>
-            T10_1236_r20 = 0x0016,
-            /// <summary>
-            /// ANSI INCITS 351-2001
-            /// </summary>
-            ANSI_2001 = 0x0017,
-        }
-
-        enum SCSIVersionDescriptorOCRWMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ISO/IEC 14776-381
-            /// </summary>
-            ISO14776_381 = 0x001E
-        }
-
-        enum SCSIVersionDescriptorMMC3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1363-D revision 9
-            /// </summary>
-            T10_1363_r09 = 0x0015,
-            /// <summary>
-            /// T10/1363-D revision 10g
-            /// </summary>
-            T10_1363_r10g = 0x0016,
-            /// <summary>
-            /// ANSI INCITS 360-2002
-            /// </summary>
-            ANSI_2001 = 0x0018
-        }
-
-        enum SCSIVersionDescriptorSMC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1383-D revision 5
-            /// </summary>
-            T10_1383_r05 = 0x0015,
-            /// <summary>
-            /// T10/1383-D revision 6
-            /// </summary>
-            T10_1383_r06 = 0x001C,
-            /// <summary>
-            /// T10/1363-D revision 7
-            /// </summary>
-            T10_1383_r07 = 0x001D,
-            /// <summary>
-            /// ANSI INCITS 382-2004
-            /// </summary>
-            ANSI_2004 = 0x001E
-        }
-
-        enum SCSIVersionDescriptorSPC3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1416-D revision 7
-            /// </summary>
-            T10_1416_r07 = 0x0001,
-            /// <summary>
-            /// T10/1416-D revision 21
-            /// </summary>
-            T10_1416_r21 = 0x0007,
-            /// <summary>
-            /// T10/1416-D revision 22
-            /// </summary>
-            T10_1416_r22 = 0x000F
-        }
-
-        enum SCSIVersionDescriptorSBC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1383 revision 5
-            /// </summary>
-            T10_1383_r05 = 0x0002,
-            /// <summary>
-            /// T10/1383 revision 6
-            /// </summary>
-            T10_1383_r06 = 0x0004,
-            /// <summary>
-            /// T10/1383 revision 7
-            /// </summary>
-            T10_1383_r07 = 0x001B,
-            /// <summary>
-            /// ANSI INCITS 405-2005
-            /// </summary>
-            ANSI_2005 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorOSDMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1355 revision 0
-            /// </summary>
-            T10_1355_r0 = 0x0001,
-            /// <summary>
-            /// T10/1355 revision 7a
-            /// </summary>
-            T10_1355_r7a = 0x0002,
-            /// <summary>
-            /// T10/1355 revision 8
-            /// </summary>
-            T10_1355_r8 = 0x0003,
-            /// <summary>
-            /// T10/1355 revision 9
-            /// </summary>
-            T10_1355_r9 = 0x0004,
-            /// <summary>
-            /// T10/1355 revision 10
-            /// </summary>
-            T10_1355_r10 = 0x0015,
-            /// <summary>
-            /// ANSI INCITS 400-2004
-            /// </summary>
-            ANSI_2004 = 0x0016
-        }
-
-        enum SCSIVersionDescriptorSSC2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1434-D revision 7
-            /// </summary>
-            T10_1434_r07 = 0x0014,
-            /// <summary>
-            /// T10/1434-D revision 9
-            /// </summary>
-            T10_1434_r09 = 0x0015,
-            /// <summary>
-            /// ANSI INCITS 380-2003
-            /// </summary>
-            ANSI_2003 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorMMC4Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1545-D revision 5
-            /// </summary>
-            T10_1545_r5 = 0x0010,
-            /// <summary>
-            /// T10/1545-D revision 3
-            /// </summary>
-            T10_1545_r3 = 0x001D,
-            /// <summary>
-            /// T10/1545-D revision 3d
-            /// </summary>
-            T10_1545_r3d = 0x001E,
-            /// <summary>
-            /// ANSI INCITS 401-2005
-            /// </summary>
-            ANSI_2005 = 0x001F
-        }
-
-        enum SCSIVersionDescriptorADCMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1558-D revision 6
-            /// </summary>
-            T10_1558_r6 = 0x0015,
-            /// <summary>
-            /// T10/1558-D revision 7
-            /// </summary>
-            T10_1558_r7 = 0x0016,
-            /// <summary>
-            /// ANSI INCITS 403-2005
-            /// </summary>
-            ANSI_2005 = 0x0017
-        }
-
-        enum SCSIVersionDescriptorSSA_TL2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/1147 revision 05b
-            /// </summary>
-            T10_1147_r05b = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.308:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSA_TL1Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/0989 revision 10b
-            /// </summary>
-            T10_0989_r10b = 0x001B,
-            /// <summary>
-            /// ANSI X3.295:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSA_S3PMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/1051 revision 05b
-            /// </summary>
-            T10_1051_r05b = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.309:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSA_S2PMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/1121 revision 07b
-            /// </summary>
-            T10_1121_r07b = 0x001B,
-            /// <summary>
-            /// ANSI X3.294:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSIPMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0856 revision 10
-            /// </summary>
-            T10_0856_r10 = 0x001B,
-            /// <summary>
-            /// ANSI X3.292:1997
-            /// </summary>
-            ANSI_1997 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCPMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0993 revision 12
-            /// </summary>
-            T10_0993_r12 = 0x001B,
-            /// <summary>
-            /// ANSI X3.269:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSBP2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1155 revision 04
-            /// </summary>
-            T10_1155_r04 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.325:1999
-            /// </summary>
-            ANSI_1999 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCP2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1144-D revision 4
-            /// </summary>
-            T10_1144_r4 = 0x0001,
-            /// <summary>
-            /// T10/1144-D revision 7
-            /// </summary>
-            T10_1144_r7 = 0x0015,
-            /// <summary>
-            /// T10/1144-D revision 7a
-            /// </summary>
-            T10_1144_r7a = 0x0016,
-            /// <summary>
-            /// ANSI INCITS 350-2003
-            /// </summary>
-            ANSI_2003 = 0x0017,
-            /// <summary>
-            /// T10/1144-D revision 8
-            /// </summary>
-            T10_1144_r8 = 0x0018
-        }
-
-        enum SCSIVersionDescriptorSSTMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1380-D revision 8b
-            /// </summary>
-            T10_1380_r8b = 0x0015
-        }
-
-        enum SCSIVersionDescriptorSRPMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1415-D revision 10
-            /// </summary>
-            T10_1415_r10 = 0x0014,
-            /// <summary>
-            /// T10/1415-D revision 16a
-            /// </summary>
-            T10_1415_r16a = 0x0015,
-            /// <summary>
-            /// ANSI INCITS 365-2002
-            /// </summary>
-            ANSI_2003 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSBP3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1467-D revision 1f
-            /// </summary>
-            T10_1467_r1f = 0x0002,
-            /// <summary>
-            /// T10/1467-D revision 3
-            /// </summary>
-            T10_1467_r3 = 0x0014,
-            /// <summary>
-            /// T10/1467-D revision 4
-            /// </summary>
-            T10_1467_r4 = 0x001A,
-            /// <summary>
-            /// T10/1467-D revision 5
-            /// </summary>
-            T10_1467_r5 = 0x001B,
-            /// <summary>
-            /// ANSI INCITS 375-2004
-            /// </summary>
-            ANSI_2004 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorADTMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1557-D revision 11
-            /// </summary>
-            T10_1557_r11 = 0x0019,
-            /// <summary>
-            /// T10/1557-D revision 14
-            /// </summary>
-            T10_1557_r14 = 0x001A,
-            /// <summary>
-            /// ANSI INCITS 406-2005
-            /// </summary>
-            ANSI_2005 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorFCP3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1560-D revision 4
-            /// </summary>
-            T10_1560_r4 = 0x000F
-        }
-
-        enum SCSIVersionDescriptorSPIMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/0855 revision 15a
-            /// </summary>
-            T10_0855_r15a = 0x0019,
-            /// <summary>
-            /// ANSI X3.253:1995
-            /// </summary>
-            ANSI_1995 = 0x001A,
-            /// <summary>
-            /// T10/0855 revision 15a with SPI Amnd revision 3a
-            /// </summary>
-            T10_0855_r15a_Amnd_3a = 0x001B,
-            /// <summary>
-            /// ANSI X3.253:1995 with SPI Amnd ANSI X3.253/AM1:1998
-            /// </summary>
-            ANSI_1995_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFast20Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1071 revision 06
-            /// </summary>
-            T10_1071_r06 = 0x001B,
-            /// <summary>
-            /// ANSI X3.277:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSPI2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1142 revision 20b
-            /// </summary>
-            T10_1142_r20b = 0x001B,
-            /// <summary>
-            /// ANSI X3.302:1999
-            /// </summary>
-            ANSI_1999 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSPI3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1302-D revision 10
-            /// </summary>
-            T10_1302D_r10 = 0x0018,
-            /// <summary>
-            /// T10/1302-D revision 13a
-            /// </summary>
-            T10_1302D_r13a = 0x0019,
-            /// <summary>
-            /// T10/1302-D revision 14
-            /// </summary>
-            T10_1302D_r14 = 0x001A,
-            /// <summary>
-            /// ANSI NCITS.336:2000
-            /// </summary>
-            ANSI_2000 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorEPIMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1134 revision 16
-            /// </summary>
-            T10_1134_r16 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS TR-23:1999
-            /// </summary>
-            ANSI_1999 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSPI4Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1365-D revision 7
-            /// </summary>
-            T10_1365_r7 = 0x0014,
-            /// <summary>
-            /// T10/1365-D revision 9
-            /// </summary>
-            T10_1365_r9 = 0x0015,
-            /// <summary>
-            /// ANSI INCITS 362-2002
-            /// </summary>
-            ANSI_2002 = 0x0016,
-            /// <summary>
-            /// T10/1365-D revision 10
-            /// </summary>
-            T10_1365_r10 = 0x0019
-        }
-
-        enum SCSIVersionDescriptorSPI5Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1525-D revision 3
-            /// </summary>
-            T10_1525_r3 = 0x0019,
-            /// <summary>
-            /// T10/1525-D revision 5
-            /// </summary>
-            T10_1525_r5 = 0x001A,
-            /// <summary>
-            /// T10/1525-D revision 6
-            /// </summary>
-            T10_1525_r6 = 0x001B,
-            /// <summary>
-            /// ANSI INCITS 367-2003
-            /// </summary>
-            ANSI_2003 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSASMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1562-D revision 01
-            /// </summary>
-            T10_1562_r01 = 0x0001,
-            /// <summary>
-            /// T10/1562-D revision 03
-            /// </summary>
-            T10_1562_r03 = 0x0015,
-            /// <summary>
-            /// T10/1562-D revision 04
-            /// </summary>
-            T10_1562_r04 = 0x001A,
-            /// <summary>
-            /// T10/1562-D revision 04
-            /// </summary>
-            T10_1562_r04bis = 0x001B,
-            /// <summary>
-            /// T10/1562-D revision 05
-            /// </summary>
-            T10_1562_r05 = 0x001C,
-            /// <summary>
-            /// ANSI INCITS 376-2003
-            /// </summary>
-            ANSI_2003 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorSAS11Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10/1601-D revision 9
-            /// </summary>
-            T10_1601_r9 = 0x0007,
-            /// <summary>
-            /// T10/1601-D revision 10
-            /// </summary>
-            T10_1601_r10 = 0x000F
-        }
-
-        enum SCSIVersionDescriptorFCPHMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI X3.230:1994
-            /// </summary>
-            ANSI_1994 = 0x001B,
-            /// <summary>
-            /// ANSI X3.230:1994 with Amnd 1 ANSI X3.230/AM1:1996
-            /// </summary>
-            ANSI_1994_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCALMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI X3.272:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCAL2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1133 revision 7.0
-            /// </summary>
-            T11_1133_r70 = 0x0001,
-            /// <summary>
-            /// ANSI NCITS.332:1999
-            /// </summary>
-            ANSI_1999 = 0x001C,
-            /// <summary>
-            /// ANSI INCITS 332-1999 with Amnd 1 AM1-2002
-            /// </summary>
-            ANSI_1999_2002 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorFCPH3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI X3.303-1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCFSMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1331 revision 1.2
-            /// </summary>
-            T11_1331_r12 = 0x0017,
-            /// <summary>
-            /// T11/1331 revision 1.7
-            /// </summary>
-            T11_1331_r17 = 0x0018,
-            /// <summary>
-            /// ANSI INCITS 373-2003
-            /// </summary>
-            ANSI_2003 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCPIMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI INCITS 352-2002
-            /// </summary>
-            ANSI_2002 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCPI2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1506-D revision 5.0
-            /// </summary>
-            T11_1506_r50 = 0x0002
-        }
-
-        enum SCSIVersionDescriptorFCSPMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1570-D revision 1.6
-            /// </summary>
-            T11_1570_r16 = 0x0002
-        }
-
-        enum SCSIVersionDescriptorFCDAMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1513-DT revision 3.1
-            /// </summary>
-            T11_1513_r31 = 0x0002
-        }
-
-        enum SCSIVersionDescriptorFCTapeMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1315 revision 1.16
-            /// </summary>
-            T11_1315_r116 = 0x0001,
-            /// <summary>
-            /// T11/1315 revision 1.17
-            /// </summary>
-            T11_1315_r117 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS TR-24:1999
-            /// </summary>
-            ANSI_1999 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCFLAMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1235 revision 7
-            /// </summary>
-            T11_1235_r7 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS TR-20:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorFCPLDAMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T11/1162 revision 2.1
-            /// </summary>
-            T11_1162_r21 = 0x001B,
-            /// <summary>
-            /// ANSI NCITS TR-19:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSAPH2Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/1145 revision 09c
-            /// </summary>
-            T10_1145_r09c = 0x001B,
-            /// <summary>
-            /// ANSI X3.293:1996
-            /// </summary>
-            ANSI_1996 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorSSAPH3Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T10.1/1146 revision 05b
-            /// </summary>
-            T10_1146_r05b = 0x001B,
-            /// <summary>
-            /// ANSI NCITS.307:1998
-            /// </summary>
-            ANSI_1998 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorIEEE1394Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI IEEE 1394:1995
-            /// </summary>
-            ANSI_1995 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorATA6Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// ANSI INCITS 361-2002
-            /// </summary>
-            ANSI_2002 = 0x001D
-        }
-
-        enum SCSIVersionDescriptorATA7Mask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// T13/1532-D revision 3
-            /// </summary>
-            T13_1532_r3 = 0x0002,
-            /// <summary>
-            /// ANSI INCITS 397-2005
-            /// </summary>
-            ANSI_2005 = 0x001C
-        }
-
-        enum SCSIVersionDescriptorATA8Mask : ushort
-        {
-            /// <summary>
-            /// ATA8-AAM Architecture Model (no version claimed)
-            /// </summary>
-            ATA8_AAM = 0x0000,
-            /// <summary>
-            /// ATA8-PT Parallel Transport (no version claimed)
-            /// </summary>
-            ATA8_PT = 0x0001,
-            /// <summary>
-            /// ATA8-AST Serial Transport (no version claimed)
-            /// </summary>
-            ATA8_AST = 0x0002,
-            /// <summary>
-            /// ATA8-ACS ATA/ATAPI Command Set (no version claimed)
-            /// </summary>
-            ATA8_ACS = 0x0003
-        }
-
-        enum SCSIVersionDescriptorUSBMask : ushort
-        {
-            /// <summary>
-            /// No revision of the standard is claimed
-            /// </summary>
-            NoVersion = 0x0000,
-            /// <summary>
-            /// Universal Serial Bus Specification, Revision 1.1
-            /// </summary>
-            USB11 = 0x0008,
-            /// <summary>
-            /// Universal Serial Bus Specification, Revision 2.0
-            /// </summary>
-            USB20 = 0x0009,
-            /// <summary>
-            /// USB Mass Storage Class Bulk-Only Transport, Revision 1.0
-            /// </summary>
-            USB_MSC_BULK = 0x0010
-        }
-
         enum SCSITGPSValues : byte
         {
             /// <summary>
@@ -2894,1427 +1620,928 @@ namespace DiscImageChef.Decoders
 
             foreach (UInt16 VersionDescriptor in response.VersionDescriptors)
             {
-                switch (VersionDescriptor & 0xFFE0)
+                switch (VersionDescriptor)
                 {
-                    case (int)SCSIVersionDescriptorStandardMask.NoStandard: //0x0000
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                //sb.AppendLine("Device claims no standard");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of no standard", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAM: //0x0020
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSAMMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SAM, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSAMMask.T10_0994_r18:
-                                sb.AppendLine("Device complies with T10/0994 revision 18 (SAM)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAMMask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.270:1996 (SAM)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAM", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAM2: //0x0040
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSAM2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SAM-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM2Mask.T10_1157_r23:
-                                sb.AppendLine("Device complies with T10/1157-D revision 23 (SAM-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM2Mask.T10_1157_r24:
-                                sb.AppendLine("Device complies with T10/1157-D revision 24 (SAM-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM2Mask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 366-2003 (SAM-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAM-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAM3: //0x0060
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSAM3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SAM-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM3Mask.T10_1561_r07:
-                                sb.AppendLine("Device complies with T10/1561-D revision 7 (SAM-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM3Mask.T10_1561_r13:
-                                sb.AppendLine("Device complies with T10/1561-D revision 13 (SAM-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM3Mask.T10_1561_r14:
-                                sb.AppendLine("Device complies with T10/1157-D revision 14 (SAM-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAM3Mask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 402-2005 (SAM-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAM-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAM4: //0x0080
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SAM-4, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAM-4", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPC: //0x0120
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPCMask.T10_0995_r11a:
-                                sb.AppendLine("Device complies with T10/0995 revision 11a (SPC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPCMask.ANSI_1997:
-                                sb.AppendLine("Device complies with ANSI X3.301:1997 (SPC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.MMC: //0x0140
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorMMCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard MMC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorMMCMask.T10_1048_r10a:
-                                sb.AppendLine("Device complies with T10/1048 revision 10a (MMC)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMCMask.ANSI_1997:
-                                sb.AppendLine("Device complies with ANSI X3.304:1997 (MMC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard MMC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SCC: //0x0160
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSCCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SCC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSCCMask.T10_1048_r06c:
-                                sb.AppendLine("Device complies with T10/1047 revision 06c (SCC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSCCMask.ANSI_1997:
-                                sb.AppendLine("Device complies with ANSI X3.276:1997 (SCC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SCC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SBC: //0x0180
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSBCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SBC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSBCMask.T10_0996_r08c:
-                                sb.AppendLine("Device complies with T10/0996 revision 08c (SBC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBCMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.306:1998 (SBC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SBC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SMC: //0x01A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSMCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SMC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSMCMask.T10_0999_r10a:
-                                sb.AppendLine("Device complies with T10/0999 revision 10a (SMC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSMCMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.314:1998 (SMC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SMC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SES: //0x01C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSESMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SES, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSESMask.T10_1212_r08b:
-                                sb.AppendLine("Device complies with T10/1212 revision 08b (SES)");
-                                break;
-                            case (int)SCSIVersionDescriptorSESMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.305:1998 (SES)");
-                                break;
-                            case (int)SCSIVersionDescriptorSESMask.T10_1212_r08b_2000:
-                                sb.AppendLine("Device complies with T10/1212 revision 08b with ANSI NCITS.305/AM1:2000 (SES)");
-                                break;
-                            case (int)SCSIVersionDescriptorSESMask.ANSI_1998_2000:
-                                sb.AppendLine("Device complies with ANSI NCITS.305:1998 with ANSI NCITS.305/AM1:2000 (SES)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SES", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SCC2: //0x01E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSCC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SCC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSCC2Mask.T10_1125_r04:
-                                sb.AppendLine("Device complies with T10/1125 revision 04 (SCC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSCC2Mask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.318:1998 (SCC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SCC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSC: //0x0200
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSCMask.T10_0997_r17:
-                                sb.AppendLine("Device complies with T10/0997 revision 17 (SSC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSCMask.T10_0997_r22:
-                                sb.AppendLine("Device complies with T10/0997 revision 22 (SSC)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSCMask.ANSI_2000:
-                                sb.AppendLine("Device complies with ANSI NCITS.335:2000 (SSC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.RBC: //0x0220
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorRBCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard RBC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorRBCMask.T10_1240_r10a:
-                                sb.AppendLine("Device complies with T10/1240 revision 10a (RBC)");
-                                break;
-                            case (int)SCSIVersionDescriptorRBCMask.ANSI_2000:
-                                sb.AppendLine("Device complies with ANSI NCITS.330:2000 (RBC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard RBC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.MMC2: //0x0240
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorMMC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard MMC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC2Mask.T10_1228_r11:
-                                sb.AppendLine("Device complies with T10/1228 revision 11 (MMC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC2Mask.T10_1228_r11a:
-                                sb.AppendLine("Device complies with T10/1228 revision 11a (MMC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC2Mask.ANSI_2000:
-                                sb.AppendLine("Device complies with ANSI NCITS.333:2000 (MMC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard MMC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPC2: //0x0260
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC2Mask.T10_1236_r12:
-                                sb.AppendLine("Device complies with T10/1236 revision 12 (SPC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC2Mask.T10_1236_r18:
-                                sb.AppendLine("Device complies with T10/1236 revision 18 (SPC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC2Mask.T10_1236_r19:
-                                sb.AppendLine("Device complies with T10/1236 revision 19 (SPC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC2Mask.T10_1236_r20:
-                                sb.AppendLine("Device complies with T10/1236 revision 20 (SPC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC2Mask.ANSI_2001:
-                                sb.AppendLine("Device complies with ANSI INCITS 351-2001 (SPC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.OCRW: //0x0280
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorOCRWMask.NoVersion:
-                                sb.AppendLine("Device complies with standard OCRW, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorOCRWMask.ISO14776_381:
-                                sb.AppendLine("Device complies with ISO/IEC 14776-381 (OCRW)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard OCRW", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.MMC3: //0x02A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorMMC3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard MMC-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC3Mask.T10_1363_r09:
-                                sb.AppendLine("Device complies with T10/1363-D revision 9 (MMC-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC3Mask.T10_1363_r10g:
-                                sb.AppendLine("Device complies with T10/1363-D revision 10g (MMC-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC3Mask.ANSI_2001:
-                                sb.AppendLine("Device complies with ANSI INCITS 360-2002 (MMC-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard MMC-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.RMC: //0x02C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard ");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SMC2: //0x02E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSMC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SMC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSMC2Mask.T10_1383_r05:
-                                sb.AppendLine("Device complies with T10/1383-D revision 5 (SMC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSMC2Mask.T10_1383_r06:
-                                sb.AppendLine("Device complies with T10/1383-D revision 6 (SMC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSMC2Mask.T10_1383_r07:
-                                sb.AppendLine("Device complies with T10/1383-D revision 7 (SMC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSMC2Mask.ANSI_2004:
-                                sb.AppendLine("Device complies with ANSI_2004 (SMC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SMC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPC3: //0x0300
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPC3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPC-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC3Mask.T10_1416_r07:
-                                sb.AppendLine("Device complies with T10/1416-D revision 7 (SPC-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC3Mask.T10_1416_r21:
-                                sb.AppendLine("Device complies with T10/1416-D revision 21 (SPC-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPC3Mask.T10_1416_r22:
-                                sb.AppendLine("Device complies with T10/1416-D revision 22 (SPC-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPC-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SBC2: //0x0320
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSBC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SBC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSBC2Mask.T10_1383_r05:
-                                sb.AppendLine("Device complies with T10/1383 revision 5 (SBC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBC2Mask.T10_1383_r06:
-                                sb.AppendLine("Device complies with T10/1383 revision 6 (SBC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBC2Mask.T10_1383_r07:
-                                sb.AppendLine("Device complies with T10/1383 revision 7 (SBC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBC2Mask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 405-2005 (SBC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SBC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.OSD: //0x0340
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorOSDMask.NoVersion:
-                                sb.AppendLine("Device complies with standard OSD, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.T10_1355_r0:
-                                sb.AppendLine("Device complies with T10/1355 revision 0 (OSD)");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.T10_1355_r7a:
-                                sb.AppendLine("Device complies with T10/1355 revision 7a (OSD)");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.T10_1355_r8:
-                                sb.AppendLine("Device complies with T10/1355 revision 8 (OSD)");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.T10_1355_r9:
-                                sb.AppendLine("Device complies with T10/1355 revision 9 (OSD)");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.T10_1355_r10:
-                                sb.AppendLine("Device complies with T10/1355 revision 10 (OSD)");
-                                break;
-                            case (int)SCSIVersionDescriptorOSDMask.ANSI_2004:
-                                sb.AppendLine("Device complies with ANSI INCITS 400-2004 (OSD)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard OSD", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSC2: //0x0360
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSC2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSC-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSC2Mask.T10_1434_r07:
-                                sb.AppendLine("Device complies with T10/1434-D revision 7 (SSC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSC2Mask.T10_1434_r09:
-                                sb.AppendLine("Device complies with T10/1434-D revision 9 (SSC-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSC2Mask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 380-2003 (SSC-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.BCC: //0x0380
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard BCC, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard BCC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.MMC4: //0x03A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorMMC4Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard MMC-4, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC4Mask.T10_1545_r5:
-                                sb.AppendLine("Device complies with T10/1545-D revision 5 (MMC-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC4Mask.T10_1545_r3:
-                                sb.AppendLine("Device complies with T10/1545-D revision 3 (MMC-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC4Mask.T10_1545_r3d:
-                                sb.AppendLine("Device complies with T10/1545-D revision 3d (MMC-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorMMC4Mask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 401-2005 (MMC-4)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard MMC-4", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ADC: //0x03C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorADCMask.NoVersion:
-                                sb.AppendLine("Device complies with standard ADC, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorADCMask.T10_1558_r6:
-                                sb.AppendLine("Device complies with T10/1558-D revision 6 (ADC)");
-                                break;
-                            case (int)SCSIVersionDescriptorADCMask.T10_1558_r7:
-                                sb.AppendLine("Device complies with T10/1558-D revision 7 (ADC)");
-                                break;
-                            case (int)SCSIVersionDescriptorADCMask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 403-2005 (ADC)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ADC", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SES2: //0x03E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SES-2, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SES-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSC3: //0x0400
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SSC-3, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSC-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.MMC5: //0x0420
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard MMC-5, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard MMC-5", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.OSD2: //0x0440
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard OSD-2, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard OSD-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPC4: //0x0460
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SPC-4, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPC-4", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SMC3: //0x0480
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SMC-3, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SMC-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ADC2: //0x04A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard ADC-2, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ADC-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_TL2: //0x0820
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSA_TL2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-TL2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_TL2Mask.T10_1147_r05b:
-                                sb.AppendLine("Device complies with T10.1/1147 revision 05b (SSA-TL2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_TL2Mask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.308:1998 (SSA-TL2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-TL2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_TL1: //0x0840
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSA_TL1Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-TL1, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_TL1Mask.T10_0989_r10b:
-                                sb.AppendLine("Device complies with T10.1/0989 revision 10b (SSA-TL1)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_TL1Mask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.295:1996 (SSA-TL1)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-TL1", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_S3P: //0x0860
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSA_S3PMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-S3P, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_S3PMask.T10_1051_r05b:
-                                sb.AppendLine("Device complies with T10.1/1051 revision 05b (SSA-S3P)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_S3PMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.309:1998 (SSA-S3P)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-S3P", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_S2P: //0x0880
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSA_S2PMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-S2P, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_S2PMask.T10_1121_r07b:
-                                sb.AppendLine("Device complies with T10.1/1121 revision 07b (SSA-S2P)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSA_S2PMask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.294:1996 (SSA-S2P)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-S2P", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SIP: //0x08A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSIPMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SIP, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSIPMask.T10_0856_r10:
-                                sb.AppendLine("Device complies with T10/0856 revision 10 (SIP)");
-                                break;
-                            case (int)SCSIVersionDescriptorSIPMask.ANSI_1997:
-                                sb.AppendLine("Device complies with ANSI X3.292:1997 (SIP)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SIP", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FCP: //0x08C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FCP, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPMask.T10_0993_r12:
-                                sb.AppendLine("Device complies with T10/0993 revision 12 (FCP)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPMask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.269:1996 (FCP)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FCP", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SBP2: //0x08E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSBP2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SBP-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP2Mask.T10_1155_r04:
-                                sb.AppendLine("Device complies with T10/1155 revision 04 (SBP-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP2Mask.ANSI_1999:
-                                sb.AppendLine("Device complies with ANSI NCITS.325:1999 (SBP-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SBP-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FCP2: //0x0900
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCP2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard FCP-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP2Mask.T10_1144_r4:
-                                sb.AppendLine("Device complies with T10/1144-D revision 4 (FCP-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP2Mask.T10_1144_r7:
-                                sb.AppendLine("Device complies with T10/1144-D revision 7 (FCP-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP2Mask.T10_1144_r7a:
-                                sb.AppendLine("Device complies with T10/1144-D revision 7a (FCP-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP2Mask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 350-2003 (FCP-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP2Mask.T10_1144_r8:
-                                sb.AppendLine("Device complies with T10/1144-D revision 8 (FCP-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FCP-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SST: //0x0920
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSTMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SST, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSTMask.T10_1380_r8b:
-                                sb.AppendLine("Device complies with T10/1380-D revision 8b (SST)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SST", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SRP: //0x0940
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSRPMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SRP, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSRPMask.T10_1415_r10:
-                                sb.AppendLine("Device complies with T10/1415-D revision 10 (SRP)");
-                                break;
-                            case (int)SCSIVersionDescriptorSRPMask.T10_1415_r16a:
-                                sb.AppendLine("Device complies with T10/1415-D revision 16a (SRP)");
-                                break;
-                            case (int)SCSIVersionDescriptorSRPMask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 365-2002 (SRP)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SRP", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.iSCSI: //0x0960
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard iSCSI, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard iSCSI", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SBP3: //0x0980
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSBP3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SBP-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP3Mask.T10_1467_r1f:
-                                sb.AppendLine("Device complies with T10/1467-D revision 1f (SBP-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP3Mask.T10_1467_r3:
-                                sb.AppendLine("Device complies with T10/1467-D revision 3 (SBP-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP3Mask.T10_1467_r4:
-                                sb.AppendLine("Device complies with T10/1467-D revision 4 (SBP-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP3Mask.T10_1467_r5:
-                                sb.AppendLine("Device complies with T10/1467-D revision 5 (SBP-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSBP3Mask.ANSI_2004:
-                                sb.AppendLine("Device complies with ANSI INCITS 375-2004 (SBP-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SBP-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ADP: //0x09C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard ADP, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ADP", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ADT: //0x09E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorADTMask.NoVersion:
-                                sb.AppendLine("Device complies with standard ADT, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorADTMask.T10_1557_r11:
-                                sb.AppendLine("Device complies with T10/1557-D revision 11 (ADT)");
-                                break;
-                            case (int)SCSIVersionDescriptorADTMask.T10_1557_r14:
-                                sb.AppendLine("Device complies with T10/1557-D revision 14 (ADT)");
-                                break;
-                            case (int)SCSIVersionDescriptorADTMask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 406-2005 (ADT)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ADT", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FCP3: //0x0A00
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCP3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard FCP-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCP3Mask.T10_1560_r4:
-                                sb.AppendLine("Device complies with T10/1560-D revision 4 (FCP-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FCP-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ADT2: //0x0A20
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard ADT-2, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ADT-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPI: //0x0AA0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPIMask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPI, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPIMask.T10_0855_r15a:
-                                sb.AppendLine("Device complies with T10/0855 revision 15a (SPI)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPIMask.ANSI_1995:
-                                sb.AppendLine("Device complies with ANSI X3.253:1995 (SPI)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPIMask.T10_0855_r15a_Amnd_3a:
-                                sb.AppendLine("Device complies with T10/0855 revision 15a with SPI Amnd revision 3a (SPI)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPIMask.ANSI_1995_1998:
-                                sb.AppendLine("Device complies with ANSI X3.253:1995 with SPI Amnd ANSI X3.253/AM1:1998 (SPI)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPI", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.Fast20: //0xAC0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFast20Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard Fast-20, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFast20Mask.T10_1071_r06:
-                                sb.AppendLine("Device complies with T10/1071 revision 06 (Fast-20)");
-                                break;
-                            case (int)SCSIVersionDescriptorFast20Mask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.277:1996 (Fast-20)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard Fast-20", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPI2: //0x0AE0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPI2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPI-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI2Mask.T10_1142_r20b:
-                                sb.AppendLine("Device complies with T10/1142 revision 20b (SPI-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI2Mask.ANSI_1999:
-                                sb.AppendLine("Device complies with ANSI X3.302:1999 (SPI-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPI-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPI3: //0x0B00
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPI3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPI-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI3Mask.T10_1302D_r10:
-                                sb.AppendLine("Device complies with T10/1302-D revision 10 (SPI-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI3Mask.T10_1302D_r13a:
-                                sb.AppendLine("Device complies with T10/1302-D revision 13a (SPI-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI3Mask.T10_1302D_r14:
-                                sb.AppendLine("Device complies with T10/1302-D revision 14 (SPI-3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI3Mask.ANSI_2000:
-                                sb.AppendLine("Device complies with ANSI NCITS.336:2000 (SPI-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPI-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.EPI: //0x0B20
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorEPIMask.NoVersion:
-                                sb.AppendLine("Device complies with standard EPI, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorEPIMask.T10_1134_r16:
-                                sb.AppendLine("Device complies with T10/1134 revision 16 (EPI)");
-                                break;
-                            case (int)SCSIVersionDescriptorEPIMask.ANSI_1999:
-                                sb.AppendLine("Device complies with ANSI NCITS TR-23:1999 (EPI)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard EPI", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPI4: //0x0B40
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPI4Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPI-4, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI4Mask.T10_1365_r7:
-                                sb.AppendLine("Device complies with T10/1365-D revision 7 (SPI-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI4Mask.T10_1365_r9:
-                                sb.AppendLine("Device complies with T10/1365-D revision 9 (SPI-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI4Mask.ANSI_2002:
-                                sb.AppendLine("Device complies with ANSI INCITS 362-2002 (SPI-4)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI4Mask.T10_1365_r10:
-                                sb.AppendLine("Device complies with T10/1365-D revision 10 (SPI-4)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPI-4", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SPI5: //0x0B40
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSPI5Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SPI-5, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI5Mask.T10_1525_r3:
-                                sb.AppendLine("Device complies with T10/1525-D revision 3 (SPI-5)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI5Mask.T10_1525_r5:
-                                sb.AppendLine("Device complies with T10/1525-D revision 5 (SPI-5)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI5Mask.T10_1525_r6:
-                                sb.AppendLine("Device complies with T10/1525-D revision 6 (SPI-5)");
-                                break;
-                            case (int)SCSIVersionDescriptorSPI5Mask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 367-2003 (SPI-5)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SPI-5", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAS: //0x0BE0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSASMask.NoVersion:
-                                sb.AppendLine("Device complies with standard (SAS)");
-                                break;
-                            case (int)SCSIVersionDescriptorSASMask.T10_1562_r01:
-                                sb.AppendLine("Device complies with T10/1562-D revision 01 (SAS)");
-                                break;
-                            case (int)SCSIVersionDescriptorSASMask.T10_1562_r03:
-                                sb.AppendLine("Device complies with T10/1562-D revision 03 (SAS)");
-                                break;
-                            case (int)SCSIVersionDescriptorSASMask.T10_1562_r04:
-                            case (int)SCSIVersionDescriptorSASMask.T10_1562_r04bis:
-                                sb.AppendLine("Device complies with T10/1562-D revision 04 (SAS)");
-                                break;
-                            case (int)SCSIVersionDescriptorSASMask.T10_1562_r05:
-                                sb.AppendLine("Device complies with T10/1562-D revision 05 (SAS)");
-                                break;
-                            case (int)SCSIVersionDescriptorSASMask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 376-2003 (SAS)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAS", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAS11: //0x0C00
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSAS11Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SAS 1.1, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSAS11Mask.T10_1601_r9:
-                                sb.AppendLine("Device complies with T10/1601-D revision 9 (SAS 1.1)");
-                                break;
-                            case (int)SCSIVersionDescriptorSAS11Mask.T10_1601_r10:
-                                sb.AppendLine("Device complies with T10/1601-D revision 10 (SAS 1.1)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAS 1.1", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_PH: //0x0D20
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPHMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-PH, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPHMask.ANSI_1994:
-                                sb.AppendLine("Device complies with ANSI X3.230:1994 (FC-PH)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPHMask.ANSI_1994_1996:
-                                sb.AppendLine("Device complies with ANSI X3.230:1994 with Amnd 1 ANSI X3.230/AM1:1996 (FC-PH)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-PH", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_AL: //0x0D40
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCALMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-AL, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCALMask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.272:1996 (FC-AL)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-AL", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_AL2: //0x0D60
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCAL2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-AL-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCAL2Mask.T11_1133_r70:
-                                sb.AppendLine("Device complies with T11/1133 revision 7.0 (FC-AL-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCAL2Mask.ANSI_1999:
-                                sb.AppendLine("Device complies with ANSI NCITS.332:1999 (FC-AL-2)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCAL2Mask.ANSI_1999_2002:
-                                sb.AppendLine("Device complies with ANSI INCITS 332-1999 with Amnd 1 AM1-2002 (FC-AL-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-AL-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_PH3: //0x0D80
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPH3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-PH-3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPH3Mask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI X3.303-1998 (FC-PH-3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-PH-3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_FS: //0x0DA0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCFSMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-FS, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCFSMask.T11_1331_r12:
-                                sb.AppendLine("Device complies with T11/1331 revision 1.2 (FC-FS)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCFSMask.T11_1331_r17:
-                                sb.AppendLine("Device complies with T11/1331 revision 1.7 (FC-FS)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCFSMask.ANSI_2003:
-                                sb.AppendLine("Device complies with ANSI INCITS 373-2003 (FC-FS)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-FS", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_PI: //0x0DC0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPIMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-PI, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPIMask.ANSI_2002:
-                                sb.AppendLine("Device complies with ANSI INCITS 352-2002 (FC-PI)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-PI", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_PI2: //0x0DE0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPI2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-PI-2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPI2Mask.T11_1506_r50:
-                                sb.AppendLine("Device complies with T11/1506-D revision 5.0 (FC-PI-2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-PI-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_FS2: //0x0E00
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard FC-FS-2, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-FS-2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_LS: //0x0E20
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard FC-LS, no version");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-LS", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_SP: //0x0E40
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCSPMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-SP, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCSPMask.T11_1570_r16:
-                                sb.AppendLine("Device complies with T11/1570-D revision 1.6 (FC-SP)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-SP", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_DA: //0x12E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCDAMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-DA, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCDAMask.T11_1513_r31:
-                                sb.AppendLine("Device complies with T11/1513-DT revision 3.1 (FC-DA)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-DA", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_Tape: //0x1300
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCTapeMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-Tape, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCTapeMask.T11_1315_r116:
-                                sb.AppendLine("Device complies with T11/1315 revision 1.16 (FC-Tape)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCTapeMask.T11_1315_r117:
-                                sb.AppendLine("Device complies with T11/1315 revision 1.17 (FC-Tape)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCTapeMask.ANSI_1999:
-                                sb.AppendLine("Device complies with ANSI NCITS TR-24:1999 (FC-Tape)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-Tape", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_FLA: //0x1320
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCFLAMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-FLA, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCFLAMask.T11_1235_r7:
-                                sb.AppendLine("Device complies with T11/1235 revision 7 (FC-FLA)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCFLAMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS TR-20:1998 (FC-FLA)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-FLA", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.FC_PLDA: //0x1340
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorFCPLDAMask.NoVersion:
-                                sb.AppendLine("Device complies with standard FC-PLDA, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPLDAMask.T11_1162_r21:
-                                sb.AppendLine("Device complies with T11/1162 revision 2.1 (FC-PLDA)");
-                                break;
-                            case (int)SCSIVersionDescriptorFCPLDAMask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS TR-19:1998 (FC-PLDA)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard FC-PLDA", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_PH2: //0x1360
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSAPH2Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-PH2, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSAPH2Mask.T10_1145_r09c:
-                                sb.AppendLine("Device complies with T10.1/1145 revision 09c (SSA-PH2)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSAPH2Mask.ANSI_1996:
-                                sb.AppendLine("Device complies with ANSI X3.293:1996 (SSA-PH2)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-PH2", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SSA_PH3: //0x1380
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorSSAPH3Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard SSA-PH3, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorSSAPH3Mask.T10_1146_r05b:
-                                sb.AppendLine("Device complies with T10.1/1146 revision 05b (SSA-PH3)");
-                                break;
-                            case (int)SCSIVersionDescriptorSSAPH3Mask.ANSI_1998:
-                                sb.AppendLine("Device complies with ANSI NCITS.307:1998 (SSA-PH3)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SSA-PH3", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.IEEE1394: //0x14A0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorIEEE1394Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard IEEE-1394, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorIEEE1394Mask.ANSI_1995:
-                                sb.AppendLine("Device complies with ANSI IEEE 1394:1995");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard IEEE-1394", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.IEEE1394a: //0x14C0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard IEEE-1394a");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard IEEE-1394a", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.IEEE1394b: //0x14E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard IEEE-1394b");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard IEEE-1394b", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ATA_ATAPI6: //0x15E0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorATA6Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard ATA/ATAPI-6, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorATA6Mask.ANSI_2002:
-                                sb.AppendLine("Device complies with ANSI INCITS 361-2002 (ATA/ATAPI-6)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ATA/ATAPI-6)", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ATA_ATAPI7: //0x1600
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorATA7Mask.NoVersion:
-                                sb.AppendLine("Device complies with standard ATA/ATAPI-7, no version");
-                                break;
-                            case (int)SCSIVersionDescriptorATA7Mask.T13_1532_r3:
-                                sb.AppendLine("Device complies with T13/1532-D revision 3 (ATA/ATAPI-7)");
-                                break;
-                            case (int)SCSIVersionDescriptorATA7Mask.ANSI_2005:
-                                sb.AppendLine("Device complies with ANSI INCITS 397-2005 (ATA/ATAPI-7)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ATA/ATAPI-7", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.ATA_ATAPI8: //0x1620
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorATA8Mask.ATA8_AAM:
-                                sb.AppendLine("Device complies with standard ATA8-AAM Architecture Model (no version claimed)");
-                                break;
-                            case (int)SCSIVersionDescriptorATA8Mask.ATA8_PT:
-                                sb.AppendLine("Device complies with standard ATA8-PT Parallel Transport (no version claimed)");
-                                break;
-                            case (int)SCSIVersionDescriptorATA8Mask.ATA8_AST:
-                                sb.AppendLine("Device complies with standard ATA8-AST Serial Transport (no version claimed)");
-                                break;
-                            case (int)SCSIVersionDescriptorATA8Mask.ATA8_ACS:
-                                sb.AppendLine("Device complies with standard ATA8-ACS ATA/ATAPI Command Set (no version claimed)");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ATA/ATAPI-8", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.USB: //0x1720
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case (int)SCSIVersionDescriptorUSBMask.NoVersion:
-                                sb.AppendLine("Device complies with Universal Serial Bus specification, no revision claimed");
-                                break;
-                            case (int)SCSIVersionDescriptorUSBMask.USB11:
-                                sb.AppendLine("Device complies with Universal Serial Bus Specification, Revision 1.1");
-                                break;
-                            case (int)SCSIVersionDescriptorUSBMask.USB20:
-                                sb.AppendLine("Device complies with Universal Serial Bus Specification, Revision 2.0");
-                                break;
-                            case (int)SCSIVersionDescriptorUSBMask.USB_MSC_BULK:
-                                sb.AppendLine("Device complies with Universal Serial Bus Mass Storage Class Bulk-Only Transport, Revision 1.0");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard ", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
-                        break;
-                    case (int)SCSIVersionDescriptorStandardMask.SAT: //0x1EA0
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendLine("Device complies with standard SAT");
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of standard SAT", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
+                    case 0xFFFF:
+                    case 0x0000:
+                        break;
+                    case 0x0020:
+                        sb.AppendLine("Device complies with SAM (no version claimed)");
+                        break;
+                    case 0x003B:
+                        sb.AppendLine("Device complies with SAM T10/0994-D revision 18");
+                        break;
+                    case 0x003C:
+                        sb.AppendLine("Device complies with SAM ANSI INCITS 270-1996");
+                        break;
+                    case 0x0040:
+                        sb.AppendLine("Device complies with SAM-2 (no version claimed)");
+                        break;
+                    case 0x0054:
+                        sb.AppendLine("Device complies with SAM-2 T10/1157-D revision 23");
+                        break;
+                    case 0x0055:
+                        sb.AppendLine("Device complies with SAM-2 T10/1157-D revision 24");
+                        break;
+                    case 0x005C:
+                        sb.AppendLine("Device complies with SAM-2 ANSI INCITS 366-2003");
+                        break;
+                    case 0x005E:
+                        sb.AppendLine("Device complies with SAM-2 ISO/IEC 14776-412");
+                        break;
+                    case 0x0060:
+                        sb.AppendLine("Device complies with SAM-3 (no version claimed)");
+                        break;
+                    case 0x0062:
+                        sb.AppendLine("Device complies with SAM-3 T10/1561-D revision 7");
+                        break;
+                    case 0x0075:
+                        sb.AppendLine("Device complies with SAM-3 T10/1561-D revision 13");
+                        break;
+                    case 0x0076:
+                        sb.AppendLine("Device complies with SAM-3 T10/1561-D revision 14");
+                        break;
+                    case 0x0077:
+                        sb.AppendLine("Device complies with SAM-3 ANSI INCITS 402-2005");
+                        break;
+                    case 0x0080:
+                        sb.AppendLine("Device complies with SAM-4 (no version claimed)");
+                        break;
+                    case 0x0087:
+                        sb.AppendLine("Device complies with SAM-4 T10/1683-D revision 13");
+                        break;
+                    case 0x008B:
+                        sb.AppendLine("Device complies with SAM-4 T10/1683-D revision 14");
+                        break;
+                    case 0x00A0:
+                        sb.AppendLine("Device complies with SAM-5 (no version claimed)");
+                        break;
+                    case 0x0120:
+                        sb.AppendLine("Device complies with SPC (no version claimed)");
+                        break;
+                    case 0x013B:
+                        sb.AppendLine("Device complies with SPC T10/0995-D revision 11a");
+                        break;
+                    case 0x013C:
+                        sb.AppendLine("Device complies with SPC ANSI INCITS 301-1997");
+                        break;
+                    case 0x0140:
+                        sb.AppendLine("Device complies with MMC (no version claimed)");
+                        break;
+                    case 0x015B:
+                        sb.AppendLine("Device complies with MMC T10/1048-D revision 10a");
+                        break;
+                    case 0x015C:
+                        sb.AppendLine("Device complies with MMC ANSI INCITS 304-1997");
+                        break;
+                    case 0x0160:
+                        sb.AppendLine("Device complies with SCC (no version claimed)");
+                        break;
+                    case 0x017B:
+                        sb.AppendLine("Device complies with SCC T10/1047-D revision 06c");
+                        break;
+                    case 0x017C:
+                        sb.AppendLine("Device complies with SCC ANSI INCITS 276-1997");
+                        break;
+                    case 0x0180:
+                        sb.AppendLine("Device complies with SBC (no version claimed)");
+                        break;
+                    case 0x019B:
+                        sb.AppendLine("Device complies with SBC T10/0996-D revision 08c");
+                        break;
+                    case 0x019C:
+                        sb.AppendLine("Device complies with SBC ANSI INCITS 306-1998");
+                        break;
+                    case 0x01A0:
+                        sb.AppendLine("Device complies with SMC (no version claimed)");
+                        break;
+                    case 0x01BB:
+                        sb.AppendLine("Device complies with SMC T10/0999-D revision 10a");
+                        break;
+                    case 0x01BC:
+                        sb.AppendLine("Device complies with SMC ANSI INCITS 314-1998");
+                        break;
+                    case 0x01BE:
+                        sb.AppendLine("Device complies with SMC ISO/IEC 14776-351");
+                        break;
+                    case 0x01C0:
+                        sb.AppendLine("Device complies with SES (no version claimed)");
+                        break;
+                    case 0x01DB:
+                        sb.AppendLine("Device complies with SES T10/1212-D revision 08b");
+                        break;
+                    case 0x01DC:
+                        sb.AppendLine("Device complies with SES ANSI INCITS 305-1998");
+                        break;
+                    case 0x01DD:
+                        sb.AppendLine("Device complies with SES T10/1212 revision 08b w/ Amendment ANSI INCITS.305/ AM1-2000");
+                        break;
+                    case 0x01DE:
+                        sb.AppendLine("Device complies with SES ANSI INCITS 305-1998 w/ Amendment ANSI INCITS.305/ AM1-2000");
+                        break;
+                    case 0x01E0:
+                        sb.AppendLine("Device complies with SCC-2 (no version claimed)");
+                        break;
+                    case 0x01FB:
+                        sb.AppendLine("Device complies with SCC-2 T10/1125-D revision 04");
+                        break;
+                    case 0x01FC:
+                        sb.AppendLine("Device complies with SCC-2 ANSI INCITS 318-1998");
+                        break;
+                    case 0x0200:
+                        sb.AppendLine("Device complies with SSC (no version claimed)");
+                        break;
+                    case 0x0201:
+                        sb.AppendLine("Device complies with SSC T10/0997-D revision 17");
+                        break;
+                    case 0x0207:
+                        sb.AppendLine("Device complies with SSC T10/0997-D revision 22");
+                        break;
+                    case 0x021C:
+                        sb.AppendLine("Device complies with SSC ANSI INCITS 335-2000");
+                        break;
+                    case 0x0220:
+                        sb.AppendLine("Device complies with RBC (no version claimed)");
+                        break;
+                    case 0x0238:
+                        sb.AppendLine("Device complies with RBC T10/1240-D revision 10a");
+                        break;
+                    case 0x023C:
+                        sb.AppendLine("Device complies with RBC ANSI INCITS 330-2000");
+                        break;
+                    case 0x0240:
+                        sb.AppendLine("Device complies with MMC-2 (no version claimed)");
+                        break;
+                    case 0x0255:
+                        sb.AppendLine("Device complies with MMC-2 T10/1228-D revision 11");
+                        break;
+                    case 0x025B:
+                        sb.AppendLine("Device complies with MMC-2 T10/1228-D revision 11a");
+                        break;
+                    case 0x025C:
+                        sb.AppendLine("Device complies with MMC-2 ANSI INCITS 333-2000");
+                        break;
+                    case 0x0260:
+                        sb.AppendLine("Device complies with SPC-2 (no version claimed)");
+                        break;
+                    case 0x0267:
+                        sb.AppendLine("Device complies with SPC-2 T10/1236-D revision 12");
+                        break;
+                    case 0x0269:
+                        sb.AppendLine("Device complies with SPC-2 T10/1236-D revision 18");
+                        break;
+                    case 0x0275:
+                        sb.AppendLine("Device complies with SPC-2 T10/1236-D revision 19");
+                        break;
+                    case 0x0276:
+                        sb.AppendLine("Device complies with SPC-2 T10/1236-D revision 20");
+                        break;
+                    case 0x0277:
+                        sb.AppendLine("Device complies with SPC-2 ANSI INCITS 351-2001");
+                        break;
+                    case 0x0278:
+                        sb.AppendLine("Device complies with SPC-2 ISO/IEC 14776-452");
+                        break;
+                    case 0x0280:
+                        sb.AppendLine("Device complies with OCRW (no version claimed)");
+                        break;
+                    case 0x029E:
+                        sb.AppendLine("Device complies with OCRW ISO/IEC 14776-381");
+                        break;
+                    case 0x02A0:
+                        sb.AppendLine("Device complies with MMC-3 (no version claimed)");
+                        break;
+                    case 0x02B5:
+                        sb.AppendLine("Device complies with MMC-3 T10/1363-D revision 9");
+                        break;
+                    case 0x02B6:
+                        sb.AppendLine("Device complies with MMC-3 T10/1363-D revision 10g");
+                        break;
+                    case 0x02B8:
+                        sb.AppendLine("Device complies with MMC-3 ANSI INCITS 360-2002");
+                        break;
+                    case 0x02E0:
+                        sb.AppendLine("Device complies with SMC-2 (no version claimed)");
+                        break;
+                    case 0x02F5:
+                        sb.AppendLine("Device complies with SMC-2 T10/1383-D revision 5");
+                        break;
+                    case 0x02FC:
+                        sb.AppendLine("Device complies with SMC-2 T10/1383-D revision 6");
+                        break;
+                    case 0x02FD:
+                        sb.AppendLine("Device complies with SMC-2 T10/1383-D revision 7");
+                        break;
+                    case 0x02FE:
+                        sb.AppendLine("Device complies with SMC-2 ANSI INCITS 382-2004");
+                        break;
+                    case 0x0300:
+                        sb.AppendLine("Device complies with SPC-3 (no version claimed)");
+                        break;
+                    case 0x0301:
+                        sb.AppendLine("Device complies with SPC-3 T10/1416-D revision 7");
+                        break;
+                    case 0x0307:
+                        sb.AppendLine("Device complies with SPC-3 T10/1416-D revision 21");
+                        break;
+                    case 0x030F:
+                        sb.AppendLine("Device complies with SPC-3 T10/1416-D revision 22");
+                        break;
+                    case 0x0312:
+                        sb.AppendLine("Device complies with SPC-3 T10/1416-D revision 23");
+                        break;
+                    case 0x0314:
+                        sb.AppendLine("Device complies with SPC-3 ANSI INCITS 408-2005");
+                        break;
+                    case 0x0320:
+                        sb.AppendLine("Device complies with SBC-2 (no version claimed)");
+                        break;
+                    case 0x0322:
+                        sb.AppendLine("Device complies with SBC-2 T10/1417-D revision 5a");
+                        break;
+                    case 0x0324:
+                        sb.AppendLine("Device complies with SBC-2 T10/1417-D revision 15");
+                        break;
+                    case 0x033B:
+                        sb.AppendLine("Device complies with SBC-2 T10/1417-D revision 16");
+                        break;
+                    case 0x033D:
+                        sb.AppendLine("Device complies with SBC-2 ANSI INCITS 405-2005");
+                        break;
+                    case 0x033E:
+                        sb.AppendLine("Device complies with SBC-2 ISO/IEC 14776-322");
+                        break;
+                    case 0x0340:
+                        sb.AppendLine("Device complies with OSD (no version claimed)");
+                        break;
+                    case 0x0341:
+                        sb.AppendLine("Device complies with OSD T10/1355-D revision 0");
+                        break;
+                    case 0x0342:
+                        sb.AppendLine("Device complies with OSD T10/1355-D revision 7a");
+                        break;
+                    case 0x0343:
+                        sb.AppendLine("Device complies with OSD T10/1355-D revision 8");
+                        break;
+                    case 0x0344:
+                        sb.AppendLine("Device complies with OSD T10/1355-D revision 9");
+                        break;
+                    case 0x0355:
+                        sb.AppendLine("Device complies with OSD T10/1355-D revision 10");
+                        break;
+                    case 0x0356:
+                        sb.AppendLine("Device complies with OSD ANSI INCITS 400-2004");
+                        break;
+                    case 0x0360:
+                        sb.AppendLine("Device complies with SSC-2 (no version claimed)");
+                        break;
+                    case 0x0374:
+                        sb.AppendLine("Device complies with SSC-2 T10/1434-D revision 7");
+                        break;
+                    case 0x0375:
+                        sb.AppendLine("Device complies with SSC-2 T10/1434-D revision 9");
+                        break;
+                    case 0x037D:
+                        sb.AppendLine("Device complies with SSC-2 ANSI INCITS 380-2003");
+                        break;
+                    case 0x0380:
+                        sb.AppendLine("Device complies with BCC (no version claimed)");
+                        break;
+                    case 0x03A0:
+                        sb.AppendLine("Device complies with MMC-4 (no version claimed)");
+                        break;
+                    case 0x03B0:
+                        sb.AppendLine("Device complies with MMC-4 T10/1545-D revision 5");
+                        break;
+                    case 0x03B1:
+                        sb.AppendLine("Device complies with MMC-4 T10/1545-D revision 5a");
+                        break;
+                    case 0x03BD:
+                        sb.AppendLine("Device complies with MMC-4 T10/1545-D revision 3");
+                        break;
+                    case 0x03BE:
+                        sb.AppendLine("Device complies with MMC-4 T10/1545-D revision 3d");
+                        break;
+                    case 0x03BF:
+                        sb.AppendLine("Device complies with MMC-4 ANSI INCITS 401-2005");
+                        break;
+                    case 0x03C0:
+                        sb.AppendLine("Device complies with ADC (no version claimed)");
+                        break;
+                    case 0x03D5:
+                        sb.AppendLine("Device complies with ADC T10/1558-D revision 6");
+                        break;
+                    case 0x03D6:
+                        sb.AppendLine("Device complies with ADC T10/1558-D revision 7");
+                        break;
+                    case 0x03D7:
+                        sb.AppendLine("Device complies with ADC ANSI INCITS 403-2005");
+                        break;
+                    case 0x03E0:
+                        sb.AppendLine("Device complies with SES-2 (no version claimed)");
+                        break;
+                    case 0x03E1:
+                        sb.AppendLine("Device complies with SES-2 T10/1559-D revision 16");
+                        break;
+                    case 0x03E7:
+                        sb.AppendLine("Device complies with SES-2 T10/1559-D revision 19");
+                        break;
+                    case 0x03EB:
+                        sb.AppendLine("Device complies with SES-2 T10/1559-D revision 20");
+                        break;
+                    case 0x0400:
+                        sb.AppendLine("Device complies with SSC-3 (no version claimed)");
+                        break;
+                    case 0x0403:
+                        sb.AppendLine("Device complies with SSC-3 T10/1611-D revision 04a");
+                        break;
+                    case 0x0420:
+                        sb.AppendLine("Device complies with MMC-5 (no version claimed)");
+                        break;
+                    case 0x042F:
+                        sb.AppendLine("Device complies with MMC-5 T10/1675-D revision 03");
+                        break;
+                    case 0x0431:
+                        sb.AppendLine("Device complies with MMC-5 T10/1675-D revision 03b");
+                        break;
+                    case 0x0432:
+                        sb.AppendLine("Device complies with MMC-5 T10/1675-D revision 04");
+                        break;
+                    case 0x0434:
+                        sb.AppendLine("Device complies with MMC-5 ANSI INCITS 430-2007");
+                        break;
+                    case 0x0440:
+                        sb.AppendLine("Device complies with OSD-2 (no version claimed)");
+                        break;
+                    case 0x0444:
+                        sb.AppendLine("Device complies with OSD-2 T10/1729-D revision 4");
+                        break;
+                    case 0x0460:
+                        sb.AppendLine("Device complies with SPC-4 (no version claimed)");
+                        break;
+                    case 0x0461:
+                        sb.AppendLine("Device complies with SPC-4 T10/1731-D revision 16");
+                        break;
+                    case 0x0480:
+                        sb.AppendLine("Device complies with SMC-3 (no version claimed)");
+                        break;
+                    case 0x04A0:
+                        sb.AppendLine("Device complies with ADC-2 (no version claimed)");
+                        break;
+                    case 0x04A7:
+                        sb.AppendLine("Device complies with ADC-2 T10/1741-D revision 7");
+                        break;
+                    case 0x04AA:
+                        sb.AppendLine("Device complies with ADC-2 T10/1741-D revision 8");
+                        break;
+                    case 0x04AC:
+                        sb.AppendLine("Device complies with ADC-2 ANSI INCITS 441-2008");
+                        break;
+                    case 0x04C0:
+                        sb.AppendLine("Device complies with SBC-3 (no version claimed)");
+                        break;
+                    case 0x04E0:
+                        sb.AppendLine("Device complies with MMC-6 (no version claimed)");
+                        break;
+                    case 0x0500:
+                        sb.AppendLine("Device complies with ADC-3 (no version claimed)");
+                        break;
+                    case 0x0820:
+                        sb.AppendLine("Device complies with SSA-TL2 (no version claimed)");
+                        break;
+                    case 0x083B:
+                        sb.AppendLine("Device complies with SSA-TL2 T10.1/1147-D revision 05b");
+                        break;
+                    case 0x083C:
+                        sb.AppendLine("Device complies with SSA-TL2 ANSI INCITS 308-1998");
+                        break;
+                    case 0x0840:
+                        sb.AppendLine("Device complies with SSA-TL1 (no version claimed)");
+                        break;
+                    case 0x085B:
+                        sb.AppendLine("Device complies with SSA-TL1 T10.1/0989-D revision 10b");
+                        break;
+                    case 0x085C:
+                        sb.AppendLine("Device complies with SSA-TL1 ANSI INCITS 295-1996");
+                        break;
+                    case 0x0860:
+                        sb.AppendLine("Device complies with SSA-S3P (no version claimed)");
+                        break;
+                    case 0x087B:
+                        sb.AppendLine("Device complies with SSA-S3P T10.1/1051-D revision 05b");
+                        break;
+                    case 0x087C:
+                        sb.AppendLine("Device complies with SSA-S3P ANSI INCITS 309-1998");
+                        break;
+                    case 0x0880:
+                        sb.AppendLine("Device complies with SSA-S2P (no version claimed)");
+                        break;
+                    case 0x089B:
+                        sb.AppendLine("Device complies with SSA-S2P T10.1/1121-D revision 07b");
+                        break;
+                    case 0x089C:
+                        sb.AppendLine("Device complies with SSA-S2P ANSI INCITS 294-1996");
+                        break;
+                    case 0x08A0:
+                        sb.AppendLine("Device complies with SIP (no version claimed)");
+                        break;
+                    case 0x08BB:
+                        sb.AppendLine("Device complies with SIP T10/0856-D revision 10");
+                        break;
+                    case 0x08BC:
+                        sb.AppendLine("Device complies with SIP ANSI INCITS 292-1997");
+                        break;
+                    case 0x08C0:
+                        sb.AppendLine("Device complies with FCP (no version claimed)");
+                        break;
+                    case 0x08DB:
+                        sb.AppendLine("Device complies with FCP T10/0993-D revision 12");
+                        break;
+                    case 0x08DC:
+                        sb.AppendLine("Device complies with FCP ANSI INCITS 269-1996");
+                        break;
+                    case 0x08E0:
+                        sb.AppendLine("Device complies with SBP-2 (no version claimed)");
+                        break;
+                    case 0x08FB:
+                        sb.AppendLine("Device complies with SBP-2 T10/1155-D revision 04");
+                        break;
+                    case 0x08FC:
+                        sb.AppendLine("Device complies with SBP-2 ANSI INCITS 325-1998");
+                        break;
+                    case 0x0900:
+                        sb.AppendLine("Device complies with FCP-2 (no version claimed)");
+                        break;
+                    case 0x0901:
+                        sb.AppendLine("Device complies with FCP-2 T10/1144-D revision 4");
+                        break;
+                    case 0x0915:
+                        sb.AppendLine("Device complies with FCP-2 T10/1144-D revision 7");
+                        break;
+                    case 0x0916:
+                        sb.AppendLine("Device complies with FCP-2 T10/1144-D revision 7a");
+                        break;
+                    case 0x0917:
+                        sb.AppendLine("Device complies with FCP-2 ANSI INCITS 350-2003");
+                        break;
+                    case 0x0918:
+                        sb.AppendLine("Device complies with FCP-2 T10/1144-D revision 8");
+                        break;
+                    case 0x0920:
+                        sb.AppendLine("Device complies with SST (no version claimed)");
+                        break;
+                    case 0x0935:
+                        sb.AppendLine("Device complies with SST T10/1380-D revision 8b");
+                        break;
+                    case 0x0940:
+                        sb.AppendLine("Device complies with SRP (no version claimed)");
+                        break;
+                    case 0x0954:
+                        sb.AppendLine("Device complies with SRP T10/1415-D revision 10");
+                        break;
+                    case 0x0955:
+                        sb.AppendLine("Device complies with SRP T10/1415-D revision 16a");
+                        break;
+                    case 0x095C:
+                        sb.AppendLine("Device complies with SRP ANSI INCITS 365-2002");
+                        break;
+                    case 0x0960:
+                        sb.AppendLine("Device complies with iSCSI (no version claimed)");
+                        break;
+                    case 0x0980:
+                        sb.AppendLine("Device complies with SBP-3 (no version claimed)");
+                        break;
+                    case 0x0982:
+                        sb.AppendLine("Device complies with SBP-3 T10/1467-D revision 1f");
+                        break;
+                    case 0x0994:
+                        sb.AppendLine("Device complies with SBP-3 T10/1467-D revision 3");
+                        break;
+                    case 0x099A:
+                        sb.AppendLine("Device complies with SBP-3 T10/1467-D revision 4");
+                        break;
+                    case 0x099B:
+                        sb.AppendLine("Device complies with SBP-3 T10/1467-D revision 5");
+                        break;
+                    case 0x099C:
+                        sb.AppendLine("Device complies with SBP-3 ANSI INCITS 375-2004");
+                        break;
+                    case 0x09C0:
+                        sb.AppendLine("Device complies with ADP (no version claimed)");
+                        break;
+                    case 0x09E0:
+                        sb.AppendLine("Device complies with ADT (no version claimed)");
+                        break;
+                    case 0x09F9:
+                        sb.AppendLine("Device complies with ADT T10/1557-D revision 11");
+                        break;
+                    case 0x09FA:
+                        sb.AppendLine("Device complies with ADT T10/1557-D revision 14");
+                        break;
+                    case 0x09FD:
+                        sb.AppendLine("Device complies with ADT ANSI INCITS 406-2005");
+                        break;
+                    case 0x0A00:
+                        sb.AppendLine("Device complies with FCP-3 (no version claimed)");
+                        break;
+                    case 0x0A07:
+                        sb.AppendLine("Device complies with FCP-3 T10/1560-D revision 3f");
+                        break;
+                    case 0x0A0F:
+                        sb.AppendLine("Device complies with FCP-3 T10/1560-D revision 4");
+                        break;
+                    case 0x0A11:
+                        sb.AppendLine("Device complies with FCP-3 ANSI INCITS 416-2006");
+                        break;
+                    case 0x0A1C:
+                        sb.AppendLine("Device complies with FCP-3 ISO/IEC 14776-223");
+                        break;
+                    case 0x0A20:
+                        sb.AppendLine("Device complies with ADT-2 (no version claimed)");
+                        break;
+                    case 0x0A40:
+                        sb.AppendLine("Device complies with FCP-4 (no version claimed)");
+                        break;
+                    case 0x0AA0:
+                        sb.AppendLine("Device complies with SPI (no version claimed)");
+                        break;
+                    case 0x0AB9:
+                        sb.AppendLine("Device complies with SPI T10/0855-D revision 15a");
+                        break;
+                    case 0x0ABA:
+                        sb.AppendLine("Device complies with SPI ANSI INCITS 253-1995");
+                        break;
+                    case 0x0ABB:
+                        sb.AppendLine("Device complies with SPI T10/0855-D revision 15a with SPI Amnd revision 3a");
+                        break;
+                    case 0x0ABC:
+                        sb.AppendLine("Device complies with SPI ANSI INCITS 253-1995 with SPI Amnd ANSI INCITS 253/ AM1-1998");
+                        break;
+                    case 0x0AC0:
+                        sb.AppendLine("Device complies with Fast-20 (no version claimed)");
+                        break;
+                    case 0x0ADB:
+                        sb.AppendLine("Device complies with Fast-20 T10/1071 revision 06");
+                        break;
+                    case 0x0ADC:
+                        sb.AppendLine("Device complies with Fast-20 ANSI INCITS 277-1996");
+                        break;
+                    case 0x0AE0:
+                        sb.AppendLine("Device complies with SPI-2 (no version claimed)");
+                        break;
+                    case 0x0AFB:
+                        sb.AppendLine("Device complies with SPI-2 T10/1142-D revision 20b");
+                        break;
+                    case 0x0AFC:
+                        sb.AppendLine("Device complies with SPI-2 ANSI INCITS 302-1999");
+                        break;
+                    case 0x0B00:
+                        sb.AppendLine("Device complies with SPI-3 (no version claimed)");
+                        break;
+                    case 0x0B18:
+                        sb.AppendLine("Device complies with SPI-3 T10/1302-D revision 10");
+                        break;
+                    case 0x0B19:
+                        sb.AppendLine("Device complies with SPI-3 T10/1302-D revision 13a");
+                        break;
+                    case 0x0B1A:
+                        sb.AppendLine("Device complies with SPI-3 T10/1302-D revision 14");
+                        break;
+                    case 0x0B1C:
+                        sb.AppendLine("Device complies with SPI-3 ANSI INCITS 336-2000");
+                        break;
+                    case 0x0B20:
+                        sb.AppendLine("Device complies with EPI (no version claimed)");
+                        break;
+                    case 0x0B3B:
+                        sb.AppendLine("Device complies with EPI T10/1134 revision 16");
+                        break;
+                    case 0x0B3C:
+                        sb.AppendLine("Device complies with EPI ANSI INCITS TR-23 1999");
+                        break;
+                    case 0x0B40:
+                        sb.AppendLine("Device complies with SPI-4 (no version claimed)");
+                        break;
+                    case 0x0B54:
+                        sb.AppendLine("Device complies with SPI-4 T10/1365-D revision 7");
+                        break;
+                    case 0x0B55:
+                        sb.AppendLine("Device complies with SPI-4 T10/1365-D revision 9");
+                        break;
+                    case 0x0B56:
+                        sb.AppendLine("Device complies with SPI-4 ANSI INCITS 362-2002");
+                        break;
+                    case 0x0B59:
+                        sb.AppendLine("Device complies with SPI-4 T10/1365-D revision 10");
+                        break;
+                    case 0x0B60:
+                        sb.AppendLine("Device complies with SPI-5 (no version claimed)");
+                        break;
+                    case 0x0B79:
+                        sb.AppendLine("Device complies with SPI-5 T10/1525-D revision 3");
+                        break;
+                    case 0x0B7A:
+                        sb.AppendLine("Device complies with SPI-5 T10/1525-D revision 5");
+                        break;
+                    case 0x0B7B:
+                        sb.AppendLine("Device complies with SPI-5 T10/1525-D revision 6");
+                        break;
+                    case 0x0B7C:
+                        sb.AppendLine("Device complies with SPI-5 ANSI INCITS 367-2003");
+                        break;
+                    case 0x0BE0:
+                        sb.AppendLine("Device complies with SAS (no version claimed)");
+                        break;
+                    case 0x0BE1:
+                        sb.AppendLine("Device complies with SAS T10/1562-D revision 01");
+                        break;
+                    case 0x0BF5:
+                        sb.AppendLine("Device complies with SAS T10/1562-D revision 03");
+                        break;
+                    case 0x0BFA:
+                        sb.AppendLine("Device complies with SAS T10/1562-D revision 04");
+                        break;
+                    case 0x0BFB:
+                        sb.AppendLine("Device complies with SAS T10/1562-D revision 04");
+                        break;
+                    case 0x0BFC:
+                        sb.AppendLine("Device complies with SAS T10/1562-D revision 05");
+                        break;
+                    case 0x0BFD:
+                        sb.AppendLine("Device complies with SAS ANSI INCITS 376-2003");
+                        break;
+                    case 0x0C00:
+                        sb.AppendLine("Device complies with SAS-1.1 (no version claimed)");
+                        break;
+                    case 0x0C07:
+                        sb.AppendLine("Device complies with SAS-1.1 T10/1601-D revision 9");
+                        break;
+                    case 0x0C0F:
+                        sb.AppendLine("Device complies with SAS-1.1 T10/1601-D revision 10");
+                        break;
+                    case 0x0C11:
+                        sb.AppendLine("Device complies with SAS-1.1 ANSI INCITS 417-2006");
+                        break;
+                    case 0x0C20:
+                        sb.AppendLine("Device complies with SAS-2 (no version claimed)");
+                        break;
+                    case 0x0C23:
+                        sb.AppendLine("Device complies with SAS-2 T10/1760-D revision 14");
+                        break;
+                    case 0x0D20:
+                        sb.AppendLine("Device complies with FC-PH (no version claimed)");
+                        break;
+                    case 0x0D3B:
+                        sb.AppendLine("Device complies with FC-PH ANSI INCITS 230-1994");
+                        break;
+                    case 0x0D3C:
+                        sb.AppendLine("Device complies with FC-PH ANSI INCITS 230-1994 with Amnd 1 ANSI INCITS 230/ AM1-1996");
+                        break;
+                    case 0x0D40:
+                        sb.AppendLine("Device complies with FC-AL (no version claimed)");
+                        break;
+                    case 0x0D5C:
+                        sb.AppendLine("Device complies with FC-AL ANSI INCITS 272-1996");
+                        break;
+                    case 0x0D60:
+                        sb.AppendLine("Device complies with FC-AL-2 (no version claimed)");
+                        break;
+                    case 0x0D61:
+                        sb.AppendLine("Device complies with FC-AL-2 T11/1133-D revision 7.0");
+                        break;
+                    case 0x0D63:
+                        sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999 with AM1-2003 & AM2-2006");
+                        break;
+                    case 0x0D64:
+                        sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999 with Amnd 2 AM2-2006");
+                        break;
+                    case 0x0D7C:
+                        sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999");
+                        break;
+                    case 0x0D7D:
+                        sb.AppendLine("Device complies with FC-AL-2 ANSI INCITS 332-1999 with Amnd 1 AM1-2003");
+                        break;
+                    case 0x0D80:
+                        sb.AppendLine("Device complies with FC-PH-3 (no version claimed)");
+                        break;
+                    case 0x0D9C:
+                        sb.AppendLine("Device complies with FC-PH-3 ANSI INCITS 303-1998");
+                        break;
+                    case 0x0DA0:
+                        sb.AppendLine("Device complies with FC-FS (no version claimed)");
+                        break;
+                    case 0x0DB7:
+                        sb.AppendLine("Device complies with FC-FS T11/1331-D revision 1.2");
+                        break;
+                    case 0x0DB8:
+                        sb.AppendLine("Device complies with FC-FS T11/1331-D revision 1.7");
+                        break;
+                    case 0x0DBC:
+                        sb.AppendLine("Device complies with FC-FS ANSI INCITS 373-2003");
+                        break;
+                    case 0x0DC0:
+                        sb.AppendLine("Device complies with FC-PI (no version claimed)");
+                        break;
+                    case 0x0DDC:
+                        sb.AppendLine("Device complies with FC-PI ANSI INCITS 352-2002");
+                        break;
+                    case 0x0DE0:
+                        sb.AppendLine("Device complies with FC-PI-2 (no version claimed)");
+                        break;
+                    case 0x0DE2:
+                        sb.AppendLine("Device complies with FC-PI-2 T11/1506-D revision 5.0");
+                        break;
+                    case 0x0DE4:
+                        sb.AppendLine("Device complies with FC-PI-2 ANSI INCITS 404-2006");
+                        break;
+                    case 0x0E00:
+                        sb.AppendLine("Device complies with FC-FS-2 (no version claimed)");
+                        break;
+                    case 0x0E02:
+                        sb.AppendLine("Device complies with FC-FS-2 ANSI INCITS 242-2007");
+                        break;
+                    case 0x0E03:
+                        sb.AppendLine("Device complies with FC-FS-2 ANSI INCITS 242-2007 with AM1 ANSI INCITS 242/ AM1-2007");
+                        break;
+                    case 0x0E20:
+                        sb.AppendLine("Device complies with FC-LS (no version claimed)");
+                        break;
+                    case 0x0E21:
+                        sb.AppendLine("Device complies with FC-LS T11/1620-D revision 1.62");
+                        break;
+                    case 0x0E29:
+                        sb.AppendLine("Device complies with FC-LS ANSI INCITS 433-2007");
+                        break;
+                    case 0x0E40:
+                        sb.AppendLine("Device complies with FC-SP (no version claimed)");
+                        break;
+                    case 0x0E42:
+                        sb.AppendLine("Device complies with FC-SP T11/1570-D revision 1.6");
+                        break;
+                    case 0x0E45:
+                        sb.AppendLine("Device complies with FC-SP ANSI INCITS 426-2007");
+                        break;
+                    case 0x0E60:
+                        sb.AppendLine("Device complies with FC-PI-3 (no version claimed)");
+                        break;
+                    case 0x0E80:
+                        sb.AppendLine("Device complies with FC-PI-4 (no version claimed)");
+                        break;
+                    case 0x0E82:
+                        sb.AppendLine("Device complies with FC-PI-4 T11/1647-D revision 8.0");
+                        break;
+                    case 0x0EA0:
+                        sb.AppendLine("Device complies with FC 10GFC (no version claimed)");
+                        break;
+                    case 0x0EA2:
+                        sb.AppendLine("Device complies with FC 10GFC ANSI INCITS 364-2003");
+                        break;
+                    case 0x0EA3:
+                        sb.AppendLine("Device complies with FC 10GFC ISO/IEC 14165-116");
+                        break;
+                    case 0x0EA6:
+                        sb.AppendLine("Device complies with FC 10GFC ANSI INCITS 364-2003 with AM1 ANSI INCITS 364/ AM1-2007");
+                        break;
+                    case 0x0EC0:
+                        sb.AppendLine("Device complies with FC-SP-2 (no version claimed)");
+                        break;
+                    case 0x0EE0:
+                        sb.AppendLine("Device complies with FC-FS-3 (no version claimed)");
+                        break;
+                    case 0x0F00:
+                        sb.AppendLine("Device complies with FC-LS-2 (no version claimed)");
+                        break;
+                    case 0x12C0:
+                        sb.AppendLine("Device complies with FC-DA-2 (no version claimed)");
+                        break;
+                    case 0x12E0:
+                        sb.AppendLine("Device complies with FC-DA (no version claimed)");
+                        break;
+                    case 0x12E2:
+                        sb.AppendLine("Device complies with FC-DA T11/1513-DT revision 3.1");
+                        break;
+                    case 0x12E8:
+                        sb.AppendLine("Device complies with FC-DA ANSI INCITS TR-36 2004");
+                        break;
+                    case 0x1300:
+                        sb.AppendLine("Device complies with FC-Tape (no version claimed)");
+                        break;
+                    case 0x1301:
+                        sb.AppendLine("Device complies with FC-Tape T11/1315 revision 1.16");
+                        break;
+                    case 0x131B:
+                        sb.AppendLine("Device complies with FC-Tape T11/1315 revision 1.17");
+                        break;
+                    case 0x131C:
+                        sb.AppendLine("Device complies with FC-Tape ANSI INCITS TR-24 1999");
+                        break;
+                    case 0x1320:
+                        sb.AppendLine("Device complies with FC-FLA (no version claimed)");
+                        break;
+                    case 0x133B:
+                        sb.AppendLine("Device complies with FC-FLA T11/1235 revision 7");
+                        break;
+                    case 0x133C:
+                        sb.AppendLine("Device complies with FC-FLA ANSI INCITS TR-20 1998");
+                        break;
+                    case 0x1340:
+                        sb.AppendLine("Device complies with FC-PLDA (no version claimed)");
+                        break;
+                    case 0x135B:
+                        sb.AppendLine("Device complies with FC-PLDA T11/1162 revision 2.1");
+                        break;
+                    case 0x135C:
+                        sb.AppendLine("Device complies with FC-PLDA ANSI INCITS TR-19 1998");
+                        break;
+                    case 0x1360:
+                        sb.AppendLine("Device complies with SSA-PH2 (no version claimed)");
+                        break;
+                    case 0x137B:
+                        sb.AppendLine("Device complies with SSA-PH2 T10.1/1145-D revision 09c");
+                        break;
+                    case 0x137C:
+                        sb.AppendLine("Device complies with SSA-PH2 ANSI INCITS 293-1996");
+                        break;
+                    case 0x1380:
+                        sb.AppendLine("Device complies with SSA-PH3 (no version claimed)");
+                        break;
+                    case 0x139B:
+                        sb.AppendLine("Device complies with SSA-PH3 T10.1/1146-D revision 05b");
+                        break;
+                    case 0x139C:
+                        sb.AppendLine("Device complies with SSA-PH3 ANSI INCITS 307-1998");
+                        break;
+                    case 0x14A0:
+                        sb.AppendLine("Device complies with IEEE 1394 (no version claimed)");
+                        break;
+                    case 0x14BD:
+                        sb.AppendLine("Device complies with ANSI IEEE 1394-1995");
+                        break;
+                    case 0x14C0:
+                        sb.AppendLine("Device complies with IEEE 1394a (no version claimed)");
+                        break;
+                    case 0x14E0:
+                        sb.AppendLine("Device complies with IEEE 1394b (no version claimed)");
+                        break;
+                    case 0x15E0:
+                        sb.AppendLine("Device complies with ATA/ATAPI-6 (no version claimed)");
+                        break;
+                    case 0x15FD:
+                        sb.AppendLine("Device complies with ATA/ATAPI-6 ANSI INCITS 361-2002");
+                        break;
+                    case 0x1600:
+                        sb.AppendLine("Device complies with ATA/ATAPI-7 (no version claimed)");
+                        break;
+                    case 0x1602:
+                        sb.AppendLine("Device complies with ATA/ATAPI-7 T13/1532-D revision 3");
+                        break;
+                    case 0x161C:
+                        sb.AppendLine("Device complies with ATA/ATAPI-7 ANSI INCITS 397-2005");
+                        break;
+                    case 0x1620:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-AAM Architecture Model (no version claimed)");
+                        break;
+                    case 0x1621:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-APT Parallel Transport (no version claimed)");
+                        break;
+                    case 0x1622:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-AST Serial Transport (no version claimed)");
+                        break;
+                    case 0x1623:
+                        sb.AppendLine("Device complies with ATA/ATAPI-8 ATA8-ACS ATA/ATAPI Command Set (no version claimed)");
+                        break;
+                    case 0x1728:
+                        sb.AppendLine("Device complies with Universal Serial Bus Specification, Revision 1.1");
+                        break;
+                    case 0x1729:
+                        sb.AppendLine("Device complies with Universal Serial Bus Specification, Revision 2.0");
+                        break;
+                    case 0x1730:
+                        sb.AppendLine("Device complies with USB Mass Storage Class Bulk-Only Transport, Revision 1.0");
+                        break;
+                    case 0x1740:
+                        sb.AppendLine("Device complies with UAS (no version claimed)");
+                        break;
+                    case 0x1EA0:
+                        sb.AppendLine("Device complies with SAT (no version claimed)");
+                        break;
+                    case 0x1EA7:
+                        sb.AppendLine("Device complies with SAT T10/1711-D revision 8");
+                        break;
+                    case 0x1EAB:
+                        sb.AppendLine("Device complies with SAT T10/1711-D revision 9");
+                        break;
+                    case 0x1EAD:
+                        sb.AppendLine("Device complies with SAT ANSI INCITS 431-2007");
+                        break;
+                    case 0x1EC0:
+                        sb.AppendLine("Device complies with SAT-2 (no version claimed)");
+                        break;
+                    case 0x1EC4:
+                        sb.AppendLine("Device complies with SAT-2 T10/1826-D revision 6");
                         break;
                     default:
-                        switch (VersionDescriptor & 0x001F)
-                        {
-                            case 0x00:
-                                sb.AppendFormat("Device complies with unknown standard 0x:{0:X4}", VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                            default:
-                                sb.AppendFormat("Device claims unknown version 0x{0:X2} of unknown standard 0x:{1:X4}", VersionDescriptor & 0x001F, VersionDescriptor & 0x001F).AppendLine();
-                                break;
-                        }
+                        sb.AppendFormat("Device complies with unknown standard code 0x{0:X4}", VersionDescriptor).AppendLine();
                         break;
                 }
             }
