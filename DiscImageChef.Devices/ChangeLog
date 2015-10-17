@@ -1,3 +1,9 @@
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/AtaCommands.cs:
+	* Device/AtapiCommands.cs:
+	  Corrected typos that resulted in device reset :p
+
 2015-10-16  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

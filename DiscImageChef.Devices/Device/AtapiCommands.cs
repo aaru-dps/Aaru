@@ -93,7 +93,7 @@ namespace DiscImageChef.Devices
 
             registers.command = (byte)Enums.AtaCommands.IdentifyPacketDevice;
 
-            lastError = SendAtaCommand(registers, out statusRegisters, Enums.AtaProtocol.PioOut, Enums.AtaTransferRegister.NoTransfer,
+            lastError = SendAtaCommand(registers, out statusRegisters, Enums.AtaProtocol.PioIn, Enums.AtaTransferRegister.NoTransfer,
                 ref buffer, timeout, false, out duration, out sense);
             error = lastError != 0;
 
