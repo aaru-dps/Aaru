@@ -1,6 +1,11 @@
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI.cs:
+	  Added information from SPC-4.
+
+2015-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI.cs:
 	  Added info from SCSI-2 specification.
 
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
