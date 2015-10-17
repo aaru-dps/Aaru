@@ -48,6 +48,7 @@ namespace DiscImageChef.Decoders
     /// T10/1416-D revision 23
     /// T10/1731-D revision 16
     /// T10/502 revision 05
+    /// RFC 7144
     /// </summary>
     public static class SCSI
     {
@@ -2909,6 +2910,39 @@ namespace DiscImageChef.Decoders
                         break;
                     case 0x0960:
                         sb.AppendLine("Device complies with iSCSI (no version claimed)");
+                        break;
+                    case 0x0961:
+                    case 0x0962:
+                    case 0x0963:
+                    case 0x0964:
+                    case 0x0965:
+                    case 0x0966:
+                    case 0x0967:
+                    case 0x0968:
+                    case 0x0969:
+                    case 0x096A:
+                    case 0x096B:
+                    case 0x096C:
+                    case 0x096D:
+                    case 0x096E:
+                    case 0x096F:
+                    case 0x0970:
+                    case 0x0971:
+                    case 0x0972:
+                    case 0x0973:
+                    case 0x0974:
+                    case 0x0975:
+                    case 0x0976:
+                    case 0x0977:
+                    case 0x0978:
+                    case 0x0979:
+                    case 0x097A:
+                    case 0x097B:
+                    case 0x097C:
+                    case 0x097D:
+                    case 0x097E:
+                    case 0x097F:
+                        sb.AppendFormat("Device complies with iSCSI revision {0}", VersionDescriptor & 0x1F).AppendLine();
                         break;
                     case 0x0980:
                         sb.AppendLine("Device complies with SBP-3 (no version claimed)");
