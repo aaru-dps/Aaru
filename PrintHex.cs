@@ -36,6 +36,7 @@ Copyright (C) 2011-2014 Claunia.com
 ****************************************************************************/
 //$Id$
 using System;
+using DiscImageChef.Console;
 
 namespace DiscImageChef
 {
@@ -43,7 +44,7 @@ namespace DiscImageChef
     {
         public static void PrintHexArray(byte[] array, int width)
         {
-            Console.WriteLine(ByteArrayToHexArrayString(array, width));
+            DicConsole.WriteLine(ByteArrayToHexArrayString(array, width));
         }
 
         public static string ByteArrayToHexArrayString(byte[] array, int width)
@@ -63,12 +64,12 @@ namespace DiscImageChef
                 {
                     if (subcounter == 3 )
                     {
-                        Console.Write("  ");
+                        sb.Append("  ");
                         subcounter = 0;
                     }
                     else
                     {
-                        Console.Write(" ");
+                        sb.Append(" ");
                         subcounter++;
                     }
                 }

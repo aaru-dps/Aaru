@@ -44,4 +44,10 @@
     <Compile Include="Swapping.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
