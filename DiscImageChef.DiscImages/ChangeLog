@@ -1,3 +1,8 @@
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugin.cs:
+	  Added ATA/ATAPI IDENTIFY DEVICE disk tags.
+
 2015-10-18  Natalia Portillo  <claunia@claunia.com>
 
 	* VHD.cs:

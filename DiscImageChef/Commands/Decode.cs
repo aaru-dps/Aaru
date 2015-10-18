@@ -87,6 +87,34 @@ namespace DiscImageChef.Commands
                                     }
                                     break;
                                 }
+                            case DiskTagType.ATA_IDENTIFY:
+                                {
+                                    byte[] identify = inputFormat.ReadDiskTag(DiskTagType.ATA_IDENTIFY);
+                                    if (identify == null)
+                                        DicConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
+                                    else
+                                    {
+                                        DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
+                                        DicConsole.WriteLine("================================================================================");
+                                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(identify));
+                                        DicConsole.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
+                            case DiskTagType.ATAPI_IDENTIFY:
+                                {
+                                    byte[] identify = inputFormat.ReadDiskTag(DiskTagType.ATAPI_IDENTIFY);
+                                    if (identify == null)
+                                        DicConsole.WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
+                                    else
+                                    {
+                                        DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
+                                        DicConsole.WriteLine("================================================================================");
+                                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(identify));
+                                        DicConsole.WriteLine("================================================================================");
+                                    }
+                                    break;
+                                }
                             case DiskTagType.CD_ATIP:
                                 {
                                     byte[] atip = inputFormat.ReadDiskTag(DiskTagType.CD_ATIP);

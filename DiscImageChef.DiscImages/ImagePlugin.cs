@@ -952,7 +952,11 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>BD-R Pseudo-overwrite information</summary>
         MMC_POWResourcesInformation,
         /// <summary>SCSI INQUIRY response</summary>
-        SCSI_INQUIRY
+        SCSI_INQUIRY,
+        /// <summary>ATA IDENTIFY DEVICE response</summary>
+        ATA_IDENTIFY,
+        /// <summary>ATA IDENTIFY PACKET DEVICE response</summary>
+        ATAPI_IDENTIFY
     };
 
     /// <summary>
