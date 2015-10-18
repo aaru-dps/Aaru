@@ -64,6 +64,7 @@ Copyright (C) 1995 Hari Thirumoorthy
  */
 
 using System;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Checksums
 {
@@ -443,42 +444,42 @@ namespace DiscImageChef.Checksums
                                 lambda[j] ^= Alpha_to[modnn(u + tmp)];
                         }
                     }
-                    //if (MainClass.isDebug)
+
+                    #if DEBUG
+                    /* find roots of the erasure location polynomial */
+                    for (i = 1; i <= no_eras; i++)
+                        reg[i] = Index_of[lambda[i]];
+                    count = 0;
+                    for (i = 1; i <= NN; i++)
                     {
-                        /* find roots of the erasure location polynomial */
-                        for (i = 1; i <= no_eras; i++)
-                            reg[i] = Index_of[lambda[i]];
-                        count = 0;
-                        for (i = 1; i <= NN; i++)
-                        {
-                            q = 1;
-                            for (j = 1; j <= no_eras; j++)
-                                if (reg[j] != A0)
-                                {
-                                    reg[j] = modnn(reg[j] + j);
-                                    q ^= Alpha_to[reg[j]];
-                                }
-                            if (q == 0)
+                        q = 1;
+                        for (j = 1; j <= no_eras; j++)
+                            if (reg[j] != A0)
                             {
-                                /* store root and error location
+                                reg[j] = modnn(reg[j] + j);
+                                q ^= Alpha_to[reg[j]];
+                            }
+                        if (q == 0)
+                        {
+                            /* store root and error location
                              * number indices
                              */
-                                root[count] = i;
-                                loc[count] = NN - i;
-                                count++;
-                            }
+                            root[count] = i;
+                            loc[count] = NN - i;
+                            count++;
                         }
-                        if (count != no_eras)
-                        {
-                            Console.WriteLine("\n lambda(x) is WRONG\n");
-                            return -1;
-                        }
-
-                        Console.WriteLine("\n Erasure positions as determined by roots of Eras Loc Poly:\n");
-                        for (i = 0; i < count; i++)
-                            Console.WriteLine("{0} ", loc[i]);
-                        Console.WriteLine("\n");
                     }
+                    if (count != no_eras)
+                    {
+                        DicConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
+                        return -1;
+                    }
+
+                    DicConsole.DebugWriteLine("Reed Solomon", "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
+                    for (i = 0; i < count; i++)
+                        DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+                    DicConsole.DebugWriteLine("Reed Solomon", "\n");
+                    #endif
                 }
                 for (i = 0; i < NN - KK + 1; i++)
                     b[i] = Index_of[lambda[i]];
@@ -572,13 +573,13 @@ namespace DiscImageChef.Checksums
                     }
                 }
 
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("\n Final error positions:\t");
-                    for (i = 0; i < count; i++)
-                        Console.WriteLine("{0} ", loc[i]);
-                    Console.WriteLine("\n");
-                }
+                #if DEBUG
+                DicConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+                for (i = 0; i < count; i++)
+                    DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+                DicConsole.DebugWriteLine("Reed Solomon", "\n");
+                #endif
+
                 if (deg_lambda != count)
                 {
                     /*
@@ -630,10 +631,7 @@ namespace DiscImageChef.Checksums
                     }
                     if (den == 0)
                     {
-                        //if (MainClass.isDebug)
-                        {
-                            Console.WriteLine("\n ERROR: denominator = 0\n");
-                        }
+                        DicConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
                         return -1;
                     }
                     /* Apply error to data */
