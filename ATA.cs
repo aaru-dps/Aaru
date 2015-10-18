@@ -1862,8 +1862,6 @@ namespace DiscImageChef.Decoders
                 return null;
             }
 
-            //IdentifyDevice ATAID = new IdentifyDevice();
-
             IntPtr ptr = Marshal.AllocHGlobal(512);
             Marshal.Copy(IdentifyDeviceResponse, 0, ptr, 512);
             IdentifyDevice ATAID = (IdentifyDevice)Marshal.PtrToStructure(ptr, typeof(IdentifyDevice));
