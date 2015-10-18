@@ -38,6 +38,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders
 {
@@ -1852,8 +1853,14 @@ namespace DiscImageChef.Decoders
 
         public static IdentifyDevice? DecodeIdentifyDevice(byte[] IdentifyDeviceResponse)
         {
-            if (IdentifyDeviceResponse.Length != 512)
+            if (IdentifyDeviceResponse != null)
                 return null;
+            
+            if (IdentifyDeviceResponse.Length != 512)
+            {
+                DicConsole.DebugWriteLine("ATA/ATAPI IDENTIFY decoder", "IDENTIFY response is different than 512 bytes, not decoding.");
+                return null;
+            }
 
             //IdentifyDevice ATAID = new IdentifyDevice();
 

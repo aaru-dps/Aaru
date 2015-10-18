@@ -1,3 +1,14 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* BD.cs:
+	* CD.cs:
+	* ATA.cs:
+	* MMC.cs:
+	* SCSI.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI.cs:
