@@ -41,6 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Based on FAT's BPB, cannot find a FAT or directory
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.Plugins
 {
     class SolarFS : Plugin
@@ -100,33 +103,30 @@ namespace DiscImageChef.Plugins
             Array.Copy(bpb_sector, 0x35, bpb_strings, 0, 8);
             BPB.fs_type = StringHandlers.CToString(bpb_strings);
 
-            //if (MainClass.isDebug)
-            {
-                BPB.x86_jump = new byte[3];
-                Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);
-                BPB.unk1 = bpb_sector[0x0D];
-                BPB.unk2 = BitConverter.ToUInt16(bpb_sector, 0x0E);
-                BPB.unk3 = new byte[10];
-                Array.Copy(bpb_sector, 0x1B, BPB.unk3, 0, 10);
-                BPB.unk4 = BitConverter.ToUInt32(bpb_sector, 0x26);
+            BPB.x86_jump = new byte[3];
+            Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);
+            BPB.unk1 = bpb_sector[0x0D];
+            BPB.unk2 = BitConverter.ToUInt16(bpb_sector, 0x0E);
+            BPB.unk3 = new byte[10];
+            Array.Copy(bpb_sector, 0x1B, BPB.unk3, 0, 10);
+            BPB.unk4 = BitConverter.ToUInt32(bpb_sector, 0x26);
 
-                Console.WriteLine("(SolarFS) BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0], BPB.x86_jump[1], BPB.x86_jump[2]);
-                Console.WriteLine("(SolarFS) BPB.OEMName: \"{0}\"", BPB.OEMName);
-                Console.WriteLine("(SolarFS) BPB.bps: {0}", BPB.bps);
-                Console.WriteLine("(SolarFS) BPB.unk1: 0x{0:X2}", BPB.unk1);
-                Console.WriteLine("(SolarFS) BPB.unk2: 0x{0:X4}", BPB.unk2);
-                Console.WriteLine("(SolarFS) BPB.root_ent: {0}", BPB.root_ent);
-                Console.WriteLine("(SolarFS) BPB.sectors: {0}", BPB.sectors);
-                Console.WriteLine("(SolarFS) BPB.media: 0x{0:X2}", BPB.media);
-                Console.WriteLine("(SolarFS) BPB.spfat: {0}", BPB.spfat);
-                Console.WriteLine("(SolarFS) BPB.sptrk: {0}", BPB.sptrk);
-                Console.WriteLine("(SolarFS) BPB.heads: {0}", BPB.heads);
-                Console.WriteLine("(SolarFS) BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}", BPB.unk3[0], BPB.unk3[1], BPB.unk3[2], BPB.unk3[3], BPB.unk3[4], BPB.unk3[5], BPB.unk3[6], BPB.unk3[7], BPB.unk3[8], BPB.unk3[9]);
-                Console.WriteLine("(SolarFS) BPB.signature: 0x{0:X2}", BPB.signature);
-                Console.WriteLine("(SolarFS) BPB.unk4: 0x{0:X8}", BPB.unk4);
-                Console.WriteLine("(SolarFS) BPB.vol_name: \"{0}\"", BPB.vol_name);
-                Console.WriteLine("(SolarFS) BPB.fs_type: \"{0}\"", BPB.fs_type);
-            }
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", BPB.x86_jump[0], BPB.x86_jump[1], BPB.x86_jump[2]);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", BPB.OEMName);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", BPB.bps);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", BPB.unk1);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}", BPB.unk2);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}", BPB.root_ent);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}", BPB.sectors);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}", BPB.media);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", BPB.spfat);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", BPB.sptrk);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", BPB.heads);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}", BPB.unk3[0], BPB.unk3[1], BPB.unk3[2], BPB.unk3[3], BPB.unk3[4], BPB.unk3[5], BPB.unk3[6], BPB.unk3[7], BPB.unk3[8], BPB.unk3[9]);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", BPB.signature);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", BPB.unk4);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", BPB.vol_name);
+            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", BPB.fs_type);
 
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", BPB.media).AppendLine();

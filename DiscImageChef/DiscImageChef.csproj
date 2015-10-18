@@ -179,5 +179,9 @@
       <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
       <Name>DiscImageChef.Interop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

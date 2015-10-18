@@ -42,6 +42,9 @@ using DiscImageChef;
 
 // TODO: Implement detecting DOS bootable disks
 // TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.Plugins
 {
     class FAT : Plugin
@@ -86,14 +89,11 @@ namespace DiscImageChef.Plugins
             {
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0); // Easier to manage
 
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("DEBUG (FAT plugin): fats_no = {0}", fats_no);
-                    Console.WriteLine("DEBUG (FAT plugin): media_descriptor = 0x{0:X2}", media_descriptor);
-                    Console.WriteLine("DEBUG (FAT plugin): fat32_signature = {0}", StringHandlers.CToString(fat32_signature));
-                    Console.WriteLine("DEBUG (FAT plugin): bps = {0}", bps);
-                    Console.WriteLine("DEBUG (FAT plugin): first_fat_entry = 0x{0:X8}", first_fat_entry);
-                }
+                DicConsole.DebugWriteLine("FAT plugin", "fats_no = {0}", fats_no);
+                DicConsole.DebugWriteLine("FAT plugin", "media_descriptor = 0x{0:X2}", media_descriptor);
+                DicConsole.DebugWriteLine("FAT plugin", "fat32_signature = {0}", StringHandlers.CToString(fat32_signature));
+                DicConsole.DebugWriteLine("FAT plugin", "bps = {0}", bps);
+                DicConsole.DebugWriteLine("FAT plugin", "first_fat_entry = 0x{0:X8}", first_fat_entry);
 
                 if (fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
 				return false;

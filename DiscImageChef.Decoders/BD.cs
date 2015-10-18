@@ -38,6 +38,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Text;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders
 {
@@ -81,8 +82,7 @@ namespace DiscImageChef.Decoders
 
             if (DIResponse.Length != 4100)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (BD Disc Information): Found incorrect Blu-ray Disc Information size ({0} bytes)", DIResponse.Length);
+                DicConsole.DebugWriteLine("BD Disc Information decoder", "Found incorrect Blu-ray Disc Information size ({0} bytes)", DIResponse.Length);
 
                 return null;
             }
@@ -141,8 +141,7 @@ namespace DiscImageChef.Decoders
                         }
                     default:
                         {
-                            //if (MainClass.isDebug)
-                                Console.WriteLine("DEBUG (BD Disc Information): Found unknown disc type identifier \"{0}\"", Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
+                            DicConsole.DebugWriteLine("BD Disc Information decoder", "Found unknown disc type identifier \"{0}\"", Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
                             break;
                         }
                 }
@@ -210,8 +209,7 @@ namespace DiscImageChef.Decoders
 
             if (BCAResponse.Length != 68)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (BD BCA): Found incorrect Blu-ray BCA size ({0} bytes)", BCAResponse.Length);
+                DicConsole.DebugWriteLine("BD BCA decoder", "Found incorrect Blu-ray BCA size ({0} bytes)", BCAResponse.Length);
 
                 return null;
             }
@@ -238,11 +236,13 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (BD BCA): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (BD BCA): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            #endif
+
             sb.AppendFormat("Blu-ray Burst Cutting Area in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.BCA, 80));
 
@@ -270,8 +270,7 @@ namespace DiscImageChef.Decoders
             decoded.Signature = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
             if (decoded.Signature != DDSIdentifier)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (BD DDS): Found incorrect DDS signature (0x{0:X4})", decoded.Signature);
+                DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})", decoded.Signature);
 
                 return null;
 
@@ -312,19 +311,6 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved4 = 0x{0:X16}", response.Reserved4).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
-                sb.AppendFormat("DEBUG (BD Disc Definition Structure): Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
-            }
-
             sb.AppendFormat("DDS Format: 0x{0:X2}", response.Format).AppendLine();
             sb.AppendFormat("DDS has ben updated {0} times", response.UpdateCount).AppendLine();
             sb.AppendFormat("First PSN of Drive Area: 0x{0:X8}", response.DriveAreaPSN).AppendLine();
@@ -342,6 +328,27 @@ namespace DiscImageChef.Decoders
             sb.AppendFormat("Blu-ray DDS Disc Type Specific Data in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0)
+                sb.AppendFormat("Reserved4 = 0x{0:X16}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0)
+                sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0)
+                sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            if(response.Reserved7 != 0)
+                sb.AppendFormat("Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
+            if(response.Reserved8 != 0)
+                sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
+            if(response.Reserved9 != 0)
+                sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
+            #endif
+
             return sb.ToString();
         }
 
@@ -358,8 +365,7 @@ namespace DiscImageChef.Decoders
 
             if (CSResponse.Length != 8)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (BD Cartridge Status): Found incorrect Blu-ray Spare Area Information size ({0} bytes)", CSResponse.Length);
+                DicConsole.DebugWriteLine("BD Cartridge Status decoder", "Found incorrect Blu-ray Cartridge Status size ({0} bytes)", CSResponse.Length);
 
                 return null;
             }
@@ -392,16 +398,22 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved4 = 0x{0:X8}", response.Reserved4).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
-                sb.AppendFormat("DEBUG (BD Cartridge Status): Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0)
+                sb.AppendFormat("Reserved4 = 0x{0:X8}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0)
+                sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0)
+                sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            if(response.Reserved7 != 0)
+                sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
+            #endif
 
             if (response.Cartridge)
             {
@@ -414,13 +426,13 @@ namespace DiscImageChef.Decoders
             else
             {
                 sb.AppendLine("Media is not in a cartridge");
-                //if (MainClass.isDebug)
-                {
-                    if (response.OUT)
-                        sb.AppendLine("Media has out bit marked, shouldn't");
-                    if (response.CWP)
-                        sb.AppendLine("Media has write protection bit marked, shouldn't");
-                }
+
+                #if DEBUG
+                if (response.OUT)
+                    sb.AppendLine("Media has out bit marked, shouldn't");
+                if (response.CWP)
+                    sb.AppendLine("Media has write protection bit marked, shouldn't");
+                #endif
             }
             return sb.ToString();
         }
@@ -438,8 +450,7 @@ namespace DiscImageChef.Decoders
 
             if (SAIResponse.Length != 16)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (BD Spare Area Information): Found incorrect Blu-ray Spare Area Information size ({0} bytes)", SAIResponse.Length);
+                DicConsole.DebugWriteLine("BD Spare Area Information decoder", "Found incorrect Blu-ray Spare Area Information size ({0} bytes)", SAIResponse.Length);
 
                 return null;
             }
@@ -467,12 +478,14 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (BD Spare Area Information): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (BD Spare Area Information): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-                sb.AppendFormat("DEBUG (BD Spare Area Information): Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            #endif
             sb.AppendFormat("{0} free spare blocks", response.FreeSpareBlocks).AppendLine();
             sb.AppendFormat("{0} allocated spare blocks", response.AllocatedSpareBlocks).AppendLine();
 

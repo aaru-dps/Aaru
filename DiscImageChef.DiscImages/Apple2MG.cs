@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -273,30 +274,26 @@ namespace DiscImageChef.ImagePlugins
             if (ImageHeader.dataSize == 0x00800C00)
             {
                 ImageHeader.dataSize = 0x000C8000;
-                ////if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (2MG plugin): Detected incorrect endian on data size field, correcting.");
+                DicConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
             }
 
-            ////if (MainClass.isDebug)
-            //{
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.headerSize = {0}", ImageHeader.headerSize);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.version = {0}", ImageHeader.version);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.imageFormat = {0}", ImageHeader.imageFormat);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.flags = 0x{0:X8}", ImageHeader.flags);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.blocks = {0}", ImageHeader.blocks);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.dataOffset = 0x{0:X8}", ImageHeader.dataOffset);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.dataSize = {0}", ImageHeader.dataSize);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.commentOffset = 0x{0:X8}", ImageHeader.commentOffset);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.commentSize = {0}", ImageHeader.commentSize);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.creatorSpecificOffset = 0x{0:X8}", ImageHeader.creatorSpecificOffset);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.creatorSpecificSize = {0}", ImageHeader.creatorSpecificSize);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved1 = 0x{0:X8}", ImageHeader.reserved1);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved2 = 0x{0:X8}", ImageHeader.reserved2);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
-                Console.WriteLine("DEBUG (2MG plugin): ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
-            //}
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", ImageHeader.headerSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", ImageHeader.version);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", ImageHeader.imageFormat);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", ImageHeader.flags);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", ImageHeader.blocks);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", ImageHeader.dataOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", ImageHeader.dataSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", ImageHeader.commentOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", ImageHeader.commentSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}", ImageHeader.creatorSpecificOffset);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}", ImageHeader.creatorSpecificSize);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", ImageHeader.reserved1);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", ImageHeader.reserved2);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
+            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
 
             if (ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 && ImageHeader.imageFormat != ProDOSSectorOrder)
                 return false;

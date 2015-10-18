@@ -39,6 +39,7 @@ using System;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Checksums;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -46,32 +47,28 @@ namespace DiscImageChef.Commands
     {
         public static void doChecksum(ChecksumSubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--separated-tracks={0}", options.SeparatedTracks);
-                Console.WriteLine("--whole-disc={0}", options.WholeDisc);
-                Console.WriteLine("--input={0}", options.InputFile);
-                Console.WriteLine("--adler32={0}", options.DoAdler32);
-                Console.WriteLine("--crc16={0}", options.DoCRC16);
-                Console.WriteLine("--crc32={0}", options.DoCRC32);
-                Console.WriteLine("--crc64={0}", options.DoCRC64);
-                Console.WriteLine("--md5={0}", options.DoMD5);
-                Console.WriteLine("--ripemd160={0}", options.DoRIPEMD160);
-                Console.WriteLine("--sha1={0}", options.DoSHA1);
-                Console.WriteLine("--sha256={0}", options.DoSHA256);
-                Console.WriteLine("--sha384={0}", options.DoSHA384);
-                Console.WriteLine("--sha512={0}", options.DoSHA512);
-                Console.WriteLine("--spamsum={0}", options.DoSpamSum);
-            }
-            //throw new NotImplementedException("Checksumming not yet implemented.");
+            DicConsole.DebugWriteLine("Checksum command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", options.SeparatedTracks);
+            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", options.WholeDisc);
+            DicConsole.DebugWriteLine("Checksum command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}", options.DoAdler32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", options.DoCRC16);
+            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", options.DoCRC32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", options.DoCRC64);
+            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", options.DoMD5);
+            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}", options.DoRIPEMD160);
+            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", options.DoSHA1);
+            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", options.DoSHA256);
+            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", options.DoSHA384);
+            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSHA512);
+            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)
             {
-                Console.WriteLine("Unable to recognize image format, not checksumming");
+                DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
                 return;
             }
 
@@ -126,11 +123,11 @@ namespace DiscImageChef.Commands
                             ssctxTrack.Init();
 
                         ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        Console.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+                        DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
                         for (ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
                         {
-                            Console.Write("\rHashing sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
+                            DicConsole.Write("\rHashing sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
                             byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
                             if (options.DoAdler32)
                                 adler32ctxTrack.Update(sector);
@@ -160,42 +157,42 @@ namespace DiscImageChef.Commands
                                 ssctxTrack.Update(sector);
                         }
 
-                        Console.WriteLine();
+                        DicConsole.WriteLine();
 
                         if (options.DoAdler32)
-                            Console.WriteLine("Track {0}'s Adler-32: 0x{1}", currentTrack.TrackSequence, adler32ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s Adler-32: 0x{1}", currentTrack.TrackSequence, adler32ctxTrack.End());
                         if (options.DoCRC16)
-                            Console.WriteLine("Track {0}'s CRC16: 0x{1}", currentTrack.TrackSequence, crc16ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s CRC16: 0x{1}", currentTrack.TrackSequence, crc16ctxTrack.End());
                         if (options.DoCRC32)
-                            Console.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
                         if (options.DoCRC64)
-                            Console.WriteLine("Track {0}'s CRC64 (ECMA): 0x{1}", currentTrack.TrackSequence, crc64ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s CRC64 (ECMA): 0x{1}", currentTrack.TrackSequence, crc64ctxTrack.End());
                         if (options.DoFletcher16)
-                            Console.WriteLine("Track {0}'s Fletcher-16: 0x{1}", currentTrack.TrackSequence, fletcher16ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s Fletcher-16: 0x{1}", currentTrack.TrackSequence, fletcher16ctxTrack.End());
                         if (options.DoFletcher32)
-                            Console.WriteLine("Track {0}'s Fletcher-32: 0x{1}", currentTrack.TrackSequence, fletcher32ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s Fletcher-32: 0x{1}", currentTrack.TrackSequence, fletcher32ctxTrack.End());
                         if (options.DoMD5)
-                            Console.WriteLine("Track {0}'s MD5: {1}", currentTrack.TrackSequence, md5ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s MD5: {1}", currentTrack.TrackSequence, md5ctxTrack.End());
                         if (options.DoRIPEMD160)
-                            Console.WriteLine("Track {0}'s RIPEMD160: {1}", currentTrack.TrackSequence, ripemd160ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s RIPEMD160: {1}", currentTrack.TrackSequence, ripemd160ctxTrack.End());
                         if (options.DoSHA1)
-                            Console.WriteLine("Track {0}'s SHA1: {1}", currentTrack.TrackSequence, sha1ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s SHA1: {1}", currentTrack.TrackSequence, sha1ctxTrack.End());
                         if (options.DoSHA256)
-                            Console.WriteLine("Track {0}'s SHA256: {1}", currentTrack.TrackSequence, sha256ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s SHA256: {1}", currentTrack.TrackSequence, sha256ctxTrack.End());
                         if (options.DoSHA384)
-                            Console.WriteLine("Track {0}'s SHA384: {1}", currentTrack.TrackSequence, sha384ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s SHA384: {1}", currentTrack.TrackSequence, sha384ctxTrack.End());
                         if (options.DoSHA512)
-                            Console.WriteLine("Track {0}'s SHA512: {1}", currentTrack.TrackSequence, sha512ctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s SHA512: {1}", currentTrack.TrackSequence, sha512ctxTrack.End());
                         if (options.DoSpamSum)
-                            Console.WriteLine("Track {0}'s SpamSum: {1}", currentTrack.TrackSequence, ssctxTrack.End());
+                            DicConsole.WriteLine("Track {0}'s SpamSum: {1}", currentTrack.TrackSequence, ssctxTrack.End());
                     }
                 }
                 catch (Exception ex)
                 {
                     if (options.Debug)
-                        Console.WriteLine("Could not get tracks because {0}", ex.Message);
+                        DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                     else
-                        Console.WriteLine("Unable to get separate tracks, not checksumming them");
+                        DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                 }
             }
 
@@ -244,11 +241,11 @@ namespace DiscImageChef.Commands
                     ssctx.Init();
 
                 ulong sectors = inputFormat.GetSectors();
-                Console.WriteLine("Sectors {0}", sectors);
+                DicConsole.WriteLine("Sectors {0}", sectors);
 
                 for (ulong i = 0; i < sectors; i++)
                 {
-                    Console.Write("\rHashing sector {0}", i + 1);
+                    DicConsole.Write("\rHashing sector {0}", i + 1);
                     byte[] sector = inputFormat.ReadSector(i);
                     if (options.DoAdler32)
                         adler32ctx.Update(sector);
@@ -278,34 +275,34 @@ namespace DiscImageChef.Commands
                         ssctx.Update(sector);
                 }
 
-                Console.WriteLine();
+                DicConsole.WriteLine();
 
                 if (options.DoAdler32)
-                    Console.WriteLine("Disk's Adler-32: 0x{0}", adler32ctx.End());
+                    DicConsole.WriteLine("Disk's Adler-32: 0x{0}", adler32ctx.End());
                 if (options.DoCRC16)
-                    Console.WriteLine("Disk's CRC16: 0x{0}", crc16ctx.End());
+                    DicConsole.WriteLine("Disk's CRC16: 0x{0}", crc16ctx.End());
                 if (options.DoCRC32)
-                    Console.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
+                    DicConsole.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
                 if (options.DoCRC64)
-                    Console.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
+                    DicConsole.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
                 if (options.DoFletcher16)
-                    Console.WriteLine("Disk's Fletcher-16: 0x{0}", fletcher16ctx.End());
+                    DicConsole.WriteLine("Disk's Fletcher-16: 0x{0}", fletcher16ctx.End());
                 if (options.DoFletcher32)
-                    Console.WriteLine("Disk's Fletcher-32: 0x{0}", fletcher32ctx.End());
+                    DicConsole.WriteLine("Disk's Fletcher-32: 0x{0}", fletcher32ctx.End());
                 if (options.DoMD5)
-                    Console.WriteLine("Disk's MD5: {0}", md5ctx.End());
+                    DicConsole.WriteLine("Disk's MD5: {0}", md5ctx.End());
                 if (options.DoRIPEMD160)
-                    Console.WriteLine("Disk's RIPEMD160: {0}", ripemd160ctx.End());
+                    DicConsole.WriteLine("Disk's RIPEMD160: {0}", ripemd160ctx.End());
                 if (options.DoSHA1)
-                    Console.WriteLine("Disk's SHA1: {0}", sha1ctx.End());
+                    DicConsole.WriteLine("Disk's SHA1: {0}", sha1ctx.End());
                 if (options.DoSHA256)
-                    Console.WriteLine("Disk's SHA256: {0}", sha256ctx.End());
+                    DicConsole.WriteLine("Disk's SHA256: {0}", sha256ctx.End());
                 if (options.DoSHA384)
-                    Console.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
+                    DicConsole.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
                 if (options.DoSHA512)
-                    Console.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
+                    DicConsole.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
                 if (options.DoSpamSum)
-                    Console.WriteLine("Disk's SpamSum: {0}", ssctx.End());
+                    DicConsole.WriteLine("Disk's SpamSum: {0}", ssctx.End());
             }
         }
     }

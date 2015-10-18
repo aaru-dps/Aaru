@@ -37,6 +37,7 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 using System;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -44,22 +45,19 @@ namespace DiscImageChef.Commands
     {
         public static void doPrintHex(PrintHexSubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--input={0}", options.InputFile);
-                Console.WriteLine("--start={0}", options.StartSector);
-                Console.WriteLine("--length={0}", options.Length);
-                Console.WriteLine("--long-sectors={0}", options.LongSectors);
-                Console.WriteLine("--WidthBytes={0}", options.WidthBytes);
-            }
+            DicConsole.DebugWriteLine("PrintHex command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("PrintHex command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("PrintHex command", "--start={0}", options.StartSector);
+            DicConsole.DebugWriteLine("PrintHex command", "--length={0}", options.Length);
+            DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", options.LongSectors);
+            DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", options.WidthBytes);
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)
             {
-                Console.WriteLine("Unable to recognize image format, not verifying");
+                DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
                 return;
             }
 
@@ -67,19 +65,19 @@ namespace DiscImageChef.Commands
 
             for(ulong i = 0; i < options.Length; i++)
             {
-                Console.WriteLine("Sector {0}", options.StartSector + i);
+                DicConsole.WriteLine("Sector {0}", options.StartSector + i);
                 byte[] sector;
 
                 if (inputFormat.ImageInfo.readableSectorTags == null)
                 {
-                    Console.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
+                    DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                     options.LongSectors = false;
                 }
                 else
                 {
                     if (inputFormat.ImageInfo.readableSectorTags.Count == 0)
                     {
-                        Console.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
+                        DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                         options.LongSectors = false;
                     }
                 }

@@ -42,6 +42,9 @@ using System.Collections.Generic;
 
 // Created following notes from Dave Dunfield
 // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.ImagePlugins
 {
     class TeleDisk : ImagePlugin
@@ -255,20 +258,17 @@ namespace DiscImageChef.ImagePlugins
             Array.Copy(headerBytes, headerBytesForCRC, 10);
             UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.sequence = 0x{0:X2}", header.sequence);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.diskSet = 0x{0:X2}", header.diskSet);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.version = 0x{0:X2}", header.version);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.dataRate = 0x{0:X2}", header.dataRate);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.driveType = 0x{0:X2}", header.driveType);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.stepping = 0x{0:X2}", header.stepping);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.dosAllocation = 0x{0:X2}", header.dosAllocation);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.sides = 0x{0:X2}", header.sides);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.crc = 0x{0:X4}", header.crc);
-                Console.WriteLine("DEBUG (TeleDisk plugin): calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
-            }
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
 
             // We need more checks as the magic is too simply.
             // This may deny legal images
@@ -321,21 +321,18 @@ namespace DiscImageChef.ImagePlugins
             Array.Copy(headerBytes, headerBytesForCRC, 10);
             UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
             
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.signature = 0x{0:X4}", header.signature);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.sequence = 0x{0:X2}", header.sequence);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.diskSet = 0x{0:X2}", header.diskSet);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.version = 0x{0:X2}", header.version);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.dataRate = 0x{0:X2}", header.dataRate);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.driveType = 0x{0:X2}", header.driveType);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.stepping = 0x{0:X2}", header.stepping);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.dosAllocation = 0x{0:X2}", header.dosAllocation);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.sides = 0x{0:X2}", header.sides);
-                Console.WriteLine("DEBUG (TeleDisk plugin): header.crc = 0x{0:X4}", header.crc);
-                Console.WriteLine("DEBUG (TeleDisk plugin): calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
-            }
-            
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", header.version);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", header.dataRate);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", header.driveType);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", header.stepping);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", header.dosAllocation);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", header.sides);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", header.crc);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCRC);
+
             // We need more checks as the magic is too simply.
             // This may deny legal images
             
@@ -343,8 +340,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.crc != calculatedHeaderCRC)
             {
                 ADiskCRCHasFailed = true;
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (TeleDisk plugin): Calculated CRC does not coincide with stored one.");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
             }
 
             if (header.sequence != 0x00)
@@ -388,19 +384,16 @@ namespace DiscImageChef.ImagePlugins
 
                 UInt16 cmtcrc = TeleDiskCRC(0, commentBlockForCRC);
 
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("DEBUG (TeleDisk plugin): Comment header");
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tCalculated CRC = 0x{0:X4}", cmtcrc);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.length = {0} bytes", commentHeader.length);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.year = {0}", commentHeader.year);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.month = {0}", commentHeader.month);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.day = {0}", commentHeader.day);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.hour = {0}", commentHeader.hour);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.minute = {0}", commentHeader.minute);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tcommentheader.second = {0}", commentHeader.second);
-                }
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", commentHeader.crc);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}", cmtcrc);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes", commentHeader.length);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}", commentHeader.year);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}", commentHeader.month);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.day = {0}", commentHeader.day);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.hour = {0}", commentHeader.hour);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.minute = {0}", commentHeader.minute);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.second = {0}", commentHeader.second);
 
                 ADiskCRCHasFailed |= cmtcrc != commentHeader.crc;
 
@@ -413,11 +406,8 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.imageComments = System.Text.Encoding.ASCII.GetString(commentBlock);
 
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("DEBUG (TeleDisk plugin): Comment");
-                    Console.WriteLine("DEBUG (TeleDisk plugin): {0}", ImageInfo.imageComments);
-                }
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", ImageInfo.imageComments);
 
                 ImageInfo.imageCreationTime = new DateTime(commentHeader.year + 1900, commentHeader.month + 1, commentHeader.day,
                     commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
@@ -428,14 +418,10 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageCreationTime = fi.CreationTimeUtc;
             ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (TeleDisk plugin): Image created on {0}", ImageInfo.imageCreationTime);
-                Console.WriteLine("DEBUG (TeleDisk plugin): Image modified on {0}", ImageInfo.imageLastModificationTime);
-            }
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.imageCreationTime);
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.imageLastModificationTime);
 
-            //if (MainClass.isDebug)
-                Console.WriteLine("DEBUG (TeleDisk plugin): Parsing image");
+            DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
 
             totalDiskSize = 0;
             byte spt = 0;
@@ -459,24 +445,18 @@ namespace DiscImageChef.ImagePlugins
 
                 TDTrackCalculatedCRC = (byte)(TeleDiskCRC(0, TDTrackForCRC) & 0xFF);
 
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("DEBUG (TeleDisk plugin): Track follows");
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack cylinder: {0}\t", TDTrack.cylinder);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack head: {0}\t", TDTrack.head);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tSectors in track: {0}\t", TDTrack.sectors);
-                    Console.WriteLine("DEBUG (TeleDisk plugin): \tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t", TDTrack.crc, TDTrackCalculatedCRC);
-                }
+                DicConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t", TDTrack.cylinder);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t", TDTrack.head);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", TDTrack.sectors);
+                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t", TDTrack.crc, TDTrackCalculatedCRC);
 
                 ADiskCRCHasFailed |= TDTrackCalculatedCRC != TDTrack.crc;
 
                 if (TDTrack.sectors == 0xFF) // End of disk image
                 {
-                    //if (MainClass.isDebug)
-                    {
-                        Console.WriteLine("DEBUG (TeleDisk plugin): End of disk image arrived");
-                        Console.WriteLine("DEBUG (TeleDisk plugin): Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
-                    }
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
 
                     break;
                 }
@@ -503,16 +483,13 @@ namespace DiscImageChef.ImagePlugins
                     TDSector.flags = (byte)stream.ReadByte();
                     TDSector.crc = (byte)stream.ReadByte();
 
-                    //if (MainClass.isDebug)
-                    {
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \tSector follows");
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark cylinder: {0}", TDSector.cylinder);
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark head: {0}", TDSector.head);
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tAddressMark sector number: {0}", TDSector.sectorNumber);
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector size: {0}", TDSector.sectorSize);
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector flags: 0x{0:X2}", TDSector.flags);
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
-                    }
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", TDSector.cylinder);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", TDSector.head);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}", TDSector.sectorNumber);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}", TDSector.sectorSize);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", TDSector.flags);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
 
                     UInt32 LBA = (uint)((TDSector.cylinder * header.sides * spt) + (TDSector.head * spt) + (TDSector.sectorNumber - 1));
                     if ((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
@@ -524,11 +501,8 @@ namespace DiscImageChef.ImagePlugins
                         TDData.dataEncoding = (byte)stream.ReadByte();
                         data = new byte[TDData.dataSize];
                         stream.Read(data, 0, TDData.dataSize);
-                        //if (MainClass.isDebug)
-                        {
-                            Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData size (in-image): {0}", TDData.dataSize);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): \t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
-                        }
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}", TDData.dataSize);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}", TDData.dataEncoding);
 
                         decodedData = DecodeTeleDiskData(TDSector.sectorSize, TDData.dataEncoding, data);
 
@@ -536,8 +510,7 @@ namespace DiscImageChef.ImagePlugins
 
                         if (TDSectorCalculatedCRC != TDSector.crc)
                         {
-                            //if (MainClass.isDebug)
-                                Console.WriteLine("DEBUG (TeleDisk plugin): Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
+                            DicConsole.DebugWriteLine("TeleDisk plugin", "Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
                             if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
                             if (!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
                                 SectorsWhereCRCHasFailed.Add((UInt64)LBA);
@@ -574,8 +547,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         ArrayHelpers.ArrayFill(decodedData, (byte)0);
                     }
-                    //if (MainClass.isDebug)
-                        Console.WriteLine("DEBUG (TeleDisk plugin): \t\tLBA: {0}", LBA);
+                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
 
                     if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
                     {
@@ -583,15 +555,13 @@ namespace DiscImageChef.ImagePlugins
                         {
                             if ((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
                             {
-                                //if (MainClass.isDebug)
-                                    Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
-                                        TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                                DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
+                                    TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
                             }
                             else
                             {
-                                //if (MainClass.isDebug)
-                                    Console.WriteLine("DEBUG (TeleDisk plugin): \t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
-                                        TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
+                                DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                    TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
                             }
                         }
                         else
@@ -840,13 +810,11 @@ namespace DiscImageChef.ImagePlugins
                             ins += 4;
                             outs += decodedPiece.Length;
                         }
-                        //if (MainClass.isDebug)
-                        {
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Input data size: {0} bytes", encodedData.Length);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Processed input: {0} bytes", ins);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Output data size: {0} bytes", decodedData.Length);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (Block pattern decoder): Processed Output: {0} bytes", outs);
-                        }
+
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes", encodedData.Length);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes", ins);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes", decodedData.Length);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes", outs);
                         break;
                     }
                 case dataBlockRLE:
@@ -881,13 +849,12 @@ namespace DiscImageChef.ImagePlugins
                                 outs += Piece.Length;
                             }
                         }
-                        //if (MainClass.isDebug)
-                        {
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Input data size: {0} bytes", encodedData.Length);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Processed input: {0} bytes", ins);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Output data size: {0} bytes", decodedData.Length);
-                            Console.WriteLine("DEBUG (TeleDisk plugin): (RLE decoder): Processed Output: {0} bytes", outs);
-                        }
+
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes", encodedData.Length);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes", decodedData.Length);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
+
                         break;
                     }
                 default:
@@ -967,8 +934,7 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.ECMA_78_2;
                             default:
                                 {
-                                    //if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 5,25\" disk with {0} bytes", totalDiskSize);
+                                    DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
@@ -1012,8 +978,7 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.SHARP_35;
                             default:
                                 {
-                                    //if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 3,5\" disk with {0} bytes", totalDiskSize);
+                                    DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
@@ -1061,16 +1026,14 @@ namespace DiscImageChef.ImagePlugins
                                 return DiskType.ECMA_69_26;
                             default:
                                 {
-                                    //if (MainClass.isDebug)
-                                        Console.WriteLine("DEBUG (TeleDisk plugin): Unknown 8\" disk with {0} bytes", totalDiskSize);
+                                    DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes", totalDiskSize);
                                     return DiskType.Unknown;
                                 }
                         }
                     }
                 default:
                     {
-                        //if (MainClass.isDebug)
-                            Console.WriteLine("DEBUG (TeleDisk plugin): Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
+                        DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
                         return DiskType.Unknown;
                     }
 

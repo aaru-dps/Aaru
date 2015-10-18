@@ -1,3 +1,20 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* Main.cs:
+	* Plugins.cs:
+	* Commands/Decode.cs:
+	* Commands/Verify.cs:
+	* Commands/Analyze.cs:
+	* Commands/Formats.cs:
+	* Commands/Entropy.cs:
+	* Commands/Compare.cs:
+	* Commands/PrintHex.cs:
+	* Commands/Checksum.cs:
+	* DiscImageChef.csproj:
+	* Commands/DeviceInfo.cs:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+
 2015-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:

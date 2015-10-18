@@ -38,6 +38,7 @@
 using System;
 using DiscImageChef.Devices;
 using System.IO;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -45,12 +46,9 @@ namespace DiscImageChef.Commands
     {
         public static void doDeviceInfo(DeviceInfoSubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--device={0}", options.DevicePath);
-            }
+            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -62,7 +60,7 @@ namespace DiscImageChef.Commands
 
             if (dev.Error)
             {
-                Console.WriteLine("Error {0} opening device.", dev.LastError);
+                DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
                 return;
             }
 
@@ -73,7 +71,7 @@ namespace DiscImageChef.Commands
 
             if(sense)
             {
-                Console.WriteLine("SCSI error. Sense decoding not yet implemented.");
+                DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
 
                 #if DEBUG
                 FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
@@ -81,9 +79,9 @@ namespace DiscImageChef.Commands
                 #endif
             }
             else
-                Console.WriteLine("SCSI OK");
+                DicConsole.WriteLine("SCSI OK");
 
-            Console.WriteLine("{0}", Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
+            DicConsole.WriteLine("{0}", Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
 
             Structs.AtaErrorRegistersCHS errorRegisters;
 
@@ -98,52 +96,48 @@ namespace DiscImageChef.Commands
                    && errorRegisters.cylinderHigh == 0xEB
                    && errorRegisters.cylinderLow == 0x14)
                 {
-                    Console.WriteLine("ATA error, but ATAPI signature detected.");
+                    DicConsole.WriteLine("ATA error, but ATAPI signature detected.");
                     sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
 
                     if (sense)
                     {
-                        Console.WriteLine("ATAPI error");
+                        DicConsole.WriteLine("ATAPI error");
 
-                        #if DEBUG
-                        Console.WriteLine("STATUS = 0x{0:X2}", errorRegisters.status);
-                        Console.WriteLine("ERROR = 0x{0:X2}", errorRegisters.error);
-                        Console.WriteLine("NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
-                        Console.WriteLine("SECTOR = 0x{0:X2}", errorRegisters.sector);
-                        Console.WriteLine("CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
-                        Console.WriteLine("CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
-                        Console.WriteLine("DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
-                        Console.WriteLine("COMMAND = 0x{0:X2}", errorRegisters.command);
-                        Console.WriteLine("Error code = {0}", dev.LastError);
-                        #endif
+                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
+                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                        DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                        DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                        DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                        DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                        DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                     }
                     else
                     {
-                        Console.WriteLine("ATAPI OK");
-                        Console.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                        DicConsole.WriteLine("ATAPI OK");
+                        DicConsole.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
                     }
                 }
                 else
                 {
-                    Console.WriteLine("ATA error");
+                    DicConsole.WriteLine("ATA error");
 
-                    #if DEBUG
-                    Console.WriteLine("STATUS = 0x{0:X2}", errorRegisters.status);
-                    Console.WriteLine("ERROR = 0x{0:X2}", errorRegisters.error);
-                    Console.WriteLine("NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
-                    Console.WriteLine("SECTOR = 0x{0:X2}", errorRegisters.sector);
-                    Console.WriteLine("CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
-                    Console.WriteLine("CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
-                    Console.WriteLine("DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
-                    Console.WriteLine("COMMAND = 0x{0:X2}", errorRegisters.command);
-                    Console.WriteLine("Error code = {0}", dev.LastError);
-                    #endif
+                    DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
+                    DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                    DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                    DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                    DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                    DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                    DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                    DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                    DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                 }
             }
             else
             {
-                Console.WriteLine("ATA OK");
-                Console.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                DicConsole.WriteLine("ATA OK");
+                DicConsole.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
            }
         }
     }

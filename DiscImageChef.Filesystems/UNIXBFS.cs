@@ -41,6 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from the Linux kernel
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.Plugins
 {
     class BFS : Plugin
@@ -87,18 +90,15 @@ namespace DiscImageChef.Plugins
             Array.Copy(bfs_sb_sector, 0x22, sb_strings, 0, 6);
             bfs_sb.s_volume = StringHandlers.CToString(sb_strings);
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("(BFS) bfs_sb.s_magic: 0x{0:X8}", bfs_sb.s_magic);
-                Console.WriteLine("(BFS) bfs_sb.s_start: 0x{0:X8}", bfs_sb.s_start);
-                Console.WriteLine("(BFS) bfs_sb.s_end: 0x{0:X8}", bfs_sb.s_end);
-                Console.WriteLine("(BFS) bfs_sb.s_from: 0x{0:X8}", bfs_sb.s_from);
-                Console.WriteLine("(BFS) bfs_sb.s_to: 0x{0:X8}", bfs_sb.s_to);
-                Console.WriteLine("(BFS) bfs_sb.s_bfrom: 0x{0:X8}", bfs_sb.s_bfrom);
-                Console.WriteLine("(BFS) bfs_sb.s_bto: 0x{0:X8}", bfs_sb.s_bto);
-                Console.WriteLine("(BFS) bfs_sb.s_fsname: 0x{0}", bfs_sb.s_fsname);
-                Console.WriteLine("(BFS) bfs_sb.s_volume: 0x{0}", bfs_sb.s_volume);
-            }
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfs_sb.s_magic);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfs_sb.s_start);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}", bfs_sb.s_end);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}", bfs_sb.s_from);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}", bfs_sb.s_to);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfs_sb.s_bfrom);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}", bfs_sb.s_bto);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}", bfs_sb.s_fsname);
+            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfs_sb.s_volume);
 
             sb.AppendLine("UNIX Boot filesystem");
             sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfs_sb.s_start, bfs_sb.s_end, bfs_sb.s_end - bfs_sb.s_start).AppendLine();

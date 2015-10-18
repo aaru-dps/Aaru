@@ -39,6 +39,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.IO;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -181,18 +182,15 @@ namespace DiscImageChef.ImagePlugins
             tmp_header.valid = buffer[0x52];
             tmp_header.reserved = buffer[0x53];
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.diskName = \"{0}\"", tmp_header.diskName);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.dataSize = {0} bytes", tmp_header.dataSize);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.tagSize = {0} bytes", tmp_header.tagSize);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.dataChecksum = 0x{0:X8}", tmp_header.dataChecksum);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.tagChecksum = 0x{0:X8}", tmp_header.tagChecksum);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.format = 0x{0:X2}", tmp_header.format);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.fmtByte = 0x{0:X2}", tmp_header.fmtByte);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.valid = {0}", tmp_header.valid);
-                Console.WriteLine("DEBUG (DC42 plugin): tmp_header.reserved = {0}", tmp_header.reserved);
-            }
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.diskName = \"{0}\"", tmp_header.diskName);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataSize = {0} bytes", tmp_header.dataSize);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagSize = {0} bytes", tmp_header.tagSize);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataChecksum = 0x{0:X8}", tmp_header.dataChecksum);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagChecksum = 0x{0:X8}", tmp_header.tagChecksum);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.format = 0x{0:X2}", tmp_header.format);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.fmtByte = 0x{0:X2}", tmp_header.fmtByte);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.valid = {0}", tmp_header.valid);
+            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.reserved = {0}", tmp_header.reserved);
 
             if (tmp_header.valid != 1 || tmp_header.reserved != 0)
                 return false;
@@ -205,8 +203,7 @@ namespace DiscImageChef.ImagePlugins
             if (tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
                 tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
 
                 return false;
             }
@@ -214,16 +211,14 @@ namespace DiscImageChef.ImagePlugins
             if (tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
                 tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
 
                 return false;
             }
 
             if (tmp_header.fmtByte == kInvalidFmtByte)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("Image says it's unformatted");
+                DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
                 return false;
             }
@@ -258,18 +253,15 @@ namespace DiscImageChef.ImagePlugins
             header.valid = buffer[0x52];
             header.reserved = buffer[0x53];
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (DC42 plugin): header.diskName = \"{0}\"", header.diskName);
-                Console.WriteLine("DEBUG (DC42 plugin): header.dataSize = {0} bytes", header.dataSize);
-                Console.WriteLine("DEBUG (DC42 plugin): header.tagSize = {0} bytes", header.tagSize);
-                Console.WriteLine("DEBUG (DC42 plugin): header.dataChecksum = 0x{0:X8}", header.dataChecksum);
-                Console.WriteLine("DEBUG (DC42 plugin): header.tagChecksum = 0x{0:X8}", header.tagChecksum);
-                Console.WriteLine("DEBUG (DC42 plugin): header.format = 0x{0:X2}", header.format);
-                Console.WriteLine("DEBUG (DC42 plugin): header.fmtByte = 0x{0:X2}", header.fmtByte);
-                Console.WriteLine("DEBUG (DC42 plugin): header.valid = {0}", header.valid);
-                Console.WriteLine("DEBUG (DC42 plugin): header.reserved = {0}", header.reserved);
-            }
+            DicConsole.DebugWriteLine("DC42 plugin", "header.diskName = \"{0}\"", header.diskName);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.dataSize = {0} bytes", header.dataSize);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.tagSize = {0} bytes", header.tagSize);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.dataChecksum = 0x{0:X8}", header.dataChecksum);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.tagChecksum = 0x{0:X8}", header.tagChecksum);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.format = 0x{0:X2}", header.format);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.fmtByte = 0x{0:X2}", header.fmtByte);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}", header.valid);
+            DicConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}", header.reserved);
 
             if (header.valid != 1 || header.reserved != 0)
                 return false;
@@ -282,8 +274,7 @@ namespace DiscImageChef.ImagePlugins
             if (header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
                 header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Unknown header.format = 0x{0:X2} value", header.format);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.format);
 
                 return false;
             }
@@ -291,16 +282,14 @@ namespace DiscImageChef.ImagePlugins
             if (header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
                 header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
+                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
                 return false;
             }
 
             if (header.fmtByte == kInvalidFmtByte)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Image says it's unformatted");
+                DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
                 return false;
             }
@@ -317,8 +306,7 @@ namespace DiscImageChef.ImagePlugins
             {
                 if (header.tagSize / 12 != ImageInfo.sectors)
                 {
-                    //if (MainClass.isDebug)
-                        Console.WriteLine("DEBUG (DC42 plugin): header.tagSize / 12 != sectors");
+                    DicConsole.DebugWriteLine("DC42 plugin", "header.tagSize / 12 != sectors");
 
                     return false;
                 }
@@ -398,39 +386,29 @@ namespace DiscImageChef.ImagePlugins
             UInt32 dataChk;
             UInt32 tagsChk = 0;
 
-            //if (MainClass.isDebug)
-                Console.WriteLine("DEBUG (DC42 plugin): Reading data");
+            DicConsole.DebugWriteLine("DC42 plugin", "Reading data");
             FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
             datastream.Seek((long)(dataOffset), SeekOrigin.Begin);
             datastream.Read(data, 0, (int)header.dataSize);
             datastream.Close();
 
-            //if (MainClass.isDebug)
-                Console.WriteLine("DEBUG (DC42 plugin): Calculating data checksum");
+            DicConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
             dataChk = DC42CheckSum(data);
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (DC42 plugin): Calculated data checksum = 0x{0:X8}", dataChk);
-                Console.WriteLine("DEBUG (DC42 plugin): Stored data checksum = 0x{0:X8}", header.dataChecksum);
-            }
+            DicConsole.DebugWriteLine("DC42 plugin", "Calculated data checksum = 0x{0:X8}", dataChk);
+            DicConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}", header.dataChecksum);
 
             if (header.tagSize > 0)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Reading tags");
+                DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
                 FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
                 tagstream.Seek((long)(tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
                 tagstream.Close();
 
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (DC42 plugin): Calculating tag checksum");
+                DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
                 tagsChk = DC42CheckSum(tags);
-                //if (MainClass.isDebug)
-                {
-                    Console.WriteLine("DEBUG (DC42 plugin): Calculated tag checksum = 0x{0:X8}", tagsChk);
-                    Console.WriteLine("DEBUG (DC42 plugin): Stored tag checksum = 0x{0:X8}", header.tagChecksum);
-                }
+                DicConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
+                DicConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}", header.tagChecksum);
             }
 
             return dataChk == header.dataChecksum && tagsChk == header.tagChecksum;

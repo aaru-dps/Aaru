@@ -1,0 +1,8 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* DicConsole.cs:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Console.csproj:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+

@@ -1,3 +1,11 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* CDChecksums.cs:
+	* ReedSolomon.cs:
+	* DiscImageChef.Checksums.csproj:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* MD5Context.cs:

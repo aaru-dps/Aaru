@@ -39,6 +39,7 @@ using System;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Checksums;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -46,21 +47,18 @@ namespace DiscImageChef.Commands
     {
         public static void doEntropy(EntropySubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--separated-tracks={0}", options.SeparatedTracks);
-                Console.WriteLine("--whole-disc={0}", options.WholeDisc);
-                Console.WriteLine("--input={0}", options.InputFile);
-                Console.WriteLine("--duplicated-sectors={0}", options.DuplicatedSectors);
-            }
+            DicConsole.DebugWriteLine("Entropy command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", options.SeparatedTracks);
+            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", options.WholeDisc);
+            DicConsole.DebugWriteLine("Entropy command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)
             {
-                Console.WriteLine("Unable to recognize image format, not checksumming");
+                DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
                 return;
             }
 
@@ -80,11 +78,11 @@ namespace DiscImageChef.Commands
                         List<string> uniqueSectorsPerTrack = new List<string>();
 
                         ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        Console.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+                        DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
                         for (ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
                         {
-                            Console.Write("\rEntropying sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
+                            DicConsole.Write("\rEntropying sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
                             byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
 
                             if(options.DuplicatedSectors)
@@ -108,20 +106,20 @@ namespace DiscImageChef.Commands
                             entropy += -(frequency * Math.Log(frequency, 2));
                         }
                         
-                        Console.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
+                        DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
 
                         if(options.DuplicatedSectors)
-                            Console.WriteLine("Track {0} has {1} unique sectors ({1:P3})", currentTrack.TrackSequence, uniqueSectorsPerTrack.Count, (double)uniqueSectorsPerTrack.Count/(double)sectors);
+                            DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", currentTrack.TrackSequence, uniqueSectorsPerTrack.Count, (double)uniqueSectorsPerTrack.Count/(double)sectors);
 
-                        Console.WriteLine();
+                        DicConsole.WriteLine();
                     }
                 }
                 catch (Exception ex)
                 {
                     if (options.Debug)
-                        Console.WriteLine("Could not get tracks because {0}", ex.Message);
+                        DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                     else
-                        Console.WriteLine("Unable to get separate tracks, not calculating their entropy");
+                        DicConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
                 }
             }
 
@@ -134,13 +132,13 @@ namespace DiscImageChef.Commands
                 List<string> uniqueSectors = new List<string>();
 
                 ulong sectors = inputFormat.GetSectors();
-                Console.WriteLine("Sectors {0}", sectors);
+                DicConsole.WriteLine("Sectors {0}", sectors);
 
                 sha1Ctx.Init();
 
                 for (ulong i = 0; i < sectors; i++)
                 {
-                    Console.Write("\rEntropying sector {0}", i + 1);
+                    DicConsole.Write("\rEntropying sector {0}", i + 1);
                     byte[] sector = inputFormat.ReadSector(i);
 
                     if(options.DuplicatedSectors)
@@ -165,12 +163,12 @@ namespace DiscImageChef.Commands
                     entropy += -(frequency * Math.Log(frequency, 2));
                 }
 
-                Console.WriteLine();
+                DicConsole.WriteLine();
 
-                Console.WriteLine("Entropy for disk is {0:F4}.", entropy);
+                DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
 
                 if(options.DuplicatedSectors)
-                    Console.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count/(double)sectors);
+                    DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count/(double)sectors);
 
 
             }

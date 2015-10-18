@@ -41,6 +41,7 @@ using System.Text;
 using DiscImageChef;
 using DiscImageChef.PartPlugins;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Plugins
 {
@@ -199,13 +200,11 @@ namespace DiscImageChef.Plugins
                 return false;
 
             ulong root_ptr = BigEndianBitConverter.ToUInt32(sector, 0x08);
-            //if (MainClass.isDebug)
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Bootblock points to {0} as Rootblock", root_ptr);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", root_ptr);
 
             root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart;
 
-            //if (MainClass.isDebug)
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Nonetheless, going to block {0} for Rootblock", root_ptr);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
 
             if (root_ptr >= imagePlugin.GetSectors())
                 return false;
@@ -242,15 +241,12 @@ namespace DiscImageChef.Plugins
             bootBlk.bootCode = new byte[BootBlockSectors.Length - 0x0C];
             Array.Copy(BootBlockSectors, 0x0C, bootBlk.bootCode, 0, BootBlockSectors.Length - 0x0C);
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Stored boot blocks checksum is 0x{0:X8}", bootBlk.checksum);
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Probably incorrect calculated boot blocks checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
-                Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
-                sha1Ctx.Init();
-                sha1Ctx.Update(bootBlk.bootCode);
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Boot code SHA1 is {0}", sha1Ctx.End());
-            }
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Stored boot blocks checksum is 0x{0:X8}", bootBlk.checksum);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Probably incorrect calculated boot blocks checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
+            Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+            sha1Ctx.Init();
+            sha1Ctx.Update(bootBlk.bootCode);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Boot code SHA1 is {0}", sha1Ctx.End());
 
             rootBlk.type = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x00);
             rootBlk.headerKey = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x04);
@@ -290,11 +286,8 @@ namespace DiscImageChef.Plugins
             rootBlk.extension = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 192));
             rootBlk.sec_type = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 196));
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Stored root block checksum is 0x{0:X8}", rootBlk.checksum);
-                Console.WriteLine("DEBUG (AmigaDOS plugin): Probably incorrect calculated root block checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
-            }
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Stored root block checksum is 0x{0:X8}", rootBlk.checksum);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Probably incorrect calculated root block checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
 
             switch (bootBlk.diskType & 0xFF)
             {

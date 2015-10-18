@@ -43,6 +43,9 @@ using DiscImageChef;
 
 // Information about structures learnt from Inside Macintosh
 // Constants from image testing
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.PartPlugins
 {
     class AppleMap : PartPlugin
@@ -106,8 +109,7 @@ namespace DiscImageChef.PartPlugins
                 {
                     sector_size = 512;
                     APMFromHDDOnCD = true;
-                    //if (MainClass.isDebug)
-                        Console.WriteLine("DEBUG (Apple Partition Map Plugin): PM sector size is 512 bytes, but device's 2048");
+                    DicConsole.DebugWriteLine("Apple Partition Map plugin", "PM sector size is 512 bytes, but device's 2048");
                 }
                 else
                 {

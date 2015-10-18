@@ -81,5 +81,9 @@
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
       <Name>DiscImageChef.DiscImages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

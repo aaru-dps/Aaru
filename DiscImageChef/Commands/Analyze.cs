@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using DiscImageChef.Plugins;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -47,18 +48,15 @@ namespace DiscImageChef.Commands
     {
         public static void doAnalyze(AnalyzeSubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--input={0}", options.InputFile);
-                Console.WriteLine("--filesystems={0}", options.SearchForFilesystems);
-                Console.WriteLine("--partitions={0}", options.SearchForPartitions);
-            }
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", options.SearchForFilesystems);
+            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", options.SearchForPartitions);
 
             if (!System.IO.File.Exists(options.InputFile))
             {
-                Console.WriteLine("Specified file does not exist.");
+                DicConsole.WriteLine("Specified file does not exist.");
                 return;
             }
 
@@ -77,38 +75,35 @@ namespace DiscImageChef.Commands
 
                 if(_imageFormat == null)
                 {
-                    Console.WriteLine("Image format not identified, not proceeding with analysis.");
+                    DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
                     return;
                 }
                 else
                 {
-                    if(MainClass.isVerbose)
-                        Console.WriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
+                    if(options.Verbose)
+                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
                     else
-                        Console.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                        DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
                 }
 
                 try
                 {
                     if (!_imageFormat.OpenImage(options.InputFile))
                     {
-                        Console.WriteLine("Unable to open image format");
-                        Console.WriteLine("No error given");
+                        DicConsole.WriteLine("Unable to open image format");
+                        DicConsole.WriteLine("No error given");
                         return;
                     }
 
-                    if (MainClass.isDebug)
-                    {
-                        Console.WriteLine("DEBUG: Correctly opened image file.");
-                        Console.WriteLine("DEBUG: Image without headers is {0} bytes.", _imageFormat.GetImageSize());
-                        Console.WriteLine("DEBUG: Image has {0} sectors.", _imageFormat.GetSectors());
-                        Console.WriteLine("DEBUG: Image identifies disk type as {0}.", _imageFormat.GetDiskType());
-                    }
+                    DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
+                    DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.", _imageFormat.GetImageSize());
+                    DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", _imageFormat.GetSectors());
+                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.", _imageFormat.GetDiskType());
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Unable to open image format");
-                    Console.WriteLine("Error: {0}", ex.Message);
+                    System.Console.Error.WriteLine("Unable to open image format");
+                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     return;
                 }
 
@@ -138,58 +133,57 @@ namespace DiscImageChef.Commands
 
                     if (partition_scheme == "")
                     {
-                        if(MainClass.isDebug)
-                            Console.WriteLine("DEBUG: No partitions found");
+                        DicConsole.DebugWriteLine("Analyze command", "No partitions found");
                         if (!options.SearchForFilesystems)
                         {
-                            Console.WriteLine("No partitions founds, not searching for filesystems");
+                            DicConsole.WriteLine("No partitions founds, not searching for filesystems");
                             return;
                         }
                         checkraw = true;
                     }
                     else
                     {
-                        Console.WriteLine("Partition scheme identified as {0}", partition_scheme);
-                        Console.WriteLine("{0} partitions found.", partitions.Count);
+                        DicConsole.WriteLine("Partition scheme identified as {0}", partition_scheme);
+                        DicConsole.WriteLine("{0} partitions found.", partitions.Count);
 
                         for (int i = 0; i < partitions.Count; i++)
                         {
-                            Console.WriteLine();
-                            Console.WriteLine("Partition {0}:", partitions[i].PartitionSequence);   
-                            Console.WriteLine("Partition name: {0}", partitions[i].PartitionName);  
-                            Console.WriteLine("Partition type: {0}", partitions[i].PartitionType);  
-                            Console.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);   
-                            Console.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);   
-                            Console.WriteLine("Partition description:");    
-                            Console.WriteLine(partitions[i].PartitionDescription);
+                            DicConsole.WriteLine();
+                            DicConsole.WriteLine("Partition {0}:", partitions[i].PartitionSequence);   
+                            DicConsole.WriteLine("Partition name: {0}", partitions[i].PartitionName);  
+                            DicConsole.WriteLine("Partition type: {0}", partitions[i].PartitionType);  
+                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);   
+                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);   
+                            DicConsole.WriteLine("Partition description:");    
+                            DicConsole.WriteLine(partitions[i].PartitionDescription);
 
                             if (options.SearchForFilesystems)
                             {
-                                Console.WriteLine("Identifying filesystem on partition");
+                                DicConsole.WriteLine("Identifying filesystem on partition");
 
                                 IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors);
                                 if (id_plugins.Count == 0)
-                                    Console.WriteLine("Filesystem not identified");
+                                    DicConsole.WriteLine("Filesystem not identified");
                                 else if (id_plugins.Count > 1)
                                 {
-                                    Console.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                                    DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
 
                                     foreach (string plugin_name in id_plugins)
                                     {
                                         if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                         {
-                                            Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                            DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
                                             _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
-                                            Console.Write(information);
+                                            DicConsole.Write(information);
                                         }
                                     }
                                 }
                                 else
                                 {
                                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                                    Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                                    DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
                                     _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
-                                    Console.Write(information);
+                                    DicConsole.Write(information);
                                 }
                             }
                         }
@@ -200,35 +194,34 @@ namespace DiscImageChef.Commands
                 {
                     IdentifyFilesystems(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors()-1);
                     if (id_plugins.Count == 0)
-                        Console.WriteLine("Filesystem not identified");
+                        DicConsole.WriteLine("Filesystem not identified");
                     else if (id_plugins.Count > 1)
                     {
-                        Console.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                        DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
 
                         foreach (string plugin_name in id_plugins)
                         {
                             if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                             {
-                                Console.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
                                 _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
-                                Console.Write(information);
+                                DicConsole.Write(information);
                             }
                         }
                     }
                     else
                     {
                         plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                        Console.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                        DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
                         _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
-                        Console.Write(information);
+                        DicConsole.Write(information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(String.Format("Error reading file: {0}", ex.Message));
-                if (MainClass.isDebug)
-                    Console.WriteLine(ex.StackTrace);
+                DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
+                DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
         }
 

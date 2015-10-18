@@ -38,6 +38,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using DiscImageChef.ImagePlugins;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -45,20 +46,17 @@ namespace DiscImageChef.Commands
     {
         public static void doVerify(VerifySubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--input={0}", options.InputFile);
-                Console.WriteLine("--verify-disc={0}", options.VerifyDisc);
-                Console.WriteLine("--verify-sectors={0}", options.VerifySectors);
-            }
+            DicConsole.DebugWriteLine("Verify command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Verify command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Verify command", "--input={0}", options.InputFile);
+            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}", options.VerifyDisc);
+            DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", options.VerifySectors);
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)
             {
-                Console.WriteLine("Unable to recognize image format, not verifying");
+                DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
                 return;
             }
 
@@ -75,18 +73,17 @@ namespace DiscImageChef.Commands
                 switch (discCheckStatus)
                 {
                     case true:
-                        Console.WriteLine("Disc image checksums are correct");
+                        DicConsole.WriteLine("Disc image checksums are correct");
                         break;
                     case false:
-                        Console.WriteLine("Disc image checksums are incorrect");
+                        DicConsole.WriteLine("Disc image checksums are incorrect");
                         break;
                     case null:
-                        Console.WriteLine("Disc image does not contain checksums");
+                        DicConsole.WriteLine("Disc image does not contain checksums");
                         break;
                 }
 
-                if (MainClass.isVerbose)
-                    Console.WriteLine("Checking disc image checksums took {0} seconds", CheckTime.TotalSeconds);
+                DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", CheckTime.TotalSeconds);
             }
 
             if (options.VerifySectors)
@@ -124,7 +121,7 @@ namespace DiscImageChef.Commands
 
                         while (remainingSectors > 0)
                         {
-                            Console.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll, inputFormat.GetSectors(), currentTrack.TrackSequence);
+                            DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll, inputFormat.GetSectors(), currentTrack.TrackSequence);
 
                             List<UInt64> tempFailingLBAs;
                             List<UInt64> tempUnknownLBAs;
@@ -175,7 +172,7 @@ namespace DiscImageChef.Commands
                     StartCheck = DateTime.UtcNow;
                     while (remainingSectors > 0)
                     {
-                        Console.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.GetSectors());
+                        DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.GetSectors());
 
                         List<UInt64> tempFailingLBAs;
                         List<UInt64> tempUnknownLBAs;
@@ -218,45 +215,44 @@ namespace DiscImageChef.Commands
 
                 TimeSpan CheckTime = EndCheck - StartCheck;
 
-                Console.Write("\r");
+                DicConsole.Write("\r");
 
                 switch (checkStatus)
                 {
                     case true:
-                        Console.WriteLine("All sector checksums are correct");
+                        DicConsole.WriteLine("All sector checksums are correct");
                         break;
                     case false:
-                        Console.WriteLine("There is at least one sector with incorrect checksum or errors");
+                        DicConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
                         break;
                     case null:
-                        Console.WriteLine("There is at least one sector that does not contain a checksum");
+                        DicConsole.WriteLine("There is at least one sector that does not contain a checksum");
                         break;
                 }
 
-                if (MainClass.isVerbose)
-                    Console.WriteLine("Checking sector checksums took {0} seconds", CheckTime.TotalSeconds);
+                DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", CheckTime.TotalSeconds);
 
-                if (MainClass.isVerbose)
+                if (options.Verbose)
                 {
-                    Console.WriteLine("LBAs with error:");
+                    DicConsole.VerboseWriteLine("LBAs with error:");
                     if (FailingLBAs.Count == (int)inputFormat.GetSectors())
-                        Console.WriteLine("\tall sectors.");
+                        DicConsole.VerboseWriteLine("\tall sectors.");
                     else
                         for (int i = 0; i < FailingLBAs.Count; i++)
-                            Console.WriteLine("\t{0}", FailingLBAs[i]);
+                            DicConsole.VerboseWriteLine("\t{0}", FailingLBAs[i]);
 
-                    Console.WriteLine("LBAs without checksum:");
+                    DicConsole.WriteLine("LBAs without checksum:");
                     if (UnknownLBAs.Count == (int)inputFormat.GetSectors())
-                        Console.WriteLine("\tall sectors.");
+                        DicConsole.VerboseWriteLine("\tall sectors.");
                     else
                         for (int i = 0; i < UnknownLBAs.Count; i++)
-                            Console.WriteLine("\t{0}", UnknownLBAs[i]);
+                            DicConsole.VerboseWriteLine("\t{0}", UnknownLBAs[i]);
                 }
 
-                Console.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());
-                Console.WriteLine("Total errors............ {0}", FailingLBAs.Count);
-                Console.WriteLine("Total unknowns.......... {0}", UnknownLBAs.Count);
-                Console.WriteLine("Total errors+unknowns... {0}", FailingLBAs.Count + UnknownLBAs.Count);
+                DicConsole.WriteLine("Total sectors........... {0}", inputFormat.GetSectors());
+                DicConsole.WriteLine("Total errors............ {0}", FailingLBAs.Count);
+                DicConsole.WriteLine("Total unknowns.......... {0}", UnknownLBAs.Count);
+                DicConsole.WriteLine("Total errors+unknowns... {0}", FailingLBAs.Count + UnknownLBAs.Count);
             }
         }
     }

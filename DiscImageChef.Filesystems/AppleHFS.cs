@@ -42,6 +42,9 @@ using DiscImageChef;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.Plugins
 {
     class AppleHFS : Plugin
@@ -82,8 +85,7 @@ namespace DiscImageChef.Plugins
 
                 if (drSigWord == HFS_MAGIC)
                 {
-                    //if (MainClass.isDebug)
-                        Console.WriteLine("DEBUG (HFS Plugin): HFS sector size is 512 bytes, but device's 2048");
+                    DicConsole.DebugWriteLine("HFS plugin", "HFS sector size is 512 bytes, but device's 2048");
 
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
 

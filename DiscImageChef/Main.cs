@@ -42,15 +42,12 @@ using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Plugins;
 using System.Reflection;
+using DiscImageChef.Console;
 
 namespace DiscImageChef
 {
     class MainClass
     {
-
-        public static bool isDebug;
-        public static bool isVerbose;
-
         public static void Main(string[] args)
         {
             string invokedVerb = "";
@@ -75,64 +72,85 @@ namespace DiscImageChef
             Version AssemblyVersion = typeof(MainClass).Assembly.GetName().Version;
             string AssemblyCopyright  = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 
-            Console.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
-            Console.WriteLine("{0}", AssemblyCopyright);
-            Console.WriteLine();
+            DicConsole.WriteLineEvent += System.Console.WriteLine;
+            DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
+
+            DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
+            DicConsole.WriteLine("{0}", AssemblyCopyright);
+            DicConsole.WriteLine();
 
             switch (invokedVerb)
             {
                 case "analyze":
                     AnalyzeSubOptions AnalyzeOptions = (AnalyzeSubOptions)invokedVerbInstance;
-                    isDebug = AnalyzeOptions.Debug;
-                    isVerbose = AnalyzeOptions.Verbose;
+                    if (AnalyzeOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (AnalyzeOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Analyze.doAnalyze(AnalyzeOptions);
                     break;
                 case "compare":
                     CompareSubOptions CompareOptions = (CompareSubOptions)invokedVerbInstance;
-                    isDebug = CompareOptions.Debug;
-                    isVerbose = CompareOptions.Verbose;
+                    if (CompareOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (CompareOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Compare.doCompare(CompareOptions);
                     break;
                 case "checksum":
                     ChecksumSubOptions ChecksumOptions = (ChecksumSubOptions)invokedVerbInstance;
-                    isDebug = ChecksumOptions.Debug;
-                    isVerbose = ChecksumOptions.Verbose;
+                    if (ChecksumOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (ChecksumOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Checksum.doChecksum(ChecksumOptions);
                     break;
                 case "entropy":
                     EntropySubOptions entropyOptions = (EntropySubOptions)invokedVerbInstance;
-                    isDebug = entropyOptions.Debug;
-                    isVerbose = entropyOptions.Verbose;
+                    if (entropyOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (entropyOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Entropy.doEntropy(entropyOptions);
                     break;
                 case "verify":
                     VerifySubOptions VerifyOptions = (VerifySubOptions)invokedVerbInstance;
-                    isDebug = VerifyOptions.Debug;
-                    isVerbose = VerifyOptions.Verbose;
+                    if (VerifyOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (VerifyOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Verify.doVerify(VerifyOptions);
                     break;
                 case "printhex":
                     PrintHexSubOptions PrintHexOptions = (PrintHexSubOptions)invokedVerbInstance;
-                    isDebug = PrintHexOptions.Debug;
-                    isVerbose = PrintHexOptions.Verbose;
+                    if (PrintHexOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (PrintHexOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.PrintHex.doPrintHex(PrintHexOptions);
                     break;
                 case "decode":
                     DecodeSubOptions DecodeOptions = (DecodeSubOptions)invokedVerbInstance;
-                    isDebug = DecodeOptions.Debug;
-                    isVerbose = DecodeOptions.Verbose;
+                    if (DecodeOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (DecodeOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Decode.doDecode(DecodeOptions);
                     break;
                 case "formats":
                     FormatsSubOptions FormatsOptions = (FormatsSubOptions)invokedVerbInstance;
-                    isVerbose = FormatsOptions.Verbose;
-                    isDebug = FormatsOptions.Debug;
-                    Commands.Formats.ListFormats();
+                    if (FormatsOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (FormatsOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.Formats.ListFormats(FormatsOptions);
                     break;
                 case "device-info":
                     DeviceInfoSubOptions DeviceInfoOptions = (DeviceInfoSubOptions)invokedVerbInstance;
-                    isVerbose = DeviceInfoOptions.Verbose;
-                    isDebug = DeviceInfoOptions.Debug;
+                    if (DeviceInfoOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (DeviceInfoOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.DeviceInfo.doDeviceInfo(DeviceInfoOptions);
                     break;
                 default:

@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Devices
 {
@@ -97,9 +98,7 @@ namespace DiscImageChef.Devices
                 ref buffer, timeout, false, out duration, out sense);
             error = lastError != 0;
 
-            #if DEBUG
-            Console.WriteLine("ATA IDENTIFY DEVICE took {0} ms.", duration);
-            #endif
+            DicConsole.DebugWriteLine("ATA Device", "IDENTIFY DEVICE took {0} ms.", duration);
 
             return sense;
         }

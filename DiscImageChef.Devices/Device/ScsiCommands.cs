@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Devices
 {
@@ -107,9 +108,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            #if DEBUG
-            Console.WriteLine("SCSI INQUIRY took {0} ms.", duration);
-            #endif
+            DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
             return sense;
         }
@@ -184,9 +183,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            #if DEBUG
-            Console.WriteLine("SCSI INQUIRY took {0} ms.", duration);
-            #endif
+            DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
             return sense;
         }

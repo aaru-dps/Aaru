@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -459,11 +460,8 @@ namespace DiscImageChef.ImagePlugins
             UInt32 headerCalculatedChecksum = VHDChecksum(header);
             UInt32 footerCalculatedChecksum = VHDChecksum(footer);
 
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (VirtualPC plugin): Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", headerChecksum, headerCalculatedChecksum);
-                Console.WriteLine("DEBUG (VirtualPC plugin): Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", footerChecksum, footerCalculatedChecksum);
-            }
+            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", headerChecksum, headerCalculatedChecksum);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", footerChecksum, footerCalculatedChecksum);
 
             byte[] usableHeader;
             UInt32 usableChecksum;
@@ -503,32 +501,29 @@ namespace DiscImageChef.ImagePlugins
             thisDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             thisDateTime = thisDateTime.AddSeconds(thisFooter.timestamp);
 
-            //if (MainClass.isDebug)
-            {
-                Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
-                sha1Ctx.Init();
-                sha1Ctx.Update(thisFooter.reserved);
+            Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
+            sha1Ctx.Init();
+            sha1Ctx.Update(thisFooter.reserved);
 
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.cookie = 0x{0:X8}", thisFooter.cookie);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.features = 0x{0:X8}", thisFooter.features);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.version = 0x{0:X8}", thisFooter.version);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.offset = {0}", thisFooter.offset);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.timestamp = 0x{0:X8} ({1})", thisFooter.timestamp, thisDateTime);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.creatorApplication = 0x{0:X8} (\"{1}\")", thisFooter.creatorApplication,
-                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorApplication)));
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.creatorVersion = 0x{0:X8}", thisFooter.creatorVersion);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.creatorHostOS = 0x{0:X8} (\"{1}\")", thisFooter.creatorHostOS,
-                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.originalSize = {0}", thisFooter.originalSize);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.currentSize = {0}", thisFooter.currentSize);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})", thisFooter.diskGeometry,
-                    (thisFooter.diskGeometry & 0xFFFF0000) >> 16, (thisFooter.diskGeometry & 0xFF00) >> 8, (thisFooter.diskGeometry & 0xFF));
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.diskType = 0x{0:X8}", thisFooter.diskType);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.checksum = 0x{0:X8}", thisFooter.checksum);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.uniqueId = {0}", thisFooter.uniqueId);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.savedState = 0x{0:X2}", thisFooter.savedState);
-                Console.WriteLine("DEBUG (VirtualPC plugin): footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
-            }
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.cookie = 0x{0:X8}", thisFooter.cookie);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.features = 0x{0:X8}", thisFooter.features);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.version = 0x{0:X8}", thisFooter.version);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.offset = {0}", thisFooter.offset);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", thisFooter.timestamp, thisDateTime);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")", thisFooter.creatorApplication,
+                Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorApplication)));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}", thisFooter.creatorVersion);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")", thisFooter.creatorHostOS,
+                Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.originalSize = {0}", thisFooter.originalSize);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}", thisFooter.currentSize);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})", thisFooter.diskGeometry,
+                (thisFooter.diskGeometry & 0xFFFF0000) >> 16, (thisFooter.diskGeometry & 0xFF00) >> 8, (thisFooter.diskGeometry & 0xFF));
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}", thisFooter.diskType);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}", thisFooter.checksum);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}", thisFooter.uniqueId);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}", thisFooter.savedState);
+            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
             if (thisFooter.version == Version1)
                 ImageInfo.imageVersion = "1.0";
@@ -655,8 +650,7 @@ namespace DiscImageChef.ImagePlugins
 
                 UInt32 dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
 
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (VirtualPC plugin): Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
 
                 if (dynamicChecksum != dynamicChecksumCalculated)
                     throw new ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
@@ -694,34 +688,31 @@ namespace DiscImageChef.ImagePlugins
                 parentDateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 parentDateTime = parentDateTime.AddSeconds(thisDynamic.parentTimestamp);
 
-                //if (MainClass.isDebug)
-                {
-                    Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
-                    sha1Ctx.Init();
-                    sha1Ctx.Update(thisDynamic.reserved2);
+                sha1Ctx = new Checksums.SHA1Context();
+                sha1Ctx.Init();
+                sha1Ctx.Update(thisDynamic.reserved2);
 
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.cookie = 0x{0:X8}", thisDynamic.cookie);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.dataOffset = {0}", thisDynamic.dataOffset);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.tableOffset = {0}", thisDynamic.tableOffset);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.headerVersion = 0x{0:X8}", thisDynamic.headerVersion);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.maxTableEntries = {0}", thisDynamic.maxTableEntries);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.blockSize = {0}", thisDynamic.blockSize);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.checksum = 0x{0:X8}", thisDynamic.checksum);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentID = {0}", thisDynamic.parentID);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentTimestamp = 0x{0:X8} ({1})", thisDynamic.parentTimestamp, parentDateTime);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.reserved = 0x{0:X8}", thisDynamic.reserved);
-                    for (int i = 0; i < 8; i++)
-                    {
-                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i, thisDynamic.locatorEntries[i].platformCode,
-                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic.locatorEntries[i].platformCode)));
-                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataSpace = {1}", i, thisDynamic.locatorEntries[i].platformDataSpace);
-                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataLength = {1}", i, thisDynamic.locatorEntries[i].platformDataLength);
-                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i, thisDynamic.locatorEntries[i].reserved);
-                        Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}].platformDataOffset = {1}", i, thisDynamic.locatorEntries[i].platformDataOffset);
-                    }
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.parentName = \"{0}\"", thisDynamic.parentName);
-                    Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", thisDynamic.cookie);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.dataOffset = {0}", thisDynamic.dataOffset);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.tableOffset = {0}", thisDynamic.tableOffset);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}", thisDynamic.headerVersion);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}", thisDynamic.maxTableEntries);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.blockSize = {0}", thisDynamic.blockSize);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.checksum = 0x{0:X8}", thisDynamic.checksum);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentID = {0}", thisDynamic.parentID);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})", thisDynamic.parentTimestamp, parentDateTime);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved = 0x{0:X8}", thisDynamic.reserved);
+                for (int i = 0; i < 8; i++)
+                {
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i, thisDynamic.locatorEntries[i].platformCode,
+                        Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic.locatorEntries[i].platformCode)));
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}", i, thisDynamic.locatorEntries[i].platformDataSpace);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataLength = {1}", i, thisDynamic.locatorEntries[i].platformDataLength);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i, thisDynamic.locatorEntries[i].reserved);
+                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataOffset = {1}", i, thisDynamic.locatorEntries[i].platformDataOffset);
                 }
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentName = \"{0}\"", thisDynamic.parentName);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
                 if (thisDynamic.headerVersion != Version1)
                     throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
@@ -738,11 +729,8 @@ namespace DiscImageChef.ImagePlugins
                 for (int i = 0; i < thisDynamic.maxTableEntries; i++)
                     blockAllocationTable[i] = BigEndianBitConverter.ToUInt32(bat, 4 * i);
 
-                //if (MainClass.isDebug)
-                {
-                    DateTime endTime = DateTime.UtcNow;
-                    Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime-startTime).TotalSeconds);
-                }
+                DateTime endTime = DateTime.UtcNow;
+                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds", (endTime-startTime).TotalSeconds);
                 */
 
                 // How many sectors uses the BAT
@@ -769,19 +757,14 @@ namespace DiscImageChef.ImagePlugins
                         Array.Copy(batSector.blockPointer, 0, blockAllocationTable, (i * 512) / 4, blockAllocationTable.Length - (i * 512) / 4);
                 }
 
-                //if (MainClass.isDebug)
-                {
-                    DateTime endTime = DateTime.UtcNow;
-                    Console.WriteLine("DEBUG (VirtualPC plugin): Filling the BAT took {0} seconds", (endTime - startTime).TotalSeconds);
-                }
+                DateTime endTime = DateTime.UtcNow;
+                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds", (endTime - startTime).TotalSeconds);
 
                 // Too noisy
                 /*
-                //if (MainClass.isDebug)
-                {
                     for (int i = 0; i < thisDynamic.maxTableEntries; i++)
-                        Console.WriteLine("DEBUG (VirtualPC plugin): blockAllocationTable[{0}] = {1}", i, blockAllocationTable[i]);
-                }*/
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockAllocationTable[{0}] = {1}", i, blockAllocationTable[i]);
+                */
 
                 // Get the roundest number of sectors needed to store the block bitmap
                 bitmapSize = (uint)Math.Ceiling((
@@ -791,8 +774,7 @@ namespace DiscImageChef.ImagePlugins
                     / 8
                     // and aligned to 512 byte boundary
                     / 512));
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (VirtualPC plugin): Bitmap is {0} sectors", bitmapSize);
+                DicConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
             }
 
             switch (thisFooter.diskType)
@@ -815,26 +797,23 @@ namespace DiscImageChef.ImagePlugins
                                 imageStream.Seek((long)thisDynamic.locatorEntries[i].platformDataOffset, SeekOrigin.Begin);
                                 imageStream.Read(locatorEntriesData[i], 0, (int)thisDynamic.locatorEntries[i].platformDataLength);
 
-                                //if (MainClass.isDebug)
+                                switch (thisDynamic.locatorEntries[i].platformCode)
                                 {
-                                    switch (thisDynamic.locatorEntries[i].platformCode)
-                                    {
-                                        case platformCodeWindowsAbsolute:
-                                        case platformCodeWindowsRelative:
-                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.ASCII.GetString(locatorEntriesData[i]));
-                                            break;
-                                        case platformCodeWindowsAbsoluteU:
-                                        case platformCodeWindowsRelativeU:
-                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.BigEndianUnicode.GetString(locatorEntriesData[i]));
-                                            break;
-                                        case platformCodeMacintoshURI:
-                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.UTF8.GetString(locatorEntriesData[i]));
-                                            break;
-                                        default:
-                                            Console.WriteLine("DEBUG (VirtualPC plugin): dynamic.locatorEntries[{0}] =", i);
-                                            PrintHex.PrintHexArray(locatorEntriesData[i], 64);
-                                            break;
-                                    }
+                                    case platformCodeWindowsAbsolute:
+                                    case platformCodeWindowsRelative:
+                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.ASCII.GetString(locatorEntriesData[i]));
+                                        break;
+                                    case platformCodeWindowsAbsoluteU:
+                                    case platformCodeWindowsRelativeU:
+                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.BigEndianUnicode.GetString(locatorEntriesData[i]));
+                                        break;
+                                    case platformCodeMacintoshURI:
+                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"", i, Encoding.UTF8.GetString(locatorEntriesData[i]));
+                                        break;
+                                    default:
+                                        DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
+                                        PrintHex.PrintHexArray(locatorEntriesData[i], 64);
+                                        break;
                                 }
                             }
                         }
@@ -861,8 +840,7 @@ namespace DiscImageChef.ImagePlugins
                                         parentPath = parentPath.Remove(0, 16);
                                     else
                                     {
-                                        //if (MainClass.isDebug)
-                                            Console.WriteLine("DEBUG (VirtualPC plugin) Unsupported protocol classified found in URI parent path: \"{0}\"", parentPath);
+                                        DicConsole.DebugWriteLine("VirtualPC plugin", "Unsupported protocol classified found in URI parent path: \"{0}\"", parentPath);
                                         parentPath = null;
                                     }
                                     break;
@@ -870,8 +848,7 @@ namespace DiscImageChef.ImagePlugins
 
                             if (parentPath != null)
                             {
-                                //if (MainClass.isDebug)
-                                    Console.WriteLine("DEBUG (VirtualPC plugin) Possible parent path: \"{0}\"", parentPath);
+                                DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
 
                                 locatorFound |= File.Exists(parentPath);
 
@@ -1026,27 +1003,23 @@ namespace DiscImageChef.ImagePlugins
                         bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
 
                         /*
-                        //if (MainClass.isDebug)
-                        {
-                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapSize = {0}", bitmapSize);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): blockNumber = {0}", blockNumber);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): sectorInBlock = {0}", sectorInBlock);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): blockOffset = {0}", blockOffset);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapByte = {0}", bitmapByte);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmapBit = {0}", bitmapBit);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): mask = 0x{0:X2}", mask);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): dirty = 0x{0}", dirty);
-                            Console.WriteLine("DEBUG (VirtualPC plugin): bitmap = ");
-                            PrintHex.PrintHexArray(bitmap, 64);
-                        }
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockNumber = {0}", blockNumber);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "sectorInBlock = {0}", sectorInBlock);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockOffset = {0}", blockOffset);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapByte = {0}", bitmapByte);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapBit = {0}", bitmapBit);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "mask = 0x{0:X2}", mask);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "dirty = 0x{0}", dirty);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "bitmap = ");
+                        PrintHex.PrintHexArray(bitmap, 64);
                         */
 
                         // Sector has been written, read from child image
                         if (dirty)
                         {
                             /* Too noisy
-                            //if (MainClass.isDebug)
-                                Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is dirty", sectorAddress);
+                            DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
                             */
 
                             byte[] data = new byte[512];
@@ -1062,8 +1035,7 @@ namespace DiscImageChef.ImagePlugins
                         }
 
                         /* Too noisy
-                        //if (MainClass.isDebug)
-                            Console.WriteLine("DEBUG (VirtualPC plugin): Sector {0} is clean", sectorAddress);
+                        DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
                         */
 
                         // Read sector from parent image

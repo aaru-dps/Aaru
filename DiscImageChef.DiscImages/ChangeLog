@@ -1,3 +1,15 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* VHD.cs:
+	* Nero.cs:
+	* CDRWin.cs:
+	* Apple2MG.cs:
+	* TeleDisk.cs:
+	* DiskCopy42.cs:
+	* DiscImageChef.DiscImages.csproj:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* VHD.cs:

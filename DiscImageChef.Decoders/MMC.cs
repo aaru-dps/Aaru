@@ -131,11 +131,12 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (AACS Volume Identifier): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (AACS Volume Identifier): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            #endif
             sb.AppendFormat("AACS Volume Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VolumeIdentifier, 80));
 
@@ -176,11 +177,12 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (AACS Media Serial Number): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (AACS Media Serial Number): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            #endif
             sb.AppendFormat("AACS Media Serial Number in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaSerialNumber, 80));
 
@@ -221,11 +223,12 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (AACS Media Identifier): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (AACS Media Identifier): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            #endif
             sb.AppendFormat("AACS Media Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaIdentifier, 80));
 
@@ -266,10 +269,10 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (AACS Media Key Block): Reserved = 0x{0:X2}", response.Reserved).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved != 0)
+                sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
+            #endif
             sb.AppendFormat("Total number of media key blocks available to transfer {0}", response.TotalPacks).AppendLine();
             sb.AppendFormat("AACS Media Key Blocks in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaKeyBlockPacks, 80));
@@ -311,11 +314,12 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (AACS Data Keys): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (AACS Data Keys): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            #endif
             sb.AppendFormat("AACS Data Keys in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DataKeys, 80));
 
@@ -416,10 +420,10 @@ namespace DiscImageChef.Decoders
 
             StringBuilder sb = new StringBuilder();
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (CPRM Media Key Block): Reserved1 = 0x{0:X2}", response.Reserved).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved != 0)
+                sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
+            #endif
             sb.AppendFormat("Total number of CPRM Media Key Blocks available to transfer: {0}", response.TotalPacks).AppendLine();
             sb.AppendFormat("CPRM Media Key Blocks in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MKBPackData, 80));
@@ -466,7 +470,7 @@ namespace DiscImageChef.Decoders
 
         public static string PrettifyFormatLayers(RecognizedFormatLayers? FormatLayersResponse)
         {
-                if (FormatLayersResponse == null)
+            if (FormatLayersResponse == null)
                 return null;
 
             RecognizedFormatLayers response = FormatLayersResponse.Value;
@@ -578,15 +582,20 @@ namespace DiscImageChef.Decoders
             if (response.SWPP)
                 sb.AppendLine("Software write protection is set until power down");
 
-            //if (MainClass.isDebug)
-            {
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
-                sb.AppendFormat("DEBUG (Write Protection Status): Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
-            }
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0)
+                sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0)
+                sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0)
+                sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
+            #endif
 
             return sb.ToString();
         }

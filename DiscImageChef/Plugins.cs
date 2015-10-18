@@ -76,7 +76,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    System.Console.Error.WriteLine(exception);
                 }
             }
 
@@ -94,7 +94,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    System.Console.Error.WriteLine(exception);
                 }
             }
 
@@ -112,7 +112,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    System.Console.Error.WriteLine(exception);
                 }
             }
         }

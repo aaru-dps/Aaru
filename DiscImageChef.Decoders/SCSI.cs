@@ -37,6 +37,7 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 using System;
 using System.Text;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Decoders
 {
@@ -1890,18 +1891,14 @@ namespace DiscImageChef.Decoders
 
             if (SCSIInquiryResponse.Length < 36)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (SCSI INQUIRY Decoder): INQUIRY response is less than minimum of 36 bytes, decoded data can be incorrect, proceeding anyway.");
-                //else
-                    return null;
+                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response is less than minimum of 36 bytes, decoded data can be incorrect, not decoding.");
+                return null;
             }
 
             if (SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 5)
             {
-                //if (MainClass.isDebug)
-                    Console.WriteLine("DEBUG (SCSI INQUIRY Decoder): INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, proceeding anyway.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
-                //else
-                    return null;
+                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
+                return null;
             }
 
             SCSIInquiry decoded = new SCSIInquiry();
@@ -2233,11 +2230,10 @@ namespace DiscImageChef.Decoders
                 sb.AppendLine("Device supports information unit transfers");
             if (response.SftRe)
                 sb.AppendLine("Device implements RESET as a soft reset");
-            //if (MainClass.isDebug)
-            {
-                if (response.VS1)
-                    sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
-            }
+            #if DEBUG
+            if (response.VS1)
+                sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
+            #endif
 
             switch ((SCSITGPSValues)response.TPGS)
             {
@@ -3694,37 +3690,40 @@ namespace DiscImageChef.Decoders
                 }
             }
 
-            //if (MainClass.isDebug)
+            #if DEBUG
+            if(response.DeviceTypeModifier != 0)
+                sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved byte 5, bits 2 to 1 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved byte 56, bits 7 to 4 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0)
+                sb.AppendFormat("Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
+
+            if (response.Reserved5 != null)
             {
-                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
-                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 5, bits 2 to 1 = 0x{0:X2}", response.Reserved2).AppendLine();
-                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 56, bits 7 to 4 = 0x{0:X2}", response.Reserved3).AppendLine();
-                sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
-
-                if (response.Reserved5 != null)
-                {
-                    sb.AppendLine("DEBUG (SCSIInquiry Decoder): Reserved bytes 74 to 95");
-                    sb.AppendLine("============================================================");
-                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.Reserved5, 60));
-                    sb.AppendLine("============================================================");
-                }
-
-                if (response.VendorSpecific != null)
-                {
-                    sb.AppendLine("DEBUG (SCSIInquiry Decoder): Vendor-specific bytes 36 to 55");
-                    sb.AppendLine("============================================================");
-                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
-                    sb.AppendLine("============================================================");
-                }
-
-                if (response.VendorSpecific2 != null)
-                {
-                    sb.AppendFormat("DEBUG (SCSIInquiry Decoder): Vendor-specific bytes 96 to {0}", response.AdditionalLength+4).AppendLine();
-                    sb.AppendLine("============================================================");
-                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
-                    sb.AppendLine("============================================================");
-                }
+                sb.AppendLine("Reserved bytes 74 to 95");
+                sb.AppendLine("============================================================");
+                sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.Reserved5, 60));
+                sb.AppendLine("============================================================");
             }
+
+            if (response.VendorSpecific != null)
+            {
+                sb.AppendLine("Vendor-specific bytes 36 to 55");
+                sb.AppendLine("============================================================");
+                sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
+                sb.AppendLine("============================================================");
+            }
+
+            if (response.VendorSpecific2 != null)
+            {
+                sb.AppendFormat("Vendor-specific bytes 96 to {0}", response.AdditionalLength+4).AppendLine();
+                sb.AppendLine("============================================================");
+                sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
+                sb.AppendLine("============================================================");
+            }
+            #endif
 
             return sb.ToString();
         }

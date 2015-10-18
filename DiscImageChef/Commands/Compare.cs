@@ -39,6 +39,7 @@ using System;
 using DiscImageChef.ImagePlugins;
 using System.Text;
 using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -46,23 +47,20 @@ namespace DiscImageChef.Commands
     {
         public static void doCompare(CompareSubOptions options)
         {
-            if (MainClass.isDebug)
-            {
-                Console.WriteLine("--debug={0}", options.Debug);
-                Console.WriteLine("--verbose={0}", options.Verbose);
-                Console.WriteLine("--input1={0}", options.InputFile1);
-                Console.WriteLine("--input2={0}", options.InputFile2);
-            }
+            DicConsole.DebugWriteLine("Compare command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Compare command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Compare command", "--input1={0}", options.InputFile1);
+            DicConsole.DebugWriteLine("Compare command", "--input2={0}", options.InputFile2);
 
             if (!System.IO.File.Exists(options.InputFile1))
             {
-                Console.WriteLine("Input file 1 does not exist.");
+                System.Console.Error.WriteLine("Input file 1 does not exist.");
                 return;
             }
 
             if (!System.IO.File.Exists(options.InputFile2))
             {
-                Console.WriteLine("Input file 2 does not exist.");
+                System.Console.Error.WriteLine("Input file 2 does not exist.");
                 return;
             }
 
@@ -71,28 +69,28 @@ namespace DiscImageChef.Commands
 
             if(input1Format == null)
             {
-                Console.WriteLine("Input file 1 format not identified, not proceeding with comparison.");
+                DicConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
                 return;
             }
             else
             {
-                if(MainClass.isVerbose)
-                    Console.WriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name, input1Format.PluginUUID);
+                if(options.Verbose)
+                    DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name, input1Format.PluginUUID);
                 else
-                    Console.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
+                    DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
             }
 
             if(input2Format == null)
             {
-                Console.WriteLine("Input file 2 format not identified, not proceeding with comparison.");
+                DicConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
                 return;
             }
             else
             {
-                if(MainClass.isVerbose)
-                    Console.WriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name, input2Format.PluginUUID);
+                if(options.Verbose)
+                    DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name, input2Format.PluginUUID);
                 else
-                    Console.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
+                    DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
             }
 
             input1Format.OpenImage(options.InputFile1);
@@ -100,7 +98,7 @@ namespace DiscImageChef.Commands
 
             StringBuilder sb = new StringBuilder();
 
-            if (MainClass.isVerbose)
+            if (options.Verbose)
             {
                 sb.AppendLine("\tDisc image 1\tDisc image 2");
                 sb.AppendLine("================================");
@@ -194,7 +192,7 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if (MainClass.isVerbose)
+            if (options.Verbose)
             {
                 sb.AppendFormat("Has partitions?\t{0}\t{1}", image1Info.imageHasPartitions, image2Info.imageHasPartitions).AppendLine();
                 sb.AppendFormat("Has sessions?\t{0}\t{1}", image1Info.imageHasSessions, image2Info.imageHasSessions).AppendLine();
@@ -226,150 +224,150 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            Console.WriteLine("Comparing disk image characteristics");
+            DicConsole.WriteLine("Comparing disk image characteristics");
 
             if (image1Info.imageHasPartitions != image2Info.imageHasPartitions)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image partitioned status differ");
             }
             if (image1Info.imageHasSessions != image2Info.imageHasSessions)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image session status differ");
             }
             if (image1Info.imageSize != image2Info.imageSize)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image size differ");
             }
             if (image1Info.sectors != image2Info.sectors)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image sectors differ");
             }
             if (image1Info.sectorSize != image2Info.sectorSize)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image sector size differ");
             }
             if (image1Info.imageCreationTime != image2Info.imageCreationTime)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image creation time differ");
             }
             if (image1Info.imageLastModificationTime != image2Info.imageLastModificationTime)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image last modification time differ");
             }
             if (image1Info.diskType != image2Info.diskType)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk type differ");
             }
             if (image1Info.imageVersion != image2Info.imageVersion)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image version differ");
             }
             if (image1Info.imageApplication != image2Info.imageApplication)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image application differ");
             }
             if (image1Info.imageApplicationVersion != image2Info.imageApplicationVersion)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image application version differ");
             }
             if (image1Info.imageCreator != image2Info.imageCreator)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image creator differ");
             }
             if (image1Info.imageName != image2Info.imageName)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image name differ");
             }
             if (image1Info.imageComments != image2Info.imageComments)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image comments differ");
             }
             if (image1Info.diskManufacturer != image2Info.diskManufacturer)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk manufacturer differ");
             }
             if (image1Info.diskModel != image2Info.diskModel)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk model differ");
             }
             if (image1Info.diskSerialNumber != image2Info.diskSerialNumber)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk serial number differ");
             }
             if (image1Info.diskBarcode != image2Info.diskBarcode)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk barcode differ");
             }
             if (image1Info.diskPartNumber != image2Info.diskPartNumber)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk part number differ");
             }
             if (image1Info.diskSequence != image2Info.diskSequence)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Disk sequence differ");
             }
             if (image1Info.lastDiskSequence != image2Info.lastDiskSequence)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Last disk in sequence differ");
             }
             if (image1Info.driveManufacturer != image2Info.driveManufacturer)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Drive manufacturer differ");
             }
             if (image1Info.driveModel != image2Info.driveModel)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Drive model differ");
             }
             if (image1Info.driveSerialNumber != image2Info.driveSerialNumber)
             {
                 imagesDiffer = true;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Drive serial number differ");
             }
 
@@ -378,24 +376,24 @@ namespace DiscImageChef.Commands
             {
                 imagesDiffer = true;
                 leastSectors = image1Info.sectors;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image 2 has more sectors");
             }
             else if (image1Info.sectors > image2Info.sectors)
             {
                 imagesDiffer = true;
                 leastSectors = image2Info.sectors;
-                if (!MainClass.isVerbose)
+                if (!options.Verbose)
                     sb.AppendLine("Image 1 has more sectors");
             }
             else
                 leastSectors = image1Info.sectors;
 
-            Console.WriteLine("Comparing sectors...");
+            DicConsole.WriteLine("Comparing sectors...");
 
             for (UInt64 sector = 0; sector < leastSectors; sector++)
             {
-                Console.Write("\rComparing sector {0} of {1}...", sector+1, leastSectors);
+                DicConsole.Write("\rComparing sector {0} of {1}...", sector+1, leastSectors);
                 try
                 {
                     byte[] image1Sector = input1Format.ReadSector(sector);
@@ -416,14 +414,14 @@ namespace DiscImageChef.Commands
                 }
                 catch{}
             }
-            Console.WriteLine();
+            DicConsole.WriteLine();
 
             if (imagesDiffer)
                 sb.AppendLine("Images differ");
             else
                 sb.AppendLine("Images do not differ");
 
-            Console.WriteLine(sb.ToString());
+            DicConsole.WriteLine(sb.ToString());
         }
 
         private static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)

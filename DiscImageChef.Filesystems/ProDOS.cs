@@ -41,6 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from Apple ProDOS 8 Technical Reference
+using DiscImageChef.Console;
+
+
 namespace DiscImageChef.Plugins
 {
     public class ProDOSPlugin : Plugin
@@ -156,13 +159,12 @@ namespace DiscImageChef.Plugins
             year += 1900;
             if (year < 1940)
                 year += 100;
-            //if (MainClass.isDebug)
-            {
-                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
-                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
-                Console.WriteLine("DEBUG (ProDOS plugin): temp_timestamp = 0x{0:X8}", temp_timestamp);
-                Console.WriteLine("DEBUG (ProDOS plugin): Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year, month, day, hour, minute);
-            }
+
+            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
+            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
+            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", temp_timestamp);
+            DicConsole.DebugWriteLine("ProDOS plugin", "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year, month, day, hour, minute);
+
             rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
 
             rootDirectoryKeyBlock.header.version = rootDirectoryKeyBlockBytes[0x20];
@@ -210,11 +212,8 @@ namespace DiscImageChef.Plugins
             if ((rootDirectoryKeyBlock.header.access & ProDOSBackupAttribute) == ProDOSBackupAttribute)
                 sbInformation.AppendLine("Volume must be backed up");
 
-            //if (MainClass.isDebug)
-            {
-                if ((rootDirectoryKeyBlock.header.access & ProDOSReservedAttributeMask) != 0)
-                    sbInformation.AppendFormat("DEBUG(ProDOS plugin): Reserved attributes are set: {0:X2}", rootDirectoryKeyBlock.header.access).AppendLine();
-            }
+            if ((rootDirectoryKeyBlock.header.access & ProDOSReservedAttributeMask) != 0)
+                DicConsole.DebugWriteLine("ProDOS plugin", "Reserved attributes are set: {0:X2}", rootDirectoryKeyBlock.header.access);
 
             information = sbInformation.ToString();
 

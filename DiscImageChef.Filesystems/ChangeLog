@@ -1,3 +1,18 @@
+2015-10-18  Natalia Portillo  <claunia@claunia.com>
+
+	* FAT.cs:
+	* FFS.cs:
+	* LisaFS.cs:
+	* ProDOS.cs:
+	* ISO9660.cs:
+	* UNIXBFS.cs:
+	* SolarFS.cs:
+	* AmigaDOS.cs:
+	* AppleHFS.cs:
+	* DiscImageChef.Filesystems.csproj:
+	  Added specific console handling for standard, verbose, debug
+	  and error outputs.
+
 2015-10-05  Natalia Portillo  <claunia@claunia.com>
 
 	* ODS.cs:
