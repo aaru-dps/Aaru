@@ -38,7 +38,6 @@
     <Compile Include="ATA\ATA.cs" />
     <Compile Include="SCSI\MMC\MMC.cs" />
     <Compile Include="Blu-ray\BD.cs" />
-    <Compile Include="CD\CD.cs" />
     <Compile Include="Floppy\Enums.cs" />
     <Compile Include="Floppy\System3740.cs" />
     <Compile Include="Floppy\System34.cs" />
@@ -63,6 +62,13 @@
     <Compile Include="DVD\CSS&amp;CPRM.cs" />
     <Compile Include="DVD\CPRM.cs" />
     <Compile Include="DVD\Cartridge.cs" />
+    <Compile Include="CD\TOC.cs" />
+    <Compile Include="CD\Session.cs" />
+    <Compile Include="CD\FullTOC.cs" />
+    <Compile Include="CD\PMA.cs" />
+    <Compile Include="CD\ATIP.cs" />
+    <Compile Include="CD\Enums.cs" />
+    <Compile Include="CD\CDTextOnLeadIn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

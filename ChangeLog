@@ -1,5 +1,18 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* CD/CD.cs:
+	* CD/TOC.cs:
+	* CD/PMA.cs:
+	* CD/ATIP.cs:
+	* CD/Enums.cs:
+	* CD/FullTOC.cs:
+	* CD/Session.cs:
+	* CD/CDTextOnLeadIn.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Separated CD decoders by type.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* DVD/DVD.cs:
 	* DVD/DMI.cs:
 	* DVD/DDS.cs:
