@@ -1,6 +1,12 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Variables.cs:
+	  Make some variables readonly so they cannot be modified
+	  after construction.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Variables.cs:
 	* Device/Constructor.cs:
 	  Having a globally accessed static SCSI Peripheral Device
 	  Type allows easier command filtering.

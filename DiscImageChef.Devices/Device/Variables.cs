@@ -46,12 +46,12 @@ namespace DiscImageChef.Devices
         object fd;
         bool error;
         int lastError;
-        DeviceType type;
-        string manufacturer;
-        string model;
-        string revision;
-        string serial;
-        Decoders.SCSI.PeripheralDeviceTypes scsiType;
+        readonly DeviceType type;
+        readonly string manufacturer;
+        readonly string model;
+        readonly string revision;
+        readonly string serial;
+        readonly Decoders.SCSI.PeripheralDeviceTypes scsiType;
 
         /// <summary>
         /// Gets the Platform ID for this device
