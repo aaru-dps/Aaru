@@ -1,6 +1,12 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Device type, manufacturer, model, revision and serial number
+	  are now obtained in device constructor.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Moved devices enums and structs out of classes.
 
 2015-10-19  Natalia Portillo  <claunia@claunia.com>

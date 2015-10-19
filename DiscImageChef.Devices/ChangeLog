@@ -1,5 +1,12 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/Constructor.cs:
+	* DiscImageChef.Devices.csproj:
+	  Device type, manufacturer, model, revision and serial number
+	  are now obtained in device constructor.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Devices.csproj:
 	  Upgrade .NET version to 4.0.
 

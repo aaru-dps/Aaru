@@ -65,158 +65,136 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            bool ata = false;
-            bool atapi = false;
-            bool scsi = false;
-            bool scsi83 = false;
-
-            string decodedAta = null;
-            string decodedAtapi = null;
-            string decodedScsi = null;
-            string scsiSerial = null;
-
-            StringBuilder sb = null;
-
-            AtaErrorRegistersCHS errorRegisters;
-
-            byte[] ataBuf;
-            bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
-
-            if (sense)
+            switch (dev.Type)
             {
-
-                if ((errorRegisters.status & 0x01) == 0x01
-                    && (errorRegisters.error & 0x04) == 0x04
-                    && errorRegisters.cylinderHigh == 0xEB
-                    && errorRegisters.cylinderLow == 0x14)
-                {
-                    sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
-
-                    if (sense)
+                case DeviceType.ATA:
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
-                        DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
-                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
-                        DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
-                        DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
-                        DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
-                    }
-                    else
-                    {
-                        atapi = true;
-                        decodedAtapi = Decoders.ATA.Identify.Prettify(ataBuf);
-                    }
-                }
-                else
-                {
-                    DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
-                    DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
-                    DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
-                    DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
-                    DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
-                    DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
-                    DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
-                    DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
-                    DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
-                }
-            }
-            else
-            {
-                ata = true;
-                decodedAta = Decoders.ATA.Identify.Prettify(ataBuf);
-            }
+                        AtaErrorRegistersCHS errorRegisters;
 
-            if (!ata)
-            {
-                byte[] senseBuf;
-                byte[] inqBuf;
+                        byte[] ataBuf;
+                        bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
 
-                sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
-
-                if (sense)
-                {
-                    DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
-
-                    #if DEBUG
-                    FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
-                    senseFs.Write(senseBuf, 0, senseBuf.Length);
-                    #endif
-                }
-                else
-                {
-                    scsi = true;
-                    decodedScsi = Decoders.SCSI.Inquiry.Prettify(inqBuf);
-
-                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
-
-                    if (!sense)
-                    {
-                        byte[] pages = Decoders.SCSI.EVPD.DecodePage00(inqBuf);
-
-                        foreach (byte page in pages)
+                        if (sense)
                         {
-                            if (page >= 0x01 && page <= 0x7F)
+                            DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
+                            DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                            DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                            DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                            DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                            DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                            DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                            DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                            DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                            break;
+                        }
+
+                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+                        break;
+                    }
+                case DeviceType.ATAPI:
+                    {
+                        AtaErrorRegistersCHS errorRegisters;
+
+                        byte[] ataBuf;
+                        bool sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
+
+                        if (sense)
+                        {
+                            DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
+                            DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
+                            DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
+                            DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.sector);
+                            DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}", errorRegisters.cylinderHigh);
+                            DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.cylinderLow);
+                            DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.deviceHead);
+                            DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
+                            DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                            break;
+                        }
+
+                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+
+                        // ATAPI devices are also SCSI devices
+                        goto case DeviceType.SCSI;
+                    }
+                case DeviceType.SCSI:
+                    {
+                        byte[] senseBuf;
+                        byte[] inqBuf;
+
+                        bool sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+
+                        if (sense)
+                        {
+                            DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
+
+                            #if DEBUG
+                            FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
+                            senseFs.Write(senseBuf, 0, senseBuf.Length);
+                            #endif
+
+                            break;
+                        }
+
+                        if (dev.Type != DeviceType.ATAPI)
+                            DicConsole.WriteLine("SCSI device");
+
+                        DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inqBuf));
+
+                        bool scsi83 = false;
+                        string scsiSerial = null;
+                        StringBuilder sb = null;
+
+                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
+
+                        if (!sense)
+                        {
+                            byte[] pages = Decoders.SCSI.EVPD.DecodePage00(inqBuf);
+
+                            foreach (byte page in pages)
                             {
-                                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                if (!sense)
+                                if (page >= 0x01 && page <= 0x7F)
                                 {
-                                    if(sb == null)
-                                        sb = new StringBuilder();
-                                    sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                    if (!sense)
+                                    {
+                                        if (sb == null)
+                                            sb = new StringBuilder();
+                                        sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                    }
                                 }
-                            }
-                            else if (page == 0x80)
-                            {
-                                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                if (!sense)
+                                else if (page == 0x80)
                                 {
-                                    scsi83 = true;
-                                    scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                    if (!sense)
+                                    {
+                                        scsi83 = true;
+                                        scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                if(page != 0x00)
-                                    DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                                else
+                                {
+                                    if (page != 0x00)
+                                        DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                                }
                             }
                         }
+
+                        if (scsi83)
+                            DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
+
+                        if (sb != null)
+                        {
+                            DicConsole.WriteLine("ASCII VPDs:");
+                            DicConsole.WriteLine(sb.ToString());
+                        }
+
+                        break;
                     }
-                }
-
-                if (atapi)
-                {
-                    DicConsole.WriteLine(decodedAtapi);
-                }
-                else if (scsi)
-                {
-                    DicConsole.WriteLine("SCSI device");
-                }
-
-                if(scsi)
-                {
-                    DicConsole.WriteLine(decodedScsi);
-
-                    if(scsi83)
-                        DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
-
-                    if(sb != null)
-                    {
-                        DicConsole.WriteLine("ASCII VPDs:");
-                        DicConsole.WriteLine(sb.ToString());
-                    }
-                }
+                default:
+                    DicConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
+                    break;
             }
-            else
-            {
-                DicConsole.WriteLine("ATA device");
-                DicConsole.WriteLine(decodedAta);
-            }
-
-            if(!ata && !atapi && !scsi)
-                DicConsole.ErrorWriteLine("Unknown device type, cannot get information.");
         }
     }
 }

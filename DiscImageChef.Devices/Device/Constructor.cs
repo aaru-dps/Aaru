@@ -90,6 +90,79 @@ namespace DiscImageChef.Devices
             }
 
             type = DeviceType.Unknown;
+
+            AtaErrorRegistersCHS errorRegisters;
+
+            byte[] ataBuf;
+            bool sense = AtaIdentify(out ataBuf, out errorRegisters);
+
+            if (!sense)
+            {
+                type = DeviceType.ATA;
+                Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
+
+                if (ATAID.HasValue)
+                {
+                    string[] separated = ATAID.Value.Model.Split(' ');
+
+                    if (separated.Length == 1)
+                        model = separated[0];
+                    else
+                    {
+                        manufacturer = separated[0];
+                        model = separated[separated.Length - 1];
+                    }
+
+                    revision = ATAID.Value.FirmwareRevision;
+                    serial = ATAID.Value.SerialNumber;
+                }
+            }
+            else
+            {
+                sense = AtapiIdentify(out ataBuf, out errorRegisters);
+
+                if (!sense)
+                {
+                    type = DeviceType.ATAPI;
+                    Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
+
+                    if (ATAID.HasValue)
+                        serial = ATAID.Value.SerialNumber;
+                }
+
+                byte[] senseBuf;
+                byte[] inqBuf;
+
+                sense = ScsiInquiry(out inqBuf, out senseBuf);
+
+                if (!sense)
+                {
+                    Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
+
+                    if (type != DeviceType.ATAPI)
+                    {
+                        type = DeviceType.SCSI;
+                        sense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
+                        if (!sense)
+                            serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                    }
+
+                    if (Inquiry.HasValue)
+                    {
+                        revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
+                        model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
+                        manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
+                    }
+                }
+            }
+
+            if (type == DeviceType.Unknown)
+            {
+                manufacturer = null;
+                model = null;
+                revision = null;
+                serial = null;
+            }
         }
     }
 }
