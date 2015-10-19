@@ -1,6 +1,12 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Decode.cs:
+	* Commands/DeviceInfo.cs:
+	  Separated SCSI decoders by type.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Decode.cs:
 	  Rename CD decoders fields, methods and structs to more
 	  adequate names.
 

@@ -1,5 +1,22 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* SCSI/Enums.cs:
+	* SCSI/Inquiry.cs:
+	* SCSI/MMC/OPW.cs:
+	* SCSI/MMC/MMC.cs:
+	* SCSI/MMC/AACS.cs:
+	* SCSI/MMC/CPRM.cs:
+	* SCSI/MMC/Enums.cs:
+	* SCSI/MMC/Hybrid.cs:
+	* SCSI/VendorString.cs:
+	* SCSI/MMC/WriteProtect.cs:
+	* SCSI/MMC/DiscInformation.cs:
+	* SCSI/MMC/TrackInformation.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Separated SCSI decoders by type.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* CD/TOC.cs:
 	* CD/PMA.cs:
 	* CD/ATIP.cs:

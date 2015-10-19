@@ -1,0 +1,186 @@
+﻿// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : WriteProtect.cs
+// Version        : 1.0
+// Author(s)      : Natalia Portillo
+//
+// Component      : Component
+//
+// Revision       : $Revision$
+// Last change by : $Author$
+// Date           : $Date$
+//
+// --[ Description ] ----------------------------------------------------------
+//
+// Description
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright (C) 2011-2015 Claunia.com
+// ****************************************************************************/
+// //$Id$
+using System;
+using System.Text;
+
+namespace DiscImageChef.Decoders.SCSI.MMC
+{
+    /// <summary>
+    /// Information from the following standards:
+    /// ANSI X3.304-1997
+    /// T10/1048-D revision 9.0
+    /// T10/1048-D revision 10a
+    /// T10/1228-D revision 7.0c
+    /// T10/1228-D revision 11a
+    /// T10/1363-D revision 10g
+    /// T10/1545-D revision 1d
+    /// T10/1545-D revision 5
+    /// T10/1545-D revision 5a
+    /// T10/1675-D revision 2c
+    /// T10/1675-D revision 4
+    /// T10/1836-D revision 2g
+    /// </summary>
+    public static class WriteProtect
+    {
+        public struct WriteProtectionStatus
+        {
+            /// <summary>
+            /// Bytes 0 to 1
+            /// Data Length
+            /// </summary>
+            public UInt16 DataLength;
+            /// <summary>
+            /// Byte 2
+            /// Reserved
+            /// </summary>
+            public byte Reserved1;
+            /// <summary>
+            /// Byte 3
+            /// Reserved
+            /// </summary>
+            public byte Reserved2;
+            /// <summary>
+            /// Byte 4, bits 7 to 4
+            /// Reserved
+            /// </summary>
+            public byte Reserved3;
+            /// <summary>
+            /// Byte 4, bit 3
+            /// Writing inhibited by media specific reason
+            /// </summary>
+            public bool MSWI;
+            /// <summary>
+            /// Byte 4, bit 2
+            /// Cartridge sets write protection
+            /// </summary>
+            public bool CWP;
+            /// <summary>
+            /// Byte 4, bit 1
+            /// Media surface sets write protection
+            /// </summary>
+            public bool PWP;
+            /// <summary>
+            /// Byte 4, bit 0
+            /// Software write protection until power down
+            /// </summary>
+            public bool SWPP;
+            /// <summary>
+            /// Byte 5
+            /// Reserved
+            /// </summary>
+            public byte Reserved4;
+            /// <summary>
+            /// Byte 6
+            /// Reserved
+            /// </summary>
+            public byte Reserved5;
+            /// <summary>
+            /// Byte 7
+            /// Reserved
+            /// </summary>
+            public byte Reserved6;
+        }
+
+        public static WriteProtectionStatus? DecodeWriteProtectionStatus(byte[] WPSResponse)
+        {
+            if (WPSResponse == null)
+                return null;
+
+            WriteProtectionStatus decoded = new WriteProtectionStatus();
+
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
+            decoded.DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0);
+            decoded.Reserved1 = WPSResponse[2];
+            decoded.Reserved2 = WPSResponse[3];
+            decoded.Reserved3 = (byte)((WPSResponse[4] & 0xF0) >> 4);
+            decoded.MSWI = Convert.ToBoolean(WPSResponse[4] & 0x08);
+            decoded.CWP = Convert.ToBoolean(WPSResponse[4] & 0x04);
+            decoded.PWP = Convert.ToBoolean(WPSResponse[4] & 0x02);
+            decoded.SWPP = Convert.ToBoolean(WPSResponse[4] & 0x01);
+            decoded.Reserved4 = WPSResponse[5];
+            decoded.Reserved5 = WPSResponse[6];
+            decoded.Reserved6 = WPSResponse[7];
+
+            return decoded;
+        }
+
+        public static string PrettifyWriteProtectionStatus(WriteProtectionStatus? WPSResponse)
+        {
+            if (WPSResponse == null)
+                return null;
+
+            WriteProtectionStatus response = WPSResponse.Value;
+
+            StringBuilder sb = new StringBuilder();
+
+            if (response.MSWI)
+                sb.AppendLine("Writing inhibited by media specific reason");
+            if (response.CWP)
+                sb.AppendLine("Cartridge sets write protection");
+            if (response.PWP)
+                sb.AppendLine("Media surface sets write protection");
+            if (response.SWPP)
+                sb.AppendLine("Software write protection is set until power down");
+
+            #if DEBUG
+            if(response.Reserved1 != 0)
+                sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            if(response.Reserved2 != 0)
+                sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            if(response.Reserved3 != 0)
+                sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            if(response.Reserved4 != 0)
+                sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
+            if(response.Reserved5 != 0)
+                sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
+            if(response.Reserved6 != 0)
+                sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
+            #endif
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyWriteProtectionStatus(byte[] WPSResponse)
+        {
+            WriteProtectionStatus? decoded = DecodeWriteProtectionStatus(WPSResponse);
+            return PrettifyWriteProtectionStatus(decoded);
+        }
+    }
+}
+

@@ -82,7 +82,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("SCSI INQUIRY command response:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.SCSI.PrettifySCSIInquiry(inquiry));
+                                        DicConsole.WriteLine(Decoders.SCSI.Inquiry.PrettifySCSIInquiry(inquiry));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;

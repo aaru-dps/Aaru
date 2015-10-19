@@ -81,7 +81,7 @@ namespace DiscImageChef.Commands
             else
                 DicConsole.WriteLine("SCSI OK");
 
-            DicConsole.WriteLine(Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
+            DicConsole.WriteLine(Decoders.SCSI.Inquiry.PrettifySCSIInquiry(inqBuf));
 
             Structs.AtaErrorRegistersCHS errorRegisters;
 
