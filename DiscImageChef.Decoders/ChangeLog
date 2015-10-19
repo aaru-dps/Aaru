@@ -1,5 +1,20 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Floppy/ISO.cs:
+	* Floppy/Amiga.cs:
+	* Floppy/Enums.cs:
+	* Floppy/Floppy.cs:
+	* Floppy/Apple2.cs:
+	* Floppy/System34.cs:
+	* Floppy/Commodore.cs:
+	* Floppy/AppleSony.cs:
+	* Floppy/System3740.cs:
+	* Floppy/Perpendicular.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Separated floppy decoders by type.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* BD.cs:
 	* CD.cs:
 	* ATA.cs:

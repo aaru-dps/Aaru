@@ -38,9 +38,17 @@
     <Compile Include="ATA\ATA.cs" />
     <Compile Include="SCSI\MMC\MMC.cs" />
     <Compile Include="Blu-ray\BD.cs" />
-    <Compile Include="Floppy\Floppy.cs" />
     <Compile Include="CD\CD.cs" />
     <Compile Include="DVD\DVD.cs" />
+    <Compile Include="Floppy\Enums.cs" />
+    <Compile Include="Floppy\System3740.cs" />
+    <Compile Include="Floppy\System34.cs" />
+    <Compile Include="Floppy\Perpendicular.cs" />
+    <Compile Include="Floppy\ISO.cs" />
+    <Compile Include="Floppy\Apple2.cs" />
+    <Compile Include="Floppy\AppleSony.cs" />
+    <Compile Include="Floppy\Commodore.cs" />
+    <Compile Include="Floppy\Amiga.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -62,4 +70,13 @@
     <Folder Include="CD\" />
     <Folder Include="Floppy\" />
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
