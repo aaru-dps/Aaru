@@ -1853,7 +1853,7 @@ namespace DiscImageChef.Decoders
 
         public static IdentifyDevice? DecodeIdentifyDevice(byte[] IdentifyDeviceResponse)
         {
-            if (IdentifyDeviceResponse != null)
+            if (IdentifyDeviceResponse == null)
                 return null;
             
             if (IdentifyDeviceResponse.Length != 512)
