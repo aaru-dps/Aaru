@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -50,24 +51,24 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple Sony GCR floppy track
         /// </summary>
-        public struct AppleSonyGCRRawSectorRawTrack
+        public struct RawTrack
         {
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, 36 bytes
             /// </summary>
             public byte[] gap;
-            public AppleSonyGCRRawSector[] sectors;
+            public RawSector[] sectors;
         }
 
         /// <summary>
         /// GCR-encoded Apple Sony GCR floppy sector
         /// </summary>
-        public struct AppleSonyGCRRawSector
+        public struct RawSector
         {
             /// <summary>
             /// Address field
             /// </summary>
-            public AppleSonyGCRRawAddressField addressField;
+            public RawAddressField addressField;
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, 6 bytes
             /// </summary>
@@ -75,7 +76,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Data field
             /// </summary>
-            public AppleSonyGCRRawDataField dataField;
+            public RawDataField dataField;
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, unknown size
             /// </summary>
@@ -85,7 +86,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple Sony GCR floppy sector address field
         /// </summary>
-        public struct AppleSonyGCRRawAddressField
+        public struct RawAddressField
         {
             /// <summary>
             /// Always 0xD5, 0xAA, 0x96
@@ -122,7 +123,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple ][ GCR floppy sector data field
         /// </summary>
-        public struct AppleSonyGCRRawDataField
+        public struct RawDataField
         {
             /// <summary>
             /// Always 0xD5, 0xAA, 0xAD
@@ -130,7 +131,7 @@ namespace DiscImageChef.Decoders.Floppy
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public byte[] prologue;
             /// <summary>
-            /// Spare, usually <see cref="AppleSonyGCRRawAddressField.sector"/> 
+            /// Spare, usually <see cref="RawAddressField.sector"/> 
             /// </summary>
             public byte spare;
             /// <summary>

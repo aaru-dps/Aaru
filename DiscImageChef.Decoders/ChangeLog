@@ -3,6 +3,19 @@
 	* Floppy/ISO.cs:
 	* Floppy/Amiga.cs:
 	* Floppy/Enums.cs:
+	* Floppy/Apple2.cs:
+	* Floppy/System34.cs:
+	* Floppy/Commodore.cs:
+	* Floppy/AppleSony.cs:
+	* Floppy/System3740.cs:
+	* Floppy/Perpendicular.cs:
+	  Rename fields, methods and structs to more adequate names.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Floppy/ISO.cs:
+	* Floppy/Amiga.cs:
+	* Floppy/Enums.cs:
 	* Floppy/Floppy.cs:
 	* Floppy/Apple2.cs:
 	* Floppy/System34.cs:

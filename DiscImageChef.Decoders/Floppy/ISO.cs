@@ -37,6 +37,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -58,7 +59,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// ISO floppy track, also used by Atari ST and others
         /// </summary>
-        public struct ISOFloppyTrack
+        public struct Track
         {
             /// <summary>
             /// Start of track, 32 bytes set to 0x4E
@@ -68,11 +69,105 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Track sectors
             /// </summary>
-            public IBMMFMSector[] sectors;
+            public Sector[] sectors;
             /// <summary>
             /// Undefined size
             /// </summary>
             public byte[] gap;
+        }
+
+        /// <summary>
+        /// Raw demodulated format for IBM System 34 floppies
+        /// </summary>
+        public struct Sector
+        {
+            /// <summary>
+            /// Sector address mark
+            /// </summary>
+            public AddressMark addressMark;
+            /// <summary>
+            /// 22 bytes set to 0x4E, set to 0x22 on Commodore 1581
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
+            public byte[] innerGap;
+            /// <summary>
+            /// Sector data block
+            /// </summary>
+            public DataBlock dataBlock;
+            /// <summary>
+            /// Variable bytes set to 0x4E, ECMA defines 54
+            /// </summary>
+            public byte[] outerGap;
+        }
+
+        /// <summary>
+        /// Sector address mark for IBM System 34 floppies, contains sync word
+        /// </summary>
+        public struct AddressMark
+        {
+            /// <summary>
+            /// 12 bytes set to 0
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
+            /// <summary>
+            /// 3 bytes set to 0xA1
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
+            /// <summary>
+            /// Set to <see cref="IBMIdType.AddressMark"/>
+            /// </summary>
+            public IBMIdType type;
+            /// <summary>
+            /// Track number
+            /// </summary>
+            public byte track;
+            /// <summary>
+            /// Side number
+            /// </summary>
+            public byte side;
+            /// <summary>
+            /// Sector number
+            /// </summary>
+            public byte sector;
+            /// <summary>
+            /// <see cref="IBMSectorSizeCode"/> 
+            /// </summary>
+            public IBMSectorSizeCode sectorSize;
+            /// <summary>
+            /// CRC16 from <see cref="AddressMark.aone"/> to end of <see cref="sectorSize"/> 
+            /// </summary>
+            public UInt16 crc;
+        }
+
+        /// <summary>
+        /// Sector data block for IBM System 34 floppies
+        /// </summary>
+        public struct DataBlock
+        {
+            /// <summary>
+            /// 12 bytes set to 0
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
+            /// <summary>
+            /// 3 bytes set to 0xA1
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
+            /// <summary>
+            /// Set to <see cref="IBMIdType.DataMark"/> or to <see cref="IBMIdType.DeletedDataMark"/>
+            /// </summary>
+            public IBMIdType type;
+            /// <summary>
+            /// User data
+            /// </summary>
+            public byte[] data;
+            /// <summary>
+            /// CRC16 from <see cref="aone"/> to end of <see cref="data"/> 
+            /// </summary>
+            public UInt16 crc;
         }
     }
 }

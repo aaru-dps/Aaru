@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -47,24 +48,24 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple ][ GCR floppy track
         /// </summary>
-        public struct AppleOldGCRRawSectorRawTrack
+        public struct RawTrack
         {
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, between 40 and 95 bytes
             /// </summary>
             public byte[] gap;
-            public AppleOldGCRRawSector[] sectors;
+            public RawSector[] sectors;
         }
 
         /// <summary>
         /// GCR-encoded Apple ][ GCR floppy sector
         /// </summary>
-        public struct AppleOldGCRRawSector
+        public struct RawSector
         {
             /// <summary>
             /// Address field
             /// </summary>
-            public AppleOldGCRRawAddressField addressField;
+            public RawDataField addressField;
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, between 5 and 10 bytes
             /// </summary>
@@ -72,7 +73,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Data field
             /// </summary>
-            public AppleOldGCRRawDataField dataField;
+            public RawDataField dataField;
             /// <summary>
             /// Track preamble, set to self-sync 0xFF, between 14 and 24 bytes
             /// </summary>
@@ -82,7 +83,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple ][ GCR floppy sector address field
         /// </summary>
-        public struct AppleOldGCRRawAddressField
+        public struct RawAddressField
         {
             /// <summary>
             /// Always 0xD5, 0xAA, 0x96
@@ -127,7 +128,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// GCR-encoded Apple ][ GCR floppy sector data field
         /// </summary>
-        public struct AppleOldGCRRawDataField
+        public struct RawDataField
         {
             /// <summary>
             /// Always 0xD5, 0xAA, 0xAD

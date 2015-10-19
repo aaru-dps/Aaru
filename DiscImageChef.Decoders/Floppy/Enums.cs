@@ -39,8 +39,6 @@ using System;
 
 namespace DiscImageChef.Decoders.Floppy
 {
-    #region Public enumerations
-
     /// <summary>
     /// In-sector code for sector size
     /// </summary>
@@ -107,7 +105,5 @@ namespace DiscImageChef.Decoders.Floppy
         /// </summary>
         MacDoubleSide = 0xD9
     }
-
-    #endregion Public enumerations
 }
 

@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -47,7 +48,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Decoded Commodore GCR sector header
         /// </summary>
-        public struct CommodoreSectorHeader
+        public struct SectorHeader
         {
             /// <summary>
             /// Always 0x08
@@ -78,7 +79,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Decoded Commodore GCR sector data
         /// </summary>
-        public struct CommodoreSectorData
+        public struct SectorData
         {
             /// <summary>
             /// Always 0x07
