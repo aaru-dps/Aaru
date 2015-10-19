@@ -137,7 +137,7 @@ namespace DiscImageChef.Decoders.CD
             public byte PFRAME;
         }
 
-        public static CDPMA? DecodeCDPMA(byte[] CDPMAResponse)
+        public static CDPMA? Decode(byte[] CDPMAResponse)
         {
             if (CDPMAResponse == null)
                 return null;
@@ -177,7 +177,7 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDPMA(CDPMA? CDPMAResponse)
+        public static string Prettify(CDPMA? CDPMAResponse)
         {
             if (CDPMAResponse == null)
                 return null;
@@ -217,10 +217,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDPMA(byte[] CDPMAResponse)
+        public static string Prettify(byte[] CDPMAResponse)
         {
-            CDPMA? decoded = DecodeCDPMA(CDPMAResponse);
-            return PrettifyCDPMA(decoded);
+            CDPMA? decoded = Decode(CDPMAResponse);
+            return Prettify(decoded);
         }
     }
 }

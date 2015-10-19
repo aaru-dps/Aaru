@@ -126,7 +126,7 @@ namespace DiscImageChef.Decoders.CD
             BlockSizeInformation = 0x8F
         }
 
-        public struct CDTextLeadIn
+        public struct CDText
         {
             /// <summary>
             /// Total size of returned CD-Text information minus this field
@@ -190,12 +190,12 @@ namespace DiscImageChef.Decoders.CD
             public UInt16 CRC;
         }
 
-        public static CDTextLeadIn? DecodeCDTextLeadIn(byte[] CDTextResponse)
+        public static CDText? Decode(byte[] CDTextResponse)
         {
             if (CDTextResponse == null)
                 return null;
 
-            CDTextLeadIn decoded = new CDTextLeadIn();
+            CDText decoded = new CDText();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -226,12 +226,12 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDTextLeadIn(CDTextLeadIn? CDTextResponse)
+        public static string Prettify(CDText? CDTextResponse)
         {
             if (CDTextResponse == null)
                 return null;
 
-            CDTextLeadIn response = CDTextResponse.Value;
+            CDText response = CDTextResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
@@ -383,10 +383,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDTextLeadIn(byte[] CDTextResponse)
+        public static string Prettify(byte[] CDTextResponse)
         {
-            CDTextLeadIn? decoded = DecodeCDTextLeadIn(CDTextResponse);
-            return PrettifyCDTextLeadIn(decoded);
+            CDText? decoded = Decode(CDTextResponse);
+            return Prettify(decoded);
         }
     }
 }

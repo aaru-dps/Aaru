@@ -112,7 +112,7 @@ namespace DiscImageChef.Decoders.CD
             public UInt32 TrackStartAddress;
         }
 
-        public static CDTOC? DecodeCDTOC(byte[] CDTOCResponse)
+        public static CDTOC? Decode(byte[] CDTOCResponse)
         {
             if (CDTOCResponse == null)
                 return null;
@@ -145,7 +145,7 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDTOC(CDTOC? CDTOCResponse)
+        public static string Prettify(CDTOC? CDTOCResponse)
         {
             if (CDTOCResponse == null)
                 return null;
@@ -225,10 +225,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDTOC(byte[] CDTOCResponse)
+        public static string Prettify(byte[] CDTOCResponse)
         {
-            CDTOC? decoded = DecodeCDTOC(CDTOCResponse);
-            return PrettifyCDTOC(decoded);
+            CDTOC? decoded = Decode(CDTOCResponse);
+            return Prettify(decoded);
         }
     }
 }

@@ -1,5 +1,15 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* CD/TOC.cs:
+	* CD/PMA.cs:
+	* CD/ATIP.cs:
+	* CD/Session.cs:
+	* CD/FullTOC.cs:
+	* CD/CDTextOnLeadIn.cs:
+	  Rename fields, methods and structs to more adequate names.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* CD/CD.cs:
 	* CD/TOC.cs:
 	* CD/PMA.cs:
