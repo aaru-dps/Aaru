@@ -1,5 +1,26 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* DVD/DVD.cs:
+	* DVD/DMI.cs:
+	* DVD/DDS.cs:
+	* DVD/PFI.cs:
+	* DVD/PRI.cs:
+	* DVD/RMD.cs:
+	* DVD/BCA.cs:
+	* DVD/UDI.cs:
+	* DVD/AACS.cs:
+	* DVD/ADIP.cs:
+	* DVD/CPRM.cs:
+	* DVD/Spare.cs:
+	* DVD/Enums.cs:
+	* DVD/Layers.cs:
+	* DVD/CSS&CPRM.cs:
+	* DVD/Cartridge.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Separated DVD decoders by type.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* Floppy/ISO.cs:
 	* Floppy/Amiga.cs:
 	* Floppy/Enums.cs:
