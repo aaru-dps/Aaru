@@ -1,3 +1,8 @@
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Helpers.csproj:
+	  Upgrade .NET version to 4.0.
+
 2015-10-18  Natalia Portillo  <claunia@claunia.com>
 
 	* PrintHex.cs:
