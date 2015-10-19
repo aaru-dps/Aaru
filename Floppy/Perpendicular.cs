@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -57,16 +58,16 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Perpendicular floppy track
         /// </summary>
-        public struct PerpendicularFloppyTrack
+        public struct Track
         {
             /// <summary>
             /// Start of track
             /// </summary>
-            public IBMMFMTrackPreamble trackStart;
+            public TrackPreamble trackStart;
             /// <summary>
             /// Track sectors
             /// </summary>
-            public PerpendicularFloppySector[] sectors;
+            public Sector[] sectors;
             /// <summary>
             /// Undefined size
             /// </summary>
@@ -76,12 +77,12 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Raw demodulated format for perpendicular floppies
         /// </summary>
-        public struct PerpendicularFloppySector
+        public struct Sector
         {
             /// <summary>
             /// Sector address mark
             /// </summary>
-            public IBMMFMSectorAddressMark addressMark;
+            public AddressMark addressMark;
             /// <summary>
             /// 41 bytes set to 0x4E
             /// </summary>
@@ -90,11 +91,113 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Sector data block
             /// </summary>
-            public IBMMFMSectorDataBlock dataBlock;
+            public DataBlock dataBlock;
             /// <summary>
             /// Variable-sized inter-sector gap, ECMA defines 83 bytes
             /// </summary>
             public byte[] outerGap;
+        }
+
+        /// <summary>
+        /// Start of IBM PC MFM floppy track
+        /// Used by IBM PC, Apple Macintosh (high-density only), and a lot others
+        /// </summary>
+        public struct TrackPreamble
+        {
+            /// <summary>
+            /// Gap from index pulse, 80 bytes set to 0x4E
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+            public byte[] gap;
+            /// <summary>
+            /// 12 bytes set to 0x00
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
+            /// <summary>
+            /// 3 bytes set to 0xC2
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] ctwo;
+            /// <summary>
+            /// Set to <see cref="IBMIdType.IndexMark"/> 
+            /// </summary>
+            public IBMIdType type;
+            /// <summary>
+            /// Gap until first sector, 50 bytes to 0x4E
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
+            public byte[] gap1;
+        }
+
+        /// <summary>
+        /// Sector address mark for IBM System 34 floppies, contains sync word
+        /// </summary>
+        public struct AddressMark
+        {
+            /// <summary>
+            /// 12 bytes set to 0
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
+            /// <summary>
+            /// 3 bytes set to 0xA1
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
+            /// <summary>
+            /// Set to <see cref="IBMIdType.AddressMark"/>
+            /// </summary>
+            public IBMIdType type;
+            /// <summary>
+            /// Track number
+            /// </summary>
+            public byte track;
+            /// <summary>
+            /// Side number
+            /// </summary>
+            public byte side;
+            /// <summary>
+            /// Sector number
+            /// </summary>
+            public byte sector;
+            /// <summary>
+            /// <see cref="IBMSectorSizeCode"/> 
+            /// </summary>
+            public IBMSectorSizeCode sectorSize;
+            /// <summary>
+            /// CRC16 from <see cref="AddressMark.aone"/> to end of <see cref="sectorSize"/> 
+            /// </summary>
+            public UInt16 crc;
+        }
+
+        /// <summary>
+        /// Sector data block for IBM System 34 floppies
+        /// </summary>
+        public struct DataBlock
+        {
+            /// <summary>
+            /// 12 bytes set to 0
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] zero;
+            /// <summary>
+            /// 3 bytes set to 0xA1
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] aone;
+            /// <summary>
+            /// Set to <see cref="IBMIdType.DataMark"/> or to <see cref="IBMIdType.DeletedDataMark"/>
+            /// </summary>
+            public IBMIdType type;
+            /// <summary>
+            /// User data
+            /// </summary>
+            public byte[] data;
+            /// <summary>
+            /// CRC16 from <see cref="aone"/> to end of <see cref="data"/> 
+            /// </summary>
+            public UInt16 crc;
         }
     }
 }

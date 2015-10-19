@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -58,16 +59,16 @@ namespace DiscImageChef.Decoders.Floppy
         /// Track format for IBM System 34 floppy
         /// Used by IBM PC, Apple Macintosh (high-density only), and a lot others
         /// </summary>
-        public struct IBMMFMTrack
+        public struct Track
         {
             /// <summary>
             /// Start of track
             /// </summary>
-            public IBMMFMTrackPreamble trackStart;
+            public TrackPreamble trackStart;
             /// <summary>
             /// Track sectors
             /// </summary>
-            public IBMMFMSector[] sectors;
+            public Sector[] sectors;
             /// <summary>
             /// Undefined size
             /// </summary>
@@ -78,7 +79,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// Start of IBM PC MFM floppy track
         /// Used by IBM PC, Apple Macintosh (high-density only), and a lot others
         /// </summary>
-        public struct IBMMFMTrackPreamble
+        public struct TrackPreamble
         {
             /// <summary>
             /// Gap from index pulse, 80 bytes set to 0x4E
@@ -109,12 +110,12 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Raw demodulated format for IBM System 34 floppies
         /// </summary>
-        public struct IBMMFMSector
+        public struct Sector
         {
             /// <summary>
             /// Sector address mark
             /// </summary>
-            public IBMMFMSectorAddressMark addressMark;
+            public AddressMark addressMark;
             /// <summary>
             /// 22 bytes set to 0x4E, set to 0x22 on Commodore 1581
             /// </summary>
@@ -123,7 +124,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Sector data block
             /// </summary>
-            public IBMMFMSectorAddressMark dataBlock;
+            public DataBlock dataBlock;
             /// <summary>
             /// Variable bytes set to 0x4E, ECMA defines 54
             /// </summary>
@@ -133,7 +134,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Sector address mark for IBM System 34 floppies, contains sync word
         /// </summary>
-        public struct IBMMFMSectorAddressMark
+        public struct AddressMark
         {
             /// <summary>
             /// 12 bytes set to 0
@@ -166,7 +167,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             public IBMSectorSizeCode sectorSize;
             /// <summary>
-            /// CRC16 from <see cref="IBMMFMSectorAddressMark.aone"/> to end of <see cref="sectorSize"/> 
+            /// CRC16 from <see cref="AddressMark.aone"/> to end of <see cref="sectorSize"/> 
             /// </summary>
             public UInt16 crc;
         }
@@ -174,7 +175,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Sector data block for IBM System 34 floppies
         /// </summary>
-        public struct IBMMFMSectorDataBlock
+        public struct DataBlock
         {
             /// <summary>
             /// 12 bytes set to 0

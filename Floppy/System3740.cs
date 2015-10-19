@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -57,16 +58,16 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Track format for IBM System 3740 floppy
         /// </summary>
-        public struct IBMFMTrack
+        public struct Track
         {
             /// <summary>
             /// Start of track
             /// </summary>
-            public IBMFMTrackPreamble trackStart;
+            public TrackPreamble trackStart;
             /// <summary>
             /// Track sectors
             /// </summary>
-            public IBMFMSector[] sectors;
+            public Sector[] sectors;
             /// <summary>
             /// Undefined size
             /// </summary>
@@ -76,7 +77,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Start of IBM PC FM floppy track
         /// </summary>
-        public struct IBMFMTrackPreamble
+        public struct TrackPreamble
         {
             /// <summary>
             /// Gap from index pulse, 80 bytes set to 0xFF
@@ -102,12 +103,12 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Raw demodulated format for IBM System 3740 floppies
         /// </summary>
-        public struct IBMFMSector
+        public struct Sector
         {
             /// <summary>
             /// Sector address mark
             /// </summary>
-            public IBMFMSectorAddressMark addressMark;
+            public AddressMark addressMark;
             /// <summary>
             /// 11 bytes set to 0xFF
             /// </summary>
@@ -116,7 +117,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Sector data block
             /// </summary>
-            public IBMFMSectorAddressMark dataBlock;
+            public DataBlock dataBlock;
             /// <summary>
             /// Variable bytes set to 0xFF
             /// </summary>
@@ -126,7 +127,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Sector address mark for IBM System 3740 floppies, contains sync word
         /// </summary>
-        public struct IBMFMSectorAddressMark
+        public struct AddressMark
         {
             /// <summary>
             /// 6 bytes set to 0
@@ -162,7 +163,7 @@ namespace DiscImageChef.Decoders.Floppy
         /// <summary>
         /// Sector data block for IBM System 3740 floppies
         /// </summary>
-        public struct IBMFMSectorDataBlock
+        public struct DataBlock
         {
             /// <summary>
             /// 12 bytes set to 0

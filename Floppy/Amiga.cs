@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
@@ -44,7 +45,7 @@ namespace DiscImageChef.Decoders.Floppy
     /// </summary>
     public static class Amiga
     {
-        public struct CommodoreAmigaSector
+        public struct Sector
         {
             /// <summary>
             /// Set to 0x00
