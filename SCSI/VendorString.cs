@@ -41,7 +41,7 @@ namespace DiscImageChef.Decoders.SCSI
 {
     public static class VendorString
     {
-        public static string PrettifySCSIVendorString(string SCSIVendorString)
+        public static string Prettify(string SCSIVendorString)
         {
             switch (SCSIVendorString)
             {

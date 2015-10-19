@@ -36,7 +36,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SCSI\Inquiry.cs" />
     <Compile Include="ATA\ATA.cs" />
-    <Compile Include="SCSI\MMC\MMC.cs" />
     <Compile Include="Blu-ray\BD.cs" />
     <Compile Include="Floppy\Enums.cs" />
     <Compile Include="Floppy\System3740.cs" />
