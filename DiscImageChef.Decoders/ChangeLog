@@ -1,5 +1,24 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* BD.cs:
+	* CD.cs:
+	* ATA.cs:
+	* MMC.cs:
+	* DVD.cs:
+	* SCSI.cs:
+	* CD/CD.cs:
+	* Floppy.cs:
+	* ATA/ATA.cs:
+	* DVD/DVD.cs:
+	* Blu-ray/BD.cs:
+	* SCSI/Inquiry.cs:
+	* SCSI/MMC/MMC.cs:
+	* Floppy/Floppy.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Organize decoders files&folders
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* ATA.cs:
 	  Typo.
 

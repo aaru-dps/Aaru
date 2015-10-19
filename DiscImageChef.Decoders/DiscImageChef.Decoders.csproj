@@ -34,13 +34,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BD.cs" />
-    <Compile Include="CD.cs" />
-    <Compile Include="DVD.cs" />
-    <Compile Include="Floppy.cs" />
-    <Compile Include="MMC.cs" />
-    <Compile Include="SCSI.cs" />
-    <Compile Include="ATA.cs" />
+    <Compile Include="SCSI\Inquiry.cs" />
+    <Compile Include="ATA\ATA.cs" />
+    <Compile Include="SCSI\MMC\MMC.cs" />
+    <Compile Include="Blu-ray\BD.cs" />
+    <Compile Include="Floppy\Floppy.cs" />
+    <Compile Include="CD\CD.cs" />
+    <Compile Include="DVD\DVD.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -52,5 +52,14 @@
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SCSI\" />
+    <Folder Include="ATA\" />
+    <Folder Include="Blu-ray\" />
+    <Folder Include="DVD\" />
+    <Folder Include="SCSI\MMC\" />
+    <Folder Include="CD\" />
+    <Folder Include="Floppy\" />
   </ItemGroup>
 </Project>
