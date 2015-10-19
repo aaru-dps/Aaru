@@ -1,5 +1,10 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* ATA/Identify.cs:
+	  Remove unused code.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* ATA/ATA.cs:
 	* ATA/Identify.cs:
 	* DiscImageChef.Decoders.csproj:

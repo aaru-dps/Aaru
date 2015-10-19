@@ -3658,36 +3658,6 @@ namespace DiscImageChef.Decoders.ATA
             return sb.ToString();
         }
 
-        static uint DescrambleDoubleWord(uint DoubleWord)
-        {
-            byte[] dwb = BitConverter.GetBytes(DoubleWord);
-            byte[] dword = new byte[4];
-
-            dword[0] = dwb[1];
-            dword[1] = dwb[0];
-            dword[2] = dwb[3];
-            dword[3] = dwb[2];
-
-            return BitConverter.ToUInt32(dword, 0);
-        }
-
-        static ulong DescrambleQuadWord(ulong QuadWord)
-        {
-            byte[] qwb = BitConverter.GetBytes(QuadWord);
-            byte[] qword = new byte[8];
-
-            qword[0] = qwb[1];
-            qword[1] = qwb[0];
-            qword[2] = qwb[3];
-            qword[3] = qwb[2];
-            qword[4] = qwb[5];
-            qword[5] = qwb[4];
-            qword[6] = qwb[7];
-            qword[7] = qwb[6];
-
-            return BitConverter.ToUInt64(qword, 0);
-        }
-
         static ulong DescrambleWWN(ulong WWN)
         {
             byte[] qwb = BitConverter.GetBytes(WWN);
