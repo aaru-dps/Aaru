@@ -78,6 +78,7 @@
     <Compile Include="SCSI\Enums.cs" />
     <Compile Include="SCSI\VendorString.cs" />
     <Compile Include="ATA\Identify.cs" />
+    <Compile Include="SCSI\EVPD.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

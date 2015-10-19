@@ -39,6 +39,7 @@ using System;
 using DiscImageChef.Devices;
 using System.IO;
 using DiscImageChef.Console;
+using System.Text;
 
 namespace DiscImageChef.Commands
 {
@@ -64,45 +65,35 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            byte[] senseBuf;
-            byte[] inqBuf;
+            bool ata = false;
+            bool atapi = false;
+            bool scsi = false;
+            bool scsi83 = false;
 
-            bool sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+            string decodedAta = null;
+            string decodedAtapi = null;
+            string decodedScsi = null;
+            string scsiSerial = null;
 
-            if(sense)
-            {
-                DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
-
-                #if DEBUG
-                FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
-                senseFs.Write(senseBuf, 0, senseBuf.Length);
-                #endif
-            }
-            else
-                DicConsole.WriteLine("SCSI OK");
-
-            DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inqBuf));
+            StringBuilder sb = null;
 
             Structs.AtaErrorRegistersCHS errorRegisters;
 
             byte[] ataBuf;
-            sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
+            bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
 
             if (sense)
             {
-                
+
                 if ((errorRegisters.status & 0x01) == 0x01
-                   && (errorRegisters.error & 0x04) == 0x04
-                   && errorRegisters.cylinderHigh == 0xEB
-                   && errorRegisters.cylinderLow == 0x14)
+                    && (errorRegisters.error & 0x04) == 0x04
+                    && errorRegisters.cylinderHigh == 0xEB
+                    && errorRegisters.cylinderLow == 0x14)
                 {
-                    DicConsole.WriteLine("ATA error, but ATAPI signature detected.");
                     sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
 
                     if (sense)
                     {
-                        DicConsole.WriteLine("ATAPI error");
-
                         DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
                         DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
                         DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
@@ -115,14 +106,12 @@ namespace DiscImageChef.Commands
                     }
                     else
                     {
-                        DicConsole.WriteLine("ATAPI OK");
-                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+                        atapi = true;
+                        decodedAtapi = Decoders.ATA.Identify.Prettify(ataBuf);
                     }
                 }
                 else
                 {
-                    DicConsole.WriteLine("ATA error");
-
                     DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
                     DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
                     DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.sectorCount);
@@ -136,9 +125,98 @@ namespace DiscImageChef.Commands
             }
             else
             {
-                DicConsole.WriteLine("ATA OK");
-                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
-           }
+                ata = true;
+                decodedAta = Decoders.ATA.Identify.Prettify(ataBuf);
+            }
+
+            if (!ata)
+            {
+                byte[] senseBuf;
+                byte[] inqBuf;
+
+                sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+
+                if (sense)
+                {
+                    DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
+
+                    #if DEBUG
+                    FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
+                    senseFs.Write(senseBuf, 0, senseBuf.Length);
+                    #endif
+                }
+                else
+                {
+                    scsi = true;
+                    decodedScsi = Decoders.SCSI.Inquiry.Prettify(inqBuf);
+
+                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
+
+                    if (!sense)
+                    {
+                        byte[] pages = Decoders.SCSI.EVPD.DecodePage00(inqBuf);
+
+                        foreach (byte page in pages)
+                        {
+                            if (page >= 0x01 && page <= 0x7F)
+                            {
+                                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                if (!sense)
+                                {
+                                    if(sb == null)
+                                        sb = new StringBuilder();
+                                    sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                }
+                            }
+                            else if (page == 0x80)
+                            {
+                                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                if (!sense)
+                                {
+                                    scsi83 = true;
+                                    scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                                }
+                            }
+                            else
+                            {
+                                if(page != 0x00)
+                                    DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                            }
+                        }
+                    }
+                }
+
+                if (atapi)
+                {
+                    DicConsole.WriteLine(decodedAtapi);
+                }
+                else if (scsi)
+                {
+                    DicConsole.WriteLine("SCSI device");
+                }
+
+                if(scsi)
+                {
+                    DicConsole.WriteLine(decodedScsi);
+
+                    if(scsi83)
+                        DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
+
+                    if(sb != null)
+                    {
+                        DicConsole.WriteLine("ASCII VPDs:");
+                        DicConsole.WriteLine(sb.ToString());
+                    }
+                }
+            }
+            else
+            {
+                DicConsole.WriteLine("ATA device");
+                DicConsole.WriteLine(decodedAta);
+            }
+
+            if(!ata && !atapi && !scsi)
+                DicConsole.ErrorWriteLine("Unknown device type, cannot get information.");
         }
     }
 }

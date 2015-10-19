@@ -174,7 +174,7 @@ namespace DiscImageChef.Devices
             if (sense)
                 return true;
 
-            byte pagesLength = (byte)(buffer[4] + 5);
+            byte pagesLength = (byte)(buffer[3] + 4);
 
             cdb = new byte[] { (byte)Enums.ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0 };
             buffer = new byte[pagesLength];

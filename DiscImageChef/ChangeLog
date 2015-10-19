@@ -1,5 +1,10 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceInfo.cs:
+	  Implemented SCSI VPDs 0x00 to 0x80.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Decode.cs:
 	* Commands/DeviceInfo.cs:
 	  Rename ATA/ATAPI decoders fields, methods and structs to

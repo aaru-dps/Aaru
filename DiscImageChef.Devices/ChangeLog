@@ -1,3 +1,8 @@
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
+	  Implemented SCSI VPDs 0x00 to 0x80.
+
 2015-10-18  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/AtaCommands.cs:

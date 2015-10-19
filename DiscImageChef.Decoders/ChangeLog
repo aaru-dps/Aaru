@@ -1,5 +1,11 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* SCSI/EVPD.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Implemented SCSI VPDs 0x00 to 0x80.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* ATA/Identify.cs:
 	  Remove unused code.
 
