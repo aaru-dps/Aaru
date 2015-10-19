@@ -10,7 +10,6 @@
     <RootNamespace>DiscImageChef.Filesystems</RootNamespace>
     <AssemblyName>DiscImageChef.Filesystems</AssemblyName>
     <ReleaseVersion>2.2</ReleaseVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -1,5 +1,10 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Devices.csproj:
+	  Upgrade .NET version to 4.0.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* Enums.cs:
 	* Device/Variables.cs:
 	* Device/Constructor.cs:

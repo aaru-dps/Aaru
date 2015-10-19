@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Interop</RootNamespace>
     <AssemblyName>DiscImageChef.Interop</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ReleaseVersion>2.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

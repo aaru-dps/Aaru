@@ -1,5 +1,10 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.DiscImages.csproj:
+	  Upgrade .NET version to 4.0.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugin.cs:
 	  Added ATA/ATAPI IDENTIFY DEVICE disk tags.
 
