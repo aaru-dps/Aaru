@@ -56,7 +56,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
+        public static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
@@ -76,7 +76,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
+        public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             switch (ptID)
             {
@@ -86,10 +86,10 @@ namespace DiscImageChef.Devices
 
                         switch (direction)
                         {
-                            case Enums.ScsiDirection.In:
+                            case ScsiDirection.In:
                                 dir = Windows.ScsiIoctlDirection.In;
                                 break;
-                            case Enums.ScsiDirection.Out:
+                            case ScsiDirection.Out:
                                 dir = Windows.ScsiIoctlDirection.Out;
                                 break;
                             default:
@@ -105,16 +105,16 @@ namespace DiscImageChef.Devices
 
                         switch (direction)
                         {
-                            case Enums.ScsiDirection.In:
+                            case ScsiDirection.In:
                                 dir = Linux.ScsiIoctlDirection.In;
                                 break;
-                            case Enums.ScsiDirection.Out:
+                            case ScsiDirection.Out:
                                 dir = Linux.ScsiIoctlDirection.Out;
                                 break;
-                            case Enums.ScsiDirection.Bidirectional:
+                            case ScsiDirection.Bidirectional:
                                 dir = Linux.ScsiIoctlDirection.Unspecified;
                                 break;
-                            case Enums.ScsiDirection.None:
+                            case ScsiDirection.None:
                                 dir = Linux.ScsiIoctlDirection.None;
                                 break;
                             default:
@@ -129,9 +129,9 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, Structs.AtaRegistersCHS registers,
-            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(object fd, AtaRegistersCHS registers,
+            out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
@@ -140,9 +140,9 @@ namespace DiscImageChef.Devices
                 transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersCHS registers,
-            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersCHS registers,
+            out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             switch (ptID)
@@ -161,9 +161,9 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, Structs.AtaRegistersLBA28 registers,
-            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(object fd, AtaRegistersLBA28 registers,
+            out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
@@ -172,9 +172,9 @@ namespace DiscImageChef.Devices
                 transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersLBA28 registers,
-            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA28 registers,
+            out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             switch (ptID)
@@ -193,9 +193,9 @@ namespace DiscImageChef.Devices
             }
         }
 
-        public static int SendAtaCommand(object fd, Structs.AtaRegistersLBA48 registers,
-            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(object fd, AtaRegistersLBA48 registers,
+            out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
@@ -204,9 +204,9 @@ namespace DiscImageChef.Devices
                 transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
         }
 
-        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, Structs.AtaRegistersLBA48 registers,
-            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public static int SendAtaCommand(Interop.PlatformID ptID, object fd, AtaRegistersLBA48 registers,
+            out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             switch (ptID)

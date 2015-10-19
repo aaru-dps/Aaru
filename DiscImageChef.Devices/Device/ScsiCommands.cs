@@ -90,10 +90,10 @@ namespace DiscImageChef.Devices
         {
             buffer = new byte[5];
             senseBuffer = new byte[32];
-            byte[] cdb = { (byte)Enums.ScsiCommands.Inquiry, 0, 0, 0, 5, 0 };
+            byte[] cdb = { (byte)ScsiCommands.Inquiry, 0, 0, 0, 5, 0 };
             bool sense;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             if (sense)
@@ -101,11 +101,11 @@ namespace DiscImageChef.Devices
 
             byte pagesLength = (byte)(buffer[4] + 5);
 
-            cdb = new byte[] { (byte)Enums.ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0 };
+            cdb = new byte[] { (byte)ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0 };
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
@@ -165,10 +165,10 @@ namespace DiscImageChef.Devices
         {
             buffer = new byte[5];
             senseBuffer = new byte[32];
-            byte[] cdb = { (byte)Enums.ScsiCommands.Inquiry, 1, page, 0, 5, 0 };
+            byte[] cdb = { (byte)ScsiCommands.Inquiry, 1, page, 0, 5, 0 };
             bool sense;
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             if (sense)
@@ -176,11 +176,11 @@ namespace DiscImageChef.Devices
 
             byte pagesLength = (byte)(buffer[3] + 4);
 
-            cdb = new byte[] { (byte)Enums.ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0 };
+            cdb = new byte[] { (byte)ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0 };
             buffer = new byte[pagesLength];
             senseBuffer = new byte[32];
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, Enums.ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);

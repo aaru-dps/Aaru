@@ -1,6 +1,11 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Moved devices enums and structs out of classes.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Implemented SCSI VPDs 0x00 to 0x80.
 
 2015-10-19  Natalia Portillo  <claunia@claunia.com>

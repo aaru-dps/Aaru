@@ -99,50 +99,50 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
-        static ScsiIoctlDirection AtaProtocolToScsiDirection(Enums.AtaProtocol protocol)
+        static ScsiIoctlDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
         {
             switch (protocol)
             {
-                case Enums.AtaProtocol.DeviceDiagnostic:
-                case Enums.AtaProtocol.DeviceReset:
-                case Enums.AtaProtocol.HardReset:
-                case Enums.AtaProtocol.NonData:
-                case Enums.AtaProtocol.SoftReset:
-                case Enums.AtaProtocol.ReturnResponse:
+                case AtaProtocol.DeviceDiagnostic:
+                case AtaProtocol.DeviceReset:
+                case AtaProtocol.HardReset:
+                case AtaProtocol.NonData:
+                case AtaProtocol.SoftReset:
+                case AtaProtocol.ReturnResponse:
                     return ScsiIoctlDirection.None;
-                case Enums.AtaProtocol.PioIn:
-                case Enums.AtaProtocol.UDmaIn:
+                case AtaProtocol.PioIn:
+                case AtaProtocol.UDmaIn:
                     return ScsiIoctlDirection.In;
-                case Enums.AtaProtocol.PioOut:
-                case Enums.AtaProtocol.UDmaOut:
+                case AtaProtocol.PioOut:
+                case AtaProtocol.UDmaOut:
                     return ScsiIoctlDirection.Out;
                 default:
                     return ScsiIoctlDirection.Unspecified;
             }
         }
 
-        internal static int SendAtaCommand(int fd, Structs.AtaRegistersCHS registers,
-            out Structs.AtaErrorRegistersCHS errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        internal static int SendAtaCommand(int fd, AtaRegistersCHS registers,
+            out AtaErrorRegistersCHS errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new Structs.AtaErrorRegistersCHS();
+            errorRegisters = new AtaErrorRegistersCHS();
 
             if (buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
-            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
+            cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
-               protocol != Enums.AtaProtocol.NonData)
+            if (transferRegister != AtaTransferRegister.NoTransfer &&
+               protocol != AtaProtocol.NonData)
             {
                 switch (protocol)
                 {
-                    case Enums.AtaProtocol.PioIn:
-                    case Enums.AtaProtocol.UDmaIn:
+                    case AtaProtocol.PioIn:
+                    case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
                         break;
                     default:
@@ -186,28 +186,28 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
-        internal static int SendAtaCommand(int fd, Structs.AtaRegistersLBA28 registers,
-            out Structs.AtaErrorRegistersLBA28 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        internal static int SendAtaCommand(int fd, AtaRegistersLBA28 registers,
+            out AtaErrorRegistersLBA28 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new Structs.AtaErrorRegistersLBA28();
+            errorRegisters = new AtaErrorRegistersLBA28();
 
             if (buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
-            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
+            cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
-                protocol != Enums.AtaProtocol.NonData)
+            if (transferRegister != AtaTransferRegister.NoTransfer &&
+                protocol != AtaProtocol.NonData)
             {
                 switch (protocol)
                 {
-                    case Enums.AtaProtocol.PioIn:
-                    case Enums.AtaProtocol.UDmaIn:
+                    case AtaProtocol.PioIn:
+                    case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
                         break;
                     default:
@@ -251,29 +251,29 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
-        internal static int SendAtaCommand(int fd, Structs.AtaRegistersLBA48 registers,
-            out Structs.AtaErrorRegistersLBA48 errorRegisters, Enums.AtaProtocol protocol,
-            Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        internal static int SendAtaCommand(int fd, AtaRegistersLBA48 registers,
+            out AtaErrorRegistersLBA48 errorRegisters, AtaProtocol protocol,
+            AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             duration = 0;
             sense = false;
-            errorRegisters = new Structs.AtaErrorRegistersLBA48();
+            errorRegisters = new AtaErrorRegistersLBA48();
 
             if (buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
-            cdb[0] = (byte)Enums.ScsiCommands.AtaPassThrough16;
+            cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] |= 0x01;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != Enums.AtaTransferRegister.NoTransfer &&
-                protocol != Enums.AtaProtocol.NonData)
+            if (transferRegister != AtaTransferRegister.NoTransfer &&
+                protocol != AtaProtocol.NonData)
             {
                 switch (protocol)
                 {
-                    case Enums.AtaProtocol.PioIn:
-                    case Enums.AtaProtocol.UDmaIn:
+                    case AtaProtocol.PioIn:
+                    case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
                         break;
                     default:

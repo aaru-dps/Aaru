@@ -52,7 +52,7 @@ namespace DiscImageChef.Devices
         /// <param name="direction">SCSI command transfer direction</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
-        public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, Enums.ScsiDirection direction, out double duration, out bool sense)
+        public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
             return Command.SendScsiCommand(platformID, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
         }
@@ -70,8 +70,8 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(Structs.AtaRegistersCHS registers, out Structs.AtaErrorRegistersCHS errorRegisters,
-            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public int SendAtaCommand(AtaRegistersCHS registers, out AtaErrorRegistersCHS errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
@@ -91,8 +91,8 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(Structs.AtaRegistersLBA28 registers, out Structs.AtaErrorRegistersLBA28 errorRegisters,
-            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public int SendAtaCommand(AtaRegistersLBA28 registers, out AtaErrorRegistersLBA28 errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
@@ -112,8 +112,8 @@ namespace DiscImageChef.Devices
         /// <param name="transferBlocks">If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in bytes.</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-        public int SendAtaCommand(Structs.AtaRegistersLBA48 registers, out Structs.AtaErrorRegistersLBA48 errorRegisters,
-            Enums.AtaProtocol protocol, Enums.AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+        public int SendAtaCommand(AtaRegistersLBA48 registers, out AtaErrorRegistersLBA48 errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
             return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,

@@ -77,7 +77,7 @@ namespace DiscImageChef.Commands
 
             StringBuilder sb = null;
 
-            Structs.AtaErrorRegistersCHS errorRegisters;
+            AtaErrorRegistersCHS errorRegisters;
 
             byte[] ataBuf;
             bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
