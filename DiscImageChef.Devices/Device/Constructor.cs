@@ -90,6 +90,7 @@ namespace DiscImageChef.Devices
             }
 
             type = DeviceType.Unknown;
+            scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
 
             AtaErrorRegistersCHS errorRegisters;
 
@@ -115,6 +116,8 @@ namespace DiscImageChef.Devices
 
                     revision = ATAID.Value.FirmwareRevision;
                     serial = ATAID.Value.SerialNumber;
+
+                    scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
                 }
             }
             else
@@ -152,6 +155,8 @@ namespace DiscImageChef.Devices
                         revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
                         model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
                         manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
+
+                        scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
                     }
                 }
             }

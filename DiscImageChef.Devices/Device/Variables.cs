@@ -51,6 +51,7 @@ namespace DiscImageChef.Devices
         string model;
         string revision;
         string serial;
+        Decoders.SCSI.PeripheralDeviceTypes scsiType;
 
         /// <summary>
         /// Gets the Platform ID for this device
@@ -167,6 +168,14 @@ namespace DiscImageChef.Devices
             get
             {
                 return serial;
+            }
+        }
+
+        public Decoders.SCSI.PeripheralDeviceTypes SCSIType
+        {
+            get
+            {
+                return scsiType;
             }
         }
     }
