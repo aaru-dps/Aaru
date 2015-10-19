@@ -1,6 +1,13 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	* Device/Variables.cs:
+	* Device/Constructor.cs:
+	  Added some device static values to variables.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	* Structs.cs:
 	* Command.cs:
 	* Linux/Command.cs:

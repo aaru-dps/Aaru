@@ -88,6 +88,8 @@ namespace DiscImageChef.Devices
                 default:
                     throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", platformID));
             }
+
+            type = DeviceType.Unknown;
         }
     }
 }

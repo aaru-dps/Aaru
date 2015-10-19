@@ -46,6 +46,11 @@ namespace DiscImageChef.Devices
         object fd;
         bool error;
         int lastError;
+        DeviceType type;
+        string manufacturer;
+        string model;
+        string revision;
+        string serial;
 
         /// <summary>
         /// Gets the Platform ID for this device
@@ -102,6 +107,66 @@ namespace DiscImageChef.Devices
             get
             {
                 return lastError;
+            }
+        }
+
+        /// <summary>
+        /// Gets the device type.
+        /// </summary>
+        /// <value>The device type.</value>
+        public DeviceType Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+
+        /// <summary>
+        /// Gets the device's manufacturer
+        /// </summary>
+        /// <value>The manufacturer.</value>
+        public string Manufacturer
+        {
+            get
+            {
+                return manufacturer;
+            }
+        }
+
+        /// <summary>
+        /// Gets the device model
+        /// </summary>
+        /// <value>The model.</value>
+        public string Model
+        {
+            get
+            {
+                return model;
+            }
+        }
+
+        /// <summary>
+        /// Gets the device's revision.
+        /// </summary>
+        /// <value>The revision.</value>
+        public string Revision
+        {
+            get
+            {
+                return revision;
+            }
+        }
+
+        /// <summary>
+        /// Gets the device's serial number.
+        /// </summary>
+        /// <value>The serial number.</value>
+        public string Serial
+        {
+            get
+            {
+                return serial;
             }
         }
     }
