@@ -55,7 +55,7 @@ namespace DiscImageChef.Decoders.SCSI
     {
         #region Public methods
 
-        public static SCSIInquiry? DecodeSCSIInquiry(byte[] SCSIInquiryResponse)
+        public static SCSIInquiry? Decode(byte[] SCSIInquiryResponse)
         {
             if (SCSIInquiryResponse == null)
                 return null;
@@ -194,7 +194,7 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifySCSIInquiry(SCSIInquiry? SCSIInquiryResponse)
+        public static string Prettify(SCSIInquiry? SCSIInquiryResponse)
         {
             if (SCSIInquiryResponse == null)
                 return null;
@@ -203,21 +203,21 @@ namespace DiscImageChef.Decoders.SCSI
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat("Device vendor: {0}", VendorString.PrettifySCSIVendorString(StringHandlers.SpacePaddedToString(response.VendorIdentification))).AppendLine();
+            sb.AppendFormat("Device vendor: {0}", VendorString.Prettify(StringHandlers.SpacePaddedToString(response.VendorIdentification))).AppendLine();
             sb.AppendFormat("Device name: {0}", StringHandlers.SpacePaddedToString(response.ProductIdentification)).AppendLine();
             sb.AppendFormat("Device release level: {0}", StringHandlers.SpacePaddedToString(response.ProductRevisionLevel)).AppendLine();
-            switch ((SCSIPeripheralQualifiers)response.PeripheralQualifier)
+            switch ((PeripheralQualifiers)response.PeripheralQualifier)
             {
-                case SCSIPeripheralQualifiers.SCSIPQSupported:
+                case PeripheralQualifiers.Supported:
                     sb.AppendLine("Device is connected and supported.");
                     break;
-                case SCSIPeripheralQualifiers.SCSIPQUnconnected:
+                case PeripheralQualifiers.Unconnected:
                     sb.AppendLine("Device is supported but not connected.");
                     break;
-                case SCSIPeripheralQualifiers.SCSIPQReserved:
+                case PeripheralQualifiers.Reserved:
                     sb.AppendLine("Reserved value set in Peripheral Qualifier field.");
                     break;
-                case SCSIPeripheralQualifiers.SCSIPQUnsupported:
+                case PeripheralQualifiers.Unsupported:
                     sb.AppendLine("Device is connected but unsupported.");
                     break;
                 default:
@@ -225,75 +225,75 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SCSIPeripheralDeviceTypes)response.PeripheralDeviceType)
+            switch ((PeripheralDeviceTypes)response.PeripheralDeviceType)
             {
-                case SCSIPeripheralDeviceTypes.SCSIPDTDirectAccess: //0x00,
+                case PeripheralDeviceTypes.DirectAccess: //0x00,
                     sb.AppendLine("Direct-access device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTSequentialAccess: //0x01,
+                case PeripheralDeviceTypes.SequentialAccess: //0x01,
                     sb.AppendLine("Sequential-access device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTPrinterDevice: //0x02,
+                case PeripheralDeviceTypes.PrinterDevice: //0x02,
                     sb.AppendLine("Printer device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTProcessorDevice: //0x03,
+                case PeripheralDeviceTypes.ProcessorDevice: //0x03,
                     sb.AppendLine("Processor device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTWriteOnceDevice: //0x04,
+                case PeripheralDeviceTypes.WriteOnceDevice: //0x04,
                     sb.AppendLine("Write-once device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTMultiMediaDevice: //0x05,
+                case PeripheralDeviceTypes.MultiMediaDevice: //0x05,
                     sb.AppendLine("CD-ROM/DVD/etc device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTScannerDevice: //0x06,
+                case PeripheralDeviceTypes.ScannerDevice: //0x06,
                     sb.AppendLine("Scanner device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTOpticalDevice: //0x07,
+                case PeripheralDeviceTypes.OpticalDevice: //0x07,
                     sb.AppendLine("Optical memory device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTMediumChangerDevice: //0x08,
+                case PeripheralDeviceTypes.MediumChangerDevice: //0x08,
                     sb.AppendLine("Medium change device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTCommsDevice: //0x09,
+                case PeripheralDeviceTypes.CommsDevice: //0x09,
                     sb.AppendLine("Communications device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTPrePressDevice1: //0x0A,
+                case PeripheralDeviceTypes.PrePressDevice1: //0x0A,
                     sb.AppendLine("Graphics arts pre-press device (defined in ASC IT8)");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTPrePressDevice2: //0x0B,
+                case PeripheralDeviceTypes.PrePressDevice2: //0x0B,
                     sb.AppendLine("Graphics arts pre-press device (defined in ASC IT8)");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTArrayControllerDevice: //0x0C,
+                case PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
                     sb.AppendLine("Array controller device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTEnclosureServiceDevice: //0x0D,
+                case PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
                     sb.AppendLine("Enclosure services device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTSimplifiedDevice: //0x0E,
+                case PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
                     sb.AppendLine("Simplified direct-access device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTOCRWDevice: //0x0F,
+                case PeripheralDeviceTypes.OCRWDevice: //0x0F,
                     sb.AppendLine("Optical card reader/writer device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTBridgingExpander: //0x10,
+                case PeripheralDeviceTypes.BridgingExpander: //0x10,
                     sb.AppendLine("Bridging Expanders");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTObjectDevice: //0x11,
+                case PeripheralDeviceTypes.ObjectDevice: //0x11,
                     sb.AppendLine("Object-based Storage Device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTADCDevice: //0x12,
+                case PeripheralDeviceTypes.ADCDevice: //0x12,
                     sb.AppendLine("Automation/Drive Interface");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
+                case PeripheralDeviceTypes.SCSISecurityManagerDevice: //0x13,
                     sb.AppendLine("Security Manager Device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIZonedBlockDEvice: //0x14
+                case PeripheralDeviceTypes.SCSIZonedBlockDEvice: //0x14
                     sb.AppendLine("Host managed zoned block device");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTWellKnownDevice: //0x1E,
+                case PeripheralDeviceTypes.WellKnownDevice: //0x1E,
                     sb.AppendLine("Well known logical unit");
                     break;
-                case SCSIPeripheralDeviceTypes.SCSIPDTUnknownDevice: //0x1F
+                case PeripheralDeviceTypes.UnknownDevice: //0x1F
                     sb.AppendLine("Unknown or no device type");
                     break;
                 default:
@@ -301,27 +301,27 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SCSIANSIVersions)response.ANSIVersion)
+            switch ((ANSIVersions)response.ANSIVersion)
             {
-                case SCSIANSIVersions.SCSIANSINoVersion:
+                case ANSIVersions.ANSINoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ANSI standard");
                     break;
-                case SCSIANSIVersions.SCSIANSI1986Version:
+                case ANSIVersions.ANSI1986Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.131:1986 (SCSI-1)");
                     break;
-                case SCSIANSIVersions.SCSIANSI1994Version:
+                case ANSIVersions.ANSI1994Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.131:1994 (SCSI-2)");
                     break;
-                case SCSIANSIVersions.SCSIANSI1997Version:
+                case ANSIVersions.ANSI1997Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.301:1997 (SPC-1)");
                     break;
-                case SCSIANSIVersions.SCSIANSI2001Version:
+                case ANSIVersions.ANSI2001Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.351:2001 (SPC-2)");
                     break;
-                case SCSIANSIVersions.SCSIANSI2005Version:
+                case ANSIVersions.ANSI2005Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.408:2005 (SPC-3)");
                     break;
-                case SCSIANSIVersions.SCSIANSI2008Version:
+                case ANSIVersions.ANSI2008Version:
                     sb.AppendLine("Device claims to comply with ANSI X3.408:2005 (SPC-4)");
                     break;
                 default:
@@ -329,12 +329,12 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SCSIECMAVersions)response.ECMAVersion)
+            switch ((ECMAVersions)response.ECMAVersion)
             {
-                case SCSIECMAVersions.SCSIECMANoVersion:
+                case ECMAVersions.ECMANoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ECMA standard");
                     break;
-                case SCSIECMAVersions.SCSIECMAObsolete:
+                case ECMAVersions.ECMAObsolete:
                     sb.AppendLine("Device claims to comply with an obsolete SCSI ECMA standard");
                     break;
                 default:
@@ -342,12 +342,12 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SCSIISOVersions)response.ISOVersion)
+            switch ((ISOVersions)response.ISOVersion)
             {
-                case SCSIISOVersions.SCSIISONoVersion:
+                case ISOVersions.ISONoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ISO/IEC standard");
                     break;
-                case SCSIISOVersions.SCSIISO1995Version:
+                case ISOVersions.ISO1995Version:
                     sb.AppendLine("Device claims to comply with ISO/IEC 9316:1995");
                     break;
                 default:
@@ -412,18 +412,18 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
             #endif
 
-            switch ((SCSITGPSValues)response.TPGS)
+            switch ((TGPSValues)response.TPGS)
             {
-                case SCSITGPSValues.NotSupported:
+                case TGPSValues.NotSupported:
                     sb.AppendLine("Device does not support assymetrical access");
                     break;
-                case SCSITGPSValues.OnlyImplicit:
+                case TGPSValues.OnlyImplicit:
                     sb.AppendLine("Device only supports implicit assymetrical access");
                     break;
-                case SCSITGPSValues.OnlyExplicit:
+                case TGPSValues.OnlyExplicit:
                     sb.AppendLine("Device only supports explicit assymetrical access");
                     break;
-                case SCSITGPSValues.Both:
+                case TGPSValues.Both:
                     sb.AppendLine("Device supports implicit and explicit assymetrical access");
                     break;
                 default:
@@ -431,18 +431,18 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SCSISPIClocking)response.Clocking)
+            switch ((SPIClocking)response.Clocking)
             {
-                case SCSISPIClocking.SCSIClockingST:
+                case SPIClocking.ST:
                     sb.AppendLine("Device supports only ST clocking");
                     break;
-                case SCSISPIClocking.SCSIClockingDT:
+                case SPIClocking.DT:
                     sb.AppendLine("Device supports only DT clocking");
                     break;
-                case SCSISPIClocking.SCSIClockingReserved:
+                case SPIClocking.Reserved:
                     sb.AppendLine("Reserved value 0x02 found in SPI clocking field");
                     break;
-                case SCSISPIClocking.SCSIClockingSTandDT:
+                case SPIClocking.STandDT:
                     sb.AppendLine("Device supports ST and DT clocking");
                     break;
                 default:
@@ -1908,10 +1908,10 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
 
-        public static string PrettifySCSIInquiry(byte[] SCSIInquiryResponse)
+        public static string Prettify(byte[] SCSIInquiryResponse)
         {
-            SCSIInquiry? decoded = DecodeSCSIInquiry(SCSIInquiryResponse);
-            return PrettifySCSIInquiry(decoded);
+            SCSIInquiry? decoded = Decode(SCSIInquiryResponse);
+            return Prettify(decoded);
         }
 
         #endregion Public methods

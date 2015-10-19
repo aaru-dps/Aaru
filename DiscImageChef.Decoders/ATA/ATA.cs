@@ -2263,69 +2263,69 @@ namespace DiscImageChef.Decoders
             if (atapi)
             {
                 // Bits 12 to 8, SCSI Peripheral Device Type
-                switch ((SCSI.SCSIPeripheralDeviceTypes)(((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8))
+                switch ((SCSI.PeripheralDeviceTypes)(((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8))
                 {
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTDirectAccess: //0x00,
+                    case SCSI.PeripheralDeviceTypes.DirectAccess: //0x00,
                         sb.AppendLine("ATAPI Direct-access device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTSequentialAccess: //0x01,
+                    case SCSI.PeripheralDeviceTypes.SequentialAccess: //0x01,
                         sb.AppendLine("ATAPI Sequential-access device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTPrinterDevice: //0x02,
+                    case SCSI.PeripheralDeviceTypes.PrinterDevice: //0x02,
                         sb.AppendLine("ATAPI Printer device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTProcessorDevice: //0x03,
+                    case SCSI.PeripheralDeviceTypes.ProcessorDevice: //0x03,
                         sb.AppendLine("ATAPI Processor device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTWriteOnceDevice: //0x04,
+                    case SCSI.PeripheralDeviceTypes.WriteOnceDevice: //0x04,
                         sb.AppendLine("ATAPI Write-once device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTMultiMediaDevice: //0x05,
+                    case SCSI.PeripheralDeviceTypes.MultiMediaDevice: //0x05,
                         sb.AppendLine("ATAPI CD-ROM/DVD/etc device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTScannerDevice: //0x06,
+                    case SCSI.PeripheralDeviceTypes.ScannerDevice: //0x06,
                         sb.AppendLine("ATAPI Scanner device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTOpticalDevice: //0x07,
+                    case SCSI.PeripheralDeviceTypes.OpticalDevice: //0x07,
                         sb.AppendLine("ATAPI Optical memory device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTMediumChangerDevice: //0x08,
+                    case SCSI.PeripheralDeviceTypes.MediumChangerDevice: //0x08,
                         sb.AppendLine("ATAPI Medium change device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTCommsDevice: //0x09,
+                    case SCSI.PeripheralDeviceTypes.CommsDevice: //0x09,
                         sb.AppendLine("ATAPI Communications device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTPrePressDevice1: //0x0A,
+                    case SCSI.PeripheralDeviceTypes.PrePressDevice1: //0x0A,
                         sb.AppendLine("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTPrePressDevice2: //0x0B,
+                    case SCSI.PeripheralDeviceTypes.PrePressDevice2: //0x0B,
                         sb.AppendLine("ATAPI Graphics arts pre-press device (defined in ASC IT8)");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTArrayControllerDevice: //0x0C,
+                    case SCSI.PeripheralDeviceTypes.ArrayControllerDevice: //0x0C,
                         sb.AppendLine("ATAPI Array controller device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTEnclosureServiceDevice: //0x0D,
+                    case SCSI.PeripheralDeviceTypes.EnclosureServiceDevice: //0x0D,
                         sb.AppendLine("ATAPI Enclosure services device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTSimplifiedDevice: //0x0E,
+                    case SCSI.PeripheralDeviceTypes.SimplifiedDevice: //0x0E,
                         sb.AppendLine("ATAPI Simplified direct-access device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTOCRWDevice: //0x0F,
+                    case SCSI.PeripheralDeviceTypes.OCRWDevice: //0x0F,
                         sb.AppendLine("ATAPI Optical card reader/writer device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTBridgingExpander: //0x10,
+                    case SCSI.PeripheralDeviceTypes.BridgingExpander: //0x10,
                         sb.AppendLine("ATAPI Bridging Expanders");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTObjectDevice: //0x11,
+                    case SCSI.PeripheralDeviceTypes.ObjectDevice: //0x11,
                         sb.AppendLine("ATAPI Object-based Storage Device");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTADCDevice: //0x12,
+                    case SCSI.PeripheralDeviceTypes.ADCDevice: //0x12,
                         sb.AppendLine("ATAPI Automation/Drive Interface");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTWellKnownDevice: //0x1E,
+                    case SCSI.PeripheralDeviceTypes.WellKnownDevice: //0x1E,
                         sb.AppendLine("ATAPI Well known logical unit");
                         break;
-                    case SCSI.SCSIPeripheralDeviceTypes.SCSIPDTUnknownDevice: //0x1F
+                    case SCSI.PeripheralDeviceTypes.UnknownDevice: //0x1F
                         sb.AppendLine("ATAPI Unknown or no device type");
                         break;
                     default:

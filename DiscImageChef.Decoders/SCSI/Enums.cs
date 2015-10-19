@@ -39,108 +39,108 @@ using System;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    enum SCSIPeripheralQualifiers : byte
+    enum PeripheralQualifiers : byte
     {
         /// <summary>
         /// Peripheral qualifier: Device is connected and supported
         /// </summary>
-        SCSIPQSupported = 0x00,
+        Supported = 0x00,
         /// <summary>
         /// Peripheral qualifier: Device is supported but not connected
         /// </summary>
-        SCSIPQUnconnected = 0x01,
+        Unconnected = 0x01,
         /// <summary>
         /// Peripheral qualifier: Reserved value
         /// </summary>
-        SCSIPQReserved = 0x02,
+        Reserved = 0x02,
         /// <summary>
         /// Peripheral qualifier: Device is connected but unsupported
         /// </summary>
-        SCSIPQUnsupported = 0x03,
+        Unsupported = 0x03,
         /// <summary>
         /// Peripheral qualifier: Vendor values: 0x04, 0x05, 0x06 and 0x07
         /// </summary>
-        SCSIPQVendorMask = 0x04
+        VendorMask = 0x04
     }
 
-    public enum SCSIPeripheralDeviceTypes : byte
+    public enum PeripheralDeviceTypes : byte
     {
         /// <summary>
         /// Direct-access device
         /// </summary>
-        SCSIPDTDirectAccess = 0x00,
+        DirectAccess = 0x00,
         /// <summary>
         /// Sequential-access device
         /// </summary>
-        SCSIPDTSequentialAccess = 0x01,
+        SequentialAccess = 0x01,
         /// <summary>
         /// Printer device
         /// </summary>
-        SCSIPDTPrinterDevice = 0x02,
+        PrinterDevice = 0x02,
         /// <summary>
         /// Processor device
         /// </summary>
-        SCSIPDTProcessorDevice = 0x03,
+        ProcessorDevice = 0x03,
         /// <summary>
         /// Write-once device
         /// </summary>
-        SCSIPDTWriteOnceDevice = 0x04,
+        WriteOnceDevice = 0x04,
         /// <summary>
         /// CD-ROM/DVD/etc device
         /// </summary>
-        SCSIPDTMultiMediaDevice = 0x05,
+        MultiMediaDevice = 0x05,
         /// <summary>
         /// Scanner device
         /// </summary>
-        SCSIPDTScannerDevice = 0x06,
+        ScannerDevice = 0x06,
         /// <summary>
         /// Optical memory device
         /// </summary>
-        SCSIPDTOpticalDevice = 0x07,
+        OpticalDevice = 0x07,
         /// <summary>
         /// Medium change device
         /// </summary>
-        SCSIPDTMediumChangerDevice = 0x08,
+        MediumChangerDevice = 0x08,
         /// <summary>
         /// Communications device
         /// </summary>
-        SCSIPDTCommsDevice = 0x09,
+        CommsDevice = 0x09,
         /// <summary>
         /// Graphics arts pre-press device (defined in ASC IT8)
         /// </summary>
-        SCSIPDTPrePressDevice1 = 0x0A,
+        PrePressDevice1 = 0x0A,
         /// <summary>
         /// Graphics arts pre-press device (defined in ASC IT8)
         /// </summary>
-        SCSIPDTPrePressDevice2 = 0x0B,
+        PrePressDevice2 = 0x0B,
         /// <summary>
         /// Array controller device
         /// </summary>
-        SCSIPDTArrayControllerDevice = 0x0C,
+        ArrayControllerDevice = 0x0C,
         /// <summary>
         /// Enclosure services device
         /// </summary>
-        SCSIPDTEnclosureServiceDevice = 0x0D,
+        EnclosureServiceDevice = 0x0D,
         /// <summary>
         /// Simplified direct-access device
         /// </summary>
-        SCSIPDTSimplifiedDevice = 0x0E,
+        SimplifiedDevice = 0x0E,
         /// <summary>
         /// Optical card reader/writer device
         /// </summary>
-        SCSIPDTOCRWDevice = 0x0F,
+        OCRWDevice = 0x0F,
         /// <summary>
         /// Bridging Expanders
         /// </summary>
-        SCSIPDTBridgingExpander = 0x10,
+        BridgingExpander = 0x10,
         /// <summary>
         /// Object-based Storage Device
         /// </summary>
-        SCSIPDTObjectDevice = 0x11,
+        ObjectDevice = 0x11,
         /// <summary>
         /// Automation/Drive Interface
         /// </summary>
-        SCSIPDTADCDevice = 0x12,
+        ADCDevice = 0x12,
         /// <summary>
         /// Security Manager Device
         /// </summary>
@@ -152,90 +152,90 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Well known logical unit
         /// </summary>
-        SCSIPDTWellKnownDevice = 0x1E,
+        WellKnownDevice = 0x1E,
         /// <summary>
         /// Unknown or no device type
         /// </summary>
-        SCSIPDTUnknownDevice = 0x1F
+        UnknownDevice = 0x1F
     }
 
-    enum SCSIANSIVersions : byte
+    enum ANSIVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ANSI version
         /// </summary>
-        SCSIANSINoVersion = 0x00,
+        ANSINoVersion = 0x00,
         /// <summary>
         /// Device complies with ANSI X3.131:1986
         /// </summary>
-        SCSIANSI1986Version = 0x01,
+        ANSI1986Version = 0x01,
         /// <summary>
         /// Device complies with ANSI X3.131:1994
         /// </summary>
-        SCSIANSI1994Version = 0x02,
+        ANSI1994Version = 0x02,
         /// <summary>
         /// Device complies with ANSI X3.301:1997
         /// </summary>
-        SCSIANSI1997Version = 0x03,
+        ANSI1997Version = 0x03,
         /// <summary>
         /// Device complies with ANSI X3.351:2001
         /// </summary>
-        SCSIANSI2001Version = 0x04,
+        ANSI2001Version = 0x04,
         /// <summary>
         /// Device complies with ANSI X3.408:2005.
         /// </summary>
-        SCSIANSI2005Version = 0x05,
+        ANSI2005Version = 0x05,
         /// <summary>
         /// Device complies with SPC-4
         /// </summary>
-        SCSIANSI2008Version = 0x06
+        ANSI2008Version = 0x06
     }
 
-    enum SCSIECMAVersions : byte
+    enum ECMAVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ECMA version
         /// </summary>
-        SCSIECMANoVersion = 0x00,
+        ECMANoVersion = 0x00,
         /// <summary>
         /// Device complies with an obsolete ECMA standard
         /// </summary>
-        SCSIECMAObsolete = 0x01
+        ECMAObsolete = 0x01
     }
 
-    enum SCSIISOVersions : byte
+    enum ISOVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ISO/IEC version
         /// </summary>
-        SCSIISONoVersion = 0x00,
+        ISONoVersion = 0x00,
         /// <summary>
         /// Device complies with ISO/IEC 9316:1995
         /// </summary>
-        SCSIISO1995Version = 0x02
+        ISO1995Version = 0x02
     }
 
-    enum SCSISPIClocking : byte
+    enum SPIClocking : byte
     {
         /// <summary>
         /// Supports only ST
         /// </summary>
-        SCSIClockingST = 0x00,
+        ST = 0x00,
         /// <summary>
         /// Supports only DT
         /// </summary>
-        SCSIClockingDT = 0x01,
+        DT = 0x01,
         /// <summary>
         /// Reserved value
         /// </summary>
-        SCSIClockingReserved = 0x02,
+        Reserved = 0x02,
         /// <summary>
         /// Supports ST and DT
         /// </summary>
-        SCSIClockingSTandDT = 0x03,
+        STandDT = 0x03,
     }
 
-    enum SCSITGPSValues : byte
+    enum TGPSValues : byte
     {
         /// <summary>
         /// Assymetrical access not supported
