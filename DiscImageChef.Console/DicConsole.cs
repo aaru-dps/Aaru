@@ -156,6 +156,31 @@ namespace DiscImageChef.Console
             if (DebugWriteEvent != null)
                 DebugWriteEvent("", null);
         }
+
+        public static void WriteLine(string format)
+        {
+            if (WriteLineEvent != null)
+                WriteLineEvent(format, null);
+        }
+
+        public static void ErrorWriteLine(string format)
+        {
+            if (ErrorWriteLineEvent != null)
+                ErrorWriteLineEvent(format, null);
+        }
+
+        public static void VerboseWriteLine(string format)
+        {
+            if (VerboseWriteLineEvent != null)
+                VerboseWriteLineEvent(format, null);
+        }
+
+        public static void DebugWriteLine(string module, string format)
+        {
+            if (DebugWriteLineEvent != null)
+                DebugWriteLineEvent("DEBUG (" + module + "): " + format, null);
+        }
+
     }
 }
 

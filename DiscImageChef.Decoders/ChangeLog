@@ -1,6 +1,15 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* ATA.cs:
+	  Typo.
+
+	* SCSI.cs:
+	  Don't try to decode Version Descriptors if there are none.
+	Also there are devices on the wild with less than 8 VDs.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* ATA.cs:
 	  Added ATA/ATAPI IDENTIFY DEVICE disk tags.
 
 2015-10-18  Natalia Portillo  <claunia@claunia.com>

@@ -1,5 +1,10 @@
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceInfo.cs:
+	  Use a format-less output.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Decode.cs:
 	  Added ATA/ATAPI IDENTIFY DEVICE disk tags.
 

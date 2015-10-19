@@ -81,7 +81,7 @@ namespace DiscImageChef.Commands
             else
                 DicConsole.WriteLine("SCSI OK");
 
-            DicConsole.WriteLine("{0}", Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
+            DicConsole.WriteLine(Decoders.SCSI.PrettifySCSIInquiry(inqBuf));
 
             Structs.AtaErrorRegistersCHS errorRegisters;
 
@@ -116,7 +116,7 @@ namespace DiscImageChef.Commands
                     else
                     {
                         DicConsole.WriteLine("ATAPI OK");
-                        DicConsole.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
                     }
                 }
                 else
@@ -137,7 +137,7 @@ namespace DiscImageChef.Commands
             else
             {
                 DicConsole.WriteLine("ATA OK");
-                DicConsole.WriteLine("{0}", Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
            }
         }
     }
