@@ -222,7 +222,7 @@ namespace DiscImageChef.Decoders.CD
             public byte Reserved10;
         }
 
-        public static CDATIP? DecodeCDATIP(byte[] CDATIPResponse)
+        public static CDATIP? Decode(byte[] CDATIPResponse)
         {
             if (CDATIPResponse == null)
                 return null;
@@ -282,7 +282,7 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDATIP(CDATIP? CDATIPResponse)
+        public static string Prettify(CDATIP? CDATIPResponse)
         {
             if (CDATIPResponse == null)
                 return null;
@@ -371,10 +371,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDATIP(byte[] CDATIPResponse)
+        public static string Prettify(byte[] CDATIPResponse)
         {
-            CDATIP? decoded = DecodeCDATIP(CDATIPResponse);
-            return PrettifyCDATIP(decoded);
+            CDATIP? decoded = Decode(CDATIPResponse);
+            return Prettify(decoded);
         }
     }
 }

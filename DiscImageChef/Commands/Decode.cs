@@ -124,7 +124,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD ATIP:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.ATIP.PrettifyCDATIP(atip));
+                                        DicConsole.WriteLine(Decoders.CD.ATIP.Prettify(atip));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -138,7 +138,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD full TOC:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.FullTOC.PrettifyCDFullTOC(fulltoc));
+                                        DicConsole.WriteLine(Decoders.CD.FullTOC.Prettify(fulltoc));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -152,7 +152,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD PMA:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.PMA.PrettifyCDPMA(pma));
+                                        DicConsole.WriteLine(Decoders.CD.PMA.Prettify(pma));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -166,7 +166,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD session information:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.Session.PrettifyCDSessionInfo(sessioninfo));
+                                        DicConsole.WriteLine(Decoders.CD.Session.Prettify(sessioninfo));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -180,7 +180,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD-TEXT:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.CDTextOnLeadIn.PrettifyCDTextLeadIn(cdtext));
+                                        DicConsole.WriteLine(Decoders.CD.CDTextOnLeadIn.Prettify(cdtext));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -194,7 +194,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("CD TOC:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.CD.TOC.PrettifyCDTOC(toc));
+                                        DicConsole.WriteLine(Decoders.CD.TOC.Prettify(toc));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;

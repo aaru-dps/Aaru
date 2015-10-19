@@ -75,10 +75,10 @@ namespace DiscImageChef.Decoders.CD
             /// <summary>
             /// Track descriptors
             /// </summary>
-            public CDFullTOCInfoTrackDataDescriptor[] TrackDescriptors;
+            public TrackDataDescriptor[] TrackDescriptors;
         }
 
-        public struct CDFullTOCInfoTrackDataDescriptor
+        public struct TrackDataDescriptor
         {
             /// <summary>
             /// Byte 0
@@ -141,7 +141,7 @@ namespace DiscImageChef.Decoders.CD
             public byte PFRAME;
         }
 
-        public static CDFullTOC? DecodeCDFullTOC(byte[] CDFullTOCResponse)
+        public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
         {
             if (CDFullTOCResponse == null)
                 return null;
@@ -153,7 +153,7 @@ namespace DiscImageChef.Decoders.CD
             decoded.DataLength = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0);
             decoded.FirstCompleteSession = CDFullTOCResponse[2];
             decoded.LastCompleteSession = CDFullTOCResponse[3];
-            decoded.TrackDescriptors = new CDFullTOCInfoTrackDataDescriptor[(decoded.DataLength - 2) / 11];
+            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
 
             if (decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
@@ -182,7 +182,7 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDFullTOC(CDFullTOC? CDFullTOCResponse)
+        public static string Prettify(CDFullTOC? CDFullTOCResponse)
         {
             if (CDFullTOCResponse == null)
                 return null;
@@ -193,7 +193,7 @@ namespace DiscImageChef.Decoders.CD
 
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
-            foreach (CDFullTOCInfoTrackDataDescriptor descriptor in response.TrackDescriptors)
+            foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
                 if ((descriptor.CONTROL != 4 && descriptor.CONTROL != 6) ||
                     (descriptor.ADR != 1 && descriptor.ADR != 5) ||
@@ -364,10 +364,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDFullTOC(byte[] CDFullTOCResponse)
+        public static string Prettify(byte[] CDFullTOCResponse)
         {
-            CDFullTOC? decoded = DecodeCDFullTOC(CDFullTOCResponse);
-            return PrettifyCDFullTOC(decoded);
+            CDFullTOC? decoded = Decode(CDFullTOCResponse);
+            return Prettify(decoded);
         }
     }
 }

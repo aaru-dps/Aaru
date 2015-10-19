@@ -75,10 +75,10 @@ namespace DiscImageChef.Decoders.CD
             /// <summary>
             /// Track descriptors
             /// </summary>
-            public CDSessionInfoTrackDataDescriptor[] TrackDescriptors;
+            public TrackDataDescriptor[] TrackDescriptors;
         }
 
-        public struct CDSessionInfoTrackDataDescriptor
+        public struct TrackDataDescriptor
         {
             /// <summary>
             /// Byte 0
@@ -112,7 +112,7 @@ namespace DiscImageChef.Decoders.CD
             public UInt32 TrackStartAddress;
         }
 
-        public static CDSessionInfo? DecodeCDSessionInfo(byte[] CDSessionInfoResponse)
+        public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
         {
             if (CDSessionInfoResponse == null)
                 return null;
@@ -124,7 +124,7 @@ namespace DiscImageChef.Decoders.CD
             decoded.DataLength = BigEndianBitConverter.ToUInt16(CDSessionInfoResponse, 0);
             decoded.FirstCompleteSession = CDSessionInfoResponse[2];
             decoded.LastCompleteSession = CDSessionInfoResponse[3];
-            decoded.TrackDescriptors = new CDSessionInfoTrackDataDescriptor[(decoded.DataLength - 2) / 8];
+            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
             if (decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {
@@ -145,7 +145,7 @@ namespace DiscImageChef.Decoders.CD
             return decoded;
         }
 
-        public static string PrettifyCDSessionInfo(CDSessionInfo? CDSessionInfoResponse)
+        public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
         {
             if (CDSessionInfoResponse == null)
                 return null;
@@ -156,7 +156,7 @@ namespace DiscImageChef.Decoders.CD
 
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
-            foreach (CDSessionInfoTrackDataDescriptor descriptor in response.TrackDescriptors)
+            foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
                 sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber);
                 sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
@@ -225,10 +225,10 @@ namespace DiscImageChef.Decoders.CD
             return sb.ToString();
         }
 
-        public static string PrettifyCDSessionInfo(byte[] CDSessionInfoResponse)
+        public static string Prettify(byte[] CDSessionInfoResponse)
         {
-            CDSessionInfo? decoded = DecodeCDSessionInfo(CDSessionInfoResponse);
-            return PrettifyCDSessionInfo(decoded);
+            CDSessionInfo? decoded = Decode(CDSessionInfoResponse);
+            return Prettify(decoded);
         }
     }
 }
