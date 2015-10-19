@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Decoders
+namespace DiscImageChef.Decoders.ATA
 {
     /// <summary>
     /// Information from following standards:
@@ -56,7 +56,7 @@ namespace DiscImageChef.Decoders
     /// T13-2161D rev. 5 (ACS-3)
     /// CF+ & CF Specification rev. 1.4 (CFA)
     /// </summary>
-    public static class ATA
+    public static class Identify
     {
         [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=2)]
         public struct IdentifyDevice
@@ -1851,7 +1851,7 @@ namespace DiscImageChef.Decoders
             Clear = 0x0001,
         }
 
-        public static IdentifyDevice? DecodeIdentifyDevice(byte[] IdentifyDeviceResponse)
+        public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
         {
             if (IdentifyDeviceResponse == null)
                 return null;
@@ -1880,16 +1880,16 @@ namespace DiscImageChef.Decoders
             return ATAID;
         }
 
-        public static string PrettifyIdentifyDevice(byte[] IdentifyDeviceResponse)
+        public static string Prettify(byte[] IdentifyDeviceResponse)
         {
             if (IdentifyDeviceResponse.Length != 512)
                 return null;
             
-            IdentifyDevice? decoded = DecodeIdentifyDevice(IdentifyDeviceResponse);
-            return PrettifyIdentifyDevice(decoded);
+            IdentifyDevice? decoded = Decode(IdentifyDeviceResponse);
+            return Prettify(decoded);
         }
 
-        public static string PrettifyIdentifyDevice(IdentifyDevice? IdentifyDeviceResponse)
+        public static string Prettify(IdentifyDevice? IdentifyDeviceResponse)
         {
             if (IdentifyDeviceResponse == null)
                 return null;

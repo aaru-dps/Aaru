@@ -96,7 +96,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(identify));
+                                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;
@@ -110,7 +110,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
                                         DicConsole.WriteLine("================================================================================");
-                                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(identify));
+                                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(identify));
                                         DicConsole.WriteLine("================================================================================");
                                     }
                                     break;

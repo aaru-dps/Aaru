@@ -2,6 +2,13 @@
 
 	* Commands/Decode.cs:
 	* Commands/DeviceInfo.cs:
+	  Rename ATA/ATAPI decoders fields, methods and structs to
+	  more adequate names.
+
+2015-10-19  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Decode.cs:
+	* Commands/DeviceInfo.cs:
 	  Rename SCSI decoders fields, methods and structs to more
 	  adequate names.
 

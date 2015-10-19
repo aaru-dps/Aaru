@@ -116,7 +116,7 @@ namespace DiscImageChef.Commands
                     else
                     {
                         DicConsole.WriteLine("ATAPI OK");
-                        DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
                     }
                 }
                 else
@@ -137,7 +137,7 @@ namespace DiscImageChef.Commands
             else
             {
                 DicConsole.WriteLine("ATA OK");
-                DicConsole.WriteLine(Decoders.ATA.PrettifyIdentifyDevice(ataBuf));
+                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
            }
         }
     }
