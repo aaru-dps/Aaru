@@ -1330,6 +1330,10 @@ namespace DiscImageChef.Devices
         /// </summary>
         DefineFloppyDiskTrackFormat = 0xC0,
         /// <summary>
+        /// Unknown vendor command in X68000
+        /// </summary>
+        Specify = 0xC2,
+        /// <summary>
         /// SASI rev. 0a
         /// </summary>
         FormatDriveErrorMap = 0xC4,

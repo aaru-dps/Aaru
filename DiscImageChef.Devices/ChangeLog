@@ -1,6 +1,11 @@
 2015-10-24  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	  Added X68k controller command.
+
+2015-10-24  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	  Added information from ANSI X3T9.3 No. 185 (SASI)
 
 2015-10-23  Natalia Portillo  <claunia@claunia.com>

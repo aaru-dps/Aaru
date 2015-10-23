@@ -3,7 +3,9 @@
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
-Copyright © 2011-2014 Natalia Portillo <claunia@claunia.com>
+Copyright © 2011-2015 Natalia Portillo <claunia@claunia.com>
+
+[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
 
 Usage
 =====
