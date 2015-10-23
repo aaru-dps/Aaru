@@ -1285,17 +1285,17 @@ namespace DiscImageChef.Devices
         ChangeDefinition = 0x40,
         /// <summary>
         /// Compares data between two devices
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Compare = 0x39,
         /// <summary>
         /// Copies data between two devices
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Copy = 0x18,
         /// <summary>
         /// Copies data between two devices and verifies the copy is correct.
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         CopyAndVerify = 0x3A,
         /// <summary>
@@ -1305,7 +1305,7 @@ namespace DiscImageChef.Devices
         ExtendedCopy = 0x83,
         /// <summary>
         /// Requests information about the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Inquiry = 0x12,
         /// <summary>
@@ -1330,7 +1330,7 @@ namespace DiscImageChef.Devices
         ManagementProtocolOut = 0xA4,
         /// <summary>
         /// Sets device parameters
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ModeSelect = 0x15,
         /// <summary>
@@ -1340,7 +1340,7 @@ namespace DiscImageChef.Devices
         ModeSelect10 = 0x55,
         /// <summary>
         /// Gets device parameters
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ModeSense = 0x1A,
         /// <summary>
@@ -1360,7 +1360,7 @@ namespace DiscImageChef.Devices
         PersistentReserveOut = 0x5F,
         /// <summary>
         /// Requests the device to disable or enable the removal of the medium inside it
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         PreventAllowMediumRemoval = 0x1E,
         /// <summary>
@@ -1385,12 +1385,12 @@ namespace DiscImageChef.Devices
         ReceiveCopyResults = 0x84,
         /// <summary>
         /// Requests the data after completion of a <see cref="SendDiagnostic"/> 
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ReceiveDiagnostic = 0x1C,
         /// <summary>
         /// Releases a previously reserved LUN or extents
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Release = 0x17,
         /// <summary>
@@ -1405,12 +1405,12 @@ namespace DiscImageChef.Devices
         ReportLuns = 0xA0,
         /// <summary>
         /// Requests the device's sense
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         RequestSense = 0x03,
         /// <summary>
         /// Reserves a LUN or extent
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Reserve = 0x16,
         /// <summary>
@@ -1430,7 +1430,7 @@ namespace DiscImageChef.Devices
         SecurityProtocolOut = 0xB5,
         /// <summary>
         /// Requests the device to perform diagnostics
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SendDiagnostic = 0x1D,
         /// <summary>
@@ -1445,7 +1445,7 @@ namespace DiscImageChef.Devices
         ServiceActionOut = 0x9F,
         /// <summary>
         /// Checks if a LUN is ready to access its medium
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         TestUnitReady = 0x00,
         /// <summary>
@@ -1469,7 +1469,7 @@ namespace DiscImageChef.Devices
         CompareAndWrite = 0x89,
         /// <summary>
         /// Formats the medium into addressable logical blocks
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         FormatUnit = 0x04,
         /// <summary>
@@ -1503,12 +1503,12 @@ namespace DiscImageChef.Devices
         PreFetch16 = 0x90,
         /// <summary>
         /// Reads blocks from device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Read = 0x08,
         /// <summary>
         /// Reads blocks from device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Read10 = 0x28,
         /// <summary>
@@ -1518,7 +1518,7 @@ namespace DiscImageChef.Devices
         Read16 = 0x88,
         /// <summary>
         /// Gets device capacity
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ReadCapacity = 0x25,
         /// <summary>
@@ -1533,7 +1533,7 @@ namespace DiscImageChef.Devices
         ReadLong = 0x3E,
         /// <summary>
         /// Requests the device to reassign the defective blocks to another area of the medium
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ReassignBlocks = 0x07,
         /// <summary>
@@ -1548,42 +1548,42 @@ namespace DiscImageChef.Devices
         Regenerate = 0x82,
         /// <summary>
         /// Requests the device to set the LUN in a vendor specific state
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         RezeroUnit = 0x01,
         /// <summary>
         /// Searches data on blocks
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataEqual = 0x31,
         /// <summary>
         /// Searches data on blocks using major than or equal comparison
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataHigh = 0x30,
         /// <summary>
         /// Searches data on blocks using minor than or equal comparison
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SearchDataLow = 0x32,
         /// <summary>
         /// Requests the device to seek to a specified blocks
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Seek = 0x0B,
         /// <summary>
         /// Requests the device to seek to a specified blocks
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Seek10 = 0x2B,
         /// <summary>
         /// Defines the range within which subsequent linked commands may operate
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SetLimits = 0x33,
         /// <summary>
         /// Requests the device to enable or disable the LUN for media access operations
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         StartStopUnit = 0x1B,
         /// <summary>
@@ -1604,7 +1604,7 @@ namespace DiscImageChef.Devices
         Unmap = 0x42,
         /// <summary>
         /// Verifies blocks on the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Verify10 = 0x2F,
         /// <summary>
@@ -1614,12 +1614,12 @@ namespace DiscImageChef.Devices
         Verify16 = 0x8F,
         /// <summary>
         /// Writes blocks to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Write = 0x0A,
         /// <summary>
         /// Writes blocks to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Write10 = 0x2A,
         /// <summary>
@@ -1629,7 +1629,7 @@ namespace DiscImageChef.Devices
         Write16 = 0x8A,
         /// <summary>
         /// Writes blocks to the device and then verifies them
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         WriteAndVerify = 0x2E,
         /// <summary>
@@ -1687,12 +1687,12 @@ namespace DiscImageChef.Devices
         FormatMedium = 0x04,
         /// <summary>
         /// Erases part of all of the medium from the current position
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Erase = 0x19,
         /// <summary>
         /// Enables or disables the LUN for further operations
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         LoadUnload = 0x1B,
         /// <summary>
@@ -1707,7 +1707,7 @@ namespace DiscImageChef.Devices
         Locate16 = 0x92,
         /// <summary>
         /// Requests the block length limits capability
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ReadBlockLimits = 0x05,
         /// <summary>
@@ -1717,12 +1717,12 @@ namespace DiscImageChef.Devices
         ReadPosition = 0x34,
         /// <summary>
         /// Reads blocks from the device, in reverse order
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         ReadReverse = 0x0F,
         /// <summary>
         /// Retrieves data from the device buffer that has not been successfully written to the medium (or printed)
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         RecoverBufferedData = 0x14,
         /// <summary>
@@ -1732,12 +1732,12 @@ namespace DiscImageChef.Devices
         ReportDensitySupport = 0x44,
         /// <summary>
         /// Seeks the medium to the beginning of partition in current partition
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Rewind = 0x01,
         /// <summary>
         /// A variety of positioning functions
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Space = 0x11,
         /// <summary>
@@ -1746,13 +1746,18 @@ namespace DiscImageChef.Devices
         /// </summary>
         Space16 = 0x91,
         /// <summary>
+        /// Selects the specified track
+        /// ECMA-111 (SCSI-1)
+        /// </summary>
+        TrackSelect = 0x0B,
+        /// <summary>
         /// Verifies one or more blocks from the next one
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Verify = 0x13,
         /// <summary>
         /// Writes the specified number of filemarks or setmarks in the current position
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         WriteFileMarks = 0x10,
         #endregion SCSI Streaming Commands (SSC)
@@ -1760,42 +1765,47 @@ namespace DiscImageChef.Devices
         #region SCSI Streaming Commands for Printers (SSC)
 
         /// <summary>
+        /// Assures that the data in the buffer has been printed, or, for other devices, written to media
+        /// ECMA-111 (SCSI-1)
+        /// </summary>
+        FlushBuffer = 0x10,
+        /// <summary>
         /// Specifies forms or fronts
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Format = 0x04,
         /// <summary>
         /// Transfers data to be printed
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Print = 0x0A,
         /// <summary>
         /// Transfers data to be printed with a slew value
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         SlewAndPrint = 0x0B,
         /// <summary>
         /// Halts printing
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         StopPrint = 0x1B,
         /// <summary>
         /// Assures that the data in the buffer has been printed, or, for other devices, written to media
         /// SCSI-2 X3T9.2/375R rev. 10l
         /// </summary>
-        SynchronizeBuffer = 0x10,
+        SynchronizeBuffer = FlushBuffer,
         #endregion SCSI Streaming Commands for Printers (SSC)
 
         #region SCSI Processor Commands
 
         /// <summary>
         /// Transfers data from the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Receive = 0x08,
         /// <summary>
         /// Sends data to the device
-        /// SCSI-2 X3T9.2/375R rev. 10l
+        /// ECMA-111 (SCSI-1)
         /// </summary>
         Send = 0x0A,
         #endregion SCSI Processor Commands
