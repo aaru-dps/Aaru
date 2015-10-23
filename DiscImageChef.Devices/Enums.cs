@@ -914,6 +914,7 @@ namespace DiscImageChef.Devices
     /// Commands 0x00 to 0x1F are 6-byte
     /// Commands 0x20 to 0x3F are 10-byte
     /// Commands 0x40 to 0x5F are 8-byte
+    /// Commands 0xA0 to 0xBF are 12-byte
     /// </summary>
     #region SASI Commands
         public enum SasiCommands : byte
@@ -981,6 +982,10 @@ namespace DiscImageChef.Devices
         /// </summary>
         Seek = 0x0B,
         /// <summary>
+        /// Found on a vendor source code
+        /// </summary>
+        InitDriveCharacteristics = 0x0C,
+        /// <summary>
         /// Unknown
         /// SASI rev. 0a
         /// </summary>
@@ -999,12 +1004,17 @@ namespace DiscImageChef.Devices
         /// Reserves the device for use by the iniator.
         /// SASI rev. 0a
         /// </summary>
-        ReserveUnit = 0x12,
+        ReserveUnitOld = 0x12,
+        /// <summary>
+        /// Gets information about a device
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        Inquiry = 0x12,
         /// <summary>
         /// Release the device from the reservation.
         /// SASI rev. 0a
         /// </summary>
-        ReleaseUnit = 0x13,
+        ReleaseUnitOld = 0x13,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1014,7 +1024,7 @@ namespace DiscImageChef.Devices
         /// Writes and verifies blocks to the device.
         /// SASI rev. 0c
         /// </summary>
-        WriteVerify = 0x14,
+        WriteAndVerifyOld = 0x14,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1024,7 +1034,7 @@ namespace DiscImageChef.Devices
         /// Verifies blocks.
         /// SASI rev. 0c
         /// </summary>
-        Verify = 0x15,
+        VerifyOld = 0x15,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1034,27 +1044,37 @@ namespace DiscImageChef.Devices
         /// Gets the number of blocks in device.
         /// SASI rev. 0c
         /// </summary>
-        ReadCapacity = 0x16,
+        ReadCapacityOld = 0x16,
+        /// <summary>
+        /// Reserves the device for use by the iniator.
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ReserveUnit = 0x16,
+        /// <summary>
+        /// Release the device from the reservation.
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ReleaseUnit = 0x17,
         /// <summary>
         /// Searches data on blocks
         /// SASI rev. 0a
         /// </summary>
-        SearchDataEqual = 0x17,
+        SearchDataEqualOld = 0x17,
         /// <summary>
         /// Searches data on blocks using major than or equal comparison
         /// SASI rev. 0a
         /// </summary>
-        SearchDataHigh = 0x18,
+        SearchDataHighOld = 0x18,
         /// <summary>
         /// Searches data on blocks using minor than or equal comparison
         /// SASI rev. 0a
         /// </summary>
-        SearchDataLow = 0x19,
+        SearchDataLowOld = 0x19,
         /// <summary>
         /// Reads analysis data from a device
         /// SASI rev. 0a
         /// </summary>
-        ReadDiagnostic = 0x1A,
+        ReadDiagnosticOld = 0x1A,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1064,12 +1084,22 @@ namespace DiscImageChef.Devices
         /// Requests a device to run a diagnostic
         /// SASI rev. 0c
         /// </summary>
-        WriteDiagnostic = 0x1B,
+        WriteDiagnosticOld = 0x1B,
+        /// <summary>
+        /// Requests the data after completion of a <see cref="WriteDiagnostic"/> 
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ReadDiagnostic = 0x1C,
+        /// <summary>
+        /// Requests the device to perform diagnostics
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        WriteDiagnostic = 0x1D,
         /// <summary>
         /// Gets information about a device
         /// SASI rev. 0c
         /// </summary>
-        Inquiry = 0x1F,
+        InquiryOld = 0x1F,
         #endregion SASI Class 0 commands
 
         #region SASI Class 1 commands
@@ -1093,12 +1123,48 @@ namespace DiscImageChef.Devices
         /// SASI rev. 0a
         /// Unknown
         /// </summary>
-        SetBlockLimitsOld = 0x26,
+        SetBlockLimitsOlder = 0x26,
         /// <summary>
         /// Sets write or read limits from a specified block
         /// SASI rev. 0c
         /// </summary>
-        SetBlockLimits = 0x28,
+        SetBlockLimitsOld = 0x28,
+        /// <summary>
+        /// Reads blocks from device
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ExtendedAddressRead = 0x28,
+        /// <summary>
+        /// Writes blocks to the device
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ExtendedAddressWrite = 0x2A,
+        /// <summary>
+        /// Writes blocks to the device and then verifies them
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        WriteAndVerify = 0x2E,
+        /// <summary>
+        /// Verifies blocks on the device
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        Verify = 0x2F,
+        /// <summary>
+        /// Searches data on blocks
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        SearchDataEqual = 0x31,
+        /// <summary>
+        /// Searches data on blocks using major than or equal comparison
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        SearchDataHigh = 0x30,
+        /// <summary>
+        /// Searches data on blocks using minor than or equal comparison
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        SearchDataLow = 0x32,
+
         #endregion SASI Class 1 commands
 
         #region SASI Class 2 commands
@@ -1242,6 +1308,21 @@ namespace DiscImageChef.Devices
         WriteControl = 0x66,
         #endregion SASI Class 3 commands
 
+        #region SASI Class 5 commands
+
+        /// <summary>
+        /// Gets the number of blocks in device.
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        ReadCapacity = 0xA5,
+        /// <summary>
+        /// Sets write or read limits from a specified block
+        /// ANSI X3T9.3 No. 185 (SASI)
+        /// </summary>
+        SetBlockLimits = 0xA9,
+
+        #endregion SASI Class 5 commands
+
         #region SASI Class 6 commands
 
         /// <summary>
@@ -1279,7 +1360,11 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
-        DriveDiagnostic = 0xE3
+        DriveDiagnostic = 0xE3,
+        /// <summary>
+        /// Found on a vendor source code
+        /// </summary>
+        ControllerDiagnostic = 0xE4,
 
         #endregion SASI Class 7 commands
     }
@@ -1332,7 +1417,7 @@ namespace DiscImageChef.Devices
         /// Requests information about the device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Inquiry = 0x12,
+        Inquiry = SasiCommands.Inquiry,
         /// <summary>
         /// Manages device statistics
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -1412,12 +1497,12 @@ namespace DiscImageChef.Devices
         /// Requests the data after completion of a <see cref="SendDiagnostic"/> 
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        ReceiveDiagnostic = 0x1C,
+        ReceiveDiagnostic = SasiCommands.ReadDiagnostic,
         /// <summary>
         /// Releases a previously reserved LUN or extents
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Release = 0x17,
+        Release = SasiCommands.ReleaseUnit,
         /// <summary>
         /// Releases a previously reserved LUN or extents
         /// SPC-1 rev. 10
@@ -1437,7 +1522,7 @@ namespace DiscImageChef.Devices
         /// Reserves a LUN or extent
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Reserve = 0x16,
+        Reserve = SasiCommands.ReserveUnit,
         /// <summary>
         /// Reserves a LUN or extent
         /// SPC-1 rev. 10
@@ -1457,7 +1542,7 @@ namespace DiscImageChef.Devices
         /// Requests the device to perform diagnostics
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        SendDiagnostic = 0x1D,
+        SendDiagnostic = SasiCommands.WriteDiagnostic,
         /// <summary>
         /// Extended commands
         /// SPC-4
@@ -1535,7 +1620,7 @@ namespace DiscImageChef.Devices
         /// Reads blocks from device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Read10 = 0x28,
+        Read10 = SasiCommands.ExtendedAddressRead,
         /// <summary>
         /// Reads blocks from device
         /// SBC-2 rev. 4
@@ -1580,17 +1665,17 @@ namespace DiscImageChef.Devices
         /// Searches data on blocks
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        SearchDataEqual = 0x31,
+        SearchDataEqual = SasiCommands.SearchDataEqual,
         /// <summary>
         /// Searches data on blocks using major than or equal comparison
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        SearchDataHigh = 0x30,
+        SearchDataHigh = SasiCommands.SearchDataHigh,
         /// <summary>
         /// Searches data on blocks using minor than or equal comparison
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        SearchDataLow = 0x32,
+        SearchDataLow = SasiCommands.SearchDataLow,
         /// <summary>
         /// Requests the device to seek to a specified blocks
         /// ECMA-111 (SCSI-1)
@@ -1631,7 +1716,7 @@ namespace DiscImageChef.Devices
         /// Verifies blocks on the device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Verify10 = 0x2F,
+        Verify10 = SasiCommands.Verify,
         /// <summary>
         /// Verifies blocks on the device
         /// SBC-2 rev. 4
@@ -1646,7 +1731,7 @@ namespace DiscImageChef.Devices
         /// Writes blocks to the device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Write10 = 0x2A,
+        Write10 = SasiCommands.ExtendedAddressWrite,
         /// <summary>
         /// Writes blocks to the device
         /// SBC-2 rev. 4
@@ -1656,7 +1741,7 @@ namespace DiscImageChef.Devices
         /// Writes blocks to the device and then verifies them
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        WriteAndVerify = 0x2E,
+        WriteAndVerify = SasiCommands.WriteAndVerify,
         /// <summary>
         /// Writes blocks to the device and then verifies them
         /// SBC-2 rev. 4
