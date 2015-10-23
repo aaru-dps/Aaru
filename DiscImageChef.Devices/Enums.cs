@@ -1132,12 +1132,12 @@ namespace DiscImageChef.Devices
         /// Unknown
         /// SASI rev. 0a
         /// </summary>
-        SpaceReserve = 0x45,
+        SpaceReverse = 0x45,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
         /// </summary>
-        SpaceReserveFileMark = 0x46,
+        SpaceReverseFileMark = 0x46,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1147,7 +1147,7 @@ namespace DiscImageChef.Devices
         /// Reads blocks from device
         /// SASI rev. 0a
         /// </summary>
-        Read10 = 0x48,
+        Read8 = 0x48,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1162,7 +1162,7 @@ namespace DiscImageChef.Devices
         /// Writes blocks to device
         /// SASI rev. 0a
         /// </summary>
-        Write10 = 0x4B,
+        Write8 = 0x4B,
         /// <summary>
         /// Unknown
         /// SASI rev. 0a
@@ -1183,6 +1183,31 @@ namespace DiscImageChef.Devices
         /// SASI rev. 0a
         /// </summary>
         WriteErase = 0x4F,
+        /// <summary>
+        /// Writes and verifies blocks to the device.
+        /// SASI rev. 0c
+        /// </summary>
+        WriteVerify8 = 0x54,
+        /// <summary>
+        /// Verifies blocks.
+        /// SASI rev. 0c
+        /// </summary>
+        Verify8 = 0x55,
+        /// <summary>
+        /// Searches data on blocks using major than or equal comparison
+        /// SASI rev. 0c
+        /// </summary>
+        SearchDataHigh8 = 0x57,
+        /// <summary>
+        /// Searches data on blocks
+        /// SASI rev. 0c
+        /// </summary>
+        SearchDataEqual8 = 0x58,
+        /// <summary>
+        /// Searches data on blocks using minor than or equal comparison
+        /// SASI rev. 0c
+        /// </summary>
+        SearchDataLow8 = 0x59
         #endregion SASI Class 2 commands
 
         #region SASI Class 3 commands

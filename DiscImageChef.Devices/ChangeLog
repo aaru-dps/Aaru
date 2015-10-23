@@ -1,6 +1,11 @@
 2015-10-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	  Correct typo and add missing SASI commands.
+
+2015-10-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	  Typo
 
 2015-10-23  Natalia Portillo  <claunia@claunia.com>
