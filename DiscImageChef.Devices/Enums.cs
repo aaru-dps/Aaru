@@ -1222,7 +1222,7 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
-        DefineFloppyDiskTracFormat = 0xC0,
+        DefineFloppyDiskTrackFormat = 0xC0,
         /// <summary>
         /// SASI rev. 0a
         /// </summary>
