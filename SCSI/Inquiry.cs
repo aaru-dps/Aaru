@@ -50,6 +50,7 @@ namespace DiscImageChef.Decoders.SCSI
     /// T10/1731-D revision 16
     /// T10/502 revision 05
     /// RFC 7144
+    /// ECMA-111
     /// </summary>
     public static class Inquiry
     {
@@ -334,8 +335,8 @@ namespace DiscImageChef.Decoders.SCSI
                 case ECMAVersions.ECMANoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ECMA standard");
                     break;
-                case ECMAVersions.ECMAObsolete:
-                    sb.AppendLine("Device claims to comply with an obsolete SCSI ECMA standard");
+                case ECMAVersions.ECMA111:
+                    sb.AppendLine("Device claims to comply ECMA-111: Small Computer System Interface SCSI");
                     break;
                 default:
                     sb.AppendFormat("Device claims to comply with unknown SCSI ECMA standard value 0x{0:X2})", response.ECMAVersion).AppendLine();

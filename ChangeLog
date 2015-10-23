@@ -1,3 +1,9 @@
+2015-10-23  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Enums.cs:
+	* SCSI/Inquiry.cs:
+	  Added information from ECMA-111.
+
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/EVPD.cs:

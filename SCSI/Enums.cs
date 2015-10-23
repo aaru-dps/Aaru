@@ -198,9 +198,9 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         ECMANoVersion = 0x00,
         /// <summary>
-        /// Device complies with an obsolete ECMA standard
+        /// Device complies with a ECMA-111 standard
         /// </summary>
-        ECMAObsolete = 0x01
+        ECMA111 = 0x01
     }
 
     enum ISOVersions : byte
