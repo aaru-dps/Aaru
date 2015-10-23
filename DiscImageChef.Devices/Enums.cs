@@ -1207,7 +1207,7 @@ namespace DiscImageChef.Devices
         /// Searches data on blocks using minor than or equal comparison
         /// SASI rev. 0c
         /// </summary>
-        SearchDataLow8 = 0x59
+        SearchDataLow8 = 0x59,
         #endregion SASI Class 2 commands
 
         #region SASI Class 3 commands
@@ -1432,7 +1432,7 @@ namespace DiscImageChef.Devices
         /// Requests the device's sense
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        RequestSense = 0x03,
+        RequestSense = SasiCommands.RequestSense,
         /// <summary>
         /// Reserves a LUN or extent
         /// ECMA-111 (SCSI-1)
@@ -1472,7 +1472,7 @@ namespace DiscImageChef.Devices
         /// Checks if a LUN is ready to access its medium
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        TestUnitReady = 0x00,
+        TestUnitReady = SasiCommands.TestUnitReady,
         /// <summary>
         /// Writes attribute values to medium auxiliary memory
         /// SPC-3 rev. 21b
@@ -1496,7 +1496,7 @@ namespace DiscImageChef.Devices
         /// Formats the medium into addressable logical blocks
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        FormatUnit = 0x04,
+        FormatUnit = SasiCommands.FormatUnit,
         /// <summary>
         /// Locks blocks from eviction of device's cache
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -1530,7 +1530,7 @@ namespace DiscImageChef.Devices
         /// Reads blocks from device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Read = 0x08,
+        Read = SasiCommands.Read,
         /// <summary>
         /// Reads blocks from device
         /// ECMA-111 (SCSI-1)
@@ -1575,7 +1575,7 @@ namespace DiscImageChef.Devices
         /// Requests the device to set the LUN in a vendor specific state
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        RezeroUnit = 0x01,
+        RezeroUnit = SasiCommands.RezeroUnit,
         /// <summary>
         /// Searches data on blocks
         /// ECMA-111 (SCSI-1)
@@ -1595,7 +1595,7 @@ namespace DiscImageChef.Devices
         /// Requests the device to seek to a specified blocks
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Seek = 0x0B,
+        Seek = SasiCommands.Seek,
         /// <summary>
         /// Requests the device to seek to a specified blocks
         /// ECMA-111 (SCSI-1)
@@ -1641,7 +1641,7 @@ namespace DiscImageChef.Devices
         /// Writes blocks to the device
         /// ECMA-111 (SCSI-1)
         /// </summary>
-        Write = 0x0A,
+        Write = SasiCommands.Write,
         /// <summary>
         /// Writes blocks to the device
         /// ECMA-111 (SCSI-1)
