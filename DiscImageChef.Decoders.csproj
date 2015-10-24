@@ -79,6 +79,7 @@
     <Compile Include="SCSI\VendorString.cs" />
     <Compile Include="ATA\Identify.cs" />
     <Compile Include="SCSI\EVPD.cs" />
+    <Compile Include="SCSI\Modes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
