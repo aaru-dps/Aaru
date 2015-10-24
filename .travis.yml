@@ -1,0 +1,11 @@
+language: csharp
+solution: DiscImageChef.sln
+mono:
+ - lastest
+ - alpha
+ - beta
+ - weekly
+ - 3.10.0
+ - 3.8.0
+ - 3.2.8
+ - 2.10.8

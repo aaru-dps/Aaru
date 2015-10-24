@@ -1,3 +1,8 @@
+2015-10-24  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.csproj:
+	  Added travis build description.
+
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:

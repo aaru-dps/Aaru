@@ -137,6 +137,9 @@
     <None Include="..\LICENSE">
       <Link>LICENSE</Link>
     </None>
+    <None Include="..\.travis.yml">
+      <Link>.travis.yml</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\commandline\src\libcmdline\CommandLine35.csproj">
