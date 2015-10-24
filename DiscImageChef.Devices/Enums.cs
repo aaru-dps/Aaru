@@ -2721,5 +2721,27 @@ namespace DiscImageChef.Devices
         /// </summary>
         Saved = 0xC0
     }
+
+    public enum ScsiPreventAllowMode : byte
+    {
+        /// <summary>
+        /// Allows medium removal from data transport and from medium changer
+        /// </summary>
+        Allow = 0x00,
+        /// <summary>
+        /// Prevents medium removal from data transport but allows it from medium changer
+        /// </summary>
+        Prevent = 0x01,
+        /// <summary>
+        /// Allows medium removal from data transport but prevents it from medium changer
+        /// </summary>
+        [Obsolete]
+        PreventChanger = 0x02,
+        /// <summary>
+        /// Prevents medium removal from both data transport and medium changer
+        /// </summary>
+        [Obsolete]
+        PreventAll = 0x03
+    }
 }
 

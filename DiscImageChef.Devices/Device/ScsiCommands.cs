@@ -214,7 +214,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-1
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -227,7 +227,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-2
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -243,7 +243,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-3 SPC-3
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(6) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -290,7 +290,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-2
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -306,7 +306,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-2
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -323,7 +323,7 @@ namespace DiscImageChef.Devices
         /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-3
         /// </summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="buffer">Buffer where the SCSI MODE SENSE(10) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -367,6 +367,76 @@ namespace DiscImageChef.Devices
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(10) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command to prevent medium removal
+        /// </summary>
+        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command to allow medium removal
+        /// </summary>
+        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command
+        /// </summary>
+        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="prevent"><c>true</c> to prevent medium removal, <c>false</c> to allow it.</param>
+        public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration)
+        {
+            if (prevent)
+                return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
+            else
+                return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command
+        /// </summary>
+        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="preventMode">Prevention mode.</param>
+        public bool PreventAllowMediumRemoval(out byte[] senseBuffer, ScsiPreventAllowMode preventMode, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            bool sense;
+            byte[] buffer = new byte[0];
+
+            cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
+            cdb[4] = (byte)((byte)preventMode & 0x03);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
 
             return sense;
         }

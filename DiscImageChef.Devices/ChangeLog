@@ -2,6 +2,12 @@
 
 	* Enums.cs:
 	* Device/ScsiCommands.cs:
+	  Implemented SCSI PREVENT ALLOW MEDIUM REMOVAL command.
+
+2015-10-24  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Device/ScsiCommands.cs:
 	  Added SCSI MODE SENSE(6) and MODE SENSE(10) commands.
 
 2015-10-24  Natalia Portillo  <claunia@claunia.com>
