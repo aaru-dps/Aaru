@@ -1,6 +1,11 @@
 2015-10-24  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Added header information from SCSI-2.
+
+2015-10-24  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	* DiscImageChef.Decoders.csproj:
 	  Implement SCSI-1 Mode Page decoding.
 
