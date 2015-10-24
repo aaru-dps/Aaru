@@ -187,6 +187,28 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        /// <summary>
+        /// Sends the SCSI TEST UNIT READY command to the device
+        /// </summary>
+        /// <returns><c>true</c>, if unit is NOT ready, <c>false</c> otherwise.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ScsiTestUnitReady(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = { (byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0 };
+            bool sense;
+            byte[] buffer = new byte[0];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "TEST UNIT READY took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 
