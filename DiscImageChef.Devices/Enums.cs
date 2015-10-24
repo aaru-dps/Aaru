@@ -2698,5 +2698,28 @@ namespace DiscImageChef.Devices
         /// </summary>
         ResetWritePointer = 0x04
     }
+
+    /// <summary>
+    /// MODE SENSE page control, mask 0xC0
+    /// </summary>
+    public enum ScsiModeSensePageControl : byte
+    {
+        /// <summary>
+        /// Current values
+        /// </summary>
+        Current = 0x00,
+        /// <summary>
+        /// Changeable values
+        /// </summary>
+        Changeable = 0x40,
+        /// <summary>
+        /// Default values
+        /// </summary>
+        Default = 0x80,
+        /// <summary>
+        /// Saved values
+        /// </summary>
+        Saved = 0xC0
+    }
 }
 

@@ -209,6 +209,167 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-1
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ModeSense(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Current, 0, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-2
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="pageControl">Page control.</param>
+        /// <param name="pageCode">Page code.</param>
+        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool DBD, ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
+        {
+            return ModeSense6(out buffer, out senseBuffer, DBD, pageControl, pageCode, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(6) command to the device as introduced in SCSI-3 SPC-3
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="pageControl">Page control.</param>
+        /// <param name="pageCode">Page code.</param>
+        /// <param name="subPageCode">Sub-page code.</param>
+        public bool ModeSense6(out byte[] buffer, out byte[] senseBuffer, bool DBD, ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            buffer = new byte[4];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ModeSense;
+            if (DBD)
+                cdb[1] = 0x08;
+            cdb[2] |= (byte)pageControl;
+            cdb[2] |= (byte)(pageCode & 0x3F);
+            cdb[3] = subPageCode;
+            cdb[4] = (byte)buffer.Length;
+            cdb[5] = 0;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            byte modeLength = (byte)(buffer[0] + 1);
+            buffer = new byte[modeLength];
+            cdb[4] = (byte)buffer.Length;
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(6) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-2
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="pageControl">Page control.</param>
+        /// <param name="pageCode">Page code.</param>
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool DBD, ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
+        {
+            return ModeSense10(out buffer, out senseBuffer, false, DBD, pageControl, pageCode, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-2
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="pageControl">Page control.</param>
+        /// <param name="pageCode">Page code.</param>
+        /// <param name="LLBAA">If set means 64-bit LBAs are accepted by the caller.</param>
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool LLBAA, bool DBD, ScsiModeSensePageControl pageControl, byte pageCode, uint timeout, out double duration)
+        {
+            return ModeSense10(out buffer, out senseBuffer, LLBAA, DBD, pageControl, pageCode, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-3
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="DBD">If set to <c>true</c> device MUST not return any block descriptor.</param>
+        /// <param name="pageControl">Page control.</param>
+        /// <param name="pageCode">Page code.</param>
+        /// <param name="subPageCode">Sub-page code.</param>
+        /// <param name="LLBAA">If set means 64-bit LBAs are accepted by the caller.</param>
+        public bool ModeSense10(out byte[] buffer, out byte[] senseBuffer, bool LLBAA, bool DBD, ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[4];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ModeSense10;
+            if (LLBAA)
+                cdb[1] |= 0x10;
+            if (DBD)
+                cdb[1] |= 0x08;
+            cdb[2] |= (byte)pageControl;
+            cdb[2] |= (byte)(pageCode & 0x3F);
+            cdb[3] = subPageCode;
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            cdb[9] = 0;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1]);
+            buffer = new byte[modeLength];
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(10) took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 
