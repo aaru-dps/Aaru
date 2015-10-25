@@ -1,6 +1,11 @@
 2015-10-25  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Added method for decoding MODE SENSE(10) response.
+
+2015-10-25  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added information from SCSI-3 SBC-1.
 
 2015-10-24  Natalia Portillo  <claunia@claunia.com>

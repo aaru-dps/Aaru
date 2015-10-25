@@ -881,6 +881,69 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
+        public static ModeHeader? DecodeModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
+        {
+            if (modeResponse == null || modeResponse.Length < 8)
+                return null;
+
+            ushort modeLength;
+            ushort blockDescLength;
+
+            modeLength = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
+            blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
+
+            if (modeResponse.Length < modeLength)
+                return null;
+
+            ModeHeader header = new ModeHeader();
+            header.MediumType = (MediumTypes)modeResponse[2];
+
+            if (blockDescLength > 0)
+            {
+                header.BlockDescriptors = new BlockDescriptor[blockDescLength/8];
+                for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                {
+                    header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
+                    header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[1 + i * 8 + 8] << 16);
+                    header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[2 + i * 8 + 8] << 8);
+                    header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 8];
+                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[5 + i * 8 + 8] << 16);
+                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[6 + i * 8 + 8] << 8);
+                    header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 8];
+                }
+            }
+
+            if (deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
+            {
+                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
+                header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+            }
+
+            if (deviceType == PeripheralDeviceTypes.SequentialAccess)
+            {
+                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
+                header.Speed = (byte)(modeResponse[3] & 0x0F);
+                header.BufferedMode = (byte)((modeResponse[3] & 0x70) >> 4);
+            }
+
+            if (deviceType == PeripheralDeviceTypes.PrinterDevice)
+                header.BufferedMode = (byte)((modeResponse[3] & 0x70) >> 4);
+
+            if (deviceType == PeripheralDeviceTypes.OpticalDevice)
+            {
+                header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
+                header.EBC = ((modeResponse[3] & 0x01) == 0x01);
+                header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
+            }
+
+            return header;
+        }
+
+        public static string PrettifyModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
+        {
+            return PrettifyModeHeader(DecodeModeHeader10(modeResponse, deviceType), deviceType);
+        }
     }
 }
 
