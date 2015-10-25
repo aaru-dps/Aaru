@@ -111,6 +111,33 @@ namespace DiscImageChef.Decoders.SCSI
             Tape24 = 0x44,
             #endregion Medium Types defined in SCSI-2 for Direct-Access devices
 
+            #region Medium Types defined in SCSI-3 SBC-1 for Optical devices
+            /// <summary>
+            /// Read-only medium
+            /// </summary>
+            ReadOnly = 0x01,
+            /// <summary>
+            /// Write-once Read-many medium
+            /// </summary>
+            WORM = 0x02,
+            /// <summary>
+            /// Erasable medium
+            /// </summary>
+            Erasable = 0x03,
+            /// <summary>
+            /// Combination of read-only and write-once medium
+            /// </summary>
+            RO_WORM = 0x04,
+            /// <summary>
+            /// Combination of read-only and erasable medium
+            /// </summary>
+            RO_RW = 0x05,
+            /// <summary>
+            /// Combination of write-once and erasable medium
+            /// </summary>
+            WORM_RW = 0x06,
+            #endregion Medium Types defined in SCSI-3 SBC-1 for Optical devices
+
             #region Medium Types defined in SCSI-2 for MultiMedia devices
             /// <summary>
             /// 120 mm CD-ROM
@@ -272,41 +299,41 @@ namespace DiscImageChef.Decoders.SCSI
 
             #region Density Types defined in SCSI-2 for Optical devices
             /// <summary>
-            /// 86 mm Read/Write single-sided optical disc with 12500 tracks
+            /// ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks
             /// </summary>
-            D660 = 0x01,
+            ISO10090 = 0x01,
             /// <summary>
             /// 89 mm Read/Write double-sided optical disc with 12500 tracks
             /// </summary>
             D581 = 0x02,
             /// <summary>
-            /// 130 mm Read/Write double-sided optical disc with 18750 tracks
+            /// ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks
             /// </summary>
-            I607 = 0x03,
+            X3_212 = 0x03,
             /// <summary>
-            /// 130 mm Write-Once double-sided optical disc with 30000 tracks
+            /// ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks
             /// </summary>
-            D655 = 0x04,
+            X3_191 = 0x04,
             /// <summary>
-            /// 130 mm Write-Once double-sided optical disc with 20000 tracks
+            /// ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks
             /// </summary>
-            D659 = 0x05,
+            X3_214 = 0x05,
             /// <summary>
-            /// 130 mm Write-Once double-sided optical disc with 18750 tracks
+            /// ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks
             /// </summary>
-            D457 = 0x06,
+            X3_211 = 0x06,
             /// <summary>
             /// 200 mm optical disc
             /// </summary>
             D407 = 0x07,
             /// <summary>
-            /// 300 mm double-sided optical disc
+            /// ISO/IEC 13614: 300 mm double-sided optical disc
             /// </summary>
-            D408 = 0x08,
+            ISO13614 = 0x08,
             /// <summary>
-            /// 356 mm double-sided optical disc with 56350 tracks
+            /// ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks
             /// </summary>
-            D456 = 0x09
+            X3_200 = 0x09
             #endregion Density Types defined in SCSI-2 for Optical devices
         }
 
@@ -330,7 +357,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModeHeader? DecodeModeHeader6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
-            if (modeResponse.Length < modeResponse[0] + 1)
+            if (modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
                 return null;
 
             ModeHeader header = new ModeHeader();
@@ -395,58 +422,61 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case PeripheralDeviceTypes.DirectAccess:
                     {
-                        sb.Append("Medium is ");
-
-                        switch (header.Value.MediumType)
+                        if (header.Value.MediumType != MediumTypes.Default)
                         {
-                            case MediumTypes.ECMA54:
-                                sb.AppendLine("ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side");
-                                break;
-                            case MediumTypes.ECMA59:
-                                sb.AppendLine("ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides");
-                                break;
-                            case MediumTypes.ECMA69:
-                                sb.AppendLine("ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides");
-                                break;
-                            case MediumTypes.ECMA66:
-                                sb.AppendLine("ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side");
-                                break;
-                            case MediumTypes.ECMA70:
-                                sb.AppendLine("ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm");
-                                break;
-                            case MediumTypes.ECMA78:
-                                sb.AppendLine("ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm");
-                                break;
-                            case MediumTypes.ECMA99:
-                                sb.AppendLine("ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm");
-                                break;
-                            case MediumTypes.ECMA100:
-                                sb.AppendLine("ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm");
-                                break;
-                            case MediumTypes.Unspecified_SS:
-                                sb.AppendLine("Unspecified single sided flexible disk");
-                                break;
-                            case MediumTypes.Unspecified_DS:
-                                sb.AppendLine("Unspecified double sided flexible disk");
-                                break;
-                            case MediumTypes.X3_73:
-                                sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side");
-                                break;
-                            case MediumTypes.X3_73_DS:
-                                sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides");
-                                break;
-                            case MediumTypes.X3_82:
-                                sb.AppendLine("ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side");
-                                break;
-                            case MediumTypes.Tape12:
-                                sb.AppendLine("6,3 mm tape with 12 tracks at 394 ftpmm");
-                                break;
-                            case MediumTypes.Tape24:
-                                sb.AppendLine("6,3 mm tape with 24 tracks at 394 ftpmm");
-                                break;
-                            default:
-                                sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
-                                break;
+                            sb.Append("Medium is ");
+
+                            switch (header.Value.MediumType)
+                            {
+                                case MediumTypes.ECMA54:
+                                    sb.AppendLine("ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side");
+                                    break;
+                                case MediumTypes.ECMA59:
+                                    sb.AppendLine("ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides");
+                                    break;
+                                case MediumTypes.ECMA69:
+                                    sb.AppendLine("ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides");
+                                    break;
+                                case MediumTypes.ECMA66:
+                                    sb.AppendLine("ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side");
+                                    break;
+                                case MediumTypes.ECMA70:
+                                    sb.AppendLine("ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm");
+                                    break;
+                                case MediumTypes.ECMA78:
+                                    sb.AppendLine("ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm");
+                                    break;
+                                case MediumTypes.ECMA99:
+                                    sb.AppendLine("ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm");
+                                    break;
+                                case MediumTypes.ECMA100:
+                                    sb.AppendLine("ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm");
+                                    break;
+                                case MediumTypes.Unspecified_SS:
+                                    sb.AppendLine("Unspecified single sided flexible disk");
+                                    break;
+                                case MediumTypes.Unspecified_DS:
+                                    sb.AppendLine("Unspecified double sided flexible disk");
+                                    break;
+                                case MediumTypes.X3_73:
+                                    sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side");
+                                    break;
+                                case MediumTypes.X3_73_DS:
+                                    sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides");
+                                    break;
+                                case MediumTypes.X3_82:
+                                    sb.AppendLine("ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side");
+                                    break;
+                                case MediumTypes.Tape12:
+                                    sb.AppendLine("6,3 mm tape with 12 tracks at 394 ftpmm");
+                                    break;
+                                case MediumTypes.Tape24:
+                                    sb.AppendLine("6,3 mm tape with 24 tracks at 394 ftpmm");
+                                    break;
+                                default:
+                                    sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                                    break;
+                            }
                         }
 
                         if (header.Value.WriteProtected)
@@ -654,6 +684,36 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                 case PeripheralDeviceTypes.OpticalDevice:
                     {
+                        if (header.Value.MediumType != MediumTypes.Default)
+                        {
+                            sb.Append("Medium is ");
+
+                            switch (header.Value.MediumType)
+                            {
+                                case MediumTypes.ReadOnly:
+                                    sb.AppendLine("a Read-only optical");
+                                    break;
+                                case MediumTypes.WORM:
+                                    sb.AppendLine("a Write-once Read-many optical");
+                                    break;
+                                case MediumTypes.Erasable:
+                                    sb.AppendLine("a Erasable optical");
+                                    break;
+                                case MediumTypes.RO_WORM:
+                                    sb.AppendLine("a combination of read-only and write-once optical");
+                                    break;
+                                case MediumTypes.RO_RW:
+                                    sb.AppendLine("a combination of read-only and erasable optical");
+                                    break;
+                                case MediumTypes.WORM_RW:
+                                    sb.AppendLine("a combination of write-once and erasable optical");
+                                    break;
+                                default:
+                                    sb.AppendFormat("an unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                                    break;
+                            }
+                        }
+
                         if (header.Value.WriteProtected)
                             sb.AppendLine("Medium is write protected");
                         if (header.Value.EBC)
@@ -668,32 +728,32 @@ namespace DiscImageChef.Decoders.SCSI
                             {
                                 case DensityType.Default:
                                     break;
-                                case DensityType.D660:
-                                    density = "86 mm Read/Write single-sided optical disc with 12500 tracks";
+                                case DensityType.ISO10090:
+                                    density = "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
                                     break;
                                 case DensityType.D581:
                                     density = "89 mm Read/Write double-sided optical disc with 12500 tracks";
                                     break;
-                                case DensityType.I607:
-                                    density = "130 mm Read/Write double-sided optical disc with 18750 tracks";
+                                case DensityType.X3_212:
+                                    density = "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
                                     break;
-                                case DensityType.D655:
-                                    density = "130 mm Write-Once double-sided optical disc with 30000 tracks";
+                                case DensityType.X3_191:
+                                    density = "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
                                     break;
-                                case DensityType.D659:
-                                    density = "130 mm Write-Once double-sided optical disc with 20000 tracks";
+                                case DensityType.X3_214:
+                                    density = "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
                                     break;
-                                case DensityType.D457:
-                                    density = "130 mm Write-Once double-sided optical disc with 18750 tracks";
+                                case DensityType.X3_211:
+                                    density = "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
                                     break;
                                 case DensityType.D407:
                                     density = "200 mm optical disc";
                                     break;
-                                case DensityType.D408:
-                                    density = "300 mm double-sided optical disc";
+                                case DensityType.ISO13614:
+                                    density = "ISO/IEC 13614: 300 mm double-sided optical disc";
                                     break;
-                                case DensityType.D456:
-                                    density = "356 mm double-sided optical disc with 56350 tracks";
+                                case DensityType.X3_200:
+                                    density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
                                     break;
                                 default:
                                     density = String.Format("Unknown density code 0x{0:X2}", descriptor.Density);
