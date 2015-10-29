@@ -1435,6 +1435,162 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x02: Disconnect-reconnect page
+
+        #region Mode Page 0x08: Caching page
+        /// <summary>
+        /// Disconnect-reconnect page
+        /// Page code 0x08
+        /// 12 bytes in SCSI-2
+        /// </summary>
+        public struct ModePage_08
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// <c>true</c> if write cache is enabled
+            /// </summary>
+            public bool WCE;
+            /// <summary>
+            /// Multiplication factor
+            /// </summary>
+            public bool MF;
+            /// <summary>
+            /// <c>true</c> if read cache is enabled
+            /// </summary>
+            public bool RCD;
+            /// <summary>
+            /// Advices on reading-cache retention priority
+            /// </summary>
+            public byte DemandReadRetentionPrio;
+            /// <summary>
+            /// Advices on writing-cache retention priority
+            /// </summary>
+            public byte WriteRetentionPriority;
+            /// <summary>
+            /// If requested read blocks are more than this, no pre-fetch is done
+            /// </summary>
+            public ushort DisablePreFetch;
+            /// <summary>
+            /// Minimum pre-fetch
+            /// </summary>
+            public ushort MinimumPreFetch;
+            /// <summary>
+            /// Maximum pre-fetch
+            /// </summary>
+            public ushort MaximumPreFetch;
+            /// <summary>
+            /// Upper limit on maximum pre-fetch value
+            /// </summary>
+            public ushort MaximumPreFetchCeiling;
+        }
+
+        public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x08)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 12)
+                return null;
+
+            ModePage_08 decoded = new ModePage_08();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.WCE |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.MF |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.RCD |= (pageResponse[2] & 0x01) == 0x01;
+
+            decoded.DemandReadRetentionPrio = (byte)((pageResponse[3] & 0xF0) >> 4);
+            decoded.WriteRetentionPriority = (byte)(pageResponse[3] & 0x0F);
+            decoded.DisablePreFetch = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
+            decoded.MinimumPreFetch = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.MaximumPreFetch = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
+            decoded.MaximumPreFetchCeiling = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_08(byte[] pageResponse)
+        {
+            return PrettifyModePage_08(DecodeModePage_08(pageResponse));
+        }
+
+        public static string PrettifyModePage_08(ModePage_08? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_08 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Caching mode page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+            if (page.RCD)
+                sb.AppendLine("\tRead-cache is enabled");
+            if (page.WCE)
+                sb.AppendLine("\tWrite-cache is enabled");
+            
+            switch (page.DemandReadRetentionPrio)
+            {
+                case 0:
+                    sb.AppendLine("\tDrive does not distinguish between cached read data");
+                    break;
+                case 1:
+                    sb.AppendLine("\tData put by READ commands should be evicted from cache sooner than data put in read cache by other means");
+                    break;
+                case 0xF:
+                    sb.AppendLine("\tData put by READ commands should not be evicted if there is data cached by other means that can be evicted");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio).AppendLine();
+                    break;
+            }
+
+            switch (page.WriteRetentionPriority)
+            {
+                case 0:
+                    sb.AppendLine("\tDrive does not distinguish between cached write data");
+                    break;
+                case 1:
+                    sb.AppendLine("\tData put by WRITE commands should be evicted from cache sooner than data put in write cache by other means");
+                    break;
+                case 0xF:
+                    sb.AppendLine("\tData put by WRITE commands should not be evicted if there is data cached by other means that can be evicted");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio).AppendLine();
+                    break;
+            }
+
+            if (page.MF)
+                sb.AppendLine("Pre-fetch values indicate a block multiplier");
+
+            if (page.DisablePreFetch == 0)
+                sb.AppendLine("No pre-fetch will be done");
+            else
+            {
+                sb.AppendFormat("Pre-fetch will be done for READ commands of {0} blocks or less", page.DisablePreFetch).AppendLine();
+
+                if (page.MinimumPreFetch > 0)
+                    sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).AppendLine();
+                if(page.MaximumPreFetch > 0)
+                    sb.AppendFormat("A maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
+                if(page.MaximumPreFetchCeiling > 0)
+                    sb.AppendFormat("A maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more", page.MaximumPreFetchCeiling).AppendLine();
+            }
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x08: Caching page
     }
 }
 
