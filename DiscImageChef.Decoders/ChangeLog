@@ -1,6 +1,11 @@
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Prevent decoding subpages on subpage 00h decoders.
+
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implemented decoding mode page 1Ah.
 
 2015-10-30  Natalia Portillo  <claunia@claunia.com>

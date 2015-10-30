@@ -1269,6 +1269,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x0A)
                 return null;
 
@@ -1477,7 +1480,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x02
-        /// 16 bytes in SCSI-2, SPC-1
+        /// 16 bytes in SCSI-2, SPC-1, SPC-2
         /// </summary>
         public struct ModePage_02
         {
@@ -1535,6 +1538,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_02? DecodeModePage_02(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x02)
@@ -1674,6 +1680,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x08)
@@ -1895,6 +1904,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_05? DecodeModePage_05(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x05)
@@ -2177,6 +2189,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x03)
                 return null;
 
@@ -2269,6 +2284,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x0B)
@@ -2393,6 +2411,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x01)
@@ -2530,6 +2551,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x04)
                 return null;
 
@@ -2652,6 +2676,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_07? DecodeModePage_07(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x07)
@@ -2810,6 +2837,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x10)
@@ -3023,6 +3053,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x0E)
                 return null;
 
@@ -3226,6 +3259,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x0D)
                 return null;
 
@@ -3348,6 +3384,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_01_MMC? DecodeModePage_01_MMC(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x01)
@@ -3495,6 +3534,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
             if ((pageResponse[0] & 0x3F) != 0x07)
                 return null;
 
@@ -3634,6 +3676,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_06? DecodeModePage_06(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x06)
@@ -3798,6 +3843,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x2A)
@@ -4000,7 +4048,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Informational exceptions control page
         /// Page code 0x1C
-        /// 12 bytes in SPC-1
+        /// 12 bytes in SPC-1, SPC-2
         /// </summary>
         public struct ModePage_1C
         {
@@ -4036,11 +4084,23 @@ namespace DiscImageChef.Decoders.SCSI
             /// How many times to report informational exceptions
             /// </summary>
             public uint ReportCount;
+
+            /// <summary>
+            /// Enable background functions
+            /// </summary>
+            public bool EBF;
+            /// <summary>
+            /// Warning reporting enabled
+            /// </summary>
+            public bool EWasc;
         }
 
         public static ModePage_1C? DecodeModePage_1C(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x1C)
@@ -4065,6 +4125,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
             decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+
+            decoded.EBF |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.EWasc |= (pageResponse[2] & 0x10) == 0x10;
 
             return decoded;
         }
@@ -4140,6 +4203,11 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times", page.ReportCount);
             }
 
+            if (page.EWasc)
+                sb.AppendLine("\tWarning reporting is enabled");
+            if (page.EBF)
+                sb.AppendLine("\tBackground functions are enabled");
+
             return sb.ToString();
         }
         #endregion Mode Page 0x1C: Informational exceptions control page
@@ -4148,7 +4216,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Power condition page
         /// Page code 0x1A
-        /// 12 bytes in SPC-1
+        /// 12 bytes in SPC-1, SPC-2
         /// </summary>
         public struct ModePage_1A
         {
@@ -4177,6 +4245,9 @@ namespace DiscImageChef.Decoders.SCSI
         public static ModePage_1A? DecodeModePage_1A(byte[] pageResponse)
         {
             if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
             if ((pageResponse[0] & 0x3F) != 0x1A)
