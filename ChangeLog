@@ -1,6 +1,11 @@
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented decoding mode page 0Eh.
+
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implemented decoding mode page 10h.
 
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
