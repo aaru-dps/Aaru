@@ -1477,7 +1477,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x02
-        /// 16 bytes in SCSI-2
+        /// 16 bytes in SCSI-2, SPC-1
         /// </summary>
         public struct ModePage_02
         {
@@ -3995,6 +3995,154 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x2A: CD-ROM capabilities page
+
+        #region Mode Page 0x1C: Informational exceptions control page
+        /// <summary>
+        /// Informational exceptions control page
+        /// Page code 0x1C
+        /// 12 bytes in SPC-1
+        /// </summary>
+        public struct ModePage_1C
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Informational exception operations should not affect performance
+            /// </summary>
+            public bool Perf;
+            /// <summary>
+            /// Disable informational exception operations
+            /// </summary>
+            public bool DExcpt;
+            /// <summary>
+            /// Create a test device failure at next interval time
+            /// </summary>
+            public bool Test;
+            /// <summary>
+            /// Log informational exception conditions
+            /// </summary>
+            public bool LogErr;
+            /// <summary>
+            /// Method of reporting informational exceptions
+            /// </summary>
+            public byte MRIE;
+            /// <summary>
+            /// 100 ms period to report an informational exception condition
+            /// </summary>
+            public uint IntervalTimer;
+            /// <summary>
+            /// How many times to report informational exceptions
+            /// </summary>
+            public uint ReportCount;
+        }
+
+        public static ModePage_1C? DecodeModePage_1C(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x1C)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 12)
+                return null;
+
+            ModePage_1C decoded = new ModePage_1C();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.Perf |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.DExcpt |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.Test |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.LogErr |= (pageResponse[2] & 0x80) == 0x80;
+
+            decoded.MRIE = (byte)(pageResponse[3] & 0x0F);
+
+            decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
+            decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_1C(byte[] pageResponse)
+        {
+            return PrettifyModePage_1C(DecodeModePage_1C(pageResponse));
+        }
+
+        public static string PrettifyModePage_1C(ModePage_1C? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_1C page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Informational exceptions control page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.DExcpt)
+                sb.AppendLine("\tInformational exceptions are disabled");
+            else
+            {
+                sb.AppendLine("\tInformational exceptions are enabled");
+
+                switch (page.MRIE)
+                {
+                    case 0:
+                        sb.AppendLine("\tNo reporting of informational exception condition");
+                        break;
+                    case 1:
+                        sb.AppendLine("\tAsynchronous event reporting of informational exceptions");
+                        break;
+                    case 2:
+                        sb.AppendLine("\tGenerate unit attention on informational exceptions");
+                        break;
+                    case 3:
+                        sb.AppendLine("\tConditionally generate recovered error on informational exceptions");
+                        break;
+                    case 4:
+                        sb.AppendLine("\tUnconditionally generate recovered error on informational exceptions");
+                        break;
+                    case 5:
+                        sb.AppendLine("\tGenerate no sense on informational exceptions");
+                        break;
+                    case 6:
+                        sb.AppendLine("\tOnly report informational exception condition on request");
+                        break;
+                    default:
+                        sb.AppendFormat("\tUnknown method of reporting {0}", page.MRIE).AppendLine();
+                        break;
+                }
+
+                if (page.Perf)
+                    sb.AppendLine("\tInformational exceptions reporting should not affect drive performance");
+                if (page.Test)
+                    sb.AppendLine("\tA test informational exception will raise on next timer");
+                if (page.LogErr)
+                    sb.AppendLine("\tDrive shall log informational exception conditions");
+
+                if (page.IntervalTimer > 0)
+                {
+                    if (page.IntervalTimer == 0xFFFFFFFF)
+                        sb.AppendLine("\tTimer interval is vendor-specific");
+                    else
+                        sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
+                }
+
+                if (page.ReportCount > 0)
+                    sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times", page.ReportCount);
+            }
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x1C: Informational exceptions control page
     }
 }
 
