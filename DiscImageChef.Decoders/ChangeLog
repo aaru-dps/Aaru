@@ -1,6 +1,12 @@
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented decoding mode pages 01h and 07h for multimedia
+	  devices.
+
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implement decoding mode page 0Dh.
 
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
