@@ -1,6 +1,11 @@
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented decoding mode page 1Ch.
+
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added information from SFF-8020i.
 
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
