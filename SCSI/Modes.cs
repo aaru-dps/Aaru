@@ -1919,6 +1919,149 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x05: Flexible disk page
+
+        #region Mode Page 0x03: Format device page
+        /// <summary>
+        /// Disconnect-reconnect page
+        /// Page code 0x03
+        /// 24 bytes in SCSI-2
+        /// </summary>
+        public struct ModePage_03
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors
+            /// </summary>
+            public ushort TracksPerZone;
+            /// <summary>
+            /// Number of sectors per zone that shall be reserved for defect handling
+            /// </summary>
+            public ushort AltSectorsPerZone;
+            /// <summary>
+            /// Number of tracks per zone that shall be reserved for defect handling
+            /// </summary>
+            public ushort AltTracksPerZone;
+            /// <summary>
+            /// Number of tracks per LUN that shall be reserved for defect handling
+            /// </summary>
+            public ushort AltTracksPerLun;
+            /// <summary>
+            /// Number of physical sectors per track
+            /// </summary>
+            public ushort SectorsPerTrack;
+            /// <summary>
+            /// Bytes per physical sector
+            /// </summary>
+            public ushort BytesPerSector;
+            /// <summary>
+            /// Interleave value, target dependent
+            /// </summary>
+            public ushort Interleave;
+            /// <summary>
+            /// Sectors between last block of one track and first block of the next
+            /// </summary>
+            public ushort TrackSkew;
+            /// <summary>
+            /// Sectors between last block of a cylinder and first block of the next one
+            /// </summary>
+            public ushort CylinderSkew;
+            /// <summary>
+            /// Soft-sectored
+            /// </summary>
+            public bool SSEC;
+            /// <summary>
+            /// Hard-sectored
+            /// </summary>
+            public bool HSEC;
+            /// <summary>
+            /// Removable
+            /// </summary>
+            public bool RMB;
+            /// <summary>
+            /// If set, address are allocated progressively in a surface before going to the next.
+            /// Otherwise, it goes by cylinders
+            /// </summary>
+            public bool SURF;
+        }
+
+        public static ModePage_03? DecodeModePage_03(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x05)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 24)
+                return null;
+
+            ModePage_03 decoded = new ModePage_03();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.TracksPerZone = (ushort)((pageResponse[2] << 8) + pageResponse[3]);
+            decoded.AltSectorsPerZone = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
+            decoded.AltTracksPerZone = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.AltTracksPerLun = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
+            decoded.SectorsPerTrack = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.BytesPerSector = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.Interleave = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.TrackSkew = (ushort)((pageResponse[16] << 8) + pageResponse[17]);
+            decoded.CylinderSkew = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
+            decoded.SSEC |= (pageResponse[20] & 0x80) == 0x80;
+            decoded.HSEC |= (pageResponse[20] & 0x40) == 0x40;
+            decoded.RMB |= (pageResponse[20] & 0x20) == 0x20;
+            decoded.SURF |= (pageResponse[20] & 0x10) == 0x10;
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_03(byte[] pageResponse)
+        {
+            return PrettifyModePage_03(DecodeModePage_03(pageResponse));
+        }
+
+        public static string PrettifyModePage_03(ModePage_03? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_03 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Format device page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            sb.AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors", page.TracksPerZone).AppendLine();
+            sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling", page.AltSectorsPerZone).AppendLine();
+            sb.AppendFormat("\t{0} tracks per zone that shall be reserved for defect handling", page.AltTracksPerZone).AppendLine();
+            sb.AppendFormat("\t{0} tracks per LUN that shall be reserved for defect handling", page.AltTracksPerLun).AppendLine();
+            sb.AppendFormat("\t{0} physical sectors per track", page.SectorsPerTrack).AppendLine();
+            sb.AppendFormat("\t{0} Bytes per physical sector", page.BytesPerSector).AppendLine();
+            sb.AppendFormat("\tTarget-dependent interleave value is {0}", page.Interleave).AppendLine();
+            sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next", page.TrackSkew).AppendLine();
+            sb.AppendFormat("\t{0} sectors between last block of a cylinder and first block of the next one", page.CylinderSkew).AppendLine();
+            if (page.SSEC)
+                sb.AppendLine("\tDrive supports soft-sectoring format");
+            if (page.HSEC)
+                sb.AppendLine("\tDrive supports hard-sectoring format");
+            if (page.RMB)
+                sb.AppendLine("\tDrive media is removable");
+            if (page.SURF)
+                sb.AppendLine("\tSector addressing is progressively incremented in one surface before going to the next");
+            else
+                sb.AppendLine("\tSector addressing is progressively incremented in one cylinder before going to the next");
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x03: Format device page
     }
 }
 
