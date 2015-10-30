@@ -166,9 +166,116 @@ namespace DiscImageChef.Decoders.SCSI
             /// <summary>
             /// 80 mm Compact Disc with data and audio
             /// </summary>
-            MixedCD_80 = 0x07
+            MixedCD_80 = 0x07,
 
             #endregion Medium Types defined in SCSI-2 for MultiMedia devices
+
+            #region Medium Types defined in SFF-8020i
+            /// <summary>
+            /// Unknown medium type
+            /// </summary>
+            Unknown_CD = 0x00,
+            /// <summary>
+            /// 120 mm Hybrid disc (Photo CD)
+            /// </summary>
+            HybridCD = 0x04,
+            /// <summary>
+            /// Unknown size CD-R
+            /// </summary>
+            Unknown_CDR = 0x10,
+            /// <summary>
+            /// 120 mm CD-R with data only
+            /// </summary>
+            CDR = 0x11,
+            /// <summary>
+            /// 120 mm CD-R with audio only
+            /// </summary>
+            CDR_DA = 0x12,
+            /// <summary>
+            /// 120 mm CD-R with data and audio
+            /// </summary>
+            CDR_Mixed = 0x13,
+            /// <summary>
+            /// 120 mm Hybrid CD-R (Photo CD)
+            /// </summary>
+            HybridCDR = 0x14,
+            /// <summary>
+            /// 80 mm CD-R with data only
+            /// </summary>
+            CDR_80 = 0x15,
+            /// <summary>
+            /// 80 mm CD-R with audio only
+            /// </summary>
+            CDR_DA_80 = 0x16,
+            /// <summary>
+            /// 80 mm CD-R with data and audio
+            /// </summary>
+            CDR_Mixed_80 = 0x17,
+            /// <summary>
+            /// 80 mm Hybrid CD-R (Photo CD)
+            /// </summary>
+            HybridCDR_80 = 0x18,
+            /// <summary>
+            /// Unknown size CD-RW
+            /// </summary>
+            Unknown_CDRW = 0x20,
+            /// <summary>
+            /// 120 mm CD-RW with data only
+            /// </summary>
+            CDRW = 0x21,
+            /// <summary>
+            /// 120 mm CD-RW with audio only
+            /// </summary>
+            CDRW_DA = 0x22,
+            /// <summary>
+            /// 120 mm CD-RW with data and audio
+            /// </summary>
+            CDRW_Mixed = 0x23,
+            /// <summary>
+            /// 120 mm Hybrid CD-RW (Photo CD)
+            /// </summary>
+            HybridCDRW = 0x24,
+            /// <summary>
+            /// 80 mm CD-RW with data only
+            /// </summary>
+            CDRW_80 = 0x25,
+            /// <summary>
+            /// 80 mm CD-RW with audio only
+            /// </summary>
+            CDRW_DA_80 = 0x26,
+            /// <summary>
+            /// 80 mm CD-RW with data and audio
+            /// </summary>
+            CDRW_Mixed_80 = 0x27,
+            /// <summary>
+            /// 80 mm Hybrid CD-RW (Photo CD)
+            /// </summary>
+            HybridCDRW_80 = 0x28,
+            /// <summary>
+            /// Unknown size HD disc
+            /// </summary>
+            Unknown_HD = 0x30,
+            /// <summary>
+            /// 120 mm HD disc
+            /// </summary>
+            HD = 0x31,
+            /// <summary>
+            /// 80 mm HD disc
+            /// </summary>
+            HD_80 = 0x35,
+            /// <summary>
+            /// No disc inserted, tray closed or caddy inserted
+            /// </summary>
+            NoDisc = 0x70,
+            /// <summary>
+            /// Tray open or no caddy inserted
+            /// </summary>
+            TrayOpen = 0x71,
+            /// <summary>
+            /// Tray closed or caddy inserted but medium error
+            /// </summary>
+            MediumError = 0x72
+            #endregion Medium Types defined in SFF-8020i
         }
 
         public enum DensityType : byte
@@ -832,6 +939,84 @@ namespace DiscImageChef.Decoders.SCSI
                                 break;
                             case MediumTypes.MixedCD_80:
                                 sb.AppendLine("80 mm Compact Disc with data and audio");
+                                break;
+                            case MediumTypes.Unknown_CD:
+                                sb.AppendLine("Unknown medium type");
+                                break;
+                            case MediumTypes.HybridCD:
+                                sb.AppendLine("120 mm Hybrid disc (Photo CD)");
+                                break;
+                            case MediumTypes.Unknown_CDR:
+                                sb.AppendLine("Unknown size CD-R");
+                                break;
+                            case MediumTypes.CDR:
+                                sb.AppendLine("120 mm CD-R with data only");
+                                break;
+                            case MediumTypes.CDR_DA:
+                                sb.AppendLine("120 mm CD-R with audio only");
+                                break;
+                            case MediumTypes.CDR_Mixed:
+                                sb.AppendLine("120 mm CD-R with data and audio");
+                                break;
+                            case MediumTypes.HybridCDR:
+                                sb.AppendLine("120 mm Hybrid CD-R (Photo CD)");
+                                break;
+                            case MediumTypes.CDR_80:
+                                sb.AppendLine("80 mm CD-R with data only");
+                                break;
+                            case MediumTypes.CDR_DA_80:
+                                sb.AppendLine("80 mm CD-R with audio only");
+                                break;
+                            case MediumTypes.CDR_Mixed_80:
+                                sb.AppendLine("80 mm CD-R with data and audio");
+                                break;
+                            case MediumTypes.HybridCDR_80:
+                                sb.AppendLine("80 mm Hybrid CD-R (Photo CD)");
+                                break;
+                            case MediumTypes.Unknown_CDRW:
+                                sb.AppendLine("Unknown size CD-RW");
+                                break;
+                            case MediumTypes.CDRW:
+                                sb.AppendLine("120 mm CD-RW with data only");
+                                break;
+                            case MediumTypes.CDRW_DA:
+                                sb.AppendLine("120 mm CD-RW with audio only");
+                                break;
+                            case MediumTypes.CDRW_Mixed:
+                                sb.AppendLine("120 mm CD-RW with data and audio");
+                                break;
+                            case MediumTypes.HybridCDRW:
+                                sb.AppendLine("120 mm Hybrid CD-RW (Photo CD)");
+                                break;
+                            case MediumTypes.CDRW_80:
+                                sb.AppendLine("80 mm CD-RW with data only");
+                                break;
+                            case MediumTypes.CDRW_DA_80:
+                                sb.AppendLine("80 mm CD-RW with audio only");
+                                break;
+                            case MediumTypes.CDRW_Mixed_80:
+                                sb.AppendLine("80 mm CD-RW with data and audio");
+                                break;
+                            case MediumTypes.HybridCDRW_80:
+                                sb.AppendLine("80 mm Hybrid CD-RW (Photo CD)");
+                                break;
+                            case MediumTypes.Unknown_HD:
+                                sb.AppendLine("Unknown size HD disc");
+                                break;
+                            case MediumTypes.HD:
+                                sb.AppendLine("120 mm HD disc");
+                                break;
+                            case MediumTypes.HD_80:
+                                sb.AppendLine("80 mm HD disc");
+                                break;
+                            case MediumTypes.NoDisc:
+                                sb.AppendLine("No disc inserted, tray closed or caddy inserted");
+                                break;
+                            case MediumTypes.TrayOpen:
+                                sb.AppendLine("Tray open or no caddy inserted");
+                                break;
+                            case MediumTypes.MediumError:
+                                sb.AppendLine("Tray closed or caddy inserted but medium error");
                                 break;
                             default:
                                 sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
@@ -3497,6 +3682,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// CD-ROM capabilities page
         /// Page code 0x2A
         /// 16 bytes in OB-U0077C
+        /// 20 bytes in SFF-8020i
         /// </summary>
         public struct ModePage_2A
         {
@@ -3592,6 +3778,21 @@ namespace DiscImageChef.Decoders.SCSI
             /// Current drive speed in Kbytes/second
             /// </summary>
             public ushort CurrentSpeed;
+
+            public bool Method2;
+            public bool ReadCDRW;
+            public bool ReadCDR;
+            public bool WriteCDRW;
+            public bool WriteCDR;
+            public bool DigitalPort2;
+            public bool DigitalPort1;
+            public bool Composite;
+            public bool SSS;
+            public bool SDP;
+            public byte Length;
+            public bool LSBF;
+            public bool RCK;
+            public bool BCK;
         }
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
@@ -3638,6 +3839,28 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.SupportedVolumeLevels = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
             decoded.BufferSize = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
             decoded.CurrentSpeed = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+
+            if (pageResponse.Length < 20)
+                return decoded;
+
+            decoded.Method2 |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.ReadCDRW |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.ReadCDR |= (pageResponse[2] & 0x01) == 0x01;
+
+            decoded.WriteCDRW |= (pageResponse[3] & 0x02) == 0x02;
+            decoded.WriteCDR |= (pageResponse[3] & 0x01) == 0x01;
+
+            decoded.Composite |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.DigitalPort1 |= (pageResponse[4] & 0x04) == 0x04;
+            decoded.DigitalPort2 |= (pageResponse[4] & 0x08) == 0x08;
+
+            decoded.SDP |= (pageResponse[7] & 0x04) == 0x04;
+            decoded.SSS |= (pageResponse[7] & 0x08) == 0x08;
+
+            decoded.Length = (byte)((pageResponse[17] & 0x30) >> 4);
+            decoded.LSBF |= (pageResponse[17] & 0x08) == 0x08;
+            decoded.RCK |= (pageResponse[17] & 0x04) == 0x04;
+            decoded.BCK |= (pageResponse[17] & 0x02) == 0x02;
 
             return decoded;
         }
@@ -3695,6 +3918,12 @@ namespace DiscImageChef.Decoders.SCSI
                 case 2:
                     sb.AppendLine("\tDrive is pop-up");
                     break;
+                case 4:
+                    sb.AppendLine("\tDrive is a changer with individually changeable discs");
+                    break;
+                case 5:
+                    sb.AppendLine("\tDrive is a changer using cartridges");
+                    break;
                 default:
                     sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).AppendLine();
                     break;
@@ -3733,6 +3962,35 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\tDrive's maximum speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
             if (page.CurrentSpeed > 0)
                 sb.AppendFormat("\tDrive's current speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
+
+            if (page.ReadCDR)
+            {
+                if (page.WriteCDR)
+                    sb.AppendLine("\tDrive can read and write CD-R");
+                else
+                    sb.AppendLine("\tDrive can read CD-R");
+
+                if (page.Method2)
+                    sb.AppendLine("\tDrive supports reading CD-R packet media");
+            }
+
+            if (page.ReadCDRW)
+            {
+                if (page.WriteCDRW)
+                    sb.AppendLine("\tDrive can read and write CD-RW");
+                else
+                    sb.AppendLine("\tDrive can read CD-RW");
+            }
+
+            if (page.Composite)
+                sb.AppendLine("\tDrive can deliver a compositve audio and video data stream");
+            if (page.DigitalPort1)
+                sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
+            if (page.DigitalPort2)
+                sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
+
+            if (page.SDP)
+                sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
 
             return sb.ToString();
         }
