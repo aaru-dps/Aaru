@@ -1,6 +1,11 @@
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Added information from SPC-5.
+
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added information from SPC-3.
 
 2015-10-30  Natalia Portillo  <claunia@claunia.com>
