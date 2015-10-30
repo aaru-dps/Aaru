@@ -2106,7 +2106,6 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-
         public static string PrettifyModePage_0B(byte[] pageResponse)
         {
             return PrettifyModePage_0B(DecodeModePage_0B(pageResponse));
@@ -2131,6 +2130,161 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x0B: Medium types supported page
+
+        #region Mode Page 0x0C: Notch page
+        // TODO: Implement this page
+        #endregion Mode Page 0x0C: Notch page
+
+        #region Mode Page 0x01: Read-write error recovery page
+        /// <summary>
+        /// Disconnect-reconnect page
+        /// Page code 0x01
+        /// 12 bytes in SCSI-2
+        /// </summary>
+        public struct ModePage_01
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Automatic Write Reallocation Enabled
+            /// </summary>
+            public bool AWRE;
+            /// <summary>
+            /// Automatic Read Reallocation Enabled
+            /// </summary>
+            public bool ARRE;
+            /// <summary>
+            /// Transfer block
+            /// </summary>
+            public bool TB;
+            /// <summary>
+            /// Read continuous
+            /// </summary>
+            public bool RC;
+            /// <summary>
+            /// Enable early recovery
+            /// </summary>
+            public bool EER;
+            /// <summary>
+            /// Post error reporting
+            /// </summary>
+            public bool PER;
+            /// <summary>
+            /// Disable transfer on error
+            /// </summary>
+            public bool DTE;
+            /// <summary>
+            /// Disable correction
+            /// </summary>
+            public bool DCR;
+            /// <summary>
+            /// How many times to retry a read operation
+            /// </summary>
+            public byte ReadRetryCount;
+            /// <summary>
+            /// How many bits of largest data burst error is maximum to apply error correction on it
+            /// </summary>
+            public byte CorrectionSpan;
+            /// <summary>
+            /// Offset to move the heads
+            /// </summary>
+            public sbyte HeadOffsetCount;
+            /// <summary>
+            /// Incremental position to which the recovered data strobe shall be adjusted
+            /// </summary>
+            public sbyte DataStrobeOffsetCount;
+            /// <summary>
+            /// How many times to retry a write operation
+            /// </summary>
+            public byte WriteRetryCount;
+            /// <summary>
+            /// Maximum time in ms to use in data error recovery procedures
+            /// </summary>
+            public ushort RecoveryTimeLimit;
+        }
+
+        public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x01)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 12)
+                return null;
+
+            ModePage_01 decoded = new ModePage_01();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.AWRE |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.ARRE |= (pageResponse[2] & 0x40) == 0x40;
+            decoded.TB |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.RC |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.EER |= (pageResponse[2] & 0x08) == 0x08;
+            decoded.PER |= (pageResponse[2] & 0x04) == 0x04;
+            decoded.DTE |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.DCR |= (pageResponse[2] & 0x01) == 0x01;
+
+            decoded.ReadRetryCount = pageResponse[3];
+            decoded.CorrectionSpan = pageResponse[4];
+            decoded.HeadOffsetCount = (sbyte)pageResponse[5];
+            decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
+            decoded.WriteRetryCount = pageResponse[8];
+            decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_01(byte[] pageResponse)
+        {
+            return PrettifyModePage_01(DecodeModePage_01(pageResponse));
+        }
+
+        public static string PrettifyModePage_01(ModePage_01? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_01 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Read-write error recovery page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.AWRE)
+                sb.AppendLine("\tAutomatic write reallocation is enabled");
+            if (page.ARRE)
+                sb.AppendLine("\tAutomatic read reallocation is enabled");
+            if (page.TB)
+                sb.AppendLine("\tData not recovered within limits shall be transferred back before a CHECK CONDITION");
+            if (page.RC)
+                sb.AppendLine("\tDrive will transfer the entire requested length without delaying to perform error recovery");
+            if (page.EER)
+                sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+            if (page.PER)
+                sb.AppendLine("\tDrive shall report recovered errors");
+            if (page.DTE)
+                sb.AppendLine("\tTransfer will be terminated upon error detection");
+            if (page.DCR)
+                sb.AppendLine("\tError correction is disabled");
+            if (page.ReadRetryCount > 0)
+                sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
+            if (page.WriteRetryCount > 0)
+                sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
+            if (page.RecoveryTimeLimit > 0)
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x01: Read-write error recovery page
     }
 }
 
