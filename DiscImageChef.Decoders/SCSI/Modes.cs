@@ -1992,7 +1992,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x05)
+            if ((pageResponse[0] & 0x3F) != 0x03)
                 return null;
 
             if (pageResponse[1] + 2 != pageResponse.Length)
