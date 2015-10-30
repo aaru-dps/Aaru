@@ -4504,6 +4504,96 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
+
+        #region Mode Page 0x1A subpage 0x01: Power Consumption mode page
+        /// <summary>
+        /// Power Consumption mode page
+        /// Page code 0x1A
+        /// Subpage code 0x01
+        /// 16 bytes in SPC-5
+        /// </summary>
+        public struct ModePage_1A_S01
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Active power level
+            /// </summary>
+            public byte ActiveLevel;
+            /// <summary>
+            /// Power Consumption VPD identifier in use
+            /// </summary>
+            public byte PowerConsumptionIdentifier;
+        }
+
+        public static ModePage_1A_S01? DecodeModePage_1A_S01(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) != 0x40)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x1A)
+                return null;
+
+            if (pageResponse[1] != 0x01)
+                return null;
+
+            if (((pageResponse[2] << 8) + pageResponse[3] + 2) != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 16)
+                return null;
+
+            ModePage_1A_S01 decoded = new ModePage_1A_S01();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.ActiveLevel = (byte)(pageResponse[6] & 0x03);
+            decoded.PowerConsumptionIdentifier = pageResponse[7];
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_1A_S01(byte[] pageResponse)
+        {
+            return PrettifyModePage_1A_S01(DecodeModePage_1A_S01(pageResponse));
+        }
+
+        public static string PrettifyModePage_1A_S01(ModePage_1A_S01? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_1A_S01 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Power Consumption page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            switch(page.ActiveLevel)
+            {
+                case 0:
+                    sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD", page.PowerConsumptionIdentifier).AppendLine();
+                    break;
+                case 1:
+                    sb.AppendLine("\tDevice is in highest relative power consumption level");
+                    break;
+                case 2:
+                    sb.AppendLine("\tDevice is in intermediate relative power consumption level");
+                    break;
+                case 3:
+                    sb.AppendLine("\tDevice is in lowest relative power consumption level");
+                    break;
+            }
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
     }
 }
 
