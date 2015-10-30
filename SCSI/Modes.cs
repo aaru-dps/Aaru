@@ -1480,7 +1480,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x02
-        /// 16 bytes in SCSI-2, SPC-1, SPC-2
+        /// 16 bytes in SCSI-2, SPC-1, SPC-2, SPC-3
         /// </summary>
         public struct ModePage_02
         {
@@ -4048,7 +4048,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Informational exceptions control page
         /// Page code 0x1C
-        /// 12 bytes in SPC-1, SPC-2
+        /// 12 bytes in SPC-1, SPC-2, SPC-3
         /// </summary>
         public struct ModePage_1C
         {
@@ -4216,7 +4216,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Power condition page
         /// Page code 0x1A
-        /// 12 bytes in SPC-1, SPC-2
+        /// 12 bytes in SPC-1, SPC-2, SPC-3
         /// </summary>
         public struct ModePage_1A
         {
