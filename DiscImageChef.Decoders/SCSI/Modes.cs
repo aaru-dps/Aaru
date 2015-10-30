@@ -2062,6 +2062,75 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x03: Format device page
+
+        #region Mode Page 0x0B: Medium types supported page
+        /// <summary>
+        /// Disconnect-reconnect page
+        /// Page code 0x0B
+        /// 8 bytes in SCSI-2
+        /// </summary>
+        public struct ModePage_0B
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            public byte MediumType1;
+            public byte MediumType2;
+            public byte MediumType3;
+            public byte MediumType4;
+        }
+
+        public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x0B)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 8)
+                return null;
+
+            ModePage_0B decoded = new ModePage_0B();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.MediumType1 = pageResponse[4];
+            decoded.MediumType2 = pageResponse[5];
+            decoded.MediumType3 = pageResponse[6];
+            decoded.MediumType4 = pageResponse[7];
+
+            return decoded;
+        }
+
+
+        public static string PrettifyModePage_0B(byte[] pageResponse)
+        {
+            return PrettifyModePage_0B(DecodeModePage_0B(pageResponse));
+        }
+
+        public static string PrettifyModePage_0B(ModePage_0B? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_0B page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Medium types supported page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            // TODO: Implement it when all known medium types are supported
+            sb.AppendLine("Not yet implemented");
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x0B: Medium types supported page
     }
 }
 
