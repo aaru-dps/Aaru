@@ -1146,7 +1146,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Control mode page
         /// Page code 0x0A
         /// 8 bytes in SCSI-2
-        /// 12 bytes in SPC-1, SPC-2
+        /// 12 bytes in SPC-1, SPC-2, SPC-3
         /// </summary>
         public struct ModePage_0A
         {
@@ -4303,6 +4303,107 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x1A: Power condition page
+
+        #region Mode Page 0x0A subpage 0x01: Control Extension mode page
+        /// <summary>
+        /// Control Extension mode page
+        /// Page code 0x0A
+        /// Subpage code 0x01
+        /// 32 bytes in SPC-3
+        /// </summary>
+        public struct ModePage_0A_S01
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Timestamp outside this standard
+            /// </summary>
+            public bool TCMOS;
+            /// <summary>
+            /// SCSI precedence
+            /// </summary>
+            public bool SCSIP;
+            /// <summary>
+            /// Implicit Asymmetric Logical Unit Access Enabled
+            /// </summary>
+            public bool IALUAE;
+            /// <summary>
+            /// Initial task priority
+            /// </summary>
+            public byte InitialPriority;
+        }
+
+        public static ModePage_0A_S01? DecodeModePage_0A_S01(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) != 0x40)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x0A)
+                return null;
+
+            if (pageResponse[1] != 0x01)
+                return null;
+
+            if (((pageResponse[2] << 8) + pageResponse[3] + 2) != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 32)
+                return null;
+
+            ModePage_0A_S01 decoded = new ModePage_0A_S01();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.IALUAE |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.SCSIP |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.TCMOS |= (pageResponse[4] & 0x04) == 0x04;
+
+            decoded.InitialPriority = (byte)(pageResponse[5] & 0x0F);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_0A_S01(byte[] pageResponse)
+        {
+            return PrettifyModePage_0A_S01(DecodeModePage_0A_S01(pageResponse));
+        }
+
+        public static string PrettifyModePage_0A_S01(ModePage_0A_S01? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_0A_S01 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Control extension page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+            
+            if(page.TCMOS)
+            {
+                sb.Append("\tTimestamp can be initialized by methods outside of the SCSI standards");
+
+                if (page.SCSIP)
+                    sb.Append(", but SCSI's SET TIMESTAMP shall take precedence over them");
+
+                sb.AppendLine();
+            }
+
+            if (page.IALUAE)
+                sb.AppendLine("\tImplicit Asymmetric Logical Unit Access is enabled");
+
+            sb.AppendFormat("\tInitial priority is {0}", page.InitialPriority);
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
     }
 }
 
