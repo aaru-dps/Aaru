@@ -3491,6 +3491,252 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x06: Optical memory page
+
+        #region Mode Page 0x2A: CD-ROM capabilities page
+        /// <summary>
+        /// CD-ROM capabilities page
+        /// Page code 0x2A
+        /// 16 bytes in OB-U0077C
+        /// </summary>
+        public struct ModePage_2A
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Drive supports multi-session and/or Photo-CD
+            /// </summary>
+            public bool MultiSession;
+            /// <summary>
+            /// Drive is capable of reading sectors in Mode 2 Form 2 format
+            /// </summary>
+            public bool Mode2Form2;
+            /// <summary>
+            /// Drive is capable of reading sectors in Mode 2 Form 1 format
+            /// </summary>
+            public bool Mode2Form1;
+            /// <summary>
+            /// Drive is capable of playing audio
+            /// </summary>
+            public bool AudioPlay;
+            /// <summary>
+            /// Drive can return the ISRC
+            /// </summary>
+            public bool ISRC;
+            /// <summary>
+            /// Drive can return the media catalogue number
+            /// </summary>
+            public bool UPC;
+            /// <summary>
+            /// Drive can return C2 pointers
+            /// </summary>
+            public bool C2Pointer;
+            /// <summary>
+            /// Drive can read, deinterlave and correct R-W subchannels
+            /// </summary>
+            public bool DeinterlaveSubchannel;
+            /// <summary>
+            /// Drive can read interleaved and uncorrected R-W subchannels
+            /// </summary>
+            public bool Subchannel;
+            /// <summary>
+            /// Drive can continue from a loss of streaming on audio reading
+            /// </summary>
+            public bool AccurateCDDA;
+            /// <summary>
+            /// Audio can be read as digital data
+            /// </summary>
+            public bool CDDACommand;
+            /// <summary>
+            /// Loading Mechanism Type
+            /// </summary>
+            public byte LoadingMechanism;
+            /// <summary>
+            /// Drive can eject discs
+            /// </summary>
+            public bool Eject;
+            /// <summary>
+            /// Drive's optional prevent jumper status
+            /// </summary>
+            public bool PreventJumper;
+            /// <summary>
+            /// Current lock status
+            /// </summary>
+            public bool LockState;
+            /// <summary>
+            /// Drive can lock media
+            /// </summary>
+            public bool Lock;
+            /// <summary>
+            /// Each channel can be muted independently
+            /// </summary>
+            public bool SeparateChannelMute;
+            /// <summary>
+            /// Each channel's volume can be controlled independently
+            /// </summary>
+            public bool SeparateChannelVolume;
+            /// <summary>
+            /// Maximum drive speed in Kbytes/second
+            /// </summary>
+            public ushort MaximumSpeed;
+            /// <summary>
+            /// Supported volume levels
+            /// </summary>
+            public ushort SupportedVolumeLevels;
+            /// <summary>
+            /// Buffer size in Kbytes
+            /// </summary>
+            public ushort BufferSize;
+            /// <summary>
+            /// Current drive speed in Kbytes/second
+            /// </summary>
+            public ushort CurrentSpeed;
+        }
+
+        public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x2A)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 16)
+                return null;
+
+            ModePage_2A decoded = new ModePage_2A();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.AudioPlay |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.Mode2Form1 |= (pageResponse[4] & 0x10) == 0x10;
+            decoded.Mode2Form2 |= (pageResponse[4] & 0x20) == 0x20;
+            decoded.MultiSession |= (pageResponse[4] & 0x40) == 0x40;
+
+            decoded.CDDACommand |= (pageResponse[5] & 0x01) == 0x01;
+            decoded.AccurateCDDA |= (pageResponse[5] & 0x02) == 0x02;
+            decoded.Subchannel |= (pageResponse[5] & 0x04) == 0x04;
+            decoded.DeinterlaveSubchannel |= (pageResponse[5] & 0x08) == 0x08;
+            decoded.C2Pointer |= (pageResponse[5] & 0x10) == 0x10;
+            decoded.UPC |= (pageResponse[5] & 0x20) == 0x20;
+            decoded.ISRC |= (pageResponse[5] & 0x40) == 0x40;
+
+            decoded.LoadingMechanism = (byte)((pageResponse[6] & 0xE0) >> 5);
+            decoded.Lock |= (pageResponse[6] & 0x01) == 0x01;
+            decoded.LockState |= (pageResponse[6] & 0x02) == 0x02;
+            decoded.PreventJumper |= (pageResponse[6] & 0x04) == 0x04;
+            decoded.Eject |= (pageResponse[6] & 0x08) == 0x08;
+
+            decoded.SeparateChannelVolume |= (pageResponse[7] & 0x01) == 0x01;
+            decoded.SeparateChannelMute |= (pageResponse[7] & 0x02) == 0x02;
+
+            decoded.MaximumSpeed = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
+            decoded.SupportedVolumeLevels = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.BufferSize = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.CurrentSpeed = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_2A(byte[] pageResponse)
+        {
+            return PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
+        }
+
+        public static string PrettifyModePage_2A(ModePage_2A? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_2A page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI CD-ROM capabilities page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.AudioPlay)
+                sb.AppendLine("\tDrive can play audio");
+            if (page.Mode2Form1)
+                sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
+            if (page.Mode2Form2)
+                sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
+            if (page.MultiSession)
+                sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
+
+            if (page.CDDACommand)
+                sb.AppendLine("\tDrive can read digital audio");
+            if (page.AccurateCDDA)
+                sb.AppendLine("\tDrive can continue from streaming loss");
+            if (page.Subchannel)
+                sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
+            if (page.DeinterlaveSubchannel)
+                sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
+            if (page.C2Pointer)
+                sb.AppendLine("\tDrive supports C2 pointers");
+            if (page.UPC)
+                sb.AppendLine("\tDrive can read Media Catalogue Number");
+            if (page.ISRC)
+                sb.AppendLine("\tDrive can read ISRC");
+
+            switch (page.LoadingMechanism)
+            {
+                case 0:
+                    sb.AppendLine("\tDrive uses media caddy");
+                    break;
+                case 1:
+                    sb.AppendLine("\tDrive uses a tray");
+                    break;
+                case 2:
+                    sb.AppendLine("\tDrive is pop-up");
+                    break;
+                default:
+                    sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).AppendLine();
+                    break;
+            }
+
+            if (page.Lock)
+                sb.AppendLine("\tDrive can lock media");
+            if (page.PreventJumper)
+            {
+                sb.AppendLine("\tDrive power ups locked");
+                if (page.LockState)
+                    sb.AppendLine("\tDrive is locked, media cannot be ejected or inserted");
+                else
+                    sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+            }
+            else
+            {
+                if (page.LockState)
+                    sb.AppendLine("\tDrive is locked, media cannot be ejected, but if empty, can be inserted");
+                else
+                    sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
+            }
+            if (page.Eject)
+                sb.AppendLine("\tDrive can eject media");
+
+            if (page.SeparateChannelMute)
+                sb.AppendLine("\tEach channel can be muted independently");
+            if (page.SeparateChannelVolume)
+                sb.AppendLine("\tEach channel's volume can be controlled independently");
+
+            if (page.SupportedVolumeLevels > 0)
+                sb.AppendFormat("\tDrive supports {0} volume levels", page.SupportedVolumeLevels).AppendLine();
+            if(page.BufferSize > 0)
+                sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
+            if (page.MaximumSpeed > 0)
+                sb.AppendFormat("\tDrive's maximum speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
+            if (page.CurrentSpeed > 0)
+                sb.AppendFormat("\tDrive's current speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x2A: CD-ROM capabilities page
     }
 }
 
