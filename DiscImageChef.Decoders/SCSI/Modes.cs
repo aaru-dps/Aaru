@@ -4143,6 +4143,95 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x1C: Informational exceptions control page
+
+        #region Mode Page 0x1A: Power condition page
+        /// <summary>
+        /// Power condition page
+        /// Page code 0x1A
+        /// 12 bytes in SPC-1
+        /// </summary>
+        public struct ModePage_1A
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Idle timer activated
+            /// </summary>
+            public bool Idle;
+            /// <summary>
+            /// Standby timer activated
+            /// </summary>
+            public bool Standby;
+            /// <summary>
+            /// Idle timer
+            /// </summary>
+            public uint IdleTimer;
+            /// <summary>
+            /// Standby timer
+            /// </summary>
+            public uint StandbyTimer;
+        }
+
+        public static ModePage_1A? DecodeModePage_1A(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x1A)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 12)
+                return null;
+
+            ModePage_1A decoded = new ModePage_1A();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.Standby |= (pageResponse[3] & 0x01) == 0x01;
+            decoded.Idle |= (pageResponse[3] & 0x02) == 0x02;
+
+            decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
+            decoded.StandbyTimer = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_1A(byte[] pageResponse)
+        {
+            return PrettifyModePage_1A(DecodeModePage_1A(pageResponse));
+        }
+
+        public static string PrettifyModePage_1A(ModePage_1A? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_1A page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Power condition page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.Standby && page.StandbyTimer > 0)
+                sb.AppendFormat("\tDrive will enter standby mode in {0} ms", page.StandbyTimer).AppendLine();
+            else
+                sb.AppendLine("\tDrive will not enter standy mode");
+
+            if(page.Idle && page.IdleTimer > 0)
+                sb.AppendFormat("\tDrive will enter idle mode in {0} ms", page.StandbyTimer).AppendLine();
+            else
+                sb.AppendLine("\tDrive will not enter idle mode");
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x1A: Power condition page
     }
 }
 
