@@ -2216,7 +2216,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if (pageResponse.Length < 8)
                 return null;
 
             ModePage_01 decoded = new ModePage_01();
@@ -2235,6 +2235,10 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.CorrectionSpan = pageResponse[4];
             decoded.HeadOffsetCount = (sbyte)pageResponse[5];
             decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
+
+            if (pageResponse.Length < 12)
+                return decoded;
+
             decoded.WriteRetryCount = pageResponse[8];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
