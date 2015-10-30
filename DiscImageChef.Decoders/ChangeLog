@@ -1,3 +1,8 @@
+2015-10-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
+	  Implemented decoding mode page 03h.
+
 2015-10-29  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
