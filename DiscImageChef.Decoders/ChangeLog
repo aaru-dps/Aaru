@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented Mode Page 0x1C: Timer & Protect page.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implemented Mode Page 0x1B: Removable Block Access
 	  Capabilities page.
 
