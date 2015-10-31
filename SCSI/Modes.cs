@@ -285,8 +285,23 @@ namespace DiscImageChef.Decoders.SCSI
             /// <summary>
             /// 3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)
             /// </summary>
-            HDFloppy = 0x94
+            HDFloppy = 0x94,
             #endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
+
+            #region Medium Types defined in INF-8070
+            /// <summary>
+            /// Unknown type block device
+            /// </summary>
+            UnknownBlockDevice = 0x40,
+            /// <summary>
+            /// Read-only block device
+            /// </summary>
+            ReadOnlyBlockDevice = 0x41,
+            /// <summary>
+            /// Read/Write block device
+            /// </summary>
+            ReadWriteBlockDevice = 0x42
+            #endregion Medium Types defined in INF-8070
         }
 
         public enum DensityType : byte
@@ -1034,6 +1049,15 @@ namespace DiscImageChef.Decoders.SCSI
                                 break;
                             case MediumTypes.MediumError:
                                 sb.AppendLine("Tray closed or caddy inserted but medium error");
+                                break;
+                            case MediumTypes.UnknownBlockDevice:
+                                sb.AppendLine("Unknown block device");
+                                break;
+                            case MediumTypes.ReadOnlyBlockDevice:
+                                sb.AppendLine("Read-only block device");
+                                break;
+                            case MediumTypes.ReadWriteBlockDevice:
+                                sb.AppendLine("Read/Write block device");
                                 break;
                             default:
                                 sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
