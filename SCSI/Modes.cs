@@ -2875,7 +2875,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Device configuration page
         /// Page code 0x10
-        /// 16 bytes in SCSI-2
+        /// 16 bytes in SCSI-2, SSC-1
         /// </summary>
         public struct ModePage_10_SSC
         {
@@ -2963,6 +2963,23 @@ namespace DiscImageChef.Decoders.SCSI
             /// Selected data compression algorithm
             /// </summary>
             public byte SelectedCompression;
+
+            /// <summary>
+            /// Soft write protect
+            /// </summary>
+            public bool SWP;
+            /// <summary>
+            /// Associated write protect
+            /// </summary>
+            public bool ASOCWP;
+            /// <summary>
+            /// Persistent write protect
+            /// </summary>
+            public bool PERSWP;
+            /// <summary>
+            /// Permanent write protect
+            /// </summary>
+            public bool PRMWP;
         }
 
         public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
@@ -3003,6 +3020,11 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.SOCF = (byte)((pageResponse[8] & 0x0C) >> 2);
             decoded.BufferSizeEarlyWarning = (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
             decoded.SelectedCompression = pageResponse[14];
+
+            decoded.SWP |= (pageResponse[10] & 0x04) == 0x04;
+            decoded.ASOCWP |= (pageResponse[15] & 0x04) == 0x04;
+            decoded.PERSWP |= (pageResponse[15] & 0x02) == 0x02;
+            decoded.PRMWP |= (pageResponse[15] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -3108,6 +3130,15 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendFormat("\tDrive uses unknown compression {0}", page.SelectedCompression).AppendLine();
                     break;
             }
+
+            if (page.SWP)
+                sb.AppendLine("\tSoftware write protect is enabled");
+            if (page.ASOCWP)
+                sb.AppendLine("\tAssociated write protect is enabled");
+            if (page.PERSWP)
+                sb.AppendLine("\tPersistent write protect is enabled");
+            if (page.PRMWP)
+                sb.AppendLine("\tPermanent write protect is enabled");
 
             return sb.ToString();
         }
