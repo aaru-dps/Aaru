@@ -1632,7 +1632,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Disconnect-reconnect page
         /// Page code 0x08
         /// 12 bytes in SCSI-2
-        /// 20 bytes in SBC-1, SBC-2
+        /// 20 bytes in SBC-1, SBC-2, SBC-3
         /// </summary>
         public struct ModePage_08
         {
@@ -2512,6 +2512,11 @@ namespace DiscImageChef.Decoders.SCSI
             /// Maximum time in ms to use in data error recovery procedures
             /// </summary>
             public ushort RecoveryTimeLimit;
+
+            /// <summary>
+            /// Logical block provisioning error reporting is enabled
+            /// </summary>
+            public bool LBPERE;
         }
 
         public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
@@ -2553,6 +2558,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.WriteRetryCount = pageResponse[8];
             decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.LBPERE |= (pageResponse[7] & 0x80) == 0x80;
 
             return decoded;
         }
@@ -2597,6 +2603,8 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
             if (page.RecoveryTimeLimit > 0)
                 sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
+            if (page.LBPERE)
+                sb.AppendLine("Logical block provisioning error reporting is enabled");
 
             return sb.ToString();
         }
@@ -4549,7 +4557,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse[1] != 0x01)
                 return null;
 
-            if (((pageResponse[2] << 8) + pageResponse[3] + 2) != pageResponse.Length)
+            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
                 return null;
 
             if (pageResponse.Length < 32)
@@ -4648,7 +4656,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse[1] != 0x01)
                 return null;
 
-            if (((pageResponse[2] << 8) + pageResponse[3] + 2) != pageResponse.Length)
+            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
                 return null;
 
             if (pageResponse.Length < 16)
