@@ -485,7 +485,7 @@ namespace DiscImageChef.Decoders.SCSI
         {
             public DensityType Density;
             public ulong Blocks;
-            public ulong BlockLength;
+            public uint BlockLength;
         }
 
         public struct ModeHeader
@@ -516,8 +516,8 @@ namespace DiscImageChef.Decoders.SCSI
                     header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[1 + i * 8 + 4] << 16);
                     header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[2 + i * 8 + 4] << 8);
                     header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 4];
-                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[5 + i * 8 + 4] << 16);
-                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[6 + i * 8 + 4] << 8);
+                    header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[5 + i * 8 + 4] << 16);
+                    header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[6 + i * 8 + 4] << 8);
                     header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 4];
                 }
             }
@@ -1136,18 +1136,55 @@ namespace DiscImageChef.Decoders.SCSI
             ModeHeader header = new ModeHeader();
             header.MediumType = (MediumTypes)modeResponse[2];
 
+            bool longLBA = (modeResponse[4] & 0x01) == 0x01;
+
             if (blockDescLength > 0)
             {
-                header.BlockDescriptors = new BlockDescriptor[blockDescLength / 8];
-                for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                if (longLBA)
                 {
-                    header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
-                    header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[1 + i * 8 + 8] << 16);
-                    header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[2 + i * 8 + 8] << 8);
-                    header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 8];
-                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[5 + i * 8 + 8] << 16);
-                    header.BlockDescriptors[i].BlockLength += (ulong)(modeResponse[6 + i * 8 + 8] << 8);
-                    header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 8];
+                    header.BlockDescriptors = new BlockDescriptor[blockDescLength / 16];
+                    for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                    {
+                        header.BlockDescriptors[i] = new BlockDescriptor();
+                        header.BlockDescriptors[i].Density = DensityType.Default;
+                        byte[] temp = new byte[8];
+                        temp[0] = modeResponse[7 + i * 16 + 8];
+                        temp[1] = modeResponse[6 + i * 16 + 8];
+                        temp[2] = modeResponse[5 + i * 16 + 8];
+                        temp[3] = modeResponse[4 + i * 16 + 8];
+                        temp[4] = modeResponse[3 + i * 16 + 8];
+                        temp[5] = modeResponse[2 + i * 16 + 8];
+                        temp[6] = modeResponse[1 + i * 16 + 8];
+                        temp[7] = modeResponse[0 + i * 16 + 8];
+                        header.BlockDescriptors[i].Blocks = BitConverter.ToUInt64(temp, 0);
+                        header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[15 + i * 16 + 8] << 24);
+                        header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[14 + i * 16 + 8] << 16);
+                        header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[13 + i * 16 + 8] << 8);
+                        header.BlockDescriptors[i].BlockLength += modeResponse[12 + i * 16 + 8];
+                    }
+                }
+                else
+                {
+                    header.BlockDescriptors = new BlockDescriptor[blockDescLength / 8];
+                    for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                    {
+                        header.BlockDescriptors[i] = new BlockDescriptor();
+                        if (deviceType != PeripheralDeviceTypes.DirectAccess)
+                        {
+                            header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
+                        }
+                        else
+                        {
+                            header.BlockDescriptors[i].Density = DensityType.Default;
+                            header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[0 + i * 8 + 8] << 24);
+                        }
+                        header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[1 + i * 8 + 8] << 16);
+                        header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[2 + i * 8 + 8] << 8);
+                        header.BlockDescriptors[i].Blocks += modeResponse[3 + i * 8 + 8];
+                        header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[5 + i * 8 + 8] << 16);
+                        header.BlockDescriptors[i].BlockLength += (uint)(modeResponse[6 + i * 8 + 8] << 8);
+                        header.BlockDescriptors[i].BlockLength += modeResponse[7 + i * 8 + 8];
+                    }
                 }
             }
 
