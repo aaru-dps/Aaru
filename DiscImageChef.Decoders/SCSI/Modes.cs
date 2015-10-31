@@ -3967,6 +3967,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// 16 bytes in OB-U0077C
         /// 20 bytes in SFF-8020i
         /// 22 bytes in MMC-1
+        /// 26 bytes in MMC-2
         /// </summary>
         public struct ModePage_2A
         {
@@ -4083,6 +4084,15 @@ namespace DiscImageChef.Decoders.SCSI
             public ushort CurrentWriteSpeed;
 
             public bool ReadBarcode;
+
+            public bool ReadDVDRAM;
+            public bool ReadDVDR;
+            public bool ReadDVDROM;
+            public bool WriteDVDRAM;
+            public bool WriteDVDR;
+            public bool LeadInPW;
+            public bool SCC;
+            public ushort CMRSupported;
         }
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
@@ -4163,6 +4173,21 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.CurrentWriteSpeed = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
 
             decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
+
+            if (pageResponse.Length < 26)
+                return decoded;
+
+            decoded.ReadDVDRAM |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.ReadDVDR |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.ReadDVDROM |= (pageResponse[2] & 0x08) == 0x08;
+
+            decoded.WriteDVDRAM |= (pageResponse[3] & 0x20) == 0x20;
+            decoded.WriteDVDR |= (pageResponse[3] & 0x10) == 0x10;
+
+            decoded.LeadInPW |= (pageResponse[3] & 0x20) == 0x20;
+            decoded.SCC |= (pageResponse[3] & 0x10) == 0x10;
+
+            decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
             return decoded;
         }
@@ -4284,6 +4309,23 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tDrive can read CD-RW");
             }
 
+            if (page.ReadDVDROM)
+                sb.AppendLine("\tDrive can read DVD-ROM");
+            if (page.ReadDVDR)
+            {
+                if (page.WriteDVDR)
+                    sb.AppendLine("\tDrive can read and write DVD-R");
+                else
+                    sb.AppendLine("\tDrive can read DVD-R");
+            }
+            if (page.ReadDVDRAM)
+            {
+                if (page.WriteDVDRAM)
+                    sb.AppendLine("\tDrive can read and write DVD-RAM");
+                else
+                    sb.AppendLine("\tDrive can read DVD-RAM");
+            }
+
             if (page.Composite)
                 sb.AppendLine("\tDrive can deliver a compositve audio and video data stream");
             if (page.DigitalPort1)
@@ -4303,6 +4345,14 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.ReadBarcode)
                 sb.AppendLine("\tDrive can read barcode");
+
+            if (page.SCC)
+                sb.AppendLine("\tDrive can read both sides of a disc");
+            if (page.LeadInPW)
+                sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
+
+            if (page.CMRSupported == 1)
+                sb.AppendLine("\tDrive supports DVD CSS");
 
             return sb.ToString();
         }
