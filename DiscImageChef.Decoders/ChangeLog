@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented Mode Page 0x0F: Data compression page.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added information from USB Mass Storage Class - UFI Command
 	  Specification
 
