@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Solved some bugs found testing on usb flash sticks.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added MODE SENSE to device information.
 
 2015-10-24  Natalia Portillo  <claunia@claunia.com>

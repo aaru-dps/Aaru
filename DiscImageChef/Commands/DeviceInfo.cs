@@ -199,24 +199,25 @@ namespace DiscImageChef.Commands
                         Decoders.SCSI.PeripheralDeviceTypes devType = (DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
                         sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, dev.Timeout, out duration);
-                        if (sense)
+                        if (sense || dev.Error)
                         {
                             sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
                         }
 
-                        if (!sense)
+                        if (!sense && !dev.Error)
                         {
                             decMode = Decoders.SCSI.Modes.DecodeMode10(modeBuf, devType);
                         }
-                        else
+
+                        if(sense || dev.Error || !decMode.HasValue)
                         {
                             sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
-                            if(sense)
+                            if (sense || dev.Error)
                                 sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
-                            if(sense)
+                            if (sense || dev.Error)
                                 sense = dev.ModeSense(out modeBuf, out senseBuf, 15000, out duration);
 
-                            if(!sense)
+                            if (!sense && !dev.Error)
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
                         }
 

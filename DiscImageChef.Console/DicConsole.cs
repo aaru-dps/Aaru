@@ -160,25 +160,25 @@ namespace DiscImageChef.Console
         public static void WriteLine(string format)
         {
             if (WriteLineEvent != null)
-                WriteLineEvent(format, null);
+                WriteLineEvent("{0}", format);
         }
 
         public static void ErrorWriteLine(string format)
         {
             if (ErrorWriteLineEvent != null)
-                ErrorWriteLineEvent(format, null);
+                ErrorWriteLineEvent("{0}", format);
         }
 
         public static void VerboseWriteLine(string format)
         {
             if (VerboseWriteLineEvent != null)
-                VerboseWriteLineEvent(format, null);
+                VerboseWriteLineEvent("{0}", format);
         }
 
         public static void DebugWriteLine(string module, string format)
         {
             if (DebugWriteLineEvent != null)
-                DebugWriteLineEvent("DEBUG (" + module + "): " + format, null);
+                DebugWriteLineEvent("{0}", "DEBUG (" + module + "): " + format);
         }
 
     }

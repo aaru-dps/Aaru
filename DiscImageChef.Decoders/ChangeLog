@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Solved some bugs found testing on usb flash sticks.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Polished some bugs and typos and format
 
 2015-10-31  Natalia Portillo  <claunia@claunia.com>

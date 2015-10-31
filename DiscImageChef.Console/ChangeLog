@@ -1,3 +1,8 @@
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* DicConsole.cs:
+	  Solved some bugs found testing on usb flash sticks.
+
 2015-10-19  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Console.csproj:
