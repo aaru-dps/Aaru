@@ -357,7 +357,7 @@ namespace DiscImageChef.Devices
             if (sense)
                 return true;
 
-            ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1]);
+            ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
             buffer = new byte[modeLength];
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);

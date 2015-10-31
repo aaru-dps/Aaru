@@ -1,3 +1,8 @@
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
+	  Corrected math typo.
+
 2015-10-24  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

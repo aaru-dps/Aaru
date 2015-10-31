@@ -139,7 +139,8 @@ namespace DiscImageChef.Commands
                         if (dev.Type != DeviceType.ATAPI)
                             DicConsole.WriteLine("SCSI device");
 
-                        DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inqBuf));
+                        Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(inqBuf);
+                        DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
 
                         bool scsi83 = false;
                         string scsiSerial = null;
@@ -151,31 +152,34 @@ namespace DiscImageChef.Commands
                         {
                             byte[] pages = Decoders.SCSI.EVPD.DecodePage00(inqBuf);
 
-                            foreach (byte page in pages)
+                            if (pages != null)
                             {
-                                if (page >= 0x01 && page <= 0x7F)
+                                foreach (byte page in pages)
                                 {
-                                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if (!sense)
+                                    if (page >= 0x01 && page <= 0x7F)
                                     {
-                                        if (sb == null)
-                                            sb = new StringBuilder();
-                                        sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if (!sense)
+                                        {
+                                            if (sb == null)
+                                                sb = new StringBuilder();
+                                            sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                        }
                                     }
-                                }
-                                else if (page == 0x80)
-                                {
-                                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                    if (!sense)
+                                    else if (page == 0x80)
                                     {
-                                        scsi83 = true;
-                                        scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if (!sense)
+                                        {
+                                            scsi83 = true;
+                                            scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    if (page != 0x00)
-                                        DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                                    else
+                                    {
+                                        if (page != 0x00)
+                                            DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+                                    }
                                 }
                             }
                         }
@@ -187,6 +191,258 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine("ASCII VPDs:");
                             DicConsole.WriteLine(sb.ToString());
+                        }
+
+                        byte[] modeBuf;
+                        double duration;
+                        Decoders.SCSI.Modes.DecodedMode? decMode = null;
+                        Decoders.SCSI.PeripheralDeviceTypes devType = (DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
+
+                        sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, dev.Timeout, out duration);
+                        if (sense)
+                        {
+                            sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                        }
+
+                        if (!sense)
+                        {
+                            decMode = Decoders.SCSI.Modes.DecodeMode10(modeBuf, devType);
+                        }
+                        else
+                        {
+                            sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                            if(sense)
+                                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                            if(sense)
+                                sense = dev.ModeSense(out modeBuf, out senseBuf, 15000, out duration);
+
+                            if(!sense)
+                                decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
+                        }
+
+                        if (decMode.HasValue)
+                        {
+                            DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModeHeader(decMode.Value.Header, devType));
+
+                            if (decMode.Value.Pages != null)
+                            {
+                                foreach (Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
+                                {
+                                    //DicConsole.WriteLine("Page {0:X2}h subpage {1:X2}h is {2} bytes long", page.Page, page.Subpage, page.PageResponse.Length);
+                                    switch (page.Page)
+                                    {
+                                        case 0x00:
+                                            {
+                                                if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_00_SFF(page.PageResponse));
+                                                else
+                                                {
+                                                    if (page.Subpage != 0)
+                                                        DicConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h", page.Page, page.Subpage);
+                                                    else
+                                                        DicConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
+                                                }
+                                                break;
+                                            }
+                                        case 0x01:
+                                            {
+                                                if (page.Subpage == 0)
+                                                {
+                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01_MMC(page.PageResponse));
+                                                    else
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01(page.PageResponse));
+                                                }
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x02:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_02(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x03:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_03(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x04:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_04(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x05:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_05(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x06:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_06(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x07:
+                                            {
+                                                if (page.Subpage == 0)
+                                                {
+                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07_MMC(page.PageResponse));
+                                                    else
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07(page.PageResponse));
+                                                }
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x08:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_08(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x0A:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0A(page.PageResponse));
+                                                else if (page.Subpage == 1)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0A_S01(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x0B:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0B(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x0D:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0D(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x0E:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0E(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x0F:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0F(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x10:
+                                            {
+                                                if (page.Subpage == 0)
+                                                {
+                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10_SSC(page.PageResponse));
+                                                    else
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10(page.PageResponse));
+                                                }
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x1A:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1A(page.PageResponse));
+                                                else if (page.Subpage == 1)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1A_S01(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x1B:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1B(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x1C:
+                                            {
+                                                if (page.Subpage == 0)
+                                                {
+                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_SFF(page.PageResponse));
+                                                    else
+                                                        DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C(page.PageResponse));
+                                                }
+                                                else if (page.Subpage == 1)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_S01(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x2A:
+                                            {
+                                                if (page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_2A(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                if (page.Subpage != 0)
+                                                    DicConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h", page.Page, page.Subpage);
+                                                else
+                                                    DicConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
+                                                break;
+                                            }
+                                    }
+                                }
+                            }
                         }
 
                         break;

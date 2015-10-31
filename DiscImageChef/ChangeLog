@@ -1,3 +1,8 @@
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Added MODE SENSE to device information.
+
 2015-10-24  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.csproj:
