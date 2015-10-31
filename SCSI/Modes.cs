@@ -274,8 +274,19 @@ namespace DiscImageChef.Decoders.SCSI
             /// <summary>
             /// Tray closed or caddy inserted but medium error
             /// </summary>
-            MediumError = 0x72
+            MediumError = 0x72,
             #endregion Medium Types defined in SFF-8020i
+
+            #region Medium Types defined in USB Mass Storage Class - UFI Command Specification
+            /// <summary>
+            /// 3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)
+            /// </summary>
+            Type3Floppy = 0x93,
+            /// <summary>
+            /// 3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)
+            /// </summary>
+            HDFloppy = 0x94
+            #endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
         }
 
         public enum DensityType : byte
@@ -590,6 +601,12 @@ namespace DiscImageChef.Decoders.SCSI
                                     break;
                                 case MediumTypes.Tape24:
                                     sb.AppendLine("6,3 mm tape with 24 tracks at 394 ftpmm");
+                                    break;
+                                case MediumTypes.Type3Floppy:
+                                    sb.AppendLine("3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)");
+                                    break;
+                                case MediumTypes.HDFloppy:
+                                    sb.AppendLine("3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)");
                                     break;
                                 default:
                                     sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();

@@ -1,6 +1,12 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Added information from USB Mass Storage Class - UFI Command
+	  Specification
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implemented Mode Page 0x1C subpage 0x01: Background Control
 	  mode page.
 
