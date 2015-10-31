@@ -2875,7 +2875,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Device configuration page
         /// Page code 0x10
-        /// 16 bytes in SCSI-2, SSC-1
+        /// 16 bytes in SCSI-2, SSC-1, SSC-2
         /// </summary>
         public struct ModePage_10_SSC
         {
@@ -2980,6 +2980,10 @@ namespace DiscImageChef.Decoders.SCSI
             /// Permanent write protect
             /// </summary>
             public bool PRMWP;
+
+            public bool BAML;
+            public bool BAM;
+            public byte RewindOnReset;
         }
 
         public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
@@ -3025,6 +3029,11 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.ASOCWP |= (pageResponse[15] & 0x04) == 0x04;
             decoded.PERSWP |= (pageResponse[15] & 0x02) == 0x02;
             decoded.PRMWP |= (pageResponse[15] & 0x01) == 0x01;
+
+            decoded.BAML |= (pageResponse[10] & 0x02) == 0x02;
+            decoded.BAM |= (pageResponse[10] & 0x01) == 0x01;
+
+            decoded.RewindOnReset = (byte)((pageResponse[15] & 0x18) >> 3);
 
             return decoded;
         }
@@ -3139,6 +3148,24 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tPersistent write protect is enabled");
             if (page.PRMWP)
                 sb.AppendLine("\tPermanent write protect is enabled");
+
+            if(page.BAML)
+            {
+                if (page.BAM)
+                    sb.AppendLine("\tDrive operates using explicit address mode");
+                else
+                    sb.AppendLine("\tDrive operates using implicit address mode");
+            }
+
+            switch (page.RewindOnReset)
+            {
+                case 1:
+                    sb.AppendLine("\tDrive shall position to beginning of default data partition on reset");
+                    break;
+                case 2:
+                    sb.AppendLine("\tDrive shall maintain its position on reset");
+                    break;
+            }
 
             return sb.ToString();
         }
@@ -4988,7 +5015,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Data compression page
         /// Page code 0x0F
-        /// 16 bytes in SSC-1
+        /// 16 bytes in SSC-1, SSC-2
         /// </summary>
         public struct ModePage_0F
         {
