@@ -1632,7 +1632,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Disconnect-reconnect page
         /// Page code 0x08
         /// 12 bytes in SCSI-2
-        /// 20 bytes in SBC-1
+        /// 20 bytes in SBC-1, SBC-2
         /// </summary>
         public struct ModePage_08
         {
@@ -1721,6 +1721,8 @@ namespace DiscImageChef.Decoders.SCSI
             /// How many bytes should be used as a buffer when all other cached data cannot be evicted
             /// </summary>
             public uint NonCacheSegmentSize;
+
+            public bool NV_DIS;
         }
 
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
@@ -1770,6 +1772,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.CacheSegments = pageResponse[13];
             decoded.CacheSegmentSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
             decoded.NonCacheSegmentSize = (uint)((pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
+
+            decoded.NV_DIS |= (pageResponse[12] & 0x01) == 0x01;
 
             return decoded;
         }
@@ -1880,6 +1884,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.NonCacheSegmentSize > 0)
                 sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted", page.NonCacheSegmentSize).AppendLine();
+
+            if (page.NV_DIS)
+                sb.AppendLine("\tNon-Volatile cache is disabled");
 
             return sb.ToString();
         }
@@ -2441,7 +2448,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x01
-        /// 12 bytes in SCSI-2, SBC-1
+        /// 12 bytes in SCSI-2, SBC-1, SBC-2
         /// </summary>
         public struct ModePage_01
         {
@@ -2734,7 +2741,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x07
-        /// 12 bytes in SCSI-2, SBC-1
+        /// 12 bytes in SCSI-2, SBC-1, SBC-2
         /// </summary>
         public struct ModePage_07
         {
@@ -4698,7 +4705,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// XOR control mode page
         /// Page code 0x10
-        /// 24 bytes in SBC-1
+        /// 24 bytes in SBC-1, SBC-2
         /// </summary>
         public struct ModePage_10
         {

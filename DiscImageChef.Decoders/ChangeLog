@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Added information from SBC-2.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Implemented decoding mode page 10h for direct-access
 	  devices.
 
