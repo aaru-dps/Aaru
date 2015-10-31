@@ -4081,6 +4081,8 @@ namespace DiscImageChef.Decoders.SCSI
             public bool TestWrite;
             public ushort MaxWriteSpeed;
             public ushort CurrentWriteSpeed;
+
+            public bool ReadBarcode;
         }
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
@@ -4159,6 +4161,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.TestWrite |= (pageResponse[3] & 0x04) == 0x04;
             decoded.MaxWriteSpeed = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
             decoded.CurrentWriteSpeed = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
+
+            decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
 
             return decoded;
         }
@@ -4296,6 +4300,9 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
             if (page.TestWrite)
                 sb.AppendLine("\tDrive supports test writing");
+
+            if (page.ReadBarcode)
+                sb.AppendLine("\tDrive can read barcode");
 
             return sb.ToString();
         }
