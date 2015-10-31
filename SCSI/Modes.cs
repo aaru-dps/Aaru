@@ -4808,6 +4808,133 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x10: XOR control mode page
+
+        #region Mode Page 0x1C subpage 0x01: Background Control mode page
+        /// <summary>
+        /// Background Control mode page
+        /// Page code 0x1A
+        /// Subpage code 0x01
+        /// 16 bytes in SPC-5
+        /// </summary>
+        public struct ModePage_1C_S01
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Suspend on log full
+            /// </summary>
+            public bool S_L_Full;
+            /// <summary>
+            /// Log only when intervention required
+            /// </summary>
+            public bool LOWIR;
+            /// <summary>
+            /// Enable background medium scan
+            /// </summary>
+            public bool En_Bms;
+            /// <summary>
+            /// Enable background pre-scan
+            /// </summary>
+            public bool En_Ps;
+            /// <summary>
+            /// Time in hours between background medium scans
+            /// </summary>
+            public ushort BackgroundScanInterval;
+            /// <summary>
+            /// Maximum time in hours for a background pre-scan to complete
+            /// </summary>
+            public ushort BackgroundPrescanTimeLimit;
+            /// <summary>
+            /// Minimum time in ms being idle before resuming a background scan
+            /// </summary>
+            public ushort MinIdleBeforeBgScan;
+            /// <summary>
+            /// Maximum time in ms to start processing commands while performing a background scan
+            /// </summary>
+            public ushort MaxTimeSuspendBgScan;
+        }
+
+        public static ModePage_1C_S01? DecodeModePage_1C_S01(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) != 0x40)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x1C)
+                return null;
+
+            if (pageResponse[1] != 0x01)
+                return null;
+
+            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 16)
+                return null;
+
+            ModePage_1C_S01 decoded = new ModePage_1C_S01();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.S_L_Full |= (pageResponse[4] & 0x04) == 0x04;
+            decoded.LOWIR |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.En_Bms |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.En_Ps |= (pageResponse[5] & 0x01) == 0x01;
+
+            decoded.BackgroundScanInterval = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.BackgroundPrescanTimeLimit = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
+            decoded.MinIdleBeforeBgScan = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.MaxTimeSuspendBgScan = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_1C_S01(byte[] pageResponse)
+        {
+            return PrettifyModePage_1C_S01(DecodeModePage_1C_S01(pageResponse));
+        }
+
+        public static string PrettifyModePage_1C_S01(ModePage_1C_S01? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_1C_S01 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Background Control page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.S_L_Full)
+                sb.AppendLine("\tBackground scans will be halted if log is full");
+            if (page.LOWIR)
+                sb.AppendLine("\tBackground scans will only be logged if they require intervention");
+            if (page.En_Bms)
+                sb.AppendLine("\tBackground medium scans are enabled");
+            if (page.En_Ps)
+                sb.AppendLine("\tBackground pre-scans are enabled");
+
+            if (page.BackgroundScanInterval > 0)
+                sb.AppendFormat("\t{0} hours shall be between the start of a background scan operation and the next", page.BackgroundScanInterval).AppendLine();
+
+            if (page.BackgroundPrescanTimeLimit > 0)
+                sb.AppendFormat("\tBackgroun pre-scan operations can take a maximum of {0} hours", page.BackgroundPrescanTimeLimit).AppendLine();
+
+            if (page.MinIdleBeforeBgScan > 0)
+                sb.AppendFormat("\tAt least {0} ms must be idle before resuming a suspended background scan operation", page.MinIdleBeforeBgScan).AppendLine();
+
+            if (page.MaxTimeSuspendBgScan > 0)
+                sb.AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands", page.MaxTimeSuspendBgScan).AppendLine();
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x1C subpage 0x01: Background Control mode page
     }
 }
 
