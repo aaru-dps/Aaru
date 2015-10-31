@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented decoding MODE SENSE.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added LongLBA MODE SENSE(10) support.
 
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
