@@ -3224,7 +3224,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// CD-ROM audio control parameters
         /// Page code 0x0E
-        /// 16 bytes in SCSI-2, MMC-1
+        /// 16 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
         /// </summary>
         public struct ModePage_0E
         {
@@ -3470,7 +3470,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// CD-ROM parameteres page
         /// Page code 0x0D
-        /// 8 bytes in SCSI-2, MMC-1
+        /// 8 bytes in SCSI-2, MMC-1, MMC-2, MMC-3
         /// </summary>
         public struct ModePage_0D
         {
@@ -3602,6 +3602,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Read error recovery page for MultiMedia Devices
         /// Page code 0x01
         /// 8 bytes in SCSI-2, MMC-1
+        /// 12 bytes in MMC-2, MMC-3
         /// </summary>
         public struct ModePage_01_MMC
         {
@@ -3617,6 +3618,14 @@ namespace DiscImageChef.Decoders.SCSI
             /// How many times to retry a read operation
             /// </summary>
             public byte ReadRetryCount;
+            /// <summary>
+            /// How many times to retry a write operation
+            /// </summary>
+            public byte WriteRetryCount;
+            /// <summary>
+            /// Maximum time in ms to use in data error recovery procedures
+            /// </summary>
+            public ushort RecoveryTimeLimit;
         }
 
         public static ModePage_01_MMC? DecodeModePage_01_MMC(byte[] pageResponse)
@@ -3641,6 +3650,12 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
             decoded.Parameter = pageResponse[2];
             decoded.ReadRetryCount = pageResponse[3];
+
+            if (pageResponse.Length < 12)
+                return decoded;
+
+            decoded.WriteRetryCount = pageResponse[8];
+            decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
         }
@@ -3741,6 +3756,11 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
+            if (page.WriteRetryCount > 0)
+                sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
+            if (page.RecoveryTimeLimit > 0)
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
+            
             return sb.ToString();
         }
         #endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
@@ -3968,6 +3988,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// 20 bytes in SFF-8020i
         /// 22 bytes in MMC-1
         /// 26 bytes in MMC-2
+        /// Variable bytes in MMC-3
         /// </summary>
         public struct ModePage_2A
         {
@@ -4093,6 +4114,17 @@ namespace DiscImageChef.Decoders.SCSI
             public bool LeadInPW;
             public bool SCC;
             public ushort CMRSupported;
+
+            public bool BUF;
+            public byte RotationControlSelected;
+            public ushort CurrentWriteSpeedSelected;
+            public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
+        }
+
+        public struct ModePage_2A_WriteDescriptor
+        {
+            public byte RotationControl;
+            public ushort WriteSpeed;
         }
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
@@ -4188,6 +4220,23 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.SCC |= (pageResponse[3] & 0x10) == 0x10;
 
             decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
+
+            if (pageResponse.Length < 32)
+                return decoded;
+
+            decoded.BUF |= (pageResponse[4] & 0x80) == 0x80;
+            decoded.RotationControlSelected = (byte)(pageResponse[27] & 0x03);
+            decoded.CurrentWriteSpeedSelected = (ushort)((pageResponse[28] << 8) + pageResponse[29]);
+
+            ushort descriptors = (ushort)((pageResponse[30] << 8) + pageResponse[31]);
+            decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
+
+            for (int i = 0; i < descriptors; i++)
+            {
+                decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor();
+                decoded.WriteSpeedPerformanceDescriptors[i].RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07);
+                decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4]);
+            }
 
             return decoded;
         }
@@ -4335,11 +4384,32 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.SDP)
                 sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
+            if (page.CurrentWriteSpeedSelected > 0)
+            {
+                if (page.RotationControlSelected == 0)
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode", page.CurrentWriteSpeedSelected).AppendLine();
+                else if (page.RotationControlSelected == 1)
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode", page.CurrentWriteSpeedSelected).AppendLine();
+            }
+            else
+            {
+                if (page.MaxWriteSpeed > 0)
+                    sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
+                if (page.CurrentWriteSpeed > 0)
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
+            }
 
-            if (page.MaxWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
-            if (page.CurrentWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
+            foreach (ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
+            {
+                if (descriptor.WriteSpeed > 0)
+                {
+                    if (descriptor.RotationControl == 0)
+                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).AppendLine();
+                    else if (descriptor.RotationControl == 1)
+                        sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode", descriptor.WriteSpeed).AppendLine();
+                }
+            }
+
             if (page.TestWrite)
                 sb.AppendLine("\tDrive supports test writing");
 
@@ -4352,7 +4422,10 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
 
             if (page.CMRSupported == 1)
-                sb.AppendLine("\tDrive supports DVD CSS");
+                sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
+
+            if (page.BUF)
+                sb.AppendLine("\tDrive supports buffer under-run free recording");
 
             return sb.ToString();
         }
