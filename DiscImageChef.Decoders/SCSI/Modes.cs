@@ -5217,6 +5217,96 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x0F: Data compression page
+
+        #region Mode Page 0x1B: Removable Block Access Capabilities page
+        /// <summary>
+        /// Removable Block Access Capabilities page
+        /// Page code 0x1B
+        /// 12 bytes in INF-8070
+        /// </summary>
+        public struct ModePage_1B
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Supports reporting progress of format
+            /// </summary>
+            public bool SRFP;
+            /// <summary>
+            /// Non-CD Optical Device
+            /// </summary>
+            public bool NCD;
+            /// <summary>
+            /// Phase change dual device supporting a CD and a Non-CD Optical devices
+            /// </summary>
+            public bool SML;
+            /// <summary>
+            /// Total number of LUNs
+            /// </summary>
+            public byte TLUN;
+        }
+
+        public static ModePage_1B? DecodeModePage_1B(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x1B)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 12)
+                return null;
+
+            ModePage_1B decoded = new ModePage_1B();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.SRFP |= (pageResponse[2] & 0x40) == 0x40;
+            decoded.NCD |= (pageResponse[3] & 0x80) == 0x80;
+            decoded.SML |= (pageResponse[3] & 0x40) == 0x40;
+
+            decoded.TLUN = (byte)(pageResponse[3] & 0x07);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_1B(byte[] pageResponse)
+        {
+            return PrettifyModePage_1B(DecodeModePage_1B(pageResponse));
+        }
+
+        public static string PrettifyModePage_1B(ModePage_1B? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_1B page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Removable Block Access Capabilities page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.SRFP)
+                sb.AppendLine("\tDrive supports reporting progress of format");
+            if (page.NCD)
+                sb.AppendLine("\tDrive is a Non-CD Optical Device");
+            if (page.SML)
+                sb.AppendLine("\tDevice is a dual device supporting CD and Non-CD Optical");
+            if (page.TLUN > 0)
+                sb.AppendFormat("\tDrive supports {0} LUNs", page.TLUN).AppendLine();
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x1B: Removable Block Access Capabilities page
     }
 }
 
