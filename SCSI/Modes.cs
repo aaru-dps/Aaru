@@ -172,6 +172,7 @@ namespace DiscImageChef.Decoders.SCSI
             #endregion Medium Types defined in SCSI-2 for MultiMedia devices
 
             #region Medium Types defined in SFF-8020i
+
             /// <summary>
             /// Unknown medium type
             /// </summary>
@@ -279,6 +280,7 @@ namespace DiscImageChef.Decoders.SCSI
             #endregion Medium Types defined in SFF-8020i
 
             #region Medium Types defined in USB Mass Storage Class - UFI Command Specification
+
             /// <summary>
             /// 3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)
             /// </summary>
@@ -290,6 +292,7 @@ namespace DiscImageChef.Decoders.SCSI
             #endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
 
             #region Medium Types defined in INF-8070
+
             /// <summary>
             /// Unknown type block device
             /// </summary>
@@ -302,6 +305,7 @@ namespace DiscImageChef.Decoders.SCSI
             /// Read/Write block device
             /// </summary>
             ReadWriteBlockDevice = 0x42
+
             #endregion Medium Types defined in INF-8070
         }
 
@@ -561,7 +565,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("SCSI Mode Page 0:");
+            sb.AppendLine("SCSI Mode Sense Header:");
 
             switch (deviceType)
             {
@@ -569,7 +573,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         if (header.Value.MediumType != MediumTypes.Default)
                         {
-                            sb.Append("Medium is ");
+                            sb.Append("\tMedium is ");
 
                             switch (header.Value.MediumType)
                             {
@@ -631,45 +635,48 @@ namespace DiscImageChef.Decoders.SCSI
                         }
 
                         if (header.Value.WriteProtected)
-                            sb.AppendLine("Medium is write protected");
+                            sb.AppendLine("\tMedium is write protected");
 
                         if (header.Value.DPOFUA)
-                            sb.AppendLine("Drive supports DPO and FUA bits");
+                            sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        if (header.Value.BlockDescriptors != null)
                         {
-                            string density = "";
-                            switch (descriptor.Density)
+                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
-                                case DensityType.Default:
-                                    break;
-                                case DensityType.Flux7958:
-                                    density = "7958 flux transitions per radian";
-                                    break;
-                                case DensityType.Flux13262:
-                                    density = "13262 flux transitions per radian";
-                                    break;
-                                case DensityType.Flux15916:
-                                    density = "15916 flux transitions per radian";
-                                    break;
-                                default:
-                                    density = String.Format("with unknown density code 0x{0:X2}", descriptor.Density);
-                                    break;
-                            }
+                                string density = "";
+                                switch (descriptor.Density)
+                                {
+                                    case DensityType.Default:
+                                        break;
+                                    case DensityType.Flux7958:
+                                        density = "7958 flux transitions per radian";
+                                        break;
+                                    case DensityType.Flux13262:
+                                        density = "13262 flux transitions per radian";
+                                        break;
+                                    case DensityType.Flux15916:
+                                        density = "15916 flux transitions per radian";
+                                        break;
+                                    default:
+                                        density = String.Format("with unknown density code 0x{0:X2}", descriptor.Density);
+                                        break;
+                                }
 
-                            if (density != "")
-                            {
-                                if (descriptor.Blocks == 0)
-                                    sb.AppendFormat("All remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                if (density != "")
+                                {
+                                    if (descriptor.Blocks == 0)
+                                        sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                }
                                 else
-                                    sb.AppendFormat("{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                            }
-                            else
-                            {
-                                if (descriptor.Blocks == 0)
-                                    sb.AppendFormat("All remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                else
-                                    sb.AppendFormat("{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                {
+                                    if (descriptor.Blocks == 0)
+                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                }
                             }
                         }
 
@@ -680,137 +687,140 @@ namespace DiscImageChef.Decoders.SCSI
                         switch (header.Value.BufferedMode)
                         {
                             case 0:
-                                sb.AppendLine("Device writes directly to media");
+                                sb.AppendLine("\tDevice writes directly to media");
                                 break;
                             case 1:
-                                sb.AppendLine("Device uses a write cache");
+                                sb.AppendLine("\tDevice uses a write cache");
                                 break;
                             case 2:
-                                sb.AppendLine("Device uses a write cache but doesn't return until cache is flushed");
+                                sb.AppendLine("\tDevice uses a write cache but doesn't return until cache is flushed");
                                 break;
                             default:
-                                sb.AppendFormat("Unknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
+                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
                                 break;
                         }
 
                         if (header.Value.Speed == 0)
-                            sb.AppendLine("Device uses default speed");
+                            sb.AppendLine("\tDevice uses default speed");
                         else
-                            sb.AppendFormat("Device uses speed {0}", header.Value.Speed).AppendLine();
+                            sb.AppendFormat("\tDevice uses speed {0}", header.Value.Speed).AppendLine();
 
                         if (header.Value.WriteProtected)
-                            sb.AppendLine("Medium is write protected");
+                            sb.AppendLine("\tMedium is write protected");
 
-                        foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        if (header.Value.BlockDescriptors != null)
                         {
-                            string density = "";
-                            switch (descriptor.Density)
+                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
-                                case DensityType.Default:
-                                    break;
-                                case DensityType.ECMA62:
-                                    density = "ECMA-62 & ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm";
-                                    break;
-                                case DensityType.ECMA62_Phase:
-                                    density = "ECMA-62 & ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm";
-                                    break;
-                                case DensityType.ECMA62_GCR:
-                                    density = "ECMA-62 & ANSI X3.54-1986: 12,7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR";
-                                    break;
-                                case DensityType.ECMA79:
-                                    density = "ECMA-79 & ANSI X3.116-1986: 6,30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM";
-                                    break;
-                                case DensityType.ECMADraft:
-                                    density = "Draft ECMA & ANSI X3B5/87-099: 12,7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR";
-                                    break;
-                                case DensityType.ECMA46:
-                                    density = "ECMA-46 & ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm";
-                                    break;
-                                case DensityType.ECMA98:
-                                    density = "ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm";
-                                    break;
-                                case DensityType.X3_136:
-                                    density = "ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR";
-                                    break;
-                                case DensityType.X3_157:
-                                    density = "ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
-                                    break;
-                                case DensityType.X3_158:
-                                    density = "ANXI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
-                                    break;
-                                case DensityType.X3B5_86:
-                                    density = "ANXI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
-                                    break;
-                                case DensityType.HiTC1:
-                                    density = "HI-TC1: 12,7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR";
-                                    break;
-                                case DensityType.HiTC2:
-                                    density = "HI-TC2: 12,7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR";
-                                    break;
-                                case DensityType.QIC120:
-                                    density = "QIC-120: 6,3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
-                                    break;
-                                case DensityType.QIC150:
-                                    density = "QIC-150: 6,3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
-                                    break;
-                                case DensityType.QIC320:
-                                    density = "QIC-320: 6,3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR";
-                                    break;
-                                case DensityType.QIC1350:
-                                    density = "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
-                                    break;
-                                case DensityType.X3B5_88:
-                                    density = "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
-                                    break;
-                                case DensityType.X3_202:
-                                    density = "ANXI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
-                                    break;
-                                case DensityType.ECMA_TC17:
-                                    density = "ECMA TC17: 8 mm Magnetic Tape Cassette, 1789 bpmm, RLL";
-                                    break;
-                                case DensityType.X3_193:
-                                    density = "ANXI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
-                                    break;
-                                case DensityType.X3B5_91:
-                                    density = "ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
-                                    break;
-                                default:
-                                    density = String.Format("Unknown density code 0x{0:X2}", descriptor.Density);
-                                    break;
-                            }
+                                string density = "";
+                                switch (descriptor.Density)
+                                {
+                                    case DensityType.Default:
+                                        break;
+                                    case DensityType.ECMA62:
+                                        density = "ECMA-62 & ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm";
+                                        break;
+                                    case DensityType.ECMA62_Phase:
+                                        density = "ECMA-62 & ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm";
+                                        break;
+                                    case DensityType.ECMA62_GCR:
+                                        density = "ECMA-62 & ANSI X3.54-1986: 12,7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR";
+                                        break;
+                                    case DensityType.ECMA79:
+                                        density = "ECMA-79 & ANSI X3.116-1986: 6,30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM";
+                                        break;
+                                    case DensityType.ECMADraft:
+                                        density = "Draft ECMA & ANSI X3B5/87-099: 12,7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR";
+                                        break;
+                                    case DensityType.ECMA46:
+                                        density = "ECMA-46 & ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm";
+                                        break;
+                                    case DensityType.ECMA98:
+                                        density = "ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm";
+                                        break;
+                                    case DensityType.X3_136:
+                                        density = "ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR";
+                                        break;
+                                    case DensityType.X3_157:
+                                        density = "ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
+                                        break;
+                                    case DensityType.X3_158:
+                                        density = "ANXI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
+                                        break;
+                                    case DensityType.X3B5_86:
+                                        density = "ANXI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
+                                        break;
+                                    case DensityType.HiTC1:
+                                        density = "HI-TC1: 12,7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR";
+                                        break;
+                                    case DensityType.HiTC2:
+                                        density = "HI-TC2: 12,7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR";
+                                        break;
+                                    case DensityType.QIC120:
+                                        density = "QIC-120: 6,3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
+                                        break;
+                                    case DensityType.QIC150:
+                                        density = "QIC-150: 6,3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR";
+                                        break;
+                                    case DensityType.QIC320:
+                                        density = "QIC-320: 6,3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR";
+                                        break;
+                                    case DensityType.QIC1350:
+                                        density = "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
+                                        break;
+                                    case DensityType.X3B5_88:
+                                        density = "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
+                                        break;
+                                    case DensityType.X3_202:
+                                        density = "ANXI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
+                                        break;
+                                    case DensityType.ECMA_TC17:
+                                        density = "ECMA TC17: 8 mm Magnetic Tape Cassette, 1789 bpmm, RLL";
+                                        break;
+                                    case DensityType.X3_193:
+                                        density = "ANXI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
+                                        break;
+                                    case DensityType.X3B5_91:
+                                        density = "ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
+                                        break;
+                                    default:
+                                        density = String.Format("Unknown density code 0x{0:X2}", descriptor.Density);
+                                        break;
+                                }
 
-                            if (density != "")
-                            {
-                                if (descriptor.Blocks == 0)
+                                if (density != "")
                                 {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("All remaining blocks conform to {0} and have a variable length", density).AppendLine();
+                                    if (descriptor.Blocks == 0)
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\tAll remaining blocks conform to {0} and have a variable length", density).AppendLine();
+                                        else
+                                            sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    }
                                     else
-                                        sb.AppendFormat("All remaining blocks conform to {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length", descriptor.Blocks, density).AppendLine();
+                                        else
+                                            sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                    }
                                 }
                                 else
                                 {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("{0} blocks conform to {1} and have a variable length", descriptor.Blocks, density).AppendLine();
+                                    if (descriptor.Blocks == 0)
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                        else
+                                            sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
+                                    }
                                     else
-                                        sb.AppendFormat("{0} blocks conform to {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                                }
-                            }
-                            else
-                            {
-                                if (descriptor.Blocks == 0)
-                                {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("All remaining blocks have a variable length").AppendLine();
-                                    else
-                                        sb.AppendFormat("All remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                }
-                                else
-                                {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("{0} blocks have a variable length", descriptor.Blocks).AppendLine();
-                                    else
-                                        sb.AppendFormat("{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
+                                        else
+                                            sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                    }
                                 }
                             }
                         }
@@ -822,13 +832,13 @@ namespace DiscImageChef.Decoders.SCSI
                         switch (header.Value.BufferedMode)
                         {
                             case 0:
-                                sb.AppendLine("Device prints directly");
+                                sb.AppendLine("\tDevice prints directly");
                                 break;
                             case 1:
-                                sb.AppendLine("Device uses a print cache");
+                                sb.AppendLine("\tDevice uses a print cache");
                                 break;
                             default:
-                                sb.AppendFormat("Unknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
+                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
                                 break;
                         }
                         break;
@@ -837,7 +847,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         if (header.Value.MediumType != MediumTypes.Default)
                         {
-                            sb.Append("Medium is ");
+                            sb.Append("\tMedium is ");
 
                             switch (header.Value.MediumType)
                             {
@@ -866,83 +876,86 @@ namespace DiscImageChef.Decoders.SCSI
                         }
 
                         if (header.Value.WriteProtected)
-                            sb.AppendLine("Medium is write protected");
+                            sb.AppendLine("\tMedium is write protected");
                         if (header.Value.EBC)
-                            sb.AppendLine("Blank checking during write is enabled");
+                            sb.AppendLine("\tBlank checking during write is enabled");
                         if (header.Value.DPOFUA)
-                            sb.AppendLine("Drive supports DPO and FUA bits");
+                            sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        if (header.Value.BlockDescriptors != null)
                         {
-                            string density = "";
-                            switch (descriptor.Density)
+                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
-                                case DensityType.Default:
-                                    break;
-                                case DensityType.ISO10090:
-                                    density = "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
-                                    break;
-                                case DensityType.D581:
-                                    density = "89 mm Read/Write double-sided optical disc with 12500 tracks";
-                                    break;
-                                case DensityType.X3_212:
-                                    density = "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
-                                    break;
-                                case DensityType.X3_191:
-                                    density = "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
-                                    break;
-                                case DensityType.X3_214:
-                                    density = "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
-                                    break;
-                                case DensityType.X3_211:
-                                    density = "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
-                                    break;
-                                case DensityType.D407:
-                                    density = "200 mm optical disc";
-                                    break;
-                                case DensityType.ISO13614:
-                                    density = "ISO/IEC 13614: 300 mm double-sided optical disc";
-                                    break;
-                                case DensityType.X3_200:
-                                    density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
-                                    break;
-                                default:
-                                    density = String.Format("Unknown density code 0x{0:X2}", descriptor.Density);
-                                    break;
-                            }
+                                string density = "";
+                                switch (descriptor.Density)
+                                {
+                                    case DensityType.Default:
+                                        break;
+                                    case DensityType.ISO10090:
+                                        density = "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
+                                        break;
+                                    case DensityType.D581:
+                                        density = "89 mm Read/Write double-sided optical disc with 12500 tracks";
+                                        break;
+                                    case DensityType.X3_212:
+                                        density = "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
+                                        break;
+                                    case DensityType.X3_191:
+                                        density = "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
+                                        break;
+                                    case DensityType.X3_214:
+                                        density = "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
+                                        break;
+                                    case DensityType.X3_211:
+                                        density = "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
+                                        break;
+                                    case DensityType.D407:
+                                        density = "200 mm optical disc";
+                                        break;
+                                    case DensityType.ISO13614:
+                                        density = "ISO/IEC 13614: 300 mm double-sided optical disc";
+                                        break;
+                                    case DensityType.X3_200:
+                                        density = "ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks";
+                                        break;
+                                    default:
+                                        density = String.Format("Unknown density code 0x{0:X2}", descriptor.Density);
+                                        break;
+                                }
 
-                            if (density != "")
-                            {
-                                if (descriptor.Blocks == 0)
+                                if (density != "")
                                 {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("All remaining blocks are {0} and have a variable length", density).AppendLine();
+                                    if (descriptor.Blocks == 0)
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length", density).AppendLine();
+                                        else
+                                            sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    }
                                     else
-                                        sb.AppendFormat("All remaining blocks are {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\t{0} blocks are {1} and have a variable length", descriptor.Blocks, density).AppendLine();
+                                        else
+                                            sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                    }
                                 }
                                 else
                                 {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("{0} blocks are {1} and have a variable length", descriptor.Blocks, density).AppendLine();
+                                    if (descriptor.Blocks == 0)
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
+                                        else
+                                            sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
+                                    }
                                     else
-                                        sb.AppendFormat("{0} blocks are {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                                }
-                            }
-                            else
-                            {
-                                if (descriptor.Blocks == 0)
-                                {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("All remaining blocks have a variable length").AppendLine();
-                                    else
-                                        sb.AppendFormat("All remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                }
-                                else
-                                {
-                                    if (descriptor.BlockLength == 0)
-                                        sb.AppendFormat("{0} blocks have a variable length", descriptor.Blocks).AppendLine();
-                                    else
-                                        sb.AppendFormat("{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                    {
+                                        if (descriptor.BlockLength == 0)
+                                            sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
+                                        else
+                                            sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                    }
                                 }
                             }
                         }
@@ -951,7 +964,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     {
-                        sb.Append("Medium is ");
+                        sb.Append("\tMedium is ");
 
                         switch (header.Value.MediumType)
                         {
@@ -1066,48 +1079,51 @@ namespace DiscImageChef.Decoders.SCSI
                         }
 
                         if (header.Value.WriteProtected)
-                            sb.AppendLine("Medium is write protected");
+                            sb.AppendLine("\tMedium is write protected");
 
                         if (header.Value.DPOFUA)
-                            sb.AppendLine("Drive supports DPO and FUA bits");
+                            sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                        if (header.Value.BlockDescriptors != null)
                         {
-                            string density = "";
-                            switch (descriptor.Density)
+                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
-                                case DensityType.Default:
-                                    break;
-                                case DensityType.User:
-                                    density = "user data only";
-                                    break;
-                                case DensityType.UserAuxiliary:
-                                    density = "user data plus auxiliary data";
-                                    break;
-                                case DensityType.UserAuxiliaryTag:
-                                    density = "4-byte tag, user data plus auxiliary data";
-                                    break;
-                                case DensityType.Audio:
-                                    density = "audio information only";
-                                    break;
-                                default:
-                                    density = String.Format("with unknown density code 0x{0:X2}", descriptor.Density);
-                                    break;
-                            }
+                                string density = "";
+                                switch (descriptor.Density)
+                                {
+                                    case DensityType.Default:
+                                        break;
+                                    case DensityType.User:
+                                        density = "user data only";
+                                        break;
+                                    case DensityType.UserAuxiliary:
+                                        density = "user data plus auxiliary data";
+                                        break;
+                                    case DensityType.UserAuxiliaryTag:
+                                        density = "4-byte tag, user data plus auxiliary data";
+                                        break;
+                                    case DensityType.Audio:
+                                        density = "audio information only";
+                                        break;
+                                    default:
+                                        density = String.Format("with unknown density code 0x{0:X2}", descriptor.Density);
+                                        break;
+                                }
 
-                            if (density != "")
-                            {
-                                if (descriptor.Blocks == 0)
-                                    sb.AppendFormat("All remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                if (density != "")
+                                {
+                                    if (descriptor.Blocks == 0)
+                                        sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                }
                                 else
-                                    sb.AppendFormat("{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
-                            }
-                            else
-                            {
-                                if (descriptor.Blocks == 0)
-                                    sb.AppendFormat("All remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
-                                else
-                                    sb.AppendFormat("{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                {
+                                    if (descriptor.Blocks == 0)
+                                        sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
+                                    else
+                                        sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
+                                }
                             }
                         }
 
@@ -1221,6 +1237,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #region Mode Page 0x0A: Control mode page
+
         /// <summary>
         /// Control mode page
         /// Page code 0x0A
@@ -1553,9 +1570,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0A: Control mode page
 
         #region Mode Page 0x02: Disconnect-reconnect page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x02
@@ -1704,9 +1723,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x02: Disconnect-reconnect page
 
         #region Mode Page 0x08: Caching page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x08
@@ -1969,9 +1990,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x08: Caching page
 
         #region Mode Page 0x05: Flexible disk page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x05
@@ -2157,9 +2180,9 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
             sb.AppendFormat("\t{0} sectors per track", page.SectorsPerTrack).AppendLine();
             sb.AppendFormat("\t{0} bytes per sector", page.BytesPerSector).AppendLine();
-            if(page.WritePrecompCylinder < page.Cylinders)
+            if (page.WritePrecompCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
-            if(page.WriteReduceCylinder < page.Cylinders)
+            if (page.WriteReduceCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
             if (page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} μs", (uint)page.DriveStepRate * 100).AppendLine();
@@ -2168,7 +2191,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (page.HeadSettleDelay > 0)
                 sb.AppendFormat("\tHeads settles in {0} μs", (uint)page.HeadSettleDelay * 100).AppendLine();
 
-            if(!page.TRDY)
+            if (!page.TRDY)
                 sb.AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
                     (double)page.MotorOnDelay * 10).AppendLine();
             else
@@ -2300,9 +2323,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x05: Flexible disk page
 
         #region Mode Page 0x03: Format device page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x03
@@ -2446,9 +2471,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x03: Format device page
 
         #region Mode Page 0x0B: Medium types supported page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x0B
@@ -2517,13 +2544,17 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0B: Medium types supported page
 
         #region Mode Page 0x0C: Notch page
+
         // TODO: Implement this page
+
         #endregion Mode Page 0x0C: Notch page
 
         #region Mode Page 0x01: Read-write error recovery page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x01
@@ -2687,9 +2718,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x01: Read-write error recovery page
 
         #region Mode Page 0x04: Rigid disk drive geometry page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x04
@@ -2792,9 +2825,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
-            if(page.WritePrecompCylinder < page.Cylinders)
+            if (page.WritePrecompCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
-            if(page.WriteReduceCylinder < page.Cylinders)
+            if (page.WriteReduceCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
             if (page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();
@@ -2822,9 +2855,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x04: Rigid disk drive geometry page
 
         #region Mode Page 0x07: Verify error recovery page
+
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x07
@@ -2931,9 +2966,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x07: Verify error recovery page
 
         #region Mode Page 0x10: Device configuration page
+
         /// <summary>
         /// Device configuration page
         /// Page code 0x10
@@ -3223,7 +3260,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (page.PRMWP)
                 sb.AppendLine("\tPermanent write protect is enabled");
 
-            if(page.BAML)
+            if (page.BAML)
             {
                 if (page.BAM)
                     sb.AppendLine("\tDrive operates using explicit address mode");
@@ -3256,9 +3293,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x10: Device configuration page
 
         #region Mode Page 0x0E: CD-ROM audio control parameters page
+
         /// <summary>
         /// CD-ROM audio control parameters
         /// Page code 0x0E
@@ -3398,7 +3437,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.OutputPort0ChannelSelection > 0)
             {
-                sb.Append("Output port 0 has channels ");
+                sb.Append("\tOutput port 0 has channels ");
                 if ((page.OutputPort0ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
                 if ((page.OutputPort0ChannelSelection & 0x02) == 0x02)
@@ -3424,7 +3463,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.OutputPort1ChannelSelection > 0)
             {
-                sb.Append("Output port 1 has channels ");
+                sb.Append("\tOutput port 1 has channels ");
                 if ((page.OutputPort1ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
                 if ((page.OutputPort1ChannelSelection & 0x02) == 0x02)
@@ -3450,7 +3489,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.OutputPort2ChannelSelection > 0)
             {
-                sb.Append("Output port 2 has channels ");
+                sb.Append("\tOutput port 2 has channels ");
                 if ((page.OutputPort2ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
                 if ((page.OutputPort2ChannelSelection & 0x02) == 0x02)
@@ -3476,7 +3515,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.OutputPort3ChannelSelection > 0)
             {
-                sb.Append("Output port 3 has channels ");
+                sb.Append("\tOutput port 3 has channels ");
                 if ((page.OutputPort3ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
                 if ((page.OutputPort3ChannelSelection & 0x02) == 0x02)
@@ -3502,9 +3541,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0E: CD-ROM audio control parameters page
 
         #region Mode Page 0x0D: CD-ROM parameteres page
+
         /// <summary>
         /// CD-ROM parameteres page
         /// Page code 0x0D
@@ -3577,65 +3618,67 @@ namespace DiscImageChef.Decoders.SCSI
             switch (page.InactivityTimerMultiplier)
             {
                 case 0:
-                    sb.AppendLine("Drive will remain in track hold state a vendor-specified time after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state a vendor-specified time after a seek or read");
                     break;
                 case 1:
-                    sb.AppendLine("Drive will remain in track hold state 125 ms after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 125 ms after a seek or read");
                     break;
                 case 2:
-                    sb.AppendLine("Drive will remain in track hold state 250 ms after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 250 ms after a seek or read");
                     break;
                 case 3:
-                    sb.AppendLine("Drive will remain in track hold state 500 ms after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 500 ms after a seek or read");
                     break;
                 case 4:
-                    sb.AppendLine("Drive will remain in track hold state 1 second after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 1 second after a seek or read");
                     break;
                 case 5:
-                    sb.AppendLine("Drive will remain in track hold state 2 seconds after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 2 seconds after a seek or read");
                     break;
                 case 6:
-                    sb.AppendLine("Drive will remain in track hold state 4 seconds after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 4 seconds after a seek or read");
                     break;
                 case 7:
-                    sb.AppendLine("Drive will remain in track hold state 8 seconds after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 8 seconds after a seek or read");
                     break;
                 case 8:
-                    sb.AppendLine("Drive will remain in track hold state 16 seconds after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 16 seconds after a seek or read");
                     break;
                 case 9:
-                    sb.AppendLine("Drive will remain in track hold state 32 seconds after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 32 seconds after a seek or read");
                     break;
                 case 10:
-                    sb.AppendLine("Drive will remain in track hold state 1 minute after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 1 minute after a seek or read");
                     break;
                 case 11:
-                    sb.AppendLine("Drive will remain in track hold state 2 minutes after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 2 minutes after a seek or read");
                     break;
                 case 12:
-                    sb.AppendLine("Drive will remain in track hold state 4 minutes after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 4 minutes after a seek or read");
                     break;
                 case 13:
-                    sb.AppendLine("Drive will remain in track hold state 8 minutes after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 8 minutes after a seek or read");
                     break;
                 case 14:
-                    sb.AppendLine("Drive will remain in track hold state 16 minutes after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 16 minutes after a seek or read");
                     break;
                 case 15:
-                    sb.AppendLine("Drive will remain in track hold state 32 minutes after a seek or read");
+                    sb.AppendLine("\tDrive will remain in track hold state 32 minutes after a seek or read");
                     break;
             }
 
             if (page.SecondsPerMinute > 0)
-                sb.AppendFormat("Each minute has {0} seconds", page.SecondsPerMinute).AppendLine();
+                sb.AppendFormat("\tEach minute has {0} seconds", page.SecondsPerMinute).AppendLine();
             if (page.FramesPerSecond > 0)
-                sb.AppendFormat("Each second has {0} frames", page.FramesPerSecond).AppendLine();
+                sb.AppendFormat("\tEach second has {0} frames", page.FramesPerSecond).AppendLine();
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0D: CD-ROM parameteres page
 
         #region Mode Page 0x01: Read error recovery page for MultiMedia Devices
+
         /// <summary>
         /// Read error recovery page for MultiMedia Devices
         /// Page code 0x01
@@ -3721,15 +3764,15 @@ namespace DiscImageChef.Decoders.SCSI
             string AllUsed = "\tAll available recovery procedures will be used.\n";
             string CIRCRetriesUsed = "\tOnly retries and CIRC are used.\n";
             string RetriesUsed = "\tOnly retries are used.\n";
-            string RecoveredNotReported = "Recovered errors will not be reported.\n";
-            string RecoveredReported = "Recovered errors will be reported.\n";
-            string RecoveredAbort = "Recovered errors will be reported and aborted with CHECK CONDITION.\n";
-            string UnrecECCAbort = "Unrecovered ECC errors will return CHECK CONDITION.";
-            string UnrecCIRCAbort = "Unrecovered CIRC errors will return CHECK CONDITION.";
-            string UnrecECCNotAbort = "Unrecovered ECC errors will not abort the transfer.";
-            string UnrecCIRCNotAbort = "Unrecovered CIRC errors will not abort the transfer.";
-            string UnrecECCAbortData = "Unrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
-            string UnrecCIRCAbortData = "Unrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+            string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
+            string RecoveredReported = "\tRecovered errors will be reported.\n";
+            string RecoveredAbort = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+            string UnrecECCAbort = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+            string UnrecCIRCAbort = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+            string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
+            string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
+            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+            string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
             switch (page.Parameter)
             {
@@ -3801,9 +3844,11 @@ namespace DiscImageChef.Decoders.SCSI
             
             return sb.ToString();
         }
+
         #endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
 
         #region Mode Page 0x07: Verify error recovery page for MultiMedia Devices
+
         /// <summary>
         /// Verify error recovery page for MultiMedia Devices
         /// Page code 0x07
@@ -3874,15 +3919,15 @@ namespace DiscImageChef.Decoders.SCSI
             string AllUsed = "\tAll available recovery procedures will be used.\n";
             string CIRCRetriesUsed = "\tOnly retries and CIRC are used.\n";
             string RetriesUsed = "\tOnly retries are used.\n";
-            string RecoveredNotReported = "Recovered errors will not be reported.\n";
-            string RecoveredReported = "Recovered errors will be reported.\n";
-            string RecoveredAbort = "Recovered errors will be reported and aborted with CHECK CONDITION.\n";
-            string UnrecECCAbort = "Unrecovered ECC errors will return CHECK CONDITION.";
-            string UnrecCIRCAbort = "Unrecovered CIRC errors will return CHECK CONDITION.";
-            string UnrecECCNotAbort = "Unrecovered ECC errors will not abort the transfer.";
-            string UnrecCIRCNotAbort = "Unrecovered CIRC errors will not abort the transfer.";
-            string UnrecECCAbortData = "Unrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
-            string UnrecCIRCAbortData = "Unrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+            string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
+            string RecoveredReported = "\tRecovered errors will be reported.\n";
+            string RecoveredAbort = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+            string UnrecECCAbort = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+            string UnrecCIRCAbort = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+            string UnrecECCNotAbort = "\tUnrecovered ECC errors will not abort the transfer.";
+            string UnrecCIRCNotAbort = "\tUnrecovered CIRC errors will not abort the transfer.";
+            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+            string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
             switch (page.Parameter)
             {
@@ -3949,9 +3994,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x07: Verify error recovery page for MultiMedia Devices
 
         #region Mode Page 0x06: Optical memory page
+
         /// <summary>
         /// Optical memory page
         /// Page code 0x06
@@ -4016,9 +4063,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x06: Optical memory page
 
         #region Mode Page 0x2A: CD-ROM capabilities page
+
         /// <summary>
         /// CD-ROM capabilities page
         /// Page code 0x2A
@@ -4370,7 +4419,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.SupportedVolumeLevels > 0)
                 sb.AppendFormat("\tDrive supports {0} volume levels", page.SupportedVolumeLevels).AppendLine();
-            if(page.BufferSize > 0)
+            if (page.BufferSize > 0)
                 sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
             if (page.MaximumSpeed > 0)
                 sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
@@ -4467,9 +4516,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x2A: CD-ROM capabilities page
 
         #region Mode Page 0x1C: Informational exceptions control page
+
         /// <summary>
         /// Informational exceptions control page
         /// Page code 0x1C
@@ -4644,9 +4695,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1C: Informational exceptions control page
 
         #region Mode Page 0x1A: Power condition page
+
         /// <summary>
         /// Power condition page
         /// Page code 0x1A
@@ -4774,11 +4827,11 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("\tParameters can be saved");
 
             if ((page.Standby && page.StandbyTimer > 0) ||
-               (page.Standby_Y && page.StandbyTimer_Y > 0))
+                (page.Standby_Y && page.StandbyTimer_Y > 0))
             {
-                if(page.Standby && page.StandbyTimer > 0)
+                if (page.Standby && page.StandbyTimer > 0)
                     sb.AppendFormat("\tStandby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
-                if(page.Standby_Y && page.StandbyTimer_Y > 0)
+                if (page.Standby_Y && page.StandbyTimer_Y > 0)
                     sb.AppendFormat("\tStandby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
             }
             else
@@ -4788,11 +4841,11 @@ namespace DiscImageChef.Decoders.SCSI
                 (page.Idle_B && page.IdleTimer_B > 0) ||
                 (page.Idle_C && page.IdleTimer_C > 0))
             {
-                if(page.Idle && page.IdleTimer > 0)
+                if (page.Idle && page.IdleTimer > 0)
                     sb.AppendFormat("\tIdle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
-                if(page.Idle_B && page.IdleTimer_B > 0)
+                if (page.Idle_B && page.IdleTimer_B > 0)
                     sb.AppendFormat("\tIdle timer B is set to {0} ms", page.IdleTimer_B * 100).AppendLine();
-                if(page.Idle_C && page.IdleTimer_C > 0)
+                if (page.Idle_C && page.IdleTimer_C > 0)
                     sb.AppendFormat("\tIdle timer C is set to {0} ms", page.IdleTimer_C * 100).AppendLine();
             }
             else
@@ -4812,9 +4865,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1A: Power condition page
 
         #region Mode Page 0x0A subpage 0x01: Control Extension mode page
+
         /// <summary>
         /// Control Extension mode page
         /// Page code 0x0A
@@ -4905,7 +4960,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (page.PS)
                 sb.AppendLine("\tParameters can be saved");
             
-            if(page.TCMOS)
+            if (page.TCMOS)
             {
                 sb.Append("\tTimestamp can be initialized by methods outside of the SCSI standards");
 
@@ -4928,9 +4983,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
 
         #region Mode Page 0x1A subpage 0x01: Power Consumption mode page
+
         /// <summary>
         /// Power Consumption mode page
         /// Page code 0x1A
@@ -5000,7 +5057,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            switch(page.ActiveLevel)
+            switch (page.ActiveLevel)
             {
                 case 0:
                     sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD", page.PowerConsumptionIdentifier).AppendLine();
@@ -5018,9 +5075,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
 
         #region Mode Page 0x10: XOR control mode page
+
         /// <summary>
         /// XOR control mode page
         /// Page code 0x10
@@ -5118,9 +5177,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x10: XOR control mode page
 
         #region Mode Page 0x1C subpage 0x01: Background Control mode page
+
         /// <summary>
         /// Background Control mode page
         /// Page code 0x1A
@@ -5245,9 +5306,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1C subpage 0x01: Background Control mode page
 
         #region Mode Page 0x0F: Data compression page
+
         /// <summary>
         /// Data compression page
         /// Page code 0x0F
@@ -5408,9 +5471,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x0F: Data compression page
 
         #region Mode Page 0x1B: Removable Block Access Capabilities page
+
         /// <summary>
         /// Removable Block Access Capabilities page
         /// Page code 0x1B
@@ -5505,9 +5570,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1B: Removable Block Access Capabilities page
 
         #region Mode Page 0x1C: Timer & Protect page
+
         /// <summary>
         /// Timer & Protect page
         /// Page code 0x1C
@@ -5587,60 +5654,62 @@ namespace DiscImageChef.Decoders.SCSI
             switch (page.InactivityTimeMultiplier)
             {
                 case 0:
-                    sb.AppendLine("Drive will remain in same status a vendor-specified time after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status a vendor-specified time after a seek, read or write operation");
                     break;
                 case 1:
-                    sb.AppendLine("Drive will remain in same status 125 ms after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 125 ms after a seek, read or write operation");
                     break;
                 case 2:
-                    sb.AppendLine("Drive will remain in same status 250 ms after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 250 ms after a seek, read or write operation");
                     break;
                 case 3:
-                    sb.AppendLine("Drive will remain in same status 500 ms after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 500 ms after a seek, read or write operation");
                     break;
                 case 4:
-                    sb.AppendLine("Drive will remain in same status 1 second after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 1 second after a seek, read or write operation");
                     break;
                 case 5:
-                    sb.AppendLine("Drive will remain in same status 2 seconds after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 2 seconds after a seek, read or write operation");
                     break;
                 case 6:
-                    sb.AppendLine("Drive will remain in same status 4 seconds after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 4 seconds after a seek, read or write operation");
                     break;
                 case 7:
-                    sb.AppendLine("Drive will remain in same status 8 seconds after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 8 seconds after a seek, read or write operation");
                     break;
                 case 8:
-                    sb.AppendLine("Drive will remain in same status 16 seconds after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 16 seconds after a seek, read or write operation");
                     break;
                 case 9:
-                    sb.AppendLine("Drive will remain in same status 32 seconds after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 32 seconds after a seek, read or write operation");
                     break;
                 case 10:
-                    sb.AppendLine("Drive will remain in same status 1 minute after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 1 minute after a seek, read or write operation");
                     break;
                 case 11:
-                    sb.AppendLine("Drive will remain in same status 2 minutes after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 2 minutes after a seek, read or write operation");
                     break;
                 case 12:
-                    sb.AppendLine("Drive will remain in same status 4 minutes after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 4 minutes after a seek, read or write operation");
                     break;
                 case 13:
-                    sb.AppendLine("Drive will remain in same status 8 minutes after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 8 minutes after a seek, read or write operation");
                     break;
                 case 14:
-                    sb.AppendLine("Drive will remain in same status 16 minutes after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 16 minutes after a seek, read or write operation");
                     break;
                 case 15:
-                    sb.AppendLine("Drive will remain in same status 32 minutes after a seek, read or write operation");
+                    sb.AppendLine("\tDrive will remain in same status 32 minutes after a seek, read or write operation");
                     break;
             }
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x1C: Timer & Protect page
 
         #region Mode Page 0x00: Drive Operation Mode page
+
         /// <summary>
         /// Drive Operation Mode page
         /// Page code 0x00
@@ -5734,9 +5803,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             return sb.ToString();
         }
+
         #endregion Mode Page 0x00: Drive Operation Mode page
 
-        public struct PageNumber
+        public struct ModePage
         {
             public byte Page;
             public byte Subpage;
@@ -5746,7 +5816,7 @@ namespace DiscImageChef.Decoders.SCSI
         public struct DecodedMode
         {
             public ModeHeader Header;
-            public PageNumber[] Pages;
+            public ModePage[] Pages;
         }
 
         public static DecodedMode? DecodeMode6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
@@ -5757,21 +5827,24 @@ namespace DiscImageChef.Decoders.SCSI
 
             DecodedMode decoded = new DecodedMode();
             decoded.Header = hdr.Value;
+            int blkDrLength = 0;
+            if (decoded.Header.BlockDescriptors != null)
+                blkDrLength = decoded.Header.BlockDescriptors.Length;
 
-            int offset = 4 + decoded.Header.BlockDescriptors.Length * 8;
-            int length = modeResponse[0];
+            int offset = 4 + blkDrLength * 8;
+            int length = modeResponse[0] + 1;
 
-            if(length != modeResponse.Length)
+            if (length != modeResponse.Length)
                 return decoded;
 
-            List<PageNumber> listpages = new List<PageNumber>();
+            List<ModePage> listpages = new List<ModePage>();
 
-            while(offset < modeResponse.Length)
+            while (offset < modeResponse.Length)
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
-                PageNumber pg = new PageNumber();
+                ModePage pg = new ModePage();
 
-                if(isSubpage)
+                if (isSubpage)
                 {
                     pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
@@ -5806,25 +5879,29 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.Header = hdr.Value;
             bool longlba = (modeResponse[4] & 0x01) == 0x01;
             int offset;
+            int blkDrLength = 0;
+            if (decoded.Header.BlockDescriptors != null)
+                blkDrLength = decoded.Header.BlockDescriptors.Length;
 
-            if(longlba)
-                offset = 8 + decoded.Header.BlockDescriptors.Length * 16;
+            if (longlba)
+                offset = 8 + blkDrLength * 16;
             else
-                offset = 8 + decoded.Header.BlockDescriptors.Length * 8;
+                offset = 8 + blkDrLength * 8;
             int length = (modeResponse[0] << 8);
             length += modeResponse[1];
+            length += 2;
 
-            if(length != modeResponse.Length)
+            if (length != modeResponse.Length)
                 return decoded;
 
-            List<PageNumber> listpages = new List<PageNumber>();
+            List<ModePage> listpages = new List<ModePage>();
 
-            while(offset < modeResponse.Length)
+            while (offset < modeResponse.Length)
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
-                PageNumber pg = new PageNumber();
+                ModePage pg = new ModePage();
 
-                if(isSubpage)
+                if (isSubpage)
                 {
                     pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
