@@ -2875,7 +2875,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Device configuration page
         /// Page code 0x10
-        /// 16 bytes in SCSI-2, SSC-1, SSC-2
+        /// 16 bytes in SCSI-2, SSC-1, SSC-2, SSC-3
         /// </summary>
         public struct ModePage_10_SSC
         {
@@ -2984,6 +2984,15 @@ namespace DiscImageChef.Decoders.SCSI
             public bool BAML;
             public bool BAM;
             public byte RewindOnReset;
+
+            /// <summary>
+            /// How drive shall respond to detection of compromised WORM medium integrity
+            /// </summary>
+            public byte WTRE;
+            /// <summary>
+            /// Respond to commands only if a reservation exists
+            /// </summary>
+            public bool OIR;
         }
 
         public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
@@ -3034,6 +3043,9 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.BAM |= (pageResponse[10] & 0x01) == 0x01;
 
             decoded.RewindOnReset = (byte)((pageResponse[15] & 0x18) >> 3);
+
+            decoded.OIR |= (pageResponse[15] & 0x20) == 0x20;
+            decoded.WTRE = (byte)((pageResponse[15] & 0xC0) >> 6);
 
             return decoded;
         }
@@ -3167,6 +3179,19 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
+            switch (page.WTRE)
+            {
+                case 1:
+                    sb.AppendLine("\tDrive will do nothing on WORM tampered medium");
+                    break;
+                case 2:
+                    sb.AppendLine("\tDrive will return CHECK CONDITION on WORM tampered medium");
+                    break;
+            }
+
+            if (page.OIR)
+                sb.AppendLine("\tDrive will only respond to commands if it has received a reservation");
+
             return sb.ToString();
         }
         #endregion Mode Page 0x10: Device configuration page
@@ -3175,7 +3200,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// CD-ROM audio control parameters
         /// Page code 0x0E
-        /// 16 bytes in SCSI-2
+        /// 16 bytes in SCSI-2, MMC-1
         /// </summary>
         public struct ModePage_0E
         {
@@ -3421,7 +3446,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// CD-ROM parameteres page
         /// Page code 0x0D
-        /// 8 bytes in SCSI-2
+        /// 8 bytes in SCSI-2, MMC-1
         /// </summary>
         public struct ModePage_0D
         {
@@ -3552,7 +3577,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Read error recovery page for MultiMedia Devices
         /// Page code 0x01
-        /// 8 bytes in SCSI-2
+        /// 8 bytes in SCSI-2, MMC-1
         /// </summary>
         public struct ModePage_01_MMC
         {
@@ -3700,7 +3725,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Verify error recovery page for MultiMedia Devices
         /// Page code 0x07
-        /// 8 bytes in SCSI-2
+        /// 8 bytes in SCSI-2, MMC-1
         /// </summary>
         public struct ModePage_07_MMC
         {
@@ -3917,6 +3942,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Page code 0x2A
         /// 16 bytes in OB-U0077C
         /// 20 bytes in SFF-8020i
+        /// 22 bytes in MMC-1
         /// </summary>
         public struct ModePage_2A
         {
@@ -4027,6 +4053,10 @@ namespace DiscImageChef.Decoders.SCSI
             public bool LSBF;
             public bool RCK;
             public bool BCK;
+
+            public bool TestWrite;
+            public ushort MaxWriteSpeed;
+            public ushort CurrentWriteSpeed;
         }
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
@@ -4098,6 +4128,13 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.LSBF |= (pageResponse[17] & 0x08) == 0x08;
             decoded.RCK |= (pageResponse[17] & 0x04) == 0x04;
             decoded.BCK |= (pageResponse[17] & 0x02) == 0x02;
+
+            if (pageResponse.Length < 22)
+                return decoded;
+
+            decoded.TestWrite |= (pageResponse[3] & 0x04) == 0x04;
+            decoded.MaxWriteSpeed = (ushort)((pageResponse[18] << 8) + pageResponse[19]);
+            decoded.CurrentWriteSpeed = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
 
             return decoded;
         }
@@ -4196,9 +4233,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.BufferSize > 0)
                 sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
             if (page.MaximumSpeed > 0)
-                sb.AppendFormat("\tDrive's maximum speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
+                sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
             if (page.CurrentSpeed > 0)
-                sb.AppendFormat("\tDrive's current speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
+                sb.AppendFormat("\tDrive's current reading speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
 
             if (page.ReadCDR)
             {
@@ -4228,6 +4265,13 @@ namespace DiscImageChef.Decoders.SCSI
 
             if (page.SDP)
                 sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
+
+            if (page.MaxWriteSpeed > 0)
+                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
+            if (page.CurrentWriteSpeed > 0)
+                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
+            if (page.TestWrite)
+                sb.AppendLine("\tDrive supports test writing");
 
             return sb.ToString();
         }
@@ -5015,7 +5059,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Data compression page
         /// Page code 0x0F
-        /// 16 bytes in SSC-1, SSC-2
+        /// 16 bytes in SSC-1, SSC-2, SSC-3
         /// </summary>
         public struct ModePage_0F
         {
