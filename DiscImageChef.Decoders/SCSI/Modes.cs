@@ -5270,6 +5270,10 @@ namespace DiscImageChef.Decoders.SCSI
             /// Total number of LUNs
             /// </summary>
             public byte TLUN;
+            /// <summary>
+            /// System Floppy Type device
+            /// </summary>
+            public bool SFLP;
         }
 
         public static ModePage_1B? DecodeModePage_1B(byte[] pageResponse)
@@ -5292,6 +5296,7 @@ namespace DiscImageChef.Decoders.SCSI
             ModePage_1B decoded = new ModePage_1B();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.SFLP |= (pageResponse[2] & 0x80) == 0x80;
             decoded.SRFP |= (pageResponse[2] & 0x40) == 0x40;
             decoded.NCD |= (pageResponse[3] & 0x80) == 0x80;
             decoded.SML |= (pageResponse[3] & 0x40) == 0x40;
@@ -5319,6 +5324,8 @@ namespace DiscImageChef.Decoders.SCSI
             if (page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
+            if (page.SFLP)
+                sb.AppendLine("\tDrive can be used as a system floppy device");
             if (page.SRFP)
                 sb.AppendLine("\tDrive supports reporting progress of format");
             if (page.NCD)
