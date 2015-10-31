@@ -629,7 +629,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     sb.AppendLine("3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)");
                                     break;
                                 default:
-                                    sb.AppendFormat("Unknown medium type 0x{0:X2}", header.Value.MediumType).AppendLine();
+                                    sb.AppendFormat("Unknown medium type 0x{0:X2}", (byte)header.Value.MediumType).AppendLine();
                                     break;
                             }
                         }
@@ -659,7 +659,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         density = "15916 flux transitions per radian";
                                         break;
                                     default:
-                                        density = String.Format("with unknown density code 0x{0:X2}", descriptor.Density);
+                                        density = String.Format("with unknown density code 0x{0:X2}", (byte)descriptor.Density);
                                         break;
                                 }
 
@@ -696,7 +696,7 @@ namespace DiscImageChef.Decoders.SCSI
                                 sb.AppendLine("\tDevice uses a write cache but doesn't return until cache is flushed");
                                 break;
                             default:
-                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", header.Value.BufferedMode).AppendLine();
+                                sb.AppendFormat("\tUnknown buffered mode code 0x{0:X2}", (byte)header.Value.BufferedMode).AppendLine();
                                 break;
                         }
 
