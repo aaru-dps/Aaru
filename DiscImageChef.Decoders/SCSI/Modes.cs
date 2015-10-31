@@ -1632,6 +1632,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Disconnect-reconnect page
         /// Page code 0x08
         /// 12 bytes in SCSI-2
+        /// 20 bytes in SBC-1
         /// </summary>
         public struct ModePage_08
         {
@@ -1675,6 +1676,51 @@ namespace DiscImageChef.Decoders.SCSI
             /// Upper limit on maximum pre-fetch value
             /// </summary>
             public ushort MaximumPreFetchCeiling;
+
+            /// <summary>
+            /// Manual cache controlling
+            /// </summary>
+            public bool IC;
+            /// <summary>
+            /// Abort pre-fetch
+            /// </summary>
+            public bool ABPF;
+            /// <summary>
+            /// Caching analysis permitted
+            /// </summary>
+            public bool CAP;
+            /// <summary>
+            /// Pre-fetch over discontinuities
+            /// </summary>
+            public bool Disc;
+            /// <summary>
+            /// <see cref="CacheSegmentSize"/> is to be used to control caching segmentation
+            /// </summary>
+            public bool Size;
+            /// <summary>
+            /// Force sequential write
+            /// </summary>
+            public bool FSW;
+            /// <summary>
+            /// Logical block cache segment size
+            /// </summary>
+            public bool LBCSS;
+            /// <summary>
+            /// Disable read-ahead
+            /// </summary>
+            public bool DRA;
+            /// <summary>
+            /// How many segments should the cache be divided upon
+            /// </summary>
+            public byte CacheSegments;
+            /// <summary>
+            /// How many bytes should the cache be divided upon
+            /// </summary>
+            public ushort CacheSegmentSize;
+            /// <summary>
+            /// How many bytes should be used as a buffer when all other cached data cannot be evicted
+            /// </summary>
+            public uint NonCacheSegmentSize;
         }
 
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
@@ -1707,6 +1753,23 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MinimumPreFetch = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
             decoded.MaximumPreFetch = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
             decoded.MaximumPreFetchCeiling = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+
+            if (pageResponse.Length < 20)
+                return decoded;
+
+            decoded.IC |= (pageResponse[2] & 0x80) == 0x80;
+            decoded.ABPF |= (pageResponse[2] & 0x40) == 0x40;
+            decoded.CAP |= (pageResponse[2] & 0x20) == 0x20;
+            decoded.Disc |= (pageResponse[2] & 0x10) == 0x10;
+            decoded.Size |= (pageResponse[2] & 0x08) == 0x08;
+
+            decoded.FSW |= (pageResponse[12] & 0x80) == 0x80;
+            decoded.LBCSS |= (pageResponse[12] & 0x40) == 0x40;
+            decoded.DRA |= (pageResponse[12] & 0x20) == 0x20;
+
+            decoded.CacheSegments = pageResponse[13];
+            decoded.CacheSegmentSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+            decoded.NonCacheSegmentSize = (uint)((pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
 
             return decoded;
         }
@@ -1765,22 +1828,58 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.MF)
-                sb.AppendLine("\tPre-fetch values indicate a block multiplier");
-
-            if (page.DisablePreFetch == 0)
-                sb.AppendLine("\tNo pre-fetch will be done");
+            if (page.DRA)
+                sb.AppendLine("\tRead-ahead is disabled");
             else
             {
-                sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less", page.DisablePreFetch).AppendLine();
+                if (page.MF)
+                    sb.AppendLine("\tPre-fetch values indicate a block multiplier");
 
-                if (page.MinimumPreFetch > 0)
-                    sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).AppendLine();
-                if(page.MaximumPreFetch > 0)
-                    sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
-                if(page.MaximumPreFetchCeiling > 0)
-                    sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more", page.MaximumPreFetchCeiling).AppendLine();
+                if (page.DisablePreFetch == 0)
+                    sb.AppendLine("\tNo pre-fetch will be done");
+                else
+                {
+                    sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less", page.DisablePreFetch).AppendLine();
+
+                    if (page.MinimumPreFetch > 0)
+                        sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).AppendLine();
+                    if (page.MaximumPreFetch > 0)
+                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
+                    if (page.MaximumPreFetchCeiling > 0)
+                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more", page.MaximumPreFetchCeiling).AppendLine();
+
+                    if (page.IC)
+                        sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
+                    if (page.ABPF)
+                        sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
+                    if (page.CAP)
+                        sb.AppendLine("\tCaching analysis is permitted");
+                    if (page.Disc)
+                        sb.AppendLine("\tPre-fetch can continue across discontinuities (such as cylinders or tracks)");
+                }
             }
+
+            if (page.FSW)
+                sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
+
+            if (page.Size)
+            {
+                if (page.CacheSegmentSize > 0)
+                {
+                    if (page.LBCSS)
+                        sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize).AppendLine();
+                    else
+                        sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize).AppendLine();
+                }
+            }
+            else
+            {
+                if (page.CacheSegments > 0)
+                    sb.AppendFormat("\tDrive should have {0} cache segments", page.CacheSegments).AppendLine();
+            }
+
+            if (page.NonCacheSegmentSize > 0)
+                sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted", page.NonCacheSegmentSize).AppendLine();
 
             return sb.ToString();
         }
@@ -1790,7 +1889,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x05
-        /// 32 bytes in SCSI-2
+        /// 32 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_05
         {
@@ -2121,7 +2220,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x03
-        /// 24 bytes in SCSI-2
+        /// 24 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_03
         {
@@ -2342,7 +2441,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x01
-        /// 12 bytes in SCSI-2
+        /// 12 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_01
         {
@@ -2500,7 +2599,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x04
-        /// 24 bytes in SCSI-2
+        /// 24 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_04
         {
@@ -2635,7 +2734,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Disconnect-reconnect page
         /// Page code 0x07
-        /// 12 bytes in SCSI-2
+        /// 12 bytes in SCSI-2, SBC-1
         /// </summary>
         public struct ModePage_07
         {
@@ -2746,7 +2845,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// Page code 0x10
         /// 16 bytes in SCSI-2
         /// </summary>
-        public struct ModePage_10
+        public struct ModePage_10_SSC
         {
             /// <summary>
             /// Parameters can be saved
@@ -2834,7 +2933,7 @@ namespace DiscImageChef.Decoders.SCSI
             public byte SelectedCompression;
         }
 
-        public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
+        public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
         {
             if (pageResponse == null)
                 return null;
@@ -2851,7 +2950,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse.Length < 16)
                 return null;
 
-            ModePage_10 decoded = new ModePage_10();
+            ModePage_10_SSC decoded = new ModePage_10_SSC();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
             decoded.CAP |= (pageResponse[2] & 0x40) == 0x40;
@@ -2876,17 +2975,17 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyModePage_10(byte[] pageResponse)
+        public static string PrettifyModePage_10_SSC(byte[] pageResponse)
         {
-            return PrettifyModePage_10(DecodeModePage_10(pageResponse));
+            return PrettifyModePage_10_SSC(DecodeModePage_10_SSC(pageResponse));
         }
 
-        public static string PrettifyModePage_10(ModePage_10? modePage)
+        public static string PrettifyModePage_10_SSC(ModePage_10_SSC? modePage)
         {
             if (!modePage.HasValue)
                 return null;
 
-            ModePage_10 page = modePage.Value;
+            ModePage_10_SSC page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Device configuration page:");
@@ -4594,6 +4693,106 @@ namespace DiscImageChef.Decoders.SCSI
             return sb.ToString();
         }
         #endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
+
+        #region Mode Page 0x10: XOR control mode page
+        /// <summary>
+        /// XOR control mode page
+        /// Page code 0x10
+        /// 24 bytes in SBC-1
+        /// </summary>
+        public struct ModePage_10
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            /// <summary>
+            /// Disables XOR operations
+            /// </summary>
+            public bool XORDIS;
+            /// <summary>
+            /// Maximum transfer length in blocks for a XOR command
+            /// </summary>
+            public uint MaxXorWrite;
+            /// <summary>
+            /// Maximum regenerate length in blocks
+            /// </summary>
+            public uint MaxRegenSize;
+            /// <summary>
+            /// Maximum transfer length in blocks for READ during a rebuild
+            /// </summary>
+            public uint MaxRebuildRead;
+            /// <summary>
+            /// Minimum time in ms between READs during a rebuild
+            /// </summary>
+            public ushort RebuildDelay;
+        }
+
+        public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
+        {
+            if (pageResponse == null)
+                return null;
+
+            if ((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
+            if ((pageResponse[0] & 0x3F) != 0x10)
+                return null;
+
+            if (pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if (pageResponse.Length < 24)
+                return null;
+
+            ModePage_10 decoded = new ModePage_10();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+            decoded.XORDIS |= (pageResponse[2] & 0x02) == 0x02;
+            decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
+            decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) + pageResponse[15]);
+            decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
+            decoded.RebuildDelay = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
+
+            return decoded;
+        }
+
+        public static string PrettifyModePage_10(byte[] pageResponse)
+        {
+            return PrettifyModePage_10(DecodeModePage_10(pageResponse));
+        }
+
+        public static string PrettifyModePage_10(ModePage_10? modePage)
+        {
+            if (!modePage.HasValue)
+                return null;
+
+            ModePage_10 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI XOR control mode page:");
+
+            if (page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if (page.XORDIS)
+                sb.AppendLine("\tXOR operations are disabled");
+            else
+            {
+                if (page.MaxXorWrite > 0)
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a single XOR WRITE command", page.MaxXorWrite).AppendLine();
+                if (page.MaxRegenSize > 0)
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command", page.MaxRegenSize).AppendLine();
+                if (page.MaxRebuildRead > 0)
+                    sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild", page.MaxRebuildRead).AppendLine();
+                if (page.RebuildDelay > 0)
+                    sb.AppendFormat("\tDrive needs a minimum of {0} ms between READ commands during rebuild", page.RebuildDelay).AppendLine();
+            }
+
+            return sb.ToString();
+        }
+        #endregion Mode Page 0x10: XOR control mode page
     }
 }
 
