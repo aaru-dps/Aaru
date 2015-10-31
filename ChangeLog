@@ -1,6 +1,11 @@
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
+	  Implemented Mode Page 0x00: Drive Operation Mode page.
+
+2015-10-31  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
 	  Added information from INF-8070.
 
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
