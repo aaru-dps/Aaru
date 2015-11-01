@@ -1,3 +1,8 @@
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	  Added MMC features and profiles enumerations.
+
 2015-10-31  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands.cs:
