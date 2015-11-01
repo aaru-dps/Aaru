@@ -529,6 +529,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Currently in-use physical interface standard
         /// </summary>
         public PhysicalInterfaces PhysicalInterfaceStandard;
+        /// <summary>
+        /// Supports Device Busy Event
+        /// </summary>
+        public bool DBE;
     }
 
     /// <summary>
@@ -548,6 +552,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports Operational Change Request/Nofitication Class Events
+        /// of GET EVENT/STATUS NOTIFICATION
+        /// </summary>
+        public bool OCEvent;
         /// <summary>
         /// Supports asynchronous GET EVENT/STATUS NOTIFICATION
         /// </summary>
@@ -606,6 +615,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports reading/writing Write Inhibit DCB on DVD+RW media.
+        /// </summary>
+        public bool WDCB;
         /// <summary>
         /// Supports PWP status
         /// </summary>
@@ -683,6 +696,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports DAP bit in READ CD and READ CD MSF
+        /// </summary>
+        public bool DAP;
         /// <summary>
         /// Supports C2 Error Pointers
         /// </summary>
@@ -817,7 +834,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// Defect Management Feature (0024h)
+    /// Hardware Defect Management Feature (0024h)
     /// </summary>
     public struct Feature_0024
     {
@@ -932,6 +949,37 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// Enhanced Defect Reporting Feature (0029h)
+    /// </summary>
+    public struct Feature_0029
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Supports DRT-DM
+        /// </summary>
+        public bool DRTDM;
+        /// <summary>
+        /// Maximum number of DBI cache zones device can handle separately
+        /// </summary>
+        public byte DBICacheZones;
+        /// <summary>
+        /// Number of entries in worst case to case DBI overflow
+        /// </summary>
+        public ushort Entries;
+    }
+
+    /// <summary>
     /// DVD+RW Feature (002Ah)
     /// </summary>
     public struct Feature_002A
@@ -953,9 +1001,36 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Write;
         /// <summary>
+        /// FORMAT UNIT supports quick start formatting
+        /// </summary>
+        public bool QuickStart;
+        /// <summary>
         /// Drive only supports read compatibility stop
         /// </summary>
         public bool CloseOnly;
+    }
+
+    /// <summary>
+    /// DVD+R Feature (002Bh)
+    /// </summary>
+    public struct Feature_002B
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can write DVD+R
+        /// </summary>
+        public bool Write;
     }
 
     /// <summary>
@@ -1192,6 +1267,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// CD-RW Media Write Support Feature (0037h)
+    /// </summary>
+    public struct Feature_0037
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Bitmask of supported CD-RW media sub-types
+        /// </summary>
+        public byte SubtypeSupport;
+    }
+
+    /// <summary>
     /// Power Management Feature (0100h)
     /// </summary>
     public struct Feature_0100
@@ -1293,6 +1391,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Separate Volume
         /// </summary>
         public bool SV;
+        /// <summary>
+        /// Number of volume levels
+        /// </summary>
+        public ushort VolumeLevels;
     }
 
     /// <summary>
@@ -1331,6 +1433,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports G3Enable bit and Group3 Timeout field in Mode Page 1Dh
+        /// </summary>
+        public bool Group3;
+        /// <summary>
+        /// Indicates a unit of block length, in sectors, corresponding to increase a unit of Group 3 time unit
+        /// </summary>
+        public ushort UnitLength;
     }
 
     /// <summary>
@@ -1419,6 +1529,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// Media Serial Number Feature (0109h)
+    /// </summary>
+    public struct Feature_0109
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
     /// Disc Control Blocks Feature (010Ah)
     /// </summary>
     public struct Feature_010A
@@ -1459,6 +1588,32 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// CPRM version
         /// </summary>
         public byte CPRMVersion;
+    }
+
+    /// <summary>
+    /// Firmware Information Feature (010Ch)
+    /// </summary>
+    public struct Feature_010C
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        public ushort Century;
+        public ushort Year;
+        public ushort Month;
+        public ushort Day;
+        public ushort Hour;
+        public ushort Minute;
+        public ushort Second;
     }
 
     public static class Features
