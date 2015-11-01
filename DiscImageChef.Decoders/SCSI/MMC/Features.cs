@@ -597,6 +597,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool PreventJumper;
         /// <summary>
+        /// Reports Device Busy Class events during medium loading/unloading
+        /// </summary>
+        public bool DBML;
+        /// <summary>
         /// Medium is currently locked
         /// </summary>
         public bool Lock;
@@ -619,6 +623,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Drive can read/write Disc Write Protect PAC on BD-R/-RE media
+        /// </summary>
+        public bool DWP;
         /// <summary>
         /// Supports reading/writing Write Inhibit DCB on DVD+RW media.
         /// </summary>
@@ -735,6 +743,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Compliant with DVD Multi Drive Read-only specifications
         /// </summary>
         public bool MULTI110;
+        /// <summary>
+        /// Supports reading all DVD-RW DL
+        /// </summary>
+        public bool DualRW;
         /// <summary>
         /// Supports reading all DVD-R DL including remapping
         /// </summary>
@@ -867,6 +879,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Supports FORMAT type 30h sub-type 10b
         /// </summary>
         public bool Cert;
+        /// <summary>
+        /// Supports FORMAT type 18h
+        /// </summary>
+        public bool FRF;
         /// <summary>
         /// Supports FORMAT type 00h/32h sub-type 10b on BD-R
         /// </summary>
@@ -1339,6 +1355,25 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// Stop Long Operation Feature (0035h)
+    /// </summary>
+    public struct Feature_0035
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
     /// CD-RW Media Write Support Feature (0037h)
     /// </summary>
     public struct Feature_0037
@@ -1459,30 +1494,38 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
-        public byte Class0BDREMSB;
-        public byte Class0BDRELSB;
-        public byte Class1BDREMSB;
-        public byte Class1BDRELSB;
-        public byte Class2BDREMSB;
-        public byte Class2BDRELSB;
-        public byte Class3BDREMSB;
-        public byte Class3BDRELSB;
-        public byte Class0BDRMSB;
-        public byte Class0BDRLSB;
-        public byte Class1BDRMSB;
-        public byte Class1BDRLSB;
-        public byte Class2BDRMSB;
-        public byte Class2BDRLSB;
-        public byte Class3BDRMSB;
-        public byte Class3BDRLSB;
-        public byte Class0BDROMMSB;
-        public byte Class0BDROMLSB;
-        public byte Class1BDROMMSB;
-        public byte Class1BDROMLSB;
-        public byte Class2BDROMMSB;
-        public byte Class2BDROMLSB;
-        public byte Class3BDROMMSB;
-        public byte Class3BDROMLSB;
+        /// <summary>
+        /// Can read BCA
+        /// </summary>
+        public bool BCA;
+        /// <summary>
+        /// Supports reading BD-RE Ver.2
+        /// </summary>
+        public bool RE2;
+        /// <summary>
+        /// Supports reading BD-RE Ver.1
+        /// </summary>
+        public bool RE1;
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public bool OldRE;
+        /// <summary>
+        /// Supports reading BD-R Ver.1
+        /// </summary>
+        public bool R;
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public bool OldR;
+        /// <summary>
+        /// Supports reading BD-ROM Ver.1
+        /// </summary>
+        public bool ROM;
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public bool OldROM;
     }
 
     /// <summary>
@@ -1506,22 +1549,26 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Supports verify not required
         /// </summary>
         public bool SVNR;
-        public byte Class0BDREMSB;
-        public byte Class0BDRELSB;
-        public byte Class1BDREMSB;
-        public byte Class1BDRELSB;
-        public byte Class2BDREMSB;
-        public byte Class2BDRELSB;
-        public byte Class3BDREMSB;
-        public byte Class3BDRELSB;
-        public byte Class0BDRMSB;
-        public byte Class0BDRLSB;
-        public byte Class1BDRMSB;
-        public byte Class1BDRLSB;
-        public byte Class2BDRMSB;
-        public byte Class2BDRLSB;
-        public byte Class3BDRMSB;
-        public byte Class3BDRLSB;
+        /// <summary>
+        /// Supports writing BD-RE Ver.2
+        /// </summary>
+        public bool RE2;
+        /// <summary>
+        /// Supports writing BD-RE Ver.1
+        /// </summary>
+        public bool RE1;
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public bool OldRE;
+        /// <summary>
+        /// Supports writing BD-R Ver.1
+        /// </summary>
+        public bool R;
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public bool OldR;
     }
 
     /// <summary>
@@ -1970,6 +2017,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         /// <summary>
+        /// Drive supports reading drive certificate
+        /// </summary>
+        public bool RDC;
+        /// <summary>
+        /// Drive can read media key block of CPRM
+        /// </summary>
+        public bool RMC;
+        /// <summary>
+        /// Drive can write bus encrypted blocks
+        /// </summary>
+        public bool WBE;
+        /// <summary>
+        /// Drive supports bus encryption
+        /// </summary>
+        public bool BCE;
+        /// <summary>
         /// Drive supports generating the binding nonce
         /// </summary>
         public bool BNG;
@@ -1985,6 +2048,80 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// AACS version
         /// </summary>
         public byte AACSVersion;
+    }
+
+    /// <summary>
+    /// DVD CSS Managed Recording Feature (010Eh)
+    /// </summary>
+    public struct Feature_010E
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Maximum number of Scramble Extent information entries in a single SEND DISC STRUCTURE
+        /// </summary>
+        public byte MaxScrambleExtent;
+    }
+
+    /// <summary>
+    /// SecurDisc Feature (0113h)
+    /// </summary>
+    public struct Feature_0113
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
+    /// OSSC Feature (0142h)
+    /// </summary>
+    public struct Feature_0142
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Supports PSA updates on write-once media
+        /// </summary>
+        public bool PSAU;
+        /// <summary>
+        /// Supports linked OSPBs
+        /// </summary>
+        public bool LOSPB;
+        /// <summary>
+        /// Restricted to recording only OSSC disc format
+        /// </summary>
+        public bool ME;
+        public ushort[] Profiles;
     }
 
     /// <summary>
