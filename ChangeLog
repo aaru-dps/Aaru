@@ -1,6 +1,11 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:
+	  Correct math priority
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/MMC/Features.cs:
 	  Added code to separate features and the feature header.
 
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
