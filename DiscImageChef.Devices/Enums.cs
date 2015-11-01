@@ -2743,5 +2743,22 @@ namespace DiscImageChef.Devices
         [Obsolete]
         PreventAll = 0x03
     }
+
+    public enum MmcGetConfigurationRt : byte
+    {
+        /// <summary>
+        /// Drive shall return the Feature Header and all Feature Descriptors
+        /// </summary>
+        All = 0x00,
+        /// <summary>
+        /// Drive shall return the Feature Header and current Feature Descriptors
+        /// </summary>
+        Current = 0x01,
+        /// <summary>
+        /// Drive shall return only the Feature Header with the chosen Feature Descriptor
+        /// </summary>
+        Single = 0x02,
+        Reserved = 0x03
+    }
 }
 

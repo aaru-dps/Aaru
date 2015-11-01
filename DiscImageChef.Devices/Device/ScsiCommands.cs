@@ -374,7 +374,6 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command to prevent medium removal
         /// </summary>
-        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -387,7 +386,6 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command to allow medium removal
         /// </summary>
-        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -400,7 +398,6 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command
         /// </summary>
-        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -417,7 +414,6 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sends the SCSI PREVENT ALLOW MEDIUM REMOVAL command
         /// </summary>
-        /// <returns><c>true</c>, if allow medium removal was prevented, <c>false</c> otherwise.</returns>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
@@ -437,6 +433,77 @@ namespace DiscImageChef.Devices
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI GET CONFIGURATION command for all Features
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return GetConfiguration(out buffer, out senseBuffer, 0x0000, MmcGetConfigurationRt.All, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI GET CONFIGURATION command for all Features starting with specified one
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber, uint timeout, out double duration)
+        {
+            return GetConfiguration(out buffer, out senseBuffer, startingFeatureNumber, MmcGetConfigurationRt.All, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI GET CONFIGURATION command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="startingFeatureNumber">Starting Feature number.</param>
+        /// <param name="RT">Return type, <see cref="MmcGetConfigurationRt"/>.</param>
+        public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber, MmcGetConfigurationRt RT, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[8];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.GetConfiguration;
+            cdb[1] = (byte)((byte)RT & 0x03);
+            cdb[2] = (byte)((startingFeatureNumber & 0xFF00) >> 8);
+            cdb[3] = (byte)(startingFeatureNumber & 0xFF);
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            cdb[9] = 0;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            ushort confLength = (ushort)(((int)buffer[2] << 8) + buffer[3] + 2);
+            buffer = new byte[confLength];
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "GET CONFIGURATION took {0} ms.", duration);
 
             return sense;
         }

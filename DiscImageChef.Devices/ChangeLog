@@ -1,6 +1,12 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	* Device/ScsiCommands.cs:
+	  Added SCSI GET CONFIGURATION
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	  Added feature structures from MMC-1.
 
 2015-11-01  Natalia Portillo  <claunia@claunia.com>

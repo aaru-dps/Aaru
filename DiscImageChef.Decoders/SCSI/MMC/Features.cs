@@ -5739,6 +5739,43 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             return Prettify_0142(Decode_0142(feature));
         }
+
+        public struct FeatureDescriptor
+        {
+            public ushort Code;
+            public byte[] Data;
+        }
+
+        public struct SeparatedFeatures
+        {
+            public uint DataLength;
+            public ushort CurrentProfile;
+            public FeatureDescriptor[] Descriptors;
+        }
+
+        public static SeparatedFeatures Separate(byte[] response)
+        {
+            SeparatedFeatures dec = new SeparatedFeatures();
+            dec.DataLength = (uint)(response[0] << 24 + response[1] << 16 + response[2] << 8 + response[4]);
+            dec.CurrentProfile = (ushort)(response[6] << 8 + response[7]);
+            uint offset = 8;
+            List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
+
+            while (offset < response.Length)
+            {
+                FeatureDescriptor desc = new FeatureDescriptor();
+                desc.Code = (ushort)(response[offset + 0] << 8 + response[offset + 1]);
+                desc.Data = new byte[response[offset + 3] + 4];
+                Array.Copy(response, offset + 4, desc.Data, 0, desc.Data.Length + 4);
+                offset += (uint)(4 + desc.Data.Length);
+
+                descLst.Add(desc);
+            }
+
+            dec.Descriptors = descLst.ToArray();
+
+            return dec;
+        }
     }
 }
 
