@@ -80,6 +80,7 @@
     <Compile Include="ATA\Identify.cs" />
     <Compile Include="SCSI\EVPD.cs" />
     <Compile Include="SCSI\Modes.cs" />
+    <Compile Include="SCSI\MMC\Features.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
