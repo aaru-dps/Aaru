@@ -2216,7 +2216,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
 
             if (decoded.Version >= 0)
-                decoded.PhysicalInterfaceStandard = (PhysicalInterfaces)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
+                decoded.PhysicalInterfaceStandard = (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
             if (decoded.Version >= 1 && feature.Length >= 12)
                 decoded.DBE |= (feature[8] & 0x01) == 0x01;
@@ -2358,8 +2358,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if (decoded.Version >= 0)
             {
-                decoded.LogicalBlockSize = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
-                decoded.Blocking = (ushort)(feature[8] << 8 + feature[9]);
+                decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+                decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
                 decoded.PP |= (feature[10] & 0x01) == 0x01;
             }
 
@@ -2483,9 +2483,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if (decoded.Version >= 1)
             {
-                decoded.LastLBA = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
-                decoded.LogicalBlockSize = (uint)(feature[8] << 24 + feature[9] << 16 + feature[10] << 8 + feature[11]);
-                decoded.Blocking = (ushort)(feature[12] << 8 + feature[13]);
+                decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+                decoded.LogicalBlockSize = (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
+                decoded.Blocking = (ushort)((feature[12] << 8) + feature[13]);
                 decoded.PP |= (feature[14] & 0x01) == 0x01;
             }
 
@@ -2516,7 +2516,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if (decoded.Version >= 1)
             {
-                decoded.DataTypeSupported = (ushort)(feature[4] << 8 + feature[5]);
+                decoded.DataTypeSupported = (ushort)((feature[4] << 8) + feature[5]);
                 decoded.BUF |= (feature[6] & 0x01) == 0x01;
                 decoded.LinkSizes = new byte[feature[7]];
                 if (feature.Length > (feature[7] + 8))
@@ -2646,8 +2646,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if (decoded.Version >= 0)
             {
-                decoded.LogicalBlockSize = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
-                decoded.Blocking = (ushort)(feature[8] << 8 + feature[9]);
+                decoded.LogicalBlockSize = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
+                decoded.Blocking = (ushort)((feature[8] << 8) + feature[9]);
                 decoded.PP |= (feature[10] & 0x01) == 0x01;
             }
 
@@ -2764,7 +2764,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             {
                 decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
                 decoded.DBICacheZones = feature[5];
-                decoded.Entries = (ushort)(feature[6] << 8 + feature[7]);
+                decoded.Entries = (ushort)((feature[6] << 8) + feature[7]);
             }
 
             return decoded;
@@ -2892,7 +2892,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
                 decoded.CDRW |= (feature[4] & 0x02) == 0x02;
                 decoded.RWSubchannel |= (feature[4] & 0x01) == 0x01;
-                decoded.DataTypeSupported = (ushort)(feature[6] << 8 + feature[7]);
+                decoded.DataTypeSupported = (ushort)((feature[6] << 8) + feature[7]);
             }
 
             if (decoded.Version >= 2)
@@ -2935,7 +2935,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
                 decoded.CDRW |= (feature[4] & 0x02) == 0x02;
                 decoded.RW |= (feature[4] & 0x01) == 0x01;
-                decoded.MaxCueSheet = (uint)(feature[5] << 16 + feature[6] << 8 + feature[7]);
+                decoded.MaxCueSheet = (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
             }
 
             if (decoded.Version >= 1)
@@ -3541,7 +3541,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 decoded.Scan |= (feature[4] & 0x04) == 0x04;
                 decoded.SCM |= (feature[4] & 0x02) == 0x02;
                 decoded.SV |= (feature[4] & 0x01) == 0x01;
-                decoded.VolumeLevels = (ushort)(feature[6] << 8 + feature[7]);
+                decoded.VolumeLevels = (ushort)((feature[6] << 8) + feature[7]);
             }
 
             return decoded;
@@ -3600,7 +3600,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if (decoded.Version >= 1 && feature.Length >= 8)
             {
                 decoded.Group3 |= (feature[4] & 0x01) == 0x01;
-                decoded.UnitLength = (ushort)(feature[6] << 8 + feature[7]);
+                decoded.UnitLength = (ushort)((feature[6] << 8) + feature[7]);
             }
 
             return decoded;
@@ -3757,7 +3757,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             {
                 decoded.DCBs = new uint[feature[3] / 4];
                 for (int i = 0; i < decoded.DCBs.Length; i++)
-                    decoded.DCBs[i] = (uint)(feature[0 + 4 + i * 4] << 24 + feature[1 + 4 + i * 4] << 16 + feature[2 + 4 + i * 4] << 8 + feature[3 + 4 + i * 4]);
+                    decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) + (feature[2 + 4 + i * 4] << 8) + feature[3 + 4 + i * 4]);
             }
 
             return decoded;
@@ -3815,13 +3815,13 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if (decoded.Version >= 0)
             {
-                decoded.Century = (ushort)(feature[4] << 8 + feature[5]);
-                decoded.Year = (ushort)(feature[6] << 8 + feature[7]);
-                decoded.Month = (ushort)(feature[8] << 8 + feature[9]);
-                decoded.Day = (ushort)(feature[10] << 8 + feature[11]);
-                decoded.Hour = (ushort)(feature[12] << 8 + feature[13]);
-                decoded.Minute = (ushort)(feature[14] << 8 + feature[15]);
-                decoded.Second = (ushort)(feature[16] << 8 + feature[17]);
+                decoded.Century = (ushort)((feature[4] << 8) + feature[5]);
+                decoded.Year = (ushort)((feature[6] << 8) + feature[7]);
+                decoded.Month = (ushort)((feature[8] << 8) + feature[9]);
+                decoded.Day = (ushort)((feature[10] << 8) + feature[11]);
+                decoded.Hour = (ushort)((feature[12] << 8) + feature[13]);
+                decoded.Minute = (ushort)((feature[14] << 8) + feature[15]);
+                decoded.Second = (ushort)((feature[16] << 8) + feature[17]);
             }
 
             return decoded;
@@ -3977,7 +3977,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 if (feature[5] * 2 + 6 == feature.Length)
                 {
                     for (int i = 0; i < feature[5]; i++)
-                        decoded.Profiles[i] = (ushort)(feature[0 + 6 + 2 * i] << 8 + feature[1 + 6 + 2 * i]);
+                        decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
                 }
             }
 
@@ -5756,18 +5756,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public static SeparatedFeatures Separate(byte[] response)
         {
             SeparatedFeatures dec = new SeparatedFeatures();
-            dec.DataLength = (uint)(response[0] << 24 + response[1] << 16 + response[2] << 8 + response[4]);
-            dec.CurrentProfile = (ushort)(response[6] << 8 + response[7]);
+            dec.DataLength = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]);
+            dec.CurrentProfile = (ushort)((response[6] << 8) + response[7]);
             uint offset = 8;
             List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
 
             while (offset < response.Length)
             {
                 FeatureDescriptor desc = new FeatureDescriptor();
-                desc.Code = (ushort)(response[offset + 0] << 8 + response[offset + 1]);
+                desc.Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
                 desc.Data = new byte[response[offset + 3] + 4];
-                Array.Copy(response, offset + 4, desc.Data, 0, desc.Data.Length + 4);
-                offset += (uint)(4 + desc.Data.Length);
+                Array.Copy(response, offset, desc.Data, 0, desc.Data.Length);
+                offset += (uint)(desc.Data.Length);
 
                 descLst.Add(desc);
             }

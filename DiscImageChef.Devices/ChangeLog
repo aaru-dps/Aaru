@@ -1,5 +1,10 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/ScsiCommands.cs:
+	  Correct command size typo
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Enums.cs:
 	* Device/ScsiCommands.cs:
 	  Added SCSI GET CONFIGURATION
