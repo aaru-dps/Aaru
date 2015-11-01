@@ -530,6 +530,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public PhysicalInterfaces PhysicalInterfaceStandard;
         /// <summary>
+        /// Supports EVPD, Page Code and 16-bit Allocation Length as defined in SPC-3
+        /// </summary>
+        public bool INQ2;
+        /// <summary>
         /// Supports Device Busy Event
         /// </summary>
         public bool DBE;
@@ -727,6 +731,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Compliant with DVD Multi Drive Read-only specifications
+        /// </summary>
+        public bool MULTI110;
+        /// <summary>
+        /// Supports reading all DVD-R DL including remapping
+        /// </summary>
+        public bool DualR;
     }
 
     /// <summary>
@@ -786,6 +798,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public ushort DataTypeSupported;
         /// <summary>
+        /// Can report Track Resources Information of READ DISC INFORMATION
+        /// </summary>
+        public bool TRIO;
+        /// <summary>
+        /// Supports Address Mode in RESERVE TRACK
+        /// </summary>
+        public bool ARSV;
+        /// <summary>
         /// Zero loss linking
         /// </summary>
         public bool BUF;
@@ -831,6 +851,26 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports formatting BD-RE without spare area
+        /// </summary>
+        public bool RENoSA;
+        /// <summary>
+        /// Supports expansion of the spare area on BD-RE
+        /// </summary>
+        public bool Expand;
+        /// <summary>
+        /// Supports FORMAT type 30h sub-type 11b
+        /// </summary>
+        public bool QCert;
+        /// <summary>
+        /// Supports FORMAT type 30h sub-type 10b
+        /// </summary>
+        public bool Cert;
+        /// <summary>
+        /// Supports FORMAT type 00h/32h sub-type 10b on BD-R
+        /// </summary>
+        public bool RRM;
     }
 
     /// <summary>
@@ -943,7 +983,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Can format and write to MRW discs
+        /// Can read DVD+MRW discs
+        /// </summary>
+        public bool DVDPRead;
+        /// <summary>
+        /// Can write DVD+MRW discs
+        /// </summary>
+        public bool DVDPWrite;
+        /// <summary>
+        /// Can format and write to CD-MRW discs
         /// </summary>
         public bool Write;
     }
@@ -1188,6 +1236,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool BUF;
         /// <summary>
+        /// Supports writing DVD-R DL
+        /// </summary>
+        public bool RDL;
+        /// <summary>
         /// Test write
         /// </summary>
         public bool TestWrite;
@@ -1267,6 +1319,26 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// Layer Jump Recording Feature (0033h)
+    /// </summary>
+    public struct Feature_0033
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        public byte[] LinkSizes;
+    }
+
+    /// <summary>
     /// CD-RW Media Write Support Feature (0037h)
     /// </summary>
     public struct Feature_0037
@@ -1287,6 +1359,266 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Bitmask of supported CD-RW media sub-types
         /// </summary>
         public byte SubtypeSupport;
+    }
+
+    /// <summary>
+    /// BD-R Pseudo-Overwrite (POW) Feature (0038h)
+    /// </summary>
+    public struct Feature_0038
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
+    /// DVD+RW Dual Layer Feature (003Ah)
+    /// </summary>
+    public struct Feature_003A
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can format DVD+RW DL discs
+        /// </summary>
+        public bool Write;
+        /// <summary>
+        /// FORMAT UNIT supports quick start formatting
+        /// </summary>
+        public bool QuickStart;
+        /// <summary>
+        /// Drive only supports read compatibility stop
+        /// </summary>
+        public bool CloseOnly;
+    }
+
+    /// <summary>
+    /// DVD+R Dual Layer Feature (003Bh)
+    /// </summary>
+    public struct Feature_003B
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can format DVD+R DL discs
+        /// </summary>
+        public bool Write;
+        /// <summary>
+        /// FORMAT UNIT supports quick start formatting
+        /// </summary>
+        public bool QuickStart;
+        /// <summary>
+        /// Drive only supports read compatibility stop
+        /// </summary>
+        public bool CloseOnly;
+    }
+
+    /// <summary>
+    /// BD Read Feature (0040h)
+    /// </summary>
+    public struct Feature_0040
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        public byte Class0BDREMSB;
+        public byte Class0BDRELSB;
+        public byte Class1BDREMSB;
+        public byte Class1BDRELSB;
+        public byte Class2BDREMSB;
+        public byte Class2BDRELSB;
+        public byte Class3BDREMSB;
+        public byte Class3BDRELSB;
+        public byte Class0BDRMSB;
+        public byte Class0BDRLSB;
+        public byte Class1BDRMSB;
+        public byte Class1BDRLSB;
+        public byte Class2BDRMSB;
+        public byte Class2BDRLSB;
+        public byte Class3BDRMSB;
+        public byte Class3BDRLSB;
+        public byte Class0BDROMMSB;
+        public byte Class0BDROMLSB;
+        public byte Class1BDROMMSB;
+        public byte Class1BDROMLSB;
+        public byte Class2BDROMMSB;
+        public byte Class2BDROMLSB;
+        public byte Class3BDROMMSB;
+        public byte Class3BDROMLSB;
+    }
+
+    /// <summary>
+    /// BD Write Feature (0041h)
+    /// </summary>
+    public struct Feature_0041
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Supports verify not required
+        /// </summary>
+        public bool SVNR;
+        public byte Class0BDREMSB;
+        public byte Class0BDRELSB;
+        public byte Class1BDREMSB;
+        public byte Class1BDRELSB;
+        public byte Class2BDREMSB;
+        public byte Class2BDRELSB;
+        public byte Class3BDREMSB;
+        public byte Class3BDRELSB;
+        public byte Class0BDRMSB;
+        public byte Class0BDRLSB;
+        public byte Class1BDRMSB;
+        public byte Class1BDRLSB;
+        public byte Class2BDRMSB;
+        public byte Class2BDRLSB;
+        public byte Class3BDRMSB;
+        public byte Class3BDRLSB;
+    }
+
+    /// <summary>
+    /// TSR Feature (0042h)
+    /// </summary>
+    public struct Feature_0042
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
+    /// HD DVD Read Feature (0050h)
+    /// </summary>
+    public struct Feature_0050
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can read HD DVD-R
+        /// </summary>
+        public bool HDDVDR;
+        /// <summary>
+        /// Can read HD DVD-RAM
+        /// </summary>
+        public bool HDDVDRAM;
+    }
+
+
+    /// <summary>
+    /// HD DVD Write Feature (0051h)
+    /// </summary>
+    public struct Feature_0051
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can write HD DVD-R
+        /// </summary>
+        public bool HDDVDR;
+        /// <summary>
+        /// Can write HD DVD-RAM
+        /// </summary>
+        public bool HDDVDRAM;
+    }
+
+    /// <summary>
+    /// Hybrid Disc Feature (0080h)
+    /// </summary>
+    public struct Feature_0080
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Reset immunity
+        /// </summary>
+        public bool RI;
     }
 
     /// <summary>
@@ -1414,6 +1746,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports validating 5-bit mode field of READ BUFFER and WRITE BUFFER commands.
+        /// </summary>
+        public bool M5;
     }
 
     /// <summary>
@@ -1506,7 +1842,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// Logical Unit serial number (0108h)
+    /// Drive serial number (0108h)
     /// </summary>
     public struct Feature_0108
     {
@@ -1523,7 +1859,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         /// <summary>
-        /// LUN serial number
+        /// Drive serial number
         /// </summary>
         public string Serial;
     }
@@ -1614,6 +1950,60 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         public ushort Hour;
         public ushort Minute;
         public ushort Second;
+    }
+
+    /// <summary>
+    /// AACS Feature (010Dh)
+    /// </summary>
+    public struct Feature_010D
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Drive supports generating the binding nonce
+        /// </summary>
+        public bool BNG;
+        /// <summary>
+        /// Blocks required to store the binding nonce for the media
+        /// </summary>
+        public bool BindNonceBlocks;
+        /// <summary>
+        /// Maximum number of AGIDs supported concurrently
+        /// </summary>
+        public byte AGIDs;
+        /// <summary>
+        /// AACS version
+        /// </summary>
+        public byte AACSVersion;
+    }
+
+    /// <summary>
+    /// VCPS Feature (0110h)
+    /// </summary>
+    public struct Feature_0110
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
     }
 
     public static class Features
