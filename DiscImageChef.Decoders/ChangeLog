@@ -1,6 +1,11 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:
+	  Added structures from MMC-5.
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/MMC/Features.cs:
 	  Added feature structures from MMC-4.
 
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
