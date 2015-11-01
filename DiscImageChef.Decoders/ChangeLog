@@ -1,6 +1,11 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:
+	  Added features structures from MMC-3.
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/MMC/Features.cs:
 	* DiscImageChef.Decoders.csproj:
 	  Added feature structures from MMC-1.
 

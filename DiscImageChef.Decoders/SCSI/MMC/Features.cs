@@ -590,6 +590,33 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// Write Protect Feature (0004h)
+    /// </summary>
+    public struct Feature_0004
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Supports PWP status
+        /// </summary>
+        public bool SPWP;
+        /// <summary>
+        /// Supports SWPP bit of mode page 1Dh
+        /// </summary>
+        public bool SSWPP;
+    }
+
+    /// <summary>
     /// Random Readable Feature (0010h)
     /// </summary>
     public struct Feature_0010
@@ -667,7 +694,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// DVD Feature (001Fh)
+    /// DVD Read Feature (001Fh)
     /// </summary>
     public struct Feature_001F
     {
@@ -742,6 +769,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public ushort DataTypeSupported;
         /// <summary>
+        /// Zero loss linking
+        /// </summary>
+        public bool BUF;
+        /// <summary>
         /// Logical blocks per link
         /// </summary>
         public byte[] LinkSizes;
@@ -802,6 +833,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports READ DISC STRUCTURE with Format Code 0Ah (Spare Area Information)
+        /// </summary>
+        public bool SSA;
     }
 
     /// <summary>
@@ -855,6 +890,110 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
+    /// CD-RW CAV Write Feature (0027h)
+    /// </summary>
+    public struct Feature_0027
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
+    /// MRW Feature (0028h)
+    /// </summary>
+    public struct Feature_0028
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can format and write to MRW discs
+        /// </summary>
+        public bool Write;
+    }
+
+    /// <summary>
+    /// DVD+RW Feature (002Ah)
+    /// </summary>
+    public struct Feature_002A
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can format DVD+RW discs
+        /// </summary>
+        public bool Write;
+        /// <summary>
+        /// Drive only supports read compatibility stop
+        /// </summary>
+        public bool CloseOnly;
+    }
+
+    /// <summary>
+    /// Rigid Restricted Overwrite Feature (002Ch)
+    /// </summary>
+    public struct Feature_002C
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Can generate Defect Status Data during formatting
+        /// </summary>
+        public bool DSDG;
+        /// <summary>
+        /// Can read Defect Status Data recorded on medium
+        /// </summary>
+        public bool DSDR;
+        /// <summary>
+        /// Supports writing on an intermediate state Session and quick formatting
+        /// </summary>
+        public bool Intermediate;
+        /// <summary>
+        /// Supports BLANK command types 00h and 01h
+        /// </summary>
+        public bool Blank;
+    }
+
+    /// <summary>
     /// CD Track at Once Feature (002Dh)
     /// </summary>
     public struct Feature_002D
@@ -871,6 +1010,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports zero loss linking
+        /// </summary>
+        public bool BUF;
+        /// <summary>
+        /// Supports writing R-W subchannels in raw mode
+        /// </summary>
+        public bool RWRaw;
+        /// <summary>
+        /// Supports writing R-W subchannels in packed mode
+        /// </summary>
+        public bool RWPack;
         /// <summary>
         /// Can perform test writes
         /// </summary>
@@ -907,6 +1058,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         /// <summary>
+        /// Supports zero loss linking
+        /// </summary>
+        public bool BUF;
+        /// <summary>
         /// Can write in Session at Once
         /// </summary>
         public bool SAO;
@@ -937,7 +1092,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     }
 
     /// <summary>
-    /// DVD-R Write Feature (002Fh)
+    /// DVD-R/-RW Write Feature (002Fh)
     /// </summary>
     public struct Feature_002F
     {
@@ -961,6 +1116,79 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Test write
         /// </summary>
         public bool TestWrite;
+        /// <summary>
+        /// Can write and erase DVD-RW
+        /// </summary>
+        public bool DVDRW;
+    }
+
+    /// <summary>
+    /// Double Density CD Read Feature (0030h)
+    /// </summary>
+    public struct Feature_0030
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+    }
+
+    /// <summary>
+    /// Double Density CD-R Write Feature (0031h)
+    /// </summary>
+    public struct Feature_0031
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Test write
+        /// </summary>
+        public bool TestWrite;
+    }
+
+    /// <summary>
+    /// Double Density CD-RW Write Feature (0032h)
+    /// </summary>
+    public struct Feature_0032
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Supports quick formatting
+        /// </summary>
+        public bool Intermediate;
+        /// <summary>
+        /// Supports BLANK command
+        /// </summary>
+        public bool Blank;
     }
 
     /// <summary>
@@ -980,6 +1208,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+    }
+
+    /// <summary>
+    /// S.M.A.R.T. Feature (0101h)
+    /// </summary>
+    public struct Feature_0101
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// Mode Page 1Ch is present
+        /// </summary>
+        public bool PP;
     }
 
     /// <summary>
@@ -1007,6 +1258,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Supports Disc Present
         /// </summary>
         public bool SDP;
+        /// <summary>
+        /// Number of slots - 1
+        /// </summary>
+        public byte HighestSlotNumber;
     }
 
     /// <summary>
@@ -1118,6 +1373,26 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// Feature is currently in use
         /// </summary>
         public bool Current;
+        /// <summary>
+        /// Supports READ BUFFER CAPACITY with block bit set
+        /// </summary>
+        public bool RBCB;
+        /// <summary>
+        /// Supports SET CD SPEED
+        /// </summary>
+        public bool SCS;
+        /// <summary>
+        /// Has Mode Page 2Ah with Speed Performance Descriptors
+        /// </summary>
+        public bool MP2A;
+        /// <summary>
+        /// Supports type 03h of GET PERFORMANCE
+        /// </summary>
+        public bool WSPD;
+        /// <summary>
+        /// Supports stream recording
+        /// </summary>
+        public bool SW;
     }
 
     /// <summary>
@@ -1161,6 +1436,29 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         public uint[] DCBs;
+    }
+
+    /// <summary>
+    /// DVD CPRM Feature (010Bh)
+    /// </summary>
+    public struct Feature_010B
+    {
+        /// <summary>
+        /// Feature version
+        /// </summary>
+        public byte Version;
+        /// <summary>
+        /// Feature is persistent
+        /// </summary>
+        public bool Persistent;
+        /// <summary>
+        /// Feature is currently in use
+        /// </summary>
+        public bool Current;
+        /// <summary>
+        /// CPRM version
+        /// </summary>
+        public byte CPRMVersion;
     }
 
     public static class Features
