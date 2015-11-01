@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Collections.Generic;
 
 
 namespace DiscImageChef.Decoders.SCSI.MMC
@@ -589,6 +590,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public byte LoadingMechanismType;
         /// <summary>
+        /// Drive is able to load the medium
+        /// </summary>
+        public bool Load;
+        /// <summary>
         /// Device can eject medium
         /// </summary>
         public bool Eject;
@@ -930,9 +935,9 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         public bool Current;
         /// <summary>
-        /// Last logical block address
+        /// Bytes per logical block
         /// </summary>
-        public uint LastLBA;
+        public uint LogicalBlockSize;
         /// <summary>
         /// Number of logical blocks per device readable unit
         /// </summary>
@@ -2031,7 +2036,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// <summary>
         /// Drive supports bus encryption
         /// </summary>
-        public bool BCE;
+        public bool BEC;
         /// <summary>
         /// Drive supports generating the binding nonce
         /// </summary>
@@ -2039,7 +2044,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// <summary>
         /// Blocks required to store the binding nonce for the media
         /// </summary>
-        public bool BindNonceBlocks;
+        public byte BindNonceBlocks;
         /// <summary>
         /// Maximum number of AGIDs supported concurrently
         /// </summary>
@@ -2145,6 +2150,1830 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
     public static class Features
     {
+        public static Feature_0000? Decode_0000(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0000)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0000 decoded = new Feature_0000();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            int offset = 4;
+            List<Profile> listProfiles = new List<Profile>();
+            while (offset < feature.Length)
+            {
+                Profile prof = new Profile();
+                prof.Number = (ProfileNumber)((feature[offset] << 8) + feature[offset + 1]);
+                prof.Current |= (feature[offset + 2] & 0x01) == 0x01;
+                listProfiles.Add(prof);
+                offset += 4;
+            }
+            decoded.Profiles = listProfiles.ToArray();
+
+            return decoded;
+        }
+
+        public static Feature_0001? Decode_0001(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0001)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0001 decoded = new Feature_0001();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.PhysicalInterfaceStandard = (PhysicalInterfaces)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
+
+            if (decoded.Version >= 1 && feature.Length >= 12)
+                decoded.DBE |= (feature[8] & 0x01) == 0x01;
+
+            if (decoded.Version >= 2 && feature.Length >= 12)
+                decoded.INQ2 |= (feature[8] & 0x02) == 0x02;
+
+            return decoded;
+        }
+
+        public static Feature_0002? Decode_0002(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0002)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0002 decoded = new Feature_0002();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.Async |= (feature[4] & 0x01) == 0x01;
+
+            if (decoded.Version >= 1)
+                decoded.OCEvent |= (feature[4] & 0x02) == 0x02;
+
+            return decoded;
+        }
+
+        public static Feature_0003? Decode_0003(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0003)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0003 decoded = new Feature_0003();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.LoadingMechanismType = (byte)((feature[4] & 0xE0) >> 5);
+                decoded.Eject |= (feature[4] & 0x08) == 0x08;
+                decoded.PreventJumper |= (feature[4] & 0x04) == 0x04;
+                decoded.Lock |= (feature[4] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 2)
+            {
+                decoded.Load |= (feature[4] & 0x10) == 0x10;
+                decoded.DBML |= (feature[4] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0004? Decode_0004(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0004)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0004 decoded = new Feature_0004();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.SPWP |= (feature[4] & 0x02) == 0x02;
+                decoded.SSWPP |= (feature[4] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 1)
+                decoded.WDCB |= (feature[4] & 0x04) == 0x04;
+
+            if (decoded.Version >= 2)
+                decoded.DWP |= (feature[4] & 0x08) == 0x08;
+
+            return decoded;
+        }
+
+        public static Feature_0010? Decode_0010(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 12)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0010)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0010 decoded = new Feature_0010();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.LogicalBlockSize = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
+                decoded.Blocking = (ushort)(feature[8] << 8 + feature[9]);
+                decoded.PP |= (feature[10] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_001D? Decode_001D(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x001D)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_001D decoded = new Feature_001D();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_001E? Decode_001E(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x001E)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_001E decoded = new Feature_001E();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1)
+            {
+                decoded.C2 |= (feature[4] & 0x02) == 0x02;
+                decoded.CDText |= (feature[4] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 2)
+                decoded.DAP |= (feature[4] & 0x80) == 0x80;
+
+            return decoded;
+        }
+
+        public static Feature_001F? Decode_001F(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x001F)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_001F decoded = new Feature_001F();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 2 && feature.Length >= 8)
+            {
+                decoded.MULTI110 |= (feature[4] & 0x01) == 0x01;
+                decoded.DualR |= (feature[6] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 2 && feature.Length >= 8)
+                decoded.DualRW |= (feature[6] & 0x02) == 0x02;
+
+            return decoded;
+        }
+
+        public static Feature_0020? Decode_0020(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 16)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0020)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0020 decoded = new Feature_0020();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1)
+            {
+                decoded.LastLBA = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
+                decoded.LogicalBlockSize = (uint)(feature[8] << 24 + feature[9] << 16 + feature[10] << 8 + feature[11]);
+                decoded.Blocking = (ushort)(feature[12] << 8 + feature[13]);
+                decoded.PP |= (feature[14] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0021? Decode_0021(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0021)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0021 decoded = new Feature_0021();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1)
+            {
+                decoded.DataTypeSupported = (ushort)(feature[4] << 8 + feature[5]);
+                decoded.BUF |= (feature[6] & 0x01) == 0x01;
+                decoded.LinkSizes = new byte[feature[7]];
+                if (feature.Length > (feature[7] + 8))
+                    Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
+            }
+
+            if (decoded.Version >= 3)
+            {
+                decoded.TRIO |= (feature[6] & 0x04) == 0x04;
+                decoded.ARSV |= (feature[6] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0022? Decode_0022(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0022)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0022 decoded = new Feature_0022();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0023? Decode_0023(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0023)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0023 decoded = new Feature_0023();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1 && feature.Length >= 12)
+            {
+                decoded.RENoSA |= (feature[4] & 0x08) == 0x08;
+                decoded.Expand |= (feature[4] & 0x04) == 0x04;
+                decoded.QCert |= (feature[4] & 0x02) == 0x02;
+                decoded.Cert |= (feature[4] & 0x01) == 0x01;
+                decoded.RRM |= (feature[8] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 2 && feature.Length >= 12)
+                decoded.FRF |= (feature[4] & 0x80) == 0x80;
+
+            return decoded;
+        }
+
+        public static Feature_0024? Decode_0024(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0024)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0024 decoded = new Feature_0024();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1 && feature.Length >= 8)
+                decoded.SSA |= (feature[4] & 0x80) == 0x80;
+
+            return decoded;
+        }
+
+        public static Feature_0025? Decode_0025(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 12)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0025)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0025 decoded = new Feature_0025();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.LogicalBlockSize = (uint)(feature[4] << 24 + feature[5] << 16 + feature[6] << 8 + feature[7]);
+                decoded.Blocking = (ushort)(feature[8] << 8 + feature[9]);
+                decoded.PP |= (feature[10] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0026? Decode_0026(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0026)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0026 decoded = new Feature_0026();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0027? Decode_0027(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0027)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0027 decoded = new Feature_0027();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0028? Decode_0028(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0028)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0028 decoded = new Feature_0028();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.Write |= (feature[4] & 0x01) == 0x01;
+
+            if (decoded.Version >= 1)
+            {
+                decoded.DVDPWrite |= (feature[4] & 0x04) == 0x04;
+                decoded.DVDPRead |= (feature[4] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0029? Decode_0029(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0029)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0029 decoded = new Feature_0029();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.DRTDM |= (feature[4] & 0x01) == 0x01;
+                decoded.DBICacheZones = feature[5];
+                decoded.Entries = (ushort)(feature[6] << 8 + feature[7]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_002A? Decode_002A(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002A)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002A decoded = new Feature_002A();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.Write |= (feature[4] & 0x01) == 0x01;
+                decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 1)
+                decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
+
+            return decoded;
+        }
+
+        public static Feature_002B? Decode_002B(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002B)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002B decoded = new Feature_002B();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.Write |= (feature[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static Feature_002C? Decode_002C(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002C)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002C decoded = new Feature_002C();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.DSDG |= (feature[4] & 0x08) == 0x08;
+                decoded.DSDR |= (feature[4] & 0x04) == 0x04;
+                decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
+                decoded.Blank |= (feature[4] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_002D? Decode_002D(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002D)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002D decoded = new Feature_002D();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+                decoded.CDRW |= (feature[4] & 0x02) == 0x02;
+                decoded.RWSubchannel |= (feature[4] & 0x01) == 0x01;
+                decoded.DataTypeSupported = (ushort)(feature[6] << 8 + feature[7]);
+            }
+
+            if (decoded.Version >= 2)
+            {
+                decoded.BUF |= (feature[4] & 0x40) == 0x40;
+                decoded.RWRaw |= (feature[4] & 0x10) == 0x10;
+                decoded.RWPack |= (feature[4] & 0x08) == 0x08;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_002E? Decode_002E(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002E)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002E decoded = new Feature_002E();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.SAO |= (feature[4] & 0x20) == 0x20;
+                decoded.RAWMS |= (feature[4] & 0x10) == 0x10;
+                decoded.RAW |= (feature[4] & 0x08) == 0x08;
+                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+                decoded.CDRW |= (feature[4] & 0x02) == 0x02;
+                decoded.RW |= (feature[4] & 0x01) == 0x01;
+                decoded.MaxCueSheet = (uint)(feature[5] << 16 + feature[6] << 8 + feature[7]);
+            }
+
+            if (decoded.Version >= 1)
+                decoded.BUF |= (feature[4] & 0x40) == 0x40;
+
+            return decoded;
+        }
+
+        public static Feature_002F? Decode_002F(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x002F)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_002F decoded = new Feature_002F();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.BUF |= (feature[4] & 0x40) == 0x40;
+                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+            }
+
+            if (decoded.Version >= 1)
+                decoded.DVDRW |= (feature[4] & 0x02) == 0x02;
+
+            if (decoded.Version >= 2)
+                decoded.RDL |= (feature[4] & 0x08) == 0x08;
+
+            return decoded;
+        }
+
+        public static Feature_0030? Decode_0030(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0030)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0030 decoded = new Feature_0030();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0031? Decode_0031(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0031)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0031 decoded = new Feature_0031();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
+
+            return decoded;
+        }
+
+        public static Feature_0032? Decode_0032(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0032)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0032 decoded = new Feature_0032();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.Intermediate |= (feature[4] & 0x02) == 0x02;
+                decoded.Blank |= (feature[4] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0033? Decode_0033(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0033)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0033 decoded = new Feature_0033();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (feature[7] > 0 && feature.Length > (feature[7] + 8))
+            {
+                decoded.LinkSizes = new byte[feature[7]];
+                Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0035? Decode_0035(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0035)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0035 decoded = new Feature_0035();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0037? Decode_0037(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0037)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0037 decoded = new Feature_0037();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.SubtypeSupport = feature[5];
+
+            return decoded;
+        }
+
+        public static Feature_0038? Decode_0038(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0038)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0038 decoded = new Feature_0038();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_003A? Decode_003A(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x003A)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_003A decoded = new Feature_003A();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.Write |= (feature[4] & 0x01) == 0x01;
+                decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
+                decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_003B? Decode_003B(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x003B)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_003B decoded = new Feature_003B();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.Write |= (feature[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static Feature_0040? Decode_0040(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 32)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0040)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0040 decoded = new Feature_0040();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.OldRE |= (feature[9] & 0x01) == 0x01;
+                decoded.OldR |= (feature[17] & 0x01) == 0x01;
+                decoded.OldROM |= (feature[25] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 1)
+            {
+                decoded.BCA |= (feature[4] & 0x01) == 0x01;
+                decoded.RE2 |= (feature[9] & 0x04) == 0x04;
+                decoded.RE1 |= (feature[9] & 0x02) == 0x02;
+                decoded.R |= (feature[17] & 0x02) == 0x02;
+                decoded.ROM |= (feature[25] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0041? Decode_0041(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 24)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0041)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0041 decoded = new Feature_0041();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.SVNR |= (feature[4] & 0x01) == 0x01;
+                decoded.OldRE |= (feature[9] & 0x01) == 0x01;
+                decoded.OldR |= (feature[17] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 1)
+            {
+                decoded.RE2 |= (feature[9] & 0x04) == 0x04;
+                decoded.RE1 |= (feature[9] & 0x02) == 0x02;
+                decoded.R |= (feature[17] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0042? Decode_0042(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0042)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0042 decoded = new Feature_0042();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0050? Decode_0050(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0050)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0050 decoded = new Feature_0050();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+                decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0051? Decode_0051(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0051)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0051 decoded = new Feature_0051();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.HDDVDR |= (feature[4] & 0x01) == 0x01;
+                decoded.HDDVDRAM |= (feature[6] & 0x01) == 0x01;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0080? Decode_0080(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0080)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0080 decoded = new Feature_0080();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.RI |= (feature[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static Feature_0100? Decode_0100(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0100)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0100 decoded = new Feature_0100();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0101? Decode_0101(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0101)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0101 decoded = new Feature_0101();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.PP |= (feature[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static Feature_0102? Decode_0102(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0102)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0102 decoded = new Feature_0102();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.SCC |= (feature[4] & 0x10) == 0x10;
+                decoded.SDP |= (feature[4] & 0x04) == 0x04;
+                decoded.HighestSlotNumber = (byte)(feature[7] & 0x1F);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0103? Decode_0103(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0103)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0103 decoded = new Feature_0103();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.Scan |= (feature[4] & 0x04) == 0x04;
+                decoded.SCM |= (feature[4] & 0x02) == 0x02;
+                decoded.SV |= (feature[4] & 0x01) == 0x01;
+                decoded.VolumeLevels = (ushort)(feature[6] << 8 + feature[7]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0104? Decode_0104(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0104)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0104 decoded = new Feature_0104();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1 && feature.Length >= 8)
+                decoded.M5 |= (feature[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static Feature_0105? Decode_0105(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0105)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0105 decoded = new Feature_0105();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 1 && feature.Length >= 8)
+            {
+                decoded.Group3 |= (feature[4] & 0x01) == 0x01;
+                decoded.UnitLength = (ushort)(feature[6] << 8 + feature[7]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0106? Decode_0106(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0106)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0106 decoded = new Feature_0106();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.CSSVersion = feature[7];
+
+            return decoded;
+        }
+
+        public static Feature_0107? Decode_0107(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0107)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0107 decoded = new Feature_0107();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 3 && feature.Length >= 8)
+            {
+                decoded.RBCB |= (feature[4] & 0x10) == 0x10;
+                decoded.SCS |= (feature[4] & 0x08) == 0x08;
+                decoded.MP2A |= (feature[4] & 0x04) == 0x04;
+                decoded.WSPD |= (feature[4] & 0x02) == 0x02;
+                decoded.SW |= (feature[4] & 0x01) == 0x01;
+            }
+
+            if (decoded.Version >= 5 && feature.Length >= 8)
+                decoded.RBCB |= (feature[4] & 0x20) == 0x20;
+
+            return decoded;
+        }
+
+        public static Feature_0108? Decode_0108(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0108)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0108 decoded = new Feature_0108();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                byte[] serial = new byte[feature.Length];
+                Array.Copy(feature, 4, serial, 0, feature.Length - 4);
+                decoded.Serial = StringHandlers.CToString(serial).Trim();
+            }
+
+            return decoded;
+        }
+
+        public static Feature_0109? Decode_0109(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0109)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0109 decoded = new Feature_0109();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_010A? Decode_010A(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x010A)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_010A decoded = new Feature_010A();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.DCBs = new uint[feature[3] / 4];
+                for (int i = 0; i < decoded.DCBs.Length; i++)
+                    decoded.DCBs[i] = (uint)(feature[0 + 4 + i * 4] << 24 + feature[1 + 4 + i * 4] << 16 + feature[2 + 4 + i * 4] << 8 + feature[3 + 4 + i * 4]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_010B? Decode_010B(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x010B)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_010B decoded = new Feature_010B();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.CPRMVersion = feature[7];
+
+            return decoded;
+        }
+
+        public static Feature_010C? Decode_010C(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 20)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x010C)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_010C decoded = new Feature_010C();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.Century = (ushort)(feature[4] << 8 + feature[5]);
+                decoded.Year = (ushort)(feature[6] << 8 + feature[7]);
+                decoded.Month = (ushort)(feature[8] << 8 + feature[9]);
+                decoded.Day = (ushort)(feature[10] << 8 + feature[11]);
+                decoded.Hour = (ushort)(feature[12] << 8 + feature[13]);
+                decoded.Minute = (ushort)(feature[14] << 8 + feature[15]);
+                decoded.Second = (ushort)(feature[16] << 8 + feature[17]);
+            }
+
+            return decoded;
+        }
+
+        public static Feature_010D? Decode_010D(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x010D)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_010D decoded = new Feature_010D();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.BNG |= (feature[4] & 0x01) == 0x01;
+                decoded.BindNonceBlocks = feature[5];
+                decoded.AGIDs = (byte)(feature[6] & 0x0F);
+                decoded.AACSVersion = feature[7];
+            }
+
+            if (decoded.Version >= 2)
+            {
+                decoded.RDC |= (feature[4] & 0x10) == 0x10;
+                decoded.RMC |= (feature[4] & 0x08) == 0x08;
+                decoded.WBE |= (feature[4] & 0x04) == 0x04;
+                decoded.BEC |= (feature[4] & 0x02) == 0x02;
+            }
+
+            return decoded;
+        }
+
+        public static Feature_010E? Decode_010E(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x010E)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_010E decoded = new Feature_010E();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+                decoded.MaxScrambleExtent = feature[4];
+
+            return decoded;
+        }
+
+        public static Feature_0110? Decode_0110(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 8)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0110)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0110 decoded = new Feature_0110();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0113? Decode_0113(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 4)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0113)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0113 decoded = new Feature_0113();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            return decoded;
+        }
+
+        public static Feature_0142? Decode_0142(byte[] feature)
+        {
+            if (feature == null)
+                return null;
+
+            if (feature.Length < 6)
+                return null;
+
+            ushort number = (ushort)((feature[0] << 8) + feature[1]);
+
+            if (number != 0x0142)
+                return null;
+
+            if ((feature[3] + 4) != feature.Length)
+                return null;
+
+            Feature_0142 decoded = new Feature_0142();
+
+            decoded.Current |= (feature[2] & 0x01) == 0x01;
+            decoded.Persistent |= (feature[2] & 0x02) == 0x02;
+            decoded.Version = (byte)((feature[2] & 0x3C) >> 2);
+
+            if (decoded.Version >= 0)
+            {
+                decoded.PSAU |= (feature[4] & 0x80) == 0x80;
+                decoded.LOSPB |= (feature[4] & 0x40) == 0x40;
+                decoded.ME |= (feature[4] & 0x01) == 0x01;
+                decoded.Profiles = new ushort[feature[5]];
+                if (feature[5] * 2 + 6 == feature.Length)
+                {
+                    for (int i = 0; i < feature[5]; i++)
+                        decoded.Profiles[i] = (ushort)(feature[0 + 6 + 2 * i] << 8 + feature[1 + 6 + 2 * i]);
+                }
+            }
+
+            return decoded;
+        }
     }
 }
 

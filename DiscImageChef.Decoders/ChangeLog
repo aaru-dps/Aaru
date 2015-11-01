@@ -1,6 +1,11 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:
+	  Implemented decoding all known features.
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/MMC/Features.cs:
 	  Added structures from MMC-6.
 
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
