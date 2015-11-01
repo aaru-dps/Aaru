@@ -1,6 +1,11 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Typo in debug output.
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Add MMC GET CONFIGURATION
 
 2015-10-31  Natalia Portillo  <claunia@claunia.com>

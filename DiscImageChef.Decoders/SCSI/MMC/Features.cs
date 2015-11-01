@@ -5174,7 +5174,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             Feature_0105 ftr = feature.Value;
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("MMC Timeout:");
+            sb.AppendLine("Drive supports Timeout & Protect mode page 1Dh");
 
             if (ftr.Group3)
             {
@@ -5258,7 +5258,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if (ftr.DCBs != null)
             {
                 foreach (uint DCB in ftr.DCBs)
-                    sb.AppendFormat("Drive supports DCB {0}", DCB).AppendLine();
+                    sb.AppendFormat("Drive supports DCB {0:X8}h", DCB).AppendLine();
             }
 
             return sb.ToString();
@@ -5321,13 +5321,11 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             try
             {
-                DateTime fwDate = TimeZoneInfo.ConvertTimeToUtc(new DateTime(Int32.Parse(syear),
-                                      Int32.Parse(smonth), Int32.Parse(sday),
-                                      Int32.Parse(shour), Int32.Parse(sminute),
-                                      Int32.Parse(ssecond), DateTimeKind.Local),
-                                      TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
+                DateTime fwDate = new DateTime(Int32.Parse(syear), Int32.Parse(smonth),
+                                      Int32.Parse(sday), Int32.Parse(shour), Int32.Parse(sminute),
+                                      Int32.Parse(ssecond), DateTimeKind.Utc);
 
-                sb.AppendFormat("Drive firmware is dated {0}", fwDate);
+                sb.AppendFormat("Drive firmware is dated {0}", fwDate).AppendLine();
             }
             catch
             {

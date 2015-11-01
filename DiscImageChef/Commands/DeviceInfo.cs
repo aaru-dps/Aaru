@@ -459,13 +459,13 @@ namespace DiscImageChef.Commands
                             Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(confBuf);
 
                             DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
-                            DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is 0x{0:X4} bytes", ftr.CurrentProfile);
+                            DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
                             if (ftr.Descriptors != null)
                             {
                                 DicConsole.WriteLine("SCSI MMC GET CONFIGURATION Features:");
                                 foreach (Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
                                 {
-                                    DicConsole.DebugWriteLine("Device-Info command", "Feature 0x{0:X4}", desc.Code);
+                                    DicConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
 
                                     switch (desc.Code)
                                     {

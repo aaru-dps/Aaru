@@ -1,6 +1,12 @@
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:
+	  Reword Feature 0105h.
+	Correct handling of feature 010Ch.
+
+2015-11-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/MMC/Features.cs:
 	  Correct math priority
 
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
