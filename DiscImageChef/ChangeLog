@@ -1,5 +1,12 @@
 2015-11-02  Natalia Portillo  <claunia@claunia.com>
 
+	* Options.cs:
+	* Commands/DeviceInfo.cs:
+	  Added option to dump binary responses got from devices while
+	  getting device info.
+
+2015-11-02  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DeviceInfo.cs:
 	  Added READ DISC STRUCTURE.
 

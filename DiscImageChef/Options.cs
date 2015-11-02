@@ -218,6 +218,9 @@ namespace DiscImageChef
     {
         [Option('i', "device", Required = true, HelpText = "Device path.")]
         public string DevicePath { get; set; }
+
+        [Option('w', "output-prefix", Required = false, DefaultValue = "", HelpText = "Write binary responses from device with that prefix.")]
+        public string OutputPrefix { get; set; }
     }
 
     public class FormatsSubOptions : CommonSubOptions

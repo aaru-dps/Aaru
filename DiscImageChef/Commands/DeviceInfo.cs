@@ -50,6 +50,8 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
+            FileStream outputFs;
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -88,6 +90,26 @@ namespace DiscImageChef.Commands
                             break;
                         }
 
+                        if(!string.IsNullOrEmpty(options.OutputPrefix))
+                        {
+                            if (!File.Exists(options.OutputPrefix + "_ata_identify.bin"))
+                            {
+                                try
+                                {
+                                    DicConsole.DebugWriteLine("Device-Info command", "Writing ATA IDENTIFY to {0}{1}", options.OutputPrefix, "_ata_identify.bin");
+                                    outputFs = new FileStream(options.OutputPrefix + "_ata_identify.bin", FileMode.CreateNew);
+                                    outputFs.Write(ataBuf, 0, ataBuf.Length);
+                                    outputFs.Close();
+                                }
+                                catch
+                                {
+                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_ata_identify.bin");
+                                }
+                            }
+                            else
+                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_ata_identify.bin");
+                        }
+
                         DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
                         break;
                     }
@@ -110,6 +132,26 @@ namespace DiscImageChef.Commands
                             DicConsole.DebugWriteLine("Device-Info command", "COMMAND = 0x{0:X2}", errorRegisters.command);
                             DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
                             break;
+                        }
+
+                        if (!string.IsNullOrEmpty(options.OutputPrefix))
+                        {
+                            if (!File.Exists(options.OutputPrefix + "_atapi_identify.bin"))
+                            {
+                                try
+                                {
+                                    DicConsole.DebugWriteLine("Device-Info command", "Writing ATAPI IDENTIFY to {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
+                                    outputFs = new FileStream(options.OutputPrefix + "_atapi_identify.bin", FileMode.CreateNew);
+                                    outputFs.Write(ataBuf, 0, ataBuf.Length);
+                                    outputFs.Close();
+                                }
+                                catch
+                                {
+                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
+                                }
+                            }
+                            else
+                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
                         }
 
                         DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
@@ -139,6 +181,26 @@ namespace DiscImageChef.Commands
                         if (dev.Type != DeviceType.ATAPI)
                             DicConsole.WriteLine("SCSI device");
 
+                        if(!string.IsNullOrEmpty(options.OutputPrefix))
+                        {
+                            if (!File.Exists(options.OutputPrefix + "_scsi_inquiry.bin"))
+                            {
+                                try
+                                {
+                                    DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY to {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
+                                    outputFs = new FileStream(options.OutputPrefix + "_scsi_inquiry.bin", FileMode.CreateNew);
+                                    outputFs.Write(inqBuf, 0, inqBuf.Length);
+                                    outputFs.Close();
+                                }
+                                catch
+                                {
+                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
+                                }
+                            }
+                            else
+                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
+                        }
+
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(inqBuf);
                         DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
 
@@ -164,6 +226,26 @@ namespace DiscImageChef.Commands
                                             if (sb == null)
                                                 sb = new StringBuilder();
                                             sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+
+                                            if(!string.IsNullOrEmpty(options.OutputPrefix))
+                                            {
+                                                if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
+                                                {
+                                                    try
+                                                    {
+                                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
+                                                        outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
+                                                        outputFs.Write(inqBuf, 0, inqBuf.Length);
+                                                        outputFs.Close();
+                                                    }
+                                                    catch
+                                                    {
+                                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                                    }
+                                                }
+                                                else
+                                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                            }
                                         }
                                     }
                                     else if (page == 0x80)
@@ -173,12 +255,58 @@ namespace DiscImageChef.Commands
                                         {
                                             scsi83 = true;
                                             scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+
+                                            if(!string.IsNullOrEmpty(options.OutputPrefix))
+                                            {
+                                                if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
+                                                {
+                                                    try
+                                                    {
+                                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
+                                                        outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
+                                                        outputFs.Write(inqBuf, 0, inqBuf.Length);
+                                                        outputFs.Close();
+                                                    }
+                                                    catch
+                                                    {
+                                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                                    }
+                                                }
+                                                else
+                                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                            }
                                         }
                                     }
                                     else
                                     {
                                         if (page != 0x00)
+                                        {
                                             DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
+
+                                            sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                            if (!sense)
+                                            {
+                                                if(!string.IsNullOrEmpty(options.OutputPrefix))
+                                                {
+                                                    if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
+                                                    {
+                                                        try
+                                                        {
+                                                            DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
+                                                            outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
+                                                            outputFs.Write(inqBuf, 0, inqBuf.Length);
+                                                            outputFs.Close();
+                                                        }
+                                                        catch
+                                                        {
+                                                            DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                                        }
+                                                    }
+                                                    else
+                                                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -223,6 +351,26 @@ namespace DiscImageChef.Commands
 
                         if (decMode.HasValue)
                         {
+                            if(!string.IsNullOrEmpty(options.OutputPrefix))
+                            {
+                                if (!File.Exists(options.OutputPrefix + "_scsi_modesense.bin"))
+                                {
+                                    try
+                                    {
+                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI MODE SENSE to {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
+                                        outputFs = new FileStream(options.OutputPrefix +"_scsi_modesense.bin", FileMode.CreateNew);
+                                        outputFs.Write(modeBuf, 0, modeBuf.Length);
+                                        outputFs.Close();
+                                    }
+                                    catch
+                                    {
+                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
+                                    }
+                                }
+                                else
+                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
+                            }
+
                             DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModeHeader(decMode.Value.Header, devType));
 
                             if (decMode.Value.Pages != null)
@@ -454,6 +602,26 @@ namespace DiscImageChef.Commands
 
                             if (!sense)
                             {
+                                if(!string.IsNullOrEmpty(options.OutputPrefix))
+                                {
+                                    if (!File.Exists(options.OutputPrefix + "_mmc_getconfiguration.bin"))
+                                    {
+                                        try
+                                        {
+                                            DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI MODE SENSE to {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
+                                            outputFs = new FileStream(options.OutputPrefix +"_mmc_getconfiguration.bin", FileMode.CreateNew);
+                                            outputFs.Write(confBuf, 0, confBuf.Length);
+                                            outputFs.Close();
+                                        }
+                                        catch
+                                        {
+                                            DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
+                                        }
+                                    }
+                                    else
+                                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
+                                }
+
                                 Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(confBuf);
 
                                 DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
