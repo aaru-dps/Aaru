@@ -1,3 +1,9 @@
+2015-11-02  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Decoders.csproj:
+	* SCSI/DiscStructureCapabilities.cs:
+	  Added READ DISC STRUCTURE.
+
 2015-11-01  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/MMC/Features.cs:

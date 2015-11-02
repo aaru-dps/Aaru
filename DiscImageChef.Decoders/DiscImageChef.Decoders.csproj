@@ -81,6 +81,7 @@
     <Compile Include="SCSI\EVPD.cs" />
     <Compile Include="SCSI\Modes.cs" />
     <Compile Include="SCSI\MMC\Features.cs" />
+    <Compile Include="SCSI\DiscStructureCapabilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

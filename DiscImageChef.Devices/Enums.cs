@@ -2760,5 +2760,207 @@ namespace DiscImageChef.Devices
         Single = 0x02,
         Reserved = 0x03
     }
+
+    public enum MmcDiscStructureMediaType : byte
+    {
+        /// <summary>
+        /// Disc Structures for DVD and HD DVD
+        /// </summary>
+        DVD = 0x00,
+        /// <summary>
+        /// Disc Structures for BD
+        /// </summary>
+        BD = 0x01
+    }
+
+    public enum MmcDiscStructureFormat : byte
+    {
+        // Generic Format Codes
+
+        /// <summary>
+        /// AACS Volume Identifier
+        /// </summary>
+        AACSVolId = 0x80,
+        /// <summary>
+        /// AACS Pre-recorded Media Serial Number
+        /// </summary>
+        AACSMediaSerial = 0x81,
+        /// <summary>
+        /// AACS Media Identifier
+        /// </summary>
+        AACSMediaId = 0x82,
+        /// <summary>
+        /// AACS Lead-in Media Key Block
+        /// </summary>
+        AACSMKB = 0x83,
+        /// <summary>
+        /// AACS Data Keys
+        /// </summary>
+        AACSDataKeys = 0x84,
+        /// <summary>
+        /// AACS LBA extents
+        /// </summary>
+        AACSLBAExtents = 0x85,
+        /// <summary>
+        /// CPRM Media Key Block specified by AACS
+        /// </summary>
+        AACSMKBCPRM = 0x86,
+        /// <summary>
+        /// Recognized format layers
+        /// </summary>
+        RecognizedFormatLayers = 0x90,
+        /// <summary>
+        /// Write protection status
+        /// </summary>
+        WriteProtectionStatus = 0xC0,
+        /// <summary>
+        /// READ/SEND DISC STRUCTURE capability list
+        /// </summary>
+        CapabilityList = 0xFF,
+            
+        // DVD Disc Structures
+        /// <summary>
+        /// DVD Lead-in Physical Information
+        /// </summary>
+        PhysicalInformation = 0x00,
+        /// <summary>
+        /// DVD Lead-in Copyright Information
+        /// </summary>
+        CopyrightInformation = 0x01,
+        /// <summary>
+        /// CSS/CPPM Disc key
+        /// </summary>
+        DiscKey = 0x02,
+        /// <summary>
+        /// DVD Burst Cutting Area
+        /// </summary>
+        BurstCuttingArea = 0x03,
+        /// <summary>
+        /// DVD Lead-in Disc Manufacturing Information
+        /// </summary>
+        DiscManufacturingInformation = 0x04,
+        /// <summary>
+        /// DVD Copyright Information from specified sector
+        /// </summary>
+        SectorCopyrightInformation = 0x05,
+        /// <summary>
+        /// CSS/CPPM Media Identifier
+        /// </summary>
+        MediaIdentifier = 0x06,
+        /// <summary>
+        /// CSS/CPPM Media Key Block
+        /// </summary>
+        MediaKeyBlock = 0x07,
+        /// <summary>
+        /// DDS from DVD-RAM
+        /// </summary>
+        DVDRAM_DDS = 0x08,
+        /// <summary>
+        /// DVD-RAM Medium Status
+        /// </summary>
+        DVDRAM_MediumStatus = 0x09,
+        /// <summary>
+        /// DVD-RAM Spare Area Information
+        /// </summary>
+        DVDRAM_SpareAreaInformation = 0x0A,
+        /// <summary>
+        /// DVD-RAM Recording Type Information
+        /// </summary>
+        DVDRAM_RecordingType = 0x0B,
+        /// <summary>
+        /// DVD-R/-RW RMD in last Border-out
+        /// </summary>
+        LastBorderOutRMD = 0x0C,
+        /// <summary>
+        /// Specified RMD from last recorded Border-out
+        /// </summary>
+        SpecifiedRMD = 0x0D,
+        /// <summary>
+        /// DVD-R/-RW Lead-in pre-recorded information
+        /// </summary>
+        PreRecordedInfo = 0x0E,
+        /// <summary>
+        /// DVD-R/-RW Media Identifier
+        /// </summary>
+        DVDR_MediaIdentifier = 0x0F,
+        /// <summary>
+        /// DVD-R/-RW Physical Format Information
+        /// </summary>
+        DVDR_PhysicalInformation = 0x10,
+        /// <summary>
+        /// ADIP
+        /// </summary>
+        ADIP = 0x11,
+        /// <summary>
+        /// HD DVD Lead-in Copyright Protection Information
+        /// </summary>
+        HDDVD_CopyrightInformation = 0x12,
+        /// <summary>
+        /// AACS Lead-in Copyright Data Section
+        /// </summary>
+        DVD_AACS = 0x15,
+        /// <summary>
+        /// HD DVD-R Medium Status
+        /// </summary>
+        HDDVDR_MediumStatus = 0x19,
+        /// <summary>
+        /// HD DVD-R Last recorded RMD in the latest RMZ
+        /// </summary>
+        HDDVDR_LastRMD = 0x1A,
+        /// <summary>
+        /// DVD+/-R DL and DVD-Download DL layer capacity
+        /// </summary>
+        DVDR_LayerCapacity = 0x20,
+        /// <summary>
+        /// DVD-R DL Middle Zone start address
+        /// </summary>
+        MiddleZoneStart = 0x21,
+        /// <summary>
+        /// DVD-R DL Jump Interval Size
+        /// </summary>
+        JumpIntervalSize = 0x22,
+        /// <summary>
+        /// DVD-R DL Start LBA of the manual layer jump
+        /// </summary>
+        ManualLayerJumpStartLBA = 0x23,
+        /// <summary>
+        /// DVD-R DL Remapping information of the specified Anchor Point
+        /// </summary>
+        RemapAnchorPoint = 0x24,
+        /// <summary>
+        /// Disc Control Block
+        /// </summary>
+        DCB = 0x30,
+
+        // BD Disc Structures
+        /// <summary>
+        /// Blu-ray Disc Information
+        /// </summary>
+        DiscInformation = 0x00,
+        /// <summary>
+        /// Blu-ray Burst Cutting Area
+        /// </summary>
+        BD_BurstCuttingArea = 0x03,
+        /// <summary>
+        /// Blu-ray DDS
+        /// </summary>
+        BD_DDS = 0x08,
+        /// <summary>
+        /// Blu-ray Cartridge Status
+        /// </summary>
+        CartridgeStatus = 0x09,
+        /// <summary>
+        /// Blu-ray Spare Area Information
+        /// </summary>
+        BD_SpareAreaInformation = 0x0A,
+        /// <summary>
+        /// Unmodified DFL
+        /// </summary>
+        RawDFL = 0x12,
+        /// <summary>
+        /// Physical Access Control
+        /// </summary>
+        PAC = 0x30
+    }
 }
 

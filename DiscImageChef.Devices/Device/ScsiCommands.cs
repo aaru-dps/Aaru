@@ -507,6 +507,45 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType, uint address, byte layerNumber, MmcDiscStructureFormat format, byte AGID, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            buffer = new byte[8];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadDiscStructure;
+            cdb[1] = (byte)((byte)mediaType & 0x0F);
+            cdb[2] = (byte)((address & 0xFF000000) >> 24);
+            cdb[2] = (byte)((address & 0xFF0000) >> 16);
+            cdb[4] = (byte)((address & 0xFF00) >> 8);
+            cdb[5] = (byte)(address & 0xFF);
+            cdb[6] = layerNumber;
+            cdb[7] = (byte)format;
+            cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[9] = (byte)(buffer.Length & 0xFF);
+            cdb[10] = (byte)((AGID & 0x03) << 6);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            ushort strctLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
+            buffer = new byte[strctLength];
+            cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[9] = (byte)(buffer.Length & 0xFF);
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ DISC STRUCTURE took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 
