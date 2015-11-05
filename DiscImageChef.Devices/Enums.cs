@@ -2559,7 +2559,29 @@ namespace DiscImageChef.Devices
         /// Variable sized Command Description Block
         /// SPC-4 rev. 16
         /// </summary>
-        VariableSizedCDB = 0x7F
+        VariableSizedCDB = 0x7F,
+
+        #region Plextor vendor commands
+        /// <summary>
+        /// Sends extended commands (like SpeedRead) to Plextor drives
+        /// </summary>
+        Plextor_Extend = 0xE9,
+        /// <summary>
+        /// Resets Plextor drives
+        /// </summary>
+        Plextor_Reset = 0xEE,
+        /// <summary>
+        /// Reads drive statistics from Plextor drives EEPROM
+        /// </summary>
+        Plextor_ReadEeprom = 0xF1,
+        #endregion Plextor vendor commands
+
+        #region HL-DT-ST vendor commands
+        /// <summary>
+        /// Sends debugging commands to HL-DT-ST DVD drives
+        /// </summary>
+        HlDtSt_Vendor = 0xE7
+        #endregion HL-DT-ST vendor commands
     }
     #endregion SCSI Commands
 

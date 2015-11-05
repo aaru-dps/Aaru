@@ -88,9 +88,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            buffer = new byte[5];
+            buffer = new byte[36];
             senseBuffer = new byte[32];
-            byte[] cdb = { (byte)ScsiCommands.Inquiry, 0, 0, 0, 5, 0 };
+            byte[] cdb = { (byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0 };
             bool sense;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
@@ -163,15 +163,19 @@ namespace DiscImageChef.Devices
         /// <param name="page">The Extended Vital Product Data</param>
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout, out double duration)
         {
-            buffer = new byte[5];
+            buffer = new byte[36];
             senseBuffer = new byte[32];
-            byte[] cdb = { (byte)ScsiCommands.Inquiry, 1, page, 0, 5, 0 };
+            byte[] cdb = { (byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0 };
             bool sense;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             if (sense)
+                return true;
+
+            // This is because INQ was returned instead of EVPD
+            if (buffer[1] != page)
                 return true;
 
             byte pagesLength = (byte)(buffer[3] + 4);
@@ -336,7 +340,7 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            buffer = new byte[4];
+            buffer = new byte[4096];
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense10;

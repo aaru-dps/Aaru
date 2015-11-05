@@ -95,33 +95,29 @@ namespace DiscImageChef.Devices
             AtaErrorRegistersCHS errorRegisters;
 
             byte[] ataBuf;
-            bool sense = AtaIdentify(out ataBuf, out errorRegisters);
+            byte[] senseBuf;
+            byte[] inqBuf;
 
-            if (!sense)
+            bool scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+
+            if (!scsiSense)
             {
-                type = DeviceType.ATA;
-                Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
+                Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
 
-                if (ATAID.HasValue)
+                type = DeviceType.SCSI;
+                bool sense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
+                if (!sense)
+                    serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
+
+                if (Inquiry.HasValue)
                 {
-                    string[] separated = ATAID.Value.Model.Split(' ');
+                    revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
+                    model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
+                    manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
 
-                    if (separated.Length == 1)
-                        model = separated[0];
-                    else
-                    {
-                        manufacturer = separated[0];
-                        model = separated[separated.Length - 1];
-                    }
-
-                    revision = ATAID.Value.FirmwareRevision;
-                    serial = ATAID.Value.SerialNumber;
-
-                    scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
+                    scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
                 }
-            }
-            else
-            {
+
                 sense = AtapiIdentify(out ataBuf, out errorRegisters);
 
                 if (!sense)
@@ -132,31 +128,32 @@ namespace DiscImageChef.Devices
                     if (ATAID.HasValue)
                         serial = ATAID.Value.SerialNumber;
                 }
+            }
 
-                byte[] senseBuf;
-                byte[] inqBuf;
-
-                sense = ScsiInquiry(out inqBuf, out senseBuf);
-
+            if (scsiSense || manufacturer == "ATA")
+            {
+                bool sense = AtaIdentify(out ataBuf, out errorRegisters);
                 if (!sense)
                 {
-                    Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
+                    type = DeviceType.ATA;
+                    Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
 
-                    if (type != DeviceType.ATAPI)
+                    if (ATAID.HasValue)
                     {
-                        type = DeviceType.SCSI;
-                        sense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
-                        if (!sense)
-                            serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
-                    }
+                        string[] separated = ATAID.Value.Model.Split(' ');
 
-                    if (Inquiry.HasValue)
-                    {
-                        revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
-                        model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
-                        manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
+                        if (separated.Length == 1)
+                            model = separated[0];
+                        else
+                        {
+                            manufacturer = separated[0];
+                            model = separated[separated.Length - 1];
+                        }
 
-                        scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
+                        revision = ATAID.Value.FirmwareRevision;
+                        serial = ATAID.Value.SerialNumber;
+
+                        scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
                     }
                 }
             }

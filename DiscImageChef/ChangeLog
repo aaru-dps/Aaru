@@ -1,3 +1,8 @@
+2015-11-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Mode sense should be written even if it can't be decoded.
+
 2015-11-02  Natalia Portillo  <claunia@claunia.com>
 
 	* Options.cs:

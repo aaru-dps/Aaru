@@ -349,16 +349,16 @@ namespace DiscImageChef.Commands
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
                         }
 
-                        if (decMode.HasValue)
+                        if (!sense)
                         {
-                            if(!string.IsNullOrEmpty(options.OutputPrefix))
+                            if (!string.IsNullOrEmpty(options.OutputPrefix))
                             {
                                 if (!File.Exists(options.OutputPrefix + "_scsi_modesense.bin"))
                                 {
                                     try
                                     {
                                         DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI MODE SENSE to {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
-                                        outputFs = new FileStream(options.OutputPrefix +"_scsi_modesense.bin", FileMode.CreateNew);
+                                        outputFs = new FileStream(options.OutputPrefix + "_scsi_modesense.bin", FileMode.CreateNew);
                                         outputFs.Write(modeBuf, 0, modeBuf.Length);
                                         outputFs.Close();
                                     }
@@ -370,7 +370,10 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
                             }
+                        }
 
+                        if (decMode.HasValue)
+                        {
                             DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModeHeader(decMode.Value.Header, devType));
 
                             if (decMode.Value.Pages != null)
@@ -608,7 +611,7 @@ namespace DiscImageChef.Commands
                                     {
                                         try
                                         {
-                                            DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI MODE SENSE to {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
+                                            DicConsole.DebugWriteLine("Device-Info command", "Writing MMC GET CONFIGURATION to {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
                                             outputFs = new FileStream(options.OutputPrefix +"_mmc_getconfiguration.bin", FileMode.CreateNew);
                                             outputFs.Write(confBuf, 0, confBuf.Length);
                                             outputFs.Close();

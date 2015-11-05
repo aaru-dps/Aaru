@@ -1,3 +1,19 @@
+2015-11-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Constructor.cs:
+	  Some devices (at least smsc usb-floppy) crash and reset when
+	  receiving ata over the ATA PASS-THROUGH scsi command. This
+	  will check for SCSI compliance first giving devices time to
+	  reset.
+
+	* Device/ScsiCommands.cs:
+	  Some devices (smsc usb floppies) return the real command
+	  result size disregarding allocation length and generating a
+	  buffer overflow.
+
+	* Enums.cs:
+	  Added some vendor commands for Plextor and HL-DT-ST devices.
+
 2015-11-02  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

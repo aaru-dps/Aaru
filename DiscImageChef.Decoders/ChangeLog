@@ -1,3 +1,9 @@
+2015-11-05  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
+	  Check for vendor pages not following page format (even if
+	  they must).
+
 2015-11-02  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Decoders.csproj:
