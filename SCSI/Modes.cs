@@ -5904,6 +5904,10 @@ namespace DiscImageChef.Decoders.SCSI
                 if (isSubpage)
                 {
                     pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
+
+                    if((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        return decoded;
+
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                     pg.Page = (byte)(modeResponse[offset] & 0x3F);
                     pg.Subpage = modeResponse[offset + 1];
@@ -5912,6 +5916,10 @@ namespace DiscImageChef.Decoders.SCSI
                 else
                 {
                     pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+
+                    if((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        return decoded;
+
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                     pg.Page = (byte)(modeResponse[offset] & 0x3F);
                     pg.Subpage = 0;
