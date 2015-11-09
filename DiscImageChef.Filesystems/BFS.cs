@@ -78,6 +78,13 @@ namespace DiscImageChef.Plugins
 
             if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
+
+            magic = BitConverter.ToUInt32(sb_sector, 0x220);
+            magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
+
+            if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
+                return true;
+
             sb_sector = imagePlugin.ReadSector(1 + partitionStart);
 				
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
@@ -116,35 +123,47 @@ namespace DiscImageChef.Plugins
                     BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
                 }
                 else
-                    return;
+                {
+                    byte[] temp = imagePlugin.ReadSector(0 + partitionStart);
+                    besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
+
+                    if (besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+                    {
+                        BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
+                        sb_sector = new byte[0x200]; 
+                        Array.Copy(temp, 0x200, sb_sector, 0, 0x200);
+                    }
+                    else
+                        return;
+                }
             }
 
             Array.Copy(sb_sector, 0x000, name_bytes, 0, 0x20);
             besb.name = StringHandlers.CToString(name_bytes);
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.fs_byte_order = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.block_size = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.block_shift = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.num_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x20);
-            besb.used_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x20);
-            besb.inode_size = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.magic2 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.blocks_per_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.ag_shift = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.num_ags = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.flags = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.log_blocks_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.log_blocks_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
-            besb.log_blocks_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
-            besb.log_start = BigEndianBitConverter.ToInt64(sb_sector, 0x20);
-            besb.log_end = BigEndianBitConverter.ToInt64(sb_sector, 0x20);
-            besb.magic3 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.root_dir_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.root_dir_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
-            besb.root_dir_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
-            besb.indices_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x20);
-            besb.indices_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
-            besb.indices_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x20);
+            besb.fs_byte_order = BigEndianBitConverter.ToUInt32(sb_sector, 0x24);
+            besb.block_size = BigEndianBitConverter.ToUInt32(sb_sector, 0x28);
+            besb.block_shift = BigEndianBitConverter.ToUInt32(sb_sector, 0x2C);
+            besb.num_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x30);
+            besb.used_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x38);
+            besb.inode_size = BigEndianBitConverter.ToInt32(sb_sector, 0x40);
+            besb.magic2 = BigEndianBitConverter.ToUInt32(sb_sector, 0x44);
+            besb.blocks_per_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x48);
+            besb.ag_shift = BigEndianBitConverter.ToInt32(sb_sector, 0x4C);
+            besb.num_ags = BigEndianBitConverter.ToInt32(sb_sector, 0x50);
+            besb.flags = BigEndianBitConverter.ToUInt32(sb_sector, 0x54);
+            besb.log_blocks_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x58);
+            besb.log_blocks_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x5C);
+            besb.log_blocks_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x5E);
+            besb.log_start = BigEndianBitConverter.ToInt64(sb_sector, 0x60);
+            besb.log_end = BigEndianBitConverter.ToInt64(sb_sector, 0x68);
+            besb.magic3 = BigEndianBitConverter.ToUInt32(sb_sector, 0x70);
+            besb.root_dir_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x74);
+            besb.root_dir_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x78);
+            besb.root_dir_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x7A);
+            besb.indices_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x7C);
+            besb.indices_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x80);
+            besb.indices_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x82);
 			
             if (!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
 				sb.AppendLine("Big-endian BeFS");

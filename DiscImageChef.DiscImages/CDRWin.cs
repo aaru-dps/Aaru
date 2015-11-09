@@ -1055,6 +1055,8 @@ namespace DiscImageChef.ImagePlugins
 
                 for (int i = 0; i < discimage.tracks.Count; i++)
                 {
+                    ulong index0_len = 0;
+
                     if (discimage.tracks[i].sequence == 1 && i != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
@@ -1111,6 +1113,7 @@ namespace DiscImageChef.ImagePlugins
 
                         sector_offset += partition.PartitionSectors;
                         byte_offset += partition.PartitionLength;
+                        index0_len = partition.PartitionSectors;
                         partitionSequence++;
 
                         if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
@@ -1135,8 +1138,8 @@ namespace DiscImageChef.ImagePlugins
                     partition.PartitionDescription = String.Format("Track {0}.", discimage.tracks[i].sequence);
                     partition.PartitionName = discimage.tracks[i].title;
                     partition.PartitionStartSector = sector_offset;
-                    partition.PartitionLength = (discimage.tracks[i].sectors - (index_one_offset - index_zero_offset)) * discimage.tracks[i].bps;
-                    partition.PartitionSectors = (discimage.tracks[i].sectors - (index_one_offset - index_zero_offset));
+                    partition.PartitionLength = (discimage.tracks[i].sectors - index0_len) * discimage.tracks[i].bps;
+                    partition.PartitionSectors = (discimage.tracks[i].sectors - index0_len);
                     partition.PartitionSequence = partitionSequence;
                     partition.PartitionStart = byte_offset;
                     partition.PartitionType = discimage.tracks[i].tracktype;

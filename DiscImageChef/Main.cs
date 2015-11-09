@@ -73,6 +73,7 @@ namespace DiscImageChef
             string AssemblyCopyright  = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 
             DicConsole.WriteLineEvent += System.Console.WriteLine;
+            DicConsole.WriteEvent += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
