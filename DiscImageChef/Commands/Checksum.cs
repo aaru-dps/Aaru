@@ -81,6 +81,9 @@ namespace DiscImageChef.Commands
                     List<Track> inputTracks = inputFormat.GetTracks();
                     foreach (Track currentTrack in inputTracks)
                     {
+                        DicConsole.DebugWriteLine("Checksum command", "Track {0} starts at sector {1} and ends at sector {2}", currentTrack.TrackSequence,
+                            currentTrack.TrackStartSector, currentTrack.TrackEndSector);
+                                
                         Adler32Context adler32ctxTrack = new Adler32Context();
                         CRC16Context crc16ctxTrack = new CRC16Context();
                         CRC32Context crc32ctxTrack = new CRC32Context();
@@ -125,9 +128,9 @@ namespace DiscImageChef.Commands
                         ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
-                        for (ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
+                        for (ulong i = 0; i < sectors; i++)
                         {
-                            DicConsole.Write("\rHashing sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
+                            DicConsole.Write("\rHashing sector {0} of track {1}", i, currentTrack.TrackSequence);
                             byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
                             if (options.DoAdler32)
                                 adler32ctxTrack.Update(sector);
@@ -195,7 +198,6 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                 }
             }
-
 
             if (options.WholeDisc)
             {

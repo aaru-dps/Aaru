@@ -79,8 +79,11 @@ namespace DiscImageChef.Plugins
             if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
 
-            magic = BitConverter.ToUInt32(sb_sector, 0x220);
-            magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
+            if (sb_sector.Length >= 0x400)
+            {
+                magic = BitConverter.ToUInt32(sb_sector, 0x220);
+                magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
+            }
 
             if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
@@ -122,7 +125,7 @@ namespace DiscImageChef.Plugins
                 {
                     BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
                 }
-                else
+                else if (sb_sector.Length >= 0x400)
                 {
                     byte[] temp = imagePlugin.ReadSector(0 + partitionStart);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
@@ -136,6 +139,8 @@ namespace DiscImageChef.Plugins
                     else
                         return;
                 }
+                else
+                    return;
             }
 
             Array.Copy(sb_sector, 0x000, name_bytes, 0, 0x20);

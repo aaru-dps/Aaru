@@ -1,6 +1,12 @@
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
 	* BFS.cs:
+	  Prevent index out of array on checking BeFS with
+	  less-than-sector-size boot sector.
+
+2015-11-09  Natalia Portillo  <claunia@claunia.com>
+
+	* BFS.cs:
 	  Corrected decoding fields.
 	Added supports for boot sector smaller than device size as in
 	  some Be CDs.

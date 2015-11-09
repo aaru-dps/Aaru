@@ -1,6 +1,11 @@
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRWin.cs:
+	  Corrected typo in track calculation.
+
+2015-11-09  Natalia Portillo  <claunia@claunia.com>
+
+	* CDRWin.cs:
 	  Corrected partition start and length calculations.
 
 2015-10-19  Natalia Portillo  <claunia@claunia.com>

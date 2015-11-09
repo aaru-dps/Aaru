@@ -1898,7 +1898,7 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackDescription = cdr_track.title;
                 if (!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
                     cdr_track.indexes.TryGetValue(1, out _track.TrackStartSector);
-                _track.TrackStartSector += previousStartSector;
+                _track.TrackStartSector = previousStartSector;
                 _track.TrackEndSector = _track.TrackStartSector + cdr_track.sectors - 1;
                 _track.TrackPregap = cdr_track.pregap;
                 _track.TrackSession = cdr_track.session;

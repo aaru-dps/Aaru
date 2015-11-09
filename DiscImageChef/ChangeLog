@@ -1,5 +1,10 @@
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/Checksum.cs:
+	  Corrected checksum calculation for multiple tracks
+
+2015-11-09  Natalia Portillo  <claunia@claunia.com>
+
 	* Main.cs:
 	  Forgot to define Console.Write()
 
