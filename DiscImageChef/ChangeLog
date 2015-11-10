@@ -1,3 +1,12 @@
+2015-11-10  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Checksum.cs:
+	  Modified checksums command to use multiple-sector reading
+	  and be heavily multithreaded.
+
+	* DiscImageChef.csproj:
+	  Enable optimizations on Release.
+
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Checksum.cs:

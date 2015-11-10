@@ -171,9 +171,9 @@ namespace DiscImageChef.Plugins
             besb.indices_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x82);
 			
             if (!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
-				sb.AppendLine("Big-endian BeFS");
+				sb.AppendLine("Little-endian BeFS");
             else
-                sb.AppendLine("Little-endian BeFS");
+                sb.AppendLine("Big-endian BeFS");
 			
             if (besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
             besb.magic2 != BEFS_MAGIC2 || besb.magic3 != BEFS_MAGIC3 ||

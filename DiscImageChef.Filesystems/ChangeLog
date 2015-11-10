@@ -1,3 +1,8 @@
+2015-11-10  Natalia Portillo  <claunia@claunia.com>
+
+	* BFS.cs:
+	  Invert endian description
+
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
 	* BFS.cs:
