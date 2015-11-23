@@ -38,6 +38,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -621,9 +622,19 @@ namespace DiscImageChef.Decoders.SCSI
             throw new NotImplementedException("Check OSD");
         }
 
-        public static void DecodeDescriptor09(byte[] descriptor)
+        public static AtaErrorRegistersLBA48 DecodeDescriptor09(byte[] descriptor)
         {
-            throw new NotImplementedException("Check SAT-3");
+            AtaErrorRegistersLBA48 errorRegisters = new AtaErrorRegistersLBA48();
+
+            errorRegisters.error = descriptor[3];
+            errorRegisters.sectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]);
+            errorRegisters.lbaLow = (ushort)((descriptor[6] << 8) + descriptor[7]);
+            errorRegisters.lbaMid = (ushort)((descriptor[8] << 8) + descriptor[9]);
+            errorRegisters.lbaHigh = (ushort)((descriptor[10] << 8) + descriptor[11]);
+            errorRegisters.deviceHead = descriptor[12];
+            errorRegisters.status = descriptor[13];
+
+            return errorRegisters;
         }
 
         public static void DecodeDescriptor0B(byte[] descriptor)
