@@ -1,6 +1,11 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands.cs:
+	  Added missing documentation.
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
 	  Implemented SCSI READ CAPACITY(10).
 
 2015-11-23  Natalia Portillo  <claunia@claunia.com>

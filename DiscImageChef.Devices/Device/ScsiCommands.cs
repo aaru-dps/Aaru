@@ -460,6 +460,7 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="startingFeatureNumber">Feature number where the feature list should start from</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber, uint timeout, out double duration)
@@ -512,6 +513,19 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Sends the SCSI READ DISC STRUCTURE command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ DISC STRUCTURE response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="mediaType">Medium type for requested disc structure</param>
+        /// <param name="address">Medium address for requested disc structure</param>
+        /// <param name="layerNumber">Medium layer for requested disc structure</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="format">Which disc structure are we requesting</param>
+        /// <param name="AGID">AGID used in medium copy protection</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType, uint address, byte layerNumber, MmcDiscStructureFormat format, byte AGID, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
