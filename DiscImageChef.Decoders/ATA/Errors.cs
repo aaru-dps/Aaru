@@ -2,11 +2,11 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Structs.cs
+// Filename       : Errors.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
-// Component      : Direct device access
+// Component      : Component
 //
 // Revision       : $Revision$
 // Last change by : $Author$
@@ -14,7 +14,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-// Contains enumerations that are common to all operating systems
+// Description
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -37,7 +37,7 @@
 // //$Id$
 using System;
 
-namespace DiscImageChef.Devices
+namespace DiscImageChef.Decoders.ATA
 {
     public struct AtaRegistersCHS
     {

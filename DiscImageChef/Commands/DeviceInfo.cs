@@ -40,6 +40,7 @@ using DiscImageChef.Devices;
 using System.IO;
 using DiscImageChef.Console;
 using System.Text;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Commands
 {

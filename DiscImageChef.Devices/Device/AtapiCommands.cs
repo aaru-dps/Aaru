@@ -37,6 +37,7 @@
 // //$Id$
 using System;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
 {

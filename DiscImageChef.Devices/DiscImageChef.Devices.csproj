@@ -49,7 +49,6 @@
     <Compile Include="Device\Destructor.cs" />
     <Compile Include="Device\Commands.cs" />
     <Compile Include="Device\ScsiCommands.cs" />
-    <Compile Include="Structs.cs" />
     <Compile Include="Device\AtaCommands.cs" />
     <Compile Include="Device\AtapiCommands.cs" />
   </ItemGroup>

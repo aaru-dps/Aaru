@@ -1,5 +1,14 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
+	* ATA/Errors.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Moved ATA register definition to a more common place.
+
+	* SCSI/Sense.cs:
+	  Added information from SAT-4.
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
 	* SCSI/Sense.cs:
 	  Added information from SPC-5.
 

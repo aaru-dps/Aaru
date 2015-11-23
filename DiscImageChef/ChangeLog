@@ -1,3 +1,8 @@
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Moved ATA register definition to a more common place.
+
 2015-11-10  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Checksum.cs:

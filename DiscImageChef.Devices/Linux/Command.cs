@@ -39,6 +39,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices.Linux
 {

@@ -38,6 +38,7 @@
 using System;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices
 {
