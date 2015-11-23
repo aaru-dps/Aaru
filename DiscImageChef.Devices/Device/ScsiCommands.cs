@@ -550,6 +550,59 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        /// <summary>
+        /// Sends the SCSI READ CAPACITY command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadCapacity(out buffer, out senseBuffer, false, 0, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ CAPACITY command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI GET CONFIGURATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="RelAddr">Indicates that <paramref name="address"/> is relative to current medium position</param>
+        /// <param name="address">Address where information is requested from, only valid if <paramref name="PMI"/> is set</param>
+        /// <param name="PMI">If set, it is requesting partial media capacity</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, bool RelAddr, uint address, bool PMI, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            buffer = new byte[8];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCapacity;
+
+            if (PMI)
+            {
+                cdb[8] = 0x01;
+                if (RelAddr)
+                    cdb[1] = 0x01;
+
+                cdb[2] = (byte)((address & 0xFF000000) >> 24);
+                cdb[3] = (byte)((address & 0xFF0000) >> 16);
+                cdb[4] = (byte)((address & 0xFF00) >> 8);
+                cdb[5] = (byte)(address & 0xFF);
+            }
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 
