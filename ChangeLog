@@ -1,5 +1,10 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
+	* SCSI/Sense.cs:
+	  Typo
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
 	* ATA/Errors.cs:
 	* DiscImageChef.Decoders.csproj:
 	  Moved ATA register definition to a more common place.
