@@ -1,5 +1,10 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/ScsiCommands.cs:
+	  Corrected typo.
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Command.cs:
 	* Linux/Command.cs:
 	* Device/Commands.cs:

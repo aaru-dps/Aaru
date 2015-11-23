@@ -169,12 +169,7 @@ namespace DiscImageChef.Commands
 
                         if (sense)
                         {
-                            DicConsole.ErrorWriteLine("SCSI error. Sense decoding not yet implemented.");
-
-                            #if DEBUG
-                            FileStream senseFs = File.Open("sense.bin", FileMode.OpenOrCreate);
-                            senseFs.Write(senseBuf, 0, senseBuf.Length);
-                            #endif
+                            DicConsole.ErrorWriteLine("SCSI error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
 
                             break;
                         }

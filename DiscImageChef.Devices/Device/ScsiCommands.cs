@@ -522,7 +522,7 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.ReadDiscStructure;
             cdb[1] = (byte)((byte)mediaType & 0x0F);
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
-            cdb[2] = (byte)((address & 0xFF0000) >> 16);
+            cdb[3] = (byte)((address & 0xFF0000) >> 16);
             cdb[4] = (byte)((address & 0xFF00) >> 8);
             cdb[5] = (byte)(address & 0xFF);
             cdb[6] = layerNumber;
