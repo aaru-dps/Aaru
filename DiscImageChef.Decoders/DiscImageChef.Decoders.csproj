@@ -82,6 +82,7 @@
     <Compile Include="SCSI\Modes.cs" />
     <Compile Include="SCSI\MMC\Features.cs" />
     <Compile Include="SCSI\DiscStructureCapabilities.cs" />
+    <Compile Include="SCSI\Sense.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
