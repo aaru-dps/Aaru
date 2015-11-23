@@ -41,6 +41,7 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.ImagePlugins
 {

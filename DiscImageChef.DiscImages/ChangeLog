@@ -1,3 +1,16 @@
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
+	* VHD.cs:
+	* Nero.cs:
+	* CDRWin.cs:
+	* Apple2MG.cs:
+	* TeleDisk.cs:
+	* ImageInfo.cs:
+	* DiskCopy42.cs:
+	* ImagePlugin.cs:
+	* ZZZRawImage.cs:
+	  Moved DiskType to commons.
+
 2015-11-09  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRWin.cs:

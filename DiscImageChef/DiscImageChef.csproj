@@ -51,6 +51,7 @@
     <Compile Include="Commands\Entropy.cs" />
     <Compile Include="DetectImageFormat.cs" />
     <Compile Include="Commands\DeviceInfo.cs" />
+    <Compile Include="Commands\MediaInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -286,7 +286,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static FixedSense? DecodeFixed(byte[] sense, out string senseDescription)
         {
             senseDescription = null;
-            if((sense[0] & 0x7F) != 0x70 || 
+            if((sense[0] & 0x7F) != 0x70 && 
                 (sense[0] & 0x7F) != 0x71)
                 return null;
 

@@ -1,5 +1,13 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
+	* Main.cs:
+	* Options.cs:
+	* DiscImageChef.csproj:
+	* Commands/MediaInfo.cs:
+	  Added media-info command
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DeviceInfo.cs:
 	  Decode SCSI sense.
 

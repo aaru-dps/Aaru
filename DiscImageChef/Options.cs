@@ -223,6 +223,15 @@ namespace DiscImageChef
         public string OutputPrefix { get; set; }
     }
 
+    public class MediaInfoSubOptions : CommonSubOptions
+    {
+        [Option('i', "device", Required = true, HelpText = "Device path.")]
+        public string DevicePath { get; set; }
+
+        [Option('w', "output-prefix", Required = false, DefaultValue = "", HelpText = "Write binary responses from device with that prefix.")]
+        public string OutputPrefix { get; set; }
+    }
+
     public class FormatsSubOptions : CommonSubOptions
     {
     }
@@ -240,6 +249,7 @@ namespace DiscImageChef
             PrintHexVerb = new PrintHexSubOptions();
             DecodeVerb = new DecodeSubOptions();
             DeviceInfoVerb = new DeviceInfoSubOptions();
+            MediaInfoVerb = new MediaInfoSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -268,6 +278,9 @@ namespace DiscImageChef
 
         [VerbOption("device-info", HelpText = "Gets information about a device.")]
         public DeviceInfoSubOptions DeviceInfoVerb { get; set; }
+
+        [VerbOption("media-info", HelpText = "Gets information about the media inserted on a device.")]
+        public MediaInfoSubOptions MediaInfoVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

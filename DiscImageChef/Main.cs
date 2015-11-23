@@ -154,6 +154,14 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.DeviceInfo.doDeviceInfo(DeviceInfoOptions);
                     break;
+                case "media-info":
+                    MediaInfoSubOptions MediaInfoOptions = (MediaInfoSubOptions)invokedVerbInstance;
+                    if (MediaInfoOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (MediaInfoOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.MediaInfo.doMediaInfo(MediaInfoOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }

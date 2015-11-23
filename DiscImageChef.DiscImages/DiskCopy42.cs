@@ -40,6 +40,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.ImagePlugins
 {

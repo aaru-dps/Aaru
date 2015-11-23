@@ -43,6 +43,7 @@ using System.Collections.Generic;
 // Created following notes from Dave Dunfield
 // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
 using DiscImageChef.Console;
+using DiscImageChef.CommonTypes;
 
 
 namespace DiscImageChef.ImagePlugins
