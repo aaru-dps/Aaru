@@ -1,6 +1,11 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Sense.cs:
+	  Added information from SPC-5.
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Sense.cs:
 	* DiscImageChef.Decoders.csproj:
 	  Added decoding SCSI SENSE as defined in SCSI-2.
 
