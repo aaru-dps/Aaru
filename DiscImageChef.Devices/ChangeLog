@@ -1,6 +1,14 @@
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands.cs:
+	  Implemented SCSI READ CAPACITY(16).
+
+	* Enums.cs:
+	  Added SCSI SERVICE ACTIONs.
+
+2015-11-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
 	  Added missing documentation.
 
 2015-11-23  Natalia Portillo  <claunia@claunia.com>

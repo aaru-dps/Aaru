@@ -2984,5 +2984,39 @@ namespace DiscImageChef.Devices
         /// </summary>
         PAC = 0x30
     }
+
+    public enum ScsiServiceActions : byte
+    {
+        // SERVICE ACTION IN
+
+        /// <summary>
+        /// Requests parameter data describing provisioning status for the specified LBA
+        /// SBC-3 rev. 25
+        /// </summary>
+        GetLBAStatus = 0x12,
+        /// <summary>
+        /// Gets device capacity
+        /// SBC-2 rev. 4
+        /// </summary>
+        ReadCapacity16 = 0x10,
+        /// <summary>
+        /// Reads blocks from device in a vendor-specific way that should include the ECC alongside the data
+        /// SBC-2 rev. 4
+        /// </summary>
+        ReadLong16 = 0x11,
+        /// <summary>
+        /// Requests information indicating the user data segments on the ports and LUNs to access them
+        /// SBC-3 rev. 25
+        /// </summary>
+        ReportReferrals = 0x13,
+
+        // SERVICE ACTION OUT
+
+        /// <summary>
+        /// Writes blocks to the device with a vendor specified format that shall include the ECC alongside the data
+        /// SBC-2 rev. 4
+        /// </summary>
+        WriteLong16 = ReadLong16
+    }
 }
 
