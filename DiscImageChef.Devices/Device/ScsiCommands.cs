@@ -670,11 +670,263 @@ namespace DiscImageChef.Devices
             cdb[12] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[13] = (byte)(buffer.Length & 0xFF);
 
-
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY(16) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ MEDIA SERIAL NUMBER command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ MEDIA SERIAL NUMBER response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            buffer = new byte[4];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadSerialNumber;
+            cdb[1] = 0x01;
+            cdb[6] = (byte)((buffer.Length & 0xFF000000) >> 24);
+            cdb[7] = (byte)((buffer.Length & 0xFF0000) >> 16);
+            cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[9] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            uint strctLength = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);
+            cdb[6] = (byte)((buffer.Length & 0xFF000000) >> 24);
+            cdb[7] = (byte)((buffer.Length & 0xFF0000) >> 16);
+            cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[9] = (byte)(buffer.Length & 0xFF);
+            buffer = new byte[strctLength];
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ MEDIA SERIAL NUMBER took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get formatted TOC from disc, in MM:SS:FF format
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="track">Start TOC from this track</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, byte track, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 0, track, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get formatted TOC from disc
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="track">Start TOC from this track</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, bool MSF, byte track, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, MSF, 0, track, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get multi-session information, in MM:SS:FF format
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 1, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get multi-session information
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, bool MSF, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, MSF, 1, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get raw TOC subchannels
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="sessionNumber">Session which TOC to get</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadRawToc(out byte[] buffer, out byte[] senseBuffer, byte sessionNumber, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 2, sessionNumber, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get PMA
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadPma(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 3, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get ATIP
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadAtip(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 4, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command to get Lead-In CD-TEXT
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadCdText(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 5, 0, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ TOC/PMA/ATIP command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ TOC/PMA/ATIP response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="MSF">If <c>true</c>, request data in MM:SS:FF units, otherwise, in blocks</param>
+        /// <param name="format">What structure is requested</param>
+        /// <param name="trackSessionNumber">Track/Session number</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool MSF, byte format, byte trackSessionNumber, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[2];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
+            if (MSF)
+                cdb[1] = 0x02;
+            cdb[2] = (byte)(format & 0x0F);
+            cdb[6] = trackSessionNumber;
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            uint strctLength = (uint)(((int)buffer[0] << 8) + buffer[1] + 2);
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            buffer = new byte[strctLength];
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ TOC/PMA/ATIP took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ DISC INFORMATION command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return ReadDiscInformation(out buffer, out senseBuffer, MmcDiscInformationDataTypes.DiscInformation, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ DISC INFORMATION command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="dataType">Which disc information to read</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, MmcDiscInformationDataTypes dataType, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[2];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadDiscInformation;
+            cdb[1] = (byte)dataType;
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            if (sense)
+                return true;
+
+            uint strctLength = (uint)(((int)buffer[0] << 8) + buffer[1] + 2);
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+            buffer = new byte[strctLength];
+            senseBuffer = new byte[32];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ DISC INFORMATION took {0} ms.", duration);
 
             return sense;
         }

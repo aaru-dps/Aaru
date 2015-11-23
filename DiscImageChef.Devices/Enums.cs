@@ -3018,5 +3018,21 @@ namespace DiscImageChef.Devices
         /// </summary>
         WriteLong16 = ReadLong16
     }
+
+    public enum MmcDiscInformationDataTypes : byte
+    {
+        /// <summary>
+        /// Standard Disc Information
+        /// </summary>
+        DiscInformation = 0x00,
+        /// <summary>
+        /// Track Resources Information
+        /// </summary>
+        TrackResources = 0x01,
+        /// <summary>
+        /// POW Resources Information
+        /// </summary>
+        POWResources = 0x02
+    }
 }
 
