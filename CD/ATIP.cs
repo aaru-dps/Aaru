@@ -231,7 +231,7 @@ namespace DiscImageChef.Decoders.CD
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            if (CDATIPResponse.Length != 32)
+            if (CDATIPResponse.Length != 32 && CDATIPResponse.Length != 28)
             {
                 DicConsole.DebugWriteLine("CD ATIP decoder", "Expected CD ATIP size (32 bytes) is not received size ({0} bytes), not decoding", CDATIPResponse.Length);
                 return null;
@@ -267,17 +267,21 @@ namespace DiscImageChef.Decoders.CD
             decoded.A1Values = new byte[3];
             decoded.A2Values = new byte[3];
             decoded.A3Values = new byte[3];
-            decoded.S4Values = new byte[3];
 
             Array.Copy(CDATIPResponse, 16, decoded.A1Values, 0, 3);
-            Array.Copy(CDATIPResponse, 20, decoded.A1Values, 0, 3);
-            Array.Copy(CDATIPResponse, 24, decoded.A1Values, 0, 3);
-            Array.Copy(CDATIPResponse, 28, decoded.A1Values, 0, 3);
+            Array.Copy(CDATIPResponse, 20, decoded.A2Values, 0, 3);
+            Array.Copy(CDATIPResponse, 24, decoded.A3Values, 0, 3);
 
             decoded.Reserved7 = CDATIPResponse[19];
             decoded.Reserved8 = CDATIPResponse[23];
             decoded.Reserved9 = CDATIPResponse[27];
-            decoded.Reserved10 = CDATIPResponse[31];
+
+            if (CDATIPResponse.Length >= 32)
+            {
+                decoded.S4Values = new byte[3];
+                Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
+                decoded.Reserved10 = CDATIPResponse[31];
+            }
 
             return decoded;
         }
@@ -365,7 +369,8 @@ namespace DiscImageChef.Decoders.CD
                     sb.AppendFormat("A2 value: 0x{0:X6}", (response.A2Values[0] << 16) + (response.A2Values[1] << 8) + response.A2Values[2]).AppendLine();
                 if(response.A3Valid)
                     sb.AppendFormat("A3 value: 0x{0:X6}", (response.A3Values[0] << 16) + (response.A3Values[1] << 8) + response.A3Values[2]).AppendLine();
-                sb.AppendFormat("S4 value: 0x{0:X6}", (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).AppendLine();
+                if(response.S4Values != null)
+                    sb.AppendFormat("S4 value: 0x{0:X6}", (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).AppendLine();
             }
 
             return sb.ToString();

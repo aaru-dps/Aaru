@@ -1,3 +1,19 @@
+2015-11-24  Natalia Portillo  <claunia@claunia.com>
+
+	* CD/ATIP.cs:
+	  ATIP not always contain S4.
+	Corrected typo.
+
+	* CD/Session.cs:
+	  Added missing newlines.
+
+	* CD/TOC.cs:
+	  Added missing newlines.
+	Recognize Lead-Out track.
+
+	* SCSI/MMC/DiscInformation.cs:
+	  Added structures for Disc Informations 001b and 010b.
+
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Sense.cs:

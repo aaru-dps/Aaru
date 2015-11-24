@@ -158,11 +158,11 @@ namespace DiscImageChef.Decoders.CD
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
             foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
-                sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber);
+                sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).AppendLine();
                 sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
                     (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
                     (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                    (descriptor.TrackStartAddress & 0xFF000000) >> 24);
+                    (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
 
                 switch ((TOC_ADR)descriptor.ADR)
                 {
