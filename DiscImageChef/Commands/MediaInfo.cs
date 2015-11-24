@@ -286,20 +286,26 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("READ DISC INFORMATION 000b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                 {
+                    DicConsole.WriteLine("Standard Disc Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(cmdBuf));
                     doWriteFile(outputPrefix, "_readdiscinformation_000b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
                 }
 
                 sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.TrackResources, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ DISC INFORMATION 001b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
+                    DicConsole.WriteLine("Track Resources Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(cmdBuf));
                     doWriteFile(outputPrefix, "_readdiscinformation_001b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
-
+                }
                 sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.POWResources, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ DISC INFORMATION 010b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
+                    DicConsole.WriteLine("POW Resources Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(cmdBuf));
                     doWriteFile(outputPrefix, "_readdiscinformation_010b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
+                }
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSVolId, 0, dev.Timeout, out duration);
                 if(sense)
