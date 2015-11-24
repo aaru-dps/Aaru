@@ -846,7 +846,7 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            buffer = new byte[2];
+            byte[] tmpBuffer = new byte[804];
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
@@ -854,23 +854,15 @@ namespace DiscImageChef.Devices
                 cdb[1] = 0x02;
             cdb[2] = (byte)(format & 0x0F);
             cdb[6] = trackSessionNumber;
-            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[8] = (byte)(buffer.Length & 0xFF);
+            cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
-                return true;
-
-            uint strctLength = (uint)(((int)buffer[0] << 8) + buffer[1] + 2);
-            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[8] = (byte)(buffer.Length & 0xFF);
+            uint strctLength = (uint)(((int)tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
             buffer = new byte[strctLength];
-            senseBuffer = new byte[32];
-
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
-            error = lastError != 0;
+            Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
             DicConsole.DebugWriteLine("SCSI Device", "READ TOC/PMA/ATIP took {0} ms.", duration);
 
@@ -903,28 +895,20 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            buffer = new byte[2];
+            byte[] tmpBuffer = new byte[804];
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReadDiscInformation;
             cdb[1] = (byte)dataType;
-            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[8] = (byte)(buffer.Length & 0xFF);
+            cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            lastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
-                return true;
-
-            uint strctLength = (uint)(((int)buffer[0] << 8) + buffer[1] + 2);
-            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
-            cdb[8] = (byte)(buffer.Length & 0xFF);
+            uint strctLength = (uint)(((int)tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
             buffer = new byte[strctLength];
-            senseBuffer = new byte[32];
-
-            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
-            error = lastError != 0;
+            Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
             DicConsole.DebugWriteLine("SCSI Device", "READ DISC INFORMATION took {0} ms.", duration);
 

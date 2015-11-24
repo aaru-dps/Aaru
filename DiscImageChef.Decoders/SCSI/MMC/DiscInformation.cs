@@ -56,7 +56,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
     /// </summary>
     public static class DiscInformation
     {
-        public struct DiscInformationResponse
+        public struct StandardDiscInformation
         {
             /// <summary>
             /// Bytes 0 to 1
@@ -192,6 +192,89 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// OPC values
             /// </summary>
             public byte[] OPCValues;
+        }
+
+        public struct TrackResourcesInformation
+        {
+            /// <summary>
+            /// Bytes 0 to 1
+            /// 10
+            /// </summary>
+            public UInt16 DataLength;
+            /// <summary>
+            /// Byte 2, bits 7 to 5
+            /// 001b
+            /// </summary>
+            public byte DataType;
+            /// <summary>
+            /// Byte 2, bits 4 to 0
+            /// Reserved
+            /// </summary>
+            public byte Reserved1;
+            /// <summary>
+            /// Byte 3
+            /// Reserved
+            /// </summary>
+            public byte Reserved2;
+            /// <summary>
+            /// Bytes 4 to 5
+            /// Maximum possible number of the tracks on the disc
+            /// </summary>
+            public UInt16 MaxTracks;
+            /// <summary>
+            /// Bytes 6 to 7
+            /// Number of the assigned tracks on the disc
+            /// </summary>
+            public UInt16 AssignedTracks;
+            /// <summary>
+            /// Bytes 8 to 9
+            /// Maximum possible number of appendable tracks on the disc
+            /// </summary>
+            public UInt16 MaxAppendableTracks;
+            /// <summary>
+            /// Bytes 10 to 11
+            /// Current number of appendable tracks on the disc
+            /// </summary>
+            public UInt16 AppendableTracks;
+        }
+
+        public struct POWResourcesInformation
+        {
+            /// <summary>
+            /// Bytes 0 to 1
+            /// 14
+            /// </summary>
+            public UInt16 DataLength;
+            /// <summary>
+            /// Byte 2, bits 7 to 5
+            /// 010b
+            /// </summary>
+            public byte DataType;
+            /// <summary>
+            /// Byte 2, bits 4 to 0
+            /// Reserved
+            /// </summary>
+            public byte Reserved1;
+            /// <summary>
+            /// Byte 3
+            /// Reserved
+            /// </summary>
+            public byte Reserved2;
+            /// <summary>
+            /// Bytes 4 to 7
+            /// Remaining POW replacements
+            /// </summary>
+            public UInt32 RemainingPOWReplacements;
+            /// <summary>
+            /// Bytes 8 to 11
+            /// Remaining POW reallocation map entries
+            /// </summary>
+            public UInt32 RemainingPOWReallocation;
+            /// <summary>
+            /// Bytes 12 to 15
+            /// Number of remaining POW updates
+            /// </summary>
+            public UInt32 RemainingPOWUpdates;
         }
     }
 }

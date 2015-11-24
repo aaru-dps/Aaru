@@ -1,3 +1,8 @@
+2015-11-24  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskType.cs:
+	  Added DVD-RW DL, DVD-Download, HD DVD-R DL and HD DVD-RW DL.
+
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* DiskType.cs:

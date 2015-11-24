@@ -108,6 +108,10 @@ namespace DiscImageChef.CommonTypes
         DVDPRDL,
         /// <summary>DVD-RAM</summary>
         DVDRAM,
+        /// <summary>DVD-RW DL</summary>
+        DVDRWDL,
+        /// <summary>DVD-Download</summary>
+        DVDDownload,
 
         // Standard HD-DVD formats
         /// <summary>HD DVD-ROM (applies to HD DVD Video)</summary>
@@ -118,6 +122,10 @@ namespace DiscImageChef.CommonTypes
         HDDVDR,
         /// <summary>HD DVD-RW</summary>
         HDDVDRW,
+        /// <summary>HD DVD-R DL</summary>
+        HDDVDRDL,
+        /// <summary>HD DVD-RW DL</summary>
+        HDDVDRWDL,
 
         // Standard Blu-ray formats
         /// <summary>BD-ROM (and BD Video)</summary>

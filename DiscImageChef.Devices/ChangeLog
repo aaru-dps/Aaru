@@ -1,3 +1,11 @@
+2015-11-24  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
+	  On READ TOC/PMA/ATIP and READ DISC INFORMATION if trying
+	  small buffer and then real-sized buffer, some drives send
+	  garbage, so get a big enough buffer and return only the
+	  applicable data size.
+
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

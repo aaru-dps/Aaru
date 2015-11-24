@@ -39,6 +39,7 @@ using System;
 using DiscImageChef.Console;
 using System.IO;
 using DiscImageChef.Devices;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Commands
 {
@@ -107,6 +108,7 @@ namespace DiscImageChef.Commands
             byte[] senseBuf;
             bool sense;
             double duration;
+            DiskType dskType = DiskType.Unknown;
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
@@ -175,13 +177,117 @@ namespace DiscImageChef.Commands
                     Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
 
                     DicConsole.DebugWriteLine("Media-Info command", "GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
+
+                    switch (ftr.CurrentProfile)
+                    {
+                        case 0x0001:
+                            dskType = DiskType.GENERIC_HDD;
+                            break;
+                        case 0x0005:
+                            dskType = DiskType.CDMO;
+                            break;
+                        case 0x0008:
+                            dskType = DiskType.CDROM;
+                            break;
+                        case 0x0009:
+                            dskType = DiskType.CDR;
+                            break;
+                        case 0x000A:
+                            dskType = DiskType.CDRW;
+                            break;
+                        case 0x0010:
+                            dskType = DiskType.DVDROM;
+                            break;
+                        case 0x0011:
+                            dskType = DiskType.DVDR;
+                            break;
+                        case 0x0012:
+                            dskType = DiskType.DVDRAM;
+                            break;
+                        case 0x0013:
+                        case 0x0014:
+                            dskType = DiskType.DVDRW;
+                            break;
+                        case 0x0015:
+                        case 0x0016:
+                            dskType = DiskType.DVDRDL;
+                            break;
+                        case 0x0017:
+                            dskType = DiskType.DVDRWDL;
+                            break;
+                        case 0x0018:
+                            dskType = DiskType.DVDDownload;
+                            break;
+                        case 0x001A:
+                            dskType = DiskType.DVDPRW;
+                            break;
+                        case 0x001B:
+                            dskType = DiskType.DVDPR;
+                            break;
+                        case 0x0020:
+                            dskType = DiskType.DDCD;
+                            break;
+                        case 0x0021:
+                            dskType = DiskType.DDCDR;
+                            break;
+                        case 0x0022:
+                            dskType = DiskType.DDCDRW;
+                            break;
+                        case 0x002A:
+                            dskType = DiskType.DVDPRWDL;
+                            break;
+                        case 0x002B:
+                            dskType = DiskType.DVDPRDL;
+                            break;
+                        case 0x0040:
+                            dskType = DiskType.BDROM;
+                            break;
+                        case 0x0041:
+                        case 0x0042:
+                            dskType = DiskType.BDR;
+                            break;
+                        case 0x0043:
+                            dskType = DiskType.BDRE;
+                            break;
+                        case 0x0050:
+                            dskType = DiskType.HDDVDROM;
+                            break;
+                        case 0x0051:
+                            dskType = DiskType.HDDVDR;
+                            break;
+                        case 0x0052:
+                            dskType = DiskType.HDDVDRAM;
+                            break;
+                        case 0x0053:
+                            dskType = DiskType.HDDVDRW;
+                            break;
+                        case 0x0058:
+                            dskType = DiskType.HDDVDRDL;
+                            break;
+                        case 0x005A:
+                            dskType = DiskType.HDDVDRWDL;
+                            break;
+                    }
+                }
+
+                DicConsole.WriteLine("{0}", dskType);
+
+                sense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out duration);
+                if (sense)
+                    DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                else
+                {
+                    DicConsole.WriteLine("TOC:\n{0}", Decoders.CD.TOC.Prettify(cmdBuf));
+                    doWriteFile(outputPrefix, "_toc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                 }
 
                 sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ DISC INFORMATION 000b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_readdiscinformation_000b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
+                }
 
                 sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.TrackResources, dev.Timeout, out duration);
                 if(sense)
@@ -194,8 +300,6 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("READ DISC INFORMATION 010b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscinformation_010b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
-
-
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSVolId, 0, dev.Timeout, out duration);
                 if(sense)
@@ -433,36 +537,47 @@ namespace DiscImageChef.Commands
                     doWriteFile(outputPrefix, "_readdiscstructure_bd_pac.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
 
 
-                sense = dev.ReadToc(out cmdBuf, out senseBuf, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_toc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                 sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: Session info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_session.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
-                sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 0, dev.Timeout, out duration);
-                if(sense)
+                    DicConsole.WriteLine("Session information:\n{0}", Decoders.CD.Session.Prettify(cmdBuf));
+                }
+                sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
+                if (sense)
                     DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: Raw TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_rawtoc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
+                    DicConsole.WriteLine("Raw TOC:\n{0}", Decoders.CD.FullTOC.Prettify(cmdBuf));
+                }
                 sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: PMA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_pma.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
+                    DicConsole.WriteLine("PMA:\n{0}", Decoders.CD.PMA.Prettify(cmdBuf));
+                }
                 sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: ATIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
+                    DicConsole.WriteLine("ATIP:\n{0}", Decoders.CD.ATIP.Prettify(cmdBuf));
+                }
+                
                 sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: CD-TEXT\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
+                {
                     doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
+                    DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
+                }
 
             }
         }
