@@ -109,6 +109,8 @@ namespace DiscImageChef.Commands
             bool sense;
             double duration;
             DiskType dskType = DiskType.Unknown;
+            ulong blocks = 0;
+            uint blockSize = 0;
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
@@ -117,9 +119,6 @@ namespace DiscImageChef.Commands
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
-                ulong blocks = 0;
-                uint blockSize = 0;
-
                 sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                 if (!sense)
                 {
@@ -187,7 +186,7 @@ namespace DiscImageChef.Commands
                             dskType = DiskType.CDMO;
                             break;
                         case 0x0008:
-                            dskType = DiskType.CDROM;
+                            dskType = DiskType.CD;
                             break;
                         case 0x0009:
                             dskType = DiskType.CDR;
@@ -763,14 +762,57 @@ namespace DiscImageChef.Commands
                         else
                         {
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
-                            DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
+                            //if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
+                              //  DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
                         }
                     }
                 }
                 #endregion CDs
+
+                #region Nintendo
+                if(dskType == DiskType.Unknown && blocks > 0)
+                {
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
+                    if(sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out duration);
+                    if(sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_cmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out duration);
+                    if(sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    
+                }
+                #endregion Nintendo
             }
 
             DicConsole.WriteLine("Media identified as {0}", dskType);
+
+            sense = dev.ReadMediaSerialNumber(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+            if (sense)
+                DicConsole.ErrorWriteLine("READ MEDIA SERIAL NUMBER\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+            else
+            {
+                doWriteFile(outputPrefix, "_mediaserialnumber.bin", "SCSI READ MEDIA SERIAL NUMBER", cmdBuf);
+                if (cmdBuf.Length >= 4)
+                {
+                    DicConsole.Write("Media Serial Number: ");
+                    for (int i = 4; i < cmdBuf.Length; i++)
+                        DicConsole.Write("{0:X2}", cmdBuf[i]);
+                    DicConsole.WriteLine();
+                }
+            }
         }
 
         static void doWriteFile(string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
