@@ -1,6 +1,13 @@
 2015-11-24  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Reorganized media-info command so only applicable
+	  information is requested based on what we are being informed
+	  about media type.
+
+2015-11-24  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added decoding and prettifying READ DISC INFORMATION.
 
 2015-11-24  Natalia Portillo  <claunia@claunia.com>

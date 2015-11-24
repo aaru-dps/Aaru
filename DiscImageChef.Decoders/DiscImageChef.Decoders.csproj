@@ -73,8 +73,6 @@
     <Compile Include="SCSI\MMC\Hybrid.cs" />
     <Compile Include="SCSI\MMC\WriteProtect.cs" />
     <Compile Include="SCSI\MMC\DiscInformation.cs" />
-    <Compile Include="SCSI\MMC\TrackInformation.cs" />
-    <Compile Include="SCSI\MMC\OPW.cs" />
     <Compile Include="SCSI\Enums.cs" />
     <Compile Include="SCSI\VendorString.cs" />
     <Compile Include="ATA\Identify.cs" />
