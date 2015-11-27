@@ -1,6 +1,11 @@
 2015-11-27  Natalia Portillo  <claunia@claunia.com>
 
 	* DVD/PFI.cs:
+	  Solved repeated field names.
+
+2015-11-27  Natalia Portillo  <claunia@claunia.com>
+
+	* DVD/PFI.cs:
 	  Added PFI information from all ECMA standards.
 
 2015-11-24  Natalia Portillo  <claunia@claunia.com>
