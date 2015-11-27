@@ -182,7 +182,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Disc type, respecting case recordability
             /// </summary>
             public DVDRAMDiscType DiscType;
-            #region DVD-RAM PFI
+            #endregion DVD-RAM PFI
 
             #region DVD-RAM PFI, Version 0001b
             /// <summary>
@@ -704,14 +704,14 @@ namespace DiscImageChef.Decoders.DVD
             /// Indicates how many bytes, up to 63, are used in ADIP's PFI
             /// </summary>
             public byte PFIUsedInADIP;
-            #region DVD+RW PFI and DVD+R PFI
+            #endregion DVD+RW PFI and DVD+R PFI
 
             #region DVD+RW PFI, version 0010b
             /// <summary>
             /// Byte 55
             /// Ttop first pulse duration
             /// </summary>
-            public byte FirstPulseDuration;
+            public byte TopFirstPulseDuration;
             /// <summary>
             /// Byte 56
             /// Tmp multi pulse duration
@@ -869,7 +869,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 36
             /// Primary recording velocity for the basic write strategy
             /// </summary>
-            public byte PrimaryVelocity;
+            public byte BasicPrimaryVelocity;
             /// <summary>
             /// Byte 37
             /// Maximum read power at Primary velocity
@@ -1193,7 +1193,7 @@ namespace DiscImageChef.Decoders.DVD
 
     public enum DVDRecordingSpeed
     {
-        None = 0
+        None = 0,
         Two = 0,
         Four = 0x10,
         Six = 0x20,
