@@ -52,6 +52,7 @@
     <Compile Include="DetectImageFormat.cs" />
     <Compile Include="Commands\DeviceInfo.cs" />
     <Compile Include="Commands\MediaInfo.cs" />
+    <Compile Include="Commands\Benchmark.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -236,6 +236,15 @@ namespace DiscImageChef
     {
     }
 
+    public class BenchmarkSubOptions : CommonSubOptions
+    {
+        [Option('b', "block-size", Required = false, DefaultValue = (int)512, HelpText = "Block size.")]
+        public int BlockSize { get; set; }
+
+        [Option('s', "buffer-size", Required = false, DefaultValue = (int)128, HelpText = "Buffer size in mebibytes.")]
+        public int BufferSize { get; set; }
+    }
+
     public class Options
     {
         public Options()
@@ -250,6 +259,7 @@ namespace DiscImageChef
             DecodeVerb = new DecodeSubOptions();
             DeviceInfoVerb = new DeviceInfoSubOptions();
             MediaInfoVerb = new MediaInfoSubOptions();
+            BenchmarkInfoVerb = new BenchmarkSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -281,6 +291,9 @@ namespace DiscImageChef
 
         [VerbOption("media-info", HelpText = "Gets information about the media inserted on a device.")]
         public MediaInfoSubOptions MediaInfoVerb { get; set; }
+
+        [VerbOption("benchmark", HelpText = "Benchmarks hashing and entropy calculation.")]
+        public BenchmarkSubOptions BenchmarkInfoVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

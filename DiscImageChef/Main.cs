@@ -162,6 +162,14 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.MediaInfo.doMediaInfo(MediaInfoOptions);
                     break;
+                case "benchmark":
+                    BenchmarkSubOptions BenchmarkOptions = (BenchmarkSubOptions)invokedVerbInstance;
+                    if (BenchmarkOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (BenchmarkOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.Benchmark.doBenchmark(BenchmarkOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }
