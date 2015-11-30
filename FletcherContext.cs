@@ -35,6 +35,9 @@ Implements Fletcher-32 and Fletcher-16 algorithms.
 Copyright (C) 2011-2015 Claunia.com
 ****************************************************************************/
 //$Id$
+
+// Disabled because the speed is abnormally slow
+/*
 using System;
 using System.Text;
 using System.IO;
@@ -455,4 +458,4 @@ namespace DiscImageChef.Checksums
         }
     }
 }
-
+*/
