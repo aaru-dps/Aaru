@@ -2,3 +2,6 @@
 	path = commandline
 	url = https://github.com/gsscoder/commandline/
 	branch = stable-1.9.71.2
+[submodule "CICMMetadata"]
+	path = CICMMetadata
+	url = https://github.com/claunia/CICMMetadata
