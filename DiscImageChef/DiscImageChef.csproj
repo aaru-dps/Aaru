@@ -52,7 +52,9 @@
     <Compile Include="DetectImageFormat.cs" />
     <Compile Include="Commands\DeviceInfo.cs" />
     <Compile Include="Commands\MediaInfo.cs" />
-    <Compile Include="Commands\Benchmark.cs" />
+    <Compile Include="Commands\Benchmark.cs">
+      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,5 +1,15 @@
 2015-11-30  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/Benchmark.cs:
+	  Corrected style.
+
+	* Options.cs:
+	* Commands/Checksum.cs:
+	* DiscImageChef.csproj:
+	  Disabled Fletcher as it is abnormally slow.
+
+2015-11-30  Natalia Portillo  <claunia@claunia.com>
+
 	* Main.cs:
 	* Options.cs:
 	* DiscImageChef.csproj:

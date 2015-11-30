@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -497,8 +497,8 @@ namespace DiscImageChef.Commands
             CRC16Context crc16ctx = new CRC16Context();
             CRC32Context crc32ctx = new CRC32Context();
             CRC64Context crc64ctx = new CRC64Context();
-//            Fletcher16Context fletcher16ctx = new Fletcher16Context();
-//            Fletcher32Context fletcher32ctx = new Fletcher32Context();
+			//Fletcher16Context fletcher16ctx = new Fletcher16Context();
+			//Fletcher32Context fletcher32ctx = new Fletcher32Context();
             MD5Context md5ctx = new MD5Context();
             RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
             SHA1Context sha1ctx = new SHA1Context();
@@ -511,8 +511,8 @@ namespace DiscImageChef.Commands
             Thread crc16Thread = new Thread(updateCRC16);
             Thread crc32Thread = new Thread(updateCRC32);
             Thread crc64Thread = new Thread(updateCRC64);
-//                    Thread fletcher16Thread = new Thread(updateFletcher16);
-//                    Thread fletcher32Thread = new Thread(updateFletcher32);
+			//Thread fletcher16Thread = new Thread(updateFletcher16);
+			//Thread fletcher32Thread = new Thread(updateFletcher32);
             Thread md5Thread = new Thread(updateMD5);
             Thread ripemd160Thread = new Thread(updateRIPEMD160);
             Thread sha1Thread = new Thread(updateSHA1);
@@ -525,8 +525,8 @@ namespace DiscImageChef.Commands
             crc16Packet crc16Pkt = new crc16Packet();
             crc32Packet crc32Pkt = new crc32Packet();
             crc64Packet crc64Pkt = new crc64Packet();
-//                    fletcher16Packet fletcher16Pkt = new fletcher16Packet();
-//                    fletcher32Packet fletcher32Pkt = new fletcher32Packet();
+			//fletcher16Packet fletcher16Pkt = new fletcher16Packet();
+			//fletcher32Packet fletcher32Pkt = new fletcher32Packet();
             md5Packet md5Pkt = new md5Packet();
             ripemd160Packet ripemd160Pkt = new ripemd160Packet();
             sha1Packet sha1Pkt = new sha1Packet();
@@ -544,10 +544,10 @@ namespace DiscImageChef.Commands
             crc32Pkt.context = crc32ctx;
             crc64ctx.Init();
             crc64Pkt.context = crc64ctx;
-//                            fletcher16ctx.Init();
-//                            fletcher16Pkt.context = fletcher16ctx;
-//                            fletcher32ctx.Init();
-//                            fletcher32Pkt.context = fletcher32ctx;
+			//fletcher16ctx.Init();
+			//fletcher16Pkt.context = fletcher16ctx;
+			//fletcher32ctx.Init();
+			//fletcher32Pkt.context = fletcher32ctx;
             md5ctx.Init();
             md5Pkt.context = md5ctx;
             ripemd160ctx.Init();
@@ -591,10 +591,10 @@ namespace DiscImageChef.Commands
                 crc32Thread.Start(crc32Pkt);
                 crc64Pkt.data = tmp;
                 crc64Thread.Start(crc64Pkt);
-//                                    fletcher16Pkt.data = tmp;
-//                                    fletcher16Thread.Start(fletcher16Pkt);
-//                                    fletcher32Pkt.data = tmp;
-//                                    fletcher32Thread.Start(fletcher32Pkt);
+				//fletcher16Pkt.data = tmp;
+				//fletcher16Thread.Start(fletcher16Pkt);
+				//fletcher32Pkt.data = tmp;
+				//fletcher32Thread.Start(fletcher32Pkt);
                 md5Pkt.data = tmp;
                 md5Thread.Start(md5Pkt);
                 ripemd160Pkt.data = tmp;
@@ -611,14 +611,14 @@ namespace DiscImageChef.Commands
                 spamsumThread.Start(spamsumPkt);
 
                 /* mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
-                maxMemory = mem;
-            if (mem < minMemory)
-                minMemory = mem;*/
+            	if (mem > maxMemory)
+                	maxMemory = mem;
+            	if (mem < minMemory)
+	                minMemory = mem;*/
 
                 while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                        crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                                    //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
+						//fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                        md5Thread.IsAlive || ripemd160Thread.IsAlive ||
                        sha1Thread.IsAlive || sha256Thread.IsAlive ||
                        sha384Thread.IsAlive || sha512Thread.IsAlive ||
@@ -631,8 +631,8 @@ namespace DiscImageChef.Commands
             crc16ctx.End();
             crc32ctx.End();
             crc64ctx.End();
-//                            fletcher16ctx.End();
-//                            fletcher32ctx.End();
+			//fletcher16ctx.End();
+			//fletcher32ctx.End();
             md5ctx.End();
             ripemd160ctx.End();
             sha1ctx.End();
@@ -695,7 +695,7 @@ namespace DiscImageChef.Commands
         {
             public Fletcher32Context context;
             public byte[] data;
-        }
+        }*/
 
         struct md5Packet
         {
