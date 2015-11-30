@@ -1,3 +1,8 @@
+2015-11-30  Natalia Portillo  <claunia@claunia.com>
+
+	* .gitignore:
+	  Added gitignore.
+
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* commandline:
