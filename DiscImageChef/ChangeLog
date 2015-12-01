@@ -1,6 +1,11 @@
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Added decoding Lead-In CMI for DVD.
+
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added all existing Blu-ray decoders.
 
 2015-12-01  Natalia Portillo  <claunia@claunia.com>

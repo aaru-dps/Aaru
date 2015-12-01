@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
 {
@@ -118,6 +119,88 @@ namespace DiscImageChef.Decoders.DVD
             /// Disc key for CSS, Album Identifier for CPPM
             /// </summary>
             public byte[] Key;
+        }
+
+        public static LeadInCopyright? DecodeLeadInCopyright(byte[] response)
+        {
+            if(response == null)
+                return null;
+
+            if (response.Length != 8)
+                return null;
+
+            LeadInCopyright cmi = new LeadInCopyright();
+
+            cmi.DataLength = (ushort)((response[0] << 8) + response[1]);
+            cmi.Reserved1 = response[2];
+            cmi.Reserved2 = response[3];
+            cmi.CopyrightType = response[4];
+            cmi.RegionInformation = response[5];
+            cmi.Reserved3 = response[6];
+            cmi.Reserved4 = response[7];
+        }
+
+        public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)
+        {
+            if (cmi == null)
+                return null;
+
+            LeadInCopyright decoded = cmi.Value;
+            StringBuilder sb = new StringBuilder();
+
+            switch (decoded.CopyrightType)
+            {
+                case 0x00:
+                    sb.AppendLine("Disc has no encryption.");
+                    break;
+                case 0x01:
+                    sb.AppendLine("Disc is encrypted using CSS or CPPM.");
+                    break;
+                case 0x02:
+                    sb.AppendLine("Disc is encrypted using CPRM.");
+                    break;
+                case 0x10:
+                    sb.AppendLine("Disc is encrypted using AACS.");
+                    break;
+                default:
+                    sb.AppendFormat("Disc is encrypted using unknown algorithm with ID {0}.", decoded.CopyrightType);
+                    break;
+            }
+
+            if (decoded.CopyrightType == 0)
+                return sb.ToString();
+
+            if (decoded.RegionInformation == 0xFF)
+                sb.AppendLine("Disc cannot be played in any region at all.");
+            else if (decoded.RegionInformation == 0x00)
+                sb.AppendLine("Disc can be played in any region.");
+            else
+            {
+                sb.Append("Disc can be played in the following regions:");
+                if ((decoded.RegionInformation & 0x01) != 0x01)
+                    sb.Append(" 0");
+                if ((decoded.RegionInformation & 0x02) != 0x02)
+                    sb.Append(" 1");
+                if ((decoded.RegionInformation & 0x04) != 0x04)
+                    sb.Append(" 2");
+                if ((decoded.RegionInformation & 0x08) != 0x08)
+                    sb.Append(" 3");
+                if ((decoded.RegionInformation & 0x10) != 0x10)
+                    sb.Append(" 4");
+                if ((decoded.RegionInformation & 0x20) != 0x20)
+                    sb.Append(" 5");
+                if ((decoded.RegionInformation & 0x40) != 0x40)
+                    sb.Append(" 6");
+                if ((decoded.RegionInformation & 0x80) != 0x80)
+                    sb.Append(" 7");
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyLeadInCopyright(byte[] response)
+        {
+            return PrettifyLeadInCopyright(DecodeLeadInCopyright(response));
         }
     }
 }
