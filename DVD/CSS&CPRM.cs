@@ -138,6 +138,8 @@ namespace DiscImageChef.Decoders.DVD
             cmi.RegionInformation = response[5];
             cmi.Reserved3 = response[6];
             cmi.Reserved4 = response[7];
+
+            return cmi;
         }
 
         public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)

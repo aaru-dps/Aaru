@@ -1,6 +1,11 @@
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
 
 	* DVD/CSS&CPRM.cs:
+	  Must return value.
+
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
+	* DVD/CSS&CPRM.cs:
 	  Added decoding Lead-In CMI for DVD.
 
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
