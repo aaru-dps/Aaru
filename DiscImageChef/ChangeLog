@@ -1,6 +1,11 @@
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  DCB was incorrectly being asked to HD DVD instead of DVD+.
+
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added decoding Lead-In CMI for DVD.
 
 2015-12-01  Natalia Portillo  <claunia@claunia.com>

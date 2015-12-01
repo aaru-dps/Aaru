@@ -480,7 +480,13 @@ namespace DiscImageChef.Commands
                     if(sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: ADIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
-                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_adip.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd+_adip.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
+                    if(sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DCB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd+_dcb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion All DVD+
 
@@ -492,12 +498,6 @@ namespace DiscImageChef.Commands
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: HDDVD CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvd_cmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                   
-                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
-                    if(sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DCB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                    else
-                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_dcb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion HD DVD-ROM
 
