@@ -1,5 +1,16 @@
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Blu-ray/DI.cs:
+	* Blu-ray/BD.cs:
+	* Blu-ray/BCA.cs:
+	* Blu-ray/DDS.cs:
+	* Blu-ray/Spare.cs:
+	* Blu-ray/Cartridge.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Separated blu-ray structure decoders.
+
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
 	* DVD/PFI.cs:
 	  Added PFI decoding.
 

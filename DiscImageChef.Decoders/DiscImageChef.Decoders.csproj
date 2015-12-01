@@ -35,7 +35,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SCSI\Inquiry.cs" />
-    <Compile Include="Blu-ray\BD.cs" />
     <Compile Include="Floppy\Enums.cs" />
     <Compile Include="Floppy\System3740.cs" />
     <Compile Include="Floppy\System34.cs" />
@@ -82,6 +81,11 @@
     <Compile Include="SCSI\DiscStructureCapabilities.cs" />
     <Compile Include="SCSI\Sense.cs" />
     <Compile Include="ATA\Errors.cs" />
+    <Compile Include="Blu-ray\DI.cs" />
+    <Compile Include="Blu-ray\BCA.cs" />
+    <Compile Include="Blu-ray\DDS.cs" />
+    <Compile Include="Blu-ray\Spare.cs" />
+    <Compile Include="Blu-ray\Cartridge.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
