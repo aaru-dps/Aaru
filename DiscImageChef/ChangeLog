@@ -1,6 +1,11 @@
 2015-12-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Added all existing Blu-ray decoders.
+
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added PFI decoding.
 
 2015-11-30  Natalia Portillo  <claunia@claunia.com>

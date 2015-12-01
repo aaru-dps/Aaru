@@ -560,7 +560,10 @@ namespace DiscImageChef.Commands
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_di.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Blu-ray Disc Information:\n{0}", Decoders.Bluray.DI.Prettify(cmdBuf));
+                    }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.PAC, 0, dev.Timeout, out duration);
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: PAC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
@@ -576,7 +579,10 @@ namespace DiscImageChef.Commands
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Blu-ray Burst Cutting Area:\n{0}", Decoders.Bluray.BCA.Prettify(cmdBuf));
+                    }
                 }
                 #endregion BD-ROM only
 
@@ -588,17 +594,26 @@ namespace DiscImageChef.Commands
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_dds.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Blu-ray Disc Definition Structure:\n{0}", Decoders.Bluray.DDS.Prettify(cmdBuf));
+                    }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CartridgeStatus, 0, dev.Timeout, out duration);
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Cartridge Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_cartstatus.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Blu-ray Cartridge Status:\n{0}", Decoders.Bluray.DI.Prettify(cmdBuf));
+                    }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_SpareAreaInformation, 0, dev.Timeout, out duration);
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Spare Area Information\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_spare.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Blu-ray Spare Area Information:\n{0}", Decoders.Bluray.DI.Prettify(cmdBuf));
+                    }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.RawDFL, 0, dev.Timeout, out duration);
                     if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Raw DFL\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
