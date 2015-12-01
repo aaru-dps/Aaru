@@ -1,3 +1,8 @@
+2015-12-01  Natalia Portillo  <claunia@claunia.com>
+
+	* DVD/PFI.cs:
+	  Added PFI decoding.
+
 2015-11-27  Natalia Portillo  <claunia@claunia.com>
 
 	* DVD/PFI.cs:
