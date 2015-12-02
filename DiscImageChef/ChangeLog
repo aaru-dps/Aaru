@@ -1,6 +1,11 @@
 2015-12-02  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Implemented decoding DVD-RAM medium status.
+
+2015-12-02  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added DDS decoding.
 
 2015-12-01  Natalia Portillo  <claunia@claunia.com>

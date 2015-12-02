@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
 {
@@ -53,7 +54,6 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1675-D revision 2c
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
-    /// ECMA 365
     /// </summary>
     public static class Cartridge
     {
@@ -124,6 +124,92 @@ namespace DiscImageChef.Decoders.DVD
             /// Reason of specific write protection, only defined 0x01 as "bare disc wp", and 0xFF as unspecified. Rest reserved.
             /// </summary>
             public byte RAMSWI;
+        }
+
+        public static MediumStatus? Decode(byte[] response)
+        {
+            if (response == null)
+                return null;
+
+            if (response.Length != 8)
+                return null;
+
+            MediumStatus status = new MediumStatus();
+
+            status.DataLength = (ushort)((response[0] << 8) + response[1]);
+            status.Reserved1 = response[2];
+            status.Reserved2 = response[3];
+            status.Cartridge |= (response[4] & 0x80) == 0x80;
+            status.OUT |= (response[4] & 0x40) == 0x40;
+            status.Reserved3 = (byte)((response[4] & 0x30) >> 4);
+            status.MSWI |= (response[4] & 0x08) == 0x08;
+            status.CWP |= (response[4] & 0x04) == 0x04;
+            status.PWP |= (response[4] & 0x02) == 0x02;
+            status.Reserved4 |= (response[4] & 0x01) == 0x01;
+            status.DiscType = response[5];
+            status.Reserved5 = response[6];
+            status.RAMSWI = response[7];
+
+            return status;
+        }
+
+        public static string Prettify(MediumStatus? status)
+        {
+            if (status == null)
+                return null;
+
+            MediumStatus decoded = status.Value;
+            StringBuilder sb = new StringBuilder();
+
+            if (decoded.PWP)
+                sb.AppendLine("Disc surface is set to write protected status");
+
+            if (decoded.Cartridge)
+            {
+                sb.AppendLine("Disc comes in a cartridge");
+                if (decoded.OUT)
+                    sb.AppendLine("Disc has been extracted from the cartridge");
+                if (decoded.CWP)
+                    sb.AppendLine("Cartridge is set to write protected");
+            }
+
+            switch (decoded.DiscType)
+            {
+                case 0:
+                    sb.AppendLine("Disc shall not be written without a cartridge");
+                    break;
+                case 0x10:
+                    sb.AppendLine("Disc may be written without a cartridge");
+                    break;
+                default:
+                    sb.AppendFormat("Unknown disc type id {0}", decoded.DiscType).AppendLine();
+                    break;
+            }
+
+            if (decoded.MSWI)
+            {
+                switch (decoded.RAMSWI)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        sb.AppendLine("Disc is write inhibited because it has been extracted from the cartridge");
+                        break;
+                    case 0xFF:
+                        sb.AppendLine("Disc is write inhibited for an unspecified reason");
+                        break;
+                    default:
+                        sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI).AppendLine();
+                        break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static string Prettify(byte[] response)
+        {
+            return Prettify(Decode(response));
         }
     }
 }
