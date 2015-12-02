@@ -1,6 +1,11 @@
 2015-12-02  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Implemented decoding DVD-RAM Spare Area Information.
+
+2015-12-02  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Implemented decoding DVD-RAM medium status.
 
 2015-12-02  Natalia Portillo  <claunia@claunia.com>

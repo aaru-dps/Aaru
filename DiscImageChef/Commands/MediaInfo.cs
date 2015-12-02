@@ -431,7 +431,10 @@ namespace DiscImageChef.Commands
                     if(sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: SAI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdram_spare.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        DicConsole.WriteLine("Spare Area Information:\n{0}", Decoders.DVD.Spare.Prettify(cmdBuf));
+                    }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_RecordingType, 0, dev.Timeout, out duration);
                     if(sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Recording Type\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
