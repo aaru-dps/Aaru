@@ -1,5 +1,12 @@
 2015-12-02  Natalia Portillo  <claunia@claunia.com>
 
+	* DVD/PFI.cs:
+	* DVD/Enums.cs:
+	* DVD/CSS&CPRM.cs:
+	  Use global enums for DVD structure decoding.
+
+2015-12-02  Natalia Portillo  <claunia@claunia.com>
+
 	* DVD/Spare.cs:
 	  Implemented decoding DVD-RAM Spare Area Information.
 

@@ -96,7 +96,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 4, bits 7 to 4
             /// Disk category field
             /// </summary>
-            public DVDCategory DiskCategory;
+            public DiskCategory DiskCategory;
             /// <summary>
             /// Byte 4, bits 3 to 0
             /// Media version
@@ -111,7 +111,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 5, bits 3 to 0
             /// Maximum data rate
             /// </summary>
-            public DVDMaxTransfer MaximumRate;
+            public MaximumRateField MaximumRate;
             /// <summary>
             /// Byte 6, bit 7
             /// Reserved
@@ -131,17 +131,17 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 6, bits 3 to 0
             /// Layer type
             /// </summary>
-            public DVDLayerTypes LayerType;
+            public LayerTypeFieldMask LayerType;
             /// <summary>
             /// Byte 7, bits 7 to 4
             /// Linear density field
             /// </summary>
-            public DVDLinearDensity LinearDensity;
+            public LinearDensityField LinearDensity;
             /// <summary>
             /// Byte 7, bits 3 to 0
             /// Track density field
             /// </summary>
-            public DVDTrackDensity TrackDensity;
+            public TrackDensityField TrackDensity;
             /// <summary>
             /// Bytes 8 to 11
             /// PSN where Data Area starts
@@ -1068,29 +1068,29 @@ namespace DiscImageChef.Decoders.DVD
             pfi.Reserved2 = response[3];
 
             // Common
-            pfi.DiskCategory = (DVDCategory)((response[4] & 0xF0) >> 4);
+            pfi.DiskCategory = (DiskCategory)((response[4] & 0xF0) >> 4);
             pfi.PartVersion = (byte)(response[4] & 0x0F);
             pfi.DiscSize = (DVDSize)((response[5] & 0xF0) >> 4);
-            pfi.MaximumRate = (DVDMaxTransfer)(response[5] & 0x0F);
+            pfi.MaximumRate = (MaximumRateField)(response[5] & 0x0F);
             pfi.Reserved3 |= (response[6] & 0x80) == 0x80;
             pfi.Layers = (byte)((response[6] & 0x60) >> 5);
             pfi.TrackPath |= (response[6] & 0x08) == 0x08;
-            pfi.LayerType = (DVDLayerTypes)(response[6] & 0x07);
-            pfi.LinearDensity = (DVDLinearDensity)((response[7] & 0xF0) >> 4);
-            pfi.TrackDensity = (DVDTrackDensity)(response[7] & 0x0F);
+            pfi.LayerType = (LayerTypeFieldMask)(response[6] & 0x07);
+            pfi.LinearDensity = (LinearDensityField)((response[7] & 0xF0) >> 4);
+            pfi.TrackDensity = (TrackDensityField)(response[7] & 0x0F);
             pfi.DataAreaStartPSN = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
             pfi.DataAreaEndPSN = (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
             pfi.Layer0EndPSN = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
             pfi.BCA |= (response[20] & 0x80) == 0x80;
 
             // UMD
-            if (pfi.DiskCategory == DVDCategory.UMD)
+            if (pfi.DiskCategory == DiskCategory.UMD)
             {
                 pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
             }
 
             // DVD-RAM
-            if (pfi.DiskCategory == DVDCategory.DVDRAM)
+            if (pfi.DiskCategory == DiskCategory.DVDRAM)
             {
                 pfi.DiscType = (DVDRAMDiscType)response[36];
 
@@ -1187,9 +1187,9 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R and DVD-RW
-            if ((pfi.DiskCategory == DVDCategory.DVDR &&
+            if ((pfi.DiskCategory == DiskCategory.DVDR &&
                 pfi.PartVersion < 6) || 
-                (pfi.DiskCategory == DVDCategory.DVDRW &&
+                (pfi.DiskCategory == DiskCategory.DVDRW &&
                     pfi.PartVersion < 3))
             {
                 pfi.CurrentBorderOutSector = (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
@@ -1197,7 +1197,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+RW
-            if (pfi.DiskCategory == DVDCategory.DVDPRW)
+            if (pfi.DiskCategory == DiskCategory.DVDPRW)
             {
                 pfi.RecordingVelocity = response[36];
                 pfi.ReadPowerMaxVelocity = response[37];
@@ -1221,10 +1221,10 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
-            if (pfi.DiskCategory == DVDCategory.DVDPR ||
-                pfi.DiskCategory == DVDCategory.DVDPRW ||
-                pfi.DiskCategory == DVDCategory.DVDPRDL ||
-                pfi.DiskCategory == DVDCategory.DVDPRWDL)
+            if (pfi.DiskCategory == DiskCategory.DVDPR ||
+                pfi.DiskCategory == DiskCategory.DVDPRW ||
+                pfi.DiskCategory == DiskCategory.DVDPRDL ||
+                pfi.DiskCategory == DiskCategory.DVDPRWDL)
             {
                 pfi.VCPS |= (response[20] & 0x40) == 0x40;
                 pfi.ApplicationCode = response[21];
@@ -1235,12 +1235,12 @@ namespace DiscImageChef.Decoders.DVD
                 tmp = new byte[3];
                 Array.Copy(response, 31, tmp, 0, 3);
                 pfi.MediaTypeID = StringHandlers.CToString(tmp);
-                pfi.ProductRevision = pfi.DiskCategory == DVDCategory.DVDPRDL ? (byte)(response[34] & 0x3F) : response[34];
+                pfi.ProductRevision = pfi.DiskCategory == DiskCategory.DVDPRDL ? (byte)(response[34] & 0x3F) : response[34];
                 pfi.PFIUsedInADIP = response[35];
             }
 
             // DVD+RW
-            if (pfi.DiskCategory == DVDCategory.DVDPRW &&
+            if (pfi.DiskCategory == DiskCategory.DVDPRW &&
                pfi.PartVersion == 2)
             {
                 pfi.TopFirstPulseDuration = response[55];
@@ -1251,8 +1251,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R and DVD+R DL
-            if (pfi.DiskCategory == DVDCategory.DVDPR ||
-               pfi.DiskCategory == DVDCategory.DVDPRDL)
+            if (pfi.DiskCategory == DiskCategory.DVDPR ||
+               pfi.DiskCategory == DiskCategory.DVDPRDL)
             {
                 pfi.PrimaryVelocity = response[36];
                 pfi.UpperVelocity = response[37];
@@ -1281,13 +1281,13 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R DL
-            if (pfi.DiskCategory == DVDCategory.DVDPRDL)
+            if (pfi.DiskCategory == DiskCategory.DVDPRDL)
             {
                 pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
             }
 
             // DVD+RW DL
-            if (pfi.DiskCategory == DVDCategory.DVDPRWDL)
+            if (pfi.DiskCategory == DiskCategory.DVDPRWDL)
             {
                 pfi.BasicPrimaryVelocity = response[36];
                 pfi.MaxReadPowerPrimaryVelocity = response[37];
@@ -1310,9 +1310,9 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R DL and DVD-RW DL
-            if ((pfi.DiskCategory == DVDCategory.DVDR &&
+            if ((pfi.DiskCategory == DiskCategory.DVDR &&
                 pfi.PartVersion == 6) || 
-                (pfi.DiskCategory == DVDCategory.DVDRW &&
+                (pfi.DiskCategory == DiskCategory.DVDRW &&
                 pfi.PartVersion == 3))
             {
                 pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
@@ -1364,14 +1364,14 @@ namespace DiscImageChef.Decoders.DVD
 
             switch (decoded.DiskCategory)
             {
-                case DVDCategory.DVDROM:
+                case DiskCategory.DVDROM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-ROM", decoded.PartVersion).AppendLine();
                     if (decoded.DiscSize == DVDSize.OneTwenty && decoded.PartVersion == 1)
                         sb.AppendLine("Disc claims conformation to ECMA-267");
                     if (decoded.DiscSize == DVDSize.Eighty && decoded.PartVersion == 1)
                         sb.AppendLine("Disc claims conformation to ECMA-268");
                     break;
-                case DVDCategory.DVDRAM:
+                case DiskCategory.DVDRAM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-RAM", decoded.PartVersion).AppendLine();
                     switch (decoded.PartVersion)
                     {
@@ -1383,7 +1383,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDR:
+                case DiskCategory.DVDR:
                     if(decoded.PartVersion >= 6)
                         sb.AppendFormat(categorySentence, sizeString, "DVD-R DL", decoded.PartVersion).AppendLine();
                     else
@@ -1401,7 +1401,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDRW:
+                case DiskCategory.DVDRW:
                     if(decoded.PartVersion >= 3)
                         sb.AppendFormat(categorySentence, sizeString, "DVD-RW DL", decoded.PartVersion).AppendLine();
                     else
@@ -1416,7 +1416,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.UMD:
+                case DiskCategory.UMD:
                     if(decoded.DiscSize == DVDSize.OneTwenty)
                         sb.AppendFormat(categorySentence, "60mm", "UMD", decoded.PartVersion).AppendLine();
                     else
@@ -1428,7 +1428,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDPRW:
+                case DiskCategory.DVDPRW:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+RW", decoded.PartVersion).AppendLine();
                     switch (decoded.PartVersion)
                     {
@@ -1443,7 +1443,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDPR:
+                case DiskCategory.DVDPR:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+R", decoded.PartVersion).AppendLine();
                     switch (decoded.PartVersion)
                     {
@@ -1452,7 +1452,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDPRWDL:
+                case DiskCategory.DVDPRWDL:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+RW DL", decoded.PartVersion).AppendLine();
                     switch (decoded.PartVersion)
                     {
@@ -1461,7 +1461,7 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
-                case DVDCategory.DVDPRDL:
+                case DiskCategory.DVDPRDL:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+R DL", decoded.PartVersion).AppendLine();
                     switch (decoded.PartVersion)
                     {
@@ -1477,16 +1477,22 @@ namespace DiscImageChef.Decoders.DVD
 
             switch (decoded.MaximumRate)
             {
-                case DVDMaxTransfer.Two:
+                case MaximumRateField.TwoMbps:
                     sb.AppendLine("Disc maximum transfer rate is 2,52 Mbit/sec.");
                     break;
-                case DVDMaxTransfer.Five:
+                case MaximumRateField.FiveMbps:
                     sb.AppendLine("Disc maximum transfer rate is 5,04 Mbit/sec.");
                     break;
-                case DVDMaxTransfer.Ten:
+                case MaximumRateField.TenMbps:
                     sb.AppendLine("Disc maximum transfer rate is 10,08 Mbit/sec.");
                     break;
-                case DVDMaxTransfer.Unspecified:
+                case MaximumRateField.TwentyMbps:
+                    sb.AppendLine("Disc maximum transfer rate is 20,16 Mbit/sec.");
+                    break;
+                case MaximumRateField.ThirtyMbps:
+                    sb.AppendLine("Disc maximum transfer rate is 30,24 Mbit/sec.");
+                    break;
+                case MaximumRateField.Unspecified:
                     sb.AppendLine("Disc maximum transfer rate is unspecified.");
                     break;
                 default:
@@ -1502,20 +1508,26 @@ namespace DiscImageChef.Decoders.DVD
 
             switch (decoded.LinearDensity)
             {
-                case DVDLinearDensity.One33:
-                    sb.AppendLine("Pitch size is 0,133 μm");
+                case LinearDensityField.TwoSix:
+                    sb.AppendLine("Pitch size is 0,267 μm/bit");
                     break;
-                case DVDLinearDensity.One47:
-                    sb.AppendLine("Pitch size is 0,147 μm");
+                case LinearDensityField.TwoNine:
+                    sb.AppendLine("Pitch size is 0,147 μm/bit");
                     break;
-                case DVDLinearDensity.Twenty5:
-                    sb.AppendLine("Pitch size is between 0,205 μm and 0,218 μm");
+                case LinearDensityField.FourZero:
+                    sb.AppendLine("Pitch size is between 0,409 μm/bit and 0,435 μm/bit");
                     break;
-                case DVDLinearDensity.One40:
-                    sb.AppendLine("Pitch size is between 0,140 μm and 0,148 μm");
+                case LinearDensityField.TwoEight:
+                    sb.AppendLine("Pitch size is between 0,140 μm/bit and 0,148 μm/bit");
                     break;
-                case DVDLinearDensity.One76:
-                    sb.AppendLine("Pitch size is 0,176 μm");
+                case LinearDensityField.OneFive:
+                    sb.AppendLine("Pitch size is 0,153 μm/bit");
+                    break;
+                case LinearDensityField.OneThree:
+                    sb.AppendLine("Pitch size is between 0,130 μm/bit and 0,140 μm/bit");
+                    break;
+                case LinearDensityField.ThreeFive:
+                    sb.AppendLine("Pitch size is 0,353 μm/bit");
                     break;
                 default:
                     sb.AppendFormat("Unknown pitch size key {0}", decoded.LinearDensity).AppendLine();
@@ -1524,14 +1536,20 @@ namespace DiscImageChef.Decoders.DVD
 
             switch (decoded.TrackDensity)
             {
-                case DVDTrackDensity.Seven4:
+                case TrackDensityField.Seven:
                     sb.AppendLine("Track size is 0,74 μm");
                     break;
-                case DVDTrackDensity.Eighty:
+                case TrackDensityField.Eight:
                     sb.AppendLine("Track size is 0,80 μm");
                     break;
-                case DVDTrackDensity.Six15:
+                case TrackDensityField.Six:
                     sb.AppendLine("Track size is 0,615 μm");
+                    break;
+                case TrackDensityField.Four:
+                    sb.AppendLine("Track size is 0,40 μm");
+                    break;
+                case TrackDensityField.Three:
+                    sb.AppendLine("Track size is 0,34 μm");
                     break;
                 default:
                     sb.AppendFormat("Unknown track size key {0}", decoded.LinearDensity).AppendLine();
@@ -1556,10 +1574,10 @@ namespace DiscImageChef.Decoders.DVD
             if (decoded.BCA)
                 sb.AppendLine("Disc has a burst cutting area");
 
-            if (decoded.DiskCategory == DVDCategory.UMD)
+            if (decoded.DiskCategory == DiskCategory.UMD)
                 sb.AppendFormat("Media attribute is {0}", decoded.MediaAttribute).AppendLine();
 
-            if (decoded.DiskCategory == DVDCategory.DVDRAM)
+            if (decoded.DiskCategory == DiskCategory.DVDRAM)
             {
                 switch (decoded.DiscType)
                 {
@@ -1581,19 +1599,19 @@ namespace DiscImageChef.Decoders.DVD
                 }
             }
 
-            if ((decoded.DiskCategory == DVDCategory.DVDR &&
+            if ((decoded.DiskCategory == DiskCategory.DVDR &&
                 decoded.PartVersion < 6) || 
-                (decoded.DiskCategory == DVDCategory.DVDRW &&
+                (decoded.DiskCategory == DiskCategory.DVDRW &&
                     decoded.PartVersion < 3))
             {
                 sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector).AppendLine();
                 sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
             }
 
-            if (decoded.DiskCategory == DVDCategory.DVDPR ||
-                decoded.DiskCategory == DVDCategory.DVDPRW ||
-                decoded.DiskCategory == DVDCategory.DVDPRDL ||
-                decoded.DiskCategory == DVDCategory.DVDPRWDL)
+            if (decoded.DiskCategory == DiskCategory.DVDPR ||
+                decoded.DiskCategory == DiskCategory.DVDPRW ||
+                decoded.DiskCategory == DiskCategory.DVDPRDL ||
+                decoded.DiskCategory == DiskCategory.DVDPRWDL)
             {
                 if (decoded.VCPS)
                     sb.AppendLine("Disc contains extended information for VCPS");
@@ -1603,9 +1621,9 @@ namespace DiscImageChef.Decoders.DVD
                 sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
             }
 
-            if ((decoded.DiskCategory == DVDCategory.DVDR &&
+            if ((decoded.DiskCategory == DiskCategory.DVDR &&
                 decoded.PartVersion >= 6) || 
-                (decoded.DiskCategory == DVDCategory.DVDRW &&
+                (decoded.DiskCategory == DiskCategory.DVDRW &&
                     decoded.PartVersion >= 3))
             {
                 sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h", decoded.CurrentRMDExtraBorderPSN).AppendLine();
@@ -1625,156 +1643,6 @@ namespace DiscImageChef.Decoders.DVD
         {
             return Prettify(Decode(response));
         }
-    }
-
-    public enum DVDCategory
-    {
-        /// <summary>
-        /// DVD-ROM. Version 1 is ECMA-267 and ECMA-268.
-        /// </summary>
-        DVDROM = 0,
-        /// <summary>
-        /// DVD-RAM. Version 1 is ECMA-272. Version 6 is ECMA-330.
-        /// </summary>
-        DVDRAM = 1,
-        /// <summary>
-        /// DVD-R. Version 1 is ECMA-279. Version 5 is ECMA-359. Version 6 is ECMA-382.
-        /// </summary>
-        DVDR = 2,
-        /// <summary>
-        /// DVD-RW. Version 2 is ECMA-338. Version 3 is ECMA-384.
-        /// </summary>
-        DVDRW = 3,
-        /// <summary>
-        /// UMD. Version 0 is ECMA-365.
-        /// </summary>
-        UMD = 8,
-        /// <summary>
-        /// DVD+RW. Version 1 is ECMA-274. Version 2 is ECMA-337. Version 3 is ECMA-371.
-        /// </summary>
-        DVDPRW = 9,
-        /// <summary>
-        /// DVD+R. Version 1 is ECMA-349.
-        /// </summary>
-        DVDPR = 10,
-        /// <summary>
-        /// DVD+RW DL. Version 1 is ECMA-374.
-        /// </summary>
-        DVDPRWDL = 13,
-        /// <summary>
-        /// DVD+R DL. Version 1 is ECMA-364.
-        /// </summary>
-        DVDPRDL = 14
-    }
-
-    public enum DVDSize
-    {
-        /// <summary>
-        /// 120 mm
-        /// </summary>
-        OneTwenty = 0,
-        /// <summary>
-        /// 80 mm
-        /// </summary>
-        Eighty = 1
-    }
-
-    public enum DVDMaxTransfer
-    {
-        /// <summary>
-        /// 2,52 Mbit/s
-        /// </summary>
-        Two = 0,
-        /// <summary>
-        /// 5,04 Mbit/s
-        /// </summary>
-        Five = 1,
-        /// <summary>
-        /// 10,08 Mbit/s
-        /// </summary>
-        Ten = 2,
-        /// <summary>
-        /// No maximum transfer rate
-        /// </summary>
-        Unspecified = 15
-    }
-
-    public enum DVDLayerTypes
-    {
-        ReadOnly = 1,
-        Recordable = 2,
-        Rewritable = 4
-    }
-
-    public enum DVDLinearDensity
-    {
-        /// <summary>
-        /// 0,133 μm
-        /// </summary>
-        One33 = 0,
-        /// <summary>
-        /// 0,147 μm
-        /// </summary>
-        One47 = 1,
-        /// <summary>
-        /// 0,205 μm to 0,218 μm
-        /// </summary>
-        Twenty5 = 2,
-        /// <summary>
-        /// 0,140 μm to 0,148 μm
-        /// </summary>
-        One40 = 4,
-        /// <summary>
-        /// 0,176 μm
-        /// </summary>
-        One76 = 8
-    }
-
-    public enum DVDTrackDensity
-    {
-        /// <summary>
-        /// 0,74 μm
-        /// </summary>
-        Seven4 = 0,
-        /// <summary>
-        /// 0,80 μm
-        /// </summary>
-        Eighty = 1,
-        /// <summary>
-        /// 0,615 μm
-        /// </summary>
-        Six15 = 2,
-    }
-
-    public enum DVDRAMDiscType
-    {
-        /// <summary>
-        /// Shall not be recorded without a case
-        /// </summary>
-        Cased = 0,
-        /// <summary>
-        /// May be recorded without a case or within one
-        /// </summary>
-        Uncased = 1
-    }
-
-    public enum DVDLayerStructure
-    {
-        Unspecified = 0,
-        InvertedStack = 1,
-        TwoP = 2,
-        Reserved = 3
-    }
-
-    public enum DVDRecordingSpeed
-    {
-        None = 0,
-        Two = 0,
-        Four = 0x10,
-        Six = 0x20,
-        Eight = 0x30,
-        Ten = 0x40,
-        Twelve = 0x50
     }
 }
 

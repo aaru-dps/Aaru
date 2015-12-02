@@ -42,22 +42,42 @@ namespace DiscImageChef.Decoders.DVD
     #region Public enumerations
     public enum DiskCategory : byte
     {
-        DVDROM = 0x00,
-        DVDRAM = 0x01,
-        DVDR = 0x02,
-        DVDRW = 0x03,
-        HDDVDROM = 0x04,
-        HDDVDRAM = 0x05,
-        HDDVDR = 0x06,
-        Reserved1 = 0x07,
-        UMD = 0x08,
-        DVDPRW = 0x09,
-        DVDPR = 0x0A,
-        Reserved2 = 0x0B,
-        Reserved3 = 0x0C,
-        DVDPRWDL = 0x0D,
-        DVDPRDL = 0x0E,
-        Reserved4 = 0x0F
+        /// <summary>
+        /// DVD-ROM. Version 1 is ECMA-267 and ECMA-268.
+        /// </summary>
+        DVDROM = 0,
+        /// <summary>
+        /// DVD-RAM. Version 1 is ECMA-272. Version 6 is ECMA-330.
+        /// </summary>
+        DVDRAM = 1,
+        /// <summary>
+        /// DVD-R. Version 1 is ECMA-279. Version 5 is ECMA-359. Version 6 is ECMA-382.
+        /// </summary>
+        DVDR = 2,
+        /// <summary>
+        /// DVD-RW. Version 2 is ECMA-338. Version 3 is ECMA-384.
+        /// </summary>
+        DVDRW = 3,
+        /// <summary>
+        /// UMD. Version 0 is ECMA-365.
+        /// </summary>
+        UMD = 8,
+        /// <summary>
+        /// DVD+RW. Version 1 is ECMA-274. Version 2 is ECMA-337. Version 3 is ECMA-371.
+        /// </summary>
+        DVDPRW = 9,
+        /// <summary>
+        /// DVD+R. Version 1 is ECMA-349.
+        /// </summary>
+        DVDPR = 10,
+        /// <summary>
+        /// DVD+RW DL. Version 1 is ECMA-374.
+        /// </summary>
+        DVDPRWDL = 13,
+        /// <summary>
+        /// DVD+R DL. Version 1 is ECMA-364.
+        /// </summary>
+        DVDPRDL = 14
     }
 
     public enum MaximumRateField : byte
@@ -181,6 +201,49 @@ namespace DiscImageChef.Decoders.DVD
         CanWrite = 0x01,
         Reserved1 = 0x02,
         Reserved2 = 0x03
+    }
+
+    public enum DVDSize
+    {
+        /// <summary>
+        /// 120 mm
+        /// </summary>
+        OneTwenty = 0,
+        /// <summary>
+        /// 80 mm
+        /// </summary>
+        Eighty = 1
+    }
+
+    public enum DVDRAMDiscType
+    {
+        /// <summary>
+        /// Shall not be recorded without a case
+        /// </summary>
+        Cased = 0,
+        /// <summary>
+        /// May be recorded without a case or within one
+        /// </summary>
+        Uncased = 1
+    }
+
+    public enum DVDLayerStructure
+    {
+        Unspecified = 0,
+        InvertedStack = 1,
+        TwoP = 2,
+        Reserved = 3
+    }
+
+    public enum DVDRecordingSpeed
+    {
+        None = 0,
+        Two = 0,
+        Four = 0x10,
+        Six = 0x20,
+        Eight = 0x30,
+        Ten = 0x40,
+        Twelve = 0x50
     }
     #endregion
 }

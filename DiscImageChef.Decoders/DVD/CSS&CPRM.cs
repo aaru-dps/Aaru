@@ -79,7 +79,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 4
             /// Copy protection system type
             /// </summary>
-            public byte CopyrightType;
+            public CopyrightType CopyrightType;
             /// <summary>
             /// Byte 5
             /// Bitmask of regions where this disc is playable
@@ -134,7 +134,7 @@ namespace DiscImageChef.Decoders.DVD
             cmi.DataLength = (ushort)((response[0] << 8) + response[1]);
             cmi.Reserved1 = response[2];
             cmi.Reserved2 = response[3];
-            cmi.CopyrightType = response[4];
+            cmi.CopyrightType = (CopyrightType)response[4];
             cmi.RegionInformation = response[5];
             cmi.Reserved3 = response[6];
             cmi.Reserved4 = response[7];
@@ -152,16 +152,16 @@ namespace DiscImageChef.Decoders.DVD
 
             switch (decoded.CopyrightType)
             {
-                case 0x00:
+                case CopyrightType.NoProtection:
                     sb.AppendLine("Disc has no encryption.");
                     break;
-                case 0x01:
+                case CopyrightType.CSS:
                     sb.AppendLine("Disc is encrypted using CSS or CPPM.");
                     break;
-                case 0x02:
+                case CopyrightType.CPRM:
                     sb.AppendLine("Disc is encrypted using CPRM.");
                     break;
-                case 0x10:
+                case CopyrightType.AACS:
                     sb.AppendLine("Disc is encrypted using AACS.");
                     break;
                 default:
