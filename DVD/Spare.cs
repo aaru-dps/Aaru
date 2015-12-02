@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
 {
@@ -53,7 +54,6 @@ namespace DiscImageChef.Decoders.DVD
     /// T10/1675-D revision 2c
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
-    /// ECMA 365
     /// </summary>
     public static class Spare
     {
@@ -89,6 +89,46 @@ namespace DiscImageChef.Decoders.DVD
             /// Data length
             /// </summary>
             public UInt32 AllocatedSupplementaryBlocks;
+        }
+
+        public static SpareAreaInformation? Decode(byte[] response)
+        {
+            if (response == null)
+                return null;
+
+            if (response.Length != 16)
+                return null;
+
+            SpareAreaInformation sai = new SpareAreaInformation();
+
+            sai.DataLength = (ushort)((response[0] << 8) + response[1]);
+            sai.Reserved1 = response[2];
+            sai.Reserved2 = response[3];
+            sai.UnusedPrimaryBlocks = (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]);
+            sai.UnusedSupplementaryBlocks = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
+            sai.AllocatedSupplementaryBlocks = (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
+
+            return sai;
+        }
+
+        public static string Prettify(SpareAreaInformation? sai)
+        {
+            if (sai == null)
+                return null;
+
+            SpareAreaInformation decoded = sai.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("{0} unused primary spare blocks", decoded.UnusedPrimaryBlocks).AppendLine();
+            sb.AppendFormat("{0} unused supplementary spare blocks", decoded.UnusedSupplementaryBlocks).AppendLine();
+            sb.AppendFormat("{0} allocated supplementary spare blocks", decoded.AllocatedSupplementaryBlocks).AppendLine();
+
+            return sb.ToString();
+        }
+
+        public static string Prettify(byte[] response)
+        {
+            return Prettify(Decode(response));
         }
     }
 }
