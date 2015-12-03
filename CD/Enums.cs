@@ -56,7 +56,15 @@ namespace DiscImageChef.Decoders.CD
         /// <summary>
         /// Q Sub-channel encodes the ISRC
         /// </summary>
-        ISRC = 0x03
+        ISRC = 0x03,
+        /// <summary>
+        /// Q Sub-channel encodes the start of an audio/data track (if found in TOC)
+        /// </summary>
+        TrackPointer = 0x01,
+        /// <summary>
+        /// Q Sub-channel encodes the start of a video track (if found in TOC) for CD-V
+        /// </summary>
+        VideoTrackPointer = 0x04,
     }
 
     public enum TOC_CONTROL : byte
