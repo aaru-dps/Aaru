@@ -1,6 +1,13 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  As of today none of my testing drives will read Nintendo's
+	  BCA because the PFI says there is no BCA.
+
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Lead-In CMI is useless in Nintendo discs.
 
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
