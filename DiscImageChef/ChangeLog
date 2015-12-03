@@ -1,6 +1,11 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Added support for CD-V.
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  As of today none of my testing drives will read Nintendo's
 	  BCA because the PFI says there is no BCA.
 

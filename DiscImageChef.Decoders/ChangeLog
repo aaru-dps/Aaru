@@ -1,5 +1,15 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
+	* CD/TOC.cs:
+	* CD/FullTOC.cs:
+	  Added support for CD-V.
+	Added support for CD-DA.
+
+	* CD/Enums.cs:
+	  Added support for CD-V.
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
 	* DVD/PFI.cs:
 	* DVD/Enums.cs:
 	  Added support for Nintendo GOD and WOD.

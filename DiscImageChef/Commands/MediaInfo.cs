@@ -747,6 +747,7 @@ namespace DiscImageChef.Commands
                             bool hasDataTrack = false;
                             bool hasAudioTrack = false;
                             bool allFirstSessionTracksAreAudio = true;
+                            bool hasVideoTrack = false;
 
                             if(toc.HasValue)
                             {
@@ -767,6 +768,9 @@ namespace DiscImageChef.Commands
                                     }
                                     else
                                         hasAudioTrack = true;
+
+                                    if(track.ADR == 4)
+                                        hasVideoTrack = true;
                                 }
                             }
 
@@ -776,6 +780,8 @@ namespace DiscImageChef.Commands
                                 dskType = DiskType.CDDA;
                             if(hasDataTrack && !hasAudioTrack && sessions == 1)
                                 dskType = DiskType.CDROM;
+                            if(hasVideoTrack && !hasDataTrack && sessions == 1)
+                                dskType = DiskType.CDV;
                         }
 
                         sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
@@ -795,7 +801,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("PMA:\n{0}", Decoders.CD.PMA.Prettify(cmdBuf));
                         }
 
-                        sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        /*sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                         if (sense)
                             DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: CD-TEXT\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
@@ -803,7 +809,7 @@ namespace DiscImageChef.Commands
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                             //if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                               //  DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
-                        }
+                        }*/
                     }
                 }
                 #endregion CDs

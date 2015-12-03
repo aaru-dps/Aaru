@@ -55,6 +55,8 @@ namespace DiscImageChef.Decoders.CD
     /// T10/1675-D revision 2c
     /// T10/1675-D revision 4
     /// T10/1836-D revision 2g
+    /// ISO/IEC 61104: Compact disc video system - 12 cm CD-V
+    /// ISO/IEC 60908: Audio recording - Compact disc digital audio system
     /// </summary>
     public static class TOC
     {
@@ -172,14 +174,20 @@ namespace DiscImageChef.Decoders.CD
                     case TOC_ADR.NoInformation:
                         sb.AppendLine("Q subchannel mode not given");
                         break;
-                    case TOC_ADR.CurrentPosition:
-                        sb.AppendLine("Q subchannel stores current position");
+                    case TOC_ADR.TrackPointer:
+                        sb.AppendLine("Q subchannel stores track pointer");
+                        break;
+                    case TOC_ADR.VideoTrackPointer:
+                        sb.AppendLine("Q subchannel stores video track pointer");
                         break;
                     case TOC_ADR.ISRC:
                         sb.AppendLine("Q subchannel stores ISRC");
                         break;
                     case TOC_ADR.MediaCatalogNumber:
                         sb.AppendLine("Q subchannel stores media catalog number");
+                        break;
+                    default:
+                        sb.AppendFormat("Q subchannel mode {0}", descriptor.ADR).AppendLine();
                         break;
                 }
 
