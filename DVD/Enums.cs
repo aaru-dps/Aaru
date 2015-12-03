@@ -77,7 +77,12 @@ namespace DiscImageChef.Decoders.DVD
         /// <summary>
         /// DVD+R DL. Version 1 is ECMA-364.
         /// </summary>
-        DVDPRDL = 14
+        DVDPRDL = 14,
+        /// <summary>
+        /// According to standards this value is reserved.
+        /// It's used by Nintendo GODs and WODs.
+        /// </summary>
+        Nintendo = 15
     }
 
     public enum MaximumRateField : byte
