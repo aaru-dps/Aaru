@@ -313,7 +313,18 @@ namespace DiscImageChef.Commands
                     if(sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
+                    {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                        //if(Decoders.Xbox.DMI.IsXbox(cmdBuf))
+                        //    Nop();
+                        //else if
+                        if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
+                        {
+                            // TODO: Detect XGD3 from XGD2...
+                            dskType = DiskType.XGD2;
+                            DicConsole.WriteLine("Xbox 360 DMI:\n{0}", Decoders.Xbox.DMI.PrettifyXbox360(cmdBuf));
+                        }
+                    }
                 }
                 #endregion All DVD and HD DVD types
 
@@ -480,11 +491,14 @@ namespace DiscImageChef.Commands
                 if(dskType == DiskType.DVDPR || dskType == DiskType.DVDPRDL ||
                     dskType == DiskType.DVDPRW || dskType == DiskType.DVDPRWDL)
                 {
+                    // TODO: None of my test discs return an ADIP. Also, it just seems to contain pre-recorded PFI, and drive is returning it on blank media using standard PFI command
+                    /*
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ADIP, 0, dev.Timeout, out duration);
                     if(sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: ADIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd+_adip.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    */
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
                     if(sense)
