@@ -86,6 +86,8 @@ namespace DiscImageChef.CommonTypes
         DTSCD,
         /// <summary>CD-MIDI (Red Book)</summary>
         CDMIDI,
+        /// <summary>CD-Video (ISO/IEC 61104)</summary>
+        CDV,
         /// <summary>Any unknown or standard violating CD</summary>
         CD,
 

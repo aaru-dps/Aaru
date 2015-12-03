@@ -1,3 +1,8 @@
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskType.cs:
+	  Added support for CD-V.
+
 2015-11-24  Natalia Portillo  <claunia@claunia.com>
 
 	* DiskType.cs:
