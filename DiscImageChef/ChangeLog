@@ -1,6 +1,11 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Lead-In CMI is useless in Nintendo discs.
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added support for Nintendo GOD and WOD.
 
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
