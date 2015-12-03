@@ -817,7 +817,19 @@ namespace DiscImageChef.Commands
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                        DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
+                        Decoders.DVD.PFI.PhysicalFormatInformation? nintendoPfi = Decoders.DVD.PFI.Decode(cmdBuf);
+                        if(nintendoPfi != null)
+                        {
+                            DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
+                            if(nintendoPfi.Value.DiskCategory == DiscImageChef.Decoders.DVD.DiskCategory.Nintendo &&
+                                nintendoPfi.Value.PartVersion == 15)
+                            {
+                                if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                    dskType = DiskType.GOD;
+                                else if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
+                                    dskType = DiskType.WOD;
+                            }
+                        }
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
                     if(sense)
@@ -837,7 +849,6 @@ namespace DiscImageChef.Commands
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                    
                 }
                 #endregion Nintendo
             }

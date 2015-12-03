@@ -1,6 +1,11 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Added support for Nintendo GOD and WOD.
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added decoding of XGD2 and XGD3 DMI.
 
 2015-12-02  Natalia Portillo  <claunia@claunia.com>

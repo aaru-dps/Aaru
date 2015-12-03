@@ -1,5 +1,11 @@
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
+	* DVD/PFI.cs:
+	* DVD/Enums.cs:
+	  Added support for Nintendo GOD and WOD.
+
+2015-12-03  Natalia Portillo  <claunia@claunia.com>
+
 	* Xbox/DMI.cs:
 	* DiscImageChef.Decoders.csproj:
 	  Added decoding of XGD2 and XGD3 DMI.

@@ -1470,6 +1470,19 @@ namespace DiscImageChef.Decoders.DVD
                             break;
                     }
                     break;
+                case DiskCategory.Nintendo:
+                    if (decoded.PartVersion == 15)
+                    {
+                        if (decoded.DiscSize == DVDSize.Eighty)
+                            sb.AppendLine("Disc is a Nintendo Gamecube Optical Disc (GOD)");
+                        else if (decoded.DiscSize == DVDSize.OneTwenty)
+                            sb.AppendLine("Disc is a Nintendo Wii Optical Disc (WOD)");
+                        else
+                            goto default;
+                    }
+                    else
+                        goto default;
+                    break;
                 default:
                     sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
                     break;
