@@ -202,7 +202,7 @@ namespace DiscImageChef.Plugins
             ulong root_ptr = BigEndianBitConverter.ToUInt32(sector, 0x08);
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", root_ptr);
 
-            root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart;
+            root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart + 1;
 
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
 
@@ -227,7 +227,7 @@ namespace DiscImageChef.Plugins
             StringBuilder sbInformation = new StringBuilder();
 
             byte[] BootBlockSectors = imagePlugin.ReadSectors(0 + partitionStart, 2);
-            byte[] RootBlockSector = imagePlugin.ReadSector((partitionEnd - partitionStart) / 2 + partitionStart);
+            byte[] RootBlockSector = imagePlugin.ReadSector((partitionEnd - partitionStart) / 2 + partitionStart + 1);
             byte[] diskName = new byte[32];
 
             BootBlock bootBlk = new BootBlock();
@@ -341,6 +341,11 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("Volume root directory last modified on on {0}", DateHandlers.AmigaToDateTime(rootBlk.rDays, rootBlk.rMins, rootBlk.rTicks)).AppendLine();
 
             information = sbInformation.ToString();
+
+            /*xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+            xmlFSType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+*/
         }
 
         static UInt32 AmigaChecksum(byte[] data)

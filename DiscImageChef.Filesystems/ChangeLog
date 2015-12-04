@@ -1,3 +1,8 @@
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
+	* AmigaDOS.cs:
+	  Corrected root block search.
+
 2015-11-10  Natalia Portillo  <claunia@claunia.com>
 
 	* BFS.cs:
