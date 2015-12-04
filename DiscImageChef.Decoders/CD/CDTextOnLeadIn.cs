@@ -38,6 +38,7 @@
 using System;
 using DiscImageChef.Console;
 using System.Text;
+using System.Collections.Generic;
 
 namespace DiscImageChef.Decoders.CD
 {
@@ -215,12 +216,12 @@ namespace DiscImageChef.Decoders.CD
                 decoded.DataPacks[i].HeaderID1 = CDTextResponse[0 + i * 18 + 4];
                 decoded.DataPacks[i].HeaderID2 = CDTextResponse[1 + i * 18 + 4];
                 decoded.DataPacks[i].HeaderID3 = CDTextResponse[2 + i * 18 + 4];
-                decoded.DataPacks[i].DBCC = Convert.ToBoolean(CDTextResponse[3 + i * 8 + 4] & 0x80);
-                decoded.DataPacks[i].BlockNumber = (byte)((CDTextResponse[3 + i * 8 + 4] & 0x70) >> 4);
-                decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 8 + 4] & 0x0F);
+                decoded.DataPacks[i].DBCC = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
+                decoded.DataPacks[i].BlockNumber = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
+                decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 18 + 4] & 0x0F);
                 decoded.DataPacks[i].TextDataField = new byte[12];
-                Array.Copy(CDTextResponse, 4, decoded.DataPacks[i].TextDataField, 0, 12);
-                decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 8 + 4);
+                Array.Copy(CDTextResponse, 4 + i * 18 + 4, decoded.DataPacks[i].TextDataField, 0, 12);
+                decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 18 + 4);
             }
 
             return decoded;
@@ -232,7 +233,6 @@ namespace DiscImageChef.Decoders.CD
                 return null;
 
             CDText response = CDTextResponse.Value;
-
             StringBuilder sb = new StringBuilder();
 
             #if DEBUG
@@ -241,10 +241,15 @@ namespace DiscImageChef.Decoders.CD
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
             #endif
+
             foreach (CDTextPack descriptor in response.DataPacks)
             {
                 if ((descriptor.HeaderID1 & 0x80) != 0x80)
-                    sb.AppendFormat("Incorrect CD-Text pack type {0}, not decoding", descriptor.HeaderID1).AppendLine();
+                {
+                    // Ignore NOPs
+                    if((descriptor.HeaderID1 & 0x80) != 0)
+                        sb.AppendFormat("Incorrect CD-Text pack type {0}, not decoding", descriptor.HeaderID1).AppendLine();
+                }
                 else
                 {
                     switch (descriptor.HeaderID1)
@@ -278,7 +283,6 @@ namespace DiscImageChef.Decoders.CD
                             }
                         case 0x83:
                             {
-                                sb.Append("CD-Text pack contains composer for ");
                                 if (descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
@@ -340,7 +344,7 @@ namespace DiscImageChef.Decoders.CD
                                 if (descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("CD-Text pack contains UPC");
                                 else
-                                    sb.AppendFormat("CD-Text pack contains ISRC for track {0}", descriptor.HeaderID2).AppendLine();
+                                    sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                                 break;
                             }
                         case 0x8F:
@@ -366,7 +370,7 @@ namespace DiscImageChef.Decoders.CD
                                     sb.AppendLine("Double Byte Character Code is used");
                                 sb.AppendFormat("Block number {0}", descriptor.BlockNumber).AppendLine();
                                 sb.AppendFormat("Character position {0}", descriptor.CharacterPosition).AppendLine();
-                                sb.AppendFormat("Text field: \"{0}\"", StringHandlers.CToString(descriptor.TextDataField)).AppendLine();
+                                sb.AppendFormat("Text field: \"{0}\"", StringHandlers.CToString(descriptor.TextDataField, Encoding.GetEncoding("iso-8859-1"))).AppendLine();
                                 break;
                             }
                         default:

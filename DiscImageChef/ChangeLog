@@ -1,6 +1,11 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Finally CD-Text on lead-in is getting decoded correctly...
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Solved when CD-TEXT is bigger than 1KiB.
 
 2015-12-03  Natalia Portillo  <claunia@claunia.com>

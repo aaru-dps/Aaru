@@ -807,8 +807,8 @@ namespace DiscImageChef.Commands
                         else
                         {
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
-                            //if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-                              //  DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
+                            if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
+                                DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
                         }
                     }
                 }

@@ -846,8 +846,13 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
-            byte[] tmpBuffer = new byte[1024];
+            byte[] tmpBuffer;
             bool sense;
+
+            if(format == 5)
+                tmpBuffer = new byte[32768];
+            else
+                tmpBuffer = new byte[1024];
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
             if (MSF)

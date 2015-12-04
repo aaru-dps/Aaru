@@ -1,5 +1,10 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
+	* CD/CDTextOnLeadIn.cs:
+	  Finally CD-Text on lead-in is getting decoded correctly...
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
 	* CD/FullTOC.cs:
 	  Enhanced prettify to be more verbose.
 

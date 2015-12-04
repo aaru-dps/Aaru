@@ -1,6 +1,11 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands.cs:
+	  Finally CD-Text on lead-in is getting decoded correctly...
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands.cs:
 	  Solved when CD-TEXT is bigger than 1KiB.
 
 2015-11-24  Natalia Portillo  <claunia@claunia.com>
