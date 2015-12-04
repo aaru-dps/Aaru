@@ -59,6 +59,22 @@ namespace DiscImageChef.Decoders.DVD
         /// </summary>
         DVDRW = 3,
         /// <summary>
+        /// HD DVD-ROM
+        /// </summary>
+        HDDVDROM = 4,
+        /// <summary>
+        /// HD DVD-RAM
+        /// </summary>
+        HDDVDRAM = 5,
+        /// <summary>
+        /// HD DVD-R
+        /// </summary>
+        HDDVDR = 6,
+        /// <summary>
+        /// HD DVD-RW
+        /// </summary>
+        HDDVDRW = 7,
+        /// <summary>
         /// UMD. Version 0 is ECMA-365.
         /// </summary>
         UMD = 8,
