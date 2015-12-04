@@ -801,7 +801,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("PMA:\n{0}", Decoders.CD.PMA.Prettify(cmdBuf));
                         }
 
-                        /*sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                         if (sense)
                             DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: CD-TEXT\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
@@ -809,7 +809,7 @@ namespace DiscImageChef.Commands
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                             //if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                               //  DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
-                        }*/
+                        }
                     }
                 }
                 #endregion CDs

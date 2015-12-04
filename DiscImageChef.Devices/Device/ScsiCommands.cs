@@ -862,10 +862,21 @@ namespace DiscImageChef.Devices
 
             uint strctLength = (uint)(((int)tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
             buffer = new byte[strctLength];
-            Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
+            if (buffer.Length <= tmpBuffer.Length)
+            {
+                Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
+                DicConsole.DebugWriteLine("SCSI Device", "READ TOC/PMA/ATIP took {0} ms.", duration);
+                return sense;
+            }
+
+            double tmpDuration = duration;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            duration += tmpDuration;
             DicConsole.DebugWriteLine("SCSI Device", "READ TOC/PMA/ATIP took {0} ms.", duration);
-
             return sense;
         }
 
