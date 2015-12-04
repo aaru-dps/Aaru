@@ -436,7 +436,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 sb.AppendLine("Disc is defined for restricted use");
 
             if (decoded.DID_V)
-                sb.AppendFormat("Disc ID: {0:X8}", decoded.DiscIdentification).AppendLine();
+                sb.AppendFormat("Disc ID: {0:X6}", decoded.DiscIdentification & 0x00FFFFFF).AppendLine();
             if (decoded.DBC_V)
                 sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
             if (decoded.DAC_V)
