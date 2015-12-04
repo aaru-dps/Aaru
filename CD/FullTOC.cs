@@ -207,7 +207,7 @@ namespace DiscImageChef.Decoders.CD
             foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
                 if ((descriptor.CONTROL & 0x08) == 0x08 ||
-                    (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4) ||
+                    (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
                     descriptor.TNO != 0)
                 {
                     sb.AppendLine("Unknown TOC entry format, printing values as-is");
@@ -531,6 +531,12 @@ namespace DiscImageChef.Decoders.CD
                                             break;
                                         }
                                 }
+                                break;
+                            }
+                        case 6:
+                            {
+                                uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                                sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
                                 break;
                             }
                     }

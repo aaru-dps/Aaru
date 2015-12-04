@@ -1,5 +1,23 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
+	* CD/ATIP.cs:
+	  Added disc type and manufacturer lookup from ATIP.
+
+	* CD/PMA.cs:
+	  Implement full PMA decoding.
+
+	* CD/FullTOC.cs:
+	  Implement decoding disc ID.
+
+	* SCSI/MMC/DiscInformation.cs:
+	  Disc ID is 24-bit.
+
+	* CD/CDTextOnLeadIn.cs:
+	  CD-TEXT can be empty without being null, do not decode an
+	  empty one.
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
 	* CD/CDTextOnLeadIn.cs:
 	  Finally CD-Text on lead-in is getting decoded correctly...
 

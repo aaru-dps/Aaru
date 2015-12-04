@@ -205,6 +205,9 @@ namespace DiscImageChef.Decoders.CD
             decoded.Reserved2 = CDTextResponse[3];
             decoded.DataPacks = new CDTextPack[(decoded.DataLength - 2) / 18];
 
+            if (decoded.DataLength == 2)
+                return null;
+
             if (decoded.DataLength + 2 != CDTextResponse.Length)
             {
                 DicConsole.DebugWriteLine("CD-TEXT decoder", "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDTextResponse.Length);
