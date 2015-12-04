@@ -1,5 +1,10 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
+	* SCSI/Sense.cs:
+	  Additional length may be bigger than provided buffer.
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
 	* DVD/PFI.cs:
 	* DVD/Enums.cs:
 	  Added HD DVD types.
