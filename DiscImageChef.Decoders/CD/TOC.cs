@@ -207,7 +207,7 @@ namespace DiscImageChef.Decoders.CD
                             sb.AppendLine("Quadraphonic audio track with no pre-emphasis");
                             break;
                         case TOC_CONTROL.FourChanPreEmph:
-                            sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
+                            sb.AppendLine("Quadraphonic audio track with 50/15 μs pre-emphasis");
                             break;
                         case TOC_CONTROL.DataTrack:
                             sb.AppendLine("Data track, recorded uninterrupted");
