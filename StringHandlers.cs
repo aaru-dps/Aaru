@@ -50,6 +50,17 @@ namespace DiscImageChef
         /// <param name="CString">A null-terminated (aka C string) ASCII byte array</param>
         public static string CToString(byte[] CString)
         {
+            return CToString(CString, Encoding.ASCII);
+        }
+
+        /// <summary>
+        /// Converts a null-terminated (aka C string) byte array with the specified encoding to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
+        /// <param name="encoding">Encoding.</param>
+        public static string CToString(byte[] CString, Encoding encoding)
+        {
             StringBuilder sb = new StringBuilder();
 			
             for (int i = 0; i < CString.Length; i++)
@@ -57,7 +68,7 @@ namespace DiscImageChef
                 if (CString[i] == 0)
                     break;
 
-                sb.Append(Encoding.ASCII.GetString(CString, i, 1));
+                sb.Append(encoding.GetString(CString, i, 1));
             }
 			
             return sb.ToString();
