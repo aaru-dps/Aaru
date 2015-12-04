@@ -1483,6 +1483,18 @@ namespace DiscImageChef.Decoders.DVD
                     else
                         goto default;
                     break;
+                case DiskCategory.HDDVDROM:
+                    sb.AppendFormat(categorySentence, sizeString, "HD DVD-ROM", decoded.PartVersion).AppendLine();
+                    break;
+                case DiskCategory.HDDVDRAM:
+                    sb.AppendFormat(categorySentence, sizeString, "HD DVD-RAM", decoded.PartVersion).AppendLine();
+                    break;
+                case DiskCategory.HDDVDR:
+                    sb.AppendFormat(categorySentence, sizeString, "HD DVD-R", decoded.PartVersion).AppendLine();
+                    break;
+                case DiskCategory.HDDVDRW:
+                    sb.AppendFormat(categorySentence, sizeString, "HD DVD-RW", decoded.PartVersion).AppendLine();
+                    break;
                 default:
                     sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
                     break;

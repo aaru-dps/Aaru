@@ -304,7 +304,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.Information = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]);
             decoded.AdditionalLength = sense[7];
 
-            if (sense.Length != decoded.AdditionalLength + 8)
+            if (sense.Length < decoded.AdditionalLength + 8)
                 return decoded;
 
             if(sense.Length >= 12)
