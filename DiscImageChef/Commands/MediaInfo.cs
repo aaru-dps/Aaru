@@ -112,6 +112,51 @@ namespace DiscImageChef.Commands
             ulong blocks = 0;
             uint blockSize = 0;
 
+            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+            if (sense)
+            {
+                Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                if (decSense.HasValue)
+                {
+                    if (decSense.Value.ASC == 0x3A)
+                    {
+                        DicConsole.ErrorWriteLine("Please insert media in drive");
+                        return;
+                    }
+
+                    if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                    {
+                        int leftRetries = 10;
+                        while (leftRetries > 0)
+                        {
+                            DicConsole.WriteLine("\rWaiting for drive to become ready");
+                            System.Threading.Thread.Sleep(2000);
+                            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                            if (!sense)
+                                break;
+
+                            leftRetries--;
+                        }
+
+                        if (sense)
+                        {
+                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        return;
+                    }
+                }
+                else
+                {
+                    DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
+                    return;
+                }
+            }
+
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||

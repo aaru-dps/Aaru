@@ -1,6 +1,12 @@
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Implement detection of medium not present and waiting for
+	  drive to become ready.
+
+2015-12-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Finally CD-Text on lead-in is getting decoded correctly...
 
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
