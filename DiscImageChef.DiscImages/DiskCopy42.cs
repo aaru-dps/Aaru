@@ -224,6 +224,8 @@ namespace DiscImageChef.ImagePlugins
                 return false;
             }
 
+            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+
             return true;
         }
 

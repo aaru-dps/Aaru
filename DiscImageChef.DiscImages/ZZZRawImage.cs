@@ -263,6 +263,22 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.diskType = CalculateDiskType();
 
+            switch (ImageInfo.diskType)
+            {
+                case DiskType.CD:
+                case DiskType.DVDPR:
+                case DiskType.DVDR:
+                case DiskType.DVDRDL:
+                case DiskType.DVDPRDL:
+                case DiskType.BDR:
+                case DiskType.BDRXL:
+                    ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
+                    break;
+                default:
+                    ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+                    break;
+            }
+
             return true;
         }
 

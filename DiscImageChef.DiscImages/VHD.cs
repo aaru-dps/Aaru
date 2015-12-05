@@ -778,6 +778,8 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
             }
 
+            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+
             switch (thisFooter.diskType)
             {
                 case typeFixed:

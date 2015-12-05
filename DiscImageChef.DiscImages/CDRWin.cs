@@ -1279,6 +1279,8 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
+                ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
+
                 return true;
             }
             catch (Exception ex)

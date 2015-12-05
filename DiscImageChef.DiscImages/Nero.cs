@@ -1596,6 +1596,9 @@ namespace DiscImageChef.ImagePlugins
 
                 _imagePath = imagePath;
                 imageStream.Close();
+
+                ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
+
                 return true;
             }
             catch

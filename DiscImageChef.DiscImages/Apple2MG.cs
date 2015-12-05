@@ -360,6 +360,8 @@ namespace DiscImageChef.ImagePlugins
 
             a2mgImagePath = imagePath;
 
+            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+
             return true;
         }
 

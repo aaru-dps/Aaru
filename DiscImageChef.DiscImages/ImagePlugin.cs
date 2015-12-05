@@ -622,6 +622,13 @@ namespace DiscImageChef.ImagePlugins
         ATAPI_IDENTIFY
     };
 
+    public enum XmlMediaType
+    {
+        OpticalDisc,
+        BlockMedia,
+        LinearMedia
+    }
+
     /// <summary>
     /// Feature is supported by image but not implemented yet.
     /// </summary>

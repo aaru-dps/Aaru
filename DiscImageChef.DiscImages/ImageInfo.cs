@@ -32,6 +32,7 @@ namespace DiscImageChef.ImagePlugins
         public string driveManufacturer;
         public string driveModel;
         public string driveSerialNumber;
+        public XmlMediaType xmlMediaType;
     }
 }
 

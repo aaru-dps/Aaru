@@ -1,3 +1,17 @@
+2015-12-05  Natalia Portillo  <claunia@claunia.com>
+
+	* VHD.cs:
+	* Nero.cs:
+	* CDRWin.cs:
+	* Apple2MG.cs:
+	* TeleDisk.cs:
+	* ImageInfo.cs:
+	* DiskCopy42.cs:
+	* ImagePlugin.cs:
+	* ZZZRawImage.cs:
+	  Added hint for XML metadata creator to know which kind of
+	  media the image represents.
+
 2015-11-23  Natalia Portillo  <claunia@claunia.com>
 
 	* VHD.cs:

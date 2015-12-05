@@ -580,6 +580,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.diskType = DecodeTeleDiskDiskType();
 
             stream.Close();
+
+            ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+
             return true;
         }
 
