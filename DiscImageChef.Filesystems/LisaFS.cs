@@ -386,6 +386,18 @@ namespace DiscImageChef.Plugins
 
                         information = sb.ToString();
 
+                        xmlFSType = new Schemas.FileSystemType();
+                        xmlFSType.BackupDate = mddf.dtvb;
+                        xmlFSType.Clusters = mddf.vol_size;
+                        xmlFSType.ClusterSize = mddf.clustersize * mddf.datasize;
+                        xmlFSType.CreationDate = mddf.dtvc;
+                        xmlFSType.Dirty = mddf.vol_left_mounted != 0;
+                        xmlFSType.Files = mddf.filecount;
+                        xmlFSType.FreeClusters = mddf.freecount;
+                        xmlFSType.Type = "LisaFS";
+                        xmlFSType.VolumeName = mddf.volname;
+                        xmlFSType.VolumeSerial = String.Format("{0:X16}", mddf.volid);
+
                         return;
                     }
                 }

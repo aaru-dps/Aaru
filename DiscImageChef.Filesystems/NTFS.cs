@@ -166,6 +166,12 @@ namespace DiscImageChef.Plugins
 
             sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
 //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
+
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.ClusterSize = ntfs_bb.spc * ntfs_bb.bps;
+            xmlFSType.Clusters = ntfs_bb.sectors / ntfs_bb.spc;
+            xmlFSType.VolumeSerial = String.Format("{0:X16}", ntfs_bb.serial_no);
+            xmlFSType.Type = "NTFS";
 			
             information = sb.ToString();
         }

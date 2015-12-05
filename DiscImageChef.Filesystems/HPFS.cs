@@ -247,6 +247,14 @@ namespace DiscImageChef.Plugins
                 sb.AppendLine("Unknown flag 0x40 on flags2 is active");
             if ((hpfs_sp.flags2 & 0x80) == 0x80)
                 sb.AppendLine("Unknown flag 0x80 on flags2 is active");
+
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Dirty |= (hpfs_sp.flags1 & 0x01) == 0x01;
+            xmlFSType.Clusters = hpfs_bpb.big_sectors / hpfs_bpb.spc;
+            xmlFSType.ClusterSize = hpfs_bpb.bps * hpfs_bpb.spc;
+            xmlFSType.Type = "HPFS";
+            xmlFSType.VolumeName = hpfs_bpb.volume_label;
+            xmlFSType.VolumeSerial = String.Format("{0:X8}", hpfs_bpb.serial_no);
 			
             information = sb.ToString();
         }

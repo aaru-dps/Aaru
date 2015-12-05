@@ -219,6 +219,14 @@ namespace DiscImageChef.Plugins
                 besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).AppendLine();
 			
             information = sb.ToString();
+
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Clusters = besb.num_blocks;
+            xmlFSType.ClusterSize = (int)besb.block_size;
+            xmlFSType.Dirty = besb.flags == BEFS_DIRTY;
+            xmlFSType.FreeClusters = besb.num_blocks - besb.used_blocks;
+            xmlFSType.Type = "BeFS";
+            xmlFSType.VolumeName = besb.name;
         }
 
         struct BeSuperBlock

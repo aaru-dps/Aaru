@@ -359,6 +359,21 @@ namespace DiscImageChef.Plugins
                 sb.AppendLine("Volume is not bootable.");
 			
             information = sb.ToString();
+
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+            xmlFSType.Bootable = BB.signature == HFSBB_MAGIC;
+            xmlFSType.Clusters = MDB.drNmAlBlks;
+            xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
+            xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+            xmlFSType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
+            xmlFSType.Files = MDB.drFilCnt;
+            xmlFSType.FreeClusters = MDB.drFreeBks;
+            xmlFSType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+            xmlFSType.Type = "HFS";
+            xmlFSType.VolumeName = MDB.drVN;
+            if (MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
+                xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
 			
             return;
         }

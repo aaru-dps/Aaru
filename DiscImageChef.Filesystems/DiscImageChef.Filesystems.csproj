@@ -84,5 +84,9 @@
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
+      <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
+      <Name>DiscImageChef.Metadata</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

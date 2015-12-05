@@ -1,0 +1,5 @@
+2015-12-05  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Metadata.csproj:
+	  Added generating XML metadata for file systems.
+

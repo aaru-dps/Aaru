@@ -66,6 +66,8 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "PC Engine filesystem";
         }
     }
 }

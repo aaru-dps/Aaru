@@ -105,6 +105,10 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("Filesystem name: {0}", bfs_sb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfs_sb.s_volume).AppendLine();
 
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "BFS";
+            xmlFSType.VolumeName = bfs_sb.s_volume;
+
             information = sb.ToString();
         }
 

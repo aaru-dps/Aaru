@@ -179,23 +179,30 @@ namespace DiscImageChef.Plugins
                 return;
             }
 
+            xmlFSType = new Schemas.FileSystemType();
+
             switch (magic)
             {
                 case UFS_MAGIC:
                     sbInformation.AppendLine("UFS filesystem");
+                    xmlFSType.Type = "UFS";
                     break;
                 case UFS_MAGIC_BW:
                     sbInformation.AppendLine("BorderWare UFS filesystem");
+                    xmlFSType.Type = "UFS";
                     break;
                 case UFS2_MAGIC:
                     sbInformation.AppendLine("UFS2 filesystem");
+                    xmlFSType.Type = "UFS2";
                     break;
                 case UFS_CIGAM:
                     sbInformation.AppendLine("Big-endian UFS filesystem");
+                    xmlFSType.Type = "UFS";
                     break;
                 case UFS_BAD_MAGIC:
                     sbInformation.AppendLine("Incompletely initialized UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
+                    xmlFSType.Type = "UFS";
                     break;
             }
 
@@ -589,6 +596,8 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_cgoffset).AppendLine();
             sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_t)).AppendLine();
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_bsize).AppendLine();
+            xmlFSType.Clusters = ufs_sb.fs_size;
+            xmlFSType.ClusterSize = (int)ufs_sb.fs_bsize;
             sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_bsize).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a basic block", ufs_sb.fs_bsize).AppendLine();
@@ -620,7 +629,10 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("Hardware sector interleave: {0}", ufs_sb.fs_interleave).AppendLine();
             sbInformation.AppendFormat("Sector 0 skew: {0}/track", ufs_sb.fs_trackskew).AppendLine();
             if (!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
+            {
                 sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
+                xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2);
+            }
             else if (fs_type_43bsd && ufs_sb.fs_headswitch_43bsd > 0 && ufs_sb.fs_trkseek_43bsd > 0)
             {
                 sbInformation.AppendFormat("{0} µsec for head switch", ufs_sb.fs_headswitch_43bsd).AppendLine();
@@ -638,10 +650,14 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("{0} blocks per group", ufs_sb.fs_fpg / ufs_sb.fs_frag).AppendLine();
             sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal_ndir).AppendLine();
             sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal_nbfree, ufs_sb.fs_cstotal_nbfree * ufs_sb.fs_bsize).AppendLine();
+            xmlFSType.FreeClusters = ufs_sb.fs_cstotal_nbfree;
             sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal_nifree).AppendLine();
             sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal_nffree).AppendLine();
             if (ufs_sb.fs_fmod == 1)
+            {
                 sbInformation.AppendLine("Superblock is under modification");
+                xmlFSType.Dirty = true;
+            }
             if (ufs_sb.fs_clean == 1)
                 sbInformation.AppendLine("Volume is clean");
             if (ufs_sb.fs_ronly == 1)
@@ -656,17 +672,22 @@ namespace DiscImageChef.Plugins
             {
                 sbInformation.AppendFormat("Volume last mounted on \"{0}\"", ufs_sb.fs_fsmnt_ufs2).AppendLine();
                 sbInformation.AppendFormat("Volume name: \"{0}\"", ufs_sb.fs_volname_ufs2).AppendLine();
+                xmlFSType.VolumeName = ufs_sb.fs_volname_ufs2;
                 sbInformation.AppendFormat("Volume ID: 0x{0:X16}", ufs_sb.fs_swuid_ufs2).AppendLine();
+                xmlFSType.VolumeSerial = String.Format("{0:X16}", ufs_sb.fs_swuid_ufs2);
                 sbInformation.AppendFormat("Last searched cylinder group: {0}", ufs_sb.fs_cgrotor_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} contiguously allocated directories", ufs_sb.fs_contigdirs_ufs2).AppendLine();
                 sbInformation.AppendFormat("Standard superblock LBA: {0}", ufs_sb.fs_sblockloc_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal_ndir_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal_nbfree_ufs2, ufs_sb.fs_cstotal_nbfree_ufs2 * ufs_sb.fs_bsize).AppendLine();
+                xmlFSType.FreeClusters = (long)ufs_sb.fs_cstotal_nbfree_ufs2;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal_nifree_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal_nffree_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free clusters", ufs_sb.fs_cstotal_numclusters_ufs2).AppendLine();
                 sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_sec_ufs2)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_sec_ufs2);
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size_ufs2, ufs_sb.fs_size_ufs2 * ufs_sb.fs_bsize).AppendLine();
+                xmlFSType.Clusters = (long)ufs_sb.fs_dsize_ufs2;
                 sbInformation.AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize_ufs2, ufs_sb.fs_dsize_ufs2 * ufs_sb.fs_bsize).AppendLine();
                 sbInformation.AppendFormat("Cylinder group summary area LBA: {0}", ufs_sb.fs_csaddr_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} blocks pending of being freed", ufs_sb.fs_pendingblocks_ufs2).AppendLine();

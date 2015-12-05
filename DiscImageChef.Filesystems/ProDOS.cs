@@ -217,6 +217,13 @@ namespace DiscImageChef.Plugins
 
             information = sbInformation.ToString();
 
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
+            xmlFSType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+            xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
+            xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
+            xmlFSType.Type = "ProDOS";
+
             return;
         }
 

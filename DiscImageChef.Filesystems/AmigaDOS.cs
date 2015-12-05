@@ -232,6 +232,7 @@ namespace DiscImageChef.Plugins
 
             BootBlock bootBlk = new BootBlock();
             RootBlock rootBlk = new RootBlock();
+            xmlFSType = new Schemas.FileSystemType();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -293,27 +294,35 @@ namespace DiscImageChef.Plugins
             {
                 case 0:
                     sbInformation.Append("Amiga Original File System");
+                    xmlFSType.Type = "Amiga OFS";
                     break;
                 case 1:
                     sbInformation.Append("Amiga Fast File System");
+                    xmlFSType.Type = "Amiga FFS";
                     break;
                 case 2:
                     sbInformation.Append("Amiga Original File System with international characters");
+                    xmlFSType.Type = "Amiga OFS";
                     break;
                 case 3:
                     sbInformation.Append("Amiga Fast File System with international characters");
+                    xmlFSType.Type = "Amiga FFS";
                     break;
                 case 4:
                     sbInformation.Append("Amiga Original File System with directory cache");
+                    xmlFSType.Type = "Amiga OFS";
                     break;
                 case 5:
                     sbInformation.Append("Amiga Fast File System with directory cache");
+                    xmlFSType.Type = "Amiga FFS";
                     break;
                 case 6:
                     sbInformation.Append("Amiga Original File System with long filenames");
+                    xmlFSType.Type = "Amiga OFS";
                     break;
                 case 7:
                     sbInformation.Append("Amiga Fast File System with long filenames");
+                    xmlFSType.Type = "Amiga FFS";
                     break;
             }
 
@@ -323,7 +332,10 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendLine();
 
             if ((bootBlk.diskType & 0xFF) == 6 || (bootBlk.diskType & 0xFF) == 7)
+            {
                 sbInformation.AppendLine("AFFS v2, following information may be completely incorrect or garbage.");
+                xmlFSType.Type = "Amiga FFS2";
+            }
 
             sbInformation.AppendFormat("Volume name: {0}", rootBlk.diskName).AppendLine();
 
@@ -342,10 +354,9 @@ namespace DiscImageChef.Plugins
 
             information = sbInformation.ToString();
 
-            /*xmlFSType = new Schemas.FileSystemType();
             xmlFSType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
             xmlFSType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
-*/
+            xmlFSType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
         }
 
         static UInt32 AmigaChecksum(byte[] data)

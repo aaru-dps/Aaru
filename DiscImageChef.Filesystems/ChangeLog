@@ -1,3 +1,30 @@
+2015-12-05  Natalia Portillo  <claunia@claunia.com>
+
+	* FAT.cs:
+	* FFS.cs:
+	* ODS.cs:
+	* BFS.cs:
+	* HPFS.cs:
+	* NTFS.cs:
+	* SysV.cs:
+	* Opera.cs:
+	* extFS.cs:
+	* LisaFS.cs:
+	* ProDOS.cs:
+	* Plugin.cs:
+	* ext2FS.cs:
+	* SolarFS.cs:
+	* ISO9660.cs:
+	* MinixFS.cs:
+	* UNIXBFS.cs:
+	* AppleHFS.cs:
+	* AppleMFS.cs:
+	* AmigaDOS.cs:
+	* PCEngine.cs:
+	* AppleHFSPlus.cs:
+	* DiscImageChef.Filesystems.csproj:
+	  Added generating XML metadata for file systems.
+
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
 	* AmigaDOS.cs:

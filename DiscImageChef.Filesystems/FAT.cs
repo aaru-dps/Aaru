@@ -177,6 +177,7 @@ namespace DiscImageChef.Plugins
             information = "";
 			
             StringBuilder sb = new StringBuilder();
+            xmlFSType = new Schemas.FileSystemType();
 
             byte[] dosString; // Space-padded
             bool isFAT32 = false;
@@ -217,17 +218,22 @@ namespace DiscImageChef.Plugins
                 if (fat32_signature == "FAT32   ")
                 {
                     sb.AppendLine("Microsoft FAT32"); // Seems easy, check reading
+                    xmlFSType.Type = "FAT32";
                     isFAT32 = true;
                 }
                 else if ((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
                 {
                     if ((first_fat_entry & 0xFF) == media_descriptor)
+                    {
                         sb.AppendLine("Microsoft FAT16"); // It MUST be FAT16, or... maybe not :S
+                        xmlFSType.Type = "FAT16";
+                    }
                 }
                 else if ((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
                 {
                     //if((first_fat_entry & 0xFF) == media_descriptor) // Pre DOS<4 does not implement this, TOS does and is !=
                     sb.AppendLine("Microsoft FAT12"); // It MUST be FAT12, or... maybe not :S
+                    xmlFSType.Type = "FAT12";
                 }
                 else
                     return;
@@ -288,13 +294,20 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("OEM Name: {0}", BPB.OEMName).AppendLine();
                 sb.AppendFormat("{0} bytes per sector.", BPB.bps).AppendLine();
                 sb.AppendFormat("{0} sectors per cluster.", BPB.spc).AppendLine();
+                xmlFSType.ClusterSize = BPB.bps * BPB.spc;
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", BPB.rsectors).AppendLine();
                 sb.AppendFormat("{0} FATs.", BPB.fats_no).AppendLine();
                 sb.AppendFormat("{0} entries on root directory.", BPB.root_ent).AppendLine();
                 if (BPB.sectors == 0)
+                {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.big_sectors, BPB.big_sectors * BPB.bps).AppendLine();
+                    xmlFSType.Clusters = BPB.big_sectors / BPB.spc;
+                }
                 else
+                {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
+                    xmlFSType.Clusters = BPB.sectors / BPB.spc;
+                }
                 if ((BPB.media & 0xF0) == 0xF0)
                     sb.AppendFormat("Media format: 0x{0:X2}", BPB.media).AppendLine();
                 if (fat32_signature == "FAT32   ")
@@ -312,20 +325,24 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("Sector of backup FAT32 parameter block: {0}", FAT32PB.backup_sector).AppendLine();
                     sb.AppendFormat("Drive number: 0x{0:X2}", FAT32PB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", FAT32PB.serial_no).AppendLine();
+                    xmlFSType.VolumeSerial = String.Format("{0:X8}", FAT32PB.serial_no);
                     if ((FAT32PB.nt_flags & 0x01) == 0x01)
                     {
                         sb.AppendLine("Volume should be checked on next mount.");	
                         if ((EPB.nt_flags & 0x02) == 0x02)
                             sb.AppendLine("Disk surface should be checked also.");	
+                        xmlFSType.Dirty = true;
                     }
 					
                     sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
+                    xmlFSType.VolumeName = EPB.volume_label;
                     sb.AppendFormat("Filesystem type: {0}", EPB.fs_type).AppendLine();
                 }
                 else if (EPB.signature == 0x28 || EPB.signature == 0x29)
                 {
                     sb.AppendFormat("Drive number: 0x{0:X2}", EPB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", EPB.serial_no).AppendLine();
+                    xmlFSType.VolumeSerial = String.Format("{0:X8}", EPB.serial_no);
                     if (EPB.signature == 0x29)
                     {
                         if ((EPB.nt_flags & 0x01) == 0x01)
@@ -333,9 +350,11 @@ namespace DiscImageChef.Plugins
                             sb.AppendLine("Volume should be checked on next mount.");	
                             if ((EPB.nt_flags & 0x02) == 0x02)
                                 sb.AppendLine("Disk surface should be checked also.");	
+                            xmlFSType.Dirty = true;
                         }
 					
                         sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
+                        xmlFSType.VolumeName = EPB.volume_label;
                         sb.AppendFormat("Filesystem type: {0}", EPB.fs_type).AppendLine();
                     }
                 }

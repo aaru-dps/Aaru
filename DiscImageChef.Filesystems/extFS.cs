@@ -92,6 +92,11 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("Log zone size: {0}", ext_sb.logzonesize);
             sb.AppendFormat("Max zone size: {0}", ext_sb.maxsize);
 
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "ext";
+            xmlFSType.FreeClusters = ext_sb.freecountblk;
+            xmlFSType.ClusterSize = 1024;
+
             information = sb.ToString();
         }
 

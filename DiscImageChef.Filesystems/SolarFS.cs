@@ -149,6 +149,12 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("{0} sectors per track", BPB.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", BPB.vol_name).AppendLine();
 
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "SolarFS";
+            xmlFSType.Clusters = BPB.sectors;
+            xmlFSType.ClusterSize = BPB.bps;
+            xmlFSType.VolumeName = BPB.vol_name;
+
             information = sb.ToString();
         }
 

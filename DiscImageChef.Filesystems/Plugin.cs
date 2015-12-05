@@ -49,6 +49,15 @@ namespace DiscImageChef.Plugins
         public string Name;
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
+        internal Schemas.FileSystemType xmlFSType;
+
+        public Schemas.FileSystemType XmlFSType
+        {
+            get
+            {
+                return xmlFSType;
+            }
+        }
 
         protected Plugin()
         {

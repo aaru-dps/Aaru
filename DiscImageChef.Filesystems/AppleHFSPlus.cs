@@ -256,6 +256,24 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", HPVH.drFndrInfo3).AppendLine();
                     sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", HPVH.drFndrInfo5).AppendLine();
                     sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7).AppendLine();
+
+                    xmlFSType = new Schemas.FileSystemType();
+                    xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                    if(HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0)
+                        xmlFSType.Bootable = true;
+                    xmlFSType.Clusters = HPVH.totalBlocks;
+                    xmlFSType.ClusterSize = (int)HPVH.blockSize;
+                    xmlFSType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                    xmlFSType.Dirty = (HPVH.attributes & 0x100) != 0x100;
+                    xmlFSType.Files = HPVH.fileCount;
+                    xmlFSType.FreeClusters = HPVH.freeBlocks;
+                    xmlFSType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                    if(HPVH.signature == 0x482B)
+                        xmlFSType.Type = "HFS+";
+                    if(HPVH.signature == 0x4858)
+                        xmlFSType.Type = "HFSX";
+                    if (HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
+                        xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
                 }
                 else
                 {

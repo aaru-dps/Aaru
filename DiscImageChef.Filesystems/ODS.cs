@@ -257,6 +257,15 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 			
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "FILES-11";
+            xmlFSType.ClusterSize = homeblock.cluster * 512;
+            xmlFSType.VolumeName = homeblock.volname;
+            xmlFSType.VolumeSerial = String.Format("{0:X8}", homeblock.serialnum);
+            xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
+            if (homeblock.revdate > 0)
+                xmlFSType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
+
             information = sb.ToString();
         }
 

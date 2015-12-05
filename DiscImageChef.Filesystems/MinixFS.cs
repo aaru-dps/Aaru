@@ -107,11 +107,15 @@ namespace DiscImageChef.Plugins
 
             magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
 
+            xmlFSType = new Schemas.FileSystemType();
+
             if (magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
             {
                 filenamesize = 60;
                 minixVersion = "Minix V3 filesystem";
                 BigEndianBitConverter.IsLittleEndian = magic != MINIX3_CIGAM;
+
+                xmlFSType.Type = "Minix V3";
 
                 minix3 = true;
             }
@@ -125,41 +129,49 @@ namespace DiscImageChef.Plugins
                         filenamesize = 14;
                         minixVersion = "Minix V1 filesystem";
                         BigEndianBitConverter.IsLittleEndian = true;
+                        xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix V1 filesystem";
                         BigEndianBitConverter.IsLittleEndian = true;
+                        xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix V2 filesystem";
                         BigEndianBitConverter.IsLittleEndian = true;
+                        xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix V2 filesystem";
                         BigEndianBitConverter.IsLittleEndian = true;
+                        xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix V1 filesystem";
                         BigEndianBitConverter.IsLittleEndian = false;
+                        xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix V1 filesystem";
                         BigEndianBitConverter.IsLittleEndian = false;
+                        xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix V2 filesystem";
                         BigEndianBitConverter.IsLittleEndian = false;
+                        xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix V2 filesystem";
                         BigEndianBitConverter.IsLittleEndian = false;
+                        xmlFSType.Type = "Minix V2";
                         break;
                     default:
                         return;
@@ -195,6 +207,8 @@ namespace DiscImageChef.Plugins
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
                 sb.AppendFormat("On-disk filesystem version: {0}", mnx_sb.s_disk_version).AppendLine();
+
+                xmlFSType.ClusterSize = mnx_sb.s_blocksize;
             }
             else
             {
@@ -224,6 +238,7 @@ namespace DiscImageChef.Plugins
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnx_sb.s_state).AppendLine();
+                xmlFSType.ClusterSize = 1024;
             }
             information = sb.ToString();
         }

@@ -262,6 +262,8 @@ namespace DiscImageChef.Plugins
             if (!sys7th && !sysv && !coherent && !xenix)
                 return;
 
+            xmlFSType = new Schemas.FileSystemType();
+
             if (xenix)
             {
                 byte[] xenix_strings = new byte[6];
@@ -293,18 +295,22 @@ namespace DiscImageChef.Plugins
 
                 UInt32 bs = 512;
                 sb.AppendLine("XENIX filesystem");
+                xmlFSType.Type = "XENIX fs";
                 switch (xnx_sb.s_type)
                 {
                     case 1:
                         sb.AppendLine("512 bytes per block");
+                        xmlFSType.ClusterSize = 512;
                         break;
                     case 2:
                         sb.AppendLine("1024 bytes per block");
                         bs = 1024;
+                        xmlFSType.ClusterSize = 1024;
                         break;
                     case 3:
                         sb.AppendLine("2048 bytes per block");
                         bs = 2048;
+                        xmlFSType.ClusterSize = 2048;
                         break;
                     default:
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
@@ -337,12 +343,17 @@ namespace DiscImageChef.Plugins
                 if (xnx_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time);
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
+                xmlFSType.VolumeName = xnx_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
                 if (xnx_sb.s_clean == 0x46)
                     sb.AppendLine("Volume is clean");
                 else
+                {
                     sb.AppendLine("Volume is dirty");
+                    xmlFSType.Dirty = true;
+                }
             }
 
             if (sysv)
@@ -411,21 +422,30 @@ namespace DiscImageChef.Plugins
 
                 UInt32 bs = 512;
                 if (sysvr4)
+                {
                     sb.AppendLine("System V Release 4 filesystem");
+                    xmlFSType.Type = "SVR4 fs";
+                }
                 else
+                {
                     sb.AppendLine("System V Release 2 filesystem");
+                    xmlFSType.Type = "SVR2 fs";
+                }
                 switch (sysv_sb.s_type)
                 {
                     case 1:
                         sb.AppendLine("512 bytes per block");
+                        xmlFSType.ClusterSize = 512;
                         break;
                     case 2:
                         sb.AppendLine("1024 bytes per block");
                         bs = 1024;
+                        xmlFSType.ClusterSize = 1024;
                         break;
                     case 3:
                         sb.AppendLine("2048 bytes per block");
                         bs = 2048;
+                        xmlFSType.ClusterSize = 2048;
                         break;
                     default:
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
@@ -458,12 +478,17 @@ namespace DiscImageChef.Plugins
                 if (sysv_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
+                xmlFSType.VolumeName = sysv_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
                 if (sysv_sb.s_state == (0x7C269D38 - sysv_sb.s_time))
                     sb.AppendLine("Volume is clean");
                 else
+                {
                     sb.AppendLine("Volume is dirty");
+                    xmlFSType.Dirty = true;
+                }
             }
 
             if (coherent)
@@ -490,6 +515,9 @@ namespace DiscImageChef.Plugins
                 Array.Copy(sb_sector, 0x1EE, coh_strings, 0, 6);
                 coh_sb.s_fpack = StringHandlers.CToString(coh_strings);
 
+                xmlFSType.Type = "Coherent fs";
+                xmlFSType.ClusterSize = 512;
+
                 sb.AppendLine("Coherent UNIX filesystem");
                 if (imagePlugin.GetSectorSize() != 512)
                     sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
@@ -508,7 +536,9 @@ namespace DiscImageChef.Plugins
                 if (coh_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
                 sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
+                xmlFSType.VolumeName = coh_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
             }
 
@@ -536,6 +566,8 @@ namespace DiscImageChef.Plugins
                 Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
                 v7_sb.s_fpack = StringHandlers.CToString(sys7_strings);
 
+                xmlFSType.Type = "UNIX 7th Edition fs";
+                xmlFSType.ClusterSize = 512;
                 sb.AppendLine("UNIX 7th Edition filesystem");
                 if (imagePlugin.GetSectorSize() != 512)
                     sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
@@ -554,7 +586,9 @@ namespace DiscImageChef.Plugins
                 if (v7_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
                 sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
+                xmlFSType.VolumeName = v7_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();
             }
 

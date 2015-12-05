@@ -225,9 +225,12 @@ namespace DiscImageChef.Plugins
             Array.Copy(sb_sector, 0x1D8, forstrings, 0, 64);
             supblk.mount_options = StringHandlers.CToString(forstrings);
 
+            xmlFSType = new Schemas.FileSystemType();
+
             if (supblk.magic == ext2OldFSMagic)
             {
                 sb.AppendLine("ext2 (old) filesystem");
+                xmlFSType.Type = "ext2";
             }
             else if (supblk.magic == ext2FSMagic)
             {
@@ -250,11 +253,20 @@ namespace DiscImageChef.Plugins
                 new_ext2 |= !ext3 && !ext4;
 
                 if (new_ext2)
+                {
                     sb.AppendLine("ext2 filesystem");
+                    xmlFSType.Type = "ext2";
+                }
                 if (ext3)
+                {
                     sb.AppendLine("ext3 filesystem");
+                    xmlFSType.Type = "ext3";
+                }
                 if (ext4)
+                {
                     sb.AppendLine("ext4 filesystem");
+                    xmlFSType.Type = "ext4";
+                }
             }
             else
             {
@@ -286,7 +298,10 @@ namespace DiscImageChef.Plugins
             }
 
             if (supblk.mkfs_t > 0)
+            {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t), ext_os).AppendLine();
+                xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t);
+            }
             else
                 sb.AppendFormat("Volume was created for {0}", ext_os).AppendLine();
 
@@ -343,6 +358,8 @@ namespace DiscImageChef.Plugins
 				supblk.block_size = 1024;
 
             sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks, 1024<<(int)supblk.block_size, blocks * (ulong)(1024<<(int)supblk.block_size)).AppendLine();
+            xmlFSType.Clusters = (long)blocks;
+            xmlFSType.ClusterSize = 1024 << (int)supblk.block_size;
             if (supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if (supblk.mount_t > 0)
@@ -381,14 +398,19 @@ namespace DiscImageChef.Plugins
             }
 
             if (supblk.write_t > 0)
+            {
                 sb.AppendFormat("Last written on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.write_t)).AppendLine();
+                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.write_t);
+            }
             else
                 sb.AppendLine("Volume has never been written");
 
+            xmlFSType.Dirty = true;
             switch (supblk.state)
             {
                 case EXT2_VALID_FS:
                     sb.AppendLine("Volume is clean");
+                    xmlFSType.Dirty = false;
                     break;
                 case EXT2_ERROR_FS:
                     sb.AppendLine("Volume is dirty");
@@ -424,12 +446,16 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("Filesystem revision: {0}.{1}", supblk.revision, supblk.minor_revision).AppendLine();
 
             if (supblk.uuid != Guid.Empty)
+            {
                 sb.AppendFormat("Volume UUID: {0}", supblk.uuid).AppendLine();
+                xmlFSType.VolumeSerial = supblk.uuid.ToString();
+            }
 
             if (supblk.kbytes_written > 0)
                 sb.AppendFormat("{0} KiB has been written on volume", supblk.kbytes_written).AppendLine();
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
+            xmlFSType.FreeClusters = (long)free;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes, supblk.free_inodes * 100 / supblk.inodes).AppendLine();
             if (supblk.first_inode > 0)
                 sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();

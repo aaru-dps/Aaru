@@ -874,6 +874,13 @@ namespace DiscImageChef.Plugins
 					ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
 			}
 
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "ISO9660";
+            if (Joliet)
+            {
+                xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
+            }
+
             information = ISOMetadata.ToString();
         }
 

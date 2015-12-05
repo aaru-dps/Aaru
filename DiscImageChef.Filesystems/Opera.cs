@@ -131,6 +131,12 @@ namespace DiscImageChef.Plugins
             SuperBlockMetadata.AppendFormat("Last root directory copy: {0}", sb.last_root_copy).AppendLine();
 
             information = SuperBlockMetadata.ToString();
+
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Type = "Opera";
+            xmlFSType.VolumeName = sb.volume_label;
+            xmlFSType.ClusterSize = sb.block_size;
+            xmlFSType.Clusters = sb.block_count;
         }
 
         struct OperaSuperBlock

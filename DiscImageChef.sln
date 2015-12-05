@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Interop", "Di
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Console", "DiscImageChef.Console\DiscImageChef.Console.csproj", "{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Metadata", "DiscImageChef.Metadata\DiscImageChef.Metadata.csproj", "{9F213318-5CB8-4066-A757-074489C9F818}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -59,6 +61,10 @@ Global
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.Build.0 = Debug|Any CPU
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.Build.0 = Release|Any CPU
+		{9F213318-5CB8-4066-A757-074489C9F818}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9F213318-5CB8-4066-A757-074489C9F818}.Debug|x86.Build.0 = Debug|Any CPU
+		{9F213318-5CB8-4066-A757-074489C9F818}.Release|x86.ActiveCfg = Release|Any CPU
+		{9F213318-5CB8-4066-A757-074489C9F818}.Release|x86.Build.0 = Release|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Debug|x86.Build.0 = Debug|Any CPU
 		{CC48B324-A532-4A45-87A6-6F91F7141E8D}.Release|x86.ActiveCfg = Release|Any CPU
