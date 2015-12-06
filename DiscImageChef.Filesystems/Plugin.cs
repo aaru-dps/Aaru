@@ -51,6 +51,10 @@ namespace DiscImageChef.Plugins
         public Guid PluginUUID;
         internal Schemas.FileSystemType xmlFSType;
 
+        /// <summary>
+        /// Information about the filesystem as expected by CICM Metadata XML
+        /// </summary>
+        /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
         public Schemas.FileSystemType XmlFSType
         {
             get
@@ -76,7 +80,8 @@ namespace DiscImageChef.Plugins
         /// Gets information about the identified filesystem.
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partitionOffset">Partition offset (LBA).</param>
+        /// <param name="partitionStart">Partition start sector (LBA).</param>
+        /// <param name="partitionEnd">Partition end sector (LBA).</param>
         /// <param name="information">Filesystem information.</param>
         public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information);
 	}

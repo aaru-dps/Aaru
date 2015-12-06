@@ -467,22 +467,48 @@ namespace DiscImageChef.ImagePlugins
         public string TrackDescription;
         /// <summary>Indexes, 00 to 99 and sector offset</summary>
         public Dictionary<int, UInt64> Indexes;
+        /// <summary>Which file stores this track</summary>
         public string TrackFile;
+        /// <summary>Starting at which byte is this track stored</summary>
         public ulong TrackFileOffset;
+        /// <summary>What kind of file is storing this track</summary>
         public string TrackFileType;
+        /// <summary>How many main channel / user data bytes are per sector in this track</summary>
         public int TrackBytesPerSector;
+        /// <summary>How many main channel bytes per sector are in the file with this track</summary>
         public int TrackRawBytesPerSector;
+        /// <summary>Which file stores this track's subchannel</summary>
         public string TrackSubchannelFile;
+        /// <summary>Starting at which byte are this track's subchannel stored</summary>
         public ulong TrackSubchannelOffset;
+        /// <summary>Type of subchannel stored for this track</summary>
         public TrackSubchannelType TrackSubchannelType;
     }
 
+    /// <summary>
+    /// Type of subchannel in track
+    /// </summary>
     public enum TrackSubchannelType
     {
+        /// <summary>
+        /// Track does not has subchannel dumped, or it's not a CD
+        /// </summary>
         None,
+        /// <summary>
+        /// Subchannel is packed and error corrected
+        /// </summary>
         Packed,
+        /// <summary>
+        /// Subchannel is interleaved
+        /// </summary>
         Raw,
+        /// <summary>
+        /// Subchannel is packed and comes interleaved with main channel in same file
+        /// </summary>
         PackedInterleaved,
+        /// <summary>
+        /// Subchannel is interleaved and comes interleaved with main channel in same file
+        /// </summary>
         RawInterleaved
     }
 
@@ -639,11 +665,26 @@ namespace DiscImageChef.ImagePlugins
         ATAPI_IDENTIFY
     };
 
+    /// <summary>
+    /// Enumeration of media types defined in CICM metadata
+    /// </summary>
     public enum XmlMediaType
     {
+        /// <summary>
+        /// Purely optical discs
+        /// </summary>
         OpticalDisc,
+        /// <summary>
+        /// Media that is physically block-based or abstracted like that
+        /// </summary>
         BlockMedia,
+        /// <summary>
+        /// Media that can be accessed by-byte or by-bit, like chips
+        /// </summary>
         LinearMedia,
+        /// <summary>
+        /// Media that can only store data when it is modulated to audio
+        /// </summary>
         AudioMedia
     }
 

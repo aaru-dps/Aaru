@@ -1,5 +1,10 @@
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugin.cs:
+	  Added documentation.
+
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
 	* CDRWin.cs:
 	  Added extra track information.
 	Corrected ReadLong for CD+G, subchannel should never come
