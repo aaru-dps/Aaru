@@ -45,12 +45,19 @@ namespace DiscImageChef.Plugins
 {
     class AppleHFSPlus : Plugin
     {
+        /// <summary>
+        /// "BD", HFS magic
+        /// </summary>
         const UInt16 HFS_MAGIC = 0x4244;
-        // "BD"
+        /// <summary>
+        /// "H+", HFS+ magic
+        /// </summary>
         const UInt16 HFSP_MAGIC = 0x482B;
-        // "H+"
+        /// <summary>
+        /// "HX", HFSX magic
+        /// </summary>
         const UInt16 HFSX_MAGIC = 0x4858;
-        // "HX"
+
         public AppleHFSPlus()
         {
             Name = "Apple HFS+ filesystem";
@@ -66,26 +73,26 @@ namespace DiscImageChef.Plugins
             UInt16 xdrStABNt;
             UInt16 drAlBlSt;
             UInt32 drAlBlkSiz;
-			
+            
             byte[] vh_sector;
             ulong hfsp_offset;
 
             vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
-			
+            
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
-			
+            
             if (drSigWord == HFS_MAGIC) // "BD"
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x07C); // Read embedded HFS+ signature
-				
+                
                 if (drSigWord == HFSP_MAGIC) // "H+"
                 {
                     xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x07E); // Starting block number of embedded HFS+ volume
-					
+                    
                     drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x014); // Block size
-					
+                    
                     drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x01C); // Start of allocated blocks (in 512-byte/block)
-					
+                    
                     hfsp_offset = (drAlBlSt + xdrStABNt * (drAlBlkSiz / 512)) * (imagePlugin.GetSectorSize() / 512);
                 }
                 else
@@ -97,9 +104,9 @@ namespace DiscImageChef.Plugins
             {
                 hfsp_offset = 0;
             }
-			
+            
             vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
-				
+                
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0);
             if (drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
                 return true;
@@ -109,25 +116,25 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+            
             UInt16 drSigWord;
             UInt16 xdrStABNt;
             UInt16 drAlBlSt;
             UInt32 drAlBlkSiz;
             HFSPlusVolumeHeader HPVH = new HFSPlusVolumeHeader();
-			
+            
             ulong hfsp_offset;
             bool wrapped;
             byte[] vh_sector;
-			
+            
             vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
-			
+            
             if (drSigWord == HFS_MAGIC) // "BD"
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x07C); // Read embedded HFS+ signature
-				
+                
                 if (drSigWord == HFSP_MAGIC) // "H+"
                 {
                     xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x07E); // Starting block number of embedded HFS+ volume
@@ -150,9 +157,9 @@ namespace DiscImageChef.Plugins
                 hfsp_offset = 0;
                 wrapped = false;
             }
-			
+            
             vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
-				
+                
             HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x000);
             if (HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)
             {
@@ -164,33 +171,33 @@ namespace DiscImageChef.Plugins
                     sb.AppendLine("HFSX filesystem.");
                 if (wrapped)
                     sb.AppendLine("Volume is wrapped inside an HFS volume.");
-				
+                
                 HPVH.version = BigEndianBitConverter.ToUInt16(vh_sector, 0x002);
-				
+                
                 if (HPVH.version == 4 || HPVH.version == 5)
                 {
                     HPVH.attributes = BigEndianBitConverter.ToUInt32(vh_sector, 0x004);
                     byte[] lastMountedVersion_b = new byte[4];
                     Array.Copy(vh_sector, 0x008, lastMountedVersion_b, 0, 4);
-                    HPVH.lastMountedVersion = Encoding.ASCII.GetString(lastMountedVersion_b);						
-                    HPVH.journalInfoBlock = BigEndianBitConverter.ToUInt32(vh_sector, 0x00C);						
+                    HPVH.lastMountedVersion = Encoding.ASCII.GetString(lastMountedVersion_b);                       
+                    HPVH.journalInfoBlock = BigEndianBitConverter.ToUInt32(vh_sector, 0x00C);                       
 
-                    HPVH.createDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x010);						
-                    HPVH.modifyDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x018);						
-                    HPVH.backupDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x020);						
-                    HPVH.checkedDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x028);						
+                    HPVH.createDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x010);                     
+                    HPVH.modifyDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x018);                     
+                    HPVH.backupDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x020);                     
+                    HPVH.checkedDate = BigEndianBitConverter.ToUInt32(vh_sector, 0x028);                        
 
-                    HPVH.fileCount = BigEndianBitConverter.ToUInt32(vh_sector, 0x030);						
-                    HPVH.folderCount = BigEndianBitConverter.ToUInt32(vh_sector, 0x034);						
+                    HPVH.fileCount = BigEndianBitConverter.ToUInt32(vh_sector, 0x030);                      
+                    HPVH.folderCount = BigEndianBitConverter.ToUInt32(vh_sector, 0x034);                        
 
-                    HPVH.blockSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x038);						
-                    HPVH.totalBlocks = BigEndianBitConverter.ToUInt32(vh_sector, 0x03C);						
-                    HPVH.freeBlocks = BigEndianBitConverter.ToUInt32(vh_sector, 0x040);						
+                    HPVH.blockSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x038);                      
+                    HPVH.totalBlocks = BigEndianBitConverter.ToUInt32(vh_sector, 0x03C);                        
+                    HPVH.freeBlocks = BigEndianBitConverter.ToUInt32(vh_sector, 0x040);                     
 
-                    HPVH.nextAllocation = BigEndianBitConverter.ToUInt32(vh_sector, 0x044);						
-                    HPVH.rsrcClumpSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x048);						
-                    HPVH.dataClumpSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x04C);						
-                    HPVH.nextCatalogID = BigEndianBitConverter.ToUInt32(vh_sector, 0x050);						
+                    HPVH.nextAllocation = BigEndianBitConverter.ToUInt32(vh_sector, 0x044);                     
+                    HPVH.rsrcClumpSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x048);                      
+                    HPVH.dataClumpSize = BigEndianBitConverter.ToUInt32(vh_sector, 0x04C);                      
+                    HPVH.nextCatalogID = BigEndianBitConverter.ToUInt32(vh_sector, 0x050);                      
 
                     HPVH.writeCount = BigEndianBitConverter.ToUInt32(vh_sector, 0x054);
 
@@ -201,13 +208,13 @@ namespace DiscImageChef.Plugins
                     HPVH.drFndrInfo5 = BigEndianBitConverter.ToUInt32(vh_sector, 0x074);
                     HPVH.drFndrInfo6 = BigEndianBitConverter.ToUInt32(vh_sector, 0x078);
                     HPVH.drFndrInfo7 = BigEndianBitConverter.ToUInt32(vh_sector, 0x07C);
-					
+                    
                     HPVH.allocationFile_logicalSize = BigEndianBitConverter.ToUInt64(vh_sector, 0x080);
                     HPVH.extentsFile_logicalSize = BigEndianBitConverter.ToUInt64(vh_sector, 0x0D0);
                     HPVH.catalogFile_logicalSize = BigEndianBitConverter.ToUInt64(vh_sector, 0x120);
                     HPVH.attributesFile_logicalSize = BigEndianBitConverter.ToUInt64(vh_sector, 0x170);
                     HPVH.startupFile_logicalSize = BigEndianBitConverter.ToUInt64(vh_sector, 0x1C0);
-					
+                    
                     sb.AppendFormat("Filesystem version is {0}.", HPVH.version).AppendLine();
 
                     if ((HPVH.attributes & 0x80) == 0x80)
@@ -294,271 +301,274 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("Filesystem version is {0}.", HPVH.version).AppendLine();
                     sb.AppendLine("This version is not supported yet.");
                 }
-				
+                
                 information = sb.ToString();
             }
             else
                 return;
         }
-        // Size = 532 bytes
-        struct HFSPlusVolumeHeader // Should be offset 0x0400 bytes in volume
+
+        /// <summary>
+        /// HFS+ Volume Header, should be at offset 0x0400 bytes in volume with a size of 532 bytes
+        /// </summary>
+        struct HFSPlusVolumeHeader
         {
+            /// <summary>0x000, "H+" for HFS+, "HX" for HFSX</summary>
             public UInt16 signature;
-            // 0x000, "H+" for HFS+, "HX" for HFSX
+            /// <summary>0x002, 4 for HFS+, 5 for HFSX</summary>
             public UInt16 version;
-            // 0x002, 4 for HFS+, 5 for HFSX
+            /// <summary>0x004, Volume attributes</summary>
             public UInt32 attributes;
-            // 0x004, Volume attributes
+            /// <summary>0x008, Implementation that last mounted the volume.
+            /// Reserved by Apple:
+            /// "8.10" Mac OS 8.1 to 9.2.2
+            /// "10.0" Mac OS X
+            /// "HFSJ" Journaled implementation
+            /// "fsck" /sbin/fsck</summary>
             public string lastMountedVersion;
-            // 0x008, Implementation that last mounted the volume.
-            // Reserved by Apple:
-            // "8.10" Mac OS 8.1 to 9.2.2
-            // "10.0" Mac OS X
-            // "HFSJ" Journaled implementation
-            // "fsck" /sbin/fsck
+            /// <summary>0x00C, Allocation block number containing the journal</summary>
             public UInt32 journalInfoBlock;
-            // 0x00C, Allocation block number containing the journal
+            /// <summary>0x010, Date of volume creation</summary>
             public ulong createDate;
-            // 0x010, Date of volume creation
+            /// <summary>0x018, Date of last volume modification</summary>
             public ulong modifyDate;
-            // 0x018, Date of last volume modification
+            /// <summary>0x020, Date of last backup</summary>
             public ulong backupDate;
-            // 0x020, Date of last backup
+            /// <summary>0x028, Date of last consistency check</summary>
             public ulong checkedDate;
-            // 0x028, Date of last consistency check
+            /// <summary>0x030, File on the volume</summary>
             public UInt32 fileCount;
-            // 0x030, File on the volume
+            /// <summary>0x034, Folders on the volume</summary>
             public UInt32 folderCount;
-            // 0x034, Folders on the volume
+            /// <summary>0x038, Bytes per allocation block</summary>
             public UInt32 blockSize;
-            // 0x038, Bytes per allocation block
+            /// <summary>0x03C, Allocation blocks on the volume</summary>
             public UInt32 totalBlocks;
-            // 0x03C, Allocation blocks on the volume
+            /// <summary>0x040, Free allocation blocks</summary>
             public UInt32 freeBlocks;
-            // 0x040, Free allocation blocks
+            /// <summary>0x044, Hint for next allocation block</summary>
             public UInt32 nextAllocation;
-            // 0x044, Hint for next allocation block
+            /// <summary>0x048, Resource fork clump size</summary>
             public UInt32 rsrcClumpSize;
-            // 0x048, Resource fork clump size
+            /// <summary>0x04C, Data fork clump size</summary>
             public UInt32 dataClumpSize;
-            // 0x04C, Data fork clump size
+            /// <summary>0x050, Next unused CNID</summary>
             public UInt32 nextCatalogID;
-            // 0x050, Next unused CNID
+            /// <summary>0x054, Times that the volume has been mounted writable</summary>
             public UInt32 writeCount;
-            // 0x054, Times that the volume has been mounted writable
+            /// <summary>0x058, Used text encoding hints</summary>
             public UInt64 encodingsBitmap;
-            // 0x058, Used text encoding hints
+            /// <summary>0x060, finderInfo[0], CNID for bootable system's directory</summary>
             public UInt32 drFndrInfo0;
-            // 0x060, finderInfo[0], CNID for bootable system's directory
+            /// <summary>0x064, finderInfo[1], CNID of the directory containing the boot application</summary>
             public UInt32 drFndrInfo1;
-            // 0x064, finderInfo[1], CNID of the directory containing the boot application
+            /// <summary>0x068, finderInfo[2], CNID of the directory that should be opened on boot</summary>
             public UInt32 drFndrInfo2;
-            // 0x068, finderInfo[2], CNID of the directory that should be opened on boot
+            /// <summary>0x06C, finderInfo[3], CNID for Mac OS 8 or 9 directory</summary>
             public UInt32 drFndrInfo3;
-            // 0x06C, finderInfo[3], CNID for Mac OS 8 or 9 directory
+            /// <summary>0x070, finderInfo[4], Reserved</summary>
             public UInt32 drFndrInfo4;
-            // 0x070, finderInfo[4], Reserved
+            /// <summary>0x074, finderInfo[5], CNID for Mac OS X directory</summary>
             public UInt32 drFndrInfo5;
-            // 0x074, finderInfo[5], CNID for Mac OS X directory
+            /// <summary>0x078, finderInfo[6], first part of Mac OS X volume ID</summary>
             public UInt32 drFndrInfo6;
-            // 0x078, finderInfo[6], first part of Mac OS X volume ID
+            /// <summary>0x07C, finderInfo[7], second part of Mac OS X volume ID</summary>
             public UInt32 drFndrInfo7;
-            // 0x07C, finderInfo[7], second part of Mac OS X volume ID
             // HFSPlusForkData     allocationFile;
+            /// <summary>0x080</summary>
             public UInt64 allocationFile_logicalSize;
-            // 0x080
+            /// <summary>0x088</summary>
             public UInt32 allocationFile_clumpSize;
-            // 0x088
+            /// <summary>0x08C</summary>
             public UInt32 allocationFile_totalBlocks;
-            // 0x08C
+            /// <summary>0x090</summary>
             public UInt32 allocationFile_extents_startBlock0;
-            // 0x090
+            /// <summary>0x094</summary>
             public UInt32 allocationFile_extents_blockCount0;
-            // 0x094
+            /// <summary>0x098</summary>
             public UInt32 allocationFile_extents_startBlock1;
-            // 0x098
+            /// <summary>0x09C</summary>
             public UInt32 allocationFile_extents_blockCount1;
-            // 0x09C
+            /// <summary>0x0A0</summary>
             public UInt32 allocationFile_extents_startBlock2;
-            // 0x0A0
+            /// <summary>0x0A4</summary>
             public UInt32 allocationFile_extents_blockCount2;
-            // 0x0A4
+            /// <summary>0x0A8</summary>
             public UInt32 allocationFile_extents_startBlock3;
-            // 0x0A8
+            /// <summary>0x0AC</summary>
             public UInt32 allocationFile_extents_blockCount3;
-            // 0x0AC
+            /// <summary>0x0B0</summary>
             public UInt32 allocationFile_extents_startBlock4;
-            // 0x0B0
+            /// <summary>0x0B4</summary>
             public UInt32 allocationFile_extents_blockCount4;
-            // 0x0B4
+            /// <summary>0x0B8</summary>
             public UInt32 allocationFile_extents_startBlock5;
-            // 0x0B8
+            /// <summary>0x0BC</summary>
             public UInt32 allocationFile_extents_blockCount5;
-            // 0x0BC
+            /// <summary>0x0C0</summary>
             public UInt32 allocationFile_extents_startBlock6;
-            // 0x0C0
+            /// <summary>0x0C4</summary>
             public UInt32 allocationFile_extents_blockCount6;
-            // 0x0C4
+            /// <summary>0x0C8</summary>
             public UInt32 allocationFile_extents_startBlock7;
-            // 0x0C8
+            /// <summary>0x0CC</summary>
             public UInt32 allocationFile_extents_blockCount7;
-            // 0x0CC
             // HFSPlusForkData     extentsFile;
+            /// <summary>0x0D0</summary>
             public UInt64 extentsFile_logicalSize;
-            // 0x0D0
+            /// <summary>0x0D8</summary>
             public UInt32 extentsFile_clumpSize;
-            // 0x0D8
+            /// <summary>0x0DC</summary>
             public UInt32 extentsFile_totalBlocks;
-            // 0x0DC
+            /// <summary>0x0E0</summary>
             public UInt32 extentsFile_extents_startBlock0;
-            // 0x0E0
+            /// <summary>0x0E4</summary>
             public UInt32 extentsFile_extents_blockCount0;
-            // 0x0E4
+            /// <summary>0x0E8</summary>
             public UInt32 extentsFile_extents_startBlock1;
-            // 0x0E8
+            /// <summary>0x0EC</summary>
             public UInt32 extentsFile_extents_blockCount1;
-            // 0x0EC
+            /// <summary>0x0F0</summary>
             public UInt32 extentsFile_extents_startBlock2;
-            // 0x0F0
+            /// <summary>0x0F4</summary>
             public UInt32 extentsFile_extents_blockCount2;
-            // 0x0F4
+            /// <summary>0x0F8</summary>
             public UInt32 extentsFile_extents_startBlock3;
-            // 0x0F8
+            /// <summary>0x0FC</summary>
             public UInt32 extentsFile_extents_blockCount3;
-            // 0x0FC
+            /// <summary>0x100</summary>
             public UInt32 extentsFile_extents_startBlock4;
-            // 0x100
+            /// <summary>0x104</summary>
             public UInt32 extentsFile_extents_blockCount4;
-            // 0x104
+            /// <summary>0x108</summary>
             public UInt32 extentsFile_extents_startBlock5;
-            // 0x108
+            /// <summary>0x10C</summary>
             public UInt32 extentsFile_extents_blockCount5;
-            // 0x10C
+            /// <summary>0x110</summary>
             public UInt32 extentsFile_extents_startBlock6;
-            // 0x110
+            /// <summary>0x114</summary>
             public UInt32 extentsFile_extents_blockCount6;
-            // 0x114
+            /// <summary>0x118</summary>
             public UInt32 extentsFile_extents_startBlock7;
-            // 0x118
+            /// <summary>0x11C</summary>
             public UInt32 extentsFile_extents_blockCount7;
-            // 0x11C
             // HFSPlusForkData     catalogFile;
+            /// <summary>0x120</summary>
             public UInt64 catalogFile_logicalSize;
-            // 0x120
+            /// <summary>0x128</summary>
             public UInt32 catalogFile_clumpSize;
-            // 0x128
+            /// <summary>0x12C</summary>
             public UInt32 catalogFile_totalBlocks;
-            // 0x12C
+            /// <summary>0x130</summary>
             public UInt32 catalogFile_extents_startBlock0;
-            // 0x130
+            /// <summary>0x134</summary>
             public UInt32 catalogFile_extents_blockCount0;
-            // 0x134
+            /// <summary>0x138</summary>
             public UInt32 catalogFile_extents_startBlock1;
-            // 0x138
+            /// <summary>0x13C</summary>
             public UInt32 catalogFile_extents_blockCount1;
-            // 0x13C
+            /// <summary>0x140</summary>
             public UInt32 catalogFile_extents_startBlock2;
-            // 0x140
+            /// <summary>0x144</summary>
             public UInt32 catalogFile_extents_blockCount2;
-            // 0x144
+            /// <summary>0x148</summary>
             public UInt32 catalogFile_extents_startBlock3;
-            // 0x148
+            /// <summary>0x14C</summary>
             public UInt32 catalogFile_extents_blockCount3;
-            // 0x14C
+            /// <summary>0x150</summary>
             public UInt32 catalogFile_extents_startBlock4;
-            // 0x150
+            /// <summary>0x154</summary>
             public UInt32 catalogFile_extents_blockCount4;
-            // 0x154
+            /// <summary>0x158</summary>
             public UInt32 catalogFile_extents_startBlock5;
-            // 0x158
+            /// <summary>0x15C</summary>
             public UInt32 catalogFile_extents_blockCount5;
-            // 0x15C
+            /// <summary>0x160</summary>
             public UInt32 catalogFile_extents_startBlock6;
-            // 0x160
+            /// <summary>0x164</summary>
             public UInt32 catalogFile_extents_blockCount6;
-            // 0x164
+            /// <summary>0x168</summary>
             public UInt32 catalogFile_extents_startBlock7;
-            // 0x168
+            /// <summary>0x16C</summary>
             public UInt32 catalogFile_extents_blockCount7;
-            // 0x16C
             // HFSPlusForkData     attributesFile;
+            /// <summary>0x170</summary>
             public UInt64 attributesFile_logicalSize;
-            // 0x170
+            /// <summary>0x178</summary>
             public UInt32 attributesFile_clumpSize;
-            // 0x178
+            /// <summary>0x17C</summary>
             public UInt32 attributesFile_totalBlocks;
-            // 0x17C
+            /// <summary>0x180</summary>
             public UInt32 attributesFile_extents_startBlock0;
-            // 0x180
+            /// <summary>0x184</summary>
             public UInt32 attributesFile_extents_blockCount0;
-            // 0x184
+            /// <summary>0x188</summary>
             public UInt32 attributesFile_extents_startBlock1;
-            // 0x188
+            /// <summary>0x18C</summary>
             public UInt32 attributesFile_extents_blockCount1;
-            // 0x18C
+            /// <summary>0x190</summary>
             public UInt32 attributesFile_extents_startBlock2;
-            // 0x190
+            /// <summary>0x194</summary>
             public UInt32 attributesFile_extents_blockCount2;
-            // 0x194
+            /// <summary>0x198</summary>
             public UInt32 attributesFile_extents_startBlock3;
-            // 0x198
+            /// <summary>0x19C</summary>
             public UInt32 attributesFile_extents_blockCount3;
-            // 0x19C
+            /// <summary>0x1A0</summary>
             public UInt32 attributesFile_extents_startBlock4;
-            // 0x1A0
+            /// <summary>0x1A4</summary>
             public UInt32 attributesFile_extents_blockCount4;
-            // 0x1A4
+            /// <summary>0x1A8</summary>
             public UInt32 attributesFile_extents_startBlock5;
-            // 0x1A8
+            /// <summary>0x1AC</summary>
             public UInt32 attributesFile_extents_blockCount5;
-            // 0x1AC
+            /// <summary>0x1B0</summary>
             public UInt32 attributesFile_extents_startBlock6;
-            // 0x1B0
+            /// <summary>0x1B4</summary>
             public UInt32 attributesFile_extents_blockCount6;
-            // 0x1B4
+            /// <summary>0x1B8</summary>
             public UInt32 attributesFile_extents_startBlock7;
-            // 0x1B8
+            /// <summary>0x1BC</summary>
             public UInt32 attributesFile_extents_blockCount7;
-            // 0x1BC
             // HFSPlusForkData     startupFile;
+            /// <summary>0x1C0</summary>
             public UInt64 startupFile_logicalSize;
-            // 0x1C0
+            /// <summary>0x1C8</summary>
             public UInt32 startupFile_clumpSize;
-            // 0x1C8
+            /// <summary>0x1CC</summary>
             public UInt32 startupFile_totalBlocks;
-            // 0x1CC
+            /// <summary>0x1D0</summary>
             public UInt32 startupFile_extents_startBlock0;
-            // 0x1D0
+            /// <summary>0x1D4</summary>
             public UInt32 startupFile_extents_blockCount0;
-            // 0x1D4
+            /// <summary>0x1D8</summary>
             public UInt32 startupFile_extents_startBlock1;
-            // 0x1D8
+            /// <summary>0x1E0</summary>
             public UInt32 startupFile_extents_blockCount1;
-            // 0x1E0
+            /// <summary>0x1E4</summary>
             public UInt32 startupFile_extents_startBlock2;
-            // 0x1E4
+            /// <summary>0x1E8</summary>
             public UInt32 startupFile_extents_blockCount2;
-            // 0x1E8
+            /// <summary>0x1EC</summary>
             public UInt32 startupFile_extents_startBlock3;
-            // 0x1EC
+            /// <summary>0x1F0</summary>
             public UInt32 startupFile_extents_blockCount3;
-            // 0x1F0
+            /// <summary>0x1F4</summary>
             public UInt32 startupFile_extents_startBlock4;
-            // 0x1F4
+            /// <summary>0x1F8</summary>
             public UInt32 startupFile_extents_blockCount4;
-            // 0x1F8
+            /// <summary>0x1FC</summary>
             public UInt32 startupFile_extents_startBlock5;
-            // 0x1FC
+            /// <summary>0x200</summary>
             public UInt32 startupFile_extents_blockCount5;
-            // 0x200
+            /// <summary>0x204</summary>
             public UInt32 startupFile_extents_startBlock6;
-            // 0x204
+            /// <summary>0x208</summary>
             public UInt32 startupFile_extents_blockCount6;
-            // 0x208
+            /// <summary>0x20C</summary>
             public UInt32 startupFile_extents_startBlock7;
-            // 0x20C
+            /// <summary>0x210</summary>
             public UInt32 startupFile_extents_blockCount7;
-            // 0x210
         }
     }
 }

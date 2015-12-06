@@ -77,24 +77,24 @@ namespace DiscImageChef.Plugins
             UInt32 s_fsize;
 
             /*for(int j = 0; j<=(br.BaseStream.Length/0x200); j++)
-			{
-				br.BaseStream.Seek(offset + j*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
-				magic = br.ReadUInt32();
+            {
+                br.BaseStream.Seek(offset + j*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
+                magic = br.ReadUInt32();
 
-				if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
-					Console.WriteLine("0x{0:X8}: 0x{1:X8} FOUND", br.BaseStream.Position-4, magic);
-				else
-					Console.WriteLine("0x{0:X8}: 0x{1:X8}", br.BaseStream.Position-4, magic);
-			}*/
+                if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
+                    Console.WriteLine("0x{0:X8}: 0x{1:X8} FOUND", br.BaseStream.Position-4, magic);
+                else
+                    Console.WriteLine("0x{0:X8}: 0x{1:X8}", br.BaseStream.Position-4, magic);
+            }*/
 
             /*UInt32 number;
-			br.BaseStream.Seek(offset+0x3A00, SeekOrigin.Begin);
-			while((br.BaseStream.Position) <= (offset+0x3C00))
-			{
-				number = br.ReadUInt32();
+            br.BaseStream.Seek(offset+0x3A00, SeekOrigin.Begin);
+            while((br.BaseStream.Position) <= (offset+0x3C00))
+            {
+                number = br.ReadUInt32();
 
-				Console.WriteLine("@{0:X8}: 0x{1:X8} ({1})", br.BaseStream.Position-offset-4, number);
-			}*/
+                Console.WriteLine("@{0:X8}: 0x{1:X8} ({1})", br.BaseStream.Position-offset-4, number);
+            }*/
 
             byte sb_size_in_sectors;
 
@@ -162,7 +162,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+            
             StringBuilder sb = new StringBuilder();
             BigEndianBitConverter.IsLittleEndian = true; // Start in little endian until we know what are we handling here
             int start;
@@ -188,7 +188,7 @@ namespace DiscImageChef.Plugins
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
-			
+            
                 if (magic == XENIX_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
@@ -203,7 +203,7 @@ namespace DiscImageChef.Plugins
                 }
 
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8); // XENIX magic location
-			
+            
                 if (magic == SYSV_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
@@ -222,8 +222,8 @@ namespace DiscImageChef.Plugins
                 s_fname = StringHandlers.CToString(coherent_string);
                 Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string);
-			
-                if (s_fname == COH_FNAME	|| s_fpack == COH_FPACK)
+            
+                if (s_fname == COH_FNAME    || s_fpack == COH_FPACK)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
@@ -244,7 +244,7 @@ namespace DiscImageChef.Plugins
                         s_nfree = (UInt16)(s_nfree >> 8);
                         s_ninode = (UInt16)(s_ninode >> 8);
                     }
-					
+                    
                     if ((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
                     {
                         if (s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
@@ -269,7 +269,7 @@ namespace DiscImageChef.Plugins
                 byte[] xenix_strings = new byte[6];
                 XenixSuperBlock xnx_sb = new XenixSuperBlock();
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
-				
+                
                 xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
                 xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
                 xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
@@ -615,248 +615,248 @@ namespace DiscImageChef.Plugins
 
         struct XenixSuperBlock
         {
+            /// <summary>0x000, index of first data zone</summary>
             public UInt16 s_isize;
-            // 0x000, index of first data zone
+            /// <summary>0x002, total number of zones of this volume</summary>
             public UInt32 s_fsize;
-            // 0x002, total number of zones of this volume
             // the start of the free block list:
+            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
             public UInt16 s_nfree;
-            // 0x006, blocks in s_free, <=100
+            /// <summary>0x008, 100 entries, first free block list chunk</summary>
             public UInt32[] s_free;
-            // 0x008, 100 entries, first free block list chunk
             // the cache of free inodes:
+            /// <summary>0x198, number of inodes in s_inode, &lt;= 100</summary>
             public UInt16 s_ninode;
-            // 0x198, number of inodes in s_inode, <= 100
+            /// <summary>0x19A, 100 entries, some free inodes</summary>
             public UInt16[] s_inode;
-            // 0x19A, 100 entries, some free inodes
+            /// <summary>0x262, free block list manipulation lock</summary>
             public byte s_flock;
-            // 0x262, free block list manipulation lock
+            /// <summary>0x263, inode cache manipulation lock</summary>
             public byte s_ilock;
-            // 0x263, inode cache manipulation lock
+            /// <summary>0x264, superblock modification flag</summary>
             public byte s_fmod;
-            // 0x264, superblock modification flag
+            /// <summary>0x265, read-only mounted flag</summary>
             public byte s_ronly;
-            // 0x265, read-only mounted flag
+            /// <summary>0x266, time of last superblock update</summary>
             public UInt32 s_time;
-            // 0x266, time of last superblock update
+            /// <summary>0x26A, total number of free zones</summary>
             public UInt32 s_tfree;
-            // 0x26A, total number of free zones
+            /// <summary>0x26E, total number of free inodes</summary>
             public UInt16 s_tinode;
-            // 0x26E, total number of free inodes
+            /// <summary>0x270, blocks per cylinder</summary>
             public UInt16 s_cylblks;
-            // 0x270, blocks per cylinder
+            /// <summary>0x272, blocks per gap</summary>
             public UInt16 s_gapblks;
-            // 0x272, blocks per gap
+            /// <summary>0x274, device information ??</summary>
             public UInt16 s_dinfo0;
-            // 0x274, device information ??
+            /// <summary>0x276, device information ??</summary>
             public UInt16 s_dinfo1;
-            // 0x276, device information ??
+            /// <summary>0x278, 6 bytes, volume name</summary>
             public string s_fname;
-            // 0x278, 6 bytes, volume name
+            /// <summary>0x27E, 6 bytes, pack name</summary>
             public string s_fpack;
-            // 0x27E, 6 bytes, pack name
+            /// <summary>0x284, 0x46 if volume is clean</summary>
             public byte s_clean;
-            // 0x284, 0x46 if volume is clean
+            /// <summary>0x285, 371 bytes</summary>
             public byte[] s_fill;
-            // 0x285, 371 bytes
+            /// <summary>0x3F8, magic</summary>
             public UInt32 s_magic;
-            // 0x3F8, magic
+            /// <summary>0x3FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
             public UInt32 s_type;
-            // 0x3FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)
         }
 
         struct SystemVRelease4SuperBlock
         {
+            /// <summary>0x000, index of first data zone</summary>
             public UInt16 s_isize;
-            // 0x000, index of first data zone
+            /// <summary>0x002, padding</summary>
             public UInt16 s_pad0;
-            // 0x002, padding
+            /// <summary>0x004, total number of zones of this volume</summary>
             public UInt32 s_fsize;
-            // 0x004, total number of zones of this volume
             // the start of the free block list:
+            /// <summary>0x008, blocks in s_free, &lt;=100</summary>
             public UInt16 s_nfree;
-            // 0x008, blocks in s_free, <=100
+            /// <summary>0x00A, padding</summary>
             public UInt16 s_pad1;
-            // 0x00A, padding
+            /// <summary>0x00C, 50 entries, first free block list chunk</summary>
             public UInt32[] s_free;
-            // 0x00C, 50 entries, first free block list chunk
             // the cache of free inodes:
+            /// <summary>0x0D4, number of inodes in s_inode, &lt;= 100</summary>
             public UInt16 s_ninode;
-            // 0x0D4, number of inodes in s_inode, <= 100
+            /// <summary>0x0D6, padding</summary>
             public UInt16 s_pad2;
-            // 0x0D6, padding
+            /// <summary>0x0D8, 100 entries, some free inodes</summary>
             public UInt16[] s_inode;
-            // 0x0D8, 100 entries, some free inodes
+            /// <summary>0x1A0, free block list manipulation lock</summary>
             public byte s_flock;
-            // 0x1A0, free block list manipulation lock
+            /// <summary>0x1A1, inode cache manipulation lock</summary>
             public byte s_ilock;
-            // 0x1A1, inode cache manipulation lock
+            /// <summary>0x1A2, superblock modification flag</summary>
             public byte s_fmod;
-            // 0x1A2, superblock modification flag
+            /// <summary>0x1A3, read-only mounted flag</summary>
             public byte s_ronly;
-            // 0x1A3, read-only mounted flag
+            /// <summary>0x1A4, time of last superblock update</summary>
             public UInt32 s_time;
-            // 0x1A4, time of last superblock update
+            /// <summary>0x1A8, blocks per cylinder</summary>
             public UInt16 s_cylblks;
-            // 0x1A8, blocks per cylinder
+            /// <summary>0x1AA, blocks per gap</summary>
             public UInt16 s_gapblks;
-            // 0x1AA, blocks per gap
+            /// <summary>0x1AC, device information ??</summary>
             public UInt16 s_dinfo0;
-            // 0x1AC, device information ??
+            /// <summary>0x1AE, device information ??</summary>
             public UInt16 s_dinfo1;
-            // 0x1AE, device information ??
+            /// <summary>0x1B0, total number of free zones</summary>
             public UInt32 s_tfree;
-            // 0x1B0, total number of free zones
+            /// <summary>0x1B4, total number of free inodes</summary>
             public UInt16 s_tinode;
-            // 0x1B4, total number of free inodes
+            /// <summary>0x1B6, padding</summary>
             public UInt16 s_pad3;
-            // 0x1B6, padding
+            /// <summary>0x1B8, 6 bytes, volume name</summary>
             public string s_fname;
-            // 0x1B8, 6 bytes, volume name
+            /// <summary>0x1BE, 6 bytes, pack name</summary>
             public string s_fpack;
-            // 0x1BE, 6 bytes, pack name
+            /// <summary>0x1C4, 48 bytes</summary>
             public byte[] s_fill;
-            // 0x1C4, 48 bytes
+            /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
             public UInt32 s_state;
-            // 0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean
+            /// <summary>0x1F8, magic</summary>
             public UInt32 s_magic;
-            // 0x1F8, magic
+            /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
             public UInt32 s_type;
-            // 0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)
         }
 
         struct SystemVRelease2SuperBlock
         {
+            /// <summary>0x000, index of first data zone</summary>
             public UInt16 s_isize;
-            // 0x000, index of first data zone
+            /// <summary>0x002, total number of zones of this volume</summary>
             public UInt32 s_fsize;
-            // 0x002, total number of zones of this volume
             // the start of the free block list:
+            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
             public UInt16 s_nfree;
-            // 0x006, blocks in s_free, <=100
+            /// <summary>0x008, 50 entries, first free block list chunk</summary>
             public UInt32[] s_free;
-            // 0x008, 50 entries, first free block list chunk
             // the cache of free inodes:
+            /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
             public UInt16 s_ninode;
-            // 0x0D0, number of inodes in s_inode, <= 100
+            /// <summary>0x0D2, 100 entries, some free inodes</summary>
             public UInt16[] s_inode;
-            // 0x0D2, 100 entries, some free inodes
+            /// <summary>0x19A, free block list manipulation lock</summary>
             public byte s_flock;
-            // 0x19A, free block list manipulation lock
+            /// <summary>0x19B, inode cache manipulation lock</summary>
             public byte s_ilock;
-            // 0x19B, inode cache manipulation lock
+            /// <summary>0x19C, superblock modification flag</summary>
             public byte s_fmod;
-            // 0x19C, superblock modification flag
+            /// <summary>0x19D, read-only mounted flag</summary>
             public byte s_ronly;
-            // 0x19D, read-only mounted flag
+            /// <summary>0x19E, time of last superblock update</summary>
             public UInt32 s_time;
-            // 0x19E, time of last superblock update
+            /// <summary>0x1A2, blocks per cylinder</summary>
             public UInt16 s_cylblks;
-            // 0x1A2, blocks per cylinder
+            /// <summary>0x1A4, blocks per gap</summary>
             public UInt16 s_gapblks;
-            // 0x1A4, blocks per gap
+            /// <summary>0x1A6, device information ??</summary>
             public UInt16 s_dinfo0;
-            // 0x1A6, device information ??
+            /// <summary>0x1A8, device information ??</summary>
             public UInt16 s_dinfo1;
-            // 0x1A8, device information ??
+            /// <summary>0x1AA, total number of free zones</summary>
             public UInt32 s_tfree;
-            // 0x1AA, total number of free zones
+            /// <summary>0x1AE, total number of free inodes</summary>
             public UInt16 s_tinode;
-            // 0x1AE, total number of free inodes
+            /// <summary>0x1B0, 6 bytes, volume name</summary>
             public string s_fname;
-            // 0x1B0, 6 bytes, volume name
+            /// <summary>0x1B6, 6 bytes, pack name</summary>
             public string s_fpack;
-            // 0x1B6, 6 bytes, pack name
+            /// <summary>0x1BC, 56 bytes</summary>
             public byte[] s_fill;
-            // 0x1BC, 56 bytes
+            /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
             public UInt32 s_state;
-            // 0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean
+            /// <summary>0x1F8, magic</summary>
             public UInt32 s_magic;
-            // 0x1F8, magic
+            /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
             public UInt32 s_type;
-            // 0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)
         }
 
         struct UNIX7thEditionSuperBlock
         {
+            /// <summary>0x000, index of first data zone</summary>
             public UInt16 s_isize;
-            // 0x000, index of first data zone
+            /// <summary>0x002, total number of zones of this volume</summary>
             public UInt32 s_fsize;
-            // 0x002, total number of zones of this volume
             // the start of the free block list:
+            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
             public UInt16 s_nfree;
-            // 0x006, blocks in s_free, <=100
+            /// <summary>0x008, 50 entries, first free block list chunk</summary>
             public UInt32[] s_free;
-            // 0x008, 50 entries, first free block list chunk
             // the cache of free inodes:
+            /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
             public UInt16 s_ninode;
-            // 0x0D0, number of inodes in s_inode, <= 100
+            /// <summary>0x0D2, 100 entries, some free inodes</summary>
             public UInt16[] s_inode;
-            // 0x0D2, 100 entries, some free inodes
+            /// <summary>0x19A, free block list manipulation lock</summary>
             public byte s_flock;
-            // 0x19A, free block list manipulation lock
+            /// <summary>0x19B, inode cache manipulation lock</summary>
             public byte s_ilock;
-            // 0x19B, inode cache manipulation lock
+            /// <summary>0x19C, superblock modification flag</summary>
             public byte s_fmod;
-            // 0x19C, superblock modification flag
+            /// <summary>0x19D, read-only mounted flag</summary>
             public byte s_ronly;
-            // 0x19D, read-only mounted flag
+            /// <summary>0x19E, time of last superblock update</summary>
             public UInt32 s_time;
-            // 0x19E, time of last superblock update
+            /// <summary>0x1A2, total number of free zones</summary>
             public UInt32 s_tfree;
-            // 0x1A2, total number of free zones
+            /// <summary>0x1A6, total number of free inodes</summary>
             public UInt16 s_tinode;
-            // 0x1A6, total number of free inodes
+            /// <summary>0x1A8, interleave factor</summary>
             public UInt16 s_int_m;
-            // 0x1A8, interleave factor
+            /// <summary>0x1AA, interleave factor</summary>
             public UInt16 s_int_n;
-            // 0x1AA, interleave factor
+            /// <summary>0x1AC, 6 bytes, volume name</summary>
             public string s_fname;
-            // 0x1AC, 6 bytes, volume name
+            /// <summary>0x1B2, 6 bytes, pack name</summary>
             public string s_fpack;
-            // 0x1B2, 6 bytes, pack name
         }
 
         struct CoherentSuperBlock
         {
+            /// <summary>0x000, index of first data zone</summary>
             public UInt16 s_isize;
-            // 0x000, index of first data zone
+            /// <summary>0x002, total number of zones of this volume</summary>
             public UInt32 s_fsize;
-            // 0x002, total number of zones of this volume
             // the start of the free block list:
+            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
             public UInt16 s_nfree;
-            // 0x006, blocks in s_free, <=100
+            /// <summary>0x008, 64 entries, first free block list chunk</summary>
             public UInt32[] s_free;
-            // 0x008, 64 entries, first free block list chunk
             // the cache of free inodes:
+            /// <summary>0x108, number of inodes in s_inode, &lt;= 100</summary>
             public UInt16 s_ninode;
-            // 0x108, number of inodes in s_inode, <= 100
+            /// <summary>0x10A, 100 entries, some free inodes</summary>
             public UInt16[] s_inode;
-            // 0x10A, 100 entries, some free inodes
+            /// <summary>0x1D2, free block list manipulation lock</summary>
             public byte s_flock;
-            // 0x1D2, free block list manipulation lock
+            /// <summary>0x1D3, inode cache manipulation lock</summary>
             public byte s_ilock;
-            // 0x1D3, inode cache manipulation lock
+            /// <summary>0x1D4, superblock modification flag</summary>
             public byte s_fmod;
-            // 0x1D4, superblock modification flag
+            /// <summary>0x1D5, read-only mounted flag</summary>
             public byte s_ronly;
-            // 0x1D5, read-only mounted flag
+            /// <summary>0x1D6, time of last superblock update</summary>
             public UInt32 s_time;
-            // 0x1D6, time of last superblock update
+            /// <summary>0x1DE, total number of free zones</summary>
             public UInt32 s_tfree;
-            // 0x1DE, total number of free zones
+            /// <summary>0x1E2, total number of free inodes</summary>
             public UInt16 s_tinode;
-            // 0x1E2, total number of free inodes
+            /// <summary>0x1E4, interleave factor</summary>
             public UInt16 s_int_m;
-            // 0x1E4, interleave factor
+            /// <summary>0x1E6, interleave factor</summary>
             public UInt16 s_int_n;
-            // 0x1E6, interleave factor
+            /// <summary>0x1E8, 6 bytes, volume name</summary>
             public string s_fname;
-            // 0x1E8, 6 bytes, volume name
+            /// <summary>0x1EE, 6 bytes, pack name</summary>
             public string s_fpack;
-            // 0x1EE, 6 bytes, pack name
+            /// <summary>0x1F4, zero-filled</summary>
             public UInt32 s_unique;
-            // 0x1F4, zero-filled
         }
     }
 }

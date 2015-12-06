@@ -116,24 +116,24 @@ namespace DiscImageChef.Plugins
 
         struct BFSSuperBlock
         {
+            /// <summary>0x00, 0x1BADFACE</summary>
             public UInt32 s_magic;
-            // 0x00, 0x1BADFACE
+            /// <summary>0x04, start in bytes of volume</summary>
             public UInt32 s_start;
-            // 0x04, start in bytes of volume
+            /// <summary>0x08, end in bytes of volume</summary>
             public UInt32 s_end;
-            // 0x08, end in bytes of volume
+            /// <summary>0x0C, unknown :p</summary>
             public UInt32 s_from;
-            // 0x0C, unknown :p
+            /// <summary>0x10, unknown :p</summary>
             public UInt32 s_to;
-            // 0x10, unknown :p
+            /// <summary>0x14, unknown :p</summary>
             public Int32 s_bfrom;
-            // 0x14, unknown :p
+            /// <summary>0x18, unknown :p</summary>
             public Int32 s_bto;
-            // 0x18, unknown :p
+            /// <summary>0x1C, 6 bytes, filesystem name</summary>
             public string s_fsname;
-            // 0x1C, 6 bytes, filesystem name
+            /// <summary>0x22, 6 bytes, volume name</summary>
             public string s_volume;
-            // 0x22, 6 bytes, volume name
         }
     }
 }

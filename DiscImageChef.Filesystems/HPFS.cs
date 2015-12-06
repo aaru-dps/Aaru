@@ -259,132 +259,141 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
         }
 
-        struct HPFS_BIOSParameterBlock // Sector 0
+        /// <summary>
+        /// BIOS Parameter Block, at sector 0
+        /// </summary>
+        struct HPFS_BIOSParameterBlock
         {
+            /// <summary>0x000, Jump to boot code</summary>
             public byte jmp1;
-            // 0x000, Jump to boot code
+            /// <summary>0x001, ...;</summary>
             public UInt16 jmp2;
-            // 0x001, ...;
+            /// <summary>0x003, OEM Name, 8 bytes, space-padded</summary>
             public string OEMName;
-            // 0x003, OEM Name, 8 bytes, space-padded
+            /// <summary>0x00B, Bytes per sector</summary>
             public UInt16 bps;
-            // 0x00B, Bytes per sector
+            /// <summary>0x00D, Sectors per cluster</summary>
             public byte spc;
-            // 0x00D, Sectors per cluster
+            /// <summary>0x00E, Reserved sectors between BPB and... does it have sense in HPFS?</summary>
             public UInt16 rsectors;
-            // 0x00E, Reserved sectors between BPB and... does it have sense in HPFS?
+            /// <summary>0x010, Number of FATs... seriously?</summary>
             public byte fats_no;
-            // 0x010, Number of FATs... seriously?
+            /// <summary>0x011, Number of entries on root directory... ok</summary>
             public UInt16 root_ent;
-            // 0x011, Number of entries on root directory... ok
+            /// <summary>0x013, Sectors in volume... doubt it</summary>
             public UInt16 sectors;
-            // 0x013, Sectors in volume... doubt it
+            /// <summary>0x015, Media descriptor</summary>
             public byte media;
-            // 0x015, Media descriptor
+            /// <summary>0x016, Sectors per FAT... again</summary>
             public UInt16 spfat;
-            // 0x016, Sectors per FAT... again
+            /// <summary>0x018, Sectors per track... you're kidding</summary>
             public UInt16 sptrk;
-            // 0x018, Sectors per track... you're kidding
+            /// <summary>0x01A, Heads... stop!</summary>
             public UInt16 heads;
-            // 0x01A, Heads... stop!
+            /// <summary>0x01C, Hidden sectors before BPB</summary>
             public UInt32 hsectors;
-            // 0x01C, Hidden sectors before BPB
+            /// <summary>0x024, Sectors in volume if &gt; 65535...</summary>
             public UInt32 big_sectors;
-            // 0x024, Sectors in volume if > 65535...
+            /// <summary>0x028, Drive number</summary>
             public byte drive_no;
-            // 0x028, Drive number
+            /// <summary>0x029, Volume flags?</summary>
             public byte nt_flags;
-            // 0x029, Volume flags?
+            /// <summary>0x02A, EPB signature, 0x29</summary>
             public byte signature;
-            // 0x02A, EPB signature, 0x29
+            /// <summary>0x02B, Volume serial number</summary>
             public UInt32 serial_no;
-            // 0x02B, Volume serial number
+            /// <summary>0x02F, Volume label, 11 bytes, space-padded</summary>
             public string volume_label;
-            // 0x02F, Volume label, 11 bytes, space-padded
+            /// <summary>0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")</summary>
             public string fs_type;
-            // 0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")
         }
 
-        struct HPFS_SuperBlock // Sector 16
+        /// <summary>
+        /// HPFS superblock at sector 16
+        /// </summary>
+        struct HPFS_SuperBlock
         {
+            /// <summary>0x000, 0xF995E849</summary>
             public UInt32 magic1;
-            // 0x000, 0xF995E849
+            /// <summary>0x004, 0xFA53E9C5</summary>
             public UInt32 magic2;
-            // 0x004, 0xFA53E9C5
+            /// <summary>0x008, HPFS version</summary>
             public byte version;
-            // 0x008, HPFS version
+            /// <summary>0x009, 2 if &lt;= 4 GiB, 3 if &gt; 4 GiB</summary>
             public byte func_version;
-            // 0x009, 2 if <= 4 GiB, 3 if > 4 GiB
+            /// <summary>0x00A, Alignment</summary>
             public UInt16 dummy;
-            // 0x00A, Alignment
+            /// <summary>0x00C, LSN pointer to root fnode</summary>
             public UInt32 root_fnode;
-            // 0x00C, LSN pointer to root fnode
+            /// <summary>0x010, Sectors on volume</summary>
             public UInt32 sectors;
-            // 0x010, Sectors on volume
+            /// <summary>0x014, Bad blocks on volume</summary>
             public UInt32 badblocks;
-            // 0x014, Bad blocks on volume
+            /// <summary>0x018, LSN pointer to volume bitmap</summary>
             public UInt32 bitmap_lsn;
-            // 0x018, LSN pointer to volume bitmap
+            /// <summary>0x01C, 0</summary>
             public UInt32 zero1;
-            // 0x01C, 0
+            /// <summary>0x020, LSN pointer to badblock directory</summary>
             public UInt32 badblock_lsn;
-            // 0x020, LSN pointer to badblock directory
+            /// <summary>0x024, 0</summary>
             public UInt32 zero2;
-            // 0x024, 0
+            /// <summary>0x028, Time of last CHKDSK</summary>
             public Int32 last_chkdsk;
-            // 0x028, Time of last CHKDSK
+            /// <summary>0x02C, Time of last optimization</summary>
             public Int32 last_optim;
-            // 0x02C, Time of last optimization
+            /// <summary>0x030, Sectors of dir band</summary>
             public UInt32 dband_sectors;
-            // 0x030, Sectors of dir band
+            /// <summary>0x034, Start sector of dir band</summary>
             public UInt32 dband_start;
-            // 0x034, Start sector of dir band
+            /// <summary>0x038, Last sector of dir band</summary>
             public UInt32 dband_last;
-            // 0x038, Last sector of dir band
+            /// <summary>0x03C, LSN of free space bitmap</summary>
             public UInt32 dband_bitmap;
-            // 0x03C, LSN of free space bitmap
+            /// <summary>0x040, Can be used for volume name (32 bytes)</summary>
             public UInt64 zero3;
-            // 0x040, Can be used for volume name (32 bytes)
+            /// <summary>0x048, ...</summary>
             public UInt64 zero4;
-            // 0x048, ...
+            /// <summary>0x04C, ...</summary>
             public UInt64 zero5;
-            // 0x04C, ...
+            /// <summary>0x050, ...;</summary>
             public UInt64 zero6;
-            // 0x050, ...;
+            /// <summary>0x058, LSN pointer to ACLs (only HPFS386)</summary>
             public UInt32 acl_start;
-            // 0x058, LSN pointer to ACLs (only HPFS386)
         }
 
-        struct HPFS_SpareBlock // Sector 17
+        /// <summary>
+        /// HPFS spareblock at sector 17
+        /// </summary>
+        struct HPFS_SpareBlock
         {
+            /// <summary>0x000, 0xF9911849</summary>
             public UInt32 magic1;
-            // 0x000, 0xF9911849
+            /// <summary>0x004, 0xFA5229C5</summary>
             public UInt32 magic2;
-            // 0x004, 0xFA5229C5
+            /// <summary>0x008, HPFS flags</summary>
             public byte flags1;
-            // 0x008, HPFS flags
+            /// <summary>0x009, HPFS386 flags</summary>
             public byte flags2;
-            // 0x009, HPFS386 flags
+            /// <summary>0x00A, Alignment</summary>
             public UInt16 dummy;
-            // 0x00A, Alignment
+            /// <summary>0x00C, LSN of hotfix directory</summary>
             public UInt32 hotfix_start;
-            // 0x00C, LSN of hotfix directory
+            /// <summary>0x010, Used hotfixes</summary>
             public UInt32 hotfix_used;
-            // 0x010, Used hotfixes
+            /// <summary>0x014, Total hotfixes available</summary>
             public UInt32 hotfix_entries;
-            // 0x014, Total hotfixes available
+            /// <summary>0x018, Unused spare dnodes</summary>
             public UInt32 spare_dnodes_free;
-            // 0x018, Unused spare dnodes
+            /// <summary>0x01C, Length of spare dnodes list</summary>
             public UInt32 spare_dnodes;
-            // 0x01C, Length of spare dnodes list
+            /// <summary>0x020, LSN of codepage directory</summary>
             public UInt32 codepage_lsn;
-            // 0x020, LSN of codepage directory
+            /// <summary>0x024, Number of codepages used</summary>
             public UInt32 codepages;
-            // 0x024, Number of codepages used
+            /// <summary>0x028, SuperBlock CRC32 (only HPFS386)</summary>
             public UInt32 sb_crc32;
-            // 0x028, SuperBlock CRC32 (only HPFS386)
+            /// <summary>0x02C, SpareBlock CRC32 (only HPFS386)</summary>
             public UInt32 sp_crc32;
-            // 0x02C, SpareBlock CRC32 (only HPFS386)
         }
     }
 }

@@ -128,12 +128,12 @@ namespace DiscImageChef.Plugins
                 sb_size_in_sectors = block_size / 2048;
             else
                 sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
-			
+            
             if (imagePlugin.GetSectors() > (partitionStart + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-				
+                
                 if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     sb_offset = partitionStart + sb_start_floppy * sb_size_in_sectors;
                 else
@@ -144,7 +144,7 @@ namespace DiscImageChef.Plugins
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-				
+                
                 if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     sb_offset = partitionStart + sb_start_ufs1 * sb_size_in_sectors;
                 else
@@ -155,7 +155,7 @@ namespace DiscImageChef.Plugins
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-				
+                
                 if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     sb_offset = partitionStart + sb_start_ufs2 * sb_size_in_sectors;
                 else
@@ -166,7 +166,7 @@ namespace DiscImageChef.Plugins
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-				
+                
                 if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     sb_offset = partitionStart + sb_start_piggy * sb_size_in_sectors;
                 else
@@ -214,180 +214,180 @@ namespace DiscImageChef.Plugins
             byte[] strings_b;
             ufs_sb_sectors = imagePlugin.ReadSectors(sb_offset, sb_size_in_sectors);
 
-            ufs_sb.fs_link_42bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000); // 0x0000
+            ufs_sb.fs_link_42bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000); /// <summary>0x0000
             ufs_sb.fs_state_sun = ufs_sb.fs_link_42bsd;
-            ufs_sb.fs_rlink = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0004);     // 0x0004 UNUSED
-            ufs_sb.fs_sblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0008);    // 0x0008 addr of super-block in filesys
-            ufs_sb.fs_cblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x000C);    // 0x000C offset of cyl-block in filesys
-            ufs_sb.fs_iblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0010);    // 0x0010 offset of inode-blocks in filesys
-            ufs_sb.fs_dblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0014);    // 0x0014 offset of first data after cg
-            ufs_sb.fs_cgoffset = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0018);  // 0x0018 cylinder group offset in cylinder
-            ufs_sb.fs_cgmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x001C);    // 0x001C used to calc mod fs_ntrak
-            ufs_sb.fs_time_t = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0020);    // 0x0020 last time written -- time_t
-            ufs_sb.fs_size = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0024);      // 0x0024 number of blocks in fs
-            ufs_sb.fs_dsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0028);     // 0x0028 number of data blocks in fs
-            ufs_sb.fs_ncg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x002C);       // 0x002C number of cylinder groups
-            ufs_sb.fs_bsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0030);     // 0x0030 size of basic blocks in fs
-            ufs_sb.fs_fsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0034);     // 0x0034 size of frag blocks in fs
-            ufs_sb.fs_frag = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0038);      // 0x0038 number of frags in a block in fs
+            ufs_sb.fs_rlink = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0004);     /// <summary>0x0004 UNUSED
+            ufs_sb.fs_sblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0008);    /// <summary>0x0008 addr of super-block in filesys
+            ufs_sb.fs_cblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x000C);    /// <summary>0x000C offset of cyl-block in filesys
+            ufs_sb.fs_iblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0010);    /// <summary>0x0010 offset of inode-blocks in filesys
+            ufs_sb.fs_dblkno = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0014);    /// <summary>0x0014 offset of first data after cg
+            ufs_sb.fs_cgoffset = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0018);  /// <summary>0x0018 cylinder group offset in cylinder
+            ufs_sb.fs_cgmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x001C);    /// <summary>0x001C used to calc mod fs_ntrak
+            ufs_sb.fs_time_t = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0020);    /// <summary>0x0020 last time written -- time_t
+            ufs_sb.fs_size = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0024);      /// <summary>0x0024 number of blocks in fs
+            ufs_sb.fs_dsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0028);     /// <summary>0x0028 number of data blocks in fs
+            ufs_sb.fs_ncg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x002C);       /// <summary>0x002C number of cylinder groups
+            ufs_sb.fs_bsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0030);     /// <summary>0x0030 size of basic blocks in fs
+            ufs_sb.fs_fsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0034);     /// <summary>0x0034 size of frag blocks in fs
+            ufs_sb.fs_frag = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0038);      /// <summary>0x0038 number of frags in a block in fs
             // these are configuration parameters
-            ufs_sb.fs_minfree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x003C);   // 0x003C minimum percentage of free blocks
-            ufs_sb.fs_rotdelay = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0040);  // 0x0040 num of ms for optimal next block
-            ufs_sb.fs_rps = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0044);       // 0x0044 disk revolutions per second
+            ufs_sb.fs_minfree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x003C);   /// <summary>0x003C minimum percentage of free blocks
+            ufs_sb.fs_rotdelay = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0040);  /// <summary>0x0040 num of ms for optimal next block
+            ufs_sb.fs_rps = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0044);       /// <summary>0x0044 disk revolutions per second
             // these fields can be computed from the others
-            ufs_sb.fs_bmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0048);     // 0x0048 ``blkoff'' calc of blk offsets
-            ufs_sb.fs_fmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x004C);     // 0x004C ``fragoff'' calc of frag offsets
-            ufs_sb.fs_bshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0050);    // 0x0050 ``lblkno'' calc of logical blkno
-            ufs_sb.fs_fshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0054);    // 0x0054 ``numfrags'' calc number of frags
+            ufs_sb.fs_bmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0048);     /// <summary>0x0048 ``blkoff'' calc of blk offsets
+            ufs_sb.fs_fmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x004C);     /// <summary>0x004C ``fragoff'' calc of frag offsets
+            ufs_sb.fs_bshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0050);    /// <summary>0x0050 ``lblkno'' calc of logical blkno
+            ufs_sb.fs_fshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0054);    /// <summary>0x0054 ``numfrags'' calc number of frags
             // these are configuration parameters
-            ufs_sb.fs_maxcontig = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0058); // 0x0058 max number of contiguous blks
-            ufs_sb.fs_maxbpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x005C);    // 0x005C max number of blks per cyl group
+            ufs_sb.fs_maxcontig = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0058); /// <summary>0x0058 max number of contiguous blks
+            ufs_sb.fs_maxbpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x005C);    /// <summary>0x005C max number of blks per cyl group
             // these fields can be computed from the others
-            ufs_sb.fs_fragshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0060); // 0x0060 block to frag shift
-            ufs_sb.fs_fsbtodb = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0064);   // 0x0064 fsbtodb and dbtofsb shift constant
-            ufs_sb.fs_sbsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0068);    // 0x0068 actual size of super block
-            ufs_sb.fs_csmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x006C);    // 0x006C csum block offset
-            ufs_sb.fs_csshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0070);   // 0x0070 csum block number
-            ufs_sb.fs_nindir = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0074);    // 0x0074 value of NINDIR
-            ufs_sb.fs_inopb = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0078);     // 0x0078 value of INOPB
-            ufs_sb.fs_nspf = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x007C);      // 0x007C value of NSPF
+            ufs_sb.fs_fragshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0060); /// <summary>0x0060 block to frag shift
+            ufs_sb.fs_fsbtodb = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0064);   /// <summary>0x0064 fsbtodb and dbtofsb shift constant
+            ufs_sb.fs_sbsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0068);    /// <summary>0x0068 actual size of super block
+            ufs_sb.fs_csmask = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x006C);    /// <summary>0x006C csum block offset
+            ufs_sb.fs_csshift = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0070);   /// <summary>0x0070 csum block number
+            ufs_sb.fs_nindir = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0074);    /// <summary>0x0074 value of NINDIR
+            ufs_sb.fs_inopb = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0078);     /// <summary>0x0078 value of INOPB
+            ufs_sb.fs_nspf = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x007C);      /// <summary>0x007C value of NSPF
             // yet another configuration parameter
-            ufs_sb.fs_optim = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0080);     // 0x0080 optimization preference, see below
+            ufs_sb.fs_optim = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0080);     /// <summary>0x0080 optimization preference, see below
             // these fields are derived from the hardware
             #region Sun
-            ufs_sb.fs_npsect_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0084);               // 0x0084 # sectors/track including spares
+            ufs_sb.fs_npsect_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0084);               /// <summary>0x0084 # sectors/track including spares
             #endregion Sun
             #region Sunx86
-            ufs_sb.fs_state_t_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0084);              // 0x0084 file system state time stamp
+            ufs_sb.fs_state_t_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0084);              /// <summary>0x0084 file system state time stamp
             #endregion Sunx86
             #region COMMON
-            ufs_sb.fs_interleave = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0088);               // 0x0088 hardware sector interleave
-            ufs_sb.fs_trackskew = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x008C);                // 0x008C sector 0 skew, per track
+            ufs_sb.fs_interleave = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0088);               /// <summary>0x0088 hardware sector interleave
+            ufs_sb.fs_trackskew = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x008C);                /// <summary>0x008C sector 0 skew, per track
             #endregion COMMON
             // a unique id for this filesystem (currently unused and unmaintained)
             // In 4.3 Tahoe this space is used by fs_headswitch and fs_trkseek
             // Neither of those fields is used in the Tahoe code right now but
             // there could be problems if they are.                           
             #region COMMON
-            ufs_sb.fs_id_1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0090);                     // 0x0090
-            ufs_sb.fs_id_2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0094);                     // 0x0094
+            ufs_sb.fs_id_1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0090);                     /// <summary>0x0090
+            ufs_sb.fs_id_2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0094);                     /// <summary>0x0094
             #endregion COMMON
             #region 43BSD
-            ufs_sb.fs_headswitch_43bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0090);         // 0x0090
-            ufs_sb.fs_trkseek_43bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0094);            // 0x0094
+            ufs_sb.fs_headswitch_43bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0090);         /// <summary>0x0090
+            ufs_sb.fs_trkseek_43bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0094);            /// <summary>0x0094
             #endregion 43BSD
             #region COMMON
             // sizes determined by number of cylinder groups and their sizes
-            ufs_sb.fs_csaddr = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0098);                   // 0x0098 blk addr of cyl grp summary area
-            ufs_sb.fs_cssize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x009C);                   // 0x009C size of cyl grp summary area
-            ufs_sb.fs_cgsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A0);                   // 0x00A0 cylinder group size
+            ufs_sb.fs_csaddr = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0098);                   /// <summary>0x0098 blk addr of cyl grp summary area
+            ufs_sb.fs_cssize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x009C);                   /// <summary>0x009C size of cyl grp summary area
+            ufs_sb.fs_cgsize = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A0);                   /// <summary>0x00A0 cylinder group size
             // these fields are derived from the hardware
-            ufs_sb.fs_ntrak = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A4);                    // 0x00A4 tracks per cylinder
-            ufs_sb.fs_nsect = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A8);                    // 0x00A8 sectors per track
-            ufs_sb.fs_spc = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00AC);                      // 0x00AC sectors per cylinder
+            ufs_sb.fs_ntrak = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A4);                    /// <summary>0x00A4 tracks per cylinder
+            ufs_sb.fs_nsect = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00A8);                    /// <summary>0x00A8 sectors per track
+            ufs_sb.fs_spc = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00AC);                      /// <summary>0x00AC sectors per cylinder
             // this comes from the disk driver partitioning
-            ufs_sb.fs_ncyl = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B0);                     // 0x00B0 cylinders in file system
+            ufs_sb.fs_ncyl = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B0);                     /// <summary>0x00B0 cylinders in file system
             // these fields can be computed from the others
-            ufs_sb.fs_cpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B4);                      // 0x00B4 cylinders per group
-            ufs_sb.fs_ipg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B8);                      // 0x00B8 inodes per cylinder group
-            ufs_sb.fs_fpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00BC);                      // 0x00BC blocks per group * fs_frag
+            ufs_sb.fs_cpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B4);                      /// <summary>0x00B4 cylinders per group
+            ufs_sb.fs_ipg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00B8);                      /// <summary>0x00B8 inodes per cylinder group
+            ufs_sb.fs_fpg = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00BC);                      /// <summary>0x00BC blocks per group * fs_frag
             // this data must be re-computed after crashes
-            // struct ufs_csum fs_cstotal = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);	// cylinder summary information
-            ufs_sb.fs_cstotal_ndir = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C0);             // 0x00C0 number of directories
-            ufs_sb.fs_cstotal_nbfree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C4);           // 0x00C4 number of free blocks
-            ufs_sb.fs_cstotal_nifree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C8);           // 0x00C8 number of free inodes
-            ufs_sb.fs_cstotal_nffree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00CC);           // 0x00CC number of free frags
+            // struct ufs_csum fs_cstotal = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000); // cylinder summary information
+            ufs_sb.fs_cstotal_ndir = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C0);             /// <summary>0x00C0 number of directories
+            ufs_sb.fs_cstotal_nbfree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C4);           /// <summary>0x00C4 number of free blocks
+            ufs_sb.fs_cstotal_nifree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00C8);           /// <summary>0x00C8 number of free inodes
+            ufs_sb.fs_cstotal_nffree = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x00CC);           /// <summary>0x00CC number of free frags
             // these fields are cleared at mount time
-            ufs_sb.fs_fmod = ufs_sb_sectors[0x00D0];                       // 0x00D0 super block modified flag
-            ufs_sb.fs_clean = ufs_sb_sectors[0x00D1];                      // 0x00D1 file system is clean flag
-            ufs_sb.fs_ronly = ufs_sb_sectors[0x00D2];                      // 0x00D2 mounted read-only flag
-            ufs_sb.fs_flags = ufs_sb_sectors[0x00D3];                      // 0x00D3
+            ufs_sb.fs_fmod = ufs_sb_sectors[0x00D0];                       /// <summary>0x00D0 super block modified flag
+            ufs_sb.fs_clean = ufs_sb_sectors[0x00D1];                      /// <summary>0x00D1 file system is clean flag
+            ufs_sb.fs_ronly = ufs_sb_sectors[0x00D2];                      /// <summary>0x00D2 mounted read-only flag
+            ufs_sb.fs_flags = ufs_sb_sectors[0x00D3];                      /// <summary>0x00D3
             #endregion COMMON
             #region UFS1
             strings_b = new byte[512];
             Array.Copy(ufs_sb_sectors, 0x00D4, strings_b, 0, 512);
-            ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b);               // 0x00D4, 512 bytes, name mounted on
-            ufs_sb.fs_cgrotor_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);             // 0x02D4 last cg searched
-            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); // 0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers
-            ufs_sb.fs_maxcluster_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);          // 0x0354
-            ufs_sb.fs_cpc_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);                 // 0x0358 cyl per cycle in postbl
-            Array.Copy(ufs_sb_sectors, 0x035C, ufs_sb.fs_opostbl_ufs1, 0, 256); // 0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head
+            ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 512 bytes, name mounted on
+            ufs_sb.fs_cgrotor_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);             /// <summary>0x02D4 last cg searched
+            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); /// <summary>0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers
+            ufs_sb.fs_maxcluster_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);          /// <summary>0x0354
+            ufs_sb.fs_cpc_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);                 /// <summary>0x0358 cyl per cycle in postbl
+            Array.Copy(ufs_sb_sectors, 0x035C, ufs_sb.fs_opostbl_ufs1, 0, 256); /// <summary>0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head
             #endregion UFS1
             #region UFS2
             strings_b = new byte[468];
             Array.Copy(ufs_sb_sectors, 0x00D4, strings_b, 0, 468);
-            ufs_sb.fs_fsmnt_ufs2 = StringHandlers.CToString(strings_b);               // 0x00D4, 468 bytes, name mounted on
+            ufs_sb.fs_fsmnt_ufs2 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 468 bytes, name mounted on
             strings_b = new byte[32];
             Array.Copy(ufs_sb_sectors, 0x02A8, strings_b, 0, 32);
-            ufs_sb.fs_volname_ufs2 = StringHandlers.CToString(strings_b);             // 0x02A8, 32 bytes, volume name
-            ufs_sb.fs_swuid_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02C8);               // 0x02C8 system-wide uid
-            ufs_sb.fs_pad_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D0);                 // 0x02D0 due to alignment of fs_swuid
-            ufs_sb.fs_cgrotor_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D4);             // 0x02D4 last cg searched
-            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_ocsp_ufs2, 0, 112); // 0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers
-            ufs_sb.fs_contigdirs_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0348);          // 0x0348 # of contiguously allocated dirs
-            ufs_sb.fs_csp_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x034C);                 // 0x034C cg summary info buffer for fs_cs
-            ufs_sb.fs_maxcluster_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0350);          // 0x0350
-            ufs_sb.fs_active_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);              // 0x0354 used by snapshots to track fs
-            ufs_sb.fs_old_cpc_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);             // 0x0358 cyl per cycle in postbl
-            ufs_sb.fs_maxbsize_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x035C);            // 0x035C maximum blocking factor permitted
-            Array.Copy(ufs_sb_sectors, 0x0360, ufs_sb.fs_sparecon64_ufs2, 0, 136); // 0x0360, 136 bytes, UInt64s, old rotation block list head
-            ufs_sb.fs_sblockloc_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03E8);           // 0x03E8 byte offset of standard superblock
+            ufs_sb.fs_volname_ufs2 = StringHandlers.CToString(strings_b);             /// <summary>0x02A8, 32 bytes, volume name
+            ufs_sb.fs_swuid_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02C8);               /// <summary>0x02C8 system-wide uid
+            ufs_sb.fs_pad_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D0);                 /// <summary>0x02D0 due to alignment of fs_swuid
+            ufs_sb.fs_cgrotor_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D4);             /// <summary>0x02D4 last cg searched
+            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_ocsp_ufs2, 0, 112); /// <summary>0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers
+            ufs_sb.fs_contigdirs_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0348);          /// <summary>0x0348 # of contiguously allocated dirs
+            ufs_sb.fs_csp_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x034C);                 /// <summary>0x034C cg summary info buffer for fs_cs
+            ufs_sb.fs_maxcluster_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0350);          /// <summary>0x0350
+            ufs_sb.fs_active_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);              /// <summary>0x0354 used by snapshots to track fs
+            ufs_sb.fs_old_cpc_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);             /// <summary>0x0358 cyl per cycle in postbl
+            ufs_sb.fs_maxbsize_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x035C);            /// <summary>0x035C maximum blocking factor permitted
+            Array.Copy(ufs_sb_sectors, 0x0360, ufs_sb.fs_sparecon64_ufs2, 0, 136); /// <summary>0x0360, 136 bytes, UInt64s, old rotation block list head
+            ufs_sb.fs_sblockloc_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03E8);           /// <summary>0x03E8 byte offset of standard superblock
             //cylinder summary information*/
-            ufs_sb.fs_cstotal_ndir_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03F0);        // 0x03F0 number of directories
-            ufs_sb.fs_cstotal_nbfree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03F8);      // 0x03F8 number of free blocks
-            ufs_sb.fs_cstotal_nifree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0400);      // 0x0400 number of free inodes
-            ufs_sb.fs_cstotal_nffree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0408);      // 0x0408 number of free frags
-            ufs_sb.fs_cstotal_numclusters_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0410); // 0x0410 number of free clusters
-            ufs_sb.fs_cstotal_spare0_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0418);      // 0x0418 future expansion
-            ufs_sb.fs_cstotal_spare1_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0420);      // 0x0420 future expansion
-            ufs_sb.fs_cstotal_spare2_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0428);      // 0x0428 future expansion
-            ufs_sb.fs_time_sec_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0430);            // 0x0430 last time written
-            ufs_sb.fs_time_usec_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0434);           // 0x0434 last time written
-            ufs_sb.fs_size_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0438);                // 0x0438 number of blocks in fs
-            ufs_sb.fs_dsize_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0440);               // 0x0440 number of data blocks in fs
-            ufs_sb.fs_csaddr_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0448);              // 0x0448 blk addr of cyl grp summary area
-            ufs_sb.fs_pendingblocks_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0450);       // 0x0450 blocks in process of being freed
-            ufs_sb.fs_pendinginodes_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0458);       // 0x0458 inodes in process of being freed
+            ufs_sb.fs_cstotal_ndir_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03F0);        /// <summary>0x03F0 number of directories
+            ufs_sb.fs_cstotal_nbfree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03F8);      /// <summary>0x03F8 number of free blocks
+            ufs_sb.fs_cstotal_nifree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0400);      /// <summary>0x0400 number of free inodes
+            ufs_sb.fs_cstotal_nffree_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0408);      /// <summary>0x0408 number of free frags
+            ufs_sb.fs_cstotal_numclusters_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0410); /// <summary>0x0410 number of free clusters
+            ufs_sb.fs_cstotal_spare0_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0418);      /// <summary>0x0418 future expansion
+            ufs_sb.fs_cstotal_spare1_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0420);      /// <summary>0x0420 future expansion
+            ufs_sb.fs_cstotal_spare2_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0428);      /// <summary>0x0428 future expansion
+            ufs_sb.fs_time_sec_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0430);            /// <summary>0x0430 last time written
+            ufs_sb.fs_time_usec_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0434);           /// <summary>0x0434 last time written
+            ufs_sb.fs_size_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0438);                /// <summary>0x0438 number of blocks in fs
+            ufs_sb.fs_dsize_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0440);               /// <summary>0x0440 number of data blocks in fs
+            ufs_sb.fs_csaddr_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0448);              /// <summary>0x0448 blk addr of cyl grp summary area
+            ufs_sb.fs_pendingblocks_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x0450);       /// <summary>0x0450 blocks in process of being freed
+            ufs_sb.fs_pendinginodes_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0458);       /// <summary>0x0458 inodes in process of being freed
             #endregion UFS2
             #region Sun
-            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun, 0, 212); // 0x045C, 212 bytes, reserved for future constants
-            ufs_sb.fs_reclaim_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);              // 0x0530
-            ufs_sb.fs_sparecon2_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);            // 0x0534
-            ufs_sb.fs_state_t_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);              // 0x0538 file system state time stamp
-            ufs_sb.fs_qbmask0_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);              // 0x053C ~usb_bmask
-            ufs_sb.fs_qbmask1_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);              // 0x0540 ~usb_bmask
-            ufs_sb.fs_qfmask0_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);              // 0x0544 ~usb_fmask
-            ufs_sb.fs_qfmask1_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);              // 0x0548 ~usb_fmask
+            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun, 0, 212); /// <summary>0x045C, 212 bytes, reserved for future constants
+            ufs_sb.fs_reclaim_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);              /// <summary>0x0530
+            ufs_sb.fs_sparecon2_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);            /// <summary>0x0534
+            ufs_sb.fs_state_t_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);              /// <summary>0x0538 file system state time stamp
+            ufs_sb.fs_qbmask0_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);              /// <summary>0x053C ~usb_bmask
+            ufs_sb.fs_qbmask1_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);              /// <summary>0x0540 ~usb_bmask
+            ufs_sb.fs_qfmask0_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);              /// <summary>0x0544 ~usb_fmask
+            ufs_sb.fs_qfmask1_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);              /// <summary>0x0548 ~usb_fmask
             #endregion Sun
             #region Sunx86
-            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun86, 0, 212); // 0x045C, 212 bytes, reserved for future constants
-            ufs_sb.fs_reclaim_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);            // 0x0530
-            ufs_sb.fs_sparecon2_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);          // 0x0534
-            ufs_sb.fs_npsect_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);             // 0x0538 # sectors/track including spares
-            ufs_sb.fs_qbmask0_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);            // 0x053C ~usb_bmask
-            ufs_sb.fs_qbmask1_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);            // 0x0540 ~usb_bmask
-            ufs_sb.fs_qfmask0_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);            // 0x0544 ~usb_fmask
-            ufs_sb.fs_qfmask1_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);            // 0x0548 ~usb_fmask
+            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun86, 0, 212); /// <summary>0x045C, 212 bytes, reserved for future constants
+            ufs_sb.fs_reclaim_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);            /// <summary>0x0530
+            ufs_sb.fs_sparecon2_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);          /// <summary>0x0534
+            ufs_sb.fs_npsect_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);             /// <summary>0x0538 # sectors/track including spares
+            ufs_sb.fs_qbmask0_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);            /// <summary>0x053C ~usb_bmask
+            ufs_sb.fs_qbmask1_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);            /// <summary>0x0540 ~usb_bmask
+            ufs_sb.fs_qfmask0_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);            /// <summary>0x0544 ~usb_fmask
+            ufs_sb.fs_qfmask1_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);            /// <summary>0x0548 ~usb_fmask
             #endregion Sunx86
             #region 44BSD
-            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_44bsd, 0, 200); // 0x045C, 200 bytes
-            ufs_sb.fs_contigsumsize_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0524);      // 0x0524 size of cluster summary array
-            ufs_sb.fs_maxsymlinklen_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0528);      // 0x0528 max length of an internal symlink
-            ufs_sb.fs_inodefmt_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x052C);           // 0x052C format of on-disk inodes
-            ufs_sb.fs_maxfilesize0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);       // 0x0530 max representable file size
-            ufs_sb.fs_maxfilesize1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);       // 0x0534 max representable file size
-            ufs_sb.fs_qbmask0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);            // 0x0538 ~usb_bmask
-            ufs_sb.fs_qbmask1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);            // 0x053C ~usb_bmask
-            ufs_sb.fs_qfmask0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);            // 0x0540 ~usb_fmask
-            ufs_sb.fs_qfmask1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);            // 0x0544 ~usb_fmask
-            ufs_sb.fs_state_t_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);              // 0x0548 file system state time stamp
+            Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_44bsd, 0, 200); /// <summary>0x045C, 200 bytes
+            ufs_sb.fs_contigsumsize_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0524);      /// <summary>0x0524 size of cluster summary array
+            ufs_sb.fs_maxsymlinklen_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0528);      /// <summary>0x0528 max length of an internal symlink
+            ufs_sb.fs_inodefmt_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x052C);           /// <summary>0x052C format of on-disk inodes
+            ufs_sb.fs_maxfilesize0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);       /// <summary>0x0530 max representable file size
+            ufs_sb.fs_maxfilesize1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);       /// <summary>0x0534 max representable file size
+            ufs_sb.fs_qbmask0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0538);            /// <summary>0x0538 ~usb_bmask
+            ufs_sb.fs_qbmask1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x053C);            /// <summary>0x053C ~usb_bmask
+            ufs_sb.fs_qfmask0_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0540);            /// <summary>0x0540 ~usb_fmask
+            ufs_sb.fs_qfmask1_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0544);            /// <summary>0x0544 ~usb_fmask
+            ufs_sb.fs_state_t_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);              /// <summary>0x0548 file system state time stamp
             #endregion 44BSD
-            ufs_sb.fs_postblformat = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x054C);             // 0x054C format of positional layout tables
-            ufs_sb.fs_nrpos = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0550);                    // 0x0550 number of rotational positions
-            ufs_sb.fs_postbloff = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0554);                // 0x0554 (__s16) rotation block list head
-            ufs_sb.fs_rotbloff = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0558);                 // 0x0558 (__u8) blocks for each rotation
-            ufs_sb.fs_magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);                    // 0x055C magic number
-            ufs_sb.fs_space = ufs_sb_sectors[0x0560];                    // 0x0560 list of blocks for each rotation
+            ufs_sb.fs_postblformat = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x054C);             /// <summary>0x054C format of positional layout tables
+            ufs_sb.fs_nrpos = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0550);                    /// <summary>0x0550 number of rotational positions
+            ufs_sb.fs_postbloff = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0554);                /// <summary>0x0554 (__s16) rotation block list head
+            ufs_sb.fs_rotbloff = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0558);                 /// <summary>0x0558 (__u8) blocks for each rotation
+            ufs_sb.fs_magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);                    /// <summary>0x055C magic number
+            ufs_sb.fs_space = ufs_sb_sectors[0x0560];                    /// <summary>0x0560 list of blocks for each rotation
 
             DicConsole.DebugWriteLine("FFS plugin", "ufs_sb offset: 0x{0:X8}", sb_offset);
             DicConsole.DebugWriteLine("FFS plugin", "fs_link_42bsd: 0x{0:X8}", ufs_sb.fs_link_42bsd);
@@ -606,10 +606,10 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("{0}% of blocks must be free", ufs_sb.fs_minfree).AppendLine();
             sbInformation.AppendFormat("{0}ms for optimal next block", ufs_sb.fs_rotdelay).AppendLine();
             sbInformation.AppendFormat("disk rotates {0} times per second ({1}rpm)", ufs_sb.fs_rps, ufs_sb.fs_rps * 60).AppendLine();
-/*			sbInformation.AppendFormat("fs_bmask: 0x{0:X8}", ufs_sb.fs_bmask).AppendLine();
-			sbInformation.AppendFormat("fs_fmask: 0x{0:X8}", ufs_sb.fs_fmask).AppendLine();
-			sbInformation.AppendFormat("fs_bshift: 0x{0:X8}", ufs_sb.fs_bshift).AppendLine();
-			sbInformation.AppendFormat("fs_fshift: 0x{0:X8}", ufs_sb.fs_fshift).AppendLine();*/
+/*          sbInformation.AppendFormat("fs_bmask: 0x{0:X8}", ufs_sb.fs_bmask).AppendLine();
+            sbInformation.AppendFormat("fs_fmask: 0x{0:X8}", ufs_sb.fs_fmask).AppendLine();
+            sbInformation.AppendFormat("fs_bshift: 0x{0:X8}", ufs_sb.fs_bshift).AppendLine();
+            sbInformation.AppendFormat("fs_fshift: 0x{0:X8}", ufs_sb.fs_fshift).AppendLine();*/
             sbInformation.AppendFormat("{0} contiguous blocks at maximum", ufs_sb.fs_maxcontig).AppendLine();
             sbInformation.AppendFormat("{0} blocks per cylinder group at maximum", ufs_sb.fs_maxbpg).AppendLine();
             sbInformation.AppendFormat("Superblock is {0} bytes", ufs_sb.fs_sbsize).AppendLine();
@@ -719,379 +719,395 @@ namespace DiscImageChef.Plugins
         }
 
         const uint block_size = 8192;
+
         // As specified in FreeBSD source code, FFS/UFS can start in any of four places
-        const ulong sb_start_floppy = 0;
         // For floppies, start at offset 0
-        const ulong sb_start_ufs1 = 1;
+        const ulong sb_start_floppy = 0;
         // For normal devices, start at offset 8192
-        const ulong sb_start_ufs2 = 8;
+        const ulong sb_start_ufs1 = 1;
         // For UFS2, start at offset 65536
-        const ulong sb_start_piggy = 32;
+        const ulong sb_start_ufs2 = 8;
         // For piggy devices (?), start at offset 262144
+        const ulong sb_start_piggy = 32;
+
         // MAGICs
-        const UInt32 UFS_MAGIC = 0x00011954;
         // UFS magic
-        const UInt32 UFS_MAGIC_BW = 0x0f242697;
+        const UInt32 UFS_MAGIC = 0x00011954;
         // BorderWare UFS
-        const UInt32 UFS2_MAGIC = 0x19540119;
+        const UInt32 UFS_MAGIC_BW = 0x0f242697;
         // UFS2 magic
-        const UInt32 UFS_CIGAM = 0x54190100;
+        const UInt32 UFS2_MAGIC = 0x19540119;
         // byteswapped
-        const UInt32 UFS_BAD_MAGIC = 0x19960408;
+        const UInt32 UFS_CIGAM = 0x54190100;
         // Incomplete newfs
-        // On-disk superblock is quite a mixture of all the UFS/FFS variants
-        // There is no clear way to detect which one is correct
-        // And as C# does not support unions this struct will clearly appear quite dirty :p
-        // To clean up things a little, comment starts with relative superblock offset of field
-        // Biggest sized supleblock would be 1377 bytes
+        const UInt32 UFS_BAD_MAGIC = 0x19960408;
+
+        /// <summary>
+        /// On-disk superblock is quite a mixture of all the UFS/FFS variants
+        /// There is no clear way to detect which one is correct
+        /// And as C# does not support unions this struct will clearly appear quite dirty :p
+        /// To clean up things a little, comment starts with relative superblock offset of field
+        /// Biggest sized supleblock would be 1377 bytes
+        /// </summary>
         public struct UFSSuperBlock
         {
             #region 42BSD
 
+            /// <summary>0x0000 linked list of file systems</summary>
             public UInt32 fs_link_42bsd;
-            // 0x0000 linked list of file systems
 
             #endregion
 
             #region Sun
 
+            /// <summary>0x0000 file system state flag</summary>
             public UInt32 fs_state_sun;
-            // 0x0000 file system state flag
 
             #endregion
 
             #region COMMON
 
+            /// <summary>0x0004 used for incore super blocks</summary>
             public UInt32 fs_rlink;
-            // 0x0004 used for incore super blocks
+            /// <summary>0x0008 addr of super-block in filesys</summary>
             public UInt32 fs_sblkno;
-            // 0x0008 addr of super-block in filesys
+            /// <summary>0x000C offset of cyl-block in filesys</summary>
             public UInt32 fs_cblkno;
-            // 0x000C offset of cyl-block in filesys
+            /// <summary>0x0010 offset of inode-blocks in filesys</summary>
             public UInt32 fs_iblkno;
-            // 0x0010 offset of inode-blocks in filesys
+            /// <summary>0x0014 offset of first data after cg</summary>
             public UInt32 fs_dblkno;
-            // 0x0014 offset of first data after cg
+            /// <summary>0x0018 cylinder group offset in cylinder</summary>
             public UInt32 fs_cgoffset;
-            // 0x0018 cylinder group offset in cylinder
+            /// <summary>0x001C used to calc mod fs_ntrak</summary>
             public UInt32 fs_cgmask;
-            // 0x001C used to calc mod fs_ntrak
+            /// <summary>0x0020 last time written -- time_t</summary>
             public UInt32 fs_time_t;
-            // 0x0020 last time written -- time_t
+            /// <summary>0x0024 number of blocks in fs</summary>
             public UInt32 fs_size;
-            // 0x0024 number of blocks in fs
+            /// <summary>0x0028 number of data blocks in fs</summary>
             public UInt32 fs_dsize;
-            // 0x0028 number of data blocks in fs
+            /// <summary>0x002C number of cylinder groups</summary>
             public UInt32 fs_ncg;
-            // 0x002C number of cylinder groups
+            /// <summary>0x0030 size of basic blocks in fs</summary>
             public UInt32 fs_bsize;
-            // 0x0030 size of basic blocks in fs
+            /// <summary>0x0034 size of frag blocks in fs</summary>
             public UInt32 fs_fsize;
-            // 0x0034 size of frag blocks in fs
+            /// <summary>0x0038 number of frags in a block in fs</summary>
             public UInt32 fs_frag;
-            // 0x0038 number of frags in a block in fs
+
             // these are configuration parameters
+            /// <summary>0x003C minimum percentage of free blocks</summary>
             public UInt32 fs_minfree;
-            // 0x003C minimum percentage of free blocks
+            /// <summary>0x0040 num of ms for optimal next block</summary>
             public UInt32 fs_rotdelay;
-            // 0x0040 num of ms for optimal next block
+            /// <summary>0x0044 disk revolutions per second</summary>
             public UInt32 fs_rps;
-            // 0x0044 disk revolutions per second
+
             // these fields can be computed from the others
+            /// <summary>0x0048 ``blkoff'' calc of blk offsets</summary>
             public UInt32 fs_bmask;
-            // 0x0048 ``blkoff'' calc of blk offsets
+            /// <summary>0x004C ``fragoff'' calc of frag offsets</summary>
             public UInt32 fs_fmask;
-            // 0x004C ``fragoff'' calc of frag offsets
+            /// <summary>0x0050 ``lblkno'' calc of logical blkno</summary>
             public UInt32 fs_bshift;
-            // 0x0050 ``lblkno'' calc of logical blkno
+            /// <summary>0x0054 ``numfrags'' calc number of frags</summary>
             public UInt32 fs_fshift;
-            // 0x0054 ``numfrags'' calc number of frags
+
             // these are configuration parameters
+            /// <summary>0x0058 max number of contiguous blks</summary>
             public UInt32 fs_maxcontig;
-            // 0x0058 max number of contiguous blks
+            /// <summary>0x005C max number of blks per cyl group</summary>
             public UInt32 fs_maxbpg;
-            // 0x005C max number of blks per cyl group
+
             // these fields can be computed from the others
+            /// <summary>0x0060 block to frag shift</summary>
             public UInt32 fs_fragshift;
-            // 0x0060 block to frag shift
+            /// <summary>0x0064 fsbtodb and dbtofsb shift constant</summary>
             public UInt32 fs_fsbtodb;
-            // 0x0064 fsbtodb and dbtofsb shift constant
+            /// <summary>0x0068 actual size of super block</summary>
             public UInt32 fs_sbsize;
-            // 0x0068 actual size of super block
+            /// <summary>0x006C csum block offset</summary>
             public UInt32 fs_csmask;
-            // 0x006C csum block offset
+            /// <summary>0x0070 csum block number</summary>
             public UInt32 fs_csshift;
-            // 0x0070 csum block number
+            /// <summary>0x0074 value of NINDIR</summary>
             public UInt32 fs_nindir;
-            // 0x0074 value of NINDIR
+            /// <summary>0x0078 value of INOPB</summary>
             public UInt32 fs_inopb;
-            // 0x0078 value of INOPB
+            /// <summary>0x007C value of NSPF</summary>
             public UInt32 fs_nspf;
-            // 0x007C value of NSPF
+
             // yet another configuration parameter
+            /// <summary>0x0080 optimization preference, see below</summary>
             public UInt32 fs_optim;
-            // 0x0080 optimization preference, see below
 
             #endregion COMMON
 
-            // these fields are derived from the hardware
 
             #region Sun
 
+            // these fields are derived from the hardware
+            /// <summary>0x0084 # sectors/track including spares</summary>
             public UInt32 fs_npsect_sun;
-            // 0x0084 # sectors/track including spares
 
             #endregion Sun
 
             #region Sunx86
 
+            /// <summary>0x0084 file system state time stamp</summary>
             public UInt32 fs_state_t_sun86;
-            // 0x0084 file system state time stamp
 
             #endregion Sunx86
 
             #region COMMON
 
+            /// <summary>0x0088 hardware sector interleave</summary>
             public UInt32 fs_interleave;
-            // 0x0088 hardware sector interleave
+            /// <summary>0x008C sector 0 skew, per track</summary>
             public UInt32 fs_trackskew;
-            // 0x008C sector 0 skew, per track
 
             #endregion COMMON
+
+
+            #region COMMON
 
             // a unique id for this filesystem (currently unused and unmaintained)
             // In 4.3 Tahoe this space is used by fs_headswitch and fs_trkseek
             // Neither of those fields is used in the Tahoe code right now but
             // there could be problems if they are.
 
-            #region COMMON
-
+            /// <summary>0x0090</summary>
             public UInt32 fs_id_1;
-            // 0x0090
+            /// <summary>0x0094</summary>
             public UInt32 fs_id_2;
-            // 0x0094
 
             #endregion COMMON
 
             #region 43BSD
 
+            /// <summary>0x0090 head switch time, usec</summary>
             public UInt32 fs_headswitch_43bsd;
-            // 0x0090 head switch time, usec
+            /// <summary>0x0094 track-to-track seek, usec</summary>
             public UInt32 fs_trkseek_43bsd;
-            // 0x0094 track-to-track seek, usec
 
             #endregion 43BSD
 
             #region COMMON
 
             // sizes determined by number of cylinder groups and their sizes
+            /// <summary>0x0098 blk addr of cyl grp summary area</summary>
             public UInt32 fs_csaddr;
-            // 0x0098 blk addr of cyl grp summary area
+            /// <summary>0x009C size of cyl grp summary area</summary>
             public UInt32 fs_cssize;
-            // 0x009C size of cyl grp summary area
+            /// <summary>0x00A0 cylinder group size</summary>
             public UInt32 fs_cgsize;
-            // 0x00A0 cylinder group size
+
             // these fields are derived from the hardware
+            /// <summary>0x00A4 tracks per cylinder</summary>
             public UInt32 fs_ntrak;
-            // 0x00A4 tracks per cylinder
+            /// <summary>0x00A8 sectors per track</summary>
             public UInt32 fs_nsect;
-            // 0x00A8 sectors per track
+            /// <summary>0x00AC sectors per cylinder</summary>
             public UInt32 fs_spc;
-            // 0x00AC sectors per cylinder
+
             // this comes from the disk driver partitioning
+            /// <summary>0x00B0 cylinders in file system</summary>
             public UInt32 fs_ncyl;
-            // 0x00B0 cylinders in file system
+
             // these fields can be computed from the others
+            /// <summary>0x00B4 cylinders per group</summary>
             public UInt32 fs_cpg;
-            // 0x00B4 cylinders per group
+            /// <summary>0x00B8 inodes per cylinder group</summary>
             public UInt32 fs_ipg;
-            // 0x00B8 inodes per cylinder group
+            /// <summary>0x00BC blocks per group * fs_frag</summary>
             public UInt32 fs_fpg;
-            // 0x00BC blocks per group * fs_frag
+
             // this data must be re-computed after crashes
-            // struct ufs_csum fs_cstotal;	// cylinder summary information
+            // struct ufs_csum fs_cstotal;  // cylinder summary information
+            /// <summary>0x00C0 number of directories</summary>
             public UInt32 fs_cstotal_ndir;
-            // 0x00C0 number of directories
+            /// <summary>0x00C4 number of free blocks</summary>
             public UInt32 fs_cstotal_nbfree;
-            // 0x00C4 number of free blocks
+            /// <summary>0x00C8 number of free inodes</summary>
             public UInt32 fs_cstotal_nifree;
-            // 0x00C8 number of free inodes
+            /// <summary>0x00CC number of free frags</summary>
             public UInt32 fs_cstotal_nffree;
-            // 0x00CC number of free frags
+
             // these fields are cleared at mount time
+            /// <summary>0x00D0 super block modified flag</summary>
             public byte fs_fmod;
-            // 0x00D0 super block modified flag
+            /// <summary>0x00D1 file system is clean flag</summary>
             public byte fs_clean;
-            // 0x00D1 file system is clean flag
+            /// <summary>0x00D2 mounted read-only flag</summary>
             public byte fs_ronly;
-            // 0x00D2 mounted read-only flag
+            /// <summary>0x00D3</summary>
             public byte fs_flags;
-            // 0x00D3
 
             #endregion common
 
             #region UFS1
 
+            /// <summary>0x00D4, 512 bytes, name mounted on</summary>
             public string fs_fsmnt_ufs1;
-            // 0x00D4, 512 bytes, name mounted on
+            /// <summary>0x02D4 last cg searched</summary>
             public UInt32 fs_cgrotor_ufs1;
-            // 0x02D4 last cg searched
+            /// <summary>0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers</summary>
             public byte[] fs_cs_ufs1;
-            // 0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers
+            /// <summary>0x0354</summary>
             public UInt32 fs_maxcluster_ufs1;
-            // 0x0354
+            /// <summary>0x0358 cyl per cycle in postbl</summary>
             public UInt32 fs_cpc_ufs1;
-            // 0x0358 cyl per cycle in postbl
+            /// <summary>0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head</summary>
             public byte[] fs_opostbl_ufs1;
-            // 0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head
 
             #endregion UFS1
 
             #region UFS2
 
+            /// <summary>0x00D4, 468 bytes, name mounted on</summary>
             public string fs_fsmnt_ufs2;
-            // 0x00D4, 468 bytes, name mounted on
+            /// <summary>0x02A8, 32 bytes, volume name</summary>
             public string fs_volname_ufs2;
-            // 0x02A8, 32 bytes, volume name
+            /// <summary>0x02C8 system-wide uid</summary>
             public UInt64 fs_swuid_ufs2;
-            // 0x02C8 system-wide uid
+            /// <summary>0x02D0 due to alignment of fs_swuid</summary>
             public UInt32 fs_pad_ufs2;
-            // 0x02D0 due to alignment of fs_swuid
+            /// <summary>0x02D4 last cg searched</summary>
             public UInt32 fs_cgrotor_ufs2;
-            // 0x02D4 last cg searched
+            /// <summary>0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers</summary>
             public byte[] fs_ocsp_ufs2;
-            // 0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers
+            /// <summary>0x0348 # of contiguously allocated dirs</summary>
             public UInt32 fs_contigdirs_ufs2;
-            // 0x0348 # of contiguously allocated dirs
+            /// <summary>0x034C cg summary info buffer for fs_cs</summary>
             public UInt32 fs_csp_ufs2;
-            // 0x034C cg summary info buffer for fs_cs
+            /// <summary>0x0350</summary>
             public UInt32 fs_maxcluster_ufs2;
-            // 0x0350
+            /// <summary>0x0354 used by snapshots to track fs</summary>
             public UInt32 fs_active_ufs2;
-            // 0x0354 used by snapshots to track fs
+            /// <summary>0x0358 cyl per cycle in postbl</summary>
             public UInt32 fs_old_cpc_ufs2;
-            // 0x0358 cyl per cycle in postbl
+            /// <summary>0x035C maximum blocking factor permitted</summary>
             public UInt32 fs_maxbsize_ufs2;
-            // 0x035C maximum blocking factor permitted
+            /// <summary>0x0360, 136 bytes, UInt64s, old rotation block list head</summary>
             public byte[] fs_sparecon64_ufs2;
-            // 0x0360, 136 bytes, UInt64s, old rotation block list head
+            /// <summary>0x03E8 byte offset of standard superblock</summary>
             public UInt64 fs_sblockloc_ufs2;
-            // 0x03E8 byte offset of standard superblock
-            //cylinder summary information*/
+
+            /// <summary>0x03F0 number of directories</summary>
             public UInt64 fs_cstotal_ndir_ufs2;
-            // 0x03F0 number of directories
+            /// <summary>0x03F8 number of free blocks</summary>
             public UInt64 fs_cstotal_nbfree_ufs2;
-            // 0x03F8 number of free blocks
+            /// <summary>0x0400 number of free inodes</summary>
             public UInt64 fs_cstotal_nifree_ufs2;
-            // 0x0400 number of free inodes
+            /// <summary>0x0408 number of free frags</summary>
             public UInt64 fs_cstotal_nffree_ufs2;
-            // 0x0408 number of free frags
+            /// <summary>0x0410 number of free clusters</summary>
             public UInt64 fs_cstotal_numclusters_ufs2;
-            // 0x0410 number of free clusters
+            /// <summary>0x0418 future expansion</summary>
             public UInt64 fs_cstotal_spare0_ufs2;
-            // 0x0418 future expansion
+            /// <summary>0x0420 future expansion</summary>
             public UInt64 fs_cstotal_spare1_ufs2;
-            // 0x0420 future expansion
+            /// <summary>0x0428 future expansion</summary>
             public UInt64 fs_cstotal_spare2_ufs2;
-            // 0x0428 future expansion
+            /// <summary>0x0430 last time written</summary>
             public UInt32 fs_time_sec_ufs2;
-            // 0x0430 last time written
+            /// <summary>0x0434 last time written</summary>
             public UInt32 fs_time_usec_ufs2;
-            // 0x0434 last time written
+            /// <summary>0x0438 number of blocks in fs</summary>
             public UInt64 fs_size_ufs2;
-            // 0x0438 number of blocks in fs
+            /// <summary>0x0440 number of data blocks in fs</summary>
             public UInt64 fs_dsize_ufs2;
-            // 0x0440 number of data blocks in fs
+            /// <summary>0x0448 blk addr of cyl grp summary area</summary>
             public UInt64 fs_csaddr_ufs2;
-            // 0x0448 blk addr of cyl grp summary area
+            /// <summary>0x0450 blocks in process of being freed</summary>
             public UInt64 fs_pendingblocks_ufs2;
-            // 0x0450 blocks in process of being freed
+            /// <summary>0x0458 inodes in process of being freed</summary>
             public UInt32 fs_pendinginodes_ufs2;
-            // 0x0458 inodes in process of being freed
 
             #endregion UFS2
 
             #region Sun
 
+            /// <summary>0x045C, 212 bytes, reserved for future constants</summary>
             public byte[] fs_sparecon_sun;
-            // 0x045C, 212 bytes, reserved for future constants
+            /// <summary>0x0530</summary>
             public UInt32 fs_reclaim_sun;
-            // 0x0530
+            /// <summary>0x0534</summary>
             public UInt32 fs_sparecon2_sun;
-            // 0x0534
+            /// <summary>0x0538 file system state time stamp</summary>
             public UInt32 fs_state_t_sun;
-            // 0x0538 file system state time stamp
+            /// <summary>0x053C ~usb_bmask</summary>
             public UInt32 fs_qbmask0_sun;
-            // 0x053C ~usb_bmask
+            /// <summary>0x0540 ~usb_bmask</summary>
             public UInt32 fs_qbmask1_sun;
-            // 0x0540 ~usb_bmask
+            /// <summary>0x0544 ~usb_fmask</summary>
             public UInt32 fs_qfmask0_sun;
-            // 0x0544 ~usb_fmask
+            /// <summary>0x0548 ~usb_fmask</summary>
             public UInt32 fs_qfmask1_sun;
-            // 0x0548 ~usb_fmask
 
             #endregion Sun
 
             #region Sunx86
 
+            /// <summary>0x045C, 212 bytes, reserved for future constants</summary>
             public byte[] fs_sparecon_sun86;
-            // 0x045C, 212 bytes, reserved for future constants
+            /// <summary>0x0530</summary>
             public UInt32 fs_reclaim_sun86;
-            // 0x0530
+            /// <summary>0x0534</summary>
             public UInt32 fs_sparecon2_sun86;
-            // 0x0534
+            /// <summary>0x0538 # sectors/track including spares</summary>
             public UInt32 fs_npsect_sun86;
-            // 0x0538 # sectors/track including spares
+            /// <summary>0x053C ~usb_bmask</summary>
             public UInt32 fs_qbmask0_sun86;
-            // 0x053C ~usb_bmask
+            /// <summary>0x0540 ~usb_bmask</summary>
             public UInt32 fs_qbmask1_sun86;
-            // 0x0540 ~usb_bmask
+            /// <summary>0x0544 ~usb_fmask</summary>
             public UInt32 fs_qfmask0_sun86;
-            // 0x0544 ~usb_fmask
+            /// <summary>0x0548 ~usb_fmask</summary>
             public UInt32 fs_qfmask1_sun86;
-            // 0x0548 ~usb_fmask
 
             #endregion Sunx86
 
             #region 44BSD
 
+            /// <summary>0x045C, 200 bytes</summary>
             public byte[] fs_sparecon_44bsd;
-            // 0x045C, 200 bytes
+            /// <summary>0x0524 size of cluster summary array</summary>
             public UInt32 fs_contigsumsize_44bsd;
-            // 0x0524 size of cluster summary array
+            /// <summary>0x0528 max length of an internal symlink</summary>
             public UInt32 fs_maxsymlinklen_44bsd;
-            // 0x0528 max length of an internal symlink
+            /// <summary>0x052C format of on-disk inodes</summary>
             public UInt32 fs_inodefmt_44bsd;
-            // 0x052C format of on-disk inodes
+            /// <summary>0x0530 max representable file size</summary>
             public UInt32 fs_maxfilesize0_44bsd;
-            // 0x0530 max representable file size
+            /// <summary>0x0534 max representable file size</summary>
             public UInt32 fs_maxfilesize1_44bsd;
-            // 0x0534 max representable file size
+            /// <summary>0x0538 ~usb_bmask</summary>
             public UInt32 fs_qbmask0_44bsd;
-            // 0x0538 ~usb_bmask
+            /// <summary>0x053C ~usb_bmask</summary>
             public UInt32 fs_qbmask1_44bsd;
-            // 0x053C ~usb_bmask
+            /// <summary>0x0540 ~usb_fmask</summary>
             public UInt32 fs_qfmask0_44bsd;
-            // 0x0540 ~usb_fmask
+            /// <summary>0x0544 ~usb_fmask</summary>
             public UInt32 fs_qfmask1_44bsd;
-            // 0x0544 ~usb_fmask
+            /// <summary>0x0548 file system state time stamp</summary>
             public UInt32 fs_state_t_44bsd;
-            // 0x0548 file system state time stamp
 
             #endregion 44BSD
 
+            /// <summary>0x054C format of positional layout tables</summary>
             public UInt32 fs_postblformat;
-            // 0x054C format of positional layout tables
+            /// <summary>0x0550 number of rotational positions</summary>
             public UInt32 fs_nrpos;
-            // 0x0550 number of rotational positions
+            /// <summary>0x0554 (__s16) rotation block list head</summary>
             public UInt32 fs_postbloff;
-            // 0x0554 (__s16) rotation block list head
+            /// <summary>0x0558 (__u8) blocks for each rotation</summary>
             public UInt32 fs_rotbloff;
-            // 0x0558 (__u8) blocks for each rotation
+            /// <summary>0x055C magic number</summary>
             public UInt32 fs_magic;
-            // 0x055C magic number
+            /// <summary>0x0560 list of blocks for each rotation</summary>
             public byte fs_space;
-            // 0x0560 list of blocks for each rotation
             // 0x0561
         }
     }

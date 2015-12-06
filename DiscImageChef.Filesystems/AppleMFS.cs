@@ -220,77 +220,82 @@ namespace DiscImageChef.Plugins
             return;
         }
 
-        struct MFS_MasterDirectoryBlock // Should be offset 0x0400 bytes in volume
+        /// <summary>
+        /// Master Directory Block, should be at offset 0x0400 bytes in volume
+        /// </summary>
+        struct MFS_MasterDirectoryBlock
         {
-            // 0x000, Signature, 0xD2D7
+            /// <summary>0x000, Signature, 0xD2D7</summary>
             public UInt16 drSigWord;
-            // 0x002, Volume creation date
+            /// <summary>0x002, Volume creation date</summary>
             public UInt32 drCrDate;
-            // 0x006, Volume last backup date
+            /// <summary>0x006, Volume last backup date</summary>
             public UInt32 drLsBkUp;
-            // 0x00A, Volume attributes
+            /// <summary>0x00A, Volume attributes</summary>
             public UInt16 drAtrb;
-            // 0x00C, Volume number of files
+            /// <summary>0x00C, Volume number of files</summary>
             public UInt16 drNmFls;
-            // 0x00E, First directory block
+            /// <summary>0x00E, First directory block</summary>
             public UInt16 drDirSt;
-            // 0x010, Length of directory in blocks
+            /// <summary>0x010, Length of directory in blocks</summary>
             public UInt16 drBlLen;
-            // 0x012, Volume allocation blocks
+            /// <summary>0x012, Volume allocation blocks</summary>
             public UInt16 drNmAlBlks;
-            // 0x014, Size of allocation blocks
+            /// <summary>0x014, Size of allocation blocks</summary>
             public UInt32 drAlBlkSiz;
-            // 0x018, Number of bytes to allocate
+            /// <summary>0x018, Number of bytes to allocate</summary>
             public UInt32 drClpSiz;
-            // 0x01C, First allocation block in block map
+            /// <summary>0x01C, First allocation block in block map</summary>
             public UInt16 drAlBlSt;
-            // 0x01E. Next unused file number
+            /// <summary>0x01E. Next unused file number</summary>
             public UInt32 drNxtFNum;
-            // 0x022, Number of unused allocation blocks
+            /// <summary>0x022, Number of unused allocation blocks</summary>
             public UInt16 drFreeBks;
-            // 0x024, Length of volume name
+            /// <summary>0x024, Length of volume name</summary>
             public byte drVNSiz;
-            // 0x025, Characters of volume name
+            /// <summary>0x025, Characters of volume name</summary>
             public string drVN;
         }
 
-        struct MFS_BootBlock // Should be offset 0x0000 bytes in volume
+        /// <summary>
+        /// Should be at offset 0x0000 in volume, followed by boot code
+        /// </summary>
+        struct MFS_BootBlock
         {
+            /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
             public UInt16 signature;
-            // 0x000, Signature, 0x4C4B if bootable
+            /// <summary>0x002, Branch</summary>
             public UInt32 branch;
-            // 0x002, Branch
+            /// <summary>0x006, Boot block flags</summary>
             public byte boot_flags;
-            // 0x006, Boot block flags
+            /// <summary>0x007, Boot block version</summary>
             public byte boot_version;
-            // 0x007, Boot block version
+            /// <summary>0x008, Allocate secondary buffers</summary>
             public short sec_sv_pages;
-            // 0x008, Allocate secondary buffers
+            /// <summary>0x00A, System file name (16 bytes)</summary>
             public string system_name;
-            // 0x00A, System file name (16 bytes)
+            /// <summary>0x01A, Finder file name (16 bytes)</summary>
             public string finder_name;
-            // 0x01A, Finder file name (16 bytes)
+            /// <summary>0x02A, Debugger file name (16 bytes)</summary>
             public string debug_name;
-            // 0x02A, Debugger file name (16 bytes)
+            /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
             public string disasm_name;
-            // 0x03A, Disassembler file name (16 bytes)
+            /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
             public string stupscr_name;
-            // 0x04A, Startup screen file name (16 bytes)
+            /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
             public string bootup_name;
-            // 0x05A, First program to execute on boot (16 bytes)
+            /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
             public string clipbrd_name;
-            // 0x06A, Clipboard file name (16 bytes)
+            /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
             public UInt16 max_files;
-            // 0x07A, 1/4 of maximum opened at a time files
+            /// <summary>0x07C, Event queue size</summary>
             public UInt16 queue_size;
-            // 0x07C, Event queue size
+            /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
             public UInt32 heap_128k;
-            // 0x07E, Heap size on a Mac with 128KiB of RAM
+            /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
             public UInt32 heap_256k;
-            // 0x082, Heap size on a Mac with 256KiB of RAM
+            /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
             public UInt32 heap_512k;
-            // 0x086, Heap size on a Mac with 512KiB of RAM or more
         }
-        // Follows boot code
     }
 }

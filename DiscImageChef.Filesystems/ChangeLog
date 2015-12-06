@@ -1,5 +1,25 @@
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
+	* ODS.cs:
+	* FFS.cs:
+	* BFS.cs:
+	* HPFS.cs:
+	* NTFS.cs:
+	* SysV.cs:
+	* Opera.cs:
+	* extFS.cs:
+	* ext2FS.cs:
+	* LisaFS.cs:
+	* SolarFS.cs:
+	* MinixFS.cs:
+	* UNIXBFS.cs:
+	* AppleMFS.cs:
+	* AppleHFS.cs:
+	* AppleHFSPlus.cs:
+	  Moved comments to XML documentation.
+
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Plugin.cs:
 	  Added documentation.
 

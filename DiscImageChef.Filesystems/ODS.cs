@@ -279,98 +279,98 @@ namespace DiscImageChef.Plugins
 
         struct ODSHomeBlock
         {
+            /// <summary>0x000, LBN of THIS home block</summary>
             public UInt32 homelbn;
-            // 0x000, LBN of THIS home block
+            /// <summary>0x004, LBN of the secondary home block</summary>
             public UInt32 alhomelbn;
-            // 0x004, LBN of the secondary home block
+            /// <summary>0x008, LBN of backup INDEXF.SYS;1</summary>
             public UInt32 altidxlbn;
-            // 0x008, LBN of backup INDEXF.SYS;1
+            /// <summary>0x00C, High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)</summary>
             public UInt16 struclev;
-            // 0x00C, High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)
+            /// <summary>0x00E, Number of blocks each bit of the volume bitmap represents</summary>
             public UInt16 cluster;
-            // 0x00E, Number of blocks each bit of the volume bitmap represents
+            /// <summary>0x010, VBN of THIS home block</summary>
             public UInt16 homevbn;
-            // 0x010, VBN of THIS home block
+            /// <summary>0x012, VBN of the secondary home block</summary>
             public UInt16 alhomevbn;
-            // 0x012, VBN of the secondary home block
+            /// <summary>0x014, VBN of backup INDEXF.SYS;1</summary>
             public UInt16 altidxvbn;
-            // 0x014, VBN of backup INDEXF.SYS;1
+            /// <summary>0x016, VBN of the bitmap</summary>
             public UInt16 ibmapvbn;
-            // 0x016, VBN of the bitmap
+            /// <summary>0x018, LBN of the bitmap</summary>
             public UInt32 ibmaplbn;
-            // 0x018, LBN of the bitmap
+            /// <summary>0x01C, Max files on volume</summary>
             public UInt32 maxfiles;
-            // 0x01C, Max files on volume
+            /// <summary>0x020, Bitmap size in sectors</summary>
             public UInt16 ibmapsize;
-            // 0x020, Bitmap size in sectors
+            /// <summary>0x022, Reserved files, 5 at minimum</summary>
             public UInt16 resfiles;
-            // 0x022, Reserved files, 5 at minimum
+            /// <summary>0x024, Device type, ODS-2 defines it as always 0</summary>
             public UInt16 devtype;
-            // 0x024, Device type, ODS-2 defines it as always 0
+            /// <summary>0x026, Relative volume number (number of the volume in a set)</summary>
             public UInt16 rvn;
-            // 0x026, Relative volume number (number of the volume in a set)
+            /// <summary>0x028, Total number of volumes in the set this volume is</summary>
             public UInt16 setcount;
-            // 0x028, Total number of volumes in the set this volume is
+            /// <summary>0x02A, Flags</summary>
             public UInt16 volchar;
-            // 0x02A, Flags
+            /// <summary>0x02C, User ID of the volume owner</summary>
             public UInt32 volowner;
-            // 0x02C, User ID of the volume owner
+            /// <summary>0x030, Security mask (??)</summary>
             public UInt32 sec_mask;
-            // 0x030, Security mask (??)
+            /// <summary>0x034, Volume permissions (system, owner, group and other)</summary>
             public UInt16 protect;
-            // 0x034, Volume permissions (system, owner, group and other)
+            /// <summary>0x036, Default file protection, unsupported in ODS-2</summary>
             public UInt16 fileprot;
-            // 0x036, Default file protection, unsupported in ODS-2
+            /// <summary>0x038, Default file record protection</summary>
             public UInt16 recprot;
-            // 0x038, Default file record protection
+            /// <summary>0x03A, Checksum of all preceding entries</summary>
             public UInt16 checksum1;
-            // 0x03A, Checksum of all preceding entries
+            /// <summary>0x03C, Creation date</summary>
             public UInt64 credate;
-            // 0x03C, Creation date
+            /// <summary>0x044, Window size (pointers for the window)</summary>
             public byte window;
-            // 0x044, Window size (pointers for the window)
+            /// <summary>0x045, Directories to be stored in cache</summary>
             public byte lru_lim;
-            // 0x045, Directories to be stored in cache
+            /// <summary>0x046, Default allocation size in blocks</summary>
             public UInt16 extend;
-            // 0x046, Default allocation size in blocks
+            /// <summary>0x048, Minimum file retention period</summary>
             public UInt64 retainmin;
-            // 0x048, Minimum file retention period
+            /// <summary>0x050, Maximum file retention period</summary>
             public UInt64 retainmax;
-            // 0x050, Maximum file retention period
+            /// <summary>0x058, Last modification date</summary>
             public UInt64 revdate;
-            // 0x058, Last modification date
+            /// <summary>0x060, Minimum security class, 20 bytes</summary>
             public byte[] min_class;
-            // 0x060, Minimum security class, 20 bytes
+            /// <summary>0x074, Maximum security class, 20 bytes</summary>
             public byte[] max_class;
-            // 0x074, Maximum security class, 20 bytes
+            /// <summary>0x088, File lookup table FID</summary>
             public UInt16 filetab_fid1;
-            // 0x088, File lookup table FID
+            /// <summary>0x08A, File lookup table FID</summary>
             public UInt16 filetab_fid2;
-            // 0x08A, File lookup table FID
+            /// <summary>0x08C, File lookup table FID</summary>
             public UInt16 filetab_fid3;
-            // 0x08C, File lookup table FID
+            /// <summary>0x08E, Lowest structure level on the volume</summary>
             public UInt16 lowstruclev;
-            // 0x08E, Lowest structure level on the volume
+            /// <summary>0x090, Highest structure level on the volume</summary>
             public UInt16 highstruclev;
-            // 0x090, Highest structure level on the volume
+            /// <summary>0x092, Volume copy date (??)</summary>
             public UInt64 copydate;
-            // 0x092, Volume copy date (??)
+            /// <summary>0x09A, 302 bytes</summary>
             public byte[] reserved1;
-            // 0x09A, 302 bytes
+            /// <summary>0x1C8, Physical drive serial number</summary>
             public UInt32 serialnum;
-            // 0x1C8, Physical drive serial number
+            /// <summary>0x1CC, Name of the volume set, 12 bytes</summary>
             public string strucname;
-            // 0x1CC, Name of the volume set, 12 bytes
+            /// <summary>0x1D8, Volume label, 12 bytes</summary>
             public string volname;
-            // 0x1D8, Volume label, 12 bytes
+            /// <summary>0x1E4, Name of the volume owner, 12 bytes</summary>
             public string ownername;
-            // 0x1E4, Name of the volume owner, 12 bytes
+            /// <summary>0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes</summary>
             public string format;
-            // 0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes
+            /// <summary>0x1FC, Reserved</summary>
             public UInt16 reserved2;
-            // 0x1FC, Reserved
+            /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>
             public UInt16 checksum2;
-            // 0x1FE, Checksum of preceding 255 words (16 bit units)
         }
     }
 }

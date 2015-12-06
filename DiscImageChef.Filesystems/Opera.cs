@@ -141,32 +141,32 @@ namespace DiscImageChef.Plugins
 
         struct OperaSuperBlock
         {
+            /// <summary>0x000, Record type, must be 1</summary>
             public byte record_type;
-            // 0x000, Record type, must be 1
+            /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
             public byte[] sync_bytes;
-            // 0x001, 5 bytes, "ZZZZZ" = new byte[5];
+            /// <summary>0x006, Record version, must be 1</summary>
             public byte record_version;
-            // 0x006, Record version, must be 1
+            /// <summary>0x007, Volume flags</summary>
             public byte volume_flags;
-            // 0x007, Volume flags
+            /// <summary>0x008, 32 bytes, volume comment</summary>
             public string volume_comment;
-            // 0x008, 32 bytes, volume comment
+            /// <summary>0x028, 32 bytes, volume label</summary>
             public string volume_label;
-            // 0x028, 32 bytes, volume label
+            /// <summary>0x048, Volume ID</summary>
             public Int32 volume_id;
-            // 0x048, Volume ID
+            /// <summary>0x04C, Block size in bytes</summary>
             public Int32 block_size;
-            // 0x04C, Block size in bytes
+            /// <summary>0x050, Blocks in volume</summary>
             public Int32 block_count;
-            // 0x050, Blocks in volume
+            /// <summary>0x054, Root directory ID</summary>
             public Int32 root_dirid;
-            // 0x054, Root directory ID
+            /// <summary>0x058, Root directory blocks</summary>
             public Int32 rootdir_blocks;
-            // 0x058, Root directory blocks
+            /// <summary>0x05C, Root directory block size</summary>
             public Int32 rootdir_bsize;
-            // 0x05C, Root directory block size
+            /// <summary>0x060, Last root directory copy</summary>
             public Int32 last_root_copy;
-            // 0x060, Last root directory copy
         }
     }
 }

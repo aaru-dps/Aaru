@@ -245,58 +245,64 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
         }
 
+        /// <summary>
+        /// Superblock for Minix V1 and V2 filesystems
+        /// </summary>
         public struct MinixSuperBlock
         {
+            /// <summary>0x00, inodes on volume</summary>
             public UInt16 s_ninodes;
-            // 0x00, inodes on volume
+            /// <summary>0x02, zones on volume</summary>
             public UInt16 s_nzones;
-            // 0x02, zones on volume
+            /// <summary>0x04, blocks on inode map</summary>
             public UInt16 s_imap_blocks;
-            // 0x04, blocks on inode map
+            /// <summary>0x06, blocks on zone map</summary>
             public UInt16 s_zmap_blocks;
-            // 0x06, blocks on zone map
+            /// <summary>0x08, first data zone</summary>
             public UInt16 s_firstdatazone;
-            // 0x08, first data zone
+            /// <summary>0x0A, log2 of blocks/zone</summary>
             public UInt16 s_log_zone_size;
-            // 0x0A, log2 of blocks/zone
+            /// <summary>0x0C, max file size</summary>
             public UInt32 s_max_size;
-            // 0x0C, max file size
+            /// <summary>0x10, magic</summary>
             public UInt16 s_magic;
-            // 0x10, magic
+            /// <summary>0x12, filesystem state</summary>
             public UInt16 s_state;
-            // 0x12, filesystem state
+            /// <summary>0x14, number of zones</summary>
             public UInt32 s_zones;
-            // 0x14, number of zones
         }
 
+        /// <summary>
+        /// Superblock for Minix V3 filesystems
+        /// </summary>
         public struct Minix3SuperBlock
         {
+            /// <summary>0x00, inodes on volume</summary>
             public UInt32 s_ninodes;
-            // 0x00, inodes on volume
+            /// <summary>0x04, padding</summary>
             public UInt16 s_pad0;
-            // 0x04, padding
+            /// <summary>0x06, blocks on inode map</summary>
             public UInt16 s_imap_blocks;
-            // 0x06, blocks on inode map
+            /// <summary>0x08, blocks on zone map</summary>
             public UInt16 s_zmap_blocks;
-            // 0x08, blocks on zone map
+            /// <summary>0x0A, first data zone</summary>
             public UInt16 s_firstdatazone;
-            // 0x0A, first data zone
+            /// <summary>0x0C, log2 of blocks/zone</summary>
             public UInt16 s_log_zone_size;
-            // 0x0C, log2 of blocks/zone
+            /// <summary>0x0E, padding</summary>
             public UInt16 s_pad1;
-            // 0x0E, padding
+            /// <summary>0x10, max file size</summary>
             public UInt32 s_max_size;
-            // 0x10, max file size
+            /// <summary>0x14, number of zones</summary>
             public UInt32 s_zones;
-            // 0x14, number of zones
+            /// <summary>0x18, magic</summary>
             public UInt16 s_magic;
-            // 0x18, magic
+            /// <summary>0x1A, padding</summary>
             public UInt16 s_pad2;
-            // 0x1A, padding
+            /// <summary>0x1C, bytes in a block</summary>
             public UInt16 s_blocksize;
-            // 0x1C, bytes in a block
+            /// <summary>0x1E, on-disk structures version</summary>
             public byte s_disk_version;
-            // 0x1E, on-disk structures version
         }
     }
 }

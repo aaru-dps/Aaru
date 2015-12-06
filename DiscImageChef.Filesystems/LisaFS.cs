@@ -423,176 +423,176 @@ namespace DiscImageChef.Plugins
 
         struct Lisa_MDDF
         {
-            // 0x00, Filesystem version
+            /// <summary>0x00, Filesystem version</summary>
             public UInt16 fsversion;
-            // 0x02, Volume ID
+            /// <summary>0x02, Volume ID</summary>
             public UInt64 volid;
-            // 0x0A, Volume sequence number
+            /// <summary>0x0A, Volume sequence number</summary>
             public UInt16 volnum;
-            // 0x0C, Pascal string, 32+1 bytes, volume name
+            /// <summary>0x0C, Pascal string, 32+1 bytes, volume name</summary>
             public string volname;
-            // 0x2D, unknown, possible padding
+            /// <summary>0x2D, unknown, possible padding</summary>
             public byte unknown1;
-            // 0x2E, Pascal string, 32+1 bytes, password
+            /// <summary>0x2E, Pascal string, 32+1 bytes, password</summary>
             public string password;
-            // 0x4F, unknown, possible padding
+            /// <summary>0x4F, unknown, possible padding</summary>
             public byte unknown2;
-            // 0x50, Lisa serial number that init'ed this disk
+            /// <summary>0x50, Lisa serial number that init'ed this disk</summary>
             public UInt32 machine_id;
-            // 0x54, ID of the master copy ? no idea really
+            /// <summary>0x54, ID of the master copy ? no idea really</summary>
             public UInt32 master_copy_id;
-            // 0x58, Date of volume creation
+            /// <summary>0x58, Date of volume creation</summary>
             public DateTime dtvc;
-            // 0x5C, Date...
+            /// <summary>0x5C, Date...</summary>
             public DateTime dtcc;
-            // 0x60, Date of volume backup
+            /// <summary>0x60, Date of volume backup</summary>
             public DateTime dtvb;
-            // 0x64, Date of volume scavenging
+            /// <summary>0x64, Date of volume scavenging</summary>
             public DateTime dtvs;
-            // 0x68, unknown
+            /// <summary>0x68, unknown</summary>
             public UInt32 unknown3;
-            // 0x6C, block the MDDF is residing on
+            /// <summary>0x6C, block the MDDF is residing on</summary>
             public UInt32 mddf_block;
-            // 0x70, volsize-1
+            /// <summary>0x70, volsize-1</summary>
             public UInt32 volsize_minus_one;
-            // 0x74, volsize-1-mddf_block
+            /// <summary>0x74, volsize-1-mddf_block</summary>
             public UInt32 volsize_minus_mddf_minus_one;
-            // 0x78, Volume size in blocks
+            /// <summary>0x78, Volume size in blocks</summary>
             public UInt32 vol_size;
-            // 0x7C, Blocks size of underlying drive (data+tags)
+            /// <summary>0x7C, Blocks size of underlying drive (data+tags)</summary>
             public UInt16 blocksize;
-            // 0x7E, Data only block size
+            /// <summary>0x7E, Data only block size</summary>
             public UInt16 datasize;
-            // 0x80, unknown
+            /// <summary>0x80, unknown</summary>
             public UInt16 unknown4;
-            // 0x82, unknown
+            /// <summary>0x82, unknown</summary>
             public UInt32 unknown5;
-            // 0x86, unknown
+            /// <summary>0x86, unknown</summary>
             public UInt32 unknown6;
-            // 0x8A, Size in sectors of filesystem clusters
+            /// <summary>0x8A, Size in sectors of filesystem clusters</summary>
             public UInt16 clustersize;
-            // 0x8C, Filesystem size in blocks
+            /// <summary>0x8C, Filesystem size in blocks</summary>
             public UInt32 fs_size;
-            // 0x90, unknown
+            /// <summary>0x90, unknown</summary>
             public UInt32 unknown7;
-            // 0x94, unknown
+            /// <summary>0x94, unknown</summary>
             public UInt32 unknown8;
-            // 0x98, unknown
+            /// <summary>0x98, unknown</summary>
             public UInt32 unknown9;
-            // 0x9C, unknown
+            /// <summary>0x9C, unknown</summary>
             public UInt32 unknown10;
-            // 0xA0, unknown
+            /// <summary>0xA0, unknown</summary>
             public UInt32 unknown11;
-            // 0xA4, unknown
+            /// <summary>0xA4, unknown</summary>
             public UInt32 unknown12;
-            // 0xA8, unknown
+            /// <summary>0xA8, unknown</summary>
             public UInt32 unknown13;
-            // 0xAC, unknown
+            /// <summary>0xAC, unknown</summary>
             public UInt32 unknown14;
-            // 0xB0, Files in volume
+            /// <summary>0xB0, Files in volume</summary>
             public UInt16 filecount;
-            // 0xB2, unknown
+            /// <summary>0xB2, unknown</summary>
             public UInt32 unknown15;
-            // 0xB6, unknown
+            /// <summary>0xB6, unknown</summary>
             public UInt32 unknown16;
-            // 0xBA, Free blocks
+            /// <summary>0xBA, Free blocks</summary>
             public UInt32 freecount;
-            // 0xBE, unknown
+            /// <summary>0xBE, unknown</summary>
             public UInt16 unknown17;
-            // 0xC0, unknown
+            /// <summary>0xC0, unknown</summary>
             public UInt32 unknown18;
-            // 0xC4, no idea
+            /// <summary>0xC4, no idea</summary>
             public UInt64 overmount_stamp;
-            // 0xCC, serialization, lisa serial number authorized to use blocked software on this volume
+            /// <summary>0xCC, serialization, lisa serial number authorized to use blocked software on this volume</summary>
             public UInt32 serialization;
-            // 0xD0, unknown
+            /// <summary>0xD0, unknown</summary>
             public UInt32 unknown19;
-            // 0xD4, unknown, possible timestamp
+            /// <summary>0xD4, unknown, possible timestamp</summary>
             public UInt32 unknown_timestamp;
-            // 0xD8, unknown
+            /// <summary>0xD8, unknown</summary>
             public UInt32 unknown20;
-            // 0xDC, unknown
+            /// <summary>0xDC, unknown</summary>
             public UInt32 unknown21;
-            // 0xE0, unknown
+            /// <summary>0xE0, unknown</summary>
             public UInt32 unknown22;
-            // 0xE4, unknown
+            /// <summary>0xE4, unknown</summary>
             public UInt32 unknown23;
-            // 0xE8, unknown
+            /// <summary>0xE8, unknown</summary>
             public UInt32 unknown24;
-            // 0xEC, unknown
+            /// <summary>0xEC, unknown</summary>
             public UInt32 unknown25;
-            // 0xF0, unknown
+            /// <summary>0xF0, unknown</summary>
             public UInt32 unknown26;
-            // 0xF4, unknown
+            /// <summary>0xF4, unknown</summary>
             public UInt32 unknown27;
-            // 0xF8, unknown
+            /// <summary>0xF8, unknown</summary>
             public UInt32 unknown28;
-            // 0xFC, unknown
+            /// <summary>0xFC, unknown</summary>
             public UInt32 unknown29;
-            // 0x100, unknown
+            /// <summary>0x100, unknown</summary>
             public UInt32 unknown30;
-            // 0x104, unknown
+            /// <summary>0x104, unknown</summary>
             public UInt32 unknown31;
-            // 0x108, unknown
+            /// <summary>0x108, unknown</summary>
             public UInt32 unknown32;
-            // 0x10C, unknown
+            /// <summary>0x10C, unknown</summary>
             public UInt32 unknown33;
-            // 0x110, unknown
+            /// <summary>0x110, unknown</summary>
             public UInt32 unknown34;
-            // 0x114, unknown
+            /// <summary>0x114, unknown</summary>
             public UInt32 unknown35;
-            // 0x118, ID of volume where this volume was backed up
+            /// <summary>0x118, ID of volume where this volume was backed up</summary>
             public UInt64 backup_volid;
-            // 0x120, Size of LisaInfo label
+            /// <summary>0x120, Size of LisaInfo label</summary>
             public UInt16 label_size;
-            // 0x122, not clear
+            /// <summary>0x122, not clear</summary>
             public UInt16 fs_overhead;
-            // 0x124, Return code of Scavenger
+            /// <summary>0x124, Return code of Scavenger</summary>
             public UInt16 result_scavenge;
-            // 0x126, No idea
+            /// <summary>0x126, No idea</summary>
             public UInt16 boot_code;
-            // 0x128, No idea
+            /// <summary>0x128, No idea</summary>
             public UInt16 boot_environ;
-            // 0x12A, unknown
+            /// <summary>0x12A, unknown</summary>
             public UInt32 unknown36;
-            // 0x12E, unknown
+            /// <summary>0x12E, unknown</summary>
             public UInt32 unknown37;
-            // 0x132, unknown
+            /// <summary>0x132, unknown</summary>
             public UInt32 unknown38;
-            // 0x136, Total volumes in sequence
+            /// <summary>0x136, Total volumes in sequence</summary>
             public UInt16 vol_sequence;
-            // 0x138, Volume is dirty?
+            /// <summary>0x138, Volume is dirty?</summary>
             public byte vol_left_mounted;
-            // Is password present? (On-disk position unknown)
+            /// <summary>Is password present? (On-disk position unknown)</summary>
             public byte passwd_present;
-            // Opened files (memory-only?) (On-disk position unknown)
+            /// <summary>Opened files (memory-only?) (On-disk position unknown)</summary>
             public UInt32 opencount;
-            // No idea (On-disk position unknown)
+            /// <summary>No idea (On-disk position unknown)</summary>
             public UInt32 copy_thread;
             // Flags are boolean, but Pascal seems to use them as full unsigned 8 bit values
-            // No idea (On-disk position unknown)
+            /// <summary>No idea (On-disk position unknown)</summary>
             public byte privileged;
-            // Read-only volume (On-disk position unknown)
+            /// <summary>Read-only volume (On-disk position unknown)</summary>
             public byte write_protected;
-            // Master disk (On-disk position unknown)
+            /// <summary>Master disk (On-disk position unknown)</summary>
             public byte master;
-            // Copy disk (On-disk position unknown)
+            /// <summary>Copy disk (On-disk position unknown)</summary>
             public byte copy;
-            // No idea (On-disk position unknown)
+            /// <summary>No idea (On-disk position unknown)</summary>
             public byte copy_flag;
-            // No idea (On-disk position unknown)
+            /// <summary>No idea (On-disk position unknown)</summary>
             public byte scavenge_flag;
         }
 
         struct Lisa_Tag
         {
-            // 0x00 Unknown
+            /// <summary>0x00 Unknown</summary>
             public UInt32 unknown1;
-            // 0x04 File ID
+            /// <summary>0x04 File ID</summary>
             public UInt16 fileID;
-            // 0x06 Unknown
+            /// <summary>0x06 Unknown</summary>
             public UInt16 unknown2;
-            // 0x08 Unknown
+            /// <summary>0x08 Unknown</summary>
             public UInt32 unknown3;
         }
     }

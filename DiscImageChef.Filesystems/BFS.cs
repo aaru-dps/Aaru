@@ -230,58 +230,61 @@ namespace DiscImageChef.Plugins
             xmlFSType.VolumeName = besb.name;
         }
 
+        /// <summary>
+        /// Be superblock
+        /// </summary>
         struct BeSuperBlock
         {
+            /// <summary>0x000, Volume name, 32 bytes</summary>
             public string name;
-            // 0x000, Volume name, 32 bytes
+            /// <summary>0x020, "BFS1", 0x42465331</summary>
             public UInt32 magic1;
-            // 0x020, "BFS1", 0x42465331
+            /// <summary>0x024, "BIGE", 0x42494745</summary>
             public UInt32 fs_byte_order;
-            // 0x024, "BIGE", 0x42494745
+            /// <summary>0x028, Bytes per block</summary>
             public UInt32 block_size;
-            // 0x028, Bytes per block
+            /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
             public UInt32 block_shift;
-            // 0x02C, 1 << block_shift == block_size
+            /// <summary>0x030, Blocks in volume</summary>
             public Int64 num_blocks;
-            // 0x030, Blocks in volume
+            /// <summary>0x038, Used blocks in volume</summary>
             public Int64 used_blocks;
-            // 0x038, Used blocks in volume
+            /// <summary>0x040, Bytes per inode</summary>
             public Int32 inode_size;
-            // 0x040, Bytes per inode
+            /// <summary>0x044, 0xDD121031</summary>
             public UInt32 magic2;
-            // 0x044, 0xDD121031
+            /// <summary>0x048, Blocks per allocation group</summary>
             public Int32 blocks_per_ag;
-            // 0x048, Blocks per allocation group
+            /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
             public Int32 ag_shift;
-            // 0x04C, 1 << ag_shift == blocks_per_ag
+            /// <summary>0x050, Allocation groups in volume</summary>
             public Int32 num_ags;
-            // 0x050, Allocation groups in volume
+            /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
             public UInt32 flags;
-            // 0x054, 0x434c454e if clean, 0x44495254 if dirty
+            /// <summary>0x058, Allocation group of journal</summary>
             public Int32 log_blocks_ag;
-            // 0x058, Allocation group of journal
+            /// <summary>0x05C, Start block of journal, inside ag</summary>
             public UInt16 log_blocks_start;
-            // 0x05C, Start block of journal, inside ag
+            /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
             public UInt16 log_blocks_len;
-            // 0x05E, Length in blocks of journal, inside ag
+            /// <summary>0x060, Start of journal</summary>
             public Int64 log_start;
-            // 0x060, Start of journal
+            /// <summary>0x068, End of journal</summary>
             public Int64 log_end;
-            // 0x068, End of journal
+            /// <summary>0x070, 0x15B6830E</summary>
             public UInt32 magic3;
-            // 0x070, 0x15B6830E
+            /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
             public Int32 root_dir_ag;
-            // 0x074, Allocation group where root folder's i-node resides
+            /// <summary>0x078, Start in ag of root folder's i-node</summary>
             public UInt16 root_dir_start;
-            // 0x078, Start in ag of root folder's i-node
+            /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
             public UInt16 root_dir_len;
-            // 0x07A, As this is part of inode_addr, this is 1
+            /// <summary>0x07C, Allocation group where indices' i-node resides</summary>
             public Int32 indices_ag;
-            // 0x07C, Allocation group where indices' i-node resides
+            /// <summary>0x080, Start in ag of indices' i-node</summary>
             public UInt16 indices_start;
-            // 0x080, Start in ag of indices' i-node
+            /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
             public UInt16 indices_len;
-            // 0x082, As this is part of inode_addr, this is 1
         }
     }
 }

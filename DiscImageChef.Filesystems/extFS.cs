@@ -102,40 +102,46 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
         }
 
+        /// <summary>
+        /// ext superblock magic
+        /// </summary>
         public const UInt16 extFSMagic = 0x137D;
 
+        /// <summary>
+        /// ext superblock
+        /// </summary>
         public struct extFSSuperBlock
         {
+            /// <summary>0x000, inodes on volume</summary>
             public UInt32 inodes;
-            // 0x000, inodes on volume
+            /// <summary>0x004, zones on volume</summary>
             public UInt32 zones;
-            // 0x004, zones on volume
+            /// <summary>0x008, first free block</summary>
             public UInt32 firstfreeblk;
-            // 0x008, first free block
+            /// <summary>0x00C, free blocks count</summary>
             public UInt32 freecountblk;
-            // 0x00C, free blocks count
+            /// <summary>0x010, first free inode</summary>
             public UInt32 firstfreeind;
-            // 0x010, first free inode
+            /// <summary>0x014, free inodes count</summary>
             public UInt32 freecountind;
-            // 0x014, free inodes count
+            /// <summary>0x018, first data zone</summary>
             public UInt32 firstdatazone;
-            // 0x018, first data zone
+            /// <summary>0x01C, log zone size</summary>
             public UInt32 logzonesize;
-            // 0x01C, log zone size
+            /// <summary>0x020, max zone size</summary>
             public UInt32 maxsize;
-            // 0x020, max zone size
+            /// <summary>0x024, reserved</summary>
             public UInt32 reserved1;
-            // 0x024, reserved
+            /// <summary>0x028, reserved</summary>
             public UInt32 reserved2;
-            // 0x028, reserved
+            /// <summary>0x02C, reserved</summary>
             public UInt32 reserved3;
-            // 0x02C, reserved
+            /// <summary>0x030, reserved</summary>
             public UInt32 reserved4;
-            // 0x030, reserved
+            /// <summary>0x034, reserved</summary>
             public UInt32 reserved5;
-            // 0x034, reserved
+            /// <summary>0x038, 0x137D (little endian)</summary>
             public UInt16 magic;
-            // 0x038, 0x137D (little endian)
         }
     }
 }

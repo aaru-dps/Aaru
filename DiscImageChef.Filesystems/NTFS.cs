@@ -176,72 +176,77 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
         }
 
-        struct NTFS_BootBlock // Sector 0
+        /// <summary>
+        /// NTFS $BOOT
+        /// </summary>
+        struct NTFS_BootBlock
         {
-            // BIOS Parameter Block
+            // Start of BIOS Parameter Block
+            /// <summary>0x000, Jump to boot code</summary>
             public byte jmp1;
-            // 0x000, Jump to boot code
+            /// <summary>0x001, ...;</summary>
             public UInt16 jmp2;
-            // 0x001, ...;
+            /// <summary>0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "</summary>
             public string OEMName;
-            // 0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "
+            /// <summary>0x00B, Bytes per sector</summary>
             public UInt16 bps;
-            // 0x00B, Bytes per sector
+            /// <summary>0x00D, Sectors per cluster</summary>
             public byte spc;
-            // 0x00D, Sectors per cluster
+            /// <summary>0x00E, Reserved sectors, seems 0</summary>
             public UInt16 rsectors;
-            // 0x00E, Reserved sectors, seems 0
+            /// <summary>0x010, Number of FATs... obviously, 0</summary>
             public byte fats_no;
-            // 0x010, Number of FATs... obviously, 0
+            /// <summary>0x011, Number of entries on root directory... 0</summary>
             public UInt16 root_ent;
-            // 0x011, Number of entries on root directory... 0
+            /// <summary>0x013, Sectors in volume... 0</summary>
             public UInt16 sml_sectors;
-            // 0x013, Sectors in volume... 0
+            /// <summary>0x015, Media descriptor</summary>
             public byte media;
-            // 0x015, Media descriptor
+            /// <summary>0x016, Sectors per FAT... 0</summary>
             public UInt16 spfat;
-            // 0x016, Sectors per FAT... 0
+            /// <summary>0x018, Sectors per track, required to boot</summary>
             public UInt16 sptrk;
-            // 0x018, Sectors per track, required to boot
+            /// <summary>0x01A, Heads... required to boot</summary>
             public UInt16 heads;
-            // 0x01A, Heads... required to boot
+            /// <summary>0x01C, Hidden sectors before BPB</summary>
             public UInt32 hsectors;
-            // 0x01C, Hidden sectors before BPB
+            /// <summary>0x020, Sectors in volume if &gt; 65535... 0</summary>
             public UInt32 big_sectors;
-            // 0x020, Sectors in volume if > 65535... 0
+            /// <summary>0x024, Drive number</summary>
             public byte drive_no;
-            // 0x024, Drive number
+            /// <summary>0x025, 0</summary>
             public byte nt_flags;
-            // 0x025, 0
+            /// <summary>0x026, EPB signature, 0x80</summary>
             public byte signature1;
-            // 0x026, EPB signature, 0x80
+            /// <summary>0x027, Alignment</summary>
             public byte dummy;
-            // 0x027, Alignment
             // End of BIOS Parameter Block
-            // NTFS real superblock
+
+            // Start of NTFS real superblock
+            /// <summary>0x028, Sectors on volume</summary>
             public Int64 sectors;
-            // 0x028, Sectors on volume
+            /// <summary>0x030, LSN of $MFT</summary>
             public Int64 mft_lsn;
-            // 0x030, LSN of $MFT
+            /// <summary>0x038, LSN of $MFTMirror</summary>
             public Int64 mftmirror_lsn;
-            // 0x038, LSN of $MFTMirror
+            /// <summary>0x040, Clusters per MFT record</summary>
             public sbyte mft_rc_clusters;
-            // 0x040, Clusters per MFT record
+            /// <summary>0x041, Alignment</summary>
             public byte dummy2;
-            // 0x041, Alignment
+            /// <summary>0x042, Alignment</summary>
             public UInt16 dummy3;
-            // 0x042, Alignment
+            /// <summary>0x044, Clusters per index block</summary>
             public sbyte index_blk_cts;
-            // 0x044, Clusters per index block
+            /// <summary>0x045, Alignment</summary>
             public byte dummy4;
-            // 0x045, Alignment
+            /// <summary>0x046, Alignment</summary>
             public UInt16 dummy5;
-            // 0x046, Alignment
+            /// <summary>0x048, Volume serial number</summary>
             public UInt64 serial_no;
-            // 0x048, Volume serial number
             // End of NTFS superblock, followed by 430 bytes of boot code
+
+            /// <summary>0x1FE, 0xAA55</summary>
             public UInt16 signature2;
-            // 0x1FE, 0xAA55
         }
     }
 }

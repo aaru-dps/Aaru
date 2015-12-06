@@ -59,7 +59,7 @@ namespace DiscImageChef.Plugins
             if ((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            byte signature; // 0x29
+            byte signature; /// <summary>0x29
             string fs_type; // "SOL_FS  "
 
             byte[] bpb = imagePlugin.ReadSector(0 + partitionStart);
@@ -160,38 +160,38 @@ namespace DiscImageChef.Plugins
 
         public struct SolarOSParameterBlock
         {
+            /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>
             public byte[] x86_jump;
-            // 0x00, x86 jump (3 bytes), jumps to 0x60
+            /// <summary>0x03, 8 bytes, "SOLAR_OS"</summary>
             public string OEMName;
-            // 0x03, 8 bytes, "SOLAR_OS"
+            /// <summary>0x0B, Bytes per sector</summary>
             public UInt16 bps;
-            // 0x0B, Bytes per sector
+            /// <summary>0x0D, unknown, 0x01</summary>
             public byte unk1;
-            // 0x0D, unknown, 0x01
+            /// <summary>0x0E, unknown, 0x0201</summary>
             public UInt16 unk2;
-            // 0x0E, unknown, 0x0201
+            /// <summary>0x10, Number of entries on root directory ? (no root directory found)</summary>
             public UInt16 root_ent;
-            // 0x10, Number of entries on root directory ? (no root directory found)
+            /// <summary>0x12, Sectors in volume</summary>
             public UInt16 sectors;
-            // 0x12, Sectors in volume
+            /// <summary>0x14, Media descriptor</summary>
             public byte media;
-            // 0x14, Media descriptor
+            /// <summary>0x15, Sectors per FAT ? (no FAT found)</summary>
             public UInt16 spfat;
-            // 0x15, Sectors per FAT ? (no FAT found)
+            /// <summary>0x17, Sectors per track</summary>
             public UInt16 sptrk;
-            // 0x17, Sectors per track
+            /// <summary>0x19, Heads</summary>
             public UInt16 heads;
-            // 0x19, Heads
+            /// <summary>0x1B, unknown, 10 bytes, zero-filled</summary>
             public byte[] unk3;
-            // 0x1B, unknown, 10 bytes, zero-filled
+            /// <summary>0x25, 0x29</summary>
             public byte signature;
-            // 0x25, 0x29
+            /// <summary>0x26, unknown, zero-filled</summary>
             public UInt32 unk4;
-            // 0x26, unknown, zero-filled
+            /// <summary>0x2A, 11 bytes, volume name, space-padded</summary>
             public string vol_name;
-            // 0x2A, 11 bytes, volume name, space-padded
+            /// <summary>0x35, 8 bytes, "SOL_FS  "</summary>
             public string fs_type;
-            // 0x35, 8 bytes, "SOL_FS  "
         }
     }
 }
