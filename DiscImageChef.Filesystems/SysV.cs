@@ -149,7 +149,7 @@ namespace DiscImageChef.Plugins
                     {
                         if (s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if ((s_fsize * 1024) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if ((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                                 return true;
                         }
                     }
@@ -249,7 +249,7 @@ namespace DiscImageChef.Plugins
                     {
                         if (s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if ((s_fsize * 1024) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) <= (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if ((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                             {
                                 sys7th = true;
                                 BigEndianBitConverter.IsLittleEndian = true;
