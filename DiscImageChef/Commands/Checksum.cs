@@ -77,8 +77,6 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(options.InputFile);
-            long maxMemory = GC.GetTotalMemory(false);
-            long snapMemory;
 
             if (inputFormat.ImageInfo.imageHasPartitions)
             {
@@ -303,10 +301,6 @@ namespace DiscImageChef.Commands
                                     spamsumThread.Start(spamsumPkt);
                                 }
 
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
-
                                 while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
@@ -330,10 +324,6 @@ namespace DiscImageChef.Commands
                                 sha384Thread = new Thread(updateSHA384);
                                 sha512Thread = new Thread(updateSHA512);
                                 spamsumThread = new Thread(updateSpamSum);
-
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
                             }
                         }
 
@@ -511,10 +501,6 @@ namespace DiscImageChef.Commands
                                     spamsumThread.Start(spamsumPkt);
                                 }
 
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
-
                                 while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
@@ -538,10 +524,6 @@ namespace DiscImageChef.Commands
                                 sha384Thread = new Thread(updateSHA384);
                                 sha512Thread = new Thread(updateSHA512);
                                 spamsumThread = new Thread(updateSpamSum);
-
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
                             }
 
                             if (options.SeparatedTracks)
@@ -612,10 +594,6 @@ namespace DiscImageChef.Commands
                                     spamsumThread.Start(spamsumPktTrack);
                                 }
 
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
-
                                 while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
@@ -639,10 +617,6 @@ namespace DiscImageChef.Commands
                                 sha384Thread = new Thread(updateSHA384);
                                 sha512Thread = new Thread(updateSHA512);
                                 spamsumThread = new Thread(updateSpamSum);
-
-                                snapMemory = GC.GetTotalMemory(false);
-                                if (snapMemory > maxMemory)
-                                    maxMemory = snapMemory;
                             }
                         }
 
@@ -756,10 +730,6 @@ namespace DiscImageChef.Commands
                                 spamsumThread.Start(spamsumPkt);
                             }
 
-                            snapMemory = GC.GetTotalMemory(false);
-                            if (snapMemory > maxMemory)
-                                maxMemory = snapMemory;
-
                             while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                                 crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                 //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
@@ -783,10 +753,6 @@ namespace DiscImageChef.Commands
                             sha384Thread = new Thread(updateSHA384);
                             sha512Thread = new Thread(updateSHA512);
                             spamsumThread = new Thread(updateSpamSum);
-
-                            snapMemory = GC.GetTotalMemory(false);
-                            if (snapMemory > maxMemory)
-                                maxMemory = snapMemory;
                         }
                     }
 
@@ -1025,10 +991,6 @@ namespace DiscImageChef.Commands
                         spamsumThread.Start(spamsumPkt);
                     }
 
-                    snapMemory = GC.GetTotalMemory(false);
-                    if (snapMemory > maxMemory)
-                        maxMemory = snapMemory;
-
                     while (adlerThread.IsAlive || crc16Thread.IsAlive ||
                         crc32Thread.IsAlive || crc64Thread.IsAlive ||
                         //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
@@ -1052,10 +1014,6 @@ namespace DiscImageChef.Commands
                     sha384Thread = new Thread(updateSHA384);
                     sha512Thread = new Thread(updateSHA512);
                     spamsumThread = new Thread(updateSpamSum);
-
-                    snapMemory = GC.GetTotalMemory(false);
-                    if (snapMemory > maxMemory)
-                        maxMemory = snapMemory;
                 }
 
                 DicConsole.WriteLine();
@@ -1087,8 +1045,6 @@ namespace DiscImageChef.Commands
                 if (options.DoSpamSum)
                     DicConsole.WriteLine("Disk's SpamSum: {0}", ssctx.End());
             }
-
-            DicConsole.DebugWriteLine("Checksum command", "Maximum memory used has been {0} bytes", maxMemory);
         }
 
         #region Threading helpers

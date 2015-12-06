@@ -398,6 +398,154 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
+        public override List<Track> GetTracks()
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Track trk = new Track();
+                trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackEndSector = ImageInfo.sectors - 1;
+                trk.TrackFile = rawImagePath;
+                trk.TrackFileOffset = 0;
+                trk.TrackFileType = "BINARY";
+                trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackSequence = 1;
+                trk.TrackStartSector = 0;
+                trk.TrackSubchannelType = TrackSubchannelType.None;
+                trk.TrackType = TrackType.Data;
+                trk.TrackSession = 1;
+                List<Track> lst = new List<Track>();
+                lst.Add(trk);
+                return lst;
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Track> GetSessionTracks(Session session)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (session.SessionSequence != 1)
+                    throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
+
+                Track trk = new Track();
+                trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackEndSector = ImageInfo.sectors - 1;
+                trk.TrackFile = rawImagePath;
+                trk.TrackFileOffset = 0;
+                trk.TrackFileType = "BINARY";
+                trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackSequence = 1;
+                trk.TrackStartSector = 0;
+                trk.TrackSubchannelType = TrackSubchannelType.None;
+                trk.TrackType = TrackType.Data;
+                trk.TrackSession = 1;
+                List<Track> lst = new List<Track>();
+                lst.Add(trk);
+                return lst;
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Track> GetSessionTracks(UInt16 session)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (session != 1)
+                    throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
+
+                Track trk = new Track();
+                trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackEndSector = ImageInfo.sectors - 1;
+                trk.TrackFile = rawImagePath;
+                trk.TrackFileOffset = 0;
+                trk.TrackFileType = "BINARY";
+                trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;
+                trk.TrackSequence = 1;
+                trk.TrackStartSector = 0;
+                trk.TrackSubchannelType = TrackSubchannelType.None;
+                trk.TrackType = TrackType.Data;
+                trk.TrackSession = 1;
+                List<Track> lst = new List<Track>();
+                lst.Add(trk);
+                return lst;
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override List<Session> GetSessions()
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                Session sess = new Session();
+                sess.EndSector = ImageInfo.sectors - 1;
+                sess.EndTrack = 1;
+                sess.SessionSequence = 1;
+                sess.StartSector = 0;
+                sess.StartTrack = 1;
+                List<Session> lst = new List<Session>();
+                lst.Add(sess);
+                return lst;
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (track != 1)
+                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+
+                return ReadSector(sectorAddress);
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (track != 1)
+                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+
+                return ReadSectors(sectorAddress, length);
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (track != 1)
+                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+
+                return ReadSector(sectorAddress);
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
+        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        {
+            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                if (track != 1)
+                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+
+                return ReadSectors(sectorAddress, length);
+            }
+
+            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        }
+
         #region Private methods
 
         DiskType CalculateDiskType()
@@ -645,52 +793,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetTracks()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetSessionTracks(Session session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Track> GetSessionTracks(UInt16 session)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override List<Session> GetSessions()
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
-        {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
-
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

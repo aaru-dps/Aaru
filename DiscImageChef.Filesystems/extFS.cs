@@ -95,7 +95,9 @@ namespace DiscImageChef.Plugins
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ext";
             xmlFSType.FreeClusters = ext_sb.freecountblk;
+            xmlFSType.FreeClustersSpecified = true;
             xmlFSType.ClusterSize = 1024;
+            xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) * imagePlugin.GetSectorSize() / 1024);
 
             information = sb.ToString();
         }

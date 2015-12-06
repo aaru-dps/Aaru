@@ -38,6 +38,13 @@
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>cicm.cs</Link>
     </Compile>
+    <Compile Include="DiskType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
+      <Name>DiscImageChef.CommonTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

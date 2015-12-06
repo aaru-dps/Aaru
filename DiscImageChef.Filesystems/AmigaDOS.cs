@@ -355,8 +355,12 @@ namespace DiscImageChef.Plugins
             information = sbInformation.ToString();
 
             xmlFSType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+            xmlFSType.CreationDateSpecified = true;
             xmlFSType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+            xmlFSType.ModificationDateSpecified = true;
             xmlFSType.Dirty = rootBlk.bitmapFlag != 0xFFFFFFFF;
+            xmlFSType.Clusters = (long)((partitionEnd - partitionStart) + 1);
+            xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
         }
 
         static UInt32 AmigaChecksum(byte[] data)

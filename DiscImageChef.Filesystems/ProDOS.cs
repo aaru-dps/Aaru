@@ -219,9 +219,15 @@ namespace DiscImageChef.Plugins
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
-            xmlFSType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+            if (year != 0 || month != 0 || day != 0 || hour != 0 || minute != 0)
+            {
+                xmlFSType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+                xmlFSType.CreationDateSpecified = true;
+            }
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
+            xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
+            xmlFSType.ClusterSize = (int)((partitionEnd - partitionStart + 1) / (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 
             return;

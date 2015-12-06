@@ -68,6 +68,8 @@ namespace DiscImageChef.Plugins
             information = "";
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "PC Engine filesystem";
+            xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) / imagePlugin.GetSectorSize() * 2048);
+            xmlFSType.ClusterSize = 2048;
         }
     }
 }

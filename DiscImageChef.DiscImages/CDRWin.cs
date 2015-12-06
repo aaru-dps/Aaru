@@ -1799,8 +1799,8 @@ namespace DiscImageChef.ImagePlugins
                 case CDRWinTrackTypeCDG:
                     {
                         sector_offset = 0;
-                        sector_size = 2448;
-                        sector_skip = 0;
+                        sector_size = 2352;
+                        sector_skip = 96;
                         break;
                     }
                 default:
@@ -1907,6 +1907,19 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackSession = cdr_track.session;
                 _track.TrackSequence = cdr_track.sequence;
                 _track.TrackType = CDRWinTrackTypeToTrackType(cdr_track.tracktype);
+                _track.TrackFile = cdr_track.trackfile.datafile;
+                _track.TrackFileOffset = cdr_track.trackfile.offset;
+                _track.TrackFileType = cdr_track.trackfile.filetype;
+                _track.TrackRawBytesPerSector = cdr_track.bps;
+                _track.TrackBytesPerSector = CDRWinTrackTypeToCookedBytesPerSector(cdr_track.tracktype);
+                if (cdr_track.bps == 2448)
+                {
+                    _track.TrackSubchannelFile = cdr_track.trackfile.datafile;
+                    _track.TrackSubchannelOffset = cdr_track.trackfile.offset;
+                    _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                }
+                else
+                    _track.TrackSubchannelType = TrackSubchannelType.None;
 
                 tracks.Add(_track);
                 previousStartSector = _track.TrackEndSector + 1;
@@ -1943,6 +1956,19 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackSession = cdr_track.session;
                     _track.TrackSequence = cdr_track.sequence;
                     _track.TrackType = CDRWinTrackTypeToTrackType(cdr_track.tracktype);
+                    _track.TrackFile = cdr_track.trackfile.datafile;
+                    _track.TrackFileOffset = cdr_track.trackfile.offset;
+                    _track.TrackFileType = cdr_track.trackfile.filetype;
+                    _track.TrackRawBytesPerSector = cdr_track.bps;
+                    _track.TrackBytesPerSector = CDRWinTrackTypeToCookedBytesPerSector(cdr_track.tracktype);
+                    if (cdr_track.bps == 2448)
+                    {
+                        _track.TrackSubchannelFile = cdr_track.trackfile.datafile;
+                        _track.TrackSubchannelOffset = cdr_track.trackfile.offset;
+                        _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                    }
+                    else
+                        _track.TrackSubchannelType = TrackSubchannelType.None;
 
                     tracks.Add(_track);
                 }
@@ -2070,6 +2096,30 @@ namespace DiscImageChef.ImagePlugins
                 case CDRWinTrackTypeMode1Raw:
                 case CDRWinTrackTypeMode2Raw:
                 case CDRWinTrackTypeCDIRaw:
+                    return 2352;
+                case CDRWinTrackTypeCDG:
+                    return 2448;
+                default:
+                    return 0;
+            }
+        }
+
+        static UInt16 CDRWinTrackTypeToCookedBytesPerSector(string trackType)
+        {
+            switch (trackType)
+            {
+                case CDRWinTrackTypeMode1:
+                case CDRWinTrackTypeMode2Form1:
+                case CDRWinTrackTypeMode1Raw:
+                    return 2048;
+                case CDRWinTrackTypeMode2Form2:
+                    return 2324;
+                case CDRWinTrackTypeMode2Formless:
+                case CDRWinTrackTypeCDI:
+                case CDRWinTrackTypeMode2Raw:
+                case CDRWinTrackTypeCDIRaw:
+                    return 2336;
+                case CDRWinTrackTypeAudio:
                     return 2352;
                 case CDRWinTrackTypeCDG:
                     return 2448;

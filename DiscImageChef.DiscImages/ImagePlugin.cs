@@ -467,6 +467,23 @@ namespace DiscImageChef.ImagePlugins
         public string TrackDescription;
         /// <summary>Indexes, 00 to 99 and sector offset</summary>
         public Dictionary<int, UInt64> Indexes;
+        public string TrackFile;
+        public ulong TrackFileOffset;
+        public string TrackFileType;
+        public int TrackBytesPerSector;
+        public int TrackRawBytesPerSector;
+        public string TrackSubchannelFile;
+        public ulong TrackSubchannelOffset;
+        public TrackSubchannelType TrackSubchannelType;
+    }
+
+    public enum TrackSubchannelType
+    {
+        None,
+        Packed,
+        Raw,
+        PackedInterleaved,
+        RawInterleaved
     }
 
     /// <summary>
@@ -626,7 +643,8 @@ namespace DiscImageChef.ImagePlugins
     {
         OpticalDisc,
         BlockMedia,
-        LinearMedia
+        LinearMedia,
+        AudioMedia
     }
 
     /// <summary>

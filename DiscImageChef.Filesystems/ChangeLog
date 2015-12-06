@@ -1,3 +1,28 @@
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
+	* FFS.cs:
+	* BFS.cs:
+	* ODS.cs:
+	* SysV.cs:
+	* extFS.cs:
+	* ProDOS.cs:
+	* ext2FS.cs:
+	* LisaFS.cs:
+	* MinixFS.cs:
+	* UNIXBFS.cs:
+	* AppleMFS.cs:
+	* PCEngine.cs:
+	* AppleHFS.cs:
+	* AmigaDOS.cs:
+	* AppleHFSPlus.cs:
+	  Completed XML information.
+
+	* ISO9660.cs:
+	  Corrected fail in Sega CD IP.BIN decoding.
+	Corrected IP.BIN date decoding.
+	Trim spaces at end of Volume Descriptor string fields.
+	Completed XML information.
+
 2015-12-05  Natalia Portillo  <claunia@claunia.com>
 
 	* FAT.cs:

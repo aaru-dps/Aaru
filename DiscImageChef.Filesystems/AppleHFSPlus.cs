@@ -258,16 +258,30 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7).AppendLine();
 
                     xmlFSType = new Schemas.FileSystemType();
-                    xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                    if (HPVH.backupDate > 0)
+                    {
+                        xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
+                        xmlFSType.BackupDateSpecified = true;
+                    }
                     if(HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0)
                         xmlFSType.Bootable = true;
                     xmlFSType.Clusters = HPVH.totalBlocks;
                     xmlFSType.ClusterSize = (int)HPVH.blockSize;
-                    xmlFSType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                    if (HPVH.createDate > 0)
+                    {
+                        xmlFSType.CreationDate = DateHandlers.MacToDateTime(HPVH.createDate);
+                        xmlFSType.CreationDateSpecified = true;
+                    }
                     xmlFSType.Dirty = (HPVH.attributes & 0x100) != 0x100;
                     xmlFSType.Files = HPVH.fileCount;
+                    xmlFSType.FilesSpecified = true;
                     xmlFSType.FreeClusters = HPVH.freeBlocks;
-                    xmlFSType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                    xmlFSType.FreeClustersSpecified = true;
+                    if (HPVH.modifyDate > 0)
+                    {
+                        xmlFSType.ModificationDate = DateHandlers.MacToDateTime(HPVH.modifyDate);
+                        xmlFSType.ModificationDateSpecified = true;
+                    }
                     if(HPVH.signature == 0x482B)
                         xmlFSType.Type = "HFS+";
                     if(HPVH.signature == 0x4858)

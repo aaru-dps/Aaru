@@ -1,3 +1,15 @@
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Checksum.cs:
+	  Checking memory usage on each step makes checksum
+	  calculation abismally slower. Removed.
+
+	* Main.cs:
+	* Options.cs:
+	* DiscImageChef.csproj:
+	* Commands/CreateSidecar.cs:
+	  Added method for creating CICM Metadata XML sidecar.
+
 2015-12-04  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:

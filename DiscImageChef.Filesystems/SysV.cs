@@ -343,7 +343,11 @@ namespace DiscImageChef.Plugins
                 if (xnx_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time)).AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time);
+                if (xnx_sb.s_time != 0)
+                {
+                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time);
+                    xmlFSType.ModificationDateSpecified = true;
+                }
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = xnx_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
@@ -478,7 +482,11 @@ namespace DiscImageChef.Plugins
                 if (sysv_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time)).AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
+                if (sysv_sb.s_time != 0)
+                {
+                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
+                    xmlFSType.ModificationDateSpecified = true;
+                }
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = sysv_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
@@ -536,7 +544,11 @@ namespace DiscImageChef.Plugins
                 if (coh_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time)).AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
+                if (coh_sb.s_time != 0)
+                {
+                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
+                    xmlFSType.ModificationDateSpecified = true;
+                }
                 sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = coh_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
@@ -586,7 +598,11 @@ namespace DiscImageChef.Plugins
                 if (v7_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time)).AppendLine();
-                xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
+                if (v7_sb.s_time != 0)
+                {
+                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
+                    xmlFSType.ModificationDateSpecified = true;
+                }
                 sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = v7_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();

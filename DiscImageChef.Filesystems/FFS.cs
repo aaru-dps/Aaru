@@ -651,6 +651,7 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal_ndir).AppendLine();
             sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal_nbfree, ufs_sb.fs_cstotal_nbfree * ufs_sb.fs_bsize).AppendLine();
             xmlFSType.FreeClusters = ufs_sb.fs_cstotal_nbfree;
+            xmlFSType.FreeClustersSpecified = true;
             sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal_nifree).AppendLine();
             sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal_nffree).AppendLine();
             if (ufs_sb.fs_fmod == 1)
@@ -681,11 +682,13 @@ namespace DiscImageChef.Plugins
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal_ndir_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal_nbfree_ufs2, ufs_sb.fs_cstotal_nbfree_ufs2 * ufs_sb.fs_bsize).AppendLine();
                 xmlFSType.FreeClusters = (long)ufs_sb.fs_cstotal_nbfree_ufs2;
+                xmlFSType.FreeClustersSpecified = true;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal_nifree_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal_nffree_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} free clusters", ufs_sb.fs_cstotal_numclusters_ufs2).AppendLine();
                 sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_sec_ufs2)).AppendLine();
                 xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_sec_ufs2);
+                xmlFSType.ModificationDateSpecified = true;
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size_ufs2, ufs_sb.fs_size_ufs2 * ufs_sb.fs_bsize).AppendLine();
                 xmlFSType.Clusters = (long)ufs_sb.fs_dsize_ufs2;
                 sbInformation.AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize_ufs2, ufs_sb.fs_dsize_ufs2 * ufs_sb.fs_bsize).AppendLine();

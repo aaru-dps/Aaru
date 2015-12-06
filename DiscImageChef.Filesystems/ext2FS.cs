@@ -301,6 +301,7 @@ namespace DiscImageChef.Plugins
             {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t), ext_os).AppendLine();
                 xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t);
+                xmlFSType.CreationDateSpecified = true;
             }
             else
                 sb.AppendFormat("Volume was created for {0}", ext_os).AppendLine();
@@ -401,6 +402,7 @@ namespace DiscImageChef.Plugins
             {
                 sb.AppendFormat("Last written on {0}", DateHandlers.UNIXUnsignedToDateTime(supblk.write_t)).AppendLine();
                 xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(supblk.write_t);
+                xmlFSType.ModificationDateSpecified = true;
             }
             else
                 sb.AppendLine("Volume has never been written");
@@ -456,6 +458,7 @@ namespace DiscImageChef.Plugins
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
             xmlFSType.FreeClusters = (long)free;
+            xmlFSType.FreeClustersSpecified = true;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes, supblk.free_inodes * 100 / supblk.inodes).AppendLine();
             if (supblk.first_inode > 0)
                 sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();

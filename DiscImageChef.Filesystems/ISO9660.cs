@@ -393,8 +393,8 @@ namespace DiscImageChef.Plugins
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_name = \"{0}\"", Encoding.ASCII.GetString(volume_name));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_name = \"{0}\"", Encoding.ASCII.GetString(system_name));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_version = \"{0}\"", Encoding.ASCII.GetString(volume_version));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0}", BitConverter.ToInt32(volume_type, 0).ToString("X"));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_version = 0x{0}", BitConverter.ToInt32(system_version, 0).ToString("X"));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0}", BitConverter.ToInt16(volume_type, 0).ToString("X"));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_version = 0x{0}", BitConverter.ToInt16(system_version, 0).ToString("X"));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_address = 0x{0}", BitConverter.ToInt32(ip_address, 0).ToString("X"));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_loadsize = {0}", BitConverter.ToInt32(ip_loadsize, 0));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_entry_address = 0x{0}", BitConverter.ToInt32(ip_entry_address, 0).ToString("X"));
@@ -413,9 +413,20 @@ namespace DiscImageChef.Plugins
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
 
                         // Decoding all data
-                        DateTime ipbindate;
+                        DateTime ipbindate = DateTime.MinValue;
                         CultureInfo provider = CultureInfo.InvariantCulture;
-                        ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "MMddyyyy", provider);
+                        try
+                        {
+                            ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "MMddyyyy", provider);
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date2), "yyyy.MMM", provider);
+                            }
+                            catch {}
+                        }
 
                         /*
                         switch (Encoding.ASCII.GetString(application_type))
@@ -445,8 +456,9 @@ namespace DiscImageChef.Plugins
                         IPBinInformation.AppendFormat("System program load size: {0} bytes", BitConverter.ToInt32(sp_loadsize, 0)).AppendLine();
                         IPBinInformation.AppendFormat("System program entry address: 0x{0}", BitConverter.ToInt32(sp_entry_address, 0).ToString("X")).AppendLine();
                         IPBinInformation.AppendFormat("System program work RAM: {0} bytes", BitConverter.ToInt32(sp_work_ram_size, 0)).AppendLine();
-                        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-                        IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
+                        if(ipbindate != DateTime.MinValue)
+                            IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
+                        //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
                         IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(hardware_id)).AppendLine();
                         IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(developer_code)).AppendLine();
                         IPBinInformation.AppendFormat("Domestic title: {0}", Encoding.ASCII.GetString(domestic_title)).AppendLine();
@@ -879,7 +891,59 @@ namespace DiscImageChef.Plugins
             if (Joliet)
             {
                 xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
+                xmlFSType.VolumeName = decodedJolietVD.VolumeIdentifier;
+                xmlFSType.VolumeSetIdentifier = decodedJolietVD.VolumeSetIdentifier;
+                xmlFSType.PublisherIdentifier = decodedJolietVD.PublisherIdentifier;
+                xmlFSType.DataPreparerIdentifier = decodedJolietVD.DataPreparerIdentifier;
+                xmlFSType.ApplicationIdentifier = decodedJolietVD.ApplicationIdentifier;
+                xmlFSType.CreationDate = decodedJolietVD.CreationTime;
+                xmlFSType.CreationDateSpecified = true;
+                if (decodedJolietVD.HasModificationTime)
+                {
+                    xmlFSType.ModificationDate = decodedJolietVD.ModificationTime;
+                    xmlFSType.ModificationDateSpecified = true;
+                }
+                if (decodedJolietVD.HasExpirationTime)
+                {
+                    xmlFSType.ExpirationDate = decodedJolietVD.ExpirationTime;
+                    xmlFSType.ExpirationDateSpecified = true;
+                }
+                if (decodedJolietVD.HasEffectiveTime)
+                {
+                    xmlFSType.EffectiveDate = decodedJolietVD.EffectiveTime;
+                    xmlFSType.EffectiveDateSpecified = true;
+                }
             }
+            else
+            {
+                xmlFSType.SystemIdentifier = decodedVD.SystemIdentifier;
+                xmlFSType.VolumeName = decodedVD.VolumeIdentifier;
+                xmlFSType.VolumeSetIdentifier = decodedVD.VolumeSetIdentifier;
+                xmlFSType.PublisherIdentifier = decodedVD.PublisherIdentifier;
+                xmlFSType.DataPreparerIdentifier = decodedVD.DataPreparerIdentifier;
+                xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
+                xmlFSType.CreationDate = decodedVD.CreationTime;
+                xmlFSType.CreationDateSpecified = true;
+                if (decodedVD.HasModificationTime)
+                {
+                    xmlFSType.ModificationDate = decodedVD.ModificationTime;
+                    xmlFSType.ModificationDateSpecified = true;
+                }
+                if (decodedVD.HasExpirationTime)
+                {
+                    xmlFSType.ExpirationDate = decodedVD.ExpirationTime;
+                    xmlFSType.ExpirationDateSpecified = true;
+                }
+                if (decodedVD.HasEffectiveTime)
+                {
+                    xmlFSType.EffectiveDate = decodedVD.EffectiveTime;
+                    xmlFSType.EffectiveDateSpecified = true;
+                }
+            }
+
+            xmlFSType.Bootable |= Bootable || SegaCD || Saturn || Dreamcast;
+            xmlFSType.Clusters = (long)(partitionEnd - partitionStart + 1);
+            xmlFSType.ClusterSize = 2048;
 
             information = ISOMetadata.ToString();
         }
@@ -888,12 +952,12 @@ namespace DiscImageChef.Plugins
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId);
-            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId);
-            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId);
-            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId);
-            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId);
-            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId);
+            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId).TrimEnd();
+            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId).TrimEnd();
+            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId).TrimEnd();
+            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd();
+            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd();
+            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd();
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
@@ -936,12 +1000,12 @@ namespace DiscImageChef.Plugins
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId);
-            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId);
-            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId);
-            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId);
-            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId);
-            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId);
+            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId).TrimEnd();
+            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId).TrimEnd();
+            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId).TrimEnd();
+            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId).TrimEnd();
+            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId).TrimEnd();
+            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId).TrimEnd();
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else

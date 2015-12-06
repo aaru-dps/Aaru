@@ -260,11 +260,19 @@ namespace DiscImageChef.Plugins
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "FILES-11";
             xmlFSType.ClusterSize = homeblock.cluster * 512;
+            xmlFSType.Clusters = homeblock.cluster;
             xmlFSType.VolumeName = homeblock.volname;
             xmlFSType.VolumeSerial = String.Format("{0:X8}", homeblock.serialnum);
-            xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
+            if (homeblock.credate > 0)
+            {
+                xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
+                xmlFSType.CreationDateSpecified = true;
+            }
             if (homeblock.revdate > 0)
+            {
                 xmlFSType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
+                xmlFSType.ModificationDateSpecified = true;
+            }
 
             information = sb.ToString();
         }

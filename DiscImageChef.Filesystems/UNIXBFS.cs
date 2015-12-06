@@ -108,6 +108,8 @@ namespace DiscImageChef.Plugins
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "BFS";
             xmlFSType.VolumeName = bfs_sb.s_volume;
+            xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
+            xmlFSType.Clusters = (long)(partitionEnd - partitionStart + 1);
 
             information = sb.ToString();
         }

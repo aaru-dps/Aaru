@@ -361,15 +361,29 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+            if (MDB.drVolBkUp > 0)
+            {
+                xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
+                xmlFSType.BackupDateSpecified = true;
+            }
             xmlFSType.Bootable = BB.signature == HFSBB_MAGIC;
             xmlFSType.Clusters = MDB.drNmAlBlks;
             xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
-            xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+            if (MDB.drCrDate > 0)
+            {
+                xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                xmlFSType.CreationDateSpecified = true;
+            }
             xmlFSType.Dirty = (MDB.drAtrb & 0x100) != 0x100;
             xmlFSType.Files = MDB.drFilCnt;
+            xmlFSType.FilesSpecified = true;
             xmlFSType.FreeClusters = MDB.drFreeBks;
-            xmlFSType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+            xmlFSType.FreeClustersSpecified = true;
+            if (MDB.drLsMod > 0)
+            {
+                xmlFSType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
+                xmlFSType.ModificationDateSpecified = true;
+            }
             xmlFSType.Type = "HFS";
             xmlFSType.VolumeName = MDB.drVN;
             if (MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)

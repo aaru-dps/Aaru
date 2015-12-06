@@ -225,6 +225,7 @@ namespace DiscImageChef.Plugins
             xmlFSType.ClusterSize = (int)besb.block_size;
             xmlFSType.Dirty = besb.flags == BEFS_DIRTY;
             xmlFSType.FreeClusters = besb.num_blocks - besb.used_blocks;
+            xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Type = "BeFS";
             xmlFSType.VolumeName = besb.name;
         }

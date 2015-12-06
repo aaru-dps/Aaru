@@ -1,3 +1,21 @@
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
+	* CDRWin.cs:
+	  Added extra track information.
+	Corrected ReadLong for CD+G, subchannel should never come
+	  along main channel on reading.
+
+	* ImagePlugin.cs:
+	  Added extra track information.
+	Added audio media type.
+
+	* Nero.cs:
+	  Added extra track information.
+
+	* ZZZRawImage.cs:
+	  Added support for ReadLong and a single track and session
+	  for optical discs.
+
 2015-12-05  Natalia Portillo  <claunia@claunia.com>
 
 	* VHD.cs:

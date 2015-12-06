@@ -170,6 +170,14 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.Benchmark.doBenchmark(BenchmarkOptions);
                     break;
+                case "create-sidecar":
+                    CreateSidecarSubOptions CreateSidecarOptions = (CreateSidecarSubOptions)invokedVerbInstance;
+                    if (CreateSidecarOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (CreateSidecarOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.CreateSidecar.doSidecar(CreateSidecarOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }

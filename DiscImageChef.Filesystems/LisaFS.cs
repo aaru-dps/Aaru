@@ -387,13 +387,23 @@ namespace DiscImageChef.Plugins
                         information = sb.ToString();
 
                         xmlFSType = new Schemas.FileSystemType();
-                        xmlFSType.BackupDate = mddf.dtvb;
+                        if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
+                        {
+                            xmlFSType.BackupDate = mddf.dtvb;
+                            xmlFSType.BackupDateSpecified = true;
+                        }
                         xmlFSType.Clusters = mddf.vol_size;
                         xmlFSType.ClusterSize = mddf.clustersize * mddf.datasize;
-                        xmlFSType.CreationDate = mddf.dtvc;
+                        if(DateTime.Compare(mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
+                        {
+                            xmlFSType.CreationDate = mddf.dtvc;
+                            xmlFSType.CreationDateSpecified = true;
+                        }
                         xmlFSType.Dirty = mddf.vol_left_mounted != 0;
                         xmlFSType.Files = mddf.filecount;
+                        xmlFSType.FilesSpecified = true;
                         xmlFSType.FreeClusters = mddf.freecount;
+                        xmlFSType.FreeClustersSpecified = true;
                         xmlFSType.Type = "LisaFS";
                         xmlFSType.VolumeName = mddf.volname;
                         xmlFSType.VolumeSerial = String.Format("{0:X16}", mddf.volid);

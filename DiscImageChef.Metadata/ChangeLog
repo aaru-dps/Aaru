@@ -1,3 +1,10 @@
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskType.cs:
+	* DiscImageChef.Metadata.csproj:
+	  Added method to convert DiskType to disk type and subtype
+	  strings.
+
 2015-12-05  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Metadata.csproj:

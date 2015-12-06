@@ -1533,6 +1533,55 @@ namespace DiscImageChef.ImagePlugins
                         _track.TrackStartSector = _neroTrack.StartLBA;
                         _track.TrackType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode);
                         imageTracks.Add(_track);
+                        _track.TrackFile = _imagePath;
+                        _track.TrackFileOffset = _neroTrack.Offset;
+                        _track.TrackFileType = "BINARY";
+                        _track.TrackSubchannelType = TrackSubchannelType.None;
+                        switch((DAOMode)_neroTrack.Mode)
+                        {
+                            case DAOMode.Audio:
+                                _track.TrackBytesPerSector = 2352;
+                                _track.TrackRawBytesPerSector = 2352;
+                                break;
+                            case DAOMode.AudioSub:
+                                _track.TrackBytesPerSector = 2352;
+                                _track.TrackRawBytesPerSector = 2448;
+                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                break;
+                            case DAOMode.Data:
+                            case DAOMode.DataM2F1:
+                                _track.TrackBytesPerSector = 2048;
+                                _track.TrackRawBytesPerSector = 2048;
+                                break;
+                            case DAOMode.DataM2F2:
+                                _track.TrackBytesPerSector = 2336;
+                                _track.TrackRawBytesPerSector = 2336;
+                                break;
+                            case DAOMode.DataM2Raw:
+                                _track.TrackBytesPerSector = 2352;
+                                _track.TrackRawBytesPerSector = 2352;
+                                break;
+                            case DAOMode.DataM2RawSub:
+                                _track.TrackBytesPerSector = 2352;
+                                _track.TrackRawBytesPerSector = 2448;
+                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                break;
+                            case DAOMode.DataRaw:
+                                _track.TrackBytesPerSector = 2048;
+                                _track.TrackRawBytesPerSector = 2352;
+                                break;
+                            case DAOMode.DataRawSub:
+                                _track.TrackBytesPerSector = 2048;
+                                _track.TrackRawBytesPerSector = 2448;
+                                _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
+                                break;
+                        }
+
+                        if(_track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
+                        {
+                            _track.TrackSubchannelFile = _imagePath;
+                            _track.TrackSubchannelOffset = _neroTrack.Offset;
+                        }
 
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}", _track.TrackDescription);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}", _track.TrackEndSector);

@@ -245,6 +245,12 @@ namespace DiscImageChef
         public int BufferSize { get; set; }
     }
 
+    public class CreateSidecarSubOptions : CommonSubOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+    }
+
     public class Options
     {
         public Options()
@@ -259,7 +265,8 @@ namespace DiscImageChef
             DecodeVerb = new DecodeSubOptions();
             DeviceInfoVerb = new DeviceInfoSubOptions();
             MediaInfoVerb = new MediaInfoSubOptions();
-            BenchmarkInfoVerb = new BenchmarkSubOptions();
+            BenchmarkVerb = new BenchmarkSubOptions();
+            CreateSidecarVerb = new CreateSidecarSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -293,7 +300,10 @@ namespace DiscImageChef
         public MediaInfoSubOptions MediaInfoVerb { get; set; }
 
         [VerbOption("benchmark", HelpText = "Benchmarks hashing and entropy calculation.")]
-        public BenchmarkSubOptions BenchmarkInfoVerb { get; set; }
+        public BenchmarkSubOptions BenchmarkVerb { get; set; }
+
+        [VerbOption("create-sidecar", HelpText = "Creates CICM Metadata XML sidecar.")]
+        public CreateSidecarSubOptions CreateSidecarVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

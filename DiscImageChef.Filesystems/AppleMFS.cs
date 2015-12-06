@@ -197,13 +197,23 @@ namespace DiscImageChef.Plugins
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
+            if (MDB.drLsBkUp > 0)
+            {
+                xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drLsBkUp);
+                xmlFSType.BackupDateSpecified = true;
+            }
             xmlFSType.Bootable = BB.signature == MFSBB_MAGIC;
             xmlFSType.Clusters = MDB.drNmAlBlks;
             xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
-            xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+            if (MDB.drCrDate > 0)
+            {
+                xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
+                xmlFSType.CreationDateSpecified = true;
+            }
             xmlFSType.Files = MDB.drNmFls;
+            xmlFSType.FilesSpecified = true;
             xmlFSType.FreeClusters = MDB.drFreeBks;
+            xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Type = "MFS";
             xmlFSType.VolumeName = MDB.drVN;
 			

@@ -209,6 +209,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("On-disk filesystem version: {0}", mnx_sb.s_disk_version).AppendLine();
 
                 xmlFSType.ClusterSize = mnx_sb.s_blocksize;
+                xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) * imagePlugin.GetSectorSize() / mnx_sb.s_blocksize);
             }
             else
             {
@@ -239,6 +240,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnx_sb.s_state).AppendLine();
                 xmlFSType.ClusterSize = 1024;
+                xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) * imagePlugin.GetSectorSize() / 1024);
             }
             information = sb.ToString();
         }
