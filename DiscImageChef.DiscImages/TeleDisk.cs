@@ -54,33 +54,33 @@ namespace DiscImageChef.ImagePlugins
 
         struct TD0Header
         {
-            // "TD" or "td" depending on compression
+            /// <summary>"TD" or "td" depending on compression</summary>
             public UInt16 signature;
-            // Sequence, but TeleDisk seems to complaing if != 0
+            /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
             public byte sequence;
-            // Random, same byte for all disks in the same set
+            /// <summary>Random, same byte for all disks in the same set</summary>
             public byte diskSet;
-            // TeleDisk version, major in high nibble, minor in low nibble
+            /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
             public byte version;
-            // Data rate
+            /// <summary>Data rate</summary>
             public byte dataRate;
-            // BIOS drive type
+            /// <summary>BIOS drive type</summary>
             public byte driveType;
-            // Stepping used
+            /// <summary>Stepping used</summary>
             public byte stepping;
-            // If set means image only allocates sectors marked in-use by FAT12
+            /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
             public byte dosAllocation;
-            // Sides of disk
+            /// <summary>Sides of disk</summary>
             public byte sides;
-            // CRC of all the previous
+            /// <summary>CRC of all the previous</summary>
             public UInt16 crc;
         }
 
         struct TDCommentBlockHeader
         {
-            // CRC of comment block after crc field
+            /// <summary>CRC of comment block after crc field</summary>
             public UInt16 crc;
-            // Length of comment
+            /// <summary>Length of comment</summary>
             public UInt16 length;
             public byte year;
             public byte month;
@@ -92,37 +92,37 @@ namespace DiscImageChef.ImagePlugins
 
         struct TDTrackHeader
         {
-            // Sectors in the track, 0xFF if end of disk image (there is no spoon)
+            /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
             public byte sectors;
-            // Cylinder the head was on
+            /// <summary>Cylinder the head was on</summary>
             public byte cylinder;
-            // Head/side used
+            /// <summary>Head/side used</summary>
             public byte head;
-            // Lower byte of CRC of previous fields
+            /// <summary>Lower byte of CRC of previous fields</summary>
             public byte crc;
         }
 
         struct TDSectorHeader
         {
-            // Cylinder as stored on sector address mark
+            /// <summary>Cylinder as stored on sector address mark</summary>
             public byte cylinder;
-            // Head as stored on sector address mark
+            /// <summary>Head as stored on sector address mark</summary>
             public byte head;
-            // Sector number as stored on sector address mark
+            /// <summary>Sector number as stored on sector address mark</summary>
             public byte sectorNumber;
-            // Sector size
+            /// <summary>Sector size</summary>
             public byte sectorSize;
-            // Sector flags
+            /// <summary>Sector flags</summary>
             public byte flags;
-            // Lower byte of TeleDisk CRC of sector header, data header and data block
+            /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
             public byte crc;
         }
 
         struct TDDataHeader
         {
-            // Size of all data (encoded) + next field (1)
+            /// <summary>Size of all data (encoded) + next field (1)</summary>
             public UInt16 dataSize;
-            // Encoding used for data block
+            /// <summary>Encoding used for data block</summary>
             public byte dataEncoding;
         }
 

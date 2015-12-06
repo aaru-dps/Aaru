@@ -52,23 +52,23 @@ namespace DiscImageChef.ImagePlugins
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
         struct DC42Header
         {
-            // 0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage
+            /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
             public string diskName;
-            // 0x40, size of data in bytes (usually sectors*512)
+            /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
             public UInt32 dataSize;
-            // 0x44, size of tags in bytes (usually sectors*12)
+            /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
             public UInt32 tagSize;
-            // 0x48, checksum of data bytes
+            /// <summary>0x48, checksum of data bytes</summary>
             public UInt32 dataChecksum;
-            // 0x4C, checksum of tag bytes
+            /// <summary>0x4C, checksum of tag bytes</summary>
             public UInt32 tagChecksum;
-            // 0x50, format of disk, see constants
+            /// <summary>0x50, format of disk, see constants</summary>
             public byte format;
-            // 0x51, format of sectors, see constants
+            /// <summary>0x51, format of sectors, see constants</summary>
             public byte fmtByte;
-            // 0x52, is disk image valid? always 0x01
+            /// <summary>0x52, is disk image valid? always 0x01</summary>
             public byte valid;
-            // 0x53, reserved, always 0x00
+            /// <summary>0x53, reserved, always 0x00</summary>
             public byte reserved;
         }
 
@@ -77,53 +77,53 @@ namespace DiscImageChef.ImagePlugins
         #region Internal Constants
 
         // format byte
-        // 3.5", single side, double density, GCR
+        /// <summary>3.5", single side, double density, GCR</summary>
         const byte kSonyFormat400K = 0x00;
-        // 3.5", double side, double density, GCR
+        /// <summary>3.5", double side, double density, GCR</summary>
         const byte kSonyFormat800K = 0x01;
-        // 3.5", double side, double density, MFM
+        /// <summary>3.5", double side, double density, MFM</summary>
         const byte kSonyFormat720K = 0x02;
-        // 3.5", double side, high density, MFM
+        /// <summary>3.5", double side, high density, MFM</summary>
         const byte kSonyFormat1440K = 0x03;
-        // 3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)
-        // Unchecked value
+        /// <summary>3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)
+        // Unchecked value</summary>
         const byte kSonyFormat1680K = 0x04;
-        // Defined by Sigma Seven's BLU
+        /// <summary>Defined by Sigma Seven's BLU</summary>
         const byte kSigmaFormatTwiggy = 0x54;
         // There should be a value for Apple HD20 hard disks, unknown...
         // fmyByte byte
         // Based on GCR nibble
         // Always 0x02 for MFM disks
         // Unknown for Apple HD20
-        // Defined by Sigma Seven's BLU
+        /// <summary>Defined by Sigma Seven's BLU</summary>
         const byte kSigmaFmtByteTwiggy = 0x01;
-        // 3.5" single side double density GCR and MFM all use same code
+        /// <summary>3.5" single side double density GCR and MFM all use same code</summary>
         const byte kSonyFmtByte400K = 0x02;
         const byte kSonyFmtByte720K = kSonyFmtByte400K;
         const byte kSonyFmtByte1440K = kSonyFmtByte400K;
         const byte kSonyFmtByte1680K = kSonyFmtByte400K;
-        // 3.5" double side double density GCR, 512 bytes/sector, interleave 2:1
+        /// <summary>3.5" double side double density GCR, 512 bytes/sector, interleave 2:1</summary>
         const byte kSonyFmtByte800K = 0x22;
-        // 3.5" double side double density GCR, 512 bytes/sector, interleave 2:1, incorrect value (but appears on official documentation)
+        /// <summary>3.5" double side double density GCR, 512 bytes/sector, interleave 2:1, incorrect value (but appears on official documentation)</summary>
         const byte kSonyFmtByte800KIncorrect = 0x12;
-        // 3.5" double side double density GCR, ProDOS format, interleave 4:1
+        /// <summary>3.5" double side double density GCR, ProDOS format, interleave 4:1</summary>
         const byte kSonyFmtByteProDos = 0x24;
-        // Unformatted sectors
+        /// <summary>Unformatted sectors</summary>
         const byte kInvalidFmtByte = 0x96;
 
         #endregion
 
         #region Internal variables
 
-        // Start of data sectors in disk image, should be 0x58
+        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
         UInt32 dataOffset;
-        // Start of tags in disk image, after data sectors
+        /// <summary>Start of tags in disk image, after data sectors</summary>
         UInt32 tagOffset;
-        // Bytes per tag, should be 12
+        /// <summary>Bytes per tag, should be 12</summary>
         UInt32 bptag;
-        // Header of opened image
+        /// <summary>Header of opened image</summary>
         DC42Header header;
-        // Disk image file
+        /// <summary>Disk image file</summary>
         string dc42ImagePath;
 
         #endregion

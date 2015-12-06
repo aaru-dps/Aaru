@@ -54,195 +54,197 @@ namespace DiscImageChef.ImagePlugins
 
         struct CDRWinTrackFile
         {
+            /// <summary>Track #</summary>
             public UInt32 sequence;
-            // Track #
+            /// <summary>Path of file containing track</summary>
             public string datafile;
-            // Path of file containing track
+            /// <summary>Offset of track start in file</summary>
             public UInt64 offset;
-            // Offset of track start in file
+            /// <summary>Type of file</summary>
             public string filetype;
-            // Type of file
         }
 
         struct CDRWinTrack
         {
+            /// <summary>Track #</summary>
             public UInt32 sequence;
-            // Track #
+            /// <summary>Track title (from CD-Text)</summary>
             public string title;
-            // Track title (from CD-Text)
+            /// <summary>Track genre (from CD-Text)</summary>
             public string genre;
-            // Track genre (from CD-Text)
+            /// <summary>Track arranger (from CD-Text)</summary>
             public string arranger;
-            // Track arranger (from CD-Text)
+            /// <summary>Track composer (from CD-Text)</summary>
             public string composer;
-            // Track composer (from CD-Text)
+            /// <summary>Track performer (from CD-Text)</summary>
             public string performer;
-            // Track performer (from CD-Text)
+            /// <summary>Track song writer (from CD-Text)</summary>
             public string songwriter;
-            // Track song writer (from CD-Text)
+            /// <summary>Track ISRC</summary>
             public string isrc;
-            // Track ISRC
+            /// <summary>File struct for this track</summary>
             public CDRWinTrackFile trackfile;
-            // File struct for this track
+            /// <summary>Indexes on this track</summary>
             public Dictionary<int, UInt64> indexes;
-            // Indexes on this track
+            /// <summary>Track pre-gap in sectors</summary>
             public UInt64 pregap;
-            // Track pre-gap in sectors
+            /// <summary>Track post-gap in sectors</summary>
             public UInt64 postgap;
-            // Track post-gap in sectors
+            /// <summary>Digical Copy Permitted</summary>
             public bool flag_dcp;
-            // Digical Copy Permitted
+            /// <summary>Track is quadraphonic</summary>
             public bool flag_4ch;
-            // Track is quadraphonic
+            /// <summary>Track has preemphasis</summary>
             public bool flag_pre;
-            // Track has preemphasis
+            /// <summary>Track has SCMS</summary>
             public bool flag_scms;
-            // Track has SCMS
+            /// <summary>Bytes per sector</summary>
             public UInt16 bps;
-            // Bytes per sector
+            /// <summary>Sectors in track</summary>
             public UInt64 sectors;
-            // Sectors in track
+            /// <summary>Track type</summary>
             public string tracktype;
-            // Track type
+            /// <summary>Track session</summary>
             public UInt16 session;
-            // Track session
         }
 
         #endregion
 
         struct CDRWinDisc
         {
+            /// <summary>Disk title (from CD-Text)</summary>
             public string title;
-            // Disk title (from CD-Text)
+            /// <summary>Disk genre (from CD-Text)</summary>
             public string genre;
-            // Disk genre (from CD-Text)
+            /// <summary>Disk arranger (from CD-Text)</summary>
             public string arranger;
-            // Disk arranger (from CD-Text)
+            /// <summary>Disk composer (from CD-Text)</summary>
             public string composer;
-            // Disk composer (from CD-Text)
+            /// <summary>Disk performer (from CD-Text)</summary>
             public string performer;
-            // Disk performer (from CD-Text)
+            /// <summary>Disk song writer (from CD-Text)</summary>
             public string songwriter;
-            // Disk song writer (from CD-Text)
+            /// <summary>Media catalog number</summary>
             public string mcn;
-            // Media catalog number
+            /// <summary>Disk type</summary>
             public DiskType disktype;
-            // Disk type
+            /// <summary>Disk type string</summary>
             public string disktypestr;
-            // Disk type string
+            /// <summary>Disk CDDB ID</summary>
             public string disk_id;
-            // Disk CDDB ID
+            /// <summary>Disk UPC/EAN</summary>
             public string barcode;
-            // Disk UPC/EAN
+            /// <summary>Sessions</summary>
             public List<Session> sessions;
-            // Sessions
+            /// <summary>Tracks</summary>
             public List<CDRWinTrack> tracks;
-            // Tracks
+            /// <summary>Disk comment</summary>
             public string comment;
-            // Disk comment
+            /// <summary>File containing CD-Text</summary>
             public string cdtextfile;
-            // File containing CD-Text
         }
 
         #region Internal consts
 
         // Type for FILE entity
+        /// <summary>Data as-is in little-endian</summary>
         const string CDRWinDiskTypeLittleEndian = "BINARY";
-        // Data as-is in little-endian
+        /// <summary>Data as-is in big-endian</summary>
         const string CDRWinDiskTypeBigEndian = "MOTOROLA";
-        // Data as-is in big-endian
+        /// <summary>Audio in Apple AIF file</summary>
         const string CDRWinDiskTypeAIFF = "AIFF";
-        // Audio in Apple AIF file
+        /// <summary>Audio in Microsoft WAV file</summary>
         const string CDRWinDiskTypeRIFF = "WAVE";
-        // Audio in Microsoft WAV file
+        /// <summary>Audio in MP3 file</summary>
         const string CDRWinDiskTypeMP3 = "MP3";
-        // Audio in MP3 file
+
         // Type for TRACK entity
+        /// <summary>Audio track, 2352 bytes/sector</summary>
         const string CDRWinTrackTypeAudio = "AUDIO";
-        // Audio track, 2352 bytes/sector
+        /// <summary>CD+G track, 2448 bytes/sector (audio+subchannel)</summary>
         const string CDRWinTrackTypeCDG = "CDG";
-        // CD+G track, 2448 bytes/sector (audio+subchannel)
+        /// <summary>Mode 1 track, cooked, 2048 bytes/sector</summary>
         const string CDRWinTrackTypeMode1 = "MODE1/2048";
-        // Mode 1 track, cooked, 2048 bytes/sector
+        /// <summary>Mode 1 track, raw, 2352 bytes/sector</summary>
         const string CDRWinTrackTypeMode1Raw = "MODE1/2352";
-        // Mode 1 track, raw, 2352 bytes/sector
+        /// <summary>Mode 2 form 1 track, cooked, 2048 bytes/sector</summary>
         const string CDRWinTrackTypeMode2Form1 = "MODE2/2048";
-        // Mode 2 form 1 track, cooked, 2048 bytes/sector
+        /// <summary>Mode 2 form 2 track, cooked, 2324 bytes/sector</summary>
         const string CDRWinTrackTypeMode2Form2 = "MODE2/2324";
-        // Mode 2 form 2 track, cooked, 2324 bytes/sector
+        /// <summary>Mode 2 formless track, cooked, 2336 bytes/sector</summary>
         const string CDRWinTrackTypeMode2Formless = "MODE2/2336";
-        // Mode 2 formless track, cooked, 2336 bytes/sector
+        /// <summary>Mode 2 track, raw, 2352 bytes/sector</summary>
         const string CDRWinTrackTypeMode2Raw = "MODE2/2352";
-        // Mode 2 track, raw, 2352 bytes/sector
+        /// <summary>CD-i track, cooked, 2336 bytes/sector</summary>
         const string CDRWinTrackTypeCDI = "CDI/2336";
-        // CD-i track, cooked, 2336 bytes/sector
+        /// <summary>CD-i track, raw, 2352 bytes/sector</summary>
         const string CDRWinTrackTypeCDIRaw = "CDI/2352";
-        // CD-i track, raw, 2352 bytes/sector
+
         // Type for REM ORIGINAL MEDIA-TYPE entity
+        /// <summary>DiskType.CD</summary>
         const string CDRWinDiskTypeCD = "CD";
-        // DiskType.CD
+        /// <summary>DiskType.CDRW</summary>
         const string CDRWinDiskTypeCDRW = "CD-RW";
-        // DiskType.CDRW
+        /// <summary>DiskType.CDMRW</summary>
         const string CDRWinDiskTypeCDMRW = "CD-MRW";
-        // DiskType.CDMRW
+        /// <summary>DiskType.CDMRW</summary>
         const string CDRWinDiskTypeCDMRW2 = "CD-(MRW)";
-        // DiskType.CDMRW
+        /// <summary>DiskType.DVDROM</summary>
         const string CDRWinDiskTypeDVD = "DVD";
-        // DiskType.DVDROM
+        /// <summary>DiskType.DVDPRW</summary>
         const string CDRWinDiskTypeDVDPMRW = "DVD+MRW";
-        // DiskType.DVDPRW
+        /// <summary>DiskType.DVDPRW</summary>
         const string CDRWinDiskTypeDVDPMRW2 = "DVD+(MRW)";
-        // DiskType.DVDPRW
+        /// <summary>DiskType.DVDPRWDL</summary>
         const string CDRWinDiskTypeDVDPMRWDL = "DVD+MRW DL";
-        // DiskType.DVDPRWDL
+        /// <summary>DiskType.DVDPRWDL</summary>
         const string CDRWinDiskTypeDVDPMRWDL2 = "DVD+(MRW) DL";
-        // DiskType.DVDPRWDL
+        /// <summary>DiskType.DVDPR</summary>
         const string CDRWinDiskTypeDVDPR = "DVD+R";
-        // DiskType.DVDPR
+        /// <summary>DiskType.DVDPRDL</summary>
         const string CDRWinDiskTypeDVDPRDL = "DVD+R DL";
-        // DiskType.DVDPRDL
+        /// <summary>DiskType.DVDPRW</summary>
         const string CDRWinDiskTypeDVDPRW = "DVD+RW";
-        // DiskType.DVDPRW
+        /// <summary>DiskType.DVDPRWDL</summary>
         const string CDRWinDiskTypeDVDPRWDL = "DVD+RW DL";
-        // DiskType.DVDPRWDL
+        /// <summary>DiskType.DVDPR</summary>
         const string CDRWinDiskTypeDVDPVR = "DVD+VR";
-        // DiskType.DVDPR
+        /// <summary>DiskType.DVDRAM</summary>
         const string CDRWinDiskTypeDVDRAM = "DVD-RAM";
-        // DiskType.DVDRAM
+        /// <summary>DiskType.DVDR</summary>
         const string CDRWinDiskTypeDVDR = "DVD-R";
-        // DiskType.DVDR
+        /// <summary>DiskType.DVDRDL</summary>
         const string CDRWinDiskTypeDVDRDL = "DVD-R DL";
-        // DiskType.DVDRDL
+        /// <summary>DiskType.DVDRW</summary>
         const string CDRWinDiskTypeDVDRW = "DVD-RW";
-        // DiskType.DVDRW
+        /// <summary>DiskType.DVDRWDL</summary>
         const string CDRWinDiskTypeDVDRWDL = "DVD-RW DL";
-        // DiskType.DVDRWDL
+        /// <summary>DiskType.DVDR</summary>
         const string CDRWinDiskTypeDVDVR = "DVD-VR";
-        // DiskType.DVDR
+        /// <summary>DiskType.DVDRW</summary>
         const string CDRWinDiskTypeDVDRW2 = "DVDRW";
-        // DiskType.DVDRW
+        /// <summary>DiskType.HDDVDROM</summary>
         const string CDRWinDiskTypeHDDVD = "HD DVD";
-        // DiskType.HDDVDROM
+        /// <summary>DiskType.HDDVDRAM</summary>
         const string CDRWinDiskTypeHDDVDRAM = "HD DVD-RAM";
-        // DiskType.HDDVDRAM
+        /// <summary>DiskType.HDDVDR</summary>
         const string CDRWinDiskTypeHDDVDR = "HD DVD-R";
-        // DiskType.HDDVDR
+        /// <summary>DiskType.HDDVDR</summary>
         const string CDRWinDiskTypeHDDVDRDL = "HD DVD-R DL";
-        // DiskType.HDDVDR
+        /// <summary>DiskType.HDDVDRW</summary>
         const string CDRWinDiskTypeHDDVDRW = "HD DVD-RW";
-        // DiskType.HDDVDRW
+        /// <summary>DiskType.HDDVDRW</summary>
         const string CDRWinDiskTypeHDDVDRWDL = "HD DVD-RW DL";
-        // DiskType.HDDVDRW
+        /// <summary>DiskType.BDROM</summary>
         const string CDRWinDiskTypeBD = "BD";
-        // DiskType.BDROM
+        /// <summary>DiskType.BDR</summary>
         const string CDRWinDiskTypeBDR = "BD-R";
-        // DiskType.BDR
+        /// <summary>DiskType.BDRE</summary>
         const string CDRWinDiskTypeBDRE = "BD-RE";
-        // DiskType.BDRE
+        /// <summary>DiskType.BDR</summary>
         const string CDRWinDiskTypeBDRDL = "BD-R DL";
-        // DiskType.BDR
+        /// <summary>DiskType.BDRE</summary>
         const string CDRWinDiskTypeBDREDL = "BD-RE DL";
-        // DiskType.BDRE
 
         #endregion
 
@@ -251,8 +253,8 @@ namespace DiscImageChef.ImagePlugins
         string imagePath;
         StreamReader cueStream;
         FileStream imageStream;
+        /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<UInt32, UInt64> offsetmap;
-        // Dictionary, index is track #, value is TrackFile
         CDRWinDisc discimage;
         List<CommonTypes.Partition> partitions;
 
@@ -263,8 +265,8 @@ namespace DiscImageChef.ImagePlugins
         const string SessionRegEx = "REM\\s+SESSION\\s+(?<number>\\d+).*$";
         const string DiskTypeRegEx = "REM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
         const string LeadOutRegEx = "REM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string LBARegEx = "REM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
         // Not checked
+        const string LBARegEx = "REM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
         const string DiskIDRegEx = "DISC_ID\\s+(?<diskid>[\\da-f]{8})$";
         const string BarCodeRegEx = "UPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
         const string CommentRegEx = "REM\\s+(?<comment>.+)$";

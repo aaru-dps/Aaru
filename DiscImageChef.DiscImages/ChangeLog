@@ -1,5 +1,12 @@
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
+	* CDRWin.cs:
+	* TeleDisk.cs:
+	* DiskCopy42.cs:
+	  Move comments to XML documentation.
+
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugin.cs:
 	  Added documentation.
 
