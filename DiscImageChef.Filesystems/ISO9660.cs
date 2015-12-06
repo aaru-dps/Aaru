@@ -97,14 +97,20 @@ namespace DiscImageChef.Plugins
             // Read to Volume Descriptor
             byte[] vd_sector = imagePlugin.ReadSector(16 + partitionStart);
 
-            VDType = vd_sector[0];
+            int xa_off = 0;
+            if (vd_sector.Length == 2336)
+                xa_off = 8;
+
+            VDType = vd_sector[0 + xa_off];
             byte[] VDMagic = new byte[5];
 
             // Wrong, VDs can be any order!
             if (VDType == 255) // Supposedly we are in the PVD.
 	            return false;
 
-            Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
+            Array.Copy(vd_sector, 0x001 + xa_off, VDMagic, 0, 5);
+
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(VDMagic));
 
             return Encoding.ASCII.GetString(VDMagic) == "CD001";			
         }
@@ -162,7 +168,15 @@ namespace DiscImageChef.Plugins
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partitionStart);
-                byte[] vd_sector = imagePlugin.ReadSector(16 + counter + partitionStart);
+                byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partitionStart);
+                byte[] vd_sector;
+                if (vd_sector_tmp.Length == 2336)
+                {
+                    vd_sector = new byte[2336 - 8];
+                    Array.Copy(vd_sector_tmp, 8, vd_sector, 0, 2336 - 8);
+                }
+                else
+                    vd_sector = vd_sector_tmp;
 
                 VDType = vd_sector[0];
                 DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", VDType);

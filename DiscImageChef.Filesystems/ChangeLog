@@ -1,5 +1,10 @@
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
+	* ISO9660.cs:
+	  Added support for CD-ROM XA sectors.
+
+2015-12-06  Natalia Portillo  <claunia@claunia.com>
+
 	* SysV.cs:
 	  Solved false positives of UNIX 7th Edition filesystem.
 
