@@ -464,6 +464,9 @@ namespace DiscImageChef.Decoders.CD
                             manufacturer = "CDA Datenträger Albrechts GmbH";
                         break;
                     case 21:
+                        // Seen only once
+                        if (frm == 10)
+                            manufacturer = "GCK";
                         if (frm == 30)
                             manufacturer = "Bestdisc Technology Corporation";
                         if (frm == 40)

@@ -110,16 +110,16 @@ namespace DiscImageChef.Metadata
                     DiscSubType = "CD-R";
                     break;
                 case CommonTypes.DiskType.CDROM:
-                    DiscType = "CD-ROM";
-                    DiscSubType = "CD";
+                    DiscType = "CD";
+                    DiscSubType = "CD-ROM";
                     break;
                 case CommonTypes.DiskType.CDROMXA:
-                    DiscType = "CD-ROM XA";
-                    DiscSubType = "CD";
+                    DiscType = "CD";
+                    DiscSubType = "CD-ROM XA";
                     break;
                 case CommonTypes.DiskType.CDRW:
-                    DiscType = "CD-RW";
-                    DiscSubType = "CD";
+                    DiscType = "CD";
+                    DiscSubType = "CD-RW";
                     break;
                 case CommonTypes.DiskType.CDV:
                     DiscType = "CD";

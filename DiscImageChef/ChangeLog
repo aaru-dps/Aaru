@@ -1,3 +1,9 @@
+2015-12-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
+	  Check ATIP even if no TOC, as blank discs do always have
+	  ATIP (but no TOC or PMA).
+
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Checksum.cs:

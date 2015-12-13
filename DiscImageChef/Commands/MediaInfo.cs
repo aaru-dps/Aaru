@@ -711,37 +711,43 @@ namespace DiscImageChef.Commands
                     dskType == DiskType.CDRW ||
                     dskType == DiskType.Unknown)
                 {
+                    Decoders.CD.TOC.CDTOC? toc = null;
+
                     // We discarded all discs that falsify a TOC before requesting a real TOC
-                    // No TOC, no CD
-                    sense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out duration);
-                    if (sense)
+                    // No TOC, no CD (or an empty one)
+                    bool tocSense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out duration);
+                    if (tocSense)
                         DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
-                        Decoders.CD.TOC.CDTOC? toc = Decoders.CD.TOC.Decode(cmdBuf);
+                        toc = Decoders.CD.TOC.Decode(cmdBuf);
                         DicConsole.WriteLine("TOC:\n{0}", Decoders.CD.TOC.Prettify(toc));
                         doWriteFile(outputPrefix, "_toc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
 
                         // As we have a TOC we know it is a CD
                         if(dskType == DiskType.Unknown)
                             dskType = DiskType.CD;
+                    }
 
-                        // Now check if it is a CD-R or CD-RW before everything else
-                        sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                        if (sense)
-                            DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: ATIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                        else
+                    // ATIP exists on blank CDs
+                    sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: ATIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                    {
+                        doWriteFile(outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
+                        Decoders.CD.ATIP.CDATIP? atip = Decoders.CD.ATIP.Decode(cmdBuf);
+                        if(atip.HasValue)
                         {
-                            doWriteFile(outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
-                            Decoders.CD.ATIP.CDATIP? atip = Decoders.CD.ATIP.Decode(cmdBuf);
-                            if(atip.HasValue)
-                            {
-                                DicConsole.WriteLine("ATIP:\n{0}", Decoders.CD.ATIP.Prettify(atip));
-                                // Only CD-R and CD-RW have ATIP
-                                dskType = atip.Value.DiscType ? DiskType.CDRW : DiskType.CDR;
-                            }
+                            DicConsole.WriteLine("ATIP:\n{0}", Decoders.CD.ATIP.Prettify(atip));
+                            // Only CD-R and CD-RW have ATIP
+                            dskType = atip.Value.DiscType ? DiskType.CDRW : DiskType.CDR;
                         }
+                    }
 
+                    // We got a TOC, get information about a recorded/mastered CD
+                    if(!tocSense)
+                    {
                         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out duration);
                         if (sense)
                             DicConsole.ErrorWriteLine("READ DISC INFORMATION 000b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
