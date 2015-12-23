@@ -902,14 +902,36 @@ namespace DiscImageChef.Plugins
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ISO9660";
+
             if (Joliet)
             {
-                xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
                 xmlFSType.VolumeName = decodedJolietVD.VolumeIdentifier;
-                xmlFSType.VolumeSetIdentifier = decodedJolietVD.VolumeSetIdentifier;
-                xmlFSType.PublisherIdentifier = decodedJolietVD.PublisherIdentifier;
-                xmlFSType.DataPreparerIdentifier = decodedJolietVD.DataPreparerIdentifier;
-                xmlFSType.ApplicationIdentifier = decodedJolietVD.ApplicationIdentifier;
+
+                if(decodedJolietVD.SystemIdentifier == null || decodedVD.SystemIdentifier.Length > decodedJolietVD.SystemIdentifier.Length)
+                    xmlFSType.SystemIdentifier = decodedVD.SystemIdentifier;
+                else
+                    xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
+                
+                if(decodedJolietVD.VolumeSetIdentifier == null || decodedVD.VolumeSetIdentifier.Length > decodedJolietVD.VolumeSetIdentifier.Length)
+                    xmlFSType.VolumeSetIdentifier = decodedVD.VolumeSetIdentifier;
+                else
+                    xmlFSType.VolumeSetIdentifier = decodedJolietVD.VolumeSetIdentifier;
+                
+                if(decodedJolietVD.PublisherIdentifier == null || decodedVD.PublisherIdentifier.Length > decodedJolietVD.PublisherIdentifier.Length)
+                    xmlFSType.PublisherIdentifier = decodedVD.PublisherIdentifier;
+                else
+                    xmlFSType.PublisherIdentifier = decodedJolietVD.PublisherIdentifier;
+                
+                if(decodedJolietVD.DataPreparerIdentifier == null || decodedVD.DataPreparerIdentifier.Length > decodedJolietVD.DataPreparerIdentifier.Length)
+                    xmlFSType.DataPreparerIdentifier = decodedVD.DataPreparerIdentifier;
+                else
+                    xmlFSType.DataPreparerIdentifier = decodedJolietVD.SystemIdentifier;
+                
+                if(decodedJolietVD.ApplicationIdentifier == null || decodedVD.ApplicationIdentifier.Length > decodedJolietVD.ApplicationIdentifier.Length)
+                    xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
+                else
+                    xmlFSType.ApplicationIdentifier = decodedJolietVD.SystemIdentifier;
+
                 xmlFSType.CreationDate = decodedJolietVD.CreationTime;
                 xmlFSType.CreationDateSpecified = true;
                 if (decodedJolietVD.HasModificationTime)
@@ -966,12 +988,12 @@ namespace DiscImageChef.Plugins
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId).TrimEnd();
-            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId).TrimEnd();
-            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId).TrimEnd();
-            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd();
-            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd();
-            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd();
+            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd().Trim(new []{'\u0000'});
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
@@ -1014,12 +1036,12 @@ namespace DiscImageChef.Plugins
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId).TrimEnd();
-            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId).TrimEnd();
-            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId).TrimEnd();
-            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId).TrimEnd();
-            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId).TrimEnd();
-            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId).TrimEnd();
+            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId).TrimEnd().Trim(new []{'\u0000'});
+            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId).TrimEnd().Trim(new []{'\u0000'});
             if (VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else

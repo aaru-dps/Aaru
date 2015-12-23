@@ -43,6 +43,7 @@
     <Compile Include="TeleDisk.cs" />
     <Compile Include="VHD.cs" />
     <Compile Include="ZZZRawImage.cs" />
+    <Compile Include="CDRDAO.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

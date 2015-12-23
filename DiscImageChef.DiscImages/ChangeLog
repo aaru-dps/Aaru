@@ -1,3 +1,14 @@
+2015-12-23  Natalia Portillo  <claunia@claunia.com>
+
+	* CDRDAO.cs:
+	* DiscImageChef.DiscImages.csproj:
+	  Added support for cdrdao images. Solves #53
+
+	* CDRWin.cs:
+	  Implemented FLAGS field support and
+	  quadraphonic/broadcasting flag.
+	Return CD track flags for any track type.
+
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRWin.cs:

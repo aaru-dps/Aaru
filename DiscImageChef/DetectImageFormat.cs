@@ -55,12 +55,18 @@ namespace DiscImageChef.ImagePlugins
                 // Check all but RAW plugin
                 foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
                 {
-                    if(_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                    if (_imageplugin.PluginUUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
-                        if (_imageplugin.IdentifyImage(imagePath))
+                        try
                         {
-                            _imageFormat = _imageplugin;
-                            break;
+                            if (_imageplugin.IdentifyImage(imagePath))
+                            {
+                                _imageFormat = _imageplugin;
+                                break;
+                            }
+                        }
+                        catch
+                        {
                         }
                     }
                 }
@@ -70,12 +76,18 @@ namespace DiscImageChef.ImagePlugins
                 {
                     foreach (ImagePlugin _imageplugin in plugins.ImagePluginsList.Values)
                     {
-                        if(_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        if (_imageplugin.PluginUUID == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                         {
-                            if (_imageplugin.IdentifyImage(imagePath))
+                            try
                             {
-                                _imageFormat = _imageplugin;
-                                break;
+                                if (_imageplugin.IdentifyImage(imagePath))
+                                {
+                                    _imageFormat = _imageplugin;
+                                    break;
+                                }
+                            }
+                            catch
+                            {
                             }
                         }
                     }

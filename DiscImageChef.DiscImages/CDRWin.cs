@@ -677,10 +677,15 @@ namespace DiscImageChef.ImagePlugins
                         }
                         else if (MatchFlags.Success)
                         {
-                            // TODO: Implement FLAGS support.
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", line);
                             if (!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found FLAGS field in incorrect place at line {0}", line));
+
+                            const string FlagsRegEx = "FLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
+                            currenttrack.flag_dcp |= MatchFile.Groups["dcp"].Value == "DCP";
+                            currenttrack.flag_4ch |= MatchFile.Groups["quad"].Value == "4CH";
+                            currenttrack.flag_pre |= MatchFile.Groups["pre"].Value == "PRE";
+                            currenttrack.flag_scms |= MatchFile.Groups["scms"].Value == "SCMS";
                         }
                         else if (MatchGenre.Success)
                         {
@@ -1216,6 +1221,8 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.diskBarcode = discimage.barcode;
                 ImageInfo.diskType = discimage.disktype;
 
+                ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
+
                 foreach (CDRWinTrack track in discimage.tracks)
                 {
                     switch (track.tracktype)
@@ -1224,16 +1231,12 @@ namespace DiscImageChef.ImagePlugins
                             {
                                 if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
-                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
                                 break;
                             }
                         case CDRWinTrackTypeCDG:
                             {
                                 if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackFlags))
-                                    ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
                                 if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
                                 break;
@@ -1561,6 +1564,9 @@ namespace DiscImageChef.ImagePlugins
 
                         if (_track.flag_pre)
                             flags[0] += 0x10;
+
+                        if (_track.flag_4ch)
+                            flags[0] += 0x80;
 
                         return flags;
                     }

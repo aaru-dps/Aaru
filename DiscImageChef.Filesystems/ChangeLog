@@ -1,3 +1,10 @@
+2015-12-23  Natalia Portillo  <claunia@claunia.com>
+
+	* ISO9660.cs:
+	  Filter null characters from Volume Descriptors.
+	If Joliet descriptor is null, or ISO descriptor is longer, use
+	  ISO descriptor for XML metadata.
+
 2015-12-06  Natalia Portillo  <claunia@claunia.com>
 
 	* ISO9660.cs:

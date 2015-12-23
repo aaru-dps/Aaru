@@ -1,3 +1,11 @@
+2015-12-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/CreateSidecar.cs:
+	  If a filesystem plugin crashes, do not abort.
+
+	* DetectImageFormat.cs:
+	  If an image plugin crashes, keep trying the others.
+
 2015-12-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:

@@ -1010,11 +1010,18 @@ namespace DiscImageChef.Commands
 
                                         foreach (Plugin _plugin in plugins.PluginsList.Values)
                                         {
-                                            if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1))
+                                            try
                                             {
-                                                string foo;
-                                                _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1, out foo);
-                                                lstFs.Add(_plugin.XmlFSType);
+                                                if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1))
+                                                {
+                                                    string foo;
+                                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1, out foo);
+                                                    lstFs.Add(_plugin.XmlFSType);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                                //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                             }
                                         }
 
@@ -1032,11 +1039,18 @@ namespace DiscImageChef.Commands
 
                                     foreach (Plugin _plugin in plugins.PluginsList.Values)
                                     {
-                                        if (_plugin.Identify(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector))
+                                        try
                                         {
-                                            string foo;
-                                            _plugin.GetInformation(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector, out foo);
-                                            lstFs.Add(_plugin.XmlFSType);
+                                            if (_plugin.Identify(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector))
+                                            {
+                                                string foo;
+                                                _plugin.GetInformation(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector, out foo);
+                                                lstFs.Add(_plugin.XmlFSType);
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                         }
                                     }
 
