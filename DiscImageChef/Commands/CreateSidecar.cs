@@ -409,8 +409,8 @@ namespace DiscImageChef.Commands
                                         if (pfi.HasValue)
                                         {
                                             if (dskType != DiskType.XGD &&
-                                               dskType != DiskType.XGD2 &&
-                                               dskType != DiskType.XGD3)
+                                                dskType != DiskType.XGD2 &&
+                                                dskType != DiskType.XGD3)
                                             {
                                                 switch (pfi.Value.DiskCategory)
                                                 {
@@ -555,7 +555,7 @@ namespace DiscImageChef.Commands
                                 xmlTrk.EndSector = (long)trk.TrackEndSector;
 
                                 if (sidecar.OpticalDisc[0].DiscType == "CD" ||
-                                   sidecar.OpticalDisc[0].DiscType == "GD")
+                                    sidecar.OpticalDisc[0].DiscType == "GD")
                                 {
                                     xmlTrk.StartMSF = LbaToMsf(xmlTrk.StartSector);
                                     xmlTrk.EndMSF = LbaToMsf(xmlTrk.EndSector);
@@ -577,6 +577,9 @@ namespace DiscImageChef.Commands
                                 xmlTrk.Image.format = trk.TrackFileType;
                                 xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * trk.TrackRawBytesPerSector;
                                 xmlTrk.BytesPerSector = trk.TrackBytesPerSector;
+
+                                // For fast debugging, skip checksum
+                                //goto skipChecksum;
 
                                 uint sectorsToRead = 512;
 
@@ -683,11 +686,11 @@ namespace DiscImageChef.Commands
                                     spamsumThread.Start(spamsumPkt);
 
                                     while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                                               crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                                               md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                                               sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                                               sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                                               spamsumThread.IsAlive)
+                                           crc32Thread.IsAlive || crc64Thread.IsAlive ||
+                                           md5Thread.IsAlive || ripemd160Thread.IsAlive ||
+                                           sha1Thread.IsAlive || sha256Thread.IsAlive ||
+                                           sha384Thread.IsAlive || sha512Thread.IsAlive ||
+                                           spamsumThread.IsAlive)
                                     {
                                     }
 
@@ -894,11 +897,11 @@ namespace DiscImageChef.Commands
                                         spamsumThread.Start(spamsumPkt);
 
                                         while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                                            crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                                            md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                                            sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                                            sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                                            spamsumThread.IsAlive)
+                                               crc32Thread.IsAlive || crc64Thread.IsAlive ||
+                                               md5Thread.IsAlive || ripemd160Thread.IsAlive ||
+                                               sha1Thread.IsAlive || sha256Thread.IsAlive ||
+                                               sha384Thread.IsAlive || sha512Thread.IsAlive ||
+                                               spamsumThread.IsAlive)
                                         {
                                         }
 
@@ -977,6 +980,9 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine();
                                 }
 
+                                // For fast debugging, skip checksum
+                                //skipChecksum:
+
                                 DicConsole.WriteLine("Checking filesystems on track {0} from sector {1} to {2}", xmlTrk.Sequence.TrackNumber, xmlTrk.StartSector, xmlTrk.EndSector);
 
                                 List<Partition> partitions = new List<Partition>();
@@ -993,10 +999,10 @@ namespace DiscImageChef.Commands
                                 }
 
                                 xmlTrk.FileSystemInformation = new PartitionType[1];
-                                if(partitions.Count > 0)
+                                if (partitions.Count > 0)
                                 {
                                     xmlTrk.FileSystemInformation = new PartitionType[partitions.Count];
-                                    for(int i = 0; i < partitions.Count; i++)
+                                    for (int i = 0; i < partitions.Count; i++)
                                     {
                                         xmlTrk.FileSystemInformation[i] = new PartitionType();
                                         xmlTrk.FileSystemInformation[i].Description = partitions[i].PartitionDescription;
@@ -1012,10 +1018,10 @@ namespace DiscImageChef.Commands
                                         {
                                             try
                                             {
-                                                if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1))
+                                                if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
                                                 {
                                                     string foo;
-                                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors-1, out foo);
+                                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
                                                     lstFs.Add(_plugin.XmlFSType);
                                                 }
                                             }
@@ -1025,7 +1031,7 @@ namespace DiscImageChef.Commands
                                             }
                                         }
 
-                                        if(lstFs.Count > 0)
+                                        if (lstFs.Count > 0)
                                             xmlTrk.FileSystemInformation[i].FileSystems = lstFs.ToArray();
                                     }
                                 }
@@ -1054,7 +1060,7 @@ namespace DiscImageChef.Commands
                                         }
                                     }
 
-                                    if(lstFs.Count > 0)
+                                    if (lstFs.Count > 0)
                                         xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
                                 }
 

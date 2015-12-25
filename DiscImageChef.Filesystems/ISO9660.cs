@@ -80,9 +80,9 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if (alreadyLaunched)
+/*            if (alreadyLaunched)
                 return false;
-            alreadyLaunched = true;
+            alreadyLaunched = true;*/
 
             byte VDType;
 
@@ -776,53 +776,56 @@ namespace DiscImageChef.Plugins
 
                         int iPeripherals = int.Parse(Encoding.ASCII.GetString(peripherals), NumberStyles.HexNumber);
 
-                        if((iPeripherals & 0x00000010) == 0x00000010)
+                        if((iPeripherals & 0x00000001) == 0x00000001)
                             IPBinInformation.AppendLine("Game uses Windows CE.");
 
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
 
-                        if ((iPeripherals & 0x00000100) == 0x00000100)
+                        if ((iPeripherals & 0x00000010) == 0x00000010)
                             IPBinInformation.AppendLine("Game supports the VGA Box.");
-                        if ((iPeripherals & 0x00001000) == 0x00001000)
+                        if ((iPeripherals & 0x00000100) == 0x00000100)
                             IPBinInformation.AppendLine("Game supports other expansion.");
-                        if ((iPeripherals & 0x00002000) == 0x00002000)
+                        if ((iPeripherals & 0x00000200) == 0x00000200)
                             IPBinInformation.AppendLine("Game supports Puru Puru pack.");
-                        if ((iPeripherals & 0x00004000) == 0x00004000)
+                        if ((iPeripherals & 0x00000400) == 0x00000400)
                             IPBinInformation.AppendLine("Game supports Mike Device.");
-                        if ((iPeripherals & 0x00008000) == 0x00008000)
+                        if ((iPeripherals & 0x00000800) == 0x00000800)
                             IPBinInformation.AppendLine("Game supports Memory Card.");
-                        if ((iPeripherals & 0x00010000) == 0x00010000)
+                        if ((iPeripherals & 0x00001000) == 0x00001000)
                             IPBinInformation.AppendLine("Game requires A + B + Start buttons and D-Pad.");
-                        if ((iPeripherals & 0x00020000) == 0x00020000)
+                        if ((iPeripherals & 0x00002000) == 0x00002000)
                             IPBinInformation.AppendLine("Game requires C button.");
-                        if ((iPeripherals & 0x00040000) == 0x00040000)
+                        if ((iPeripherals & 0x00004000) == 0x00004000)
                             IPBinInformation.AppendLine("Game requires D button.");
-                        if ((iPeripherals & 0x00080000) == 0x00080000)
+                        if ((iPeripherals & 0x00008000) == 0x00008000)
                             IPBinInformation.AppendLine("Game requires X button.");
-                        if ((iPeripherals & 0x00100000) == 0x00100000)
+                        if ((iPeripherals & 0x00010000) == 0x00010000)
                             IPBinInformation.AppendLine("Game requires Y button.");
-                        if ((iPeripherals & 0x00200000) == 0x00200000)
+                        if ((iPeripherals & 0x00020000) == 0x00020000)
                             IPBinInformation.AppendLine("Game requires Z button.");
-                        if ((iPeripherals & 0x00400000) == 0x00400000)
+                        if ((iPeripherals & 0x00040000) == 0x00040000)
                             IPBinInformation.AppendLine("Game requires expanded direction buttons.");
-                        if ((iPeripherals & 0x00800000) == 0x00800000)
+                        if ((iPeripherals & 0x00080000) == 0x00080000)
                             IPBinInformation.AppendLine("Game requires analog R trigger.");
-                        if ((iPeripherals & 0x01000000) == 0x01000000)
+                        if ((iPeripherals & 0x00100000) == 0x00100000)
                             IPBinInformation.AppendLine("Game requires analog L trigger.");
-                        if ((iPeripherals & 0x02000000) == 0x02000000)
+                        if ((iPeripherals & 0x00200000) == 0x00200000)
                             IPBinInformation.AppendLine("Game requires analog horizontal controller.");
-                        if ((iPeripherals & 0x04000000) == 0x04000000)
+                        if ((iPeripherals & 0x00400000) == 0x00400000)
                             IPBinInformation.AppendLine("Game requires analog vertical controller.");
-                        if ((iPeripherals & 0x08000000) == 0x08000000)
+                        if ((iPeripherals & 0x00800000) == 0x00800000)
                             IPBinInformation.AppendLine("Game requires expanded analog horizontal controller.");
-                        if ((iPeripherals & 0x10000000) == 0x10000000)
+                        if ((iPeripherals & 0x01000000) == 0x01000000)
                             IPBinInformation.AppendLine("Game requires expanded analog vertical controller.");
-                        if ((iPeripherals & 0x20000000) == 0x20000000)
+                        if ((iPeripherals & 0x02000000) == 0x02000000)
                             IPBinInformation.AppendLine("Game supports Gun.");
-                        if ((iPeripherals & 0x40000000) == 0x40000000)
+                        if ((iPeripherals & 0x04000000) == 0x04000000)
                             IPBinInformation.AppendLine("Game supports Keyboard.");
-                        if ((iPeripherals & 0x80000000) == 0x80000000)
+                        if ((iPeripherals & 0x08000000) == 0x08000000)
                             IPBinInformation.AppendLine("Game supports Mouse.");
+
+                        if((iPeripherals & 0xEE) != 0)
+                            IPBinInformation.AppendFormat("Game supports unknown peripherals mask {0:X2}", (iPeripherals & 0xEE));
 
                         break;
                     }

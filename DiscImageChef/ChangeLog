@@ -1,3 +1,8 @@
+2015-12-25  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/CreateSidecar.cs:
+	  Formatting.
+
 2015-12-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/CreateSidecar.cs:

@@ -1,3 +1,8 @@
+2015-12-25  Natalia Portillo  <claunia@claunia.com>
+
+	* ISO9660.cs:
+	  Corrected Dreamcast IP.BIN interpretation.
+
 2015-12-23  Natalia Portillo  <claunia@claunia.com>
 
 	* ISO9660.cs:
