@@ -930,6 +930,644 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        /// <summary>
+        /// Sends the SCSI READ (6) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Starting block.</param>
+        /// <param name="blockSize">Block size in bytes.</param>
+        public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout, out double duration)
+        {
+            return Read6(out buffer, out senseBuffer, lba, blockSize, 1, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ (6) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Starting block.</param>
+        /// <param name="blockSize">Block size in bytes.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Read6;
+            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)(lba & 0xFF);
+            cdb[4] = transferLength;
+
+            if(transferLength == 0)
+                buffer = new byte[256 * blockSize];
+            else
+                buffer = new byte[transferLength * blockSize];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ (6) took {0} ms.", duration);
+        
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ (10) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
+        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
+        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="lba">Starting block.</param>
+        /// <param name="blockSize">Block size in bytes.</param>
+        /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
+        public bool Read10(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv, bool relAddr, uint lba, uint blockSize, byte groupNumber, ushort transferLength, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Read10;
+            cdb[1] = (byte)((rdprotect & 0x07) << 5);
+            if(dpo)
+                cdb[1] += 0x10;
+            if(fua)
+                cdb[1] += 0x08;
+            if(fuaNv)
+                cdb[1] += 0x02;
+            if(relAddr)
+                cdb[1] += 0x01;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[6] = (byte)(groupNumber & 0x1F);
+            cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[8] = (byte)(transferLength & 0xFF);
+
+            buffer = new byte[transferLength * blockSize];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ (10) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ (12) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
+        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
+        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="lba">Starting block.</param>
+        /// <param name="blockSize">Block size in bytes.</param>
+        /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
+        /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
+        public bool Read12(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv, bool relAddr, uint lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Read12;
+            cdb[1] = (byte)((rdprotect & 0x07) << 5);
+            if(dpo)
+                cdb[1] += 0x10;
+            if(fua)
+                cdb[1] += 0x08;
+            if(fuaNv)
+                cdb[1] += 0x02;
+            if(relAddr)
+                cdb[1] += 0x01;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[6] = (byte)((transferLength & 0xFF000000) >> 24);
+            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[9] = (byte)(transferLength & 0xFF);
+            cdb[10] = (byte)(groupNumber & 0x1F);
+            if(streaming)
+                cdb[10] += 0x80;
+
+            buffer = new byte[transferLength * blockSize];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ (12) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ (16) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="rdprotect">Instructs the drive how to check for protection information on the medium.</param>
+        /// <param name="dpo">If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache fetch/retain.</param>
+        /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
+        /// <param name="fuaNv">If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not present they shall be stored there.</param>
+        /// <param name="lba">Starting block.</param>
+        /// <param name="blockSize">Block size in bytes.</param>
+        /// <param name="groupNumber">Group number where attributes associated with this command should be collected.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv, ulong lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[16];
+            bool sense;
+            byte[] lbaBytes = BitConverter.GetBytes(lba);
+
+            cdb[0] = (byte)ScsiCommands.Read16;
+            cdb[1] = (byte)((rdprotect & 0x07) << 5);
+            if(dpo)
+                cdb[1] += 0x10;
+            if(fua)
+                cdb[1] += 0x08;
+            if(fuaNv)
+                cdb[1] += 0x02;
+            cdb[2] = lbaBytes[7];
+            cdb[3] = lbaBytes[6];
+            cdb[4] = lbaBytes[5];
+            cdb[5] = lbaBytes[4];
+            cdb[6] = lbaBytes[3];
+            cdb[7] = lbaBytes[2];
+            cdb[8] = lbaBytes[1];
+            cdb[9] = lbaBytes[0];
+            cdb[10] = (byte)((transferLength & 0xFF000000) >> 24);
+            cdb[11] = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[12] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[13] = (byte)(transferLength & 0xFF);
+            cdb[14] = (byte)(groupNumber & 0x1F);
+            if(streaming)
+                cdb[14] += 0x80;
+
+            buffer = new byte[transferLength * blockSize];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ (16) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ LONG (10) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name = "relAddr"></param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="correct">If set to <c>true</c> ask the drive to try to correct errors in the sector.</param>
+        /// <param name="lba">LBA to read.</param>
+        /// <param name="transferBytes">How many bytes to read. If the number is not exactly the drive's size, the command will fail and incidate a delta of the size in SENSE.</param>
+        public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr, uint lba, ushort transferBytes, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadLong;
+            if(correct)
+                cdb[1] += 0x02;
+            if(relAddr)
+                cdb[1] += 0x01;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[7] = (byte)((transferBytes & 0xFF00) >> 8);
+            cdb[8] = (byte)(transferBytes & 0xFF);
+
+            buffer = new byte[transferBytes];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ LONG (10) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SCSI READ LONG (16) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ LONG response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="correct">If set to <c>true</c> ask the drive to try to correct errors in the sector.</param>
+        /// <param name="lba">LBA to read.</param>
+        /// <param name="transferBytes">How many bytes to read. If the number is not exactly the drive's size, the command will fail and incidate a delta of the size in SENSE.</param>
+        public bool ReadLong16(out byte[] buffer, out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[16];
+            bool sense;
+            byte[] lbaBytes = BitConverter.GetBytes(lba);
+
+            cdb[0] = (byte)ScsiCommands.ServiceActionIn;
+            cdb[1] = (byte)ScsiServiceActions.ReadLong16;
+            cdb[2] = lbaBytes[7];
+            cdb[3] = lbaBytes[6];
+            cdb[4] = lbaBytes[5];
+            cdb[5] = lbaBytes[4];
+            cdb[6] = lbaBytes[3];
+            cdb[7] = lbaBytes[2];
+            cdb[8] = lbaBytes[1];
+            cdb[9] = lbaBytes[0];
+            cdb[12] = (byte)((transferBytes & 0xFF00) >> 8);
+            cdb[13] = (byte)(transferBytes & 0xFF);
+            if(correct)
+                cdb[14] += 0x01;
+
+            buffer = new byte[transferBytes];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ LONG (16) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the MMC READ CD command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the MMC READ CD response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="blockSize">Block size.</param>
+        /// <param name="expectedSectorType">Expected sector type.</param>
+        /// <param name="DAP">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
+        /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
+        /// <param name="sync">If set to <c>true</c> we request the sync bytes for data sectors.</param>
+        /// <param name="headerCodes">Header codes.</param>
+        /// <param name="userData">If set to <c>true</c> we request the user data.</param>
+        /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
+        /// <param name="C2Error">C2 error options.</param>
+        /// <param name="subchannel">Subchannel selection.</param>
+        public bool ReadCd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, MmcSectorTypes expectedSectorType,
+            bool DAP, bool relAddr, bool sync, MmcHeaderCodes headerCodes, bool userData, bool edcEcc, MmcErrorField C2Error, MmcSubchannel subchannel, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCd;
+            cdb[1] = (byte)((byte)expectedSectorType << 2);
+            if(DAP)
+                cdb[1] += 0x02;
+            if(relAddr)
+                cdb[1] += 0x01;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[6] = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[8] = (byte)(transferLength & 0xFF);
+            cdb[9] = (byte)((byte)C2Error << 1);
+            cdb[9] += (byte)((byte)headerCodes << 5);
+            if(sync)
+                cdb[9] += 0x80;
+            if(userData)
+                cdb[9] += 0x10;
+            if(edcEcc)
+                cdb[9] += 0x08;
+            cdb[10] = (byte)subchannel;
+
+            buffer = new byte[blockSize * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the MMC READ CD MSF command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the MMC READ CD MSF response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="startMsf">Start MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+        /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+        /// <param name="blockSize">Block size.</param>
+        /// <param name="expectedSectorType">Expected sector type.</param>
+        /// <param name="DAP">If set to <c>true</c> CD-DA should be modified by mute and interpolation</param>
+        /// <param name="sync">If set to <c>true</c> we request the sync bytes for data sectors.</param>
+        /// <param name="headerCodes">Header codes.</param>
+        /// <param name="userData">If set to <c>true</c> we request the user data.</param>
+        /// <param name="edcEcc">If set to <c>true</c> we request the EDC/ECC fields for data sectors.</param>
+        /// <param name="C2Error">C2 error options.</param>
+        /// <param name="subchannel">Subchannel selection.</param>
+        public bool ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize, MmcSectorTypes expectedSectorType,
+            bool DAP, bool sync, MmcHeaderCodes headerCodes, bool userData, bool edcEcc, MmcErrorField C2Error, MmcSubchannel subchannel, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCdMsf;
+            cdb[1] = (byte)((byte)expectedSectorType << 2);
+            if(DAP)
+                cdb[1] += 0x02;
+            cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
+            cdb[4] = (byte)((startMsf & 0xFF00) >> 8);
+            cdb[5] = (byte)(startMsf & 0xFF);
+            cdb[6] = (byte)((endMsf & 0xFF0000) >> 16);
+            cdb[7] = (byte)((endMsf & 0xFF00) >> 8);
+            cdb[8] = (byte)(endMsf & 0xFF);
+            cdb[9] = (byte)((byte)C2Error << 1);
+            cdb[9] += (byte)((byte)headerCodes << 5);
+            if(sync)
+                cdb[9] += 0x80;
+            if(userData)
+                cdb[9] += 0x10;
+            if(edcEcc)
+                cdb[9] += 0x08;
+            cdb[10] = (byte)subchannel;
+
+            uint transferLength = (uint)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
+
+            buffer = new byte[blockSize * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD MSF took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the Pioneer READ CD-DA command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the Pioneer READ CD-DA response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="blockSize">Block size.</param>
+        /// <param name="subchannel">Subchannel selection.</param>
+        public bool ReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, PioneerSubchannel subchannel, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCdDa;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[9] = (byte)(transferLength & 0xFF);
+            cdb[10] = (byte)subchannel;
+
+            buffer = new byte[blockSize * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the Pioneer READ CD-DA MSF command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the Pioneer READ CD-DA MSF response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="startMsf">Start MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+        /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+        /// <param name="blockSize">Block size.</param>
+        /// <param name="subchannel">Subchannel selection.</param>
+        public bool ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCdMsf;
+            cdb[3] = (byte)((startMsf & 0xFF0000) >> 16);
+            cdb[4] = (byte)((startMsf & 0xFF00) >> 8);
+            cdb[5] = (byte)(startMsf & 0xFF);
+            cdb[7] = (byte)((endMsf & 0xFF0000) >> 16);
+            cdb[8] = (byte)((endMsf & 0xFF00) >> 8);
+            cdb[9] = (byte)(endMsf & 0xFF);
+            cdb[10] = (byte)subchannel;
+
+            uint transferLength = (uint)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
+
+            buffer = new byte[blockSize * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA MSF took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the Plextor READ CD-DA command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the Plextor READ CD-DA response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        /// <param name="blockSize">Block size.</param>
+        /// <param name="subchannel">Subchannel selection.</param>
+        public bool ReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, PlextorSubchannel subchannel, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadCdDa;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[6] = (byte)((transferLength & 0xFF000000) >> 24);
+            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
+            cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[9] = (byte)(transferLength & 0xFF);
+            cdb[10] = (byte)subchannel;
+
+            buffer = new byte[blockSize * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the NEC READ CD-DA command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the NEC READ CD-DA response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        public bool ReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.NEC_ReadCdDa;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
+            cdb[8] = (byte)(transferLength & 0xFF);
+
+            buffer = new byte[2352 * transferLength];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Reads a "raw" sector from DVD on Plextor drives. Does it reading drive's cache.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the Plextor READ DVD (RAW) response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        public bool PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[2064 * transferLength];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ReadBuffer;
+            cdb[1] = 0x02;
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+            cdb[3] = (byte)((buffer.Length & 0xFF0000) >> 16);
+            cdb[4] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[5] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "Plextor READ DVD (RAW) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Reads a "raw" sector from DVD on HL-DT-ST drives.
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the HL-DT-ST READ DVD (RAW) response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="lba">Start block address.</param>
+        /// <param name="transferLength">How many blocks to read.</param>
+        public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            buffer = new byte[2064 * transferLength];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.HlDtSt_Vendor;
+            cdb[1] = 0x48;
+            cdb[2] = 0x49;
+            cdb[3] = 0x54;
+            cdb[4] = 0x01;
+            cdb[6] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[7] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[8] = (byte)((lba & 0xFF00) >> 8);
+            cdb[9] = (byte)(lba & 0xFF);
+            cdb[10] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[11] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 

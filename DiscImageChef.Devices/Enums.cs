@@ -2580,8 +2580,15 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sends debugging commands to HL-DT-ST DVD drives
         /// </summary>
-        HlDtSt_Vendor = 0xE7
+        HlDtSt_Vendor = 0xE7,
         #endregion HL-DT-ST vendor commands
+
+        #region NEC vendor commands
+        /// <summary>
+        /// Reads CD-DA data
+        /// </summary>
+        NEC_ReadCdDa = 0xD4
+        #endregion NEC vendor commands
     }
     #endregion SCSI Commands
 
@@ -3033,6 +3040,134 @@ namespace DiscImageChef.Devices
         /// POW Resources Information
         /// </summary>
         POWResources = 0x02
+    }
+
+    public enum MmcSectorTypes : byte
+    {
+        /// <summary>
+        /// No checking of data type is performed
+        /// </summary>
+        AllTypes = 0x00,
+        /// <summary>
+        /// Only CD-DA sectors shall be returned
+        /// </summary>
+        CDDA = 0x01,
+        /// <summary>
+        /// Only Mode 1 sectors shall be returned
+        /// </summary>
+        Mode1 = 0x02,
+        /// <summary>
+        /// Only Mode 2 formless sectors shall be returned
+        /// </summary>
+        Mode2 = 0x03,
+        /// <summary>
+        /// Only Mode 2 Form 1 sectors shall be returned
+        /// </summary>
+        Mode2Form1 = 0x04,
+        /// <summary>
+        /// Only Mode 2 Form 2 sectors shall be returned
+        /// </summary>
+        Mode2Form2 = 0x05
+    }
+
+    public enum MmcHeaderCodes : byte
+    {
+        /// <summary>
+        /// No header information shall be returned
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// Only the four byte header shall be returned
+        /// </summary>
+        HeaderOnly = 0x01,
+        /// <summary>
+        /// Only the mode 2 form x subheader shall be returned
+        /// </summary>
+        SubHeaderOnly = 0x02,
+        /// <summary>
+        /// Return both header and subheader
+        /// </summary>
+        AllHeaders = 0x03
+    }
+
+    public enum MmcErrorField : byte
+    {
+        /// <summary>
+        /// No error information is returned
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// The C2 pointer bits will be included
+        /// </summary>
+        C2Pointers = 0x01,
+        /// <summary>
+        /// The C2 pointer bits will be included as well as the block error byte with a padding byte
+        /// </summary>
+        C2PointersAndBlock = 0x02
+    }
+
+    public enum MmcSubchannel : byte
+    {
+        /// <summary>
+        /// No subchannel shall be returned
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// The raw P to W subchannel data shall be transferred
+        /// </summary>
+        Raw = 0x01,
+        /// <summary>
+        /// Q data shall be transferred
+        /// </summary>
+        Q16 = 0x02,
+        /// <summary>
+        /// De-interleaved and error-corrected R to W subchannel data shall be transferred
+        /// </summary>
+        RW = 0x04
+    }
+
+    public enum PioneerSubchannel : byte
+    {
+        /// <summary>
+        /// No subchannel shall be returned
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// Q data shall be transferred
+        /// </summary>
+        Q16 = 0x01,
+        /// <summary>
+        /// The raw P to W subchannel data shall be transferred
+        /// </summary>
+        All = 0x02,
+        /// <summary>
+        /// The raw P to W subchannel data shall be transferred WITHOUT user data
+        /// </summary>
+        Only = 0x03
+    }
+
+    public enum PlextorSubchannel : byte
+    {
+        /// <summary>
+        /// No subchannel shall be returned
+        /// </summary>
+        None = 0x00,
+        /// <summary>
+        /// Q data shall be transferred
+        /// </summary>
+        Q16 = 0x01,
+        /// <summary>
+        /// The packed and corrected P to W subchannel data shall be transferred
+        /// </summary>
+        Pack = 0x02,
+        /// <summary>
+        /// The raw P to W subchannel data shall be transferred
+        /// </summary>
+        All = 0x03,
+        /// <summary>
+        /// The raw P to W subchannel data, plus C2 error data shall be transferred
+        /// </summary>
+        RawC2 = 0x08
     }
 }
 
