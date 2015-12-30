@@ -232,6 +232,15 @@ namespace DiscImageChef
         public string OutputPrefix { get; set; }
     }
 
+    public class MediaScanSubOptions : CommonSubOptions
+    {
+        [Option('i', "device", Required = true, HelpText = "Device path.")]
+        public string DevicePath { get; set; }
+
+        [Option('m', "mhdd-log", Required = false, DefaultValue = "", HelpText = "Write a log of the scan in the format used by MHDD.")]
+        public string MHDDLogPath { get; set; }
+    }
+
     public class FormatsSubOptions : CommonSubOptions
     {
     }
@@ -267,6 +276,7 @@ namespace DiscImageChef
             MediaInfoVerb = new MediaInfoSubOptions();
             BenchmarkVerb = new BenchmarkSubOptions();
             CreateSidecarVerb = new CreateSidecarSubOptions();
+            MediaScanVerb = new MediaScanSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -304,6 +314,9 @@ namespace DiscImageChef
 
         [VerbOption("create-sidecar", HelpText = "Creates CICM Metadata XML sidecar.")]
         public CreateSidecarSubOptions CreateSidecarVerb { get; set; }
+
+        [VerbOption("media-scan", HelpText = "Scans the media inserted on a device.")]
+        public MediaScanSubOptions MediaScanVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

@@ -1,3 +1,12 @@
+2015-12-30  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Inquiry.cs:
+	  Fixes decoding for devices that follow old 5-byte SCSI
+	  INQUIRY format.
+
+	* SCSI/Sense.cs:
+	  Fixes printing of sense block missing a newline.
+
 2015-12-14  Natalia Portillo  <claunia@claunia.com>
 
 	* CD/ATIP.cs:

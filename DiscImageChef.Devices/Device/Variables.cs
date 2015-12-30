@@ -52,6 +52,7 @@ namespace DiscImageChef.Devices
         readonly string revision;
         readonly string serial;
         readonly Decoders.SCSI.PeripheralDeviceTypes scsiType;
+        readonly bool removable;
 
         /// <summary>
         /// Gets the Platform ID for this device
@@ -176,6 +177,14 @@ namespace DiscImageChef.Devices
             get
             {
                 return scsiType;
+            }
+        }
+
+        public bool IsRemovable
+        {
+            get
+            {
+                return removable;
             }
         }
     }

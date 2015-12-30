@@ -100,6 +100,8 @@ namespace DiscImageChef.Devices.Windows
 
             duration = (end - start).TotalMilliseconds;
 
+            Marshal.FreeHGlobal(sptd_sb.sptd.DataBuffer);
+
             return error;
         }
     }

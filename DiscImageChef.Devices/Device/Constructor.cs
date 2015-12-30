@@ -53,6 +53,7 @@ namespace DiscImageChef.Devices
             platformID = Interop.DetectOS.GetRealPlatformID();
             Timeout = 15;
             error = false;
+            removable = false;
 
             switch (platformID)
             {
@@ -115,6 +116,7 @@ namespace DiscImageChef.Devices
                     revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
                     model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
                     manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
+                    removable = Inquiry.Value.RMB;
 
                     scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
                 }
@@ -124,7 +126,7 @@ namespace DiscImageChef.Devices
                 if (!sense)
                 {
                     type = DeviceType.ATAPI;
-                    Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
+                    Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
                     if (ATAID.HasValue)
                         serial = ATAID.Value.SerialNumber;
@@ -137,7 +139,7 @@ namespace DiscImageChef.Devices
                 if (!sense)
                 {
                     type = DeviceType.ATA;
-                    Decoders.ATA.Identify.IdentifyDevice? ATAID = Decoders.ATA.Identify.Decode(ataBuf);
+                    Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
                     if (ATAID.HasValue)
                     {
@@ -155,6 +157,11 @@ namespace DiscImageChef.Devices
                         serial = ATAID.Value.SerialNumber;
 
                         scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
+
+                        if ((ushort)ATAID.Value.GeneralConfiguration != 0x848A)
+                        {
+                            removable |= (ATAID.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) == Identify.GeneralConfigurationBit.Removable;
+                        }
                     }
                 }
             }

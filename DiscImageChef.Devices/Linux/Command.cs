@@ -97,6 +97,10 @@ namespace DiscImageChef.Devices.Linux
 
             duration = (double)io_hdr.duration;
 
+            Marshal.FreeHGlobal(io_hdr.dxferp);
+            Marshal.FreeHGlobal(io_hdr.cmdp);
+            Marshal.FreeHGlobal(io_hdr.sbp);
+
             return error;
         }
 

@@ -1,3 +1,18 @@
+2015-12-30  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Variables.cs:
+	* Device/Constructor.cs:
+	  Added an IsRemovable field.
+
+	* Device/ScsiCommands.cs:
+	  Fixed SCSI READ CAPACITY CDB size.
+	Fixed READ CD-DA MSF method name.
+	Implemented SCSI SEEK (6) and SEEK (10) commands.
+
+	* Linux/Command.cs:
+	* Windows/Command.cs:
+	  Fixed memory leaking on unmanaged heap.
+
 2015-12-26  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

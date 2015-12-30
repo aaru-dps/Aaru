@@ -592,7 +592,7 @@ namespace DiscImageChef.Devices
         public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, bool RelAddr, uint address, bool PMI, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
-            byte[] cdb = new byte[12];
+            byte[] cdb = new byte[10];
             buffer = new byte[8];
             bool sense;
 
@@ -1398,7 +1398,7 @@ namespace DiscImageChef.Devices
         /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
+        public bool ReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf, uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -1565,6 +1565,61 @@ namespace DiscImageChef.Devices
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Moves the device reading element to the specified block address
+        /// </summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="lba">LBA.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool Seek6(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            byte[] buffer = new byte[0];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Seek6;
+            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)(lba & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "SEEK (6) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Moves the device reading element to the specified block address
+        /// </summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="lba">LBA.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool Seek10(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            byte[] buffer = new byte[0];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Seek10;
+            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+            cdb[3] = (byte)((lba & 0xFF0000) >> 16);
+            cdb[4] = (byte)((lba & 0xFF00) >> 8);
+            cdb[5] = (byte)(lba & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "SEEK (10) took {0} ms.", duration);
 
             return sense;
         }

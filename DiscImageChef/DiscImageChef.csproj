@@ -57,6 +57,7 @@
       <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
     </Compile>
     <Compile Include="Commands\CreateSidecar.cs" />
+    <Compile Include="Commands\MediaScan.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

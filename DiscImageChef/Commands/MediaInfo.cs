@@ -47,10 +47,10 @@ namespace DiscImageChef.Commands
     {
         public static void doMediaInfo(MediaInfoSubOptions options)
         {
-            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", options.Debug);
-            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
-            DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
+            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", options.Debug);
+            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", options.Verbose);
+            DicConsole.DebugWriteLine("Media-Info command", "--device={0}", options.DevicePath);
+            DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", options.OutputPrefix);
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -112,33 +112,55 @@ namespace DiscImageChef.Commands
             ulong blocks = 0;
             uint blockSize = 0;
 
-            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
-            if (sense)
+            if (dev.IsRemovable)
             {
-                Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
-                if (decSense.HasValue)
+                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                if (sense)
                 {
-                    if (decSense.Value.ASC == 0x3A)
+                    Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
+                    if (decSense.HasValue)
                     {
-                        DicConsole.ErrorWriteLine("Please insert media in drive");
-                        return;
-                    }
-
-                    if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
-                    {
-                        int leftRetries = 10;
-                        while (leftRetries > 0)
+                        if (decSense.Value.ASC == 0x3A)
                         {
-                            DicConsole.WriteLine("\rWaiting for drive to become ready");
-                            System.Threading.Thread.Sleep(2000);
-                            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
-                            if (!sense)
-                                break;
+                            int leftRetries = 5;
+                            while (leftRetries > 0)
+                            {
+                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                System.Threading.Thread.Sleep(2000);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                if (!sense)
+                                    break;
 
-                            leftRetries--;
+                                leftRetries--;
+                            }
+
+                            if (sense)
+                            {
+                                DicConsole.ErrorWriteLine("Please insert media in drive");
+                                return;
+                            }
                         }
+                        else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                        {
+                            int leftRetries = 10;
+                            while (leftRetries > 0)
+                            {
+                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                System.Threading.Thread.Sleep(2000);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                                if (!sense)
+                                    break;
 
-                        if (sense)
+                                leftRetries--;
+                            }
+
+                            if (sense)
+                            {
+                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                return;
+                            }
+                        }
+                        else
                         {
                             DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             return;
@@ -146,14 +168,9 @@ namespace DiscImageChef.Commands
                     }
                     else
                     {
-                        DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
                         return;
                     }
-                }
-                else
-                {
-                    DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
-                    return;
                 }
             }
 
@@ -923,7 +940,7 @@ namespace DiscImageChef.Commands
                 {
                     try
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "Writing " + whatWriting + " to {0}{1}", outputPrefix, outputSuffix);
+                        DicConsole.DebugWriteLine("Media-Info command", "Writing " + whatWriting + " to {0}{1}", outputPrefix, outputSuffix);
                         FileStream outputFs = new FileStream(outputPrefix + outputSuffix, FileMode.CreateNew);
                         outputFs.Write(data, 0, data.Length);
                         outputFs.Close();

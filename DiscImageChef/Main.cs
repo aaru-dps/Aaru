@@ -178,6 +178,14 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.CreateSidecar.doSidecar(CreateSidecarOptions);
                     break;
+                case "media-scan":
+                    MediaScanSubOptions MediaScanOptions = (MediaScanSubOptions)invokedVerbInstance;
+                    if (MediaScanOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (MediaScanOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.MediaScan.doMediaScan(MediaScanOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }
