@@ -61,9 +61,9 @@ namespace DiscImageChef.Decoders.SCSI
             if (SCSIInquiryResponse == null)
                 return null;
 
-            if (SCSIInquiryResponse.Length < 36)
+            if (SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
             {
-                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response is less than minimum of 36 bytes, decoded data can be incorrect, not decoding.");
+                DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length);
                 return null;
             }
 

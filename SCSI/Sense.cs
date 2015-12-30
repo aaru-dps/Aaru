@@ -425,7 +425,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (decoded.ILI)
                 sb.AppendLine("Incorrect length indicator");
             if (decoded.InformationValid)
-                sb.AppendFormat("On logical block {0}", decoded.Information);
+                sb.AppendFormat("On logical block {0}", decoded.Information).AppendLine();
 
             if (decoded.AdditionalLength < 6)
                 return sb.ToString();
