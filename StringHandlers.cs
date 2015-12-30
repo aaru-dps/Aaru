@@ -61,6 +61,9 @@ namespace DiscImageChef
         /// <param name="encoding">Encoding.</param>
         public static string CToString(byte[] CString, Encoding encoding)
         {
+            if (CString == null)
+                return null;
+
             StringBuilder sb = new StringBuilder();
 			
             for (int i = 0; i < CString.Length; i++)
@@ -81,6 +84,9 @@ namespace DiscImageChef
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         public static string PascalToString(byte[] PascalString)
         {
+            if (PascalString == null)
+                return null;
+
             StringBuilder sb = new StringBuilder();
 
             byte length = PascalString[0];
@@ -100,6 +106,9 @@ namespace DiscImageChef
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString)
         {
+            if (SpacePaddedString == null)
+                return null;
+            
             int length = 0;
 
             for (int i = SpacePaddedString.Length; i >= 0; i--)
@@ -114,10 +123,7 @@ namespace DiscImageChef
                 }
             }
 
-            if (length == 0)
-                return "";
-
-            return Encoding.ASCII.GetString(SpacePaddedString, 0, length);
+            return length == 0 ? "" : Encoding.ASCII.GetString(SpacePaddedString, 0, length);
         }
     }
 }
