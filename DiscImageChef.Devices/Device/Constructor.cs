@@ -176,6 +176,70 @@ namespace DiscImageChef.Devices
                 usb = false;
             #endregion USB
 
+            #region FireWire
+            if(platformID == DiscImageChef.Interop.PlatformID.Linux)
+            {
+                if(devicePath.StartsWith("/dev/sd"))
+                {
+                    string devPath = devicePath.Substring(5);
+                    if(System.IO.Directory.Exists("/sys/block/" + devPath))
+                    {
+                        string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                        resolvedLink = "/sys" + resolvedLink.Substring(2);
+                        if(!string.IsNullOrEmpty(resolvedLink))
+                        {
+                            while(resolvedLink.Contains("firewire"))
+                            {
+                                resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
+                                if(System.IO.File.Exists(resolvedLink + "/model") &&
+                                    System.IO.File.Exists(resolvedLink + "/vendor") &&
+                                    System.IO.File.Exists(resolvedLink + "/guid"))
+                                {
+                                    System.IO.StreamReader fwSr;
+                                    string fwTemp;
+
+                                    fwSr = new System.IO.StreamReader(resolvedLink + "/model");
+                                    fwTemp = fwSr.ReadToEnd();
+                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireModel);
+                                    fwSr.Close();
+
+                                    fwSr = new System.IO.StreamReader(resolvedLink + "/vendor");
+                                    fwTemp = fwSr.ReadToEnd();
+                                    uint.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireVendor);
+                                    fwSr.Close();
+
+                                    fwSr = new System.IO.StreamReader(resolvedLink + "/guid");
+                                    fwTemp = fwSr.ReadToEnd();
+                                    ulong.TryParse(fwTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out firewireGuid);
+                                    fwSr.Close();
+
+                                    if(System.IO.File.Exists(resolvedLink + "/model_name"))
+                                    {
+                                        fwSr = new System.IO.StreamReader(resolvedLink + "/model_name");
+                                        firewireModelName = fwSr.ReadToEnd().Trim();
+                                        fwSr.Close();
+                                    }
+
+                                    if(System.IO.File.Exists(resolvedLink + "/vendor_name"))
+                                    {
+                                        fwSr = new System.IO.StreamReader(resolvedLink + "/vendor_name");
+                                        firewireVendorName = fwSr.ReadToEnd().Trim();
+                                        fwSr.Close();
+                                    }
+
+                                    firewire = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: Implement for other operating systems
+            else
+                firewire = false;
+            #endregion FireWire
+
             if (!scsiSense)
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
@@ -262,6 +326,24 @@ namespace DiscImageChef.Devices
                     {
                         if(Char.IsControl(c))
                             serial = usbSerialString;
+                    }
+                }
+            }
+
+            if (firewire)
+            {
+                if (string.IsNullOrEmpty(manufacturer))
+                    manufacturer = firewireVendorName;
+                if (string.IsNullOrEmpty(model))
+                    model = firewireModelName;
+                if (string.IsNullOrEmpty(serial))
+                    serial = String.Format("{0:X16}", firewireGuid);
+                else
+                {
+                    foreach (char c in serial)
+                    {
+                        if(Char.IsControl(c))
+                            serial = String.Format("{0:X16}", firewireGuid);
                     }
                 }
             }

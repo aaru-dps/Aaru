@@ -60,6 +60,12 @@ namespace DiscImageChef.Devices
         readonly string usbManufacturerString;
         readonly string usbProductString;
         readonly string usbSerialString;
+        readonly bool firewire;
+        readonly ulong firewireGuid;
+        readonly uint firewireModel;
+        readonly string firewireModelName;
+        readonly uint firewireVendor;
+        readonly string firewireVendorName;
 
         /// <summary>
         /// Gets the Platform ID for this device
@@ -286,6 +292,42 @@ namespace DiscImageChef.Devices
                 return usbSerialString;
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this device is attached via FireWire.
+        /// </summary>
+        /// <value><c>true</c> if this device is attached via FireWire; otherwise, <c>false</c>.</value>
+        public bool IsFireWire { get { return firewire; } }
+
+        /// <summary>
+        /// Gets the FireWire GUID
+        /// </summary>
+        /// <value>The FireWire GUID.</value>
+        public ulong FireWireGUID { get { return firewireGuid; } }
+
+        /// <summary>
+        /// Gets the FireWire model number
+        /// </summary>
+        /// <value>The FireWire model.</value>
+        public uint FireWireModel { get { return firewireModel; } }
+
+        /// <summary>
+        /// Gets the FireWire model name.
+        /// </summary>
+        /// <value>The FireWire model name.</value>
+        public string FireWireModelName { get { return firewireModelName; } }
+
+        /// <summary>
+        /// Gets the FireWire vendor number.
+        /// </summary>
+        /// <value>The FireWire vendor number.</value>
+        public uint FireWireVendor { get { return firewireVendor; } }
+
+        /// <summary>
+        /// Gets the FireWire vendor name.
+        /// </summary>
+        /// <value>The FireWire vendor name.</value>
+        public string FireWireVendorName { get { return firewireVendorName; } }
     }
 }
 

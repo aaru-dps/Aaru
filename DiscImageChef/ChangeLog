@@ -1,6 +1,11 @@
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added support for FireWire devices.
+
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added support for USB detection and metadata.
 
 2015-12-30  Natalia Portillo  <claunia@claunia.com>

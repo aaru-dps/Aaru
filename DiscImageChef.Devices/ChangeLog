@@ -1,5 +1,11 @@
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/Variables.cs:
+	* Device/Constructor.cs:
+	  Added support for FireWire devices.
+
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
 	* Device/Constructor.cs:
 	  Added support for USB on Linux.
 

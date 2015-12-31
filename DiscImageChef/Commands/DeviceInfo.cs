@@ -75,9 +75,20 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("USB descriptor is {0} bytes", dev.USBDescriptors.Length);
                 DicConsole.WriteLine("USB Vendor ID: {0:X4}", dev.USBVendorID);
                 DicConsole.WriteLine("USB Product ID: {0:X4}", dev.USBProductID);
-                DicConsole.WriteLine("USB Manufacturer: {0:X4}", dev.USBManufacturerString);
-                DicConsole.WriteLine("USB Product: {0:X4}", dev.USBProductString);
-                DicConsole.WriteLine("USB Serial number: {0:X4}", dev.USBSerialString);
+                DicConsole.WriteLine("USB Manufacturer: {0}", dev.USBManufacturerString);
+                DicConsole.WriteLine("USB Product: {0}", dev.USBProductString);
+                DicConsole.WriteLine("USB Serial number: {0}", dev.USBSerialString);
+                DicConsole.WriteLine();
+            }
+
+            if (dev.IsFireWire)
+            {
+                DicConsole.WriteLine("FireWire device");
+                DicConsole.WriteLine("FireWire Vendor ID: {0:X6}", dev.FireWireVendor);
+                DicConsole.WriteLine("FireWire Model ID: {0:X6}", dev.FireWireModel);
+                DicConsole.WriteLine("FireWire Manufacturer: {0}", dev.FireWireVendorName);
+                DicConsole.WriteLine("FireWire Model: {0}", dev.FireWireModelName);
+                DicConsole.WriteLine("FireWire GUID: {0:X16}", dev.FireWireGUID);
                 DicConsole.WriteLine();
             }
 
