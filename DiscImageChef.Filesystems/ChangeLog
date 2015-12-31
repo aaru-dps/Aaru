@@ -1,3 +1,8 @@
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* ISO9660.cs:
+	  Comment unused variable.
+
 2015-12-25  Natalia Portillo  <claunia@claunia.com>
 
 	* ISO9660.cs:

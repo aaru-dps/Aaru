@@ -52,13 +52,13 @@ namespace DiscImageChef.Plugins
 {
     class ISO9660Plugin : Plugin
     {
-		static bool alreadyLaunched;
+		//static bool alreadyLaunched;
 
         public ISO9660Plugin()
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-			alreadyLaunched = false;
+			//alreadyLaunched = false;
         }
 
         struct DecodedVolumeDescriptor
