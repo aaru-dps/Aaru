@@ -328,6 +328,34 @@ namespace DiscImageChef.Devices.Linux
 
             return error;
         }
+
+        public static string ReadLink(string path)
+        {
+            IntPtr buf = Marshal.AllocHGlobal(int.MaxValue);
+            int resultSize;
+
+            if (Interop.DetectOS.Is64Bit())
+            {
+                long result64 = Extern.readlink64(path, buf, (long)int.MaxValue);
+                if (result64 <= 0)
+                    return null;
+                
+                resultSize = (int)result64;
+            }
+            else
+            {
+                int result = Extern.readlink(path, buf, int.MaxValue);
+                if (result <= 0)
+                    return null;
+
+                resultSize = result;
+            }
+
+            byte[] resultString = new byte[resultSize];
+            Marshal.Copy(buf, resultString, 0, resultSize);
+            Marshal.FreeHGlobal(buf);
+            return System.Text.Encoding.ASCII.GetString(resultString);
+        }
     }
 }
 

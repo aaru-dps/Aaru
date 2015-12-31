@@ -1,3 +1,15 @@
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Constructor.cs:
+	  Added support for USB on Linux.
+
+	* Device/Variables.cs:
+	  Added support for USB detection and metadata.
+
+	* Linux/Extern.cs:
+	* Linux/Command.cs:
+	  Added readlink(3) support, for getting symlink destinations.
+
 2015-12-30  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Variables.cs:

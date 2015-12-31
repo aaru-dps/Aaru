@@ -68,6 +68,19 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            if (dev.IsUSB)
+            {
+                DicConsole.WriteLine("USB device");
+                if(dev.USBDescriptors != null)
+                    DicConsole.WriteLine("USB descriptor is {0} bytes", dev.USBDescriptors.Length);
+                DicConsole.WriteLine("USB Vendor ID: {0:X4}", dev.USBVendorID);
+                DicConsole.WriteLine("USB Product ID: {0:X4}", dev.USBProductID);
+                DicConsole.WriteLine("USB Manufacturer: {0:X4}", dev.USBManufacturerString);
+                DicConsole.WriteLine("USB Product: {0:X4}", dev.USBProductString);
+                DicConsole.WriteLine("USB Serial number: {0:X4}", dev.USBSerialString);
+                DicConsole.WriteLine();
+            }
+
             switch (dev.Type)
             {
                 case DeviceType.ATA:

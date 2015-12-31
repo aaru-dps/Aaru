@@ -102,6 +102,80 @@ namespace DiscImageChef.Devices
 
             bool scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
 
+            #region USB
+            if(platformID == DiscImageChef.Interop.PlatformID.Linux)
+            {
+                if(devicePath.StartsWith("/dev/sd"))
+                {
+                    string devPath = devicePath.Substring(5);
+                    if(System.IO.Directory.Exists("/sys/block/" + devPath))
+                    {
+                        string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                        resolvedLink = "/sys" + resolvedLink.Substring(2);
+                        if(!string.IsNullOrEmpty(resolvedLink))
+                        {
+                            while(resolvedLink.Contains("usb"))
+                            {
+                                resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
+                                if(System.IO.File.Exists(resolvedLink + "/descriptors") &&
+                                    System.IO.File.Exists(resolvedLink + "/idProduct") &&
+                                    System.IO.File.Exists(resolvedLink + "/idVendor"))
+                                {
+                                    System.IO.FileStream usbFs;
+                                    System.IO.StreamReader usbSr;
+                                    string usbTemp;
+
+                                    usbFs = new System.IO.FileStream(resolvedLink + "/descriptors", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                    byte[] usbBuf = new byte[65536];
+                                    int usbCount = usbFs.Read(usbBuf, 0, 65536);
+                                    usbDescriptors = new byte[usbCount];
+                                    Array.Copy(usbBuf, 0, usbDescriptors, 0, usbCount);
+                                    usbFs.Close();
+
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/idProduct");
+                                    usbTemp = usbSr.ReadToEnd();
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out usbProduct);
+                                    usbSr.Close();
+
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/idVendor");
+                                    usbTemp = usbSr.ReadToEnd();
+                                    ushort.TryParse(usbTemp, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out usbVendor);
+                                    usbSr.Close();
+
+                                    if(System.IO.File.Exists(resolvedLink + "/manufacturer"))
+                                    {
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/manufacturer");
+                                        usbManufacturerString = usbSr.ReadToEnd().Trim();
+                                        usbSr.Close();
+                                    }
+
+                                    if(System.IO.File.Exists(resolvedLink + "/product"))
+                                    {
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/product");
+                                    usbProductString = usbSr.ReadToEnd().Trim();
+                                    usbSr.Close();
+                                    }
+
+                                    if(System.IO.File.Exists(resolvedLink + "/serial"))
+                                    {
+                                    usbSr = new System.IO.StreamReader(resolvedLink + "/serial");
+                                    usbSerialString = usbSr.ReadToEnd().Trim();
+                                    usbSr.Close();
+                                    }
+
+                                    usb = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: Implement for other operating systems
+            else
+                usb = false;
+            #endregion USB
+
             if (!scsiSense)
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
@@ -172,6 +246,24 @@ namespace DiscImageChef.Devices
                 model = null;
                 revision = null;
                 serial = null;
+            }
+
+            if (usb)
+            {
+                if (string.IsNullOrEmpty(manufacturer))
+                    manufacturer = usbManufacturerString;
+                if (string.IsNullOrEmpty(model))
+                    model = usbProductString;
+                if (string.IsNullOrEmpty(serial))
+                    serial = usbSerialString;
+                else
+                {
+                    foreach (char c in serial)
+                    {
+                        if(Char.IsControl(c))
+                            serial = usbSerialString;
+                    }
+                }
             }
         }
     }
