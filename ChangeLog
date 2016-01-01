@@ -1,3 +1,8 @@
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskType.cs:
+	  Added Acorn Archimedes and Commodore 15xx floppies.
+
 2015-12-03  Natalia Portillo  <claunia@claunia.com>
 
 	* DiskType.cs:
