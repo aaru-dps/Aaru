@@ -1096,8 +1096,200 @@ namespace DiscImageChef.Commands
                             }
                             sidecar.BlockMedia[0].Sequence.MediaTitle = _imageFormat.GetImageName();
 
-                            //DiskType dskType = _imageFormat.ImageInfo.diskType;
-                            // TODO: Complete it
+                            foreach (DiskTagType tagType in _imageFormat.ImageInfo.readableDiskTags)
+                            {
+                                switch (tagType)
+                                {
+                                    case DiskTagType.ATAPI_IDENTIFY:
+                                        sidecar.BlockMedia[0].ATA = new ATAType();
+                                        sidecar.BlockMedia[0].ATA.Identify = new DumpType();
+                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.ATAPI_IDENTIFY)).ToArray();
+                                        sidecar.BlockMedia[0].ATA.Identify.Size = _imageFormat.ReadDiskTag(DiskTagType.ATAPI_IDENTIFY).Length;
+                                        break;
+                                    case DiskTagType.ATA_IDENTIFY:
+                                        sidecar.BlockMedia[0].ATA = new ATAType();
+                                        sidecar.BlockMedia[0].ATA.Identify = new DumpType();
+                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.ATA_IDENTIFY)).ToArray();
+                                        sidecar.BlockMedia[0].ATA.Identify.Size = _imageFormat.ReadDiskTag(DiskTagType.ATA_IDENTIFY).Length;
+                                        break;
+                                    case DiskTagType.PCMCIA_CIS:
+                                        sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
+                                        sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
+                                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.PCMCIA_CIS)).ToArray();
+                                        sidecar.BlockMedia[0].PCMCIA.CIS.Size = _imageFormat.ReadDiskTag(DiskTagType.PCMCIA_CIS).Length;
+                                        break;
+                                    case DiskTagType.SCSI_INQUIRY:
+                                        sidecar.BlockMedia[0].SCSI = new SCSIType();
+                                        sidecar.BlockMedia[0].SCSI.Inquiry = new DumpType();
+                                        sidecar.BlockMedia[0].SCSI.Inquiry.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.SCSI_INQUIRY)).ToArray();
+                                        sidecar.BlockMedia[0].SCSI.Inquiry.Size = _imageFormat.ReadDiskTag(DiskTagType.SCSI_INQUIRY).Length;
+                                        break;
+                                    case DiskTagType.SD_CID:
+                                        if(sidecar.BlockMedia[0].SecureDigital == null)
+                                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                                        sidecar.BlockMedia[0].SecureDigital.CID = new DumpType();
+                                        sidecar.BlockMedia[0].SecureDigital.CID.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.SD_CID)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.CID.Size = _imageFormat.ReadDiskTag(DiskTagType.SD_CID).Length;
+                                        break;
+                                    case DiskTagType.SD_CSD:
+                                        if(sidecar.BlockMedia[0].SecureDigital == null)
+                                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                                        sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType();
+                                        sidecar.BlockMedia[0].SecureDigital.CSD.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.SD_CSD)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.CSD.Size = _imageFormat.ReadDiskTag(DiskTagType.SD_CSD).Length;
+                                        break;
+                                    case DiskTagType.SD_ExtendedCSD:
+                                        if(sidecar.BlockMedia[0].SecureDigital == null)
+                                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType();
+                                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Checksums = GetChecksums(_imageFormat.ReadDiskTag(DiskTagType.SD_ExtendedCSD)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Size = _imageFormat.ReadDiskTag(DiskTagType.SD_ExtendedCSD).Length;
+                                        break;
+                                }
+                            }
+
+                            string dskType, dskSubType;
+                            Metadata.DiskType.DiskTypeToString(_imageFormat.ImageInfo.diskType, out dskType, out dskSubType);
+                            sidecar.BlockMedia[0].DiskType = dskType;
+                            sidecar.BlockMedia[0].DiskSubType = dskSubType;
+
+                            switch(dskType)
+                            {
+                                case "8\" floppy":
+                                    // According to ECMA-59 et al
+                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
+                                    sidecar.BlockMedia[0].Dimensions.Height = 203.2;
+                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Width = 203.2;
+                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Thickness = 1.65;
+                                    break;
+                                case "5.25\" floppy":
+                                    // According to ECMA-99 et al
+                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
+                                    sidecar.BlockMedia[0].Dimensions.Height = 133.3;
+                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Width = 133.3;
+                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Thickness = 1.65;
+                                    break;
+                                case "3.5\" floppy":
+                                    // According to ECMA-100 et al
+                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
+                                    sidecar.BlockMedia[0].Dimensions.Height = 94;
+                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Width = 90;
+                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Thickness = 3.3;
+                                    break;
+                                case "5.25\" magneto-optical":
+                                    // According to ECMA-183 et al
+                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
+                                    sidecar.BlockMedia[0].Dimensions.Height = 153;
+                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Width = 135;
+                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Thickness = 11;
+                                    break;
+                                case "3.5\" magneto-optical":
+                                    // According to ECMA-154 et al
+                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
+                                    sidecar.BlockMedia[0].Dimensions.Height = 94;
+                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Width = 90;
+                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
+                                    sidecar.BlockMedia[0].Dimensions.Thickness = 6;
+                                    break;
+                            }
+
+                            sidecar.BlockMedia[0].LogicalBlocks = (long)_imageFormat.GetSectors();
+                            sidecar.BlockMedia[0].LogicalBlockSize = (int)_imageFormat.GetSectorSize();
+                            // TODO: Detect it
+                            sidecar.BlockMedia[0].PhysicalBlockSize = (int)_imageFormat.GetSectorSize();
+
+                            DicConsole.WriteLine("Checking filesystems...");
+
+                            List<Partition> partitions = new List<Partition>();
+
+                            foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
+                            {
+                                List<Partition> _partitions;
+
+                                if (_partplugin.GetInformation(_imageFormat, out _partitions))
+                                {
+                                    partitions = _partitions;
+                                    break;
+                                }
+                            }
+
+                            sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[1];
+                            if (partitions.Count > 0)
+                            {
+                                sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
+                                for (int i = 0; i < partitions.Count; i++)
+                                {
+                                    sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType();
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].Description = partitions[i].PartitionDescription;
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].Name = partitions[i].PartitionName;
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].Sequence = (int)partitions[i].PartitionSequence;
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].StartSector = (int)partitions[i].PartitionStartSector;
+                                    sidecar.BlockMedia[0].FileSystemInformation[i].Type = partitions[i].PartitionType;
+
+                                    List<FileSystemType> lstFs = new List<FileSystemType>();
+
+                                    foreach (Plugin _plugin in plugins.PluginsList.Values)
+                                    {
+                                        try
+                                        {
+                                            if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
+                                            {
+                                                string foo;
+                                                _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                                lstFs.Add(_plugin.XmlFSType);
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                                        }
+                                    }
+
+                                    if (lstFs.Count > 0)
+                                        sidecar.BlockMedia[0].FileSystemInformation[i].FileSystems = lstFs.ToArray();
+                                }
+                            }
+                            else
+                            {
+                                sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType();
+                                sidecar.BlockMedia[0].FileSystemInformation[0].StartSector = 0;
+                                sidecar.BlockMedia[0].FileSystemInformation[0].EndSector = (int)(_imageFormat.GetSectors() - 1);
+
+                                List<FileSystemType> lstFs = new List<FileSystemType>();
+
+                                foreach (Plugin _plugin in plugins.PluginsList.Values)
+                                {
+                                    try
+                                    {
+                                        if (_plugin.Identify(_imageFormat, 0, _imageFormat.GetSectors() - 1))
+                                        {
+                                            string foo;
+                                            _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out foo);
+                                            lstFs.Add(_plugin.XmlFSType);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                                    }
+                                }
+
+                                if (lstFs.Count > 0)
+                                    sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
+                            }
+
+
+                            // TODO: Implement support for getting CHS
                             break;
                         }
                     case XmlMediaType.LinearMedia:

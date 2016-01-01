@@ -1,5 +1,10 @@
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/CreateSidecar.cs:
+	  Implemented most support for block media sidecars.
+
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DeviceInfo.cs:
 	  Added support for FireWire devices.
 

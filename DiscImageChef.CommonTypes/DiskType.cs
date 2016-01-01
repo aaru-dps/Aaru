@@ -294,6 +294,8 @@ namespace DiscImageChef.CommonTypes
         ACORN_525_SS_DD_80,
         /// <summary>5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM</summary>
         ACORN_525_DS_DD,
+        /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        ACORN_35_DS_DD,
 
         // Atari standard floppy formats
         /// <summary>5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM</summary>
@@ -304,12 +306,14 @@ namespace DiscImageChef.CommonTypes
         ATARI_525_DD,
 
         // Commodore standard floppy formats
-        /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM (1581)</summary>
         CBM_35_DD,
         /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)</summary>
         CBM_AMIGA_35_DD,
         /// <summary>3,5", DS, HD, 80 tracks, 22 spt, 512 bytes/sector, MFM (Amiga)</summary>
         CBM_AMIGA_35_HD,
+        /// <summary>5,25", SS, DD, 35 tracks, GCR</summary>
+        CBM_1540,
 
         // NEC standard floppy formats
         /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
@@ -378,9 +382,9 @@ namespace DiscImageChef.CommonTypes
         FDFORMAT_525_DD,
         /// <summary>5,25", DS, HD, 82 tracks, 17 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_525_HD,
-        /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3,5", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_35_DD,
-        /// <summary>5,25", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3,5", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_35_HD,
 
         // Generic hard disks

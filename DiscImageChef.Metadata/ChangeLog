@@ -1,3 +1,8 @@
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskType.cs:
+	  Added known floppies and magneto-opticals.
+
 2015-12-13  Natalia Portillo  <claunia@claunia.com>
 
 	* DiskType.cs:

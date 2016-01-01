@@ -341,6 +341,297 @@ namespace DiscImageChef.Metadata
                     DiscType = "BD";
                     DiscSubType = "Xbox One Game Disc (XGD4)";
                     break;
+                case DiscImageChef.CommonTypes.DiskType.Apple32SS:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Apple DOS 3.2";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.Apple32DS:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Apple DOS 3.2 (double-sided)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.Apple33SS:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Apple DOS 3.3";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.Apple33DS:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Apple DOS 3.3 (double-sided)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.AppleSonySS:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Apple 400K";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.AppleSonyDS:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Apple 800K";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.AppleFileWare:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Apple FileWare";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_525_SS_DD_8:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM double-density, single-sided, 8 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_525_SS_DD_9:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM double-density, single-sided, 9 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_525_DS_DD_8:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM double-density, double-sided, 8 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_525_DS_DD_9:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM double-density, double-sided, 9 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_525_HD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_SS_DD_8:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM double-density, single-sided, 8 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_SS_DD_9:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM double-density, single-sided, 9 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_DS_DD_8:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM double-density, double-sided, 8 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_DS_DD_9:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM double-density, double-sided, 9 sectors";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_HD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DOS_35_ED:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM extra-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DMF:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Microsoft DMF";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.DMF_82:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Microsoft DMF (82-track)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.XDF_35:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "IBM XDF";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.XDF_525:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "IBM XDF";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM23FD:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 23FD";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM33FD_128:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 33FD (128 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM33FD_256:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 33FD (256 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM33FD_512:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 33FD (512 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM43FD_128:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 43FD (128 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM43FD_256:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 43FD (256 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM53FD_256:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 53FD (256 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM53FD_512:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 53FD (512 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.IBM53FD_1024:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "IBM 53FD (1024 bytes/sector)";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.RX01:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "DEC RX-01";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.RX02:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "DEC RX-02";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_SD_40:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "BBC Micro 100K";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_SD_80:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "BBC Micro 200K";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_DD_40:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Acorn S";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_DD_80:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Acorn M";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_525_DS_DD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Acorn L";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ACORN_35_DS_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Acorn Archimedes";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ATARI_525_SD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Atari single-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ATARI_525_ED:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Atari enhanced-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ATARI_525_DD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Atari double-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.CBM_1540:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Commodore 1540/1541";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.CBM_35_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Commodore 1581";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.CBM_AMIGA_35_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Amiga double-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.CBM_AMIGA_35_HD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Amiga high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.NEC_8_SD:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "NEC single-sided";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.NEC_8_DD:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "NEC double-sided";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.NEC_525_HD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "NEC high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.NEC_35_HD_8:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "NEC high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.NEC_35_HD_15:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "NEC floppy mode 3";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.SHARP_525:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Sharp";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.SHARP_35:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Sharp";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_54:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "ECMA-54";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_59:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "ECMA-59";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_69_8:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_69_15:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_69_26:
+                    DiscType = "8\" floppy";
+                    DiscSubType = "ECMA-69";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_66:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "ECMA-66";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_70:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "ECMA-70";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_78:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_78_2:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "ECMA-78";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_99_8:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_99_15:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_99_26:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "ECMA-99";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_100:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "ECMA-99";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_125:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "ECMA-125";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_147:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "ECMA-147";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_525_DD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "FDFORMAT double-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_525_HD:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "FDFORMAT high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_35_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "FDFORMAT double-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_35_HD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "FDFORMAT high-density";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_183_512:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_183_1024:
+                    DiscType = "5.25\" magneto-optical";
+                    DiscSubType = "ECMA-183";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_184_512:
+                case DiscImageChef.CommonTypes.DiskType.ECMA_184_1024:
+                    DiscType = "5.25\" magneto-optical";
+                    DiscSubType = "ECMA-184";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_154:
+                    DiscType = "3.5\" magneto-optical";
+                    DiscSubType = "ECMA-154";
+                    break;
+                case DiscImageChef.CommonTypes.DiskType.ECMA_201:
+                    DiscType = "3.5\" magneto-optical";
+                    DiscSubType = "ECMA-201";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

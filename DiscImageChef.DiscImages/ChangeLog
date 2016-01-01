@@ -1,3 +1,9 @@
+2015-12-31  Natalia Portillo  <claunia@claunia.com>
+
+	* ImagePlugin.cs:
+	  Added DiskTag for PCMCIA CIS and SecureDigital/MMC CID, CSD
+	  and extended CSD.
+
 2015-12-25  Natalia Portillo  <claunia@claunia.com>
 
 	* GDI.cs:

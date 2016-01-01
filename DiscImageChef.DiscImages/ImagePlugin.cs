@@ -662,7 +662,15 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>ATA IDENTIFY DEVICE response</summary>
         ATA_IDENTIFY,
         /// <summary>ATA IDENTIFY PACKET DEVICE response</summary>
-        ATAPI_IDENTIFY
+        ATAPI_IDENTIFY,
+        /// <summary>PCMCIA/CardBus Card Information Structure</summary>
+        PCMCIA_CIS,
+        /// <summary>SecureDigital / MMC CID</summary>
+        SD_CID,
+        /// <summary>SecureDigital / MMC CSD</summary>
+        SD_CSD,
+        /// <summary>SecureDigital Extended CSD</summary>
+        SD_ExtendedCSD
     };
 
     /// <summary>
