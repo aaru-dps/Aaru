@@ -1,5 +1,18 @@
 2016-01-11  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/ScsiCommands.cs:
+	* Device/ScsiCommands/MMC.cs:
+	* Device/ScsiCommands/NEC.cs:
+	* Device/ScsiCommands/SPC.cs:
+	* Device/ScsiCommands/SBC.cs:
+	* DiscImageChef.Devices.csproj:
+	* Device/ScsiCommands/Plextor.cs:
+	* Device/ScsiCommands/Pioneer.cs:
+	* Device/ScsiCommands/HL-DT-ST.cs:
+	  Separated SCSI commands by category/vendor.
+
+2016-01-11  Natalia Portillo  <claunia@claunia.com>
+
 	* Enums.cs:
 	* Device/ScsiCommands.cs:
 	  Added Plextor vendor commands.
