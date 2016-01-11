@@ -1,3 +1,9 @@
+2016-01-11  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Device/ScsiCommands.cs:
+	  Added Plextor vendor commands.
+
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Variables.cs:

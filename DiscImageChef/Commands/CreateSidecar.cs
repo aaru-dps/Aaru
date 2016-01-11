@@ -88,7 +88,7 @@ namespace DiscImageChef.Commands
                 }
                 catch (Exception ex)
                 {
-                    System.Console.Error.WriteLine("Unable to open image format");
+                    DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     return;
                 }

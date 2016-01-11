@@ -54,13 +54,13 @@ namespace DiscImageChef.Commands
 
             if (!System.IO.File.Exists(options.InputFile1))
             {
-                System.Console.Error.WriteLine("Input file 1 does not exist.");
+                DicConsole.ErrorWriteLine("Input file 1 does not exist.");
                 return;
             }
 
             if (!System.IO.File.Exists(options.InputFile2))
             {
-                System.Console.Error.WriteLine("Input file 2 does not exist.");
+                DicConsole.ErrorWriteLine("Input file 2 does not exist.");
                 return;
             }
 

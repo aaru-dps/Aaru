@@ -2567,6 +2567,14 @@ namespace DiscImageChef.Devices
         /// </summary>
         Plextor_Extend = 0xE9,
         /// <summary>
+        /// Command for Plextor PoweRec
+        /// </summary>
+        Plextor_PoweRec = 0xEB,
+        /// <summary>
+        /// Sends extended commands (like PoweRec) to Plextor drives
+        /// </summary>
+        Plextor_Extend2 = 0xED,
+        /// <summary>
         /// Resets Plextor drives
         /// </summary>
         Plextor_Reset = 0xEE,
@@ -3168,6 +3176,68 @@ namespace DiscImageChef.Devices
         /// The raw P to W subchannel data, plus C2 error data shall be transferred
         /// </summary>
         RawC2 = 0x08
+    }
+
+    public enum PlextorSubCommands : byte
+    {
+        /// <summary>
+        /// Gets Plextor mode
+        /// </summary>
+        GetMode = 0x00,
+        /// <summary>
+        /// Sets Plextor mode
+        /// </summary>
+        SetMode = 0x10,
+
+        /// <summary>
+        /// Plextor force single session or hide CD-R
+        /// </summary>
+        SessionHide = 0x01,
+        /// <summary>
+        /// Plextor VariRec
+        /// </summary>
+        VariRec = 0x02,
+        /// <summary>
+        /// Plextor GigaRec
+        /// </summary>
+        GigaRec = 0x04,
+        /// <summary>
+        /// Plextor accoustic management (disc related)
+        /// </summary>
+        SilentDisc = 0x06,
+        /// <summary>
+        /// Plextor accoustic management (tra related)
+        /// </summary>
+        SilentTray = 0x07,
+        /// <summary>
+        /// Plextor accoustic management
+        /// </summary>
+        Silent = 0x08,
+        /// <summary>
+        /// Plextor test write DVD+
+        /// </summary>
+        TestWriteDvdPlus = 0x21,
+        /// <summary>
+        /// Plextor book setting
+        /// </summary>
+        BitSet = 0x22,
+        /// <summary>
+        /// Plextor SecuRec
+        /// </summary>
+        SecuRec = 0xD5,
+
+        /// <summary>
+        /// Book setting for DVD+R
+        /// </summary>
+        BitSetR = 0x0A,
+        /// <summary>
+        /// Book setting for DVD+R DL
+        /// </summary>
+        BitSetRDL = 0x0E,
+        /// <summary>
+        /// Plextor SpeedRead
+        /// </summary>
+        SpeedRead = 0xBB
     }
 }
 

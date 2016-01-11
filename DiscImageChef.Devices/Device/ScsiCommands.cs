@@ -1623,6 +1623,401 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        /// <summary>
+        /// Reads the statistics EEPROM from Plextor CD recorders
+        /// </summary>
+        /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorReadEepromCDR(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[256];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[8] = 1;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Reads the statistics EEPROM from Plextor PX-708 and PX-712 recorders
+        /// </summary>
+        /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorReadEeprom(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[512];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[8] = 2;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Reads a block from the statistics EEPROM from Plextor DVD recorders
+        /// </summary>
+        /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="block">EEPROM block to read</param>
+        /// <param name="blockSize">How many bytes are in the EEPROM block</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, byte block, ushort blockSize, uint timeout, out double duration)
+        {
+            buffer = new byte[blockSize];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_ReadEeprom;
+            cdb[1] = 1;
+            cdb[7] = block;
+            cdb[8] = (byte)((blockSize & 0xFF00) >> 8);
+            cdb[9] = (byte)(blockSize & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets speeds set by Plextor PoweRec
+        /// </summary>
+        /// <returns><c>true</c>, if speeds were got correctly, <c>false</c> otherwise.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="selected">Selected write speed.</param>
+        /// <param name="max">Max speed for currently inserted media.</param>
+        /// <param name="last">Last actual speed.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetSpeeds(out byte[] senseBuffer, out ushort selected, out ushort max, out ushort last, uint timeout, out double duration)
+        {
+            byte[] buf = new byte[10];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            selected = 0;
+            max = 0;
+            last = 0;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_PoweRec;
+            cdb[9] = (byte)buf.Length;
+
+            lastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
+
+            if (!sense && !error)
+            {
+                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                selected = BigEndianBitConverter.ToUInt16(buf, 4);
+                max = BigEndianBitConverter.ToUInt16(buf, 6);
+                last = BigEndianBitConverter.ToUInt16(buf, 8);
+            }
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor PoweRec status
+        /// </summary>
+        /// <returns><c>true</c>, if PoweRec is supported, <c>false</c> otherwise.</returns>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="enabled">PoweRec is enabled.</param>
+        /// <param name="speed">PoweRec recommended speed.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetPoweRec(out byte[] senseBuffer, out bool enabled, out ushort speed, uint timeout, out double duration)
+        {
+            byte[] buf = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            enabled = false;
+            speed = 0;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend2;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[9] = (byte)buf.Length;
+
+            lastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
+
+            if (!sense && !error)
+            {
+                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                enabled = buf[2] != 0;
+                speed = BigEndianBitConverter.ToUInt16(buf, 4);
+            }
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor SilentMode status
+        /// </summary>
+        /// <returns><c>true</c>, if SilentMode is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetSilentMode(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.Silent;
+            cdb[3] = 4;
+            cdb[10] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SILENT MODE took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor GigaRec status
+        /// </summary>
+        /// <returns><c>true</c>, if GigaRec is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetGigaRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.GigaRec;
+            cdb[10] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET GIGAREC took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor VariRec status
+        /// </summary>
+        /// <returns><c>true</c>, if VariRec is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetVariRec(out byte[] buffer, out byte[] senseBuffer, bool dvd, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.VariRec;
+            cdb[10] = (byte)buffer.Length;
+
+            if(dvd)
+                cdb[3] = 0x12;
+            else
+                cdb[3] = 0x02;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET VARIREC took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor SecuRec status
+        /// </summary>
+        /// <returns><c>true</c>, if SecuRec is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetSecuRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[2] = (byte)PlextorSubCommands.SecuRec;
+            cdb[10] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SECUREC took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor SpeedRead status
+        /// </summary>
+        /// <returns><c>true</c>, if SpeedRead is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetSpeedRead(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.SpeedRead;
+            cdb[10] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SPEEDREAD took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor CD-R and multi-session hiding status
+        /// </summary>
+        /// <returns><c>true</c>, if CD-R and multi-session hiding is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetHiding(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.SessionHide;
+            cdb[9] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SINGLE-SESSION / HIDE CD-R took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor DVD+ book bitsetting status
+        /// </summary>
+        /// <returns><c>true</c>, if DVD+ book bitsetting is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetBitsetting(out byte[] buffer, out byte[] senseBuffer, bool dualLayer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.BitSet;
+            cdb[9] = (byte)buffer.Length;
+
+            if(dualLayer)
+                cdb[3] = (byte)PlextorSubCommands.BitSetRDL;
+            else
+                cdb[3] = (byte)PlextorSubCommands.BitSetR;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET BOOK BITSETTING took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Gets the Plextor DVD+ test writing status
+        /// </summary>
+        /// <returns><c>true</c>, if DVD+ test writing is supported, <c>false</c> otherwise.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool PlextorGetTestWriteDvdPlus(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[12];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Plextor_Extend;
+            cdb[1] = (byte)PlextorSubCommands.GetMode;
+            cdb[2] = (byte)PlextorSubCommands.TestWriteDvdPlus;
+            cdb[10] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET TEST WRITE DVD+ took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 

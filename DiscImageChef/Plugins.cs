@@ -42,6 +42,7 @@ using System.Reflection;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Plugins;
+using DiscImageChef.Console;
 
 namespace DiscImageChef
 {
@@ -76,7 +77,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    System.Console.Error.WriteLine(exception);
+                    DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
             }
 
@@ -94,7 +95,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    System.Console.Error.WriteLine(exception);
+                    DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
             }
 
@@ -112,7 +113,7 @@ namespace DiscImageChef
                 }
                 catch (Exception exception)
                 {
-                    System.Console.Error.WriteLine(exception);
+                    DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
             }
         }

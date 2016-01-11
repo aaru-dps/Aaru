@@ -1,3 +1,14 @@
+2016-01-11  Natalia Portillo  <claunia@claunia.com>
+
+	* Plugins.cs:
+	* Commands/Analyze.cs:
+	* Commands/Compare.cs:
+	* Commands/CreateSidecar.cs:
+	  Do not call system console directly.
+
+	* Commands/DeviceInfo.cs:
+	  Added Plextor vendor commands.
+
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/CreateSidecar.cs:
