@@ -32,7 +32,7 @@ using System;
 
 namespace DiscImageChef
 {
-    public static class ArrayHelpers
+    public static partial class ArrayHelpers
     {
         public static void ArrayFill<T>(T[] destinationArray, T value)
         {
