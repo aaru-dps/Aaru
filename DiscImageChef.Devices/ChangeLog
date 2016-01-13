@@ -2,6 +2,17 @@
 
 	* Enums.cs:
 	* DiscImageChef.Devices.csproj:
+	* Device/ScsiCommands/ArchiveCorp.cs:
+	  Added vendor commands for Archive Corporation Viper 2060S,
+	  2125S and 2150S.
+
+	* Device/ScsiCommands/Adaptec.cs:
+	  Corrected documentation typo.
+
+2016-01-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* DiscImageChef.Devices.csproj:
 	* Device/ScsiCommands/Adaptec.cs:
 	  Added Adaptec ACB-4000A and ACB-4070 vendor commands.
 

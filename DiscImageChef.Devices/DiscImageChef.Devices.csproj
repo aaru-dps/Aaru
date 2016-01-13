@@ -60,6 +60,7 @@
     <Compile Include="Device\ScsiCommands\SSC.cs" />
     <Compile Include="Device\ScsiCommands\SMC.cs" />
     <Compile Include="Device\ScsiCommands\Adaptec.cs" />
+    <Compile Include="Device\ScsiCommands\ArchiveCorp.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

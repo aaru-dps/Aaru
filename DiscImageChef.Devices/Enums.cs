@@ -2607,12 +2607,32 @@ namespace DiscImageChef.Devices
         #endregion NEC vendor commands
 
         #region Adaptec vendor commands
+        /// <summary>
+        /// Translates a SCSI LBA to a drive's CHS
+        /// </summary>
         Adaptec_Translate = 0x0F,
+        /// <summary>
+        /// Configures Adaptec controller error threshold
+        /// </summary>
         Adaptec_SetErrorThreshold = 0x10,
+        /// <summary>
+        /// Reads and resets error and statistical counters
+        /// </summary>
         Adaptec_ReadCounters = 0x11,
+        /// <summary>
+        /// Writes to controller's RAM
+        /// </summary>
         Adaptec_WriteBuffer = 0x13,
-        Adaptec_ReadBuffer = 0x14
+        /// <summary>
+        /// Reads controller's RAM
+        /// </summary>
+        Adaptec_ReadBuffer = 0x14,
         #endregion Adaptec vendor commands
+
+        #region Archive Corp. vendor commands
+        Archive_RequestBlockAddress = 0x02,
+        Archive_SeekBlock = 0x0C
+        #endregion Archive Corp. vendor commands
     }
     #endregion SCSI Commands
 

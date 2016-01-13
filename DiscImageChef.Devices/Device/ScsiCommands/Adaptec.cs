@@ -47,7 +47,7 @@ namespace DiscImageChef.Devices
         /// </summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="lba">SCSI.</param>
+        /// <param name="lba">SCSI Logical Block Address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout, out double duration)
@@ -61,7 +61,7 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="drive1">If set to <c>true</c> request the data from drive 1.</param>
-        /// <param name="lba">SCSI.</param>
+        /// <param name="lba">SCSI Logical Block Address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint lba, uint timeout, out double duration)
