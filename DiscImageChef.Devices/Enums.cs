@@ -1566,7 +1566,7 @@ namespace DiscImageChef.Devices
         /// Writes attribute values to medium auxiliary memory
         /// SPC-3 rev. 21b
         /// </summary>
-        WriteAttribute = 0x8C,
+        WriteAttribute = 0x8D,
         /// <summary>
         /// Writes to the device's buffer
         /// SCSI-2 X3T9.2/375R rev. 10l
@@ -3238,6 +3238,94 @@ namespace DiscImageChef.Devices
         /// Plextor SpeedRead
         /// </summary>
         SpeedRead = 0xBB
+    }
+
+    public enum SscLogicalIdTypes : byte
+    {
+        /// <summary>
+        /// Logical object identifier
+        /// </summary>
+        ObjectId = 0,
+        /// <summary>
+        /// Logical file identifier
+        /// </summary>
+        FileId = 1,
+        /// <summary>
+        /// Logical set identifier
+        /// </summary>
+        SetId = 2,
+        /// <summary>
+        /// Reserved
+        /// </summary>
+        Reserved = 3
+    }
+
+    public enum SscPositionForms : byte
+    {
+        /// <summary>
+        /// 20 bytes using logical block addresses
+        /// </summary>
+        Short = 0,
+        /// <summary>
+        /// 20 bytes using vendor-specified values
+        /// </summary>
+        VendorShort = 1,
+        /// <summary>
+        /// Equivalent to <see cref="Long"/> on SSC-1
+        /// </summary>
+        OldLong = 2,
+        /// <summary>
+        /// Invalid: Equivalent to LONG + BT on SSC-1
+        /// </summary>
+        OldLongVendor = 3,
+        /// <summary>
+        /// Invalid: Equivalent to TCLP on SSC-1
+        /// </summary>
+        OldTclp = 4,
+        /// <summary>
+        /// Invalid: Equivalent to TCLP + BT on SSC-1
+        /// </summary>
+        OldTclpVendor = 5,
+        /// <summary>
+        /// 32 bytes
+        /// </summary>
+        Long = 6,
+        /// <summary>
+        /// Invalid: Equivalent to TCLP + LONG + BT on SSC-1
+        /// </summary>
+        OldLongTclpVendor = 7,
+        /// <summary>
+        /// From 28 bytes to allocation length
+        /// </summary>
+        Extended = 8
+    }
+
+    public enum ScsiAttributeAction : byte
+    {
+        /// <summary>
+        /// Return attribute values
+        /// </summary>
+        Values = 0,
+        /// <summary>
+        /// Return a list of available attributes
+        /// </summary>
+        List = 1,
+        /// <summary>
+        /// Returns a list of known logical volume numbers
+        /// </summary>
+        VolumeList = 2,
+        /// <summary>
+        /// Returns a list of known partition numbers
+        /// </summary>
+        PartitionList = 3,
+        /// <summary>
+        /// Returns a list of elements containing volumes with MAM
+        /// </summary>
+        ElementList = 4,
+        /// <summary>
+        /// Returns a list of supported attribute identifiers
+        /// </summary>
+        Supported = 5
     }
 }
 

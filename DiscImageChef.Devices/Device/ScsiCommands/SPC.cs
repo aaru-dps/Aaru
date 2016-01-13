@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SpcCommands.cs
+// Filename       : SPC.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -583,11 +583,11 @@ namespace DiscImageChef.Devices
                 return true;
 
             uint strctLength = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);
+            buffer = new byte[strctLength];
             cdb[6] = (byte)((buffer.Length & 0xFF000000) >> 24);
             cdb[7] = (byte)((buffer.Length & 0xFF0000) >> 16);
             cdb[8] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[9] = (byte)(buffer.Length & 0xFF);
-            buffer = new byte[strctLength];
             senseBuffer = new byte[32];
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
@@ -596,6 +596,99 @@ namespace DiscImageChef.Devices
             DicConsole.DebugWriteLine("SCSI Device", "READ MEDIA SERIAL NUMBER took {0} ms.", duration);
 
             return sense;
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="partition">Partition number.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte partition, ushort firstAttribute, bool cache, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, cache, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, ushort firstAttribute, bool cache, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, cache, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="partition">Partition number.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte partition, ushort firstAttribute, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, ushort firstAttribute, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="volume">Volume number.</param>
+        /// <param name="partition">Partition number.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte volume, byte partition, ushort firstAttribute, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Reads an attribute from the medium auxiliary memory
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="action">What to do, <see cref="ScsiAttributeAction"/>.</param>
+        /// <param name="volume">Volume number.</param>
+        /// <param name="partition">Partition number.</param>
+        /// <param name="firstAttribute">First attribute identifier.</param>
+        /// <param name="cache">If set to <c>true</c> device can return cached data.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte volume, byte partition, ushort firstAttribute, bool cache, uint timeout, out double duration)
+        {
+            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, cache, timeout, out duration);
         }
     }
 }

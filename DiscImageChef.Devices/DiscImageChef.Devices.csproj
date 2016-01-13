@@ -57,6 +57,8 @@
     <Compile Include="Device\ScsiCommands\Plextor.cs" />
     <Compile Include="Device\ScsiCommands\NEC.cs" />
     <Compile Include="Device\ScsiCommands\HL-DT-ST.cs" />
+    <Compile Include="Device\ScsiCommands\SSC.cs" />
+    <Compile Include="Device\ScsiCommands\SMC.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

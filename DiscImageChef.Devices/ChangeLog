@@ -1,3 +1,23 @@
+2016-01-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands/SMC.cs:
+	* DiscImageChef.Devices.csproj:
+	  Added read-only Streaming Commands.
+
+	* Device/ScsiCommands/SSC.cs:
+	  Added READ ATTRIBUTE.
+
+	* Device/ScsiCommands/MMC.cs:
+	  Corrected typo on header
+
+	* Device/ScsiCommands/SPC.cs:
+	  Corrected buffer mislength.
+	Added support for READ ATTRIBUTE.
+
+	* Enums.cs:
+	  Corrected opcode for SCSI WRITE ATTRIBUTE.
+	Added SCSI Streaming and Attribute enumerations.
+
 2016-01-11  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands.cs:

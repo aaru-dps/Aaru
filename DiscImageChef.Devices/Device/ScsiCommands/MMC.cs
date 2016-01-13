@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : MmcCommands.cs
+// Filename       : MMC.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
