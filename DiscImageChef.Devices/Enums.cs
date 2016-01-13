@@ -2655,8 +2655,19 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Used to display a message on the operator panel
         /// </summary>
-        Fujitsu_Display = 0xCF
+        Fujitsu_Display = 0xCF,
         #endregion Fujitsu vendor commands
+
+        #region M-Systems vendor commands
+        /// <summary>
+        /// Securely erases all flash blocks, including defective, spared and unused
+        /// </summary>
+        MSystems_SecurityErase = 0xFF,
+        /// <summary>
+        /// Securely erases all flash blocks, including defective, spared and unused
+        /// </summary>
+        MSystems_SecurityEraseOld = 0xDF,
+        #endregion M-Systems vendor commands
     }
     #endregion SCSI Commands
 

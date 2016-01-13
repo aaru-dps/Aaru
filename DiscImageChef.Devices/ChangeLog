@@ -1,6 +1,11 @@
 2016-01-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:
+	  Added M-Systems vendor commands.
+
+2016-01-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
 	* DiscImageChef.Devices.csproj:
 	  Implemented Certance, Fujitsu and Hewlett-Packard vendor
 	  commands.
