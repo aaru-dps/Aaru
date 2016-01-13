@@ -2630,9 +2630,33 @@ namespace DiscImageChef.Devices
         #endregion Adaptec vendor commands
 
         #region Archive Corp. vendor commands
+        /// <summary>
+        /// Gets current position's block address
+        /// </summary>
         Archive_RequestBlockAddress = 0x02,
-        Archive_SeekBlock = 0x0C
+        /// <summary>
+        /// Seeks to specified block address
+        /// </summary>
+        Archive_SeekBlock = 0x0C,
         #endregion Archive Corp. vendor commands
+
+        #region Certance vendor commands
+        /// <summary>
+        /// Parks the load arm in preparation for transport
+        /// </summary>
+        Certance_ParkUnpark = 0x06,
+        #endregion Certance vendor commands
+
+        #region Fujitsu vendor commands
+        /// <summary>
+        /// Used to check the controller's data and control path
+        /// </summary>
+        Fujitsu_LoopWriteToRead = 0xC1,
+        /// <summary>
+        /// Used to display a message on the operator panel
+        /// </summary>
+        Fujitsu_Display = 0xCF
+        #endregion Fujitsu vendor commands
     }
     #endregion SCSI Commands
 
@@ -3362,6 +3386,30 @@ namespace DiscImageChef.Devices
         /// Returns a list of supported attribute identifiers
         /// </summary>
         Supported = 5
+    }
+
+    public enum FujitsuDisplayModes : byte
+    {
+        /// <summary>
+        /// Message is displayed until next tape operation starts
+        /// </summary>
+        Idle = 0,
+        /// <summary>
+        /// Message is displayed only if a cartridge is inserted, until its removal
+        /// </summary>
+        Cart = 1,
+        /// <summary>
+        /// Message is only displayed when drive is ready
+        /// </summary>
+        Ready = 2,
+        /// <summary>
+        /// Cancels current display
+        /// </summary>
+        Cancel = 3,
+        /// <summary>
+        /// Message is displayed only if a cartridge is inserted. When removed, only second half of the message is displayed.
+        /// </summary>
+        Half = 7
     }
 }
 

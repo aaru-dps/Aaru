@@ -2,6 +2,22 @@
 
 	* Enums.cs:
 	* DiscImageChef.Devices.csproj:
+	  Implemented Certance, Fujitsu and Hewlett-Packard vendor
+	  commands.
+
+	* Device/ScsiCommands/Certance.cs:
+	  Implemented Certance vendor commands.
+
+	* Device/ScsiCommands/Fujitsu.cs:
+	  Implemented Fujitsu vendor commands.
+
+	* Device/ScsiCommands/HP.cs:
+	  Implemented Hewlett-Packard vendor commands.
+
+2016-01-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* DiscImageChef.Devices.csproj:
 	* Device/ScsiCommands/ArchiveCorp.cs:
 	  Added vendor commands for Archive Corporation Viper 2060S,
 	  2125S and 2150S.

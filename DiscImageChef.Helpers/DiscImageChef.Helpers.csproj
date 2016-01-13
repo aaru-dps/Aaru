@@ -41,6 +41,7 @@
     <Compile Include="PrintHex.cs" />
     <Compile Include="StringHandlers.cs" />
     <Compile Include="Swapping.cs" />
+    <Compile Include="ArrayIsEmpty.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
