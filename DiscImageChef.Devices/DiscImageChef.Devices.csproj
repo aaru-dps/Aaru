@@ -59,6 +59,7 @@
     <Compile Include="Device\ScsiCommands\HL-DT-ST.cs" />
     <Compile Include="Device\ScsiCommands\SSC.cs" />
     <Compile Include="Device\ScsiCommands\SMC.cs" />
+    <Compile Include="Device\ScsiCommands\Adaptec.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

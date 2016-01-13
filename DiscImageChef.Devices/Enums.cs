@@ -1369,6 +1369,14 @@ namespace DiscImageChef.Devices
         /// Found on a vendor source code
         /// </summary>
         ControllerDiagnostic = 0xE4,
+        /// <summary>
+        /// Found on a vendor document
+        /// </summary>
+        ReadLong = 0xE5,
+        /// <summary>
+        /// Found on a vendor document
+        /// </summary>
+        WriteLong = 0xE6
 
         #endregion SASI Class 7 commands
     }
@@ -2595,8 +2603,16 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Reads CD-DA data
         /// </summary>
-        NEC_ReadCdDa = 0xD4
+        NEC_ReadCdDa = 0xD4,
         #endregion NEC vendor commands
+
+        #region Adaptec vendor commands
+        Adaptec_Translate = 0x0F,
+        Adaptec_SetErrorThreshold = 0x10,
+        Adaptec_ReadCounters = 0x11,
+        Adaptec_WriteBuffer = 0x13,
+        Adaptec_ReadBuffer = 0x14
+        #endregion Adaptec vendor commands
     }
     #endregion SCSI Commands
 

@@ -1,5 +1,12 @@
 2016-01-13  Natalia Portillo  <claunia@claunia.com>
 
+	* Enums.cs:
+	* DiscImageChef.Devices.csproj:
+	* Device/ScsiCommands/Adaptec.cs:
+	  Added Adaptec ACB-4000A and ACB-4070 vendor commands.
+
+2016-01-13  Natalia Portillo  <claunia@claunia.com>
+
 	* Device/ScsiCommands/SMC.cs:
 	* DiscImageChef.Devices.csproj:
 	  Added read-only Streaming Commands.

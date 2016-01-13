@@ -1,0 +1,226 @@
+﻿// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : Adaptec.cs
+// Version        : 1.0
+// Author(s)      : Natalia Portillo
+//
+// Component      : Adaptec vendor commands
+//
+// Revision       : $Revision$
+// Last change by : $Author$
+// Date           : $Date$
+//
+// --[ Description ] ----------------------------------------------------------
+//
+// Commands described for Adaptec ACB-4000A and ACB-4070 ST-506 to SCSI controllers
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright (C) 2011-2015 Claunia.com
+// ****************************************************************************/
+// //$Id$
+using System;
+using DiscImageChef.Console;
+
+namespace DiscImageChef.Devices
+{
+    public partial class Device
+    {
+        /// <summary>
+        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="lba">SCSI.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout, out double duration)
+        {
+            return AdaptecTranslate(out buffer, out senseBuffer, false, lba, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="drive1">If set to <c>true</c> request the data from drive 1.</param>
+        /// <param name="lba">SCSI.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint lba, uint timeout, out double duration)
+        {
+            buffer = new byte[8];
+            byte[] cdb = new byte[6];
+            senseBuffer = new byte[32];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
+            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+            cdb[2] = (byte)((lba & 0xFF00) >> 8);
+            cdb[3] = (byte)(lba & 0xFF);
+            if (drive1)
+                cdb[1] += 0x20;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC TRANSLATE took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sets the error threshold
+        /// </summary>
+        /// <returns><c>true</c>, if set error threshold was adapteced, <c>false</c> otherwise.</returns>
+        /// <param name="threshold">Threshold. 0 to disable error reporting.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return AdaptecSetErrorThreshold(threshold, out senseBuffer, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Sets the error threshold
+        /// </summary>
+        /// <returns><c>true</c>, if set error threshold was adapteced, <c>false</c> otherwise.</returns>
+        /// <param name="threshold">Threshold. 0 to disable error reporting.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="drive1">If set to <c>true</c> set the threshold from drive 1.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[1];
+            buffer[0] = threshold;
+            byte[] cdb = new byte[6];
+            senseBuffer = new byte[32];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Adaptec_SetErrorThreshold;
+            if (drive1)
+                cdb[1] += 0x20;
+            cdb[4] = 1;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC SET ERROR THRESHOLD took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Requests the usage, seek and error counters, and resets them
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
+        }
+
+        /// <summary>
+        /// Requests the usage, seek and error counters, and resets them
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="drive1">If set to <c>true</c> get the counters from drive 1.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, bool drive1, uint timeout, out double duration)
+        {
+            buffer = new byte[9];
+            byte[] cdb = new byte[6];
+            senseBuffer = new byte[32];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
+            if (drive1)
+                cdb[1] += 0x20;
+            cdb[4] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ/RESET USAGE COUNTER took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Fills the Adaptec controller RAM with 1K bytes of data
+        /// </summary>
+        /// <param name="buffer">Data to fill the buffer with.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecWriteBuffer(byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            byte[] oneKBuffer = new byte[1024];
+            if (buffer.Length < 1024)
+                Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length);
+            else
+                Array.Copy(buffer, 0, oneKBuffer, 0, 1024);
+
+            byte[] cdb = new byte[6];
+            senseBuffer = new byte[32];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Adaptec_WriteBuffer;
+
+            lastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC WRITE DATA BUFFER took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Reads 1K bytes of data from the Adaptec controller RAM
+        /// </summary>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        public bool AdaptecReadBuffer(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            buffer = new byte[1024];
+            byte[] cdb = new byte[6];
+            senseBuffer = new byte[32];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.Adaptec_ReadBuffer;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ DATA BUFFER took {0} ms.", duration);
+
+            return sense;
+        }
+    }
+}
+
