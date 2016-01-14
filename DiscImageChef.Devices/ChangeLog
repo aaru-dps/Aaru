@@ -1,5 +1,10 @@
 2016-01-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/ScsiCommands/SyQuest.cs:
+	  Corrected typo
+
+2016-01-14  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Devices.csproj:
 	* Device/ScsiCommands/SyQuest.cs:
 	  Added SyQuest vendor commands.

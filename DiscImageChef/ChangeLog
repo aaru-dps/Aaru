@@ -1,3 +1,8 @@
+2016-01-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Moved common code to a static method.
+
 2016-01-11  Natalia Portillo  <claunia@claunia.com>
 
 	* Plugins.cs:

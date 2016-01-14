@@ -136,7 +136,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, duration);
+            return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
         }
 
         /// <summary>

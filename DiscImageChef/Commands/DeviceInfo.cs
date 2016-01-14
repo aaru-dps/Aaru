@@ -52,7 +52,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
-            FileStream outputFs;
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -115,25 +114,7 @@ namespace DiscImageChef.Commands
                             break;
                         }
 
-                        if(!string.IsNullOrEmpty(options.OutputPrefix))
-                        {
-                            if (!File.Exists(options.OutputPrefix + "_ata_identify.bin"))
-                            {
-                                try
-                                {
-                                    DicConsole.DebugWriteLine("Device-Info command", "Writing ATA IDENTIFY to {0}{1}", options.OutputPrefix, "_ata_identify.bin");
-                                    outputFs = new FileStream(options.OutputPrefix + "_ata_identify.bin", FileMode.CreateNew);
-                                    outputFs.Write(ataBuf, 0, ataBuf.Length);
-                                    outputFs.Close();
-                                }
-                                catch
-                                {
-                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_ata_identify.bin");
-                                }
-                            }
-                            else
-                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_ata_identify.bin");
-                        }
+                        doWriteFile(options.OutputPrefix, "_ata_identify.bin", "ATA IDENTIFY", ataBuf);
 
                         DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
                         break;
@@ -159,25 +140,7 @@ namespace DiscImageChef.Commands
                             break;
                         }
 
-                        if (!string.IsNullOrEmpty(options.OutputPrefix))
-                        {
-                            if (!File.Exists(options.OutputPrefix + "_atapi_identify.bin"))
-                            {
-                                try
-                                {
-                                    DicConsole.DebugWriteLine("Device-Info command", "Writing ATAPI IDENTIFY to {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
-                                    outputFs = new FileStream(options.OutputPrefix + "_atapi_identify.bin", FileMode.CreateNew);
-                                    outputFs.Write(ataBuf, 0, ataBuf.Length);
-                                    outputFs.Close();
-                                }
-                                catch
-                                {
-                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
-                                }
-                            }
-                            else
-                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_atapi_identify.bin");
-                        }
+                        doWriteFile(options.OutputPrefix, "_atapi_identify.bin", "ATAPI IDENTIFY", ataBuf);
 
                         DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
 
@@ -201,30 +164,12 @@ namespace DiscImageChef.Commands
                         if (dev.Type != DeviceType.ATAPI)
                             DicConsole.WriteLine("SCSI device");
 
-                        if(!string.IsNullOrEmpty(options.OutputPrefix))
-                        {
-                            if (!File.Exists(options.OutputPrefix + "_scsi_inquiry.bin"))
-                            {
-                                try
-                                {
-                                    DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY to {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
-                                    outputFs = new FileStream(options.OutputPrefix + "_scsi_inquiry.bin", FileMode.CreateNew);
-                                    outputFs.Write(inqBuf, 0, inqBuf.Length);
-                                    outputFs.Close();
-                                }
-                                catch
-                                {
-                                    DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
-                                }
-                            }
-                            else
-                                DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_scsi_inquiry.bin");
-                        }
+                        doWriteFile(options.OutputPrefix, "_scsi_inquiry.bin", "SCSI IDENTIFY", inqBuf);
 
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(inqBuf);
                         DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
 
-                        bool scsi83 = false;
+                        bool scsi80 = false;
                         string scsiSerial = null;
                         StringBuilder sb = null;
 
@@ -247,25 +192,7 @@ namespace DiscImageChef.Commands
                                                 sb = new StringBuilder();
                                             sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
 
-                                            if(!string.IsNullOrEmpty(options.OutputPrefix))
-                                            {
-                                                if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
-                                                {
-                                                    try
-                                                    {
-                                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
-                                                        outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
-                                                        outputFs.Write(inqBuf, 0, inqBuf.Length);
-                                                        outputFs.Close();
-                                                    }
-                                                    catch
-                                                    {
-                                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                                    }
-                                                }
-                                                else
-                                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                            }
+                                            doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
                                     else if (page == 0x80)
@@ -273,28 +200,10 @@ namespace DiscImageChef.Commands
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if (!sense)
                                         {
-                                            scsi83 = true;
+                                            scsi80 = true;
                                             scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
 
-                                            if(!string.IsNullOrEmpty(options.OutputPrefix))
-                                            {
-                                                if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
-                                                {
-                                                    try
-                                                    {
-                                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
-                                                        outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
-                                                        outputFs.Write(inqBuf, 0, inqBuf.Length);
-                                                        outputFs.Close();
-                                                    }
-                                                    catch
-                                                    {
-                                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                                    }
-                                                }
-                                                else
-                                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                            }
+                                            doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
                                     else
@@ -306,25 +215,7 @@ namespace DiscImageChef.Commands
                                             sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                             if (!sense)
                                             {
-                                                if(!string.IsNullOrEmpty(options.OutputPrefix))
-                                                {
-                                                    if (!File.Exists(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page)))
-                                                    {
-                                                        try
-                                                        {
-                                                            DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI INQUIRY EVPD {2:X2}h to {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), page);
-                                                            outputFs = new FileStream(options.OutputPrefix + String.Format("_scsi_evpd_{0:X2}h.bin", page), FileMode.CreateNew);
-                                                            outputFs.Write(inqBuf, 0, inqBuf.Length);
-                                                            outputFs.Close();
-                                                        }
-                                                        catch
-                                                        {
-                                                            DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                                        }
-                                                    }
-                                                    else
-                                                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page));
-                                                }
+                                                doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                             }
                                         }
                                     }
@@ -332,7 +223,7 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        if (scsi83)
+                        if (scsi80)
                             DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
 
                         if (sb != null)
@@ -370,27 +261,7 @@ namespace DiscImageChef.Commands
                         }
 
                         if (!sense)
-                        {
-                            if (!string.IsNullOrEmpty(options.OutputPrefix))
-                            {
-                                if (!File.Exists(options.OutputPrefix + "_scsi_modesense.bin"))
-                                {
-                                    try
-                                    {
-                                        DicConsole.DebugWriteLine("Device-Info command", "Writing SCSI MODE SENSE to {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
-                                        outputFs = new FileStream(options.OutputPrefix + "_scsi_modesense.bin", FileMode.CreateNew);
-                                        outputFs.Write(modeBuf, 0, modeBuf.Length);
-                                        outputFs.Close();
-                                    }
-                                    catch
-                                    {
-                                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
-                                    }
-                                }
-                                else
-                                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_scsi_modesense.bin");
-                            }
-                        }
+                            doWriteFile(options.OutputPrefix, "_scsi_modesense.bin", "SCSI MODE SENSE", modeBuf);
 
                         if (decMode.HasValue)
                         {
@@ -625,25 +496,7 @@ namespace DiscImageChef.Commands
 
                             if (!sense)
                             {
-                                if(!string.IsNullOrEmpty(options.OutputPrefix))
-                                {
-                                    if (!File.Exists(options.OutputPrefix + "_mmc_getconfiguration.bin"))
-                                    {
-                                        try
-                                        {
-                                            DicConsole.DebugWriteLine("Device-Info command", "Writing MMC GET CONFIGURATION to {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
-                                            outputFs = new FileStream(options.OutputPrefix +"_mmc_getconfiguration.bin", FileMode.CreateNew);
-                                            outputFs.Write(confBuf, 0, confBuf.Length);
-                                            outputFs.Close();
-                                        }
-                                        catch
-                                        {
-                                            DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
-                                        }
-                                    }
-                                    else
-                                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_mmc_getconfiguration.bin");
-                                }
+                                doWriteFile(options.OutputPrefix, "_mmc_getconfiguration.bin", "MMC GET CONFIGURATION", confBuf);
 
                                 Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(confBuf);
 
@@ -886,233 +739,238 @@ namespace DiscImageChef.Commands
                                 }
                             }
                             */
-                        }
 
-                        #region Plextor
-                        if(dev.Manufacturer == "PLEXTOR")
-                        {
-                            bool plxtSense = true;
-                            bool plxtDvd = false;
-                            byte[] plxtBuf = null;
-
-                            switch(dev.Model)
+                            #region Plextor
+                            if (dev.Manufacturer == "PLEXTOR")
                             {
-                                case "DVDR   PX-708A":
-                                case "DVDR   PX-708A2":
-                                case "DVDR   PX-712A":
-                                    plxtDvd = true;
-                                    plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                    break;
-                                case "DVDR   PX-714A":
-                                case "DVDR   PX-716A":
-                                case "DVDR   PX-716AL":
-                                case "DVDR   PX-755A":
-                                case "DVDR   PX-760A":
-                                    {
-                                        byte[] plxtBufSmall;
-                                        plxtBuf = new byte[256 * 4];
-                                        for(byte i = 0; i < 4; i++)
-                                        {
-                                            plxtSense = dev.PlextorReadEepromBlock(out plxtBufSmall, out senseBuf, i, 256, dev.Timeout, out duration);
-                                            if(plxtSense)
-                                                break;
-                                            Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
-                                        }
+                                bool plxtSense = true;
+                                bool plxtDvd = false;
+                                byte[] plxtBuf = null;
+
+                                switch (dev.Model)
+                                {
+                                    case "DVDR   PX-708A":
+                                    case "DVDR   PX-708A2":
+                                    case "DVDR   PX-712A":
                                         plxtDvd = true;
+                                        plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout, out duration);
                                         break;
-                                    }
-                                default:
-                                    {
-                                        if(dev.Model.StartsWith("CD-R   "))
+                                    case "DVDR   PX-714A":
+                                    case "DVDR   PX-716A":
+                                    case "DVDR   PX-716AL":
+                                    case "DVDR   PX-755A":
+                                    case "DVDR   PX-760A":
                                         {
-                                            plxtSense = dev.PlextorReadEepromCDR(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                            byte[] plxtBufSmall;
+                                            plxtBuf = new byte[256 * 4];
+                                            for (byte i = 0; i < 4; i++)
+                                            {
+                                                plxtSense = dev.PlextorReadEepromBlock(out plxtBufSmall, out senseBuf, i, 256, dev.Timeout, out duration);
+                                                if (plxtSense)
+                                                    break;
+                                                Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
+                                            }
+                                            plxtDvd = true;
+                                            break;
                                         }
-                                        break;
-                                    }
-                            }
+                                    default:
+                                        {
+                                            if (dev.Model.StartsWith("CD-R   "))
+                                            {
+                                                plxtSense = dev.PlextorReadEepromCDR(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                            }
+                                            break;
+                                        }
+                                }
 
-                            if (!plxtSense)
-                            {
-                                if(!string.IsNullOrEmpty(options.OutputPrefix))
+                                if (!plxtSense)
                                 {
-                                    if (!File.Exists(options.OutputPrefix + "_plextor_eeprom.bin"))
+                                    doWriteFile(options.OutputPrefix, "_plextor_eeprom.bin", "PLEXTOR READ EEPROM", plxtBuf);
+
+                                    ushort discs;
+                                    uint cdReadTime, cdWriteTime, dvdReadTime = 0, dvdWriteTime = 0;
+
+                                    BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                                    if (plxtDvd)
                                     {
-                                        try
+                                        discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
+                                        cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
+                                        cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
+                                        dvdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
+                                        dvdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012E);
+                                    }
+                                    else
+                                    {
+                                        discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
+                                        cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
+                                        cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x007A);
+                                    }
+
+                                    DicConsole.WriteLine("Drive has loaded a total of {0} discs", discs);
+                                    DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
+                                        cdReadTime / 3600, (cdReadTime / 60) % 60, cdReadTime % 60);
+                                    DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
+                                        cdWriteTime / 3600, (cdWriteTime / 60) % 60, cdWriteTime % 60);
+                                    if (plxtDvd)
+                                    {
+                                        DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
+                                            dvdReadTime / 3600, (dvdReadTime / 60) % 60, dvdReadTime % 60);
+                                        DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
+                                            dvdWriteTime / 3600, (dvdWriteTime / 60) % 60, dvdWriteTime % 60);
+                                    }
+                                }
+
+                                bool plxtPwrRecEnabled;
+                                ushort plxtPwrRecSpeed;
+                                plxtSense = dev.PlextorGetPoweRec(out senseBuf, out plxtPwrRecEnabled, out plxtPwrRecSpeed, dev.Timeout, out duration);
+                                if (!plxtSense)
+                                {
+                                    DicConsole.Write("Drive supports PoweRec");
+                                    if (plxtPwrRecEnabled)
+                                    {
+                                        DicConsole.Write(", has it enabled");
+
+                                        if (plxtPwrRecSpeed > 0)
+                                            DicConsole.WriteLine(" and recommends {0} Kb/sec.", plxtPwrRecSpeed);
+                                        else
+                                            DicConsole.WriteLine(".");
+
+                                        ushort plxtPwrRecSelected, plxtPwrRecMax, plxtPwrRecLast;
+                                        plxtSense = dev.PlextorGetSpeeds(out senseBuf, out plxtPwrRecSelected, out plxtPwrRecMax, out plxtPwrRecLast, dev.Timeout, out duration);
+
+                                        if (!plxtSense)
                                         {
-                                            DicConsole.DebugWriteLine("Device-Info command", "Writing PLEXTOR READ EEPROM to {0}{1}", options.OutputPrefix, "_plextor_eeprom.bin");
-                                            outputFs = new FileStream(options.OutputPrefix +"_plextor_eeprom.bin", FileMode.CreateNew);
-                                            outputFs.Write(plxtBuf, 0, plxtBuf.Length);
-                                            outputFs.Close();
-                                        }
-                                        catch
-                                        {
-                                            DicConsole.ErrorWriteLine("Unable to write file {0}{1}", options.OutputPrefix, "_plextor_eeprom.bin");
+                                            if (plxtPwrRecSelected > 0)
+                                                DicConsole.WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecSelected, plxtPwrRecSelected / 177);
+                                            if (plxtPwrRecMax > 0)
+                                                DicConsole.WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecMax, plxtPwrRecMax / 177);
+                                            if (plxtPwrRecLast > 0)
+                                                DicConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)", plxtPwrRecLast, plxtPwrRecLast / 177);
                                         }
                                     }
                                     else
-                                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", options.OutputPrefix, "_plextor_eeprom.bin");
+                                        DicConsole.WriteLine("PoweRec is disabled");
                                 }
 
-                                ushort discs;
-                                uint cdReadTime, cdWriteTime, dvdReadTime = 0, dvdWriteTime = 0;
-
-                                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-                                if(plxtDvd)
+                                // TODO: Check it with a drive
+                                plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                if (!plxtSense)
                                 {
-                                    discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
-                                    cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
-                                    cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
-                                    dvdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
-                                    dvdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012E);
-                                }
-                                else
-                                {
-                                    discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
-                                    cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
-                                    cdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x007A);
-                                }
-
-                                DicConsole.WriteLine("Drive has loaded a total of {0} discs", discs);
-                                DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
-                                    cdReadTime / 3600, (cdReadTime / 60) % 60, cdReadTime % 60);
-                                DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
-                                    cdWriteTime / 3600, (cdWriteTime / 60) % 60, cdWriteTime % 60);
-                                if(plxtDvd)
-                                {
-                                    DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                        dvdReadTime / 3600, (dvdReadTime / 60) % 60, dvdReadTime % 60);
-                                    DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                        dvdWriteTime / 3600, (dvdWriteTime / 60) % 60, dvdWriteTime % 60);
-                                }
-                            }
-
-                            bool plxtPwrRecEnabled;
-                            ushort plxtPwrRecSpeed;
-                            plxtSense = dev.PlextorGetPoweRec(out senseBuf, out plxtPwrRecEnabled, out plxtPwrRecSpeed, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.Write("Drive supports PoweRec");
-                                if(plxtPwrRecEnabled)
-                                {
-                                    DicConsole.Write(", has it enabled");
-
-                                    if(plxtPwrRecSpeed > 0)
-                                        DicConsole.WriteLine(" and recommends {0} Kb/sec.", plxtPwrRecSpeed);
-                                    else
-                                        DicConsole.WriteLine(".");
-
-                                    ushort plxtPwrRecSelected, plxtPwrRecMax, plxtPwrRecLast;
-                                    plxtSense = dev.PlextorGetSpeeds(out senseBuf, out plxtPwrRecSelected, out plxtPwrRecMax, out plxtPwrRecLast, dev.Timeout, out duration);
-
-                                    if(!plxtSense)
+                                    DicConsole.WriteLine("Drive supports Plextor SilentMode");
+                                    if (plxtBuf[0] == 1)
                                     {
-                                        if(plxtPwrRecSelected > 0)
-                                            DicConsole.WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecSelected, plxtPwrRecSelected/177);
-                                        if(plxtPwrRecMax > 0)
-                                            DicConsole.WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecMax, plxtPwrRecMax/177);
-                                        if(plxtPwrRecLast > 0)
-                                            DicConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)", plxtPwrRecLast, plxtPwrRecLast/177);
+                                        DicConsole.WriteLine("Plextor SilentMode is enabled:");
+                                        if (plxtBuf[1] == 2)
+                                            DicConsole.WriteLine("\tAccess time is slow");
+                                        else
+                                            DicConsole.WriteLine("\tAccess time is fast");
+
+                                        if (plxtBuf[2] > 0)
+                                            DicConsole.WriteLine("\tCD read speed limited to {0}x", plxtBuf[2]);
+                                        if (plxtBuf[3] > 0 && plxtDvd)
+                                            DicConsole.WriteLine("\tDVD read speed limited to {0}x", plxtBuf[3]);
+                                        if (plxtBuf[4] > 0)
+                                            DicConsole.WriteLine("\tCD write speed limited to {0}x", plxtBuf[4]);
+                                        if (plxtBuf[6] > 0)
+                                            DicConsole.WriteLine("\tTray eject speed limited to {0}", -(plxtBuf[6] + 48));
+                                        if (plxtBuf[7] > 0)
+                                            DicConsole.WriteLine("\tTray eject speed limited to {0}", plxtBuf[7] - 47);
                                     }
                                 }
-                                else
-                                    DicConsole.WriteLine("PoweRec is disabled");
-                            }
 
-                            // TODO: Check it with a drive
-                            plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.WriteLine("Drive supports Plextor SilentMode");
-                                if(plxtBuf[0] == 1)
+                                plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                if (!plxtSense)
                                 {
-                                    DicConsole.WriteLine("Plextor SilentMode is enabled:");
-                                    if(plxtBuf[1] == 2)
-                                        DicConsole.WriteLine("\tAccess time is slow");
-                                    else
-                                        DicConsole.WriteLine("\tAccess time is fast");
-
-                                    if(plxtBuf[2] > 0)
-                                        DicConsole.WriteLine("\tCD read speed limited to {0}x", plxtBuf[2]);
-                                    if(plxtBuf[3] > 0 && plxtDvd)
-                                        DicConsole.WriteLine("\tDVD read speed limited to {0}x", plxtBuf[3]);
-                                    if(plxtBuf[4] > 0)
-                                        DicConsole.WriteLine("\tCD write speed limited to {0}x", plxtBuf[4]);
-                                    if(plxtBuf[6] > 0)
-                                        DicConsole.WriteLine("\tTray eject speed limited to {0}", -(plxtBuf[6] + 48));
-                                    if(plxtBuf[7] > 0)
-                                        DicConsole.WriteLine("\tTray eject speed limited to {0}", plxtBuf[7] - 47);
-                                }
-                            }
-
-                            plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.WriteLine("Drive supports Plextor GigaRec");
-                                // TODO: Pretty print it
-                            }
-
-                            plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.WriteLine("Drive supports Plextor SecuRec");
-                                // TODO: Pretty print it
-                            }
-
-                            plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.Write("Drive supports Plextor SpeedRead");
-                                if((plxtBuf[2] & 0x01) == 0x01)
-                                    DicConsole.WriteLine("and has it enabled");
-                                else
-                                    DicConsole.WriteLine();
-                            }
-
-                            plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
-
-                                if((plxtBuf[2] & 0x02) == 0x02)
-                                    DicConsole.WriteLine("Drive currently hides CD-Rs");
-                                if((plxtBuf[2] & 0x01) == 0x01)
-                                    DicConsole.WriteLine("Drive currently forces single session");
-                            }
-
-                            plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
-                            if(!plxtSense)
-                            {
-                                DicConsole.WriteLine("Drive supports Plextor VariRec");
-                                // TODO: Pretty print it
-                            }
-
-                            if(plxtDvd)
-                            {
-                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
-                                if(!plxtSense)
-                                {
-                                    DicConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
+                                    DicConsole.WriteLine("Drive supports Plextor GigaRec");
                                     // TODO: Pretty print it
                                 }
 
-                                plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
-                                if(!plxtSense)
-                                    DicConsole.WriteLine("Drive supports bitsetting DVD+R book type");
-                                plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
-                                if(!plxtSense)
-                                    DicConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
-                                plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if(!plxtSense)
-                                    DicConsole.WriteLine("Drive supports test writing DVD+");
+                                plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                if (!plxtSense)
+                                {
+                                    DicConsole.WriteLine("Drive supports Plextor SecuRec");
+                                    // TODO: Pretty print it
+                                }
+
+                                plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                if (!plxtSense)
+                                {
+                                    DicConsole.Write("Drive supports Plextor SpeedRead");
+                                    if ((plxtBuf[2] & 0x01) == 0x01)
+                                        DicConsole.WriteLine("and has it enabled");
+                                    else
+                                        DicConsole.WriteLine();
+                                }
+
+                                plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                if (!plxtSense)
+                                {
+                                    DicConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
+
+                                    if ((plxtBuf[2] & 0x02) == 0x02)
+                                        DicConsole.WriteLine("Drive currently hides CD-Rs");
+                                    if ((plxtBuf[2] & 0x01) == 0x01)
+                                        DicConsole.WriteLine("Drive currently forces single session");
+                                }
+
+                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
+                                if (!plxtSense)
+                                {
+                                    DicConsole.WriteLine("Drive supports Plextor VariRec");
+                                    // TODO: Pretty print it
+                                }
+
+                                if (plxtDvd)
+                                {
+                                    plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
+                                    if (!plxtSense)
+                                    {
+                                        DicConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
+                                        // TODO: Pretty print it
+                                    }
+
+                                    plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
+                                    if (!plxtSense)
+                                        DicConsole.WriteLine("Drive supports bitsetting DVD+R book type");
+                                    plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
+                                    if (!plxtSense)
+                                        DicConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
+                                    plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout, out duration);
+                                    if (!plxtSense)
+                                        DicConsole.WriteLine("Drive supports test writing DVD+");
+                                }
                             }
+                            #endregion Plextor
                         }
-                        #endregion Plextor
 
                         break;
                     }
                 default:
                     DicConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
                     break;
+            }
+        }
+
+        static void doWriteFile(string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
+        {
+            if(!string.IsNullOrEmpty(outputPrefix))
+            {
+                if (!File.Exists(outputPrefix + outputSuffix))
+                {
+                    try
+                    {
+                        DicConsole.DebugWriteLine("Device-Info command", "Writing " + whatWriting + " to {0}{1}", outputPrefix, outputSuffix);
+                        FileStream outputFs = new FileStream(outputPrefix + outputSuffix, FileMode.CreateNew);
+                        outputFs.Write(data, 0, data.Length);
+                        outputFs.Close();
+                    }
+                    catch
+                    {
+                        DicConsole.ErrorWriteLine("Unable to write file {0}{1}", outputPrefix, outputSuffix);
+                    }
+                }
+                else
+                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", outputPrefix, outputSuffix);
             }
         }
     }
