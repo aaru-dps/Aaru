@@ -65,6 +65,7 @@
     <Compile Include="Device\ScsiCommands\Fujitsu.cs" />
     <Compile Include="Device\ScsiCommands\HP.cs" />
     <Compile Include="Device\ScsiCommands\Plasmon.cs" />
+    <Compile Include="Device\ScsiCommands\SyQuest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
