@@ -1,3 +1,13 @@
+2016-01-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* DiscImageChef.Devices.csproj:
+	* Device/ScsiCommands/Plasmon.cs:
+	  Added Plasmon vendor commands.
+
+	* Device/ScsiCommands/Pioneer.cs:
+	  Added Pioner READ CD-XA vendor command.
+
 2016-01-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Enums.cs:

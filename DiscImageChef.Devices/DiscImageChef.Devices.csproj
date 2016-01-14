@@ -64,6 +64,7 @@
     <Compile Include="Device\ScsiCommands\Certance.cs" />
     <Compile Include="Device\ScsiCommands\Fujitsu.cs" />
     <Compile Include="Device\ScsiCommands\HP.cs" />
+    <Compile Include="Device\ScsiCommands\Plasmon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -2434,6 +2434,7 @@ namespace DiscImageChef.Devices
         /// Sets the spindle speed to be used while reading/writing data to a CD
         /// </summary>
         SetCdSpeed = 0xDA,
+        WriteCdp = 0xE3,
         #endregion
 
         #region ATA Command Pass-Through
@@ -2668,6 +2669,17 @@ namespace DiscImageChef.Devices
         /// </summary>
         MSystems_SecurityEraseOld = 0xDF,
         #endregion M-Systems vendor commands
+
+        #region Plasmon vendor commands
+        /// <summary>
+        /// Retrieves sector address
+        /// </summary>
+        Plasmon_ReadSectorLocation = 0xE6,
+        /// <summary>
+        /// Makes a Compliant WORM block completely unreadable
+        /// </summary>
+        Plasmon_Shred = 0xEE,
+        #endregion Plasmon vendor commands
     }
     #endregion SCSI Commands
 
