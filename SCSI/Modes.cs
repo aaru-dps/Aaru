@@ -5362,7 +5362,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 24)
+            if (pageResponse.Length < 16)
                 return null;
 
             ModePage_0F decoded = new ModePage_0F();

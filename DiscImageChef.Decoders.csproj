@@ -87,6 +87,8 @@
     <Compile Include="Blu-ray\Spare.cs" />
     <Compile Include="Blu-ray\Cartridge.cs" />
     <Compile Include="Xbox\DMI.cs" />
+    <Compile Include="SCSI\SSC\BlockLimits.cs" />
+    <Compile Include="SCSI\SSC\DensitySupport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -108,6 +110,7 @@
     <Folder Include="CD\" />
     <Folder Include="Floppy\" />
     <Folder Include="Xbox\" />
+    <Folder Include="SCSI\SSC\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
