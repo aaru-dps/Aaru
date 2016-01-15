@@ -892,9 +892,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ReportDensitySupport;
-            if (mediumType)
-                cdb[1] += 0x01;
             if (currentMedia)
+                cdb[1] += 0x01;
+            if (mediumType)
                 cdb[1] += 0x02;
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);

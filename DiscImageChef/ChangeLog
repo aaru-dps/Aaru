@@ -1,3 +1,9 @@
+2016-01-15  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
+	* Commands/DeviceInfo.cs:
+	  Added support for SCSI sequential devices.
+
 2016-01-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:

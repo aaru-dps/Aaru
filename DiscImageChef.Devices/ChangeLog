@@ -1,3 +1,8 @@
+2016-01-15  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands/SSC.cs:
+	  Corrected ReportDensitySupport.
+
 2016-01-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands/SyQuest.cs:

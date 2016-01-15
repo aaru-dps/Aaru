@@ -40,6 +40,7 @@ using DiscImageChef.Console;
 using System.IO;
 using DiscImageChef.Devices;
 using DiscImageChef.CommonTypes;
+using System.Linq;
 
 namespace DiscImageChef.Commands
 {
@@ -175,11 +176,11 @@ namespace DiscImageChef.Commands
             }
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
-               dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
-               dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
-               dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
-               dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
-               dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
+                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
+                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
+                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
+                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
+                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
                 sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                 if (!sense)
@@ -224,7 +225,56 @@ namespace DiscImageChef.Commands
             }
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
-                throw new NotImplementedException("SCSI Streaming Devices not yet implemented");
+            {
+                byte[] seqBuf;
+                byte[] medBuf;
+
+                sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, false, dev.Timeout, out duration);
+                if (!sense)
+                {
+                    sense = dev.ReportDensitySupport(out medBuf, out senseBuf, true, dev.Timeout, out duration);
+
+                    if (!sense && !seqBuf.SequenceEqual(medBuf))
+                    {
+                        doWriteFile(outputPrefix, "_ssc_reportdensitysupport_media.bin", "SSC REPORT DENSITY SUPPORT (MEDIA)", seqBuf);
+                        Decoders.SCSI.SSC.DensitySupport.DensitySupportHeader? dens = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                        if (dens.HasValue)
+                        {
+                            DicConsole.WriteLine("Densities supported by currently inserted media:");
+                            DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyDensity(dens));
+                        }
+                    }
+                }
+
+                sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out duration);
+                if (!sense)
+                {
+                    sense = dev.ReportDensitySupport(out medBuf, out senseBuf, true, true, dev.Timeout, out duration);
+
+                    if (!sense && !seqBuf.SequenceEqual(medBuf))
+                    {
+                        doWriteFile(outputPrefix, "_ssc_reportdensitysupport_medium_media.bin", "SSC REPORT DENSITY SUPPORT (MEDIUM & MEDIA)", seqBuf);
+                        Decoders.SCSI.SSC.DensitySupport.MediaTypeSupportHeader? meds = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                        if (meds.HasValue)
+                        {
+                            DicConsole.WriteLine("Medium types currently inserted in device:");
+                            DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyMediumType(meds));
+                        }
+                        DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyMediumType(seqBuf));
+                    }
+                }
+
+                // TODO: Get a machine where 16-byte CDBs don't get DID_ABORT
+                /*
+                sense = dev.ReadAttribute(out seqBuf, out senseBuf, ScsiAttributeAction.List, 0, dev.Timeout, out duration);
+                if (sense)
+                    DicConsole.ErrorWriteLine("SCSI READ ATTRIBUTE:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                else
+                {
+                    doWriteFile(outputPrefix, "_scsi_readattribute.bin", "SCSI READ ATTRIBUTE", seqBuf);
+                }
+                */
+            }
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
@@ -332,12 +382,12 @@ namespace DiscImageChef.Commands
                 }
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.RecognizedFormatLayers, 0, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Recognized Format Layers\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_formatlayers.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.WriteProtectionStatus, 0, dev.Timeout, out duration);
-                if(sense)
+                if (sense)
                     DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Write Protection Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_writeprotection.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -353,10 +403,10 @@ namespace DiscImageChef.Commands
 
                 #region All DVD and HD DVD types
                 if (dskType == DiskType.DVDDownload || dskType == DiskType.DVDPR ||
-                   dskType == DiskType.DVDPRDL || dskType == DiskType.DVDPRW ||
-                   dskType == DiskType.DVDPRWDL || dskType == DiskType.DVDR ||
-                   dskType == DiskType.DVDRAM || dskType == DiskType.DVDRDL ||
-                   dskType == DiskType.DVDROM || dskType == DiskType.DVDRW ||
+                    dskType == DiskType.DVDPRDL || dskType == DiskType.DVDPRW ||
+                    dskType == DiskType.DVDPRWDL || dskType == DiskType.DVDR ||
+                    dskType == DiskType.DVDRAM || dskType == DiskType.DVDRDL ||
+                    dskType == DiskType.DVDROM || dskType == DiskType.DVDRW ||
                     dskType == DiskType.DVDRWDL || dskType == DiskType.HDDVDR ||
                     dskType == DiskType.HDDVDRAM || dskType == DiskType.HDDVDRDL ||
                     dskType == DiskType.HDDVDROM || dskType == DiskType.HDDVDRW ||
@@ -372,7 +422,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
@@ -380,7 +430,7 @@ namespace DiscImageChef.Commands
                         //if(Decoders.Xbox.DMI.IsXbox(cmdBuf))
                         //    Nop();
                         //else if
-                        if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
+                        if (Decoders.Xbox.DMI.IsXbox360(cmdBuf))
                         {
                             // TODO: Detect XGD3 from XGD2...
                             dskType = DiskType.XGD2;
@@ -394,7 +444,7 @@ namespace DiscImageChef.Commands
                 if (dskType == DiskType.DVDDownload || dskType == DiskType.DVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
@@ -409,12 +459,12 @@ namespace DiscImageChef.Commands
                     dskType == DiskType.HDDVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVD_AACS, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD AACS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_aacs.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -482,10 +532,10 @@ namespace DiscImageChef.Commands
                 #endregion Require drive authentication, won't work
 
                 #region DVD-RAM and HD DVD-RAM
-                if(dskType == DiskType.DVDRAM || dskType == DiskType.HDDVDRAM)
+                if (dskType == DiskType.DVDRAM || dskType == DiskType.HDDVDRAM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_DDS, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
@@ -493,7 +543,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Disc Definition Structure:\n{0}", Decoders.DVD.DDS.Prettify(cmdBuf));
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_MediumStatus, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
@@ -501,7 +551,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Medium Status:\n{0}", Decoders.DVD.Cartridge.Prettify(cmdBuf));
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_SpareAreaInformation, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: SAI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
@@ -512,21 +562,21 @@ namespace DiscImageChef.Commands
                 #endregion DVD-RAM and HD DVD-RAM
 
                 #region DVD-R and HD DVD-R
-                if(dskType == DiskType.DVDR || dskType == DiskType.HDDVDR)
+                if (dskType == DiskType.DVDR || dskType == DiskType.HDDVDR)
                 {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.LastBorderOutRMD, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Last-Out Border RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvd_lastrmd.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.LastBorderOutRMD, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Last-Out Border RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_lastrmd.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion DVD-R and HD DVD-R
 
                 #region DVD-R and DVD-RW
-                if(dskType == DiskType.DVDR || dskType == DiskType.DVDRW)
+                if (dskType == DiskType.DVDR || dskType == DiskType.DVDRW)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Pre-Recorded Info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pri.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -534,24 +584,24 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R and DVD-RW
 
                 #region DVD-R, DVD-RW and HD DVD-R
-                if(dskType == DiskType.DVDR || dskType == DiskType.DVDRW || dskType == DiskType.HDDVDR)
+                if (dskType == DiskType.DVDR || dskType == DiskType.DVDRW || dskType == DiskType.HDDVDR)
                 {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_MediaIdentifier, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvdr_mediaid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvdr_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_MediaIdentifier, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvdr_mediaid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvdr_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion DVD-R, DVD-RW and HD DVD-R
 
                 #region All DVD+
-                if(dskType == DiskType.DVDPR || dskType == DiskType.DVDPRDL ||
-                    dskType == DiskType.DVDPRW || dskType == DiskType.DVDPRWDL)
+                if (dskType == DiskType.DVDPR || dskType == DiskType.DVDPRDL ||
+                   dskType == DiskType.DVDPRW || dskType == DiskType.DVDPRWDL)
                 {
                     // TODO: None of my test discs return an ADIP. Also, it just seems to contain pre-recorded PFI, and drive is returning it on blank media using standard PFI command
                     /*
@@ -563,7 +613,7 @@ namespace DiscImageChef.Commands
                     */
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DCB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd+_dcb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -571,10 +621,10 @@ namespace DiscImageChef.Commands
                 #endregion All DVD+
 
                 #region HD DVD-ROM
-                if(dskType == DiskType.HDDVDROM)
+                if (dskType == DiskType.HDDVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: HDDVD CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvd_cmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -582,15 +632,15 @@ namespace DiscImageChef.Commands
                 #endregion HD DVD-ROM
 
                 #region HD DVD-R
-                if(dskType == DiskType.HDDVDR)
+                if (dskType == DiskType.HDDVDR)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVDR_MediumStatus, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: HDDVD-R Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvdr_status.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVDR_LastRMD, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Last RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvdr_lastrmd.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -598,46 +648,46 @@ namespace DiscImageChef.Commands
                 #endregion HD DVD-R
 
                 #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
-                if(dskType == DiskType.DVDPRDL || dskType == DiskType.DVDRDL ||
-                    dskType == DiskType.DVDRWDL || dskType == DiskType.DVDPRWDL)
+                if (dskType == DiskType.DVDPRDL || dskType == DiskType.DVDRDL ||
+                   dskType == DiskType.DVDRWDL || dskType == DiskType.DVDPRWDL)
                 {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Layer Capacity\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvdr_layercap.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Layer Capacity\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvdr_layercap.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
 
                 #region DVD-R DL
-                if(dskType == DiskType.DVDRDL)
+                if (dskType == DiskType.DVDRDL)
                 {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Middle Zone Start\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvd_mzs.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.JumpIntervalSize, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Jump Interval Size\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvd_jis.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ManualLayerJumpStartLBA, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Manual Layer Jump Start LBA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvd_manuallj.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.RemapAnchorPoint, 0, dev.Timeout, out duration);
-                if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Remap Anchor Point\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    doWriteFile(outputPrefix, "_readdiscstructure_dvd_remapanchor.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Middle Zone Start\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_mzs.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.JumpIntervalSize, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Jump Interval Size\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_jis.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ManualLayerJumpStartLBA, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Manual Layer Jump Start LBA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_manuallj.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.RemapAnchorPoint, 0, dev.Timeout, out duration);
+                    if (sense)
+                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Remap Anchor Point\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        doWriteFile(outputPrefix, "_readdiscstructure_dvd_remapanchor.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion DVD-R DL
 
                 #region All Blu-ray
                 if (dskType == DiskType.BDR || dskType == DiskType.BDRE || dskType == DiskType.BDROM ||
-                   dskType == DiskType.BDRXL || dskType == DiskType.BDREXL)
+                    dskType == DiskType.BDRXL || dskType == DiskType.BDREXL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -656,7 +706,7 @@ namespace DiscImageChef.Commands
                 #endregion All Blu-ray
 
                 #region BD-ROM only
-                if(dskType == DiskType.BDROM)
+                if (dskType == DiskType.BDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_BurstCuttingArea, 0, dev.Timeout, out duration);
                     if (sense)
@@ -722,11 +772,11 @@ namespace DiscImageChef.Commands
                 #endregion Writable Blu-ray only
 
                 #region CDs
-                if(dskType == DiskType.CD ||
-                    dskType == DiskType.CDR ||
-                    dskType == DiskType.CDROM ||
-                    dskType == DiskType.CDRW ||
-                    dskType == DiskType.Unknown)
+                if (dskType == DiskType.CD ||
+                   dskType == DiskType.CDR ||
+                   dskType == DiskType.CDROM ||
+                   dskType == DiskType.CDRW ||
+                   dskType == DiskType.Unknown)
                 {
                     Decoders.CD.TOC.CDTOC? toc = null;
 
@@ -742,7 +792,7 @@ namespace DiscImageChef.Commands
                         doWriteFile(outputPrefix, "_toc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
 
                         // As we have a TOC we know it is a CD
-                        if(dskType == DiskType.Unknown)
+                        if (dskType == DiskType.Unknown)
                             dskType = DiskType.CD;
                     }
 
@@ -754,7 +804,7 @@ namespace DiscImageChef.Commands
                     {
                         doWriteFile(outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                         Decoders.CD.ATIP.CDATIP? atip = Decoders.CD.ATIP.Decode(cmdBuf);
-                        if(atip.HasValue)
+                        if (atip.HasValue)
                         {
                             DicConsole.WriteLine("ATIP:\n{0}", Decoders.CD.ATIP.Prettify(atip));
                             // Only CD-R and CD-RW have ATIP
@@ -763,7 +813,7 @@ namespace DiscImageChef.Commands
                     }
 
                     // We got a TOC, get information about a recorded/mastered CD
-                    if(!tocSense)
+                    if (!tocSense)
                     {
                         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out duration);
                         if (sense)
@@ -771,15 +821,15 @@ namespace DiscImageChef.Commands
                         else
                         {
                             Decoders.SCSI.MMC.DiscInformation.StandardDiscInformation? discInfo = Decoders.SCSI.MMC.DiscInformation.Decode000b(cmdBuf);
-                            if(discInfo.HasValue)
+                            if (discInfo.HasValue)
                             {
                                 DicConsole.WriteLine("Standard Disc Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify000b(discInfo));
                                 doWriteFile(outputPrefix, "_readdiscinformation_000b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
 
                                 // If it is a read-only CD, check CD type if available
-                                if(dskType == DiskType.CD)
+                                if (dskType == DiskType.CD)
                                 {
-                                    switch(discInfo.Value.DiscType)
+                                    switch (discInfo.Value.DiscType)
                                     {
                                         case 0x10:
                                             dskType = DiskType.CDI;
@@ -803,33 +853,33 @@ namespace DiscImageChef.Commands
                             doWriteFile(outputPrefix, "_session.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
                             Decoders.CD.Session.CDSessionInfo? session = Decoders.CD.Session.Decode(cmdBuf);
                             DicConsole.WriteLine("Session information:\n{0}", Decoders.CD.Session.Prettify(session));
-                            if(session.HasValue)
+                            if (session.HasValue)
                             {
                                 sessions = session.Value.LastCompleteSession;
                                 firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
                             }
                         }
 
-                        if(dskType == DiskType.CD)
+                        if (dskType == DiskType.CD)
                         {
                             bool hasDataTrack = false;
                             bool hasAudioTrack = false;
                             bool allFirstSessionTracksAreAudio = true;
                             bool hasVideoTrack = false;
 
-                            if(toc.HasValue)
+                            if (toc.HasValue)
                             {
-                                foreach(Decoders.CD.TOC.CDTOCTrackDataDescriptor track in toc.Value.TrackDescriptors)
+                                foreach (Decoders.CD.TOC.CDTOCTrackDataDescriptor track in toc.Value.TrackDescriptors)
                                 {
-                                    if(track.TrackNumber == 1 &&
-                                        ((Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrack ||
-                                            (Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrackIncremental))
+                                    if (track.TrackNumber == 1 &&
+                                       ((Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrack ||
+                                       (Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrackIncremental))
                                     {
                                         allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
                                     }
 
-                                    if((Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrack ||
-                                        (Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrackIncremental)
+                                    if ((Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrack ||
+                                       (Decoders.CD.TOC_CONTROL)(track.CONTROL & 0x0D) == Decoders.CD.TOC_CONTROL.DataTrackIncremental)
                                     {
                                         hasDataTrack = true;
                                         allFirstSessionTracksAreAudio &= track.TrackNumber >= firstTrackLastSession;
@@ -837,18 +887,18 @@ namespace DiscImageChef.Commands
                                     else
                                         hasAudioTrack = true;
 
-                                    if(track.ADR == 4)
+                                    if (track.ADR == 4)
                                         hasVideoTrack = true;
                                 }
                             }
 
-                            if(hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
+                            if (hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
                                 dskType = DiskType.CDPLUS;
-                            if(!hasDataTrack && hasAudioTrack && sessions == 1)
+                            if (!hasDataTrack && hasAudioTrack && sessions == 1)
                                 dskType = DiskType.CDDA;
-                            if(hasDataTrack && !hasAudioTrack && sessions == 1)
+                            if (hasDataTrack && !hasAudioTrack && sessions == 1)
                                 dskType = DiskType.CDROM;
-                            if(hasVideoTrack && !hasDataTrack && sessions == 1)
+                            if (hasVideoTrack && !hasDataTrack && sessions == 1)
                                 dskType = DiskType.CDV;
                         }
 
@@ -875,7 +925,7 @@ namespace DiscImageChef.Commands
                         else
                         {
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
-                            if(Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
+                            if (Decoders.CD.CDTextOnLeadIn.Decode(cmdBuf).HasValue)
                                 DicConsole.WriteLine("CD-TEXT on Lead-In:\n{0}", Decoders.CD.CDTextOnLeadIn.Prettify(cmdBuf));
                         }
                     }
@@ -883,7 +933,7 @@ namespace DiscImageChef.Commands
                 #endregion CDs
 
                 #region Nintendo
-                if(dskType == DiskType.Unknown && blocks > 0)
+                if (dskType == DiskType.Unknown && blocks > 0)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -892,21 +942,21 @@ namespace DiscImageChef.Commands
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                         Decoders.DVD.PFI.PhysicalFormatInformation? nintendoPfi = Decoders.DVD.PFI.Decode(cmdBuf);
-                        if(nintendoPfi != null)
+                        if (nintendoPfi != null)
                         {
                             DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
-                            if(nintendoPfi.Value.DiskCategory == DiscImageChef.Decoders.DVD.DiskCategory.Nintendo &&
-                                nintendoPfi.Value.PartVersion == 15)
+                            if (nintendoPfi.Value.DiskCategory == DiscImageChef.Decoders.DVD.DiskCategory.Nintendo &&
+                               nintendoPfi.Value.PartVersion == 15)
                             {
-                                if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                if (nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
                                     dskType = DiskType.GOD;
-                                else if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
+                                else if (nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
                                     dskType = DiskType.WOD;
                             }
                         }
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
-                    if(sense)
+                    if (sense)
                         DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -934,7 +984,7 @@ namespace DiscImageChef.Commands
 
         static void doWriteFile(string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
         {
-            if(!string.IsNullOrEmpty(outputPrefix))
+            if (!string.IsNullOrEmpty(outputPrefix))
             {
                 if (!File.Exists(outputPrefix + outputSuffix))
                 {
@@ -951,7 +1001,7 @@ namespace DiscImageChef.Commands
                     }
                 }
                 else
-                        DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", outputPrefix, outputSuffix);
+                    DicConsole.ErrorWriteLine("Not overwriting file {0}{1}", outputPrefix, outputSuffix);
             }
         }
     }

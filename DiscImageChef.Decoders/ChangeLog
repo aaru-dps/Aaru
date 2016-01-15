@@ -1,3 +1,14 @@
+2016-01-15  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/SSC/BlockLimits.cs:
+	* SCSI/SSC/DensitySupport.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Added decoders for SCSI SSC READ BLOCK LIMITS and REPORT
+	  DENSITY SUPPORT.
+
+	* SCSI/Modes.cs:
+	  Corrected mode size.
+
 2015-12-30  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Inquiry.cs:

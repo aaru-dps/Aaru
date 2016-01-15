@@ -943,6 +943,50 @@ namespace DiscImageChef.Commands
                             #endregion Plextor
                         }
 
+                        if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                        {
+                            byte[] seqBuf;
+
+                            sense = dev.ReadBlockLimits(out seqBuf, out senseBuf, dev.Timeout, out duration);
+                            if (sense)
+                                DicConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            else
+                            {
+                                doWriteFile(options.OutputPrefix, "_ssc_readblocklimits.bin", "SSC READ BLOCK LIMITS", seqBuf);
+                                DicConsole.WriteLine("Block limits for device:");
+                                DicConsole.WriteLine(Decoders.SCSI.SSC.BlockLimits.Prettify(seqBuf));
+                            }
+
+                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out duration);
+                            if (sense)
+                                DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            else
+                            {
+                                doWriteFile(options.OutputPrefix, "_ssc_reportdensitysupport.bin", "SSC REPORT DENSITY SUPPORT", seqBuf);
+                                Decoders.SCSI.SSC.DensitySupport.DensitySupportHeader? dens = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                                if (dens.HasValue)
+                                {
+                                    DicConsole.WriteLine("Densities supported by device:");
+                                    DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyDensity(dens));
+                                }
+                            }
+
+                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out duration);
+                            if (sense)
+                                DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            else
+                            {
+                                doWriteFile(options.OutputPrefix, "_ssc_reportdensitysupport_medium.bin", "SSC REPORT DENSITY SUPPORT (MEDIUM)", seqBuf);
+                                Decoders.SCSI.SSC.DensitySupport.MediaTypeSupportHeader? meds = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                                if (meds.HasValue)
+                                {
+                                    DicConsole.WriteLine("Medium types supported by device:");
+                                    DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyMediumType(meds));
+                                }
+                                DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyMediumType(seqBuf));
+                            }
+                        }
+
                         break;
                     }
                 default:
