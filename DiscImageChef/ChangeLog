@@ -1,5 +1,10 @@
 2016-01-15  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceInfo.cs:
+	  Implement decoding Fujitsu Verify Control Page.
+
+2016-01-15  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/MediaInfo.cs:
 	* Commands/DeviceInfo.cs:
 	  Added support for SCSI sequential devices.

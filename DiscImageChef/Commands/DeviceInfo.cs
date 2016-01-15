@@ -475,6 +475,15 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x3E:
+                                            {
+                                                if (StringHandlers.SpacePaddedToString(inq.Value.VendorIdentification) == "FUJITSU")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         default:
                                             {
                                                 if (page.Subpage != 0)
