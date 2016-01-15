@@ -300,9 +300,306 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// Read/Write block device
         /// </summary>
-        ReadWriteBlockDevice = 0x42
+        ReadWriteBlockDevice = 0x42,
 
         #endregion Medium Types defined in INF-8070
+
+        #region Medium Types found in vendor documents
+        /// <summary>
+        /// LTO WORM as reported by HP drives
+        /// </summary>
+        LTOWORM = 0x01,
+        /// <summary>
+        /// LTO cleaning cartridge as reported by Certance/Seagate drives
+        /// </summary>
+        LTOCleaning = 0x01,
+        /// <summary>
+        /// Direct-overwrite magneto-optical
+        /// </summary>
+        DOW = 0x07,
+        /// <summary>
+        /// LTO Ultrium
+        /// </summary>
+        LTO = 0x18,
+        /// <summary>
+        /// LTO Ultrium-2
+        /// </summary>
+        LTO2 = 0x28,
+        /// <summary>
+        /// DC-2900SL
+        /// </summary>
+        DC2900SL = 0x31,
+        /// <summary>
+        /// MLR-1
+        /// </summary>
+        MLR1 = 0x33,
+        /// <summary>
+        /// DDS-3
+        /// </summary>
+        DDS3 = 0x33,
+        /// <summary>
+        /// DC-9200
+        /// </summary>
+        DC9200 = 0x34,
+        /// <summary>
+        /// DDS-4
+        /// </summary>
+        DDS4 = 0x34,
+        /// <summary>
+        /// DAT-72
+        /// </summary>
+        DAT72 = 0x35,
+        /// <summary>
+        /// LTO Ultrium-3
+        /// </summary>
+        LTO3 = 0x38,
+        /// <summary>
+        /// LTO Ultrium-3 WORM
+        /// </summary>
+        LTO3WORM = 0x3C,
+        /// <summary>
+        /// DDS cleaning cartridge
+        /// </summary>
+        DDSCleaning = 0x3F,
+        /// <summary>
+        /// DC-9250
+        /// </summary>
+        DC9250 = 0x40,
+        /// <summary>
+        /// SLR-32
+        /// </summary>
+        SLR32 = 0x43,
+        /// <summary>
+        /// MLR-1SL
+        /// </summary>
+        MLR1SL = 0x44,
+        /// <summary>
+        /// SLRtape-50
+        /// </summary>
+        SLRtape50 = 0x47,
+        /// <summary>
+        /// LTO Ultrium-4
+        /// </summary>
+        LTO4 = 0x48,
+        /// <summary>
+        /// LTO Ultrium-4 WORM
+        /// </summary>
+        LTO4WORM = 0x4C,
+        /// <summary>
+        /// SLRtape-50SL
+        /// </summary>
+        SLRtape50SL = 0x50,
+        /// <summary>
+        /// SLR-32SL
+        /// </summary>
+        SLR32SL = 0x54,
+        /// <summary>
+        /// SLR-5
+        /// </summary>
+        SLR5 = 0x55,
+        /// <summary>
+        /// SLR-5SL
+        /// </summary>
+        SLR5SL = 0x56,
+        /// <summary>
+        /// LTO Ultrium-5
+        /// </summary>
+        LTO5 = 0x58,
+        /// <summary>
+        /// LTO Ultrium-5 WORM
+        /// </summary>
+        LTO5WORM = 0x5C,
+        /// <summary>
+        /// SLRtape-7
+        /// </summary>
+        SLRtape7 = 0x63,
+        /// <summary>
+        /// SLRtape-7SL
+        /// </summary>
+        SLRtape7SL = 0x64,
+        /// <summary>
+        /// SLRtape-24
+        /// </summary>
+        SLRtape24 = 0x65,
+        /// <summary>
+        /// SLRtape-24SL
+        /// </summary>
+        SLRtape24SL = 0x66,
+        /// <summary>
+        /// LTO Ultrium-6
+        /// </summary>
+        LTO6 = 0x68,
+        /// <summary>
+        /// LTO Ultrium-6 WORM
+        /// </summary>
+        LTO6WORM = 0x6C,
+        /// <summary>
+        /// SLRtape-140
+        /// </summary>
+        SLRtape140 = 0x70,
+        /// <summary>
+        /// SLRtape-40
+        /// </summary>
+        SLRtape40 = 0x73,
+        /// <summary>
+        /// SLRtape-60
+        /// </summary>
+        SLRtape60 = 0x74,
+        /// <summary>
+        /// SLRtape-75
+        /// </summary>
+        SLRtape75 = 0x74,
+        /// <summary>
+        /// SLRtape-100
+        /// </summary>
+        SLRtape100 = 0x75,
+        /// <summary>
+        /// SLR-40 or SLR-60 or SLR-100
+        /// </summary>
+        SLR40_60_100 = 0x76,
+        /// <summary>
+        /// LTO Ultrium-7
+        /// </summary>
+        LTO7 = 0x78,
+        /// <summary>
+        /// LTO Ultrium-7 WORM
+        /// </summary>
+        LTO7WORM = 0x7C,
+        /// <summary>
+        /// HP LTO emulating a CD
+        /// </summary>
+        LTOCD = 0x80,
+        /// <summary>
+        /// Exatape 15m
+        /// </summary>
+        Exatape15m = 0x81,
+        /// <summary>
+        /// IBM MagStar
+        /// </summary>
+        MagStar = 0x81,
+        /// <summary>
+        /// VXA
+        /// </summary>
+        VXA = 0x81,
+        /// <summary>
+        /// CompactTape I
+        /// </summary>
+        CT1 = 0x82,
+        /// <summary>
+        /// Exatape 28m
+        /// </summary>
+        Exatape28m = 0x82,
+        /// <summary>
+        /// CompactTape II
+        /// </summary>
+        CT2 = 0x82,
+        /// <summary>
+        /// VXA-2
+        /// </summary>
+        VXA2 = 0x82,
+        /// <summary>
+        /// VXA-3
+        /// </summary>
+        VXA3 = 0x82,
+        /// <summary>
+        /// Exatape 54m
+        /// </summary>
+        Exatape54m = 0x83,
+        /// <summary>
+        /// DLTtape III
+        /// </summary>
+        DLTtapeIII = 0x83,
+        /// <summary>
+        /// Exatape 80m
+        /// </summary>
+        Exatape80m = 0x84,
+        /// <summary>
+        /// DLTtape IIIxt
+        /// </summary>
+        DLTtapeIIIxt = 0x84,
+        /// <summary>
+        /// Exatape 106m
+        /// </summary>
+        Exatape106m = 0x85,
+        /// <summary>
+        /// DLTtape IV
+        /// </summary>
+        DLTtapeIV = 0x85,
+        /// <summary>
+        /// Travan 5
+        /// </summary>
+        Travan5 = 0x85,
+        /// <summary>
+        /// Exatape 106m XL
+        /// </summary>
+        Exatape106mXL = 0x86,
+        /// <summary>
+        /// SuperDLT I
+        /// </summary>
+        SDLT1 = 0x86,
+        /// <summary>
+        /// SuperDLT II
+        /// </summary>
+        SDLT2 = 0x87,
+        /// <summary>
+        /// VStape I
+        /// </summary>
+        VStapeI = 0x90,
+        /// <summary>
+        /// DLTtape S4
+        /// </summary>
+        DLTtapeS4 = 0x91,
+        /// <summary>
+        /// Travan 7
+        /// </summary>
+        Travan7 = 0x95,
+        /// <summary>
+        /// Exatape 22m
+        /// </summary>
+        Exatape22m = 0xC1,
+        /// <summary>
+        /// Exatape 40m
+        /// </summary>
+        Exatape40m = 0xC2,
+        /// <summary>
+        /// Exatape 76m
+        /// </summary>
+        Exatape76m = 0xC3,
+        /// <summary>
+        /// Exatape 112m
+        /// </summary>
+        Exatape112m = 0xC4,
+        /// <summary>
+        /// Exatape 22m AME
+        /// </summary>
+        Exatape22mAME = 0xD1,
+        /// <summary>
+        /// Exatape 170m
+        /// </summary>
+        Exatape170m = 0xD2,
+        /// <summary>
+        /// Exatape 125m
+        /// </summary>
+        Exatape125m = 0xD3,
+        /// <summary>
+        /// Exatape 45m
+        /// </summary>
+        Exatape45m = 0xD4,
+        /// <summary>
+        /// Exatape 225m
+        /// </summary>
+        Exatape225m = 0xD5,
+        /// <summary>
+        /// Exatape 150m
+        /// </summary>
+        Exatape150m = 0xD6,
+        /// <summary>
+        /// Exatape 75m
+        /// </summary>
+        Exatape75m = 0xD7,
+
+            
+        #endregion Medium Types found in vendor documents
     }
 
     public enum DensityType : byte
@@ -343,9 +640,9 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         ECMA79 = 0x07,
         /// <summary>
-        /// Draft ECMA &amp; ANSI X3B5/87-099: 12,7 mm Magnetic Tape Cartridge using IFM Recording on 18 Tracks at 1944 ftpmm, GCR
+        /// Draft ECMA &amp; ANSI X3B5/87-099: 12,7 mm Magnetic Tape Cartridge using IFM Recording on 18 Tracks at 1944 ftpmm, GCR (IBM 3480, 3490, 3490E)
         /// </summary>
-        ECMADraft = 0x09,
+        IBM3480 = 0x09,
         /// <summary>
         /// ECMA-46 &amp; ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm
         /// </summary>
@@ -359,7 +656,7 @@ namespace DiscImageChef.Decoders.SCSI
         #region Density Types defined in SCSI-2 for Sequential-Access devices
 
         /// <summary>
-        /// ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR
+        /// ANXI X3.136-1986: 6,35 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)
         /// </summary>
         X3_136 = 0x05,
         /// <summary>
@@ -477,9 +774,281 @@ namespace DiscImageChef.Decoders.SCSI
         /// <summary>
         /// ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks
         /// </summary>
-        X3_200 = 0x09
+        X3_200 = 0x09,
 
         #endregion Density Types defined in SCSI-2 for Optical devices
+
+        #region Density Types found in vendor documents
+        /// <summary>
+        /// QIC-11
+        /// </summary>
+        QIC11 = 0x04,
+        /// <summary>
+        /// CompactTape I
+        /// </summary>
+        CT1 = 0x0A,
+        /// <summary>
+        /// Exabyte 8200 format
+        /// </summary>
+        Ex8200 = 0x14,
+        /// <summary>
+        /// Exabyte 8500 format
+        /// </summary>
+        Ex8500 = 0x15,
+        /// <summary>
+        /// CompactTape II
+        /// </summary>
+        CT2 = 0x16,
+        /// <summary>
+        /// DLTtape III 42500 bpi
+        /// </summary>
+        DLT3_42k = 0x17,
+        /// <summary>
+        /// DLTtape III 56 track
+        /// </summary>
+        DLT3_56t = 0x18,
+        /// <summary>
+        /// DLTtape III 62500 bpi
+        /// </summary>
+        DLT3_62k = 0x19,
+        /// <summary>
+        /// DLTtape IV
+        /// </summary>
+        DLT4 = 0x1A,
+        /// <summary>
+        /// DLTtape IV 85937 bpi
+        /// </summary>
+        DLT4_85k = 0x1B,
+        /// <summary>
+        /// DDS-3
+        /// </summary>
+        DDS3 = 0x25,
+        /// <summary>
+        /// DDS-4
+        /// </summary>
+        DDS4 = 0x26,
+        /// <summary>
+        /// Exabyte Mammoth
+        /// </summary>
+        Mammoth = 0x27,
+        /// <summary>
+        /// IBM 3490 & 3490E
+        /// </summary>
+        IBM3490E = 0x28,
+        /// <summary>
+        /// Exabyte Mammoth-2
+        /// </summary>
+        Mammoth2 = 0x28,
+        /// <summary>
+        /// IBM 3590
+        /// </summary>
+        IBM3590 = 0x29,
+        /// <summary>
+        /// IBM 3590E
+        /// </summary>
+        IBM3590E = 0x2A,
+        /// <summary>
+        /// AIT-1
+        /// </summary>
+        AIT1 = 0x30,
+        /// <summary>
+        /// AIT-2
+        /// </summary>
+        AIT2 = 0x31,
+        /// <summary>
+        /// AIT-3
+        /// </summary>
+        AIT3 = 0x32,
+        /// <summary>
+        /// DLTtape IV 123090 bpi
+        /// </summary>
+        DLT4_123k = 0x40,
+        /// <summary>
+        /// Ultrium-1
+        /// </summary>
+        LTO1 = 0x40,
+        /// <summary>
+        /// Super AIT-1
+        /// </summary>
+        SAIT1 = 0x40,
+        /// <summary>
+        /// DLTtape IV 85937 bpi
+        /// </summary>
+        DLT4_98k = 0x41,
+        /// <summary>
+        /// Ultrium-2 as reported by the Certance drive
+        /// </summary>
+        LTO2Old = 0x41,
+        /// <summary>
+        /// Ultrium-2
+        /// </summary>
+        LTO2 = 0x42,
+        /// <summary>
+        /// T9840
+        /// </summary>
+        T9840 = 0x42,
+        /// <summary>
+        /// T9940
+        /// </summary>
+        T9940 = 0x43,
+        /// <summary>
+        /// Ultrium-
+        /// </summary>
+        LTO3 = 0x44,
+        /// <summary>
+        /// T9840C
+        /// </summary>
+        T9840C = 0x45,
+        /// <summary>
+        /// Travan 5
+        /// </summary>
+        Travan5 = 0x46,
+        /// <summary>
+        /// Ultrium-4
+        /// </summary>
+        LTO4 = 0x46,
+        /// <summary>
+        /// T9840D
+        /// </summary>
+        T9840D = 0x46,
+        /// <summary>
+        /// DAT-72
+        /// </summary>
+        DAT72 = 0x47,
+        /// <summary>
+        /// Super DLTtape I 133000 bpi
+        /// </summary>
+        SDLT1_133k = 0x48,
+        /// <summary>
+        /// Super DLTtape I
+        /// </summary>
+        SDLT1 = 0x49,
+        /// <summary>
+        /// T10000A
+        /// </summary>
+        T10000A = 0x4A,
+        /// <summary>
+        /// Super DLTtape II
+        /// </summary>
+        SDLT2 = 0x4A,
+        /// <summary>
+        /// DLTtape S4
+        /// </summary>
+        DLTS4 = 0x4B,
+        /// <summary>
+        /// T10000B
+        /// </summary>
+        T10000B = 0x4B,
+        /// <summary>
+        /// T10000C
+        /// </summary>
+        T10000C = 0x4C,
+        /// <summary>
+        /// T10000D
+        /// </summary>
+        T10000D = 0x4D,
+        /// <summary>
+        /// VStape I
+        /// </summary>
+        VStape1 = 0x40,
+        /// <summary>
+        /// Ultrium-5
+        /// </summary>
+        LTO5 = 0x58,
+        /// <summary>
+        /// Ultrium-6
+        /// </summary>
+        LTO6 = 0x5A,
+        /// <summary>
+        /// Ultrium-7
+        /// </summary>
+        LTO7 = 0x5C,
+        /// <summary>
+        /// DLTtape III 62500 bpi secondary code
+        /// </summary>
+        DLT3_62kAlt = 0x80,
+        /// <summary>
+        /// VXA-1
+        /// </summary>
+        VXA1 = 0x80,
+        /// <summary>
+        /// DLTtape III compressed
+        /// </summary>
+        DLT3c = 0x81,
+        /// <summary>
+        /// VXA-2
+        /// </summary>
+        VXA2 = 0x81,
+        /// <summary>
+        /// DLTtape IV secondary code
+        /// </summary>
+        DLT4Alt = 0x82,
+        /// <summary>
+        /// VXA-3
+        /// </summary>
+        VXA3 = 0x82,
+        /// <summary>
+        /// DLTtape IV compressed
+        /// </summary>
+        DLT4c = 0x83,
+        /// <summary>
+        /// DLTtape IV 85937 bpi secondary code
+        /// </summary>
+        DLT4_85kAlt = 0x84,
+        /// <summary>
+        /// DLTtape IV 85937 bpi compressed
+        /// </summary>
+        DLT4c_85k = 0x85,
+        /// <summary>
+        /// DLTtape IV 123090 bpi secondary code
+        /// </summary>
+        DLT4_123kAlt = 0x86,
+        /// <summary>
+        /// DLTtape IV 123090 bpi compressed
+        /// </summary>
+        DLT4c_123k = 0x87,
+        /// <summary>
+        /// DLTtape IV 98250 bpi secondary code
+        /// </summary>
+        DLT4_98kAlt = 0x88,
+        /// <summary>
+        /// DLTtape IV 98250 bpi compressed
+        /// </summary>
+        DLT4c_98k = 0x89,
+        /// <summary>
+        /// Exabyte compressed 8200 format
+        /// </summary>
+        Ex8500c = 0x8C,
+        /// <summary>
+        /// Exabyte compressed 8500 format
+        /// </summary>
+        Ex8200c = 0x90,
+        /// <summary>
+        /// Super DLTtape I secondary code
+        /// </summary>
+        SDLT1Alt = 0x90,
+        /// <summary>
+        /// Super DLTtape I compressed
+        /// </summary>
+        SDLT1c = 0x91,
+        /// <summary>
+        /// Super DLTtape I 133000 bpi secondary code
+        /// </summary>
+        SDLT1_133kAlt = 0x92,
+        /// <summary>
+        /// Super DLTtape I 133000 bpi compressed
+        /// </summary>
+        SDLT1c_133k = 0x93,
+        /// <summary>
+        /// VStape I secondary code
+        /// </summary>
+        VStape1Alt = 0x98,
+        /// <summary>
+        /// VStape I compressed
+        /// </summary>
+        VStape1c = 0x99,
+
+        #endregion Density Types found in vendor documents
     }
 }
 
