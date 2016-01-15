@@ -1,5 +1,12 @@
 2016-01-15  Natalia Portillo  <claunia@claunia.com>
 
+	* SCSI/Modes.cs:
+	* SCSI/Types.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Moved density and medium type codes to a separate file.
+
+2016-01-15  Natalia Portillo  <claunia@claunia.com>
+
 	* SCSI/SSC/BlockLimits.cs:
 	* SCSI/SSC/DensitySupport.cs:
 	* DiscImageChef.Decoders.csproj:
