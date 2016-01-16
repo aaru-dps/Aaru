@@ -45,7 +45,7 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Unknown disk type</summary>
         Unknown,
 
-        // Somewhat standard Compact Disc formats
+        #region Somewhat standard Compact Disc formats
         /// <summary>CD Digital Audio (Red Book)</summary>
         CDDA,
         /// <summary>CD+G (Red Book)</summary>
@@ -90,8 +90,9 @@ namespace DiscImageChef.CommonTypes
         CDV,
         /// <summary>Any unknown or standard violating CD</summary>
         CD,
+        #endregion Somewhat standard Compact Disc formats
 
-        // Standard DVD formats
+        #region Standard DVD formats
         /// <summary>DVD-ROM (applies to DVD Video and DVD Audio)</summary>
         DVDROM,
         /// <summary>DVD-R</summary>
@@ -114,8 +115,9 @@ namespace DiscImageChef.CommonTypes
         DVDRWDL,
         /// <summary>DVD-Download</summary>
         DVDDownload,
+        #endregion Standard DVD formats
 
-        // Standard HD-DVD formats
+        #region Standard HD-DVD formats
         /// <summary>HD DVD-ROM (applies to HD DVD Video)</summary>
         HDDVDROM,
         /// <summary>HD DVD-RAM</summary>
@@ -128,8 +130,9 @@ namespace DiscImageChef.CommonTypes
         HDDVDRDL,
         /// <summary>HD DVD-RW DL</summary>
         HDDVDRWDL,
+        #endregion Standard HD-DVD formats
 
-        // Standard Blu-ray formats
+        #region Standard Blu-ray formats
         /// <summary>BD-ROM (and BD Video)</summary>
         BDROM,
         /// <summary>BD-R</summary>
@@ -140,8 +143,9 @@ namespace DiscImageChef.CommonTypes
         BDRXL,
         /// <summary>BD-RE XL</summary>
         BDREXL,
+        #endregion Standard Blu-ray formats
 
-        // Rare or uncommon standards
+        #region Rare or uncommon optical standards
         /// <summary>Enhanced Versatile Disc</summary>
         EVD,
         /// <summary>Forward Versatile Disc</summary>
@@ -154,22 +158,32 @@ namespace DiscImageChef.CommonTypes
         HDVMD,
         /// <summary>Versatile Compact Disc High Density</summary>
         VCDHD,
-        /// <summary>Pioneer LaserDisc</summary>
-        LD,
-        /// <summary>Pioneer LaserDisc data</summary>
-        LDROM,
-        /// <summary>Sony MiniDisc</summary>
-        MD,
-        /// <summary>Sony Hi-MD</summary>
-        HiMD,
-        /// <summary>Ultra Density Optical</summary>
-        UDO,
         /// <summary>Stacked Volumetric Optical Disc</summary>
         SVOD,
         /// <summary>Five Dimensional disc</summary>
         FDDVD,
+        #endregion Rare or uncommon optical standards
 
-        // Propietary game discs
+        #region LaserDisc based
+        /// <summary>Pioneer LaserDisc</summary>
+        LD,
+        /// <summary>Pioneer LaserDisc data</summary>
+        LDROM,
+        #endregion LaserDisc based
+
+        #region MiniDisc based
+        /// <summary>Sony MiniDisc</summary>
+        MD,
+        /// <summary>Sony Hi-MD</summary>
+        HiMD,
+        #endregion MiniDisc based
+
+        #region Plasmon UDO
+        /// <summary>Ultra Density Optical</summary>
+        UDO,
+        #endregion Plasmon UDO
+
+        #region Propietary game discs
         /// <summary>Sony PlayStation game CD</summary>
         PS1CD,
         /// <summary>Sony PlayStation 2 game CD</summary>
@@ -206,8 +220,9 @@ namespace DiscImageChef.CommonTypes
         GDROM,
         /// <summary>Sega/Yamaha recordable Gigabyte Disc}}</summary>
         GDR,
+        #endregion Propietary game discs
 
-        // Apple standard floppy format
+        #region Apple standard floppy format
         /// <summary>5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
         Apple32SS,
         /// <summary>5.25", DS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
@@ -222,8 +237,9 @@ namespace DiscImageChef.CommonTypes
         AppleSonyDS,
         /// <summary>5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy</summary>
         AppleFileWare,
+        #endregion Apple standard floppy format
 
-        // IBM/Microsoft PC standard floppy formats
+        #region IBM/Microsoft PC standard floppy formats
         /// <summary>5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM</summary>
         DOS_525_SS_DD_8,
         /// <summary>5.25", SS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM</summary>
@@ -246,18 +262,21 @@ namespace DiscImageChef.CommonTypes
         DOS_35_HD,
         /// <summary>3.5", DS, ED, 80 tracks, 36 spt, 512 bytes/sector, MFM</summary>
         DOS_35_ED,
+        #endregion IBM/Microsoft PC standard floppy formats
 
-        // Microsoft non standard floppy formats
+        #region Microsoft non standard floppy formats
         /// <summary>3.5", DS, DD, 80 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF,
         /// <summary>3.5", DS, DD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF_82,
+        #endregion Microsoft non standard floppy formats
 
-        // IBM non standard floppy formats
+        #region IBM non standard floppy formats
         XDF_525,
         XDF_35,
+        #endregion IBM non standard floppy formats
 
-        // IBM standard floppy formats
+        #region IBM standard floppy formats
         /// <summary>8", SS, SD, 32 tracks, 8 spt, 319 bytes/sector, FM</summary>
         IBM23FD,
         /// <summary>8", SS, SD, 73 tracks, 26 spt, 128 bytes/sector, FM</summary>
@@ -276,14 +295,16 @@ namespace DiscImageChef.CommonTypes
         IBM53FD_512,
         /// <summary>8", DS, DD, 74 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         IBM53FD_1024,
+        #endregion IBM standard floppy formats
 
-        // DEC standard floppy formats
+        #region DEC standard floppy formats
         /// <summary>8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         RX01,
         /// <summary>8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM</summary>
         RX02,
+        #endregion DEC standard floppy formats
 
-        // Acorn standard floppy formats
+        #region Acorn standard floppy formats
         /// <summary>5,25", SS, SD, 40 tracks, 10 spt, 256 bytes/sector, FM</summary>
         ACORN_525_SS_SD_40,
         /// <summary>5,25", SS, SD, 80 tracks, 10 spt, 256 bytes/sector, FM</summary>
@@ -296,16 +317,18 @@ namespace DiscImageChef.CommonTypes
         ACORN_525_DS_DD,
         /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         ACORN_35_DS_DD,
+        #endregion Acorn standard floppy formats
 
-        // Atari standard floppy formats
+        #region Atari standard floppy formats
         /// <summary>5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM</summary>
         ATARI_525_SD,
         /// <summary>5,25", SS, ED, 40 tracks, 26 spt, 128 bytes/sector, MFM</summary>
         ATARI_525_ED,
         /// <summary>5,25", SS, DD, 40 tracks, 18 spt, 256 bytes/sector, MFM</summary>
         ATARI_525_DD,
+        #endregion Atari standard floppy formats
 
-        // Commodore standard floppy formats
+        #region Commodore standard floppy formats
         /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM (1581)</summary>
         CBM_35_DD,
         /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)</summary>
@@ -314,8 +337,9 @@ namespace DiscImageChef.CommonTypes
         CBM_AMIGA_35_HD,
         /// <summary>5,25", SS, DD, 35 tracks, GCR</summary>
         CBM_1540,
+        #endregion Commodore standard floppy formats
 
-        // NEC standard floppy formats
+        #region NEC standard floppy formats
         /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         NEC_8_SD,
         /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
@@ -326,14 +350,16 @@ namespace DiscImageChef.CommonTypes
         NEC_35_HD_8,
         /// <summary>3,5", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM</summary>
         NEC_35_HD_15,
+        #endregion NEC standard floppy formats
 
-        // SHARP standard floppy formats
+        #region SHARP standard floppy formats
         /// <summary>5,25", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_525,
         /// <summary>3,5", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_35,
+        #endregion SHARP standard floppy formats
 
-        // ECMA standards
+        #region ECMA floppy standards
         /// <summary>5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
         ECMA_99_8,
         /// <summary>5,25", DS, DD, 77 tracks, 15 spt, 512 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track 0 side 1 = 26 sectors, 256 bytes/sector</summary>
@@ -376,8 +402,9 @@ namespace DiscImageChef.CommonTypes
         ECMA_184_1024,
         /// <summary>3,5", M.O., 448500 sectors, 512 bytes/sector</summary>
         ECMA_201,
+        #endregion ECMA floppy standards
 
-        // FDFORMAT, non-standard floppy formats
+        #region FDFORMAT, non-standard floppy formats
         /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_525_DD,
         /// <summary>5,25", DS, HD, 82 tracks, 17 spt, 512 bytes/sector, MFM</summary>
@@ -386,9 +413,11 @@ namespace DiscImageChef.CommonTypes
         FDFORMAT_35_DD,
         /// <summary>3,5", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         FDFORMAT_35_HD,
+        #endregion FDFORMAT, non-standard floppy formats
 
-        // Generic hard disks
+        #region Generic hard disks
         GENERIC_HDD
+        #endregion Generic hard disks
     };
 }
 
