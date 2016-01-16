@@ -65,7 +65,7 @@ namespace DiscImageChef.Commands
             if (options.VerifyDisc)
             {
                 DateTime StartCheck = DateTime.UtcNow;
-                bool? discCheckStatus = inputFormat.VerifyDiskImage();
+                bool? discCheckStatus = inputFormat.VerifyMediaImage();
                 DateTime EndCheck = DateTime.UtcNow;
 
                 TimeSpan CheckTime = EndCheck - StartCheck;

@@ -107,7 +107,7 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <returns>Disk tag</returns>
         /// <param name="tag">Tag type to read.</param>
-        public abstract byte[] ReadDiskTag(DiskTagType tag);
+        public abstract byte[] ReadDiskTag(MediaTagType tag);
 
         /// <summary>
         /// Reads a sector's user data.
@@ -268,51 +268,51 @@ namespace DiscImageChef.ImagePlugins
         // Functions to get information from disk represented by image
 
         /// <summary>
-        /// Gets the disk manufacturer.
+        /// Gets the media manufacturer.
         /// </summary>
-        /// <returns>The disk manufacturer.</returns>
-        public abstract string   GetDiskManufacturer();
+        /// <returns>The media manufacturer.</returns>
+        public abstract string   GetMediaManufacturer();
 
         /// <summary>
-        /// Gets the disk model.
+        /// Gets the media model.
         /// </summary>
-        /// <returns>The disk model.</returns>
-        public abstract string   GetDiskModel();
+        /// <returns>The media model.</returns>
+        public abstract string   GetMediaModel();
 
         /// <summary>
-        /// Gets the disk serial number.
+        /// Gets the media serial number.
         /// </summary>
-        /// <returns>The disk serial number.</returns>
-        public abstract string   GetDiskSerialNumber();
+        /// <returns>The media serial number.</returns>
+        public abstract string   GetMediaSerialNumber();
 
         /// <summary>
-        /// Gets the disk (or product) barcode.
+        /// Gets the media (or product) barcode.
         /// </summary>
-        /// <returns>The disk barcode.</returns>
-        public abstract string   GetDiskBarcode();
+        /// <returns>The media barcode.</returns>
+        public abstract string   GetMediaBarcode();
 
         /// <summary>
-        /// Gets the disk part number.
+        /// Gets the media part number.
         /// </summary>
-        /// <returns>The disk part number.</returns>
-        public abstract string   GetDiskPartNumber();
+        /// <returns>The media part number.</returns>
+        public abstract string   GetMediaPartNumber();
 
         /// <summary>
-        /// Gets the type of the disk.
+        /// Gets the type of the media.
         /// </summary>
-        /// <returns>The disk type.</returns>
-        public abstract DiskType GetDiskType();
+        /// <returns>The media type.</returns>
+        public abstract MediaType GetMediaType();
 
         /// <summary>
-        /// Gets the disk sequence.
+        /// Gets the media sequence.
         /// </summary>
-        /// <returns>The disk sequence, starting at 1.</returns>
-        public abstract int      GetDiskSequence();
+        /// <returns>The media sequence, starting at 1.</returns>
+        public abstract int      GetMediaSequence();
 
         /// <summary>
-        /// Gets the last disk in the sequence.
+        /// Gets the last media in the sequence.
         /// </summary>
-        /// <returns>The last disk in the sequence.</returns>
+        /// <returns>The last media in the sequence.</returns>
         public abstract int      GetLastDiskSequence();
 
         // Functions to get information from drive used to create image
@@ -409,10 +409,10 @@ namespace DiscImageChef.ImagePlugins
         public abstract bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs);
 
         /// <summary>
-        /// Verifies disk image internal checksum.
+        /// Verifies media image internal checksum.
         /// </summary>
         /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
-        public abstract bool? VerifyDiskImage();
+        public abstract bool? VerifyMediaImage();
 
 
         // CD flags bitmask
@@ -563,9 +563,9 @@ namespace DiscImageChef.ImagePlugins
     };
 
     /// <summary>
-    /// Metadata present for each disk.
+    /// Metadata present for each media.
     /// </summary>
-    public enum DiskTagType
+    public enum MediaTagType
     {
         /// <summary>CD table of contents</summary>
         CD_TOC,

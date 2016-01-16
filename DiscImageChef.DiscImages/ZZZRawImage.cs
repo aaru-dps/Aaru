@@ -60,7 +60,7 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
             ImageInfo.imageVersion = null;
@@ -68,13 +68,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageCreator = null;
             ImageInfo.imageComments = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskSerialNumber = null;
-            ImageInfo.diskBarcode = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -261,17 +261,17 @@ namespace DiscImageChef.ImagePlugins
                     break;
             }
 
-            ImageInfo.diskType = CalculateDiskType();
+            ImageInfo.mediaType = CalculateDiskType();
 
-            switch (ImageInfo.diskType)
+            switch (ImageInfo.mediaType)
             {
-                case DiskType.CD:
-                case DiskType.DVDPR:
-                case DiskType.DVDR:
-                case DiskType.DVDRDL:
-                case DiskType.DVDPRDL:
-                case DiskType.BDR:
-                case DiskType.BDRXL:
+                case MediaType.CD:
+                case MediaType.DVDPR:
+                case MediaType.DVDR:
+                case MediaType.DVDRDL:
+                case MediaType.DVDPRDL:
+                case MediaType.BDR:
+                case MediaType.BDRXL:
                     ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
                     break;
                 default:
@@ -356,9 +356,9 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageName;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         public override bool? VerifySector(UInt64 sectorAddress)
@@ -393,7 +393,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }
@@ -548,138 +548,138 @@ namespace DiscImageChef.ImagePlugins
 
         #region Private methods
 
-        DiskType CalculateDiskType()
+        MediaType CalculateDiskType()
         {
             if (ImageInfo.sectorSize == 2048)
             {
                 if (ImageInfo.sectors <= 360000)
-                    return DiskType.CD;
+                    return MediaType.CD;
                 if (ImageInfo.sectors <= 2295104)
-                    return DiskType.DVDPR;
+                    return MediaType.DVDPR;
                 if (ImageInfo.sectors <= 2298496)
-                    return DiskType.DVDR;
+                    return MediaType.DVDR;
                 if (ImageInfo.sectors <= 4171712)
-                    return DiskType.DVDRDL;
+                    return MediaType.DVDRDL;
                 if (ImageInfo.sectors <= 4173824)
-                    return DiskType.DVDPRDL;
+                    return MediaType.DVDPRDL;
                 if (ImageInfo.sectors <= 24438784)
-                    return DiskType.BDR;
+                    return MediaType.BDR;
                 if (ImageInfo.sectors <= 62500864)
-                    return DiskType.BDRXL;
-                return DiskType.Unknown;
+                    return MediaType.BDRXL;
+                return MediaType.Unknown;
             }
             else
             {
                 switch (ImageInfo.imageSize)
                 {
                     case 80384:
-                        return DiskType.ECMA_66;
+                        return MediaType.ECMA_66;
                     case 81664:
-                        return DiskType.IBM23FD;
+                        return MediaType.IBM23FD;
                     case 92160:
-                        return DiskType.ATARI_525_SD;
+                        return MediaType.ATARI_525_SD;
                     case 102400:
-                        return DiskType.ACORN_525_SS_SD_40;
+                        return MediaType.ACORN_525_SS_SD_40;
                     case 116480:
-                        return DiskType.Apple32SS;
+                        return MediaType.Apple32SS;
                     case 133120:
-                        return DiskType.ATARI_525_ED;
+                        return MediaType.ATARI_525_ED;
                     case 143360:
-                        return DiskType.Apple33SS;
+                        return MediaType.Apple33SS;
                     case 163840:
-                        return DiskType.DOS_525_SS_DD_8;
+                        return MediaType.DOS_525_SS_DD_8;
                     case 184320:
-                        return DiskType.DOS_525_SS_DD_9;
+                        return MediaType.DOS_525_SS_DD_9;
                     case 204800:
-                        return DiskType.ACORN_525_SS_SD_80;
+                        return MediaType.ACORN_525_SS_SD_80;
                     case 232960:
-                        return DiskType.Apple32DS;
+                        return MediaType.Apple32DS;
                     case 242944:
-                        return DiskType.IBM33FD_128;
+                        return MediaType.IBM33FD_128;
                     case 256256:
-                        return DiskType.ECMA_54;
+                        return MediaType.ECMA_54;
                     case 286720:
-                        return DiskType.Apple33DS;
+                        return MediaType.Apple33DS;
                     case 287488:
-                        return DiskType.IBM33FD_256;
+                        return MediaType.IBM33FD_256;
                     case 306432:
-                        return DiskType.IBM33FD_512;
+                        return MediaType.IBM33FD_512;
                     case 325632:
-                        return DiskType.ECMA_70;
+                        return MediaType.ECMA_70;
                     case 327680:
-                        return DiskType.DOS_525_DS_DD_8;
+                        return MediaType.DOS_525_DS_DD_8;
                     case 368640:
-                        return DiskType.DOS_525_DS_DD_9;
+                        return MediaType.DOS_525_DS_DD_9;
                     case 409600:
-                        return DiskType.AppleSonySS;
+                        return MediaType.AppleSonySS;
                     case 495872:
-                        return DiskType.IBM43FD_128;
+                        return MediaType.IBM43FD_128;
                     case 512512:
-                        return DiskType.ECMA_59;
+                        return MediaType.ECMA_59;
                     case 653312:
-                        return DiskType.ECMA_78;
+                        return MediaType.ECMA_78;
                     case 655360:
-                        return DiskType.ACORN_525_DS_DD;
+                        return MediaType.ACORN_525_DS_DD;
                     case 737280:
-                        return DiskType.DOS_35_DS_DD_9;
+                        return MediaType.DOS_35_DS_DD_9;
                     case 819200:
-                        return DiskType.AppleSonyDS;
+                        return MediaType.AppleSonyDS;
                     case 839680:
-                        return DiskType.FDFORMAT_35_DD;
+                        return MediaType.FDFORMAT_35_DD;
                     case 901120:
-                        return DiskType.CBM_AMIGA_35_DD;
+                        return MediaType.CBM_AMIGA_35_DD;
                     case 988416:
-                        return DiskType.IBM43FD_256;
+                        return MediaType.IBM43FD_256;
                     case 995072:
-                        return DiskType.IBM53FD_256;
+                        return MediaType.IBM53FD_256;
                     case 1021696:
-                        return DiskType.ECMA_99_26;
+                        return MediaType.ECMA_99_26;
                     case 1146624:
-                        return DiskType.IBM53FD_512;
+                        return MediaType.IBM53FD_512;
                     case 1177344:
-                        return DiskType.ECMA_99_15;
+                        return MediaType.ECMA_99_15;
                     case 1222400:
-                        return DiskType.IBM53FD_1024;
+                        return MediaType.IBM53FD_1024;
                     case 1228800:
-                        return DiskType.DOS_525_HD;
+                        return MediaType.DOS_525_HD;
                     case 1255168:
-                        return DiskType.ECMA_69_8;
+                        return MediaType.ECMA_69_8;
                     case 1261568:
-                        return DiskType.NEC_8_DD;
+                        return MediaType.NEC_8_DD;
                     case 1304320:
-                        return DiskType.ECMA_99_8;
+                        return MediaType.ECMA_99_8;
                     case 1310720:
-                        return DiskType.NEC_525_HD;
+                        return MediaType.NEC_525_HD;
                     case 1427456:
-                        return DiskType.FDFORMAT_525_HD;
+                        return MediaType.FDFORMAT_525_HD;
                     case 1474560:
-                        return DiskType.DOS_35_HD;
+                        return MediaType.DOS_35_HD;
                     case 1720320:
-                        return DiskType.DMF;
+                        return MediaType.DMF;
                     case 1763328:
-                        return DiskType.FDFORMAT_35_HD;
+                        return MediaType.FDFORMAT_35_HD;
                     case 1802240:
-                        return DiskType.CBM_AMIGA_35_HD;
+                        return MediaType.CBM_AMIGA_35_HD;
                     case 1880064:
-                        return DiskType.XDF_35;
+                        return MediaType.XDF_35;
                     case 1884160:
-                        return DiskType.XDF_35;
+                        return MediaType.XDF_35;
                     case 2949120:
-                        return DiskType.DOS_35_ED;
+                        return MediaType.DOS_35_ED;
                     case 128000000:
-                        return DiskType.ECMA_154;
+                        return MediaType.ECMA_154;
                     case 229632000:
-                        return DiskType.ECMA_201;
+                        return MediaType.ECMA_201;
                     case 481520640:
-                        return DiskType.ECMA_183_512;
+                        return MediaType.ECMA_183_512;
                     case 533403648:
-                        return DiskType.ECMA_183_1024;
+                        return MediaType.ECMA_183_1024;
                     case 596787200:
-                        return DiskType.ECMA_184_512;
+                        return MediaType.ECMA_184_512;
                     case 654540800:
-                        return DiskType.ECMA_184_1024;
+                        return MediaType.ECMA_184_1024;
                     default:
-                        return DiskType.GENERIC_HDD;
+                        return MediaType.GENERIC_HDD;
                 }
             }
         }
@@ -723,7 +723,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageApplicationVersion;
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -738,39 +738,39 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override string   GetDiskManufacturer()
+        public override string   GetMediaManufacturer()
         {
-            return ImageInfo.diskManufacturer;
+            return ImageInfo.mediaManufacturer;
         }
 
-        public override string   GetDiskModel()
+        public override string   GetMediaModel()
         {
-            return ImageInfo.diskModel;
+            return ImageInfo.mediaModel;
         }
 
-        public override string   GetDiskSerialNumber()
+        public override string   GetMediaSerialNumber()
         {
-            return ImageInfo.diskSerialNumber;
+            return ImageInfo.mediaSerialNumber;
         }
 
-        public override string   GetDiskBarcode()
+        public override string   GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override string   GetDiskPartNumber()
+        public override string   GetMediaPartNumber()
         {
-            return ImageInfo.diskPartNumber;
+            return ImageInfo.mediaPartNumber;
         }
 
-        public override int      GetDiskSequence()
+        public override int      GetMediaSequence()
         {
-            return ImageInfo.diskSequence;
+            return ImageInfo.mediaSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            return ImageInfo.lastDiskSequence;
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()

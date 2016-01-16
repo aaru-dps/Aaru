@@ -109,7 +109,7 @@ namespace DiscImageChef.Commands
             byte[] senseBuf;
             bool sense;
             double duration;
-            DiskType dskType = DiskType.Unknown;
+            MediaType dskType = MediaType.Unknown;
             ulong blocks = 0;
             uint blockSize = 0;
 
@@ -292,91 +292,91 @@ namespace DiscImageChef.Commands
                     switch (ftr.CurrentProfile)
                     {
                         case 0x0001:
-                            dskType = DiskType.GENERIC_HDD;
+                            dskType = MediaType.GENERIC_HDD;
                             break;
                         case 0x0005:
-                            dskType = DiskType.CDMO;
+                            dskType = MediaType.CDMO;
                             break;
                         case 0x0008:
-                            dskType = DiskType.CD;
+                            dskType = MediaType.CD;
                             break;
                         case 0x0009:
-                            dskType = DiskType.CDR;
+                            dskType = MediaType.CDR;
                             break;
                         case 0x000A:
-                            dskType = DiskType.CDRW;
+                            dskType = MediaType.CDRW;
                             break;
                         case 0x0010:
-                            dskType = DiskType.DVDROM;
+                            dskType = MediaType.DVDROM;
                             break;
                         case 0x0011:
-                            dskType = DiskType.DVDR;
+                            dskType = MediaType.DVDR;
                             break;
                         case 0x0012:
-                            dskType = DiskType.DVDRAM;
+                            dskType = MediaType.DVDRAM;
                             break;
                         case 0x0013:
                         case 0x0014:
-                            dskType = DiskType.DVDRW;
+                            dskType = MediaType.DVDRW;
                             break;
                         case 0x0015:
                         case 0x0016:
-                            dskType = DiskType.DVDRDL;
+                            dskType = MediaType.DVDRDL;
                             break;
                         case 0x0017:
-                            dskType = DiskType.DVDRWDL;
+                            dskType = MediaType.DVDRWDL;
                             break;
                         case 0x0018:
-                            dskType = DiskType.DVDDownload;
+                            dskType = MediaType.DVDDownload;
                             break;
                         case 0x001A:
-                            dskType = DiskType.DVDPRW;
+                            dskType = MediaType.DVDPRW;
                             break;
                         case 0x001B:
-                            dskType = DiskType.DVDPR;
+                            dskType = MediaType.DVDPR;
                             break;
                         case 0x0020:
-                            dskType = DiskType.DDCD;
+                            dskType = MediaType.DDCD;
                             break;
                         case 0x0021:
-                            dskType = DiskType.DDCDR;
+                            dskType = MediaType.DDCDR;
                             break;
                         case 0x0022:
-                            dskType = DiskType.DDCDRW;
+                            dskType = MediaType.DDCDRW;
                             break;
                         case 0x002A:
-                            dskType = DiskType.DVDPRWDL;
+                            dskType = MediaType.DVDPRWDL;
                             break;
                         case 0x002B:
-                            dskType = DiskType.DVDPRDL;
+                            dskType = MediaType.DVDPRDL;
                             break;
                         case 0x0040:
-                            dskType = DiskType.BDROM;
+                            dskType = MediaType.BDROM;
                             break;
                         case 0x0041:
                         case 0x0042:
-                            dskType = DiskType.BDR;
+                            dskType = MediaType.BDR;
                             break;
                         case 0x0043:
-                            dskType = DiskType.BDRE;
+                            dskType = MediaType.BDRE;
                             break;
                         case 0x0050:
-                            dskType = DiskType.HDDVDROM;
+                            dskType = MediaType.HDDVDROM;
                             break;
                         case 0x0051:
-                            dskType = DiskType.HDDVDR;
+                            dskType = MediaType.HDDVDR;
                             break;
                         case 0x0052:
-                            dskType = DiskType.HDDVDRAM;
+                            dskType = MediaType.HDDVDRAM;
                             break;
                         case 0x0053:
-                            dskType = DiskType.HDDVDRW;
+                            dskType = MediaType.HDDVDRW;
                             break;
                         case 0x0058:
-                            dskType = DiskType.HDDVDRDL;
+                            dskType = MediaType.HDDVDRDL;
                             break;
                         case 0x005A:
-                            dskType = DiskType.HDDVDRWDL;
+                            dskType = MediaType.HDDVDRWDL;
                             break;
                     }
                 }
@@ -402,15 +402,15 @@ namespace DiscImageChef.Commands
                 */
 
                 #region All DVD and HD DVD types
-                if (dskType == DiskType.DVDDownload || dskType == DiskType.DVDPR ||
-                    dskType == DiskType.DVDPRDL || dskType == DiskType.DVDPRW ||
-                    dskType == DiskType.DVDPRWDL || dskType == DiskType.DVDR ||
-                    dskType == DiskType.DVDRAM || dskType == DiskType.DVDRDL ||
-                    dskType == DiskType.DVDROM || dskType == DiskType.DVDRW ||
-                    dskType == DiskType.DVDRWDL || dskType == DiskType.HDDVDR ||
-                    dskType == DiskType.HDDVDRAM || dskType == DiskType.HDDVDRDL ||
-                    dskType == DiskType.HDDVDROM || dskType == DiskType.HDDVDRW ||
-                    dskType == DiskType.HDDVDRWDL)
+                if (dskType == MediaType.DVDDownload || dskType == MediaType.DVDPR ||
+                    dskType == MediaType.DVDPRDL || dskType == MediaType.DVDPRW ||
+                    dskType == MediaType.DVDPRWDL || dskType == MediaType.DVDR ||
+                    dskType == MediaType.DVDRAM || dskType == MediaType.DVDRDL ||
+                    dskType == MediaType.DVDROM || dskType == MediaType.DVDRW ||
+                    dskType == MediaType.DVDRWDL || dskType == MediaType.HDDVDR ||
+                    dskType == MediaType.HDDVDRAM || dskType == MediaType.HDDVDRDL ||
+                    dskType == MediaType.HDDVDROM || dskType == MediaType.HDDVDRW ||
+                    dskType == MediaType.HDDVDRWDL)
                 {
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
@@ -433,7 +433,7 @@ namespace DiscImageChef.Commands
                         if (Decoders.Xbox.DMI.IsXbox360(cmdBuf))
                         {
                             // TODO: Detect XGD3 from XGD2...
-                            dskType = DiskType.XGD2;
+                            dskType = MediaType.XGD2;
                             DicConsole.WriteLine("Xbox 360 DMI:\n{0}", Decoders.Xbox.DMI.PrettifyXbox360(cmdBuf));
                         }
                     }
@@ -441,7 +441,7 @@ namespace DiscImageChef.Commands
                 #endregion All DVD and HD DVD types
 
                 #region DVD-ROM
-                if (dskType == DiskType.DVDDownload || dskType == DiskType.DVDROM)
+                if (dskType == MediaType.DVDDownload || dskType == MediaType.DVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -455,8 +455,8 @@ namespace DiscImageChef.Commands
                 #endregion DVD-ROM
 
                 #region DVD-ROM and HD DVD-ROM
-                if (dskType == DiskType.DVDDownload || dskType == DiskType.DVDROM ||
-                    dskType == DiskType.HDDVDROM)
+                if (dskType == MediaType.DVDDownload || dskType == MediaType.DVDROM ||
+                    dskType == MediaType.HDDVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out duration);
                     if (sense)
@@ -532,7 +532,7 @@ namespace DiscImageChef.Commands
                 #endregion Require drive authentication, won't work
 
                 #region DVD-RAM and HD DVD-RAM
-                if (dskType == DiskType.DVDRAM || dskType == DiskType.HDDVDRAM)
+                if (dskType == MediaType.DVDRAM || dskType == MediaType.HDDVDRAM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_DDS, 0, dev.Timeout, out duration);
                     if (sense)
@@ -562,7 +562,7 @@ namespace DiscImageChef.Commands
                 #endregion DVD-RAM and HD DVD-RAM
 
                 #region DVD-R and HD DVD-R
-                if (dskType == DiskType.DVDR || dskType == DiskType.HDDVDR)
+                if (dskType == MediaType.DVDR || dskType == MediaType.HDDVDR)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.LastBorderOutRMD, 0, dev.Timeout, out duration);
                     if (sense)
@@ -573,7 +573,7 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R and HD DVD-R
 
                 #region DVD-R and DVD-RW
-                if (dskType == DiskType.DVDR || dskType == DiskType.DVDRW)
+                if (dskType == MediaType.DVDR || dskType == MediaType.DVDRW)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out duration);
                     if (sense)
@@ -584,7 +584,7 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R and DVD-RW
 
                 #region DVD-R, DVD-RW and HD DVD-R
-                if (dskType == DiskType.DVDR || dskType == DiskType.DVDRW || dskType == DiskType.HDDVDR)
+                if (dskType == MediaType.DVDR || dskType == MediaType.DVDRW || dskType == MediaType.HDDVDR)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_MediaIdentifier, 0, dev.Timeout, out duration);
                     if (sense)
@@ -600,8 +600,8 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R, DVD-RW and HD DVD-R
 
                 #region All DVD+
-                if (dskType == DiskType.DVDPR || dskType == DiskType.DVDPRDL ||
-                   dskType == DiskType.DVDPRW || dskType == DiskType.DVDPRWDL)
+                if (dskType == MediaType.DVDPR || dskType == MediaType.DVDPRDL ||
+                   dskType == MediaType.DVDPRW || dskType == MediaType.DVDPRWDL)
                 {
                     // TODO: None of my test discs return an ADIP. Also, it just seems to contain pre-recorded PFI, and drive is returning it on blank media using standard PFI command
                     /*
@@ -621,7 +621,7 @@ namespace DiscImageChef.Commands
                 #endregion All DVD+
 
                 #region HD DVD-ROM
-                if (dskType == DiskType.HDDVDROM)
+                if (dskType == MediaType.HDDVDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -632,7 +632,7 @@ namespace DiscImageChef.Commands
                 #endregion HD DVD-ROM
 
                 #region HD DVD-R
-                if (dskType == DiskType.HDDVDR)
+                if (dskType == MediaType.HDDVDR)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVDR_MediumStatus, 0, dev.Timeout, out duration);
                     if (sense)
@@ -648,8 +648,8 @@ namespace DiscImageChef.Commands
                 #endregion HD DVD-R
 
                 #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
-                if (dskType == DiskType.DVDPRDL || dskType == DiskType.DVDRDL ||
-                   dskType == DiskType.DVDRWDL || dskType == DiskType.DVDPRWDL)
+                if (dskType == MediaType.DVDPRDL || dskType == MediaType.DVDRDL ||
+                   dskType == MediaType.DVDRWDL || dskType == MediaType.DVDPRWDL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, dev.Timeout, out duration);
                     if (sense)
@@ -660,7 +660,7 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
 
                 #region DVD-R DL
-                if (dskType == DiskType.DVDRDL)
+                if (dskType == MediaType.DVDRDL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out duration);
                     if (sense)
@@ -686,8 +686,8 @@ namespace DiscImageChef.Commands
                 #endregion DVD-R DL
 
                 #region All Blu-ray
-                if (dskType == DiskType.BDR || dskType == DiskType.BDRE || dskType == DiskType.BDROM ||
-                    dskType == DiskType.BDRXL || dskType == DiskType.BDREXL)
+                if (dskType == MediaType.BDR || dskType == MediaType.BDRE || dskType == MediaType.BDROM ||
+                    dskType == MediaType.BDRXL || dskType == MediaType.BDREXL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -706,7 +706,7 @@ namespace DiscImageChef.Commands
                 #endregion All Blu-ray
 
                 #region BD-ROM only
-                if (dskType == DiskType.BDROM)
+                if (dskType == MediaType.BDROM)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_BurstCuttingArea, 0, dev.Timeout, out duration);
                     if (sense)
@@ -720,8 +720,8 @@ namespace DiscImageChef.Commands
                 #endregion BD-ROM only
 
                 #region Writable Blu-ray only
-                if (dskType == DiskType.BDR || dskType == DiskType.BDRE ||
-                    dskType == DiskType.BDRXL || dskType == DiskType.BDREXL)
+                if (dskType == MediaType.BDR || dskType == MediaType.BDRE ||
+                    dskType == MediaType.BDRXL || dskType == MediaType.BDREXL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_DDS, 0, dev.Timeout, out duration);
                     if (sense)
@@ -772,11 +772,11 @@ namespace DiscImageChef.Commands
                 #endregion Writable Blu-ray only
 
                 #region CDs
-                if (dskType == DiskType.CD ||
-                   dskType == DiskType.CDR ||
-                   dskType == DiskType.CDROM ||
-                   dskType == DiskType.CDRW ||
-                   dskType == DiskType.Unknown)
+                if (dskType == MediaType.CD ||
+                   dskType == MediaType.CDR ||
+                   dskType == MediaType.CDROM ||
+                   dskType == MediaType.CDRW ||
+                   dskType == MediaType.Unknown)
                 {
                     Decoders.CD.TOC.CDTOC? toc = null;
 
@@ -792,8 +792,8 @@ namespace DiscImageChef.Commands
                         doWriteFile(outputPrefix, "_toc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
 
                         // As we have a TOC we know it is a CD
-                        if (dskType == DiskType.Unknown)
-                            dskType = DiskType.CD;
+                        if (dskType == MediaType.Unknown)
+                            dskType = MediaType.CD;
                     }
 
                     // ATIP exists on blank CDs
@@ -808,7 +808,7 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine("ATIP:\n{0}", Decoders.CD.ATIP.Prettify(atip));
                             // Only CD-R and CD-RW have ATIP
-                            dskType = atip.Value.DiscType ? DiskType.CDRW : DiskType.CDR;
+                            dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
                         }
                     }
 
@@ -827,15 +827,15 @@ namespace DiscImageChef.Commands
                                 doWriteFile(outputPrefix, "_readdiscinformation_000b.bin", "SCSI READ DISC INFORMATION", cmdBuf);
 
                                 // If it is a read-only CD, check CD type if available
-                                if (dskType == DiskType.CD)
+                                if (dskType == MediaType.CD)
                                 {
                                     switch (discInfo.Value.DiscType)
                                     {
                                         case 0x10:
-                                            dskType = DiskType.CDI;
+                                            dskType = MediaType.CDI;
                                             break;
                                         case 0x20:
-                                            dskType = DiskType.CDROMXA;
+                                            dskType = MediaType.CDROMXA;
                                             break;
                                     }
                                 }
@@ -860,7 +860,7 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        if (dskType == DiskType.CD)
+                        if (dskType == MediaType.CD)
                         {
                             bool hasDataTrack = false;
                             bool hasAudioTrack = false;
@@ -893,13 +893,13 @@ namespace DiscImageChef.Commands
                             }
 
                             if (hasDataTrack && hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2)
-                                dskType = DiskType.CDPLUS;
+                                dskType = MediaType.CDPLUS;
                             if (!hasDataTrack && hasAudioTrack && sessions == 1)
-                                dskType = DiskType.CDDA;
+                                dskType = MediaType.CDDA;
                             if (hasDataTrack && !hasAudioTrack && sessions == 1)
-                                dskType = DiskType.CDROM;
+                                dskType = MediaType.CDROM;
                             if (hasVideoTrack && !hasDataTrack && sessions == 1)
-                                dskType = DiskType.CDV;
+                                dskType = MediaType.CDV;
                         }
 
                         sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
@@ -933,7 +933,7 @@ namespace DiscImageChef.Commands
                 #endregion CDs
 
                 #region Nintendo
-                if (dskType == DiskType.Unknown && blocks > 0)
+                if (dskType == MediaType.Unknown && blocks > 0)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                     if (sense)
@@ -949,9 +949,9 @@ namespace DiscImageChef.Commands
                                nintendoPfi.Value.PartVersion == 15)
                             {
                                 if (nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
-                                    dskType = DiskType.GOD;
+                                    dskType = MediaType.GOD;
                                 else if (nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
-                                    dskType = DiskType.WOD;
+                                    dskType = MediaType.WOD;
                             }
                         }
                     }

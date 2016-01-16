@@ -1,5 +1,15 @@
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/Decode.cs:
+	* Commands/Verify.cs:
+	* Commands/Analyze.cs:
+	* Commands/Compare.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/CreateSidecar.cs:
+	  Refactor most disk references to media.
+
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/CreateSidecar.cs:
 	  Added static method to get standard dimensions from disk
 	  types.

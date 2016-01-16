@@ -98,7 +98,7 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
                     DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.", _imageFormat.GetImageSize());
                     DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", _imageFormat.GetSectors());
-                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.", _imageFormat.GetDiskType());
+                    DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.", _imageFormat.GetMediaType());
                 }
                 catch (Exception ex)
                 {

@@ -134,7 +134,7 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
             ImageInfo.imageVersion = "4.2";
@@ -142,13 +142,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageApplicationVersion = "4.2";
             ImageInfo.imageCreator = null;
             ImageInfo.imageComments = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskSerialNumber = null;
-            ImageInfo.diskBarcode = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -325,25 +325,25 @@ namespace DiscImageChef.ImagePlugins
             switch (header.format)
             {
                 case kSonyFormat400K:
-                    ImageInfo.diskType = DiskType.AppleSonySS;
+                    ImageInfo.mediaType = MediaType.AppleSonySS;
                     break;
                 case kSonyFormat800K:
-                    ImageInfo.diskType = DiskType.AppleSonyDS;
+                    ImageInfo.mediaType = MediaType.AppleSonyDS;
                     break;
                 case kSonyFormat720K:
-                    ImageInfo.diskType = DiskType.DOS_35_DS_DD_9;
+                    ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
                     break;
                 case kSonyFormat1440K:
-                    ImageInfo.diskType = DiskType.DOS_35_HD;
+                    ImageInfo.mediaType = MediaType.DOS_35_HD;
                     break;
                 case kSonyFormat1680K:
-                    ImageInfo.diskType = DiskType.DMF;
+                    ImageInfo.mediaType = MediaType.DMF;
                     break;
                 case kSigmaFormatTwiggy:
-                    ImageInfo.diskType = DiskType.AppleFileWare;
+                    ImageInfo.mediaType = MediaType.AppleFileWare;
                     break;
                 default:
-                    ImageInfo.diskType = DiskType.Unknown;
+                    ImageInfo.mediaType = MediaType.Unknown;
                     break;
             }
 
@@ -382,7 +382,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             byte[] data = new byte[header.dataSize];
             byte[] tags = new byte[header.tagSize];
@@ -556,14 +556,14 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageName;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         #region Unsupported features
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -578,39 +578,39 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override string   GetDiskManufacturer()
+        public override string   GetMediaManufacturer()
         {
-            return ImageInfo.diskManufacturer;
+            return ImageInfo.mediaManufacturer;
         }
 
-        public override string   GetDiskModel()
+        public override string   GetMediaModel()
         {
-            return ImageInfo.diskModel;
+            return ImageInfo.mediaModel;
         }
 
-        public override string   GetDiskSerialNumber()
+        public override string   GetMediaSerialNumber()
         {
-            return ImageInfo.diskSerialNumber;
+            return ImageInfo.mediaSerialNumber;
         }
 
-        public override string   GetDiskBarcode()
+        public override string   GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override string   GetDiskPartNumber()
+        public override string   GetMediaPartNumber()
         {
-            return ImageInfo.diskPartNumber;
+            return ImageInfo.mediaPartNumber;
         }
 
-        public override int      GetDiskSequence()
+        public override int      GetMediaSequence()
         {
-            return ImageInfo.diskSequence;
+            return ImageInfo.mediaSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            return ImageInfo.lastDiskSequence;
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()

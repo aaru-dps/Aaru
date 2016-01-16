@@ -35,51 +35,50 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
 using Schemas;
 
 namespace DiscImageChef.Metadata
 {
     public static class Dimensions
     {
-        public static DimensionsType DimensionsFromDiskType(CommonTypes.DiskType dskType)
+        public static DimensionsType DimensionsFromMediaType(CommonTypes.MediaType dskType)
         {
             DimensionsType dmns = new DimensionsType();
 
             switch (dskType)
             {
                 #region 5.25" floppy disk
-                case DiscImageChef.CommonTypes.DiskType.Apple32SS:
-                case DiscImageChef.CommonTypes.DiskType.Apple32DS:
-                case DiscImageChef.CommonTypes.DiskType.Apple33SS:
-                case DiscImageChef.CommonTypes.DiskType.Apple33DS:
-                case DiscImageChef.CommonTypes.DiskType.AppleFileWare:
-                case DiscImageChef.CommonTypes.DiskType.DOS_525_SS_DD_8:
-                case DiscImageChef.CommonTypes.DiskType.DOS_525_SS_DD_9:
-                case DiscImageChef.CommonTypes.DiskType.DOS_525_DS_DD_8:
-                case DiscImageChef.CommonTypes.DiskType.DOS_525_DS_DD_9:
-                case DiscImageChef.CommonTypes.DiskType.DOS_525_HD:
-                case DiscImageChef.CommonTypes.DiskType.XDF_525:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_SD_40:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_SD_80:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_DD_40:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_525_SS_DD_80:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_525_DS_DD:
-                case DiscImageChef.CommonTypes.DiskType.ATARI_525_SD:
-                case DiscImageChef.CommonTypes.DiskType.ATARI_525_ED:
-                case DiscImageChef.CommonTypes.DiskType.ATARI_525_DD:
-                case DiscImageChef.CommonTypes.DiskType.CBM_1540:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_66:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_70:
-                case DiscImageChef.CommonTypes.DiskType.NEC_525_HD:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_78:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_78_2:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_99_8:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_99_15:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_99_26:
-                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_525_DD:
-                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_525_HD:
-                case DiscImageChef.CommonTypes.DiskType.SHARP_525:
+                case CommonTypes.MediaType.Apple32SS:
+                case CommonTypes.MediaType.Apple32DS:
+                case CommonTypes.MediaType.Apple33SS:
+                case CommonTypes.MediaType.Apple33DS:
+                case CommonTypes.MediaType.AppleFileWare:
+                case CommonTypes.MediaType.DOS_525_SS_DD_8:
+                case CommonTypes.MediaType.DOS_525_SS_DD_9:
+                case CommonTypes.MediaType.DOS_525_DS_DD_8:
+                case CommonTypes.MediaType.DOS_525_DS_DD_9:
+                case CommonTypes.MediaType.DOS_525_HD:
+                case CommonTypes.MediaType.XDF_525:
+                case CommonTypes.MediaType.ACORN_525_SS_SD_40:
+                case CommonTypes.MediaType.ACORN_525_SS_SD_80:
+                case CommonTypes.MediaType.ACORN_525_SS_DD_40:
+                case CommonTypes.MediaType.ACORN_525_SS_DD_80:
+                case CommonTypes.MediaType.ACORN_525_DS_DD:
+                case CommonTypes.MediaType.ATARI_525_SD:
+                case CommonTypes.MediaType.ATARI_525_ED:
+                case CommonTypes.MediaType.ATARI_525_DD:
+                case CommonTypes.MediaType.CBM_1540:
+                case CommonTypes.MediaType.ECMA_66:
+                case CommonTypes.MediaType.ECMA_70:
+                case CommonTypes.MediaType.NEC_525_HD:
+                case CommonTypes.MediaType.ECMA_78:
+                case CommonTypes.MediaType.ECMA_78_2:
+                case CommonTypes.MediaType.ECMA_99_8:
+                case CommonTypes.MediaType.ECMA_99_15:
+                case CommonTypes.MediaType.ECMA_99_26:
+                case CommonTypes.MediaType.FDFORMAT_525_DD:
+                case CommonTypes.MediaType.FDFORMAT_525_HD:
+                case CommonTypes.MediaType.SHARP_525:
                     // According to ECMA-99 et al
                     dmns.Height = 133.3;
                     dmns.HeightSpecified = true;
@@ -90,29 +89,29 @@ namespace DiscImageChef.Metadata
                 #endregion 5.25" floppy disk
 
                 #region 3.5" floppy disk
-                case DiscImageChef.CommonTypes.DiskType.AppleSonySS:
-                case DiscImageChef.CommonTypes.DiskType.AppleSonyDS:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_SS_DD_8:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_SS_DD_9:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_DS_DD_8:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_DS_DD_9:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_HD:
-                case DiscImageChef.CommonTypes.DiskType.DOS_35_ED:
-                case DiscImageChef.CommonTypes.DiskType.DMF:
-                case DiscImageChef.CommonTypes.DiskType.DMF_82:
-                case DiscImageChef.CommonTypes.DiskType.XDF_35:
-                case DiscImageChef.CommonTypes.DiskType.ACORN_35_DS_DD:
-                case DiscImageChef.CommonTypes.DiskType.CBM_35_DD:
-                case DiscImageChef.CommonTypes.DiskType.CBM_AMIGA_35_DD:
-                case DiscImageChef.CommonTypes.DiskType.CBM_AMIGA_35_HD:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_100:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_125:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_147:
-                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_35_DD:
-                case DiscImageChef.CommonTypes.DiskType.FDFORMAT_35_HD:
-                case DiscImageChef.CommonTypes.DiskType.NEC_35_HD_8:
-                case DiscImageChef.CommonTypes.DiskType.NEC_35_HD_15:
-                case DiscImageChef.CommonTypes.DiskType.SHARP_35:
+                case CommonTypes.MediaType.AppleSonySS:
+                case CommonTypes.MediaType.AppleSonyDS:
+                case CommonTypes.MediaType.DOS_35_SS_DD_8:
+                case CommonTypes.MediaType.DOS_35_SS_DD_9:
+                case CommonTypes.MediaType.DOS_35_DS_DD_8:
+                case CommonTypes.MediaType.DOS_35_DS_DD_9:
+                case CommonTypes.MediaType.DOS_35_HD:
+                case CommonTypes.MediaType.DOS_35_ED:
+                case CommonTypes.MediaType.DMF:
+                case CommonTypes.MediaType.DMF_82:
+                case CommonTypes.MediaType.XDF_35:
+                case CommonTypes.MediaType.ACORN_35_DS_DD:
+                case CommonTypes.MediaType.CBM_35_DD:
+                case CommonTypes.MediaType.CBM_AMIGA_35_DD:
+                case CommonTypes.MediaType.CBM_AMIGA_35_HD:
+                case CommonTypes.MediaType.ECMA_100:
+                case CommonTypes.MediaType.ECMA_125:
+                case CommonTypes.MediaType.ECMA_147:
+                case CommonTypes.MediaType.FDFORMAT_35_DD:
+                case CommonTypes.MediaType.FDFORMAT_35_HD:
+                case CommonTypes.MediaType.NEC_35_HD_8:
+                case CommonTypes.MediaType.NEC_35_HD_15:
+                case CommonTypes.MediaType.SHARP_35:
                     // According to ECMA-100 et al
                     dmns.Height = 94;
                     dmns.HeightSpecified = true;
@@ -123,24 +122,24 @@ namespace DiscImageChef.Metadata
                 #endregion 3.5" floppy disk
 
                 #region 8" floppy disk
-                case DiscImageChef.CommonTypes.DiskType.IBM23FD:
-                case DiscImageChef.CommonTypes.DiskType.IBM33FD_128:
-                case DiscImageChef.CommonTypes.DiskType.IBM33FD_256:
-                case DiscImageChef.CommonTypes.DiskType.IBM33FD_512:
-                case DiscImageChef.CommonTypes.DiskType.IBM43FD_128:
-                case DiscImageChef.CommonTypes.DiskType.IBM43FD_256:
-                case DiscImageChef.CommonTypes.DiskType.IBM53FD_256:
-                case DiscImageChef.CommonTypes.DiskType.IBM53FD_512:
-                case DiscImageChef.CommonTypes.DiskType.IBM53FD_1024:
-                case DiscImageChef.CommonTypes.DiskType.RX01:
-                case DiscImageChef.CommonTypes.DiskType.RX02:
-                case DiscImageChef.CommonTypes.DiskType.NEC_8_SD:
-                case DiscImageChef.CommonTypes.DiskType.NEC_8_DD:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_54:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_59:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_69_8:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_69_15:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_69_26:
+                case CommonTypes.MediaType.IBM23FD:
+                case CommonTypes.MediaType.IBM33FD_128:
+                case CommonTypes.MediaType.IBM33FD_256:
+                case CommonTypes.MediaType.IBM33FD_512:
+                case CommonTypes.MediaType.IBM43FD_128:
+                case CommonTypes.MediaType.IBM43FD_256:
+                case CommonTypes.MediaType.IBM53FD_256:
+                case CommonTypes.MediaType.IBM53FD_512:
+                case CommonTypes.MediaType.IBM53FD_1024:
+                case CommonTypes.MediaType.RX01:
+                case CommonTypes.MediaType.RX02:
+                case CommonTypes.MediaType.NEC_8_SD:
+                case CommonTypes.MediaType.NEC_8_DD:
+                case CommonTypes.MediaType.ECMA_54:
+                case CommonTypes.MediaType.ECMA_59:
+                case CommonTypes.MediaType.ECMA_69_8:
+                case CommonTypes.MediaType.ECMA_69_15:
+                case CommonTypes.MediaType.ECMA_69_26:
                     // According to ECMA-59 et al
                     dmns.Height = 203.2;
                     dmns.HeightSpecified = true;
@@ -151,10 +150,10 @@ namespace DiscImageChef.Metadata
                 #endregion 8" floppy disk
 
                 #region 5.25" magneto optical
-                case DiscImageChef.CommonTypes.DiskType.ECMA_183_512:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_183_1024:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_184_512:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_184_1024:
+                case CommonTypes.MediaType.ECMA_183_512:
+                case CommonTypes.MediaType.ECMA_183_1024:
+                case CommonTypes.MediaType.ECMA_184_512:
+                case CommonTypes.MediaType.ECMA_184_1024:
                     // According to ECMA-183 et al
                     dmns.Height = 153;
                     dmns.HeightSpecified = true;
@@ -165,8 +164,8 @@ namespace DiscImageChef.Metadata
                 #endregion 5.25" magneto optical
 
                 #region 3.5" magneto optical
-                case DiscImageChef.CommonTypes.DiskType.ECMA_154:
-                case DiscImageChef.CommonTypes.DiskType.ECMA_201:
+                case CommonTypes.MediaType.ECMA_154:
+                case CommonTypes.MediaType.ECMA_201:
                     // According to ECMA-154 et al
                     dmns.Height = 94;
                     dmns.HeightSpecified = true;

@@ -117,8 +117,8 @@ namespace DiscImageChef.Commands
             ImageInfo image2Info = new ImageInfo();
             List<Session> image1Sessions = new List<Session>();
             List<Session> image2Sessions = new List<Session>();
-            Dictionary<DiskTagType, byte[]> image1DiskTags = new Dictionary<DiskTagType, byte[]>();
-            Dictionary<DiskTagType, byte[]> image2DiskTags = new Dictionary<DiskTagType, byte[]>();
+            Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
+            Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 
             image1Info.imageHasPartitions = input1Format.ImageHasPartitions();
             try{ image1Sessions = input1Format.GetSessions(); } catch{}
@@ -129,24 +129,24 @@ namespace DiscImageChef.Commands
             image1Info.sectorSize = input1Format.GetSectorSize();
             image1Info.imageCreationTime = input1Format.GetImageCreationTime();
             image1Info.imageLastModificationTime = input1Format.GetImageLastModificationTime();
-            image1Info.diskType = input1Format.GetDiskType();
+            image1Info.mediaType = input1Format.GetMediaType();
             try{ image1Info.imageVersion = input1Format.GetImageVersion(); } catch{ image1Info.imageVersion = null;}
             try{ image1Info.imageApplication = input1Format.GetImageApplication(); } catch{ image1Info.imageApplication = null;}
             try{ image1Info.imageApplicationVersion = input1Format.GetImageApplicationVersion(); } catch{ image1Info.imageApplicationVersion = null;}
             try{ image1Info.imageCreator = input1Format.GetImageCreator(); } catch{ image1Info.imageCreator = null;}
             try{ image1Info.imageName = input1Format.GetImageName(); } catch{ image1Info.imageName = null;}
             try{ image1Info.imageComments = input1Format.GetImageComments(); } catch{ image1Info.imageComments = null;}
-            try{ image1Info.diskManufacturer = input1Format.GetDiskManufacturer(); } catch{ image1Info.diskManufacturer = null;}
-            try{ image1Info.diskModel = input1Format.GetDiskModel(); } catch{ image1Info.diskModel = null;}
-            try{ image1Info.diskSerialNumber = input1Format.GetDiskSerialNumber(); } catch{ image1Info.diskSerialNumber = null;}
-            try{ image1Info.diskBarcode = input1Format.GetDiskBarcode(); } catch{ image1Info.diskBarcode = null;}
-            try{ image1Info.diskPartNumber = input1Format.GetDiskPartNumber(); } catch{ image1Info.diskPartNumber = null;}
-            try{ image1Info.diskSequence = input1Format.GetDiskSequence(); } catch{ image1Info.diskSequence = 0;}
-            try{ image1Info.lastDiskSequence = input1Format.GetLastDiskSequence(); } catch{ image1Info.lastDiskSequence = 0;}
+            try{ image1Info.mediaManufacturer = input1Format.GetMediaManufacturer(); } catch{ image1Info.mediaManufacturer = null;}
+            try{ image1Info.mediaModel = input1Format.GetMediaModel(); } catch{ image1Info.mediaModel = null;}
+            try{ image1Info.mediaSerialNumber = input1Format.GetMediaSerialNumber(); } catch{ image1Info.mediaSerialNumber = null;}
+            try{ image1Info.mediaBarcode = input1Format.GetMediaBarcode(); } catch{ image1Info.mediaBarcode = null;}
+            try{ image1Info.mediaPartNumber = input1Format.GetMediaPartNumber(); } catch{ image1Info.mediaPartNumber = null;}
+            try{ image1Info.mediaSequence = input1Format.GetMediaSequence(); } catch{ image1Info.mediaSequence = 0;}
+            try{ image1Info.lastMediaSequence = input1Format.GetLastDiskSequence(); } catch{ image1Info.lastMediaSequence = 0;}
             try{ image1Info.driveManufacturer = input1Format.GetDriveManufacturer(); } catch{ image1Info.driveManufacturer = null;}
             try{ image1Info.driveModel = input1Format.GetDriveModel(); } catch{ image1Info.driveModel = null;}
             try{ image1Info.driveSerialNumber = input1Format.GetDriveSerialNumber(); } catch{ image1Info.driveSerialNumber = null;}
-            foreach (DiskTagType disktag in Enum.GetValues(typeof(DiskTagType)))
+            foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try{
                     byte[] temparray = input1Format.ReadDiskTag(disktag);
@@ -165,24 +165,24 @@ namespace DiscImageChef.Commands
             image2Info.sectorSize = input2Format.GetSectorSize();
             image2Info.imageCreationTime = input2Format.GetImageCreationTime();
             image2Info.imageLastModificationTime = input2Format.GetImageLastModificationTime();
-            image2Info.diskType = input2Format.GetDiskType();
+            image2Info.mediaType = input2Format.GetMediaType();
             try{ image2Info.imageVersion = input2Format.GetImageVersion(); } catch{ image2Info.imageVersion = null;}
             try{ image2Info.imageApplication = input2Format.GetImageApplication(); } catch{ image2Info.imageApplication = null;}
             try{ image2Info.imageApplicationVersion = input2Format.GetImageApplicationVersion(); } catch{ image2Info.imageApplicationVersion = null;}
             try{ image2Info.imageCreator = input2Format.GetImageCreator(); } catch{ image2Info.imageCreator = null;}
             try{ image2Info.imageName = input2Format.GetImageName(); } catch{ image2Info.imageName = null;}
             try{ image2Info.imageComments = input2Format.GetImageComments(); } catch{ image2Info.imageComments = null;}
-            try{ image2Info.diskManufacturer = input2Format.GetDiskManufacturer(); } catch{ image2Info.diskManufacturer = null;}
-            try{ image2Info.diskModel = input2Format.GetDiskModel(); } catch{ image2Info.diskModel = null;}
-            try{ image2Info.diskSerialNumber = input2Format.GetDiskSerialNumber(); } catch{ image2Info.diskSerialNumber = null;}
-            try{ image2Info.diskBarcode = input2Format.GetDiskBarcode(); } catch{ image2Info.diskBarcode = null;}
-            try{ image2Info.diskPartNumber = input2Format.GetDiskPartNumber(); } catch{ image2Info.diskPartNumber = null;}
-            try{ image2Info.diskSequence = input2Format.GetDiskSequence(); } catch{ image2Info.diskSequence = 0;}
-            try{ image2Info.lastDiskSequence = input2Format.GetLastDiskSequence(); } catch{ image2Info.lastDiskSequence = 0;}
+            try{ image2Info.mediaManufacturer = input2Format.GetMediaManufacturer(); } catch{ image2Info.mediaManufacturer = null;}
+            try{ image2Info.mediaModel = input2Format.GetMediaModel(); } catch{ image2Info.mediaModel = null;}
+            try{ image2Info.mediaSerialNumber = input2Format.GetMediaSerialNumber(); } catch{ image2Info.mediaSerialNumber = null;}
+            try{ image2Info.mediaBarcode = input2Format.GetMediaBarcode(); } catch{ image2Info.mediaBarcode = null;}
+            try{ image2Info.mediaPartNumber = input2Format.GetMediaPartNumber(); } catch{ image2Info.mediaPartNumber = null;}
+            try{ image2Info.mediaSequence = input2Format.GetMediaSequence(); } catch{ image2Info.mediaSequence = 0;}
+            try{ image2Info.lastMediaSequence = input2Format.GetLastDiskSequence(); } catch{ image2Info.lastMediaSequence = 0;}
             try{ image2Info.driveManufacturer = input2Format.GetDriveManufacturer(); } catch{ image2Info.driveManufacturer = null;}
             try{ image2Info.driveModel = input2Format.GetDriveModel(); } catch{ image2Info.driveModel = null;}
             try{ image2Info.driveSerialNumber = input2Format.GetDriveSerialNumber(); } catch{ image2Info.driveSerialNumber = null;}
-            foreach (DiskTagType disktag in Enum.GetValues(typeof(DiskTagType)))
+            foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try{
                     byte[] temparray = input2Format.ReadDiskTag(disktag);
@@ -201,24 +201,24 @@ namespace DiscImageChef.Commands
                 sb.AppendFormat("Sector size\t{0}\t{1}", image1Info.sectorSize, image2Info.sectorSize).AppendLine();
                 sb.AppendFormat("Creation time\t{0}\t{1}", image1Info.imageCreationTime, image2Info.imageCreationTime).AppendLine();
                 sb.AppendFormat("Last modification time\t{0}\t{1}", image1Info.imageLastModificationTime, image2Info.imageLastModificationTime).AppendLine();
-                sb.AppendFormat("Disk type\t{0}\t{1}", image1Info.diskType, image2Info.diskType).AppendLine();
+                sb.AppendFormat("Disk type\t{0}\t{1}", image1Info.mediaType, image2Info.mediaType).AppendLine();
                 sb.AppendFormat("Image version\t{0}\t{1}", image1Info.imageVersion, image2Info.imageVersion).AppendLine();
                 sb.AppendFormat("Image application\t{0}\t{1}", image1Info.imageApplication, image2Info.imageApplication).AppendLine();
                 sb.AppendFormat("Image application version\t{0}\t{1}", image1Info.imageApplicationVersion, image2Info.imageApplicationVersion).AppendLine();
                 sb.AppendFormat("Image creator\t{0}\t{1}", image1Info.imageCreator, image2Info.imageCreator).AppendLine();
                 sb.AppendFormat("Image name\t{0}\t{1}", image1Info.imageName, image2Info.imageName).AppendLine();
                 sb.AppendFormat("Image comments\t{0}\t{1}", image1Info.imageComments, image2Info.imageComments).AppendLine();
-                sb.AppendFormat("Disk manufacturer\t{0}\t{1}", image1Info.diskManufacturer, image2Info.diskManufacturer).AppendLine();
-                sb.AppendFormat("Disk model\t{0}\t{1}", image1Info.diskModel, image2Info.diskModel).AppendLine();
-                sb.AppendFormat("Disk serial number\t{0}\t{1}", image1Info.diskSerialNumber, image2Info.diskSerialNumber).AppendLine();
-                sb.AppendFormat("Disk barcode\t{0}\t{1}", image1Info.diskBarcode, image2Info.diskBarcode).AppendLine();
-                sb.AppendFormat("Disk part no.\t{0}\t{1}", image1Info.diskPartNumber, image2Info.diskPartNumber).AppendLine();
-                sb.AppendFormat("Disk sequence\t{0}\t{1}", image1Info.diskSequence, image2Info.diskSequence).AppendLine();
-                sb.AppendFormat("Last disk on sequence\t{0}\t{1}", image1Info.lastDiskSequence, image2Info.lastDiskSequence).AppendLine();
+                sb.AppendFormat("Disk manufacturer\t{0}\t{1}", image1Info.mediaManufacturer, image2Info.mediaManufacturer).AppendLine();
+                sb.AppendFormat("Disk model\t{0}\t{1}", image1Info.mediaModel, image2Info.mediaModel).AppendLine();
+                sb.AppendFormat("Disk serial number\t{0}\t{1}", image1Info.mediaSerialNumber, image2Info.mediaSerialNumber).AppendLine();
+                sb.AppendFormat("Disk barcode\t{0}\t{1}", image1Info.mediaBarcode, image2Info.mediaBarcode).AppendLine();
+                sb.AppendFormat("Disk part no.\t{0}\t{1}", image1Info.mediaPartNumber, image2Info.mediaPartNumber).AppendLine();
+                sb.AppendFormat("Disk sequence\t{0}\t{1}", image1Info.mediaSequence, image2Info.mediaSequence).AppendLine();
+                sb.AppendFormat("Last disk on sequence\t{0}\t{1}", image1Info.lastMediaSequence, image2Info.lastMediaSequence).AppendLine();
                 sb.AppendFormat("Drive manufacturer\t{0}\t{1}", image1Info.driveManufacturer, image2Info.driveManufacturer).AppendLine();
                 sb.AppendFormat("Drive model\t{0}\t{1}", image1Info.driveModel, image2Info.driveModel).AppendLine();
                 sb.AppendFormat("Drive serial number\t{0}\t{1}", image1Info.driveSerialNumber, image2Info.driveSerialNumber).AppendLine();
-                foreach (DiskTagType disktag in Enum.GetValues(typeof(DiskTagType)))
+                foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
                 {
                     sb.AppendFormat("Has {0}?\t{1}\t{2}", disktag, image1DiskTags.ContainsKey(disktag), image2DiskTags.ContainsKey(disktag)).AppendLine();
                 }
@@ -268,7 +268,7 @@ namespace DiscImageChef.Commands
                 if (!options.Verbose)
                     sb.AppendLine("Image last modification time differ");
             }
-            if (image1Info.diskType != image2Info.diskType)
+            if (image1Info.mediaType != image2Info.mediaType)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
@@ -310,43 +310,43 @@ namespace DiscImageChef.Commands
                 if (!options.Verbose)
                     sb.AppendLine("Image comments differ");
             }
-            if (image1Info.diskManufacturer != image2Info.diskManufacturer)
+            if (image1Info.mediaManufacturer != image2Info.mediaManufacturer)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk manufacturer differ");
             }
-            if (image1Info.diskModel != image2Info.diskModel)
+            if (image1Info.mediaModel != image2Info.mediaModel)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk model differ");
             }
-            if (image1Info.diskSerialNumber != image2Info.diskSerialNumber)
+            if (image1Info.mediaSerialNumber != image2Info.mediaSerialNumber)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk serial number differ");
             }
-            if (image1Info.diskBarcode != image2Info.diskBarcode)
+            if (image1Info.mediaBarcode != image2Info.mediaBarcode)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk barcode differ");
             }
-            if (image1Info.diskPartNumber != image2Info.diskPartNumber)
+            if (image1Info.mediaPartNumber != image2Info.mediaPartNumber)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk part number differ");
             }
-            if (image1Info.diskSequence != image2Info.diskSequence)
+            if (image1Info.mediaSequence != image2Info.mediaSequence)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)
                     sb.AppendLine("Disk sequence differ");
             }
-            if (image1Info.lastDiskSequence != image2Info.lastDiskSequence)
+            if (image1Info.lastMediaSequence != image2Info.lastMediaSequence)
             {
                 imagesDiffer = true;
                 if (!options.Verbose)

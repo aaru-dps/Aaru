@@ -364,7 +364,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendLine("Pre-DOS 2.0 Microsoft FAT12.");
                 sb.AppendLine("***WARNING***");
                 sb.AppendLine("This may be a false positive.");
-                sb.AppendFormat("Disk image identifies disk type as {0}.", imagePlugin.GetDiskType()).AppendLine();
+                sb.AppendFormat("Disk image identifies disk type as {0}.", imagePlugin.GetMediaType()).AppendLine();
             }
 			
             information = sb.ToString();

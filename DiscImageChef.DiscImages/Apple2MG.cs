@@ -177,7 +177,7 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
             ImageInfo.imageVersion = null;
@@ -185,13 +185,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageCreator = null;
             ImageInfo.imageComments = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskSerialNumber = null;
-            ImageInfo.diskBarcode = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -430,24 +430,24 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
             switch (ImageInfo.sectors)
             {
                 case 455:
-                    return DiskType.Apple32SS;
+                    return MediaType.Apple32SS;
                 case 910:
-                    return DiskType.Apple32DS;
+                    return MediaType.Apple32DS;
                 case 560:
-                    return DiskType.Apple33SS;
+                    return MediaType.Apple33SS;
                 case 1120:
-                    return DiskType.Apple33DS;
+                    return MediaType.Apple33DS;
                 case 800:
-                    return DiskType.AppleSonySS;
+                    return MediaType.AppleSonySS;
                 case 1600:
-                    return DiskType.AppleSonyDS;
+                    return MediaType.AppleSonyDS;
                 default:
-                    return DiskType.Unknown;
+                    return MediaType.Unknown;
             }
         }
 
@@ -479,7 +479,7 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -534,32 +534,32 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskManufacturer()
+        public override string GetMediaManufacturer()
         {
             return null;
         }
 
-        public override string GetDiskModel()
+        public override string GetMediaModel()
         {
             return null;
         }
 
-        public override string GetDiskSerialNumber()
+        public override string GetMediaSerialNumber()
         {
             return null;
         }
 
-        public override string GetDiskBarcode()
+        public override string GetMediaBarcode()
         {
             return null;
         }
 
-        public override string GetDiskPartNumber()
+        public override string GetMediaPartNumber()
         {
             return null;
         }
 
-        public override int GetDiskSequence()
+        public override int GetMediaSequence()
         {
             return 0;
         }
@@ -633,7 +633,7 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }

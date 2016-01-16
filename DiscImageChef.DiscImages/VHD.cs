@@ -373,7 +373,7 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("8014d88f-64cd-4484-9441-7635c632958a");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
             ImageInfo.imageVersion = null;
@@ -381,13 +381,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageCreator = null;
             ImageInfo.imageComments = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskSerialNumber = null;
-            ImageInfo.diskBarcode = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -971,9 +971,9 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageName;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return DiskType.GENERIC_HDD;
+            return MediaType.GENERIC_HDD;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)
@@ -1171,7 +1171,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -1226,32 +1226,32 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskManufacturer()
+        public override string GetMediaManufacturer()
         {
             return null;
         }
 
-        public override string GetDiskModel()
+        public override string GetMediaModel()
         {
             return null;
         }
 
-        public override string GetDiskSerialNumber()
+        public override string GetMediaSerialNumber()
         {
             return null;
         }
 
-        public override string GetDiskBarcode()
+        public override string GetMediaBarcode()
         {
             return null;
         }
 
-        public override string GetDiskPartNumber()
+        public override string GetMediaPartNumber()
         {
             return null;
         }
 
-        public override int GetDiskSequence()
+        public override int GetMediaSequence()
         {
             return 0;
         }
@@ -1325,7 +1325,7 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }

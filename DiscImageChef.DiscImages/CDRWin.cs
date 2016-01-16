@@ -127,7 +127,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>Media catalog number</summary>
             public string mcn;
             /// <summary>Disk type</summary>
-            public DiskType disktype;
+            public MediaType disktype;
             /// <summary>Disk type string</summary>
             public string disktypestr;
             /// <summary>Disk CDDB ID</summary>
@@ -297,18 +297,18 @@ namespace DiscImageChef.ImagePlugins
             imagePath = "";
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = true;
             ImageInfo.imageHasSessions = true;
             ImageInfo.imageVersion = null;
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageName = null;
             ImageInfo.imageCreator = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -867,9 +867,9 @@ namespace DiscImageChef.ImagePlugins
                 for (int t = 1; t <= cuetracks.Length; t++)
                     discimage.tracks.Add(cuetracks[t - 1]);
 
-                discimage.disktype = CDRWinIsoBusterDiscTypeToDiskType(discimage.disktypestr);
+                discimage.disktype = CDRWinIsoBusterDiscTypeToMediaType(discimage.disktypestr);
 
-                if (discimage.disktype == DiskType.Unknown || discimage.disktype == DiskType.CD)
+                if (discimage.disktype == MediaType.Unknown || discimage.disktype == MediaType.CD)
                 {
                     bool data = false;
                     bool cdg = false;
@@ -912,19 +912,19 @@ namespace DiscImageChef.ImagePlugins
                     }
 
                     if (!data && !firstdata)
-                        discimage.disktype = DiskType.CDDA;
+                        discimage.disktype = MediaType.CDDA;
                     else if (cdg)
-                        discimage.disktype = DiskType.CDG;
+                        discimage.disktype = MediaType.CDG;
                     else if (cdi)
-                        discimage.disktype = DiskType.CDI;
+                        discimage.disktype = MediaType.CDI;
                     else if (firstaudio && data && discimage.sessions.Count > 1 && mode2)
-                        discimage.disktype = DiskType.CDPLUS;
+                        discimage.disktype = MediaType.CDPLUS;
                     else if ((firstdata && !data) || mode2)
-                        discimage.disktype = DiskType.CDROMXA;
+                        discimage.disktype = MediaType.CDROMXA;
                     else if (!audio)
-                        discimage.disktype = DiskType.CDROM;
+                        discimage.disktype = MediaType.CDROM;
                     else
-                        discimage.disktype = DiskType.CD;
+                        discimage.disktype = MediaType.CD;
                 }
 
                 // DEBUG information
@@ -1193,17 +1193,17 @@ namespace DiscImageChef.ImagePlugins
                 foreach (CDRWinTrack track in discimage.tracks)
                     ImageInfo.sectors += track.sectors;
 
-                if (discimage.disktype == DiskType.CDG || discimage.disktype == DiskType.CDEG || discimage.disktype == DiskType.CDMIDI)
+                if (discimage.disktype == MediaType.CDG || discimage.disktype == MediaType.CDEG || discimage.disktype == MediaType.CDMIDI)
                     ImageInfo.sectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
-                else if (discimage.disktype != DiskType.CDROMXA && discimage.disktype != DiskType.CDDA && discimage.disktype != DiskType.CDI && discimage.disktype != DiskType.CDPLUS)
+                else if (discimage.disktype != MediaType.CDROMXA && discimage.disktype != MediaType.CDDA && discimage.disktype != MediaType.CDI && discimage.disktype != MediaType.CDPLUS)
                     ImageInfo.sectorSize = 2048; // Only data tracks
                 else
                     ImageInfo.sectorSize = 2352; // All others
 
                 if (discimage.mcn != null)
-                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
                 if (discimage.cdtextfile != null)
-                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_TEXT);
+                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_TEXT);
 
                 // Detect ISOBuster extensions
                 if (discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
@@ -1217,9 +1217,9 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
                 ImageInfo.imageComments = discimage.comment;
-                ImageInfo.diskSerialNumber = discimage.mcn;
-                ImageInfo.diskBarcode = discimage.barcode;
-                ImageInfo.diskType = discimage.disktype;
+                ImageInfo.mediaSerialNumber = discimage.mcn;
+                ImageInfo.mediaBarcode = discimage.barcode;
+                ImageInfo.mediaType = discimage.disktype;
 
                 ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
 
@@ -1317,11 +1317,11 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.sectorSize;
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             switch (tag)
             {
-                case DiskTagType.CD_MCN:
+                case MediaTagType.CD_MCN:
                     {
                         if (discimage.mcn != null)
                         {
@@ -1329,7 +1329,7 @@ namespace DiscImageChef.ImagePlugins
                         }
                         throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                     }
-                case DiskTagType.CD_TEXT:
+                case MediaTagType.CD_TEXT:
                     {
                         if (discimage.cdtextfile != null)
                             // TODO: Check that binary text file exists, open it, read it, send it to caller.
@@ -1875,19 +1875,19 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override string GetDiskSerialNumber()
+        public override string GetMediaSerialNumber()
         {
-            return ImageInfo.diskSerialNumber;
+            return ImageInfo.mediaSerialNumber;
         }
 
-        public override string GetDiskBarcode()
+        public override string GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         public override List<CommonTypes.Partition> GetPartitions()
@@ -2064,7 +2064,7 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }
@@ -2160,62 +2160,62 @@ namespace DiscImageChef.ImagePlugins
             }
         }
 
-        static DiskType CDRWinIsoBusterDiscTypeToDiskType(string discType)
+        static MediaType CDRWinIsoBusterDiscTypeToMediaType(string discType)
         {
             switch (discType)
             {
                 case CDRWinDiskTypeCD:
-                    return DiskType.CD;
+                    return MediaType.CD;
                 case CDRWinDiskTypeCDRW:
                 case CDRWinDiskTypeCDMRW:
                 case CDRWinDiskTypeCDMRW2:
-                    return DiskType.CDRW;
+                    return MediaType.CDRW;
                 case CDRWinDiskTypeDVD:
-                    return DiskType.DVDROM;
+                    return MediaType.DVDROM;
                 case CDRWinDiskTypeDVDPRW:
                 case CDRWinDiskTypeDVDPMRW:
                 case CDRWinDiskTypeDVDPMRW2:
-                    return DiskType.DVDPRW;
+                    return MediaType.DVDPRW;
                 case CDRWinDiskTypeDVDPRWDL:
                 case CDRWinDiskTypeDVDPMRWDL:
                 case CDRWinDiskTypeDVDPMRWDL2:
-                    return DiskType.DVDPRWDL;
+                    return MediaType.DVDPRWDL;
                 case CDRWinDiskTypeDVDPR:
                 case CDRWinDiskTypeDVDPVR:
-                    return DiskType.DVDPR;
+                    return MediaType.DVDPR;
                 case CDRWinDiskTypeDVDPRDL:
-                    return DiskType.DVDPRDL;
+                    return MediaType.DVDPRDL;
                 case CDRWinDiskTypeDVDRAM:
-                    return DiskType.DVDRAM;
+                    return MediaType.DVDRAM;
                 case CDRWinDiskTypeDVDVR:
                 case CDRWinDiskTypeDVDR:
-                    return DiskType.DVDR;
+                    return MediaType.DVDR;
                 case CDRWinDiskTypeDVDRDL:
-                    return DiskType.DVDRDL;
+                    return MediaType.DVDRDL;
                 case CDRWinDiskTypeDVDRW:
                 case CDRWinDiskTypeDVDRWDL:
                 case CDRWinDiskTypeDVDRW2:
-                    return DiskType.DVDRW;
+                    return MediaType.DVDRW;
                 case CDRWinDiskTypeHDDVD:
-                    return DiskType.HDDVDROM;
+                    return MediaType.HDDVDROM;
                 case CDRWinDiskTypeHDDVDRAM:
-                    return DiskType.HDDVDRAM;
+                    return MediaType.HDDVDRAM;
                 case CDRWinDiskTypeHDDVDR:
                 case CDRWinDiskTypeHDDVDRDL:
-                    return DiskType.HDDVDR;
+                    return MediaType.HDDVDR;
                 case CDRWinDiskTypeHDDVDRW:
                 case CDRWinDiskTypeHDDVDRWDL:
-                    return DiskType.HDDVDRW;
+                    return MediaType.HDDVDRW;
                 case CDRWinDiskTypeBD:
-                    return DiskType.BDROM;
+                    return MediaType.BDROM;
                 case CDRWinDiskTypeBDR:
                 case CDRWinDiskTypeBDRDL:
-                    return DiskType.BDR;
+                    return MediaType.BDR;
                 case CDRWinDiskTypeBDRE:
                 case CDRWinDiskTypeBDREDL:
-                    return DiskType.BDRE;
+                    return MediaType.BDRE;
                 default:
-                    return DiskType.Unknown;
+                    return MediaType.Unknown;
             }
         }
 
@@ -2223,14 +2223,14 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override int    GetDiskSequence()
+        public override int    GetMediaSequence()
         {
-            return ImageInfo.diskSequence;
+            return ImageInfo.mediaSequence;
         }
 
         public override int    GetLastDiskSequence()
         {
-            return ImageInfo.lastDiskSequence;
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
@@ -2248,19 +2248,19 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override string GetDiskPartNumber()
+        public override string GetMediaPartNumber()
         {
-            return ImageInfo.diskPartNumber;
+            return ImageInfo.mediaPartNumber;
         }
 
-        public override string GetDiskManufacturer()
+        public override string GetMediaManufacturer()
         {
-            return ImageInfo.diskManufacturer;
+            return ImageInfo.mediaManufacturer;
         }
 
-        public override string GetDiskModel()
+        public override string GetMediaModel()
         {
-            return ImageInfo.diskModel;
+            return ImageInfo.mediaModel;
         }
 
         public override string   GetImageName()

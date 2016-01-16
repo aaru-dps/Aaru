@@ -1,3 +1,8 @@
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
+	* FAT.cs:
+	  Refactor most disk references to media.
+
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
 	* ISO9660.cs:

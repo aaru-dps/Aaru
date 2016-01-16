@@ -871,7 +871,7 @@ namespace DiscImageChef.ImagePlugins
             imageNewFormat = false;
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             neroSessions = new Dictionary<ushort, UInt32>();
             neroTracks = new Dictionary<uint, NeroTrack>();
             offsetmap = new Dictionary<uint, ulong>();
@@ -975,7 +975,7 @@ namespace DiscImageChef.ImagePlugins
                 imageTracks = new List<Track>();
                 TrackISRCs = new Dictionary<uint, byte[]>();
 
-                ImageInfo.diskType = DiskType.CD;
+                ImageInfo.mediaType = MediaType.CD;
                 ImageInfo.sectors = 0;
                 ImageInfo.sectorSize = 0;
 
@@ -1080,8 +1080,8 @@ namespace DiscImageChef.ImagePlugins
                                 neroDAOV1.LastTrack = tmpbuffer[21];
                                 neroDAOV1.Tracks = new List<NeroV1DAOEntry>();
 
-                                if (!ImageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
-                                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                                if (!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
+                                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
 
                                 if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
@@ -1163,8 +1163,8 @@ namespace DiscImageChef.ImagePlugins
                                 neroDAOV2.LastTrack = tmpbuffer[21];
                                 neroDAOV2.Tracks = new List<NeroV2DAOEntry>();
 
-                                if (!ImageInfo.readableDiskTags.Contains(DiskTagType.CD_MCN))
-                                    ImageInfo.readableDiskTags.Add(DiskTagType.CD_MCN);
+                                if (!ImageInfo.readableMediaTags.Contains(MediaTagType.CD_MCN))
+                                    ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
 
                                 if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
@@ -1404,7 +1404,7 @@ namespace DiscImageChef.ImagePlugins
 
                                 DicConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})", (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
 
-                                ImageInfo.diskType = NeroMediaTypeToDiskType((NeroMediaTypes)neroMediaTyp.Type);
+                                ImageInfo.mediaType = NeroMediaTypeToMediaType((NeroMediaTypes)neroMediaTyp.Type);
 
                                 break;
                             }
@@ -1475,16 +1475,16 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageLastModificationTime = imageInfo.LastWriteTimeUtc;
                 ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
                 ImageInfo.imageComments = null;
-                ImageInfo.diskManufacturer = null;
-                ImageInfo.diskModel = null;
-                ImageInfo.diskSerialNumber = null;
-                ImageInfo.diskBarcode = null;
-                ImageInfo.diskPartNumber = null;
+                ImageInfo.mediaManufacturer = null;
+                ImageInfo.mediaModel = null;
+                ImageInfo.mediaSerialNumber = null;
+                ImageInfo.mediaBarcode = null;
+                ImageInfo.mediaPartNumber = null;
                 ImageInfo.driveManufacturer = null;
                 ImageInfo.driveModel = null;
                 ImageInfo.driveSerialNumber = null;
-                ImageInfo.diskSequence = 0;
-                ImageInfo.lastDiskSequence = 0;
+                ImageInfo.mediaSequence = 0;
+                ImageInfo.lastMediaSequence = 0;
                 if (imageNewFormat)
                 {
                     ImageInfo.imageSize = footerV2.FirstChunkOffset;
@@ -1677,13 +1677,13 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.sectorSize;
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             switch (tag)
             {
-                case DiskTagType.CD_MCN:
+                case MediaTagType.CD_MCN:
                     return UPC;
-                case DiskTagType.CD_TEXT:
+                case MediaTagType.CD_TEXT:
                     throw new NotImplementedException("Not yet implemented");
                 default:
                     throw new FeaturedNotSupportedByDiscImageException("Requested disk tag not supported by image");
@@ -2228,14 +2228,14 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageLastModificationTime;
         }
 
-        public override string GetDiskBarcode()
+        public override string GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         public override List<CommonTypes.Partition> GetPartitions()
@@ -2342,7 +2342,7 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }
@@ -2351,56 +2351,56 @@ namespace DiscImageChef.ImagePlugins
 
         #region Private methods
 
-        static DiskType NeroMediaTypeToDiskType(NeroMediaTypes MediaType)
+        static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {
-            switch (MediaType)
+            switch (type)
             {
                 case NeroMediaTypes.NERO_MTYP_DDCD:
-                    return DiskType.DDCD;
+                    return MediaType.DDCD;
                 case NeroMediaTypes.NERO_MTYP_DVD_M:
                 case NeroMediaTypes.NERO_MTYP_DVD_M_R:
-                    return DiskType.DVDR;
+                    return MediaType.DVDR;
                 case NeroMediaTypes.NERO_MTYP_DVD_P:
                 case NeroMediaTypes.NERO_MTYP_DVD_P_R:
-                    return DiskType.DVDPR;
+                    return MediaType.DVDPR;
                 case NeroMediaTypes.NERO_MTYP_DVD_RAM:
-                    return DiskType.DVDRAM;
+                    return MediaType.DVDRAM;
                 case NeroMediaTypes.NERO_MTYP_ML:
                 case NeroMediaTypes.NERO_MTYP_MRW:
                 case NeroMediaTypes.NERO_MTYP_CDRW:
-                    return DiskType.CDRW;
+                    return MediaType.CDRW;
                 case NeroMediaTypes.NERO_MTYP_CDR:
-                    return DiskType.CDR;
+                    return MediaType.CDR;
                 case NeroMediaTypes.NERO_MTYP_DVD_ROM:
-                    return DiskType.DVDROM;
+                    return MediaType.DVDROM;
                 case NeroMediaTypes.NERO_MTYP_CDROM:
-                    return DiskType.CDROM;
+                    return MediaType.CDROM;
                 case NeroMediaTypes.NERO_MTYP_DVD_M_RW:
-                    return DiskType.DVDRW;
+                    return MediaType.DVDRW;
                 case NeroMediaTypes.NERO_MTYP_DVD_P_RW:
-                    return DiskType.DVDPRW;
+                    return MediaType.DVDPRW;
                 case NeroMediaTypes.NERO_MTYP_DVD_P_R9:
-                    return DiskType.DVDPRDL;
+                    return MediaType.DVDPRDL;
                 case NeroMediaTypes.NERO_MTYP_DVD_M_R9:
-                    return DiskType.DVDRDL;
+                    return MediaType.DVDRDL;
                 case NeroMediaTypes.NERO_MTYP_BD:
                 case NeroMediaTypes.NERO_MTYP_BD_ANY:
                 case NeroMediaTypes.NERO_MTYP_BD_ROM:
-                    return DiskType.BDROM;
+                    return MediaType.BDROM;
                 case NeroMediaTypes.NERO_MTYP_BD_R:
-                    return DiskType.BDR;
+                    return MediaType.BDR;
                 case NeroMediaTypes.NERO_MTYP_BD_RE:
-                    return DiskType.BDRE;
+                    return MediaType.BDRE;
                 case NeroMediaTypes.NERO_MTYP_HD_DVD:
                 case NeroMediaTypes.NERO_MTYP_HD_DVD_ANY:
                 case NeroMediaTypes.NERO_MTYP_HD_DVD_ROM:
-                    return DiskType.HDDVDROM;
+                    return MediaType.HDDVDROM;
                 case NeroMediaTypes.NERO_MTYP_HD_DVD_R:
-                    return DiskType.HDDVDR;
+                    return MediaType.HDDVDR;
                 case NeroMediaTypes.NERO_MTYP_HD_DVD_RW:
-                    return DiskType.HDDVDRW;
+                    return MediaType.HDDVDRW;
                 default:
-                    return DiskType.CD;
+                    return MediaType.CD;
             }
         }
 
@@ -2453,7 +2453,7 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override int GetDiskSequence()
+        public override int GetMediaSequence()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -2478,17 +2478,17 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskPartNumber()
+        public override string GetMediaPartNumber()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskManufacturer()
+        public override string GetMediaManufacturer()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskModel()
+        public override string GetMediaModel()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -2508,7 +2508,7 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string GetDiskSerialNumber()
+        public override string GetMediaSerialNumber()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

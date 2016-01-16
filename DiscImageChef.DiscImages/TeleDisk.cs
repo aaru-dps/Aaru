@@ -211,19 +211,19 @@ namespace DiscImageChef.ImagePlugins
             PluginUUID = new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
             ImageInfo.imageApplication = "Sydex TeleDisk";
             ImageInfo.imageComments = null;
             ImageInfo.imageCreator = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskSerialNumber = null;
-            ImageInfo.diskBarcode = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaSerialNumber = null;
+            ImageInfo.mediaBarcode = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -577,7 +577,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             ImageInfo.sectors = (ulong)sectorsData.Count;
-            ImageInfo.diskType = DecodeTeleDiskDiskType();
+            ImageInfo.mediaType = DecodeTeleDiskDiskType();
 
             stream.Close();
 
@@ -695,9 +695,9 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageName;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         public override bool? VerifySector(UInt64 sectorAddress)
@@ -733,7 +733,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return ADiskCRCHasFailed;
         }
@@ -868,7 +868,7 @@ namespace DiscImageChef.ImagePlugins
             return decodedData;
         }
 
-        DiskType DecodeTeleDiskDiskType()
+        MediaType DecodeTeleDiskDiskType()
         {
             switch (header.driveType)
             {
@@ -882,64 +882,64 @@ namespace DiscImageChef.ImagePlugins
                                 {
                                     // Acorn disk uses 256 bytes/sector
                                     if (ImageInfo.sectorSize == 256)
-                                        return DiskType.ACORN_525_SS_DD_40;
+                                        return MediaType.ACORN_525_SS_DD_40;
                                     else // DOS disks use 512 bytes/sector
-                                        return DiskType.DOS_525_SS_DD_8;
+                                        return MediaType.DOS_525_SS_DD_8;
                                 }
                             case 184320:
                                 {
                                     // Atari disk uses 256 bytes/sector
                                     if (ImageInfo.sectorSize == 256)
-                                        return DiskType.ATARI_525_DD;
+                                        return MediaType.ATARI_525_DD;
                                     else // DOS disks use 512 bytes/sector
-                                        return DiskType.DOS_525_SS_DD_9;
+                                        return MediaType.DOS_525_SS_DD_9;
                                 }
                             case 327680:
                                 {
                                     // Acorn disk uses 256 bytes/sector
                                     if (ImageInfo.sectorSize == 256)
-                                        return DiskType.ACORN_525_SS_DD_80;
+                                        return MediaType.ACORN_525_SS_DD_80;
                                     else // DOS disks use 512 bytes/sector
-                                        return DiskType.DOS_525_DS_DD_8;
+                                        return MediaType.DOS_525_DS_DD_8;
                                 }
                             case 368640:
-                                return DiskType.DOS_525_DS_DD_9;
+                                return MediaType.DOS_525_DS_DD_9;
                             case 1228800:
-                                return DiskType.DOS_525_HD;
+                                return MediaType.DOS_525_HD;
                             case 102400:
-                                return DiskType.ACORN_525_SS_SD_40;
+                                return MediaType.ACORN_525_SS_SD_40;
                             case 204800:
-                                return DiskType.ACORN_525_SS_SD_80;
+                                return MediaType.ACORN_525_SS_SD_80;
                             case 655360:
-                                return DiskType.ACORN_525_DS_DD;
+                                return MediaType.ACORN_525_DS_DD;
                             case 92160:
-                                return DiskType.ATARI_525_SD;
+                                return MediaType.ATARI_525_SD;
                             case 133120:
-                                return DiskType.ATARI_525_ED;
+                                return MediaType.ATARI_525_ED;
                             case 1310720:
-                                return DiskType.NEC_525_HD;
+                                return MediaType.NEC_525_HD;
                             case 1261568:
-                                return DiskType.SHARP_525;
+                                return MediaType.SHARP_525;
                             case 839680:
-                                return DiskType.FDFORMAT_525_DD;
+                                return MediaType.FDFORMAT_525_DD;
                             case 1304320:
-                                return DiskType.ECMA_99_8;
+                                return MediaType.ECMA_99_8;
                             case 1223424:
-                                return DiskType.ECMA_99_15;
+                                return MediaType.ECMA_99_15;
                             case 1061632:
-                                return DiskType.ECMA_99_26;
+                                return MediaType.ECMA_99_26;
                             case 80384:
-                                return DiskType.ECMA_66;
+                                return MediaType.ECMA_66;
                             case 325632:
-                                return DiskType.ECMA_70;
+                                return MediaType.ECMA_70;
                             case 653312:
-                                return DiskType.ECMA_78;
+                                return MediaType.ECMA_78;
                             case 737280:
-                                return DiskType.ECMA_78_2;
+                                return MediaType.ECMA_78_2;
                             default:
                                 {
                                     DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes", totalDiskSize);
-                                    return DiskType.Unknown;
+                                    return MediaType.Unknown;
                                 }
                         }
                     }
@@ -950,40 +950,40 @@ namespace DiscImageChef.ImagePlugins
                         switch (totalDiskSize)
                         {
                             case 327680:
-                                return DiskType.DOS_35_SS_DD_8;
+                                return MediaType.DOS_35_SS_DD_8;
                             case 368640:
-                                return DiskType.DOS_35_SS_DD_9;
+                                return MediaType.DOS_35_SS_DD_9;
                             case 655360:
-                                return DiskType.DOS_35_DS_DD_8;
+                                return MediaType.DOS_35_DS_DD_8;
                             case 737280:
-                                return DiskType.DOS_35_DS_DD_9;
+                                return MediaType.DOS_35_DS_DD_9;
                             case 1474560:
-                                return DiskType.DOS_35_HD;
+                                return MediaType.DOS_35_HD;
                             case 2949120:
-                                return DiskType.DOS_35_ED;
+                                return MediaType.DOS_35_ED;
                             case 1720320:
-                                return DiskType.DMF;
+                                return MediaType.DMF;
                             case 1763328:
-                                return DiskType.DMF_82;
+                                return MediaType.DMF_82;
                             case 1884160: // Irreal size, seen as BIOS with TSR, 23 sectors/track
                             case 1860608: // Real data size, sum of all sectors
-                                return DiskType.XDF_35;
+                                return MediaType.XDF_35;
                             case 819200:
-                                return DiskType.CBM_35_DD;
+                                return MediaType.CBM_35_DD;
                             case 901120:
-                                return DiskType.CBM_AMIGA_35_DD;
+                                return MediaType.CBM_AMIGA_35_DD;
                             case 1802240:
-                                return DiskType.CBM_AMIGA_35_HD;
+                                return MediaType.CBM_AMIGA_35_HD;
                             case 1310720:
-                                return DiskType.NEC_35_HD_8;
+                                return MediaType.NEC_35_HD_8;
                             case 1228800:
-                                return DiskType.NEC_35_HD_15;
+                                return MediaType.NEC_35_HD_15;
                             case 1261568:
-                                return DiskType.SHARP_35;
+                                return MediaType.SHARP_35;
                             default:
                                 {
                                     DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes", totalDiskSize);
-                                    return DiskType.Unknown;
+                                    return MediaType.Unknown;
                                 }
                         }
                     }
@@ -992,53 +992,53 @@ namespace DiscImageChef.ImagePlugins
                         switch (totalDiskSize)
                         {
                             case 81664:
-                                return DiskType.IBM23FD;
+                                return MediaType.IBM23FD;
                             case 242944:
-                                return DiskType.IBM33FD_128;
+                                return MediaType.IBM33FD_128;
                             case 287488:
-                                return DiskType.IBM33FD_256;
+                                return MediaType.IBM33FD_256;
                             case 306432:
-                                return DiskType.IBM33FD_512;
+                                return MediaType.IBM33FD_512;
                             case 499200:
-                                return DiskType.IBM43FD_128;
+                                return MediaType.IBM43FD_128;
                             case 574976:
-                                return DiskType.IBM43FD_256;
+                                return MediaType.IBM43FD_256;
                             case 995072:
-                                return DiskType.IBM53FD_256;
+                                return MediaType.IBM53FD_256;
                             case 1146624:
-                                return DiskType.IBM53FD_512;
+                                return MediaType.IBM53FD_512;
                             case 1222400:
-                                return DiskType.IBM53FD_1024;
+                                return MediaType.IBM53FD_1024;
                             case 256256:
                                 // Same size, with same disk geometry, for DEC RX01, NEC and ECMA, return ECMA
-                                return DiskType.ECMA_54;
+                                return MediaType.ECMA_54;
                             case 512512:
                                 {
                                     // DEC disk uses 256 bytes/sector
                                     if (ImageInfo.sectorSize == 256)
-                                        return DiskType.RX02;
+                                        return MediaType.RX02;
                                     else // ECMA disks use 128 bytes/sector
-                                        return DiskType.ECMA_59;
+                                        return MediaType.ECMA_59;
                                 }
                             case 1261568:
-                                return DiskType.NEC_8_DD;
+                                return MediaType.NEC_8_DD;
                             case 1255168:
-                                return DiskType.ECMA_69_8;
+                                return MediaType.ECMA_69_8;
                             case 1177344:
-                                return DiskType.ECMA_69_15;
+                                return MediaType.ECMA_69_15;
                             case 1021696:
-                                return DiskType.ECMA_69_26;
+                                return MediaType.ECMA_69_26;
                             default:
                                 {
                                     DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes", totalDiskSize);
-                                    return DiskType.Unknown;
+                                    return MediaType.Unknown;
                                 }
                         }
                     }
                 default:
                     {
                         DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize, header.driveType);
-                        return DiskType.Unknown;
+                        return MediaType.Unknown;
                     }
 
             }
@@ -1058,7 +1058,7 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -1073,39 +1073,39 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override string   GetDiskManufacturer()
+        public override string   GetMediaManufacturer()
         {
-            return ImageInfo.diskManufacturer;
+            return ImageInfo.mediaManufacturer;
         }
 
-        public override string   GetDiskModel()
+        public override string   GetMediaModel()
         {
-            return ImageInfo.diskModel;
+            return ImageInfo.mediaModel;
         }
 
-        public override string   GetDiskSerialNumber()
+        public override string   GetMediaSerialNumber()
         {
-            return ImageInfo.diskSerialNumber;
+            return ImageInfo.mediaSerialNumber;
         }
 
-        public override string   GetDiskBarcode()
+        public override string   GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override string   GetDiskPartNumber()
+        public override string   GetMediaPartNumber()
         {
-            return ImageInfo.diskPartNumber;
+            return ImageInfo.mediaPartNumber;
         }
 
-        public override int      GetDiskSequence()
+        public override int      GetMediaSequence()
         {
-            return ImageInfo.diskSequence;
+            return ImageInfo.mediaSequence;
         }
 
         public override int      GetLastDiskSequence()
         {
-            return ImageInfo.lastDiskSequence;
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()

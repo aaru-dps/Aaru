@@ -38,8 +38,8 @@
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>cicm.cs</Link>
     </Compile>
-    <Compile Include="DiskType.cs" />
     <Compile Include="Dimensions.cs" />
+    <Compile Include="MediaType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,5 +1,13 @@
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
+	* DiskType.cs:
+	* MediaType.cs:
+	* Dimensions.cs:
+	* DiscImageChef.Metadata.csproj:
+	  Refactor most disk references to media.
+
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
 	* Dimensions.cs:
 	* DiscImageChef.Metadata.csproj:
 	  Added static method to get standard dimensions from disk

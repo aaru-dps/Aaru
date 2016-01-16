@@ -81,7 +81,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>Tracks</summary>
             public List<GDITrack> tracks;
             /// <summary>Disk type</summary>
-            public DiskType disktype;
+            public MediaType disktype;
         }
 
         #endregion Internal structures
@@ -114,18 +114,18 @@ namespace DiscImageChef.ImagePlugins
             imagePath = "";
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
-            ImageInfo.readableDiskTags = new List<DiskTagType>();
+            ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = true;
             ImageInfo.imageHasSessions = true;
             ImageInfo.imageVersion = null;
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageName = null;
             ImageInfo.imageCreator = null;
-            ImageInfo.diskManufacturer = null;
-            ImageInfo.diskModel = null;
-            ImageInfo.diskPartNumber = null;
-            ImageInfo.diskSequence = 0;
-            ImageInfo.lastDiskSequence = 0;
+            ImageInfo.mediaManufacturer = null;
+            ImageInfo.mediaModel = null;
+            ImageInfo.mediaPartNumber = null;
+            ImageInfo.mediaSequence = 0;
+            ImageInfo.lastMediaSequence = 0;
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
@@ -335,7 +335,7 @@ namespace DiscImageChef.ImagePlugins
                 discimage.sessions.Add(_sessions[0]);
                 discimage.sessions.Add(_sessions[1]);
 
-                discimage.disktype = DiskType.GDROM;
+                discimage.disktype = MediaType.GDROM;
 
                 // DEBUG information
                 DicConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
@@ -426,7 +426,7 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageCreationTime = fi.CreationTimeUtc;
                 ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
-                ImageInfo.diskType = discimage.disktype;
+                ImageInfo.mediaType = discimage.disktype;
 
                 ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
 
@@ -463,7 +463,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.sectorSize;
         }
 
-        public override byte[] ReadDiskTag(DiskTagType tag)
+        public override byte[] ReadDiskTag(MediaTagType tag)
         {
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
         }
@@ -990,19 +990,19 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageComments;
         }
 
-        public override string GetDiskSerialNumber()
+        public override string GetMediaSerialNumber()
         {
-            return ImageInfo.diskSerialNumber;
+            return ImageInfo.mediaSerialNumber;
         }
 
-        public override string GetDiskBarcode()
+        public override string GetMediaBarcode()
         {
-            return ImageInfo.diskBarcode;
+            return ImageInfo.mediaBarcode;
         }
 
-        public override DiskType GetDiskType()
+        public override MediaType GetMediaType()
         {
-            return ImageInfo.diskType;
+            return ImageInfo.mediaType;
         }
 
         public override List<Partition> GetPartitions()
@@ -1184,7 +1184,7 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifyDiskImage()
+        public override bool? VerifyMediaImage()
         {
             return null;
         }
@@ -1193,14 +1193,14 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override int    GetDiskSequence()
+        public override int    GetMediaSequence()
         {
-            return ImageInfo.diskSequence;
+            return ImageInfo.mediaSequence;
         }
 
         public override int    GetLastDiskSequence()
         {
-            return ImageInfo.lastDiskSequence;
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
@@ -1218,19 +1218,19 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override string GetDiskPartNumber()
+        public override string GetMediaPartNumber()
         {
-            return ImageInfo.diskPartNumber;
+            return ImageInfo.mediaPartNumber;
         }
 
-        public override string GetDiskManufacturer()
+        public override string GetMediaManufacturer()
         {
-            return ImageInfo.diskManufacturer;
+            return ImageInfo.mediaManufacturer;
         }
 
-        public override string GetDiskModel()
+        public override string GetMediaModel()
         {
-            return ImageInfo.diskModel;
+            return ImageInfo.mediaModel;
         }
 
         public override string   GetImageName()
