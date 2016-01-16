@@ -1,6 +1,11 @@
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs:
+	  Refactor: added regions
+
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs:
 	* DiscImageChef.CommonTypes.csproj:
 	  Refactor most disk references to media.
 
