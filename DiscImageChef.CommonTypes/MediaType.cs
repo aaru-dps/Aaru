@@ -169,21 +169,29 @@ namespace DiscImageChef.CommonTypes
         LD,
         /// <summary>Pioneer LaserDisc data</summary>
         LDROM,
+        LDROM2,
+        LVROM,
+        MegaLD,
         #endregion LaserDisc based
 
         #region MiniDisc based
-        /// <summary>Sony MiniDisc</summary>
-        MD,
         /// <summary>Sony Hi-MD</summary>
         HiMD,
+        /// <summary>Sony MiniDisc</summary>
+        MD,
+        MDData,
+        MDData2,
         #endregion MiniDisc based
 
         #region Plasmon UDO
         /// <summary>Ultra Density Optical</summary>
         UDO,
+        UDO2,
         #endregion Plasmon UDO
 
-        #region Propietary game discs
+        #region Sony game media
+        PlayStationMemoryCard,
+        PlayStationMemoryCard2,
         /// <summary>Sony PlayStation game CD</summary>
         PS1CD,
         /// <summary>Sony PlayStation 2 game CD</summary>
@@ -198,12 +206,9 @@ namespace DiscImageChef.CommonTypes
         PS4BD,
         /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
         UMD,
-        /// <summary>Nintendo GameCube Optical Disc</summary>
-        GOD,
-        /// <summary>Nintendo Wii Optical Disc</summary>
-        WOD,
-        /// <summary>Nintendo Wii U Optical Disc</summary>
-        WUOD,
+        #endregion Sony game media
+
+        #region Microsoft game media
         /// <summary>Microsoft X-box Game Disc</summary>
         XGD,
         /// <summary>Microsoft X-box 360 Game Disc</summary>
@@ -212,6 +217,9 @@ namespace DiscImageChef.CommonTypes
         XGD3,
         /// <summary>Microsoft X-box One Game Disc</summary>
         XGD4,
+        #endregion Microsoft game media
+
+        #region Sega game media
         /// <summary>Sega MegaCD</summary>
         MEGACD,
         /// <summary>Sega Saturn disc</summary>
@@ -220,7 +228,8 @@ namespace DiscImageChef.CommonTypes
         GDROM,
         /// <summary>Sega/Yamaha recordable Gigabyte Disc}}</summary>
         GDR,
-        #endregion Propietary game discs
+        SegaCard,
+        #endregion Sega game media
 
         #region Apple standard floppy format
         /// <summary>5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
@@ -415,7 +424,300 @@ namespace DiscImageChef.CommonTypes
         FDFORMAT_35_HD,
         #endregion FDFORMAT, non-standard floppy formats
 
+        #region OnStream ADR
+        ADR2120,
+        ADR260,
+        ADR30,
+        ADR50,
+        #endregion OnStream ADR
+
+        #region Advanced Intelligent Tape
+        AIT1,
+        AIT1Turbo,
+        AIT2,
+        AIT2Turbo,
+        AIT3,
+        AIT3Ex,
+        AIT3Turbo,
+        AIT4,
+        AIT5,
+        AITETurbo,
+        SAIT1,
+        SAIT2,
+        #endregion Advanced Intelligent Tape
+
+        #region Iomega
+        Bernoulli,
+        Bernoulli2,
+        DataPlay,
+        Ditto,
+        DittoMax,
+        Jaz,
+        Jaz2,
+        PocketZip,
+        REV120,
+        REV35,
+        REV70,
+        ZIP100,
+        ZIP250,
+        ZIP750,
+        #endregion Iomega
+
+        #region Audio or video media
+        CompactCassette,
+        Data8,
+        MiniDV,
+        #endregion Audio media
+
+        #region CompactFlash Association
+        CFast,
+        CompactFlash,
+        CompactFlashType2,
+        #endregion CompactFlash Association
+
+        #region Digital Audio Tape / Digital Data Storage
+        DigitalAudioTape,
+        DAT160,
+        DAT320,
+        DAT72,
+        DDS1,
+        DDS2,
+        DDS3,
+        DDS4,
+        #endregion Digital Audio Tape / Digital Data Storage
+
+        #region DEC
+        CompactTapeI,
+        CompactTapeII,
+        DECtapeII,
+        DLTtapeIII,
+        DLTtapeIIIxt,
+        DLTtapeIV,
+        DLTtapeS4,
+        SDLT1,
+        SDLT2,
+        VStapeI,
+        #endregion DEC
+
+        #region Exatape
+        Exatape15m,
+        Exatape22mAME,
+        Exatape40m,
+        Exatape45m,
+        Exatape54m,
+        Exatape75m,
+        Exatape76m,
+        Exatape80m,
+        Exatape106m,
+        Exatape106mXL,
+        Exatape112m,
+        Exatape125m,
+        Exatape150m,
+        Exatape170m,
+        Exatape225m,
+        #endregion Exatape
+
+        #region PCMCIA / ExpressCard
+        ExpressCard34,
+        ExpressCard54,
+        PCCardTypeI,
+        PCCardTypeII,
+        PCCardTypeIII,
+        PCCardTypeIV,
+        #endregion PCMCIA / ExpressCard
+
+        #region SyQuest
+        EZ135,
+        EZ230,
+        Quest,
+        SparQ,
+        SQ100,
+        SQ200,
+        SQ300,
+        SQ310,
+        SQ327,
+        SQ400,
+        SQ800,
+        SQ1500,
+        SQ2000,
+        #endregion SyQuest
+
+        #region Nintendo
+        FamicomGamePak,
+        GameBoyAdvanceGamePak,
+        GameBoyGamePak,
+        /// <summary>Nintendo GameCube Optical Disc</summary>
+        GOD,
+        N64DD,
+        N64GamePak,
+        NESGamePak,
+        Nintendo3DSGameCard,
+        NintendoDiskCard,
+        NintendoDSGameCard,
+        NintendoDSiGameCard,
+        SNESGamePak,
+        SNESGamePakUS,
+        /// <summary>Nintendo Wii Optical Disc</summary>
+        WOD,
+        /// <summary>Nintendo Wii U Optical Disc</summary>
+        WUOD,
+        #endregion Nintendo
+
+        #region IBM Tapes
+        IBM3470,
+        IBM3480,
+        IBM3490,
+        IBM3490E,
+        IBM3592,
+        #endregion IBM Tapes
+
+        #region LTO Ultrium
+        LTO,
+        LTO2,
+        LTO3,
+        LTO3WORM,
+        LTO4,
+        LTO4WORM,
+        LTO5,
+        LTO5WORM,
+        LTO6,
+        LTO6WORM,
+        LTO7,
+        LTO7WORM,
+        #endregion LTO Ultrium
+
+        #region MemoryStick
+        MemoryStick,
+        MemoryStickDuo,
+        MemoryStickMicro,
+        MemoryStickPro,
+        MemoryStickProDuo,
+        #endregion MemoryStick
+
+        #region SecureDigital
+        microSD,
+        miniSD,
+        SecureDigital,
+        #endregion SecureDigital
+
+        #region MultiMediaCard
+        MMC,
+        MMCmicro,
+        RSMMC,
+        #endregion MultiMediaCard
+
+        #region SLR
+        MLR1,
+        MRL1SL,
+        MLR3,
+        SLR1,
+        SLR2,
+        SLR3,
+        SLR32,
+        SLR32SL,
+        SLR4,
+        SLR5,
+        SLR5SL,
+        SLR6,
+        SLRtape7,
+        SLRtape7SL,
+        SLRtape24,
+        SLRtape24SL,
+        SLRtape40,
+        SLRtape50,
+        SLRtape60,
+        SLRtape75,
+        SLRtape100,
+        SLRtape140,
+        #endregion SLR
+
+        #region QIC
+        QIC11,
+        QIC120,
+        QIC1350,
+        QIC150,
+        QIC24,
+        QIC3010,
+        QIC3020,
+        QIC3080,
+        QIC3095,
+        QIC320,
+        QIC40,
+        QIC525,
+        QIC80,
+        #endregion QIC
+
+        #region StorageTek tapes
+        STK4480,
+        STK4490,
+        STK9490,
+        T9840A,
+        T9840B,
+        T9840C,
+        T9840D,
+        T9940A,
+        T9940B,
+        T10000A,
+        T10000B,
+        T10000C,
+        T10000D,
+        #endregion StorageTek tapes
+
+        #region Travan
+        Travan,
+        Travan1Ex,
+        Travan3,
+        Travan3Ex,
+        Travan4,
+        Travan5,
+        Travan7,
+        #endregion Travan
+
+        #region VXA
+        VXA1,
+        VXA2,
+        VXA3,
+        #endregion VXA
+
+        #region Other floppy standards
+        CompactFloppy,
+        DemiDiskette,
+        Floptical,
+        HiFD,
+        LS120,
+        LS240,
+        QuickDisk,
+        UHD144,
+        VideoFloppy,
+        Wafer,
+        ZXMicrodrive,
+        #endregion Other floppy standards
+
+        #region Miscellaneous
+        BeeCard,
+        Borsu,
+        DataStore,
+        DIR,
+        DST,
+        DTF,
+        DTF2,
+        Flextra3020,
+        Flextra3225,
+        HiTC1,
+        HiTC2,
+        HuCard,
+        LT1,
+        MiniCard,
+        Orb,
+        Orb5,
+        SmartMedia,
+        xD,
+        XQD,
+        #endregion Miscellaneous
+
         #region Generic hard disks
+        Microdrive,
+        RDX,
         GENERIC_HDD
         #endregion Generic hard disks
     };

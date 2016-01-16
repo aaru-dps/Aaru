@@ -1,5 +1,10 @@
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
+	* Dimensions.cs:
+	  Added about 200 new media types.
+
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
 	* DiskType.cs:
 	* MediaType.cs:
 	* Dimensions.cs:
