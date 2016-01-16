@@ -1,3 +1,9 @@
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/CreateSidecar.cs:
+	  Added static method to get standard dimensions from disk
+	  types.
+
 2016-01-15  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:

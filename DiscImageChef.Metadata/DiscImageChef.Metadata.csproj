@@ -39,6 +39,7 @@
       <Link>cicm.cs</Link>
     </Compile>
     <Compile Include="DiskType.cs" />
+    <Compile Include="Dimensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

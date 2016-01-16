@@ -1153,54 +1153,7 @@ namespace DiscImageChef.Commands
                             sidecar.BlockMedia[0].DiskType = dskType;
                             sidecar.BlockMedia[0].DiskSubType = dskSubType;
 
-                            switch(dskType)
-                            {
-                                case "8\" floppy":
-                                    // According to ECMA-59 et al
-                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
-                                    sidecar.BlockMedia[0].Dimensions.Height = 203.2;
-                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Width = 203.2;
-                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Thickness = 1.65;
-                                    break;
-                                case "5.25\" floppy":
-                                    // According to ECMA-99 et al
-                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
-                                    sidecar.BlockMedia[0].Dimensions.Height = 133.3;
-                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Width = 133.3;
-                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Thickness = 1.65;
-                                    break;
-                                case "3.5\" floppy":
-                                    // According to ECMA-100 et al
-                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
-                                    sidecar.BlockMedia[0].Dimensions.Height = 94;
-                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Width = 90;
-                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Thickness = 3.3;
-                                    break;
-                                case "5.25\" magneto-optical":
-                                    // According to ECMA-183 et al
-                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
-                                    sidecar.BlockMedia[0].Dimensions.Height = 153;
-                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Width = 135;
-                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Thickness = 11;
-                                    break;
-                                case "3.5\" magneto-optical":
-                                    // According to ECMA-154 et al
-                                    sidecar.BlockMedia[0].Dimensions = new DimensionsType();
-                                    sidecar.BlockMedia[0].Dimensions.Height = 94;
-                                    sidecar.BlockMedia[0].Dimensions.HeightSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Width = 90;
-                                    sidecar.BlockMedia[0].Dimensions.WidthSpecified = true;;
-                                    sidecar.BlockMedia[0].Dimensions.Thickness = 6;
-                                    break;
-                            }
+                            sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromDiskType(_imageFormat.ImageInfo.diskType);
 
                             sidecar.BlockMedia[0].LogicalBlocks = (long)_imageFormat.GetSectors();
                             sidecar.BlockMedia[0].LogicalBlockSize = (int)_imageFormat.GetSectorSize();
