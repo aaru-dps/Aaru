@@ -39,8 +39,8 @@ using System;
 
 namespace DiscImageChef.CommonTypes
 {
-    // Disk types
-    public enum DiskType
+    // Media (disk, cartridge, tape, cassette, etc) types
+    public enum MediaType
     {
         /// <summary>Unknown disk type</summary>
         Unknown,
