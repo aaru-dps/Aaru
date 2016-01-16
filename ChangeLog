@@ -1,6 +1,11 @@
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs:
+	  Added about 200 new media types.
+
+2016-01-16  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs:
 	  Refactor: added regions
 
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
