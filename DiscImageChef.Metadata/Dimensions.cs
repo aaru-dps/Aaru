@@ -152,11 +152,47 @@ namespace DiscImageChef.Metadata
                     return dmns;
                 #endregion 8" floppy disk
 
+                #region 356mm magneto optical
+                case CommonTypes.MediaType.ECMA_260:
+                case CommonTypes.MediaType.ECMA_260_Double:
+                    // According to ECMA-260 et al
+                    dmns.Height = 421.84;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 443.76;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 25.4;
+                    return dmns;
+                #endregion 356mm magneto optical
+
+                #region 300mm magneto optical
+                case CommonTypes.MediaType.ECMA_189:
+                case CommonTypes.MediaType.ECMA_190:
+                case CommonTypes.MediaType.ECMA_317:
+                    // According to ECMA-317 et al
+                    dmns.Height = 340;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 320;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 17;
+                    return dmns;
+                #endregion 300mm magneto optical
+
                 #region 5.25" magneto optical
+                case CommonTypes.MediaType.ECMA_153:
+                case CommonTypes.MediaType.ECMA_153_512:
                 case CommonTypes.MediaType.ECMA_183_512:
-                case CommonTypes.MediaType.ECMA_183_1024:
+                case CommonTypes.MediaType.ECMA_183:
                 case CommonTypes.MediaType.ECMA_184_512:
-                case CommonTypes.MediaType.ECMA_184_1024:
+                case CommonTypes.MediaType.ECMA_184:
+                case CommonTypes.MediaType.ECMA_195:
+                case CommonTypes.MediaType.ECMA_195_512:
+                case CommonTypes.MediaType.ECMA_238:
+                case CommonTypes.MediaType.ECMA_280:
+                case CommonTypes.MediaType.ECMA_322:
+                case CommonTypes.MediaType.ECMA_322_2k:
+                case CommonTypes.MediaType.UDO:
+                case CommonTypes.MediaType.UDO2:
+                case CommonTypes.MediaType.UDO2_WORM:
                     // According to ECMA-183 et al
                     dmns.Height = 153;
                     dmns.HeightSpecified = true;
@@ -169,6 +205,11 @@ namespace DiscImageChef.Metadata
                 #region 3.5" magneto optical
                 case CommonTypes.MediaType.ECMA_154:
                 case CommonTypes.MediaType.ECMA_201:
+                case CommonTypes.MediaType.ECMA_201_ROM:
+                case CommonTypes.MediaType.ECMA_223:
+                case CommonTypes.MediaType.ECMA_223_512:
+                case CommonTypes.MediaType.GigaMo:
+                case CommonTypes.MediaType.GigaMo2:
                     // According to ECMA-154 et al
                     dmns.Height = 94;
                     dmns.HeightSpecified = true;
@@ -178,6 +219,21 @@ namespace DiscImageChef.Metadata
                     return dmns;
                 #endregion 3.5" magneto optical
 
+                case CommonTypes.MediaType.PD650:
+                case CommonTypes.MediaType.PD650_WORM:
+                    dmns.Height = 135;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 124;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 7.8;
+                    return dmns;
+                case CommonTypes.MediaType.ECMA_239:
+                    dmns.Height = 97;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 92;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 5;
+                    return dmns;
                 case CommonTypes.MediaType.MMCmicro:
                     dmns.Height = 14;
                     dmns.HeightSpecified = true;
@@ -483,19 +539,14 @@ namespace DiscImageChef.Metadata
                     dmns.Thickness = 14;
                     return dmns;
                 case CommonTypes.MediaType.RDX:
+                case CommonTypes.MediaType.RDX320:
                     dmns.Height = 119;
                     dmns.HeightSpecified = true;
-                    dmns.Width = 86.5;
+                    dmns.Width = 87;
                     dmns.WidthSpecified = true;
-                    dmns.Thickness = 23.2;
+                    dmns.Thickness = 23;
                     return dmns;
                 case CommonTypes.MediaType.LS120:
-                    dmns.Height = 94;
-                    dmns.HeightSpecified = true;
-                    dmns.Width = 90;
-                    dmns.WidthSpecified = true;
-                    dmns.Thickness = 3.5;
-                    return dmns;
                 case CommonTypes.MediaType.LS240:
                     dmns.Height = 94;
                     dmns.HeightSpecified = true;
@@ -550,14 +601,16 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.AIT5:
                 case CommonTypes.MediaType.AITETurbo:
                 case CommonTypes.MediaType.Exatape106m:
-                case CommonTypes.MediaType.Exatape106mXL:
+                case CommonTypes.MediaType.Exatape160mXL:
                 case CommonTypes.MediaType.Exatape112m:
                 case CommonTypes.MediaType.Exatape125m:
                 case CommonTypes.MediaType.Exatape150m:
                 case CommonTypes.MediaType.Exatape15m:
                 case CommonTypes.MediaType.Exatape170m:
                 case CommonTypes.MediaType.Exatape225m:
+                case CommonTypes.MediaType.Exatape22m:
                 case CommonTypes.MediaType.Exatape22mAME:
+                case CommonTypes.MediaType.Exatape28m:
                 case CommonTypes.MediaType.Exatape40m:
                 case CommonTypes.MediaType.Exatape45m:
                 case CommonTypes.MediaType.Exatape54m:

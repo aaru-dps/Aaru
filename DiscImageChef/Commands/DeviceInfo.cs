@@ -164,7 +164,7 @@ namespace DiscImageChef.Commands
                         if (dev.Type != DeviceType.ATAPI)
                             DicConsole.WriteLine("SCSI device");
 
-                        doWriteFile(options.OutputPrefix, "_scsi_inquiry.bin", "SCSI IDENTIFY", inqBuf);
+                        doWriteFile(options.OutputPrefix, "_scsi_inquiry.bin", "SCSI INQUIRY", inqBuf);
 
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(inqBuf);
                         DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
@@ -237,10 +237,10 @@ namespace DiscImageChef.Commands
                         Decoders.SCSI.Modes.DecodedMode? decMode = null;
                         Decoders.SCSI.PeripheralDeviceTypes devType = (DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
-                        sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, dev.Timeout, out duration);
+                        sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
                         if (sense || dev.Error)
                         {
-                            sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                            sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
                         }
 
                         if (!sense && !dev.Error)
@@ -250,11 +250,11 @@ namespace DiscImageChef.Commands
 
                         if(sense || dev.Error || !decMode.HasValue)
                         {
-                            sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                            sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
                             if (sense || dev.Error)
-                                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out duration);
+                                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
                             if (sense || dev.Error)
-                                sense = dev.ModeSense(out modeBuf, out senseBuf, 15000, out duration);
+                                sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out duration);
 
                             if (!sense && !dev.Error)
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
@@ -477,7 +477,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x3E:
                                             {
-                                                if (StringHandlers.SpacePaddedToString(inq.Value.VendorIdentification) == "FUJITSU")
+                                                if (StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "FUJITSU")
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
                                                 else
                                                     goto default;

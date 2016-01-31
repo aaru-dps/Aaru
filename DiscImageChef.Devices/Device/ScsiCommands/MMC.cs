@@ -492,6 +492,90 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return PreventAllowMediumRemoval(out senseBuffer, false, true, timeout, out duration);
+        }
+
+        public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return PreventAllowMediumRemoval(out senseBuffer, false, false, timeout, out duration);
+        }
+
+        public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool persistent, bool prevent, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            byte[] buffer = new byte[0];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
+            if (prevent)
+                cdb[4] += 0x01;
+            if (persistent)
+                cdb[4] += 0x02;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool LoadTray(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return StartStopUnit(out senseBuffer, false, 0, 0, false, true, true, timeout, out duration);
+        }
+
+        public bool EjectTray(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return StartStopUnit(out senseBuffer, false, 0, 0, false, true, false, timeout, out duration);
+        }
+
+        public bool StartUnit(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return StartStopUnit(out senseBuffer, false, 0, 0, false, false, true, timeout, out duration);
+        }
+
+        public bool StopUnit(out byte[] senseBuffer, uint timeout, out double duration)
+        {
+            return StartStopUnit(out senseBuffer, false, 0, 0, false, false, false, timeout, out duration);
+        }
+
+        public bool StartStopUnit(out byte[] senseBuffer, bool immediate, byte formatLayer, byte powerConditions, bool changeFormatLayer, bool loadEject, bool start, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            byte[] buffer = new byte[0];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.StartStopUnit;
+            if (immediate)
+                cdb[1] += 0x01;
+            if (changeFormatLayer)
+            {
+                cdb[3] = (byte)(formatLayer & 0x03);
+                cdb[4] += 0x04;
+            }
+            else
+            {
+                if(loadEject)
+                    cdb[4] += 0x02;
+                if(start)
+                    cdb[4] += 0x01;
+            }
+            cdb[4] += (byte)((powerConditions & 0x0F) << 4);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "START STOP UNIT took {0} ms.", duration);
+
+            return sense;
+        }
+
     }
 }
 

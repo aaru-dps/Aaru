@@ -613,13 +613,18 @@ namespace DiscImageChef.Metadata
                     DiscType = "3.5\" floppy";
                     DiscSubType = "FDFORMAT high-density";
                     break;
+                case CommonTypes.MediaType.ECMA_260:
+                case CommonTypes.MediaType.ECMA_260_Double:
+                    DiscType = "356mm magneto-optical";
+                    DiscSubType = "ECMA-260 / ISO 15898";
+                    break;
                 case CommonTypes.MediaType.ECMA_183_512:
-                case CommonTypes.MediaType.ECMA_183_1024:
+                case CommonTypes.MediaType.ECMA_183:
                     DiscType = "5.25\" magneto-optical";
                     DiscSubType = "ECMA-183";
                     break;
                 case CommonTypes.MediaType.ECMA_184_512:
-                case CommonTypes.MediaType.ECMA_184_1024:
+                case CommonTypes.MediaType.ECMA_184:
                     DiscType = "5.25\" magneto-optical";
                     DiscSubType = "ECMA-184";
                     break;
@@ -630,6 +635,10 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ECMA_201:
                     DiscType = "3.5\" magneto-optical";
                     DiscSubType = "ECMA-201";
+                    break;
+                case DiscImageChef.CommonTypes.MediaType.FlashDrive:
+                    DiscType = "USB flash drive";
+                    DiscSubType = "USB flash drive";
                     break;
                 default:
                     DiscType = "Unknown";

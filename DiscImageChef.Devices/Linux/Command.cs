@@ -331,12 +331,12 @@ namespace DiscImageChef.Devices.Linux
 
         public static string ReadLink(string path)
         {
-            IntPtr buf = Marshal.AllocHGlobal(int.MaxValue);
+            IntPtr buf = Marshal.AllocHGlobal(4096);
             int resultSize;
 
             if (Interop.DetectOS.Is64Bit())
             {
-                long result64 = Extern.readlink64(path, buf, (long)int.MaxValue);
+                long result64 = Extern.readlink64(path, buf, (long)4096);
                 if (result64 <= 0)
                     return null;
                 
@@ -344,7 +344,7 @@ namespace DiscImageChef.Devices.Linux
             }
             else
             {
-                int result = Extern.readlink(path, buf, int.MaxValue);
+                int result = Extern.readlink(path, buf, 4096);
                 if (result <= 0)
                     return null;
 

@@ -239,6 +239,9 @@ namespace DiscImageChef
 
         [Option('m', "mhdd-log", Required = false, DefaultValue = "", HelpText = "Write a log of the scan in the format used by MHDD.")]
         public string MHDDLogPath { get; set; }
+
+        [Option('b', "ibg-log", Required = false, DefaultValue = "", HelpText = "Write a log of the scan in the format used by ImgBurn.")]
+        public string IBGLogPath { get; set; }
     }
 
     public class FormatsSubOptions : CommonSubOptions
@@ -260,6 +263,38 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
+    // TODO: Add more options
+    public class DumpMediaSubOptions : CommonSubOptions
+    {
+        [Option('i', "device", Required = true, HelpText = "Device path.")]
+        public string DevicePath { get; set; }
+
+        [Option('w', "output-prefix", Required = true, HelpText = "Prefix for media dump.")]
+        public string OutputPrefix { get; set; }
+
+        [Option('r', "raw", DefaultValue = false,
+            HelpText = "Print sectors with tags included.")]
+        public bool Raw { get; set; }
+
+        [Option('s', "stop-on-error", DefaultValue = false,
+            HelpText = "Print sectors with tags included.")]
+        public bool StopOnError { get; set; }
+
+        [Option('f', "force", DefaultValue = false,
+            HelpText = "Continue dump whatever happens.")]
+        public bool Force { get; set; }
+
+        [Option("reset", DefaultValue = (ushort)0,
+            HelpText = "Reset the device after these many errors. 0 to disable.")]
+        public ushort Reset { get; set; }
+    }
+
+    public class DeviceReportSubOptions : CommonSubOptions
+    {
+        [Option('i', "device", Required = true, HelpText = "Device path.")]
+        public string DevicePath { get; set; }
+    }
+
     public class Options
     {
         public Options()
@@ -277,6 +312,8 @@ namespace DiscImageChef
             BenchmarkVerb = new BenchmarkSubOptions();
             CreateSidecarVerb = new CreateSidecarSubOptions();
             MediaScanVerb = new MediaScanSubOptions();
+            DumpMediaVerb = new DumpMediaSubOptions();
+            DeviceReportVerb = new DeviceReportSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -317,6 +354,12 @@ namespace DiscImageChef
 
         [VerbOption("media-scan", HelpText = "Scans the media inserted on a device.")]
         public MediaScanSubOptions MediaScanVerb { get; set; }
+
+        [VerbOption("dump-media", HelpText = "Dumps the media inserted on a device to a media image.")]
+        public DumpMediaSubOptions DumpMediaVerb { get; set; }
+
+        [VerbOption("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]
+        public DeviceReportSubOptions DeviceReportVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

@@ -186,6 +186,22 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.MediaScan.doMediaScan(MediaScanOptions);
                     break;
+                case "dump-media":
+                    DumpMediaSubOptions DumpMediaOptions = (DumpMediaSubOptions)invokedVerbInstance;
+                    if (DumpMediaOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (DumpMediaOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.DumpMedia.doDumpMedia(DumpMediaOptions);
+                    break;
+                case "device-report":
+                    DeviceReportSubOptions DeviceReportOptions = (DeviceReportSubOptions)invokedVerbInstance;
+                    if (DeviceReportOptions.Debug)
+                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    if (DeviceReportOptions.Verbose)
+                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    Commands.DeviceReport.doDeviceReport(DeviceReportOptions);
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }

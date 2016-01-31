@@ -96,64 +96,7 @@ namespace DiscImageChef.Commands
                 FileInfo fi = new FileInfo(options.InputFile);
                 FileStream fs = new FileStream(options.InputFile, FileMode.Open, FileAccess.Read);
 
-                Adler32Context adler32ctx = new Adler32Context();
-                CRC16Context crc16ctx = new CRC16Context();
-                CRC32Context crc32ctx = new CRC32Context();
-                CRC64Context crc64ctx = new CRC64Context();
-                MD5Context md5ctx = new MD5Context();
-                RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
-                SHA1Context sha1ctx = new SHA1Context();
-                SHA256Context sha256ctx = new SHA256Context();
-                SHA384Context sha384ctx = new SHA384Context();
-                SHA512Context sha512ctx = new SHA512Context();
-                SpamSumContext ssctx = new SpamSumContext();
-
-                Thread adlerThread = new Thread(updateAdler);
-                Thread crc16Thread = new Thread(updateCRC16);
-                Thread crc32Thread = new Thread(updateCRC32);
-                Thread crc64Thread = new Thread(updateCRC64);
-                Thread md5Thread = new Thread(updateMD5);
-                Thread ripemd160Thread = new Thread(updateRIPEMD160);
-                Thread sha1Thread = new Thread(updateSHA1);
-                Thread sha256Thread = new Thread(updateSHA256);
-                Thread sha384Thread = new Thread(updateSHA384);
-                Thread sha512Thread = new Thread(updateSHA512);
-                Thread spamsumThread = new Thread(updateSpamSum);
-
-                adlerPacket adlerPkt = new adlerPacket();
-                crc16Packet crc16Pkt = new crc16Packet();
-                crc32Packet crc32Pkt = new crc32Packet();
-                crc64Packet crc64Pkt = new crc64Packet();
-                md5Packet md5Pkt = new md5Packet();
-                ripemd160Packet ripemd160Pkt = new ripemd160Packet();
-                sha1Packet sha1Pkt = new sha1Packet();
-                sha256Packet sha256Pkt = new sha256Packet();
-                sha384Packet sha384Pkt = new sha384Packet();
-                sha512Packet sha512Pkt = new sha512Packet();
-                spamsumPacket spamsumPkt = new spamsumPacket();
-
-                adler32ctx.Init();
-                adlerPkt.context = adler32ctx;
-                crc16ctx.Init();
-                crc16Pkt.context = crc16ctx;
-                crc32ctx.Init();
-                crc32Pkt.context = crc32ctx;
-                crc64ctx.Init();
-                crc64Pkt.context = crc64ctx;
-                md5ctx.Init();
-                md5Pkt.context = md5ctx;
-                ripemd160ctx.Init();
-                ripemd160Pkt.context = ripemd160ctx;
-                sha1ctx.Init();
-                sha1Pkt.context = sha1ctx;
-                sha256ctx.Init();
-                sha256Pkt.context = sha256ctx;
-                sha384ctx.Init();
-                sha384Pkt.context = sha384ctx;
-                sha512ctx.Init();
-                sha512Pkt.context = sha512ctx;
-                ssctx.Init();
-                spamsumPkt.context = ssctx;
+                Core.Checksum imgChkWorker = new DiscImageChef.Core.Checksum();
 
                 byte[] data;
                 long position = 0;
@@ -164,49 +107,7 @@ namespace DiscImageChef.Commands
 
                     DicConsole.Write("\rHashing image file byte {0} of {1}", position, fi.Length);
 
-                    adlerPkt.data = data;
-                    adlerThread.Start(adlerPkt);
-                    crc16Pkt.data = data;
-                    crc16Thread.Start(crc16Pkt);
-                    crc32Pkt.data = data;
-                    crc32Thread.Start(crc32Pkt);
-                    crc64Pkt.data = data;
-                    crc64Thread.Start(crc64Pkt);
-                    md5Pkt.data = data;
-                    md5Thread.Start(md5Pkt);
-                    ripemd160Pkt.data = data;
-                    ripemd160Thread.Start(ripemd160Pkt);
-                    sha1Pkt.data = data;
-                    sha1Thread.Start(sha1Pkt);
-                    sha256Pkt.data = data;
-                    sha256Thread.Start(sha256Pkt);
-                    sha384Pkt.data = data;
-                    sha384Thread.Start(sha384Pkt);
-                    sha512Pkt.data = data;
-                    sha512Thread.Start(sha512Pkt);
-                    spamsumPkt.data = data;
-                    spamsumThread.Start(spamsumPkt);
-
-                    while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                           crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                           md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                           sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                           sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                           spamsumThread.IsAlive)
-                    {
-                    }
-
-                    adlerThread = new Thread(updateAdler);
-                    crc16Thread = new Thread(updateCRC16);
-                    crc32Thread = new Thread(updateCRC32);
-                    crc64Thread = new Thread(updateCRC64);
-                    md5Thread = new Thread(updateMD5);
-                    ripemd160Thread = new Thread(updateRIPEMD160);
-                    sha1Thread = new Thread(updateSHA1);
-                    sha256Thread = new Thread(updateSHA256);
-                    sha384Thread = new Thread(updateSHA384);
-                    sha512Thread = new Thread(updateSHA512);
-                    spamsumThread = new Thread(updateSpamSum);
+                    imgChkWorker.Update(data);
 
                     position += 1048576;
                 }
@@ -216,97 +117,12 @@ namespace DiscImageChef.Commands
 
                 DicConsole.Write("\rHashing image file byte {0} of {1}", position, fi.Length);
 
-                adlerPkt.data = data;
-                adlerThread.Start(adlerPkt);
-                crc16Pkt.data = data;
-                crc16Thread.Start(crc16Pkt);
-                crc32Pkt.data = data;
-                crc32Thread.Start(crc32Pkt);
-                crc64Pkt.data = data;
-                crc64Thread.Start(crc64Pkt);
-                md5Pkt.data = data;
-                md5Thread.Start(md5Pkt);
-                ripemd160Pkt.data = data;
-                ripemd160Thread.Start(ripemd160Pkt);
-                sha1Pkt.data = data;
-                sha1Thread.Start(sha1Pkt);
-                sha256Pkt.data = data;
-                sha256Thread.Start(sha256Pkt);
-                sha384Pkt.data = data;
-                sha384Thread.Start(sha384Pkt);
-                sha512Pkt.data = data;
-                sha512Thread.Start(sha512Pkt);
-                spamsumPkt.data = data;
-                spamsumThread.Start(spamsumPkt);
-
-                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                       crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                       md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                       sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                       sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                       spamsumThread.IsAlive)
-                {
-                }
+                imgChkWorker.Update(data);
 
                 DicConsole.WriteLine();
                 fs.Close();
 
-                List<ChecksumType> imgChecksums = new List<ChecksumType>();
-
-                ChecksumType chk = new ChecksumType();
-                chk.type = ChecksumTypeType.adler32;
-                chk.Value = adler32ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc16;
-                chk.Value = crc16ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc32;
-                chk.Value = crc32ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.crc64;
-                chk.Value = crc64ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.md5;
-                chk.Value = md5ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.ripemd160;
-                chk.Value = ripemd160ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha1;
-                chk.Value = sha1ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha256;
-                chk.Value = sha256ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha384;
-                chk.Value = sha384ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.sha512;
-                chk.Value = sha512ctx.End();
-                imgChecksums.Add(chk);
-
-                chk = new ChecksumType();
-                chk.type = ChecksumTypeType.spamsum;
-                chk.Value = ssctx.End();
-                imgChecksums.Add(chk);
+                List<ChecksumType> imgChecksums = imgChkWorker.End();
 
                 switch (_imageFormat.ImageInfo.xmlMediaType)
                 {
@@ -342,7 +158,7 @@ namespace DiscImageChef.Commands
                                 {
                                     case MediaTagType.CD_ATIP:
                                         sidecar.OpticalDisc[0].ATIP = new DumpType();
-                                        sidecar.OpticalDisc[0].ATIP.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray();
+                                        sidecar.OpticalDisc[0].ATIP.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray();
                                         sidecar.OpticalDisc[0].ATIP.Size = _imageFormat.ReadDiskTag(MediaTagType.CD_ATIP).Length;
                                         Decoders.CD.ATIP.CDATIP? atip = Decoders.CD.ATIP.Decode(_imageFormat.ReadDiskTag(MediaTagType.CD_ATIP));
                                         if (atip.HasValue)
@@ -355,12 +171,12 @@ namespace DiscImageChef.Commands
                                         break;
                                     case MediaTagType.DVD_BCA:
                                         sidecar.OpticalDisc[0].BCA = new DumpType();
-                                        sidecar.OpticalDisc[0].BCA.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray();
+                                        sidecar.OpticalDisc[0].BCA.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray();
                                         sidecar.OpticalDisc[0].BCA.Size = _imageFormat.ReadDiskTag(MediaTagType.DVD_BCA).Length;
                                         break;
                                     case MediaTagType.BD_BCA:
                                         sidecar.OpticalDisc[0].BCA = new DumpType();
-                                        sidecar.OpticalDisc[0].BCA.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.BD_BCA)).ToArray();
+                                        sidecar.OpticalDisc[0].BCA.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.BD_BCA)).ToArray();
                                         sidecar.OpticalDisc[0].BCA.Size = _imageFormat.ReadDiskTag(MediaTagType.BD_BCA).Length;
                                         break;
                                     case MediaTagType.DVD_CMI:
@@ -381,12 +197,12 @@ namespace DiscImageChef.Commands
                                                     break;
                                             }
                                         }
-                                        sidecar.OpticalDisc[0].CMI.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray();
+                                        sidecar.OpticalDisc[0].CMI.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray();
                                         sidecar.OpticalDisc[0].CMI.Size = _imageFormat.ReadDiskTag(MediaTagType.DVD_CMI).Length;
                                         break;
                                     case MediaTagType.DVD_DMI:
                                         sidecar.OpticalDisc[0].DMI = new DumpType();
-                                        sidecar.OpticalDisc[0].DMI.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray();
+                                        sidecar.OpticalDisc[0].DMI.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray();
                                         sidecar.OpticalDisc[0].DMI.Size = _imageFormat.ReadDiskTag(MediaTagType.DVD_DMI).Length;
                                         if (Decoders.Xbox.DMI.IsXbox(_imageFormat.ReadDiskTag(MediaTagType.DVD_DMI)))
                                         {
@@ -403,7 +219,7 @@ namespace DiscImageChef.Commands
                                         break;
                                     case MediaTagType.DVD_PFI:
                                         sidecar.OpticalDisc[0].PFI = new DumpType();
-                                        sidecar.OpticalDisc[0].PFI.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray();
+                                        sidecar.OpticalDisc[0].PFI.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray();
                                         sidecar.OpticalDisc[0].PFI.Size = _imageFormat.ReadDiskTag(MediaTagType.DVD_PFI).Length;
                                         Decoders.DVD.PFI.PhysicalFormatInformation? pfi = Decoders.DVD.PFI.Decode(_imageFormat.ReadDiskTag(MediaTagType.DVD_PFI));
                                         if (pfi.HasValue)
@@ -477,7 +293,7 @@ namespace DiscImageChef.Commands
                                         break;
                                     case MediaTagType.CD_PMA:
                                         sidecar.OpticalDisc[0].PMA = new DumpType();
-                                        sidecar.OpticalDisc[0].PMA.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.CD_PMA)).ToArray();
+                                        sidecar.OpticalDisc[0].PMA.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.CD_PMA)).ToArray();
                                         sidecar.OpticalDisc[0].PMA.Size = _imageFormat.ReadDiskTag(MediaTagType.CD_PMA).Length;
                                         break;
                                 }
@@ -583,64 +399,7 @@ namespace DiscImageChef.Commands
 
                                 uint sectorsToRead = 512;
 
-                                adler32ctx = new Adler32Context();
-                                crc16ctx = new CRC16Context();
-                                crc32ctx = new CRC32Context();
-                                crc64ctx = new CRC64Context();
-                                md5ctx = new MD5Context();
-                                ripemd160ctx = new RIPEMD160Context();
-                                sha1ctx = new SHA1Context();
-                                sha256ctx = new SHA256Context();
-                                sha384ctx = new SHA384Context();
-                                sha512ctx = new SHA512Context();
-                                ssctx = new SpamSumContext();
-
-                                adlerThread = new Thread(updateAdler);
-                                crc16Thread = new Thread(updateCRC16);
-                                crc32Thread = new Thread(updateCRC32);
-                                crc64Thread = new Thread(updateCRC64);
-                                md5Thread = new Thread(updateMD5);
-                                ripemd160Thread = new Thread(updateRIPEMD160);
-                                sha1Thread = new Thread(updateSHA1);
-                                sha256Thread = new Thread(updateSHA256);
-                                sha384Thread = new Thread(updateSHA384);
-                                sha512Thread = new Thread(updateSHA512);
-                                spamsumThread = new Thread(updateSpamSum);
-
-                                adlerPkt = new adlerPacket();
-                                crc16Pkt = new crc16Packet();
-                                crc32Pkt = new crc32Packet();
-                                crc64Pkt = new crc64Packet();
-                                md5Pkt = new md5Packet();
-                                ripemd160Pkt = new ripemd160Packet();
-                                sha1Pkt = new sha1Packet();
-                                sha256Pkt = new sha256Packet();
-                                sha384Pkt = new sha384Packet();
-                                sha512Pkt = new sha512Packet();
-                                spamsumPkt = new spamsumPacket();
-
-                                adler32ctx.Init();
-                                adlerPkt.context = adler32ctx;
-                                crc16ctx.Init();
-                                crc16Pkt.context = crc16ctx;
-                                crc32ctx.Init();
-                                crc32Pkt.context = crc32ctx;
-                                crc64ctx.Init();
-                                crc64Pkt.context = crc64ctx;
-                                md5ctx.Init();
-                                md5Pkt.context = md5ctx;
-                                ripemd160ctx.Init();
-                                ripemd160Pkt.context = ripemd160ctx;
-                                sha1ctx.Init();
-                                sha1Pkt.context = sha1ctx;
-                                sha256ctx.Init();
-                                sha256Pkt.context = sha256ctx;
-                                sha384ctx.Init();
-                                sha384Pkt.context = sha384ctx;
-                                sha512ctx.Init();
-                                sha512Pkt.context = sha512ctx;
-                                ssctx.Init();
-                                spamsumPkt.context = ssctx;
+                                Core.Checksum trkChkWorker = new DiscImageChef.Core.Checksum();
 
                                 ulong sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                                 ulong doneSectors = 0;
@@ -662,107 +421,10 @@ namespace DiscImageChef.Commands
                                         doneSectors += (sectors - doneSectors);
                                     }
 
-                                    adlerPkt.data = sector;
-                                    adlerThread.Start(adlerPkt);
-                                    crc16Pkt.data = sector;
-                                    crc16Thread.Start(crc16Pkt);
-                                    crc32Pkt.data = sector;
-                                    crc32Thread.Start(crc32Pkt);
-                                    crc64Pkt.data = sector;
-                                    crc64Thread.Start(crc64Pkt);
-                                    md5Pkt.data = sector;
-                                    md5Thread.Start(md5Pkt);
-                                    ripemd160Pkt.data = sector;
-                                    ripemd160Thread.Start(ripemd160Pkt);
-                                    sha1Pkt.data = sector;
-                                    sha1Thread.Start(sha1Pkt);
-                                    sha256Pkt.data = sector;
-                                    sha256Thread.Start(sha256Pkt);
-                                    sha384Pkt.data = sector;
-                                    sha384Thread.Start(sha384Pkt);
-                                    sha512Pkt.data = sector;
-                                    sha512Thread.Start(sha512Pkt);
-                                    spamsumPkt.data = sector;
-                                    spamsumThread.Start(spamsumPkt);
-
-                                    while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                                           crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                                           md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                                           sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                                           sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                                           spamsumThread.IsAlive)
-                                    {
-                                    }
-
-                                    adlerThread = new Thread(updateAdler);
-                                    crc16Thread = new Thread(updateCRC16);
-                                    crc32Thread = new Thread(updateCRC32);
-                                    crc64Thread = new Thread(updateCRC64);
-                                    md5Thread = new Thread(updateMD5);
-                                    ripemd160Thread = new Thread(updateRIPEMD160);
-                                    sha1Thread = new Thread(updateSHA1);
-                                    sha256Thread = new Thread(updateSHA256);
-                                    sha384Thread = new Thread(updateSHA384);
-                                    sha512Thread = new Thread(updateSHA512);
-                                    spamsumThread = new Thread(updateSpamSum);
+                                    trkChkWorker.Update(sector);
                                 }
 
-                                List<ChecksumType> trkChecksums = new List<ChecksumType>();
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.adler32;
-                                chk.Value = adler32ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.crc16;
-                                chk.Value = crc16ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.crc32;
-                                chk.Value = crc32ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.crc64;
-                                chk.Value = crc64ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.md5;
-                                chk.Value = md5ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.ripemd160;
-                                chk.Value = ripemd160ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.sha1;
-                                chk.Value = sha1ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.sha256;
-                                chk.Value = sha256ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.sha384;
-                                chk.Value = sha384ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.sha512;
-                                chk.Value = sha512ctx.End();
-                                trkChecksums.Add(chk);
-
-                                chk = new ChecksumType();
-                                chk.type = ChecksumTypeType.spamsum;
-                                chk.Value = ssctx.End();
-                                trkChecksums.Add(chk);
+                                List<ChecksumType> trkChecksums = trkChkWorker.End();
 
                                 xmlTrk.Checksums = trkChecksums.ToArray();
 
@@ -794,64 +456,7 @@ namespace DiscImageChef.Commands
                                     // TODO: Packed subchannel has different size?
                                     xmlTrk.SubChannel.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96;
 
-                                    adler32ctx = new Adler32Context();
-                                    crc16ctx = new CRC16Context();
-                                    crc32ctx = new CRC32Context();
-                                    crc64ctx = new CRC64Context();
-                                    md5ctx = new MD5Context();
-                                    ripemd160ctx = new RIPEMD160Context();
-                                    sha1ctx = new SHA1Context();
-                                    sha256ctx = new SHA256Context();
-                                    sha384ctx = new SHA384Context();
-                                    sha512ctx = new SHA512Context();
-                                    ssctx = new SpamSumContext();
-
-                                    adlerThread = new Thread(updateAdler);
-                                    crc16Thread = new Thread(updateCRC16);
-                                    crc32Thread = new Thread(updateCRC32);
-                                    crc64Thread = new Thread(updateCRC64);
-                                    md5Thread = new Thread(updateMD5);
-                                    ripemd160Thread = new Thread(updateRIPEMD160);
-                                    sha1Thread = new Thread(updateSHA1);
-                                    sha256Thread = new Thread(updateSHA256);
-                                    sha384Thread = new Thread(updateSHA384);
-                                    sha512Thread = new Thread(updateSHA512);
-                                    spamsumThread = new Thread(updateSpamSum);
-
-                                    adlerPkt = new adlerPacket();
-                                    crc16Pkt = new crc16Packet();
-                                    crc32Pkt = new crc32Packet();
-                                    crc64Pkt = new crc64Packet();
-                                    md5Pkt = new md5Packet();
-                                    ripemd160Pkt = new ripemd160Packet();
-                                    sha1Pkt = new sha1Packet();
-                                    sha256Pkt = new sha256Packet();
-                                    sha384Pkt = new sha384Packet();
-                                    sha512Pkt = new sha512Packet();
-                                    spamsumPkt = new spamsumPacket();
-
-                                    adler32ctx.Init();
-                                    adlerPkt.context = adler32ctx;
-                                    crc16ctx.Init();
-                                    crc16Pkt.context = crc16ctx;
-                                    crc32ctx.Init();
-                                    crc32Pkt.context = crc32ctx;
-                                    crc64ctx.Init();
-                                    crc64Pkt.context = crc64ctx;
-                                    md5ctx.Init();
-                                    md5Pkt.context = md5ctx;
-                                    ripemd160ctx.Init();
-                                    ripemd160Pkt.context = ripemd160ctx;
-                                    sha1ctx.Init();
-                                    sha1Pkt.context = sha1ctx;
-                                    sha256ctx.Init();
-                                    sha256Pkt.context = sha256ctx;
-                                    sha384ctx.Init();
-                                    sha384Pkt.context = sha384ctx;
-                                    sha512ctx.Init();
-                                    sha512Pkt.context = sha512ctx;
-                                    ssctx.Init();
-                                    spamsumPkt.context = ssctx;
+                                    Core.Checksum subChkWorker = new DiscImageChef.Core.Checksum();
 
                                     sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                                     doneSectors = 0;
@@ -873,107 +478,10 @@ namespace DiscImageChef.Commands
                                             doneSectors += (sectors - doneSectors);
                                         }
 
-                                        adlerPkt.data = sector;
-                                        adlerThread.Start(adlerPkt);
-                                        crc16Pkt.data = sector;
-                                        crc16Thread.Start(crc16Pkt);
-                                        crc32Pkt.data = sector;
-                                        crc32Thread.Start(crc32Pkt);
-                                        crc64Pkt.data = sector;
-                                        crc64Thread.Start(crc64Pkt);
-                                        md5Pkt.data = sector;
-                                        md5Thread.Start(md5Pkt);
-                                        ripemd160Pkt.data = sector;
-                                        ripemd160Thread.Start(ripemd160Pkt);
-                                        sha1Pkt.data = sector;
-                                        sha1Thread.Start(sha1Pkt);
-                                        sha256Pkt.data = sector;
-                                        sha256Thread.Start(sha256Pkt);
-                                        sha384Pkt.data = sector;
-                                        sha384Thread.Start(sha384Pkt);
-                                        sha512Pkt.data = sector;
-                                        sha512Thread.Start(sha512Pkt);
-                                        spamsumPkt.data = sector;
-                                        spamsumThread.Start(spamsumPkt);
-
-                                        while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                                               crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                                               md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                                               sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                                               sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                                               spamsumThread.IsAlive)
-                                        {
-                                        }
-
-                                        adlerThread = new Thread(updateAdler);
-                                        crc16Thread = new Thread(updateCRC16);
-                                        crc32Thread = new Thread(updateCRC32);
-                                        crc64Thread = new Thread(updateCRC64);
-                                        md5Thread = new Thread(updateMD5);
-                                        ripemd160Thread = new Thread(updateRIPEMD160);
-                                        sha1Thread = new Thread(updateSHA1);
-                                        sha256Thread = new Thread(updateSHA256);
-                                        sha384Thread = new Thread(updateSHA384);
-                                        sha512Thread = new Thread(updateSHA512);
-                                        spamsumThread = new Thread(updateSpamSum);
+                                        subChkWorker.Update(sector);
                                     }
 
-                                    List<ChecksumType> subChecksums = new List<ChecksumType>();
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.adler32;
-                                    chk.Value = adler32ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.crc16;
-                                    chk.Value = crc16ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.crc32;
-                                    chk.Value = crc32ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.crc64;
-                                    chk.Value = crc64ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.md5;
-                                    chk.Value = md5ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.ripemd160;
-                                    chk.Value = ripemd160ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.sha1;
-                                    chk.Value = sha1ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.sha256;
-                                    chk.Value = sha256ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.sha384;
-                                    chk.Value = sha384ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.sha512;
-                                    chk.Value = sha512ctx.End();
-                                    subChecksums.Add(chk);
-
-                                    chk = new ChecksumType();
-                                    chk.type = ChecksumTypeType.spamsum;
-                                    chk.Value = ssctx.End();
-                                    subChecksums.Add(chk);
+                                    List<ChecksumType> subChecksums = subChkWorker.End();
 
                                     xmlTrk.SubChannel.Checksums = subChecksums.ToArray();
 
@@ -1103,46 +611,46 @@ namespace DiscImageChef.Commands
                                     case MediaTagType.ATAPI_IDENTIFY:
                                         sidecar.BlockMedia[0].ATA = new ATAType();
                                         sidecar.BlockMedia[0].ATA.Identify = new DumpType();
-                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).ToArray();
+                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).ToArray();
                                         sidecar.BlockMedia[0].ATA.Identify.Size = _imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length;
                                         break;
                                     case MediaTagType.ATA_IDENTIFY:
                                         sidecar.BlockMedia[0].ATA = new ATAType();
                                         sidecar.BlockMedia[0].ATA.Identify = new DumpType();
-                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).ToArray();
+                                        sidecar.BlockMedia[0].ATA.Identify.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).ToArray();
                                         sidecar.BlockMedia[0].ATA.Identify.Size = _imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length;
                                         break;
                                     case MediaTagType.PCMCIA_CIS:
                                         sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
                                         sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
-                                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS)).ToArray();
+                                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS)).ToArray();
                                         sidecar.BlockMedia[0].PCMCIA.CIS.Size = _imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS).Length;
                                         break;
                                     case MediaTagType.SCSI_INQUIRY:
                                         sidecar.BlockMedia[0].SCSI = new SCSIType();
                                         sidecar.BlockMedia[0].SCSI.Inquiry = new DumpType();
-                                        sidecar.BlockMedia[0].SCSI.Inquiry.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).ToArray();
+                                        sidecar.BlockMedia[0].SCSI.Inquiry.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).ToArray();
                                         sidecar.BlockMedia[0].SCSI.Inquiry.Size = _imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length;
                                         break;
                                     case MediaTagType.SD_CID:
                                         if(sidecar.BlockMedia[0].SecureDigital == null)
                                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
                                         sidecar.BlockMedia[0].SecureDigital.CID = new DumpType();
-                                        sidecar.BlockMedia[0].SecureDigital.CID.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_CID)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.CID.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_CID)).ToArray();
                                         sidecar.BlockMedia[0].SecureDigital.CID.Size = _imageFormat.ReadDiskTag(MediaTagType.SD_CID).Length;
                                         break;
                                     case MediaTagType.SD_CSD:
                                         if(sidecar.BlockMedia[0].SecureDigital == null)
                                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
                                         sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType();
-                                        sidecar.BlockMedia[0].SecureDigital.CSD.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_CSD)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.CSD.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_CSD)).ToArray();
                                         sidecar.BlockMedia[0].SecureDigital.CSD.Size = _imageFormat.ReadDiskTag(MediaTagType.SD_CSD).Length;
                                         break;
                                     case MediaTagType.SD_ExtendedCSD:
                                         if(sidecar.BlockMedia[0].SecureDigital == null)
                                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
                                         sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType();
-                                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Checksums = GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_ExtendedCSD)).ToArray();
+                                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.SD_ExtendedCSD)).ToArray();
                                         sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Size = _imageFormat.ReadDiskTag(MediaTagType.SD_ExtendedCSD).Length;
                                         break;
                                 }
@@ -1360,297 +868,6 @@ namespace DiscImageChef.Commands
 
             return String.Format("{3}:{0:D2}:{1:D2}:{2:D2}", m, s, f, h);
         }
-
-        static List<ChecksumType> GetChecksums(byte[] data)
-        {
-            Adler32Context adler32ctx = new Adler32Context();
-            CRC16Context crc16ctx = new CRC16Context();
-            CRC32Context crc32ctx = new CRC32Context();
-            CRC64Context crc64ctx = new CRC64Context();
-            MD5Context md5ctx = new MD5Context();
-            RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
-            SHA1Context sha1ctx = new SHA1Context();
-            SHA256Context sha256ctx = new SHA256Context();
-            SHA384Context sha384ctx = new SHA384Context();
-            SHA512Context sha512ctx = new SHA512Context();
-            SpamSumContext ssctx = new SpamSumContext();
-
-            Thread adlerThread = new Thread(updateAdler);
-            Thread crc16Thread = new Thread(updateCRC16);
-            Thread crc32Thread = new Thread(updateCRC32);
-            Thread crc64Thread = new Thread(updateCRC64);
-            Thread md5Thread = new Thread(updateMD5);
-            Thread ripemd160Thread = new Thread(updateRIPEMD160);
-            Thread sha1Thread = new Thread(updateSHA1);
-            Thread sha256Thread = new Thread(updateSHA256);
-            Thread sha384Thread = new Thread(updateSHA384);
-            Thread sha512Thread = new Thread(updateSHA512);
-            Thread spamsumThread = new Thread(updateSpamSum);
-
-            adlerPacket adlerPkt = new adlerPacket();
-            crc16Packet crc16Pkt = new crc16Packet();
-            crc32Packet crc32Pkt = new crc32Packet();
-            crc64Packet crc64Pkt = new crc64Packet();
-            md5Packet md5Pkt = new md5Packet();
-            ripemd160Packet ripemd160Pkt = new ripemd160Packet();
-            sha1Packet sha1Pkt = new sha1Packet();
-            sha256Packet sha256Pkt = new sha256Packet();
-            sha384Packet sha384Pkt = new sha384Packet();
-            sha512Packet sha512Pkt = new sha512Packet();
-            spamsumPacket spamsumPkt = new spamsumPacket();
-
-            adler32ctx.Init();
-            adlerPkt.context = adler32ctx;
-            crc16ctx.Init();
-            crc16Pkt.context = crc16ctx;
-            crc32ctx.Init();
-            crc32Pkt.context = crc32ctx;
-            crc64ctx.Init();
-            crc64Pkt.context = crc64ctx;
-            md5ctx.Init();
-            md5Pkt.context = md5ctx;
-            ripemd160ctx.Init();
-            ripemd160Pkt.context = ripemd160ctx;
-            sha1ctx.Init();
-            sha1Pkt.context = sha1ctx;
-            sha256ctx.Init();
-            sha256Pkt.context = sha256ctx;
-            sha384ctx.Init();
-            sha384Pkt.context = sha384ctx;
-            sha512ctx.Init();
-            sha512Pkt.context = sha512ctx;
-            ssctx.Init();
-            spamsumPkt.context = ssctx;
-
-            adlerPkt.data = data;
-            adlerThread.Start(adlerPkt);
-            crc16Pkt.data = data;
-            crc16Thread.Start(crc16Pkt);
-            crc32Pkt.data = data;
-            crc32Thread.Start(crc32Pkt);
-            crc64Pkt.data = data;
-            crc64Thread.Start(crc64Pkt);
-            md5Pkt.data = data;
-            md5Thread.Start(md5Pkt);
-            ripemd160Pkt.data = data;
-            ripemd160Thread.Start(ripemd160Pkt);
-            sha1Pkt.data = data;
-            sha1Thread.Start(sha1Pkt);
-            sha256Pkt.data = data;
-            sha256Thread.Start(sha256Pkt);
-            sha384Pkt.data = data;
-            sha384Thread.Start(sha384Pkt);
-            sha512Pkt.data = data;
-            sha512Thread.Start(sha512Pkt);
-            spamsumPkt.data = data;
-            spamsumThread.Start(spamsumPkt);
-
-            while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                   crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                   md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                   sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                   sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                   spamsumThread.IsAlive)
-            {
-            }
-
-            List<ChecksumType> imgChecksums = new List<ChecksumType>();
-            ChecksumType chk = new ChecksumType();
-
-            chk.type = ChecksumTypeType.adler32;
-            chk.Value = adler32ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.crc16;
-            chk.Value = crc16ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.crc32;
-            chk.Value = crc32ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.crc64;
-            chk.Value = crc64ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.md5;
-            chk.Value = md5ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.ripemd160;
-            chk.Value = ripemd160ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.sha1;
-            chk.Value = sha1ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.sha256;
-            chk.Value = sha256ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.sha384;
-            chk.Value = sha384ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.sha512;
-            chk.Value = sha512ctx.End();
-            imgChecksums.Add(chk);
-
-            chk.type = ChecksumTypeType.spamsum;
-            chk.Value = ssctx.End();
-            imgChecksums.Add(chk);
-
-            return imgChecksums;
-        }
-
-        #region Threading helpers
-
-        struct adlerPacket
-        {
-            public Adler32Context context;
-            public byte[] data;
-        }
-
-        struct crc16Packet
-        {
-            public CRC16Context context;
-            public byte[] data;
-        }
-
-        struct crc32Packet
-        {
-            public CRC32Context context;
-            public byte[] data;
-        }
-
-        struct crc64Packet
-        {
-            public CRC64Context context;
-            public byte[] data;
-        }
-
-        /*struct fletcher16Packet
-        {
-            public Fletcher16Context context;
-            public byte[] data;
-        }
-
-        struct fletcher32Packet
-        {
-            public Fletcher32Context context;
-            public byte[] data;
-        }*/
-
-        struct md5Packet
-        {
-            public MD5Context context;
-            public byte[] data;
-        }
-
-        struct ripemd160Packet
-        {
-            public RIPEMD160Context context;
-            public byte[] data;
-        }
-
-        struct sha1Packet
-        {
-            public SHA1Context context;
-            public byte[] data;
-        }
-
-        struct sha256Packet
-        {
-            public SHA256Context context;
-            public byte[] data;
-        }
-
-        struct sha384Packet
-        {
-            public SHA384Context context;
-            public byte[] data;
-        }
-
-        struct sha512Packet
-        {
-            public SHA512Context context;
-            public byte[] data;
-        }
-
-        struct spamsumPacket
-        {
-            public SpamSumContext context;
-            public byte[] data;
-        }
-
-        static void updateAdler(object packet)
-        {
-            ((adlerPacket)packet).context.Update(((adlerPacket)packet).data);
-        }
-
-        static void updateCRC16(object packet)
-        {
-            ((crc16Packet)packet).context.Update(((crc16Packet)packet).data);
-        }
-
-        static void updateCRC32(object packet)
-        {
-            ((crc32Packet)packet).context.Update(((crc32Packet)packet).data);
-        }
-
-        static void updateCRC64(object packet)
-        {
-            ((crc64Packet)packet).context.Update(((crc64Packet)packet).data);
-        }
-
-        /*static void updateFletcher16(object packet)
-        {
-            ((fletcher16Packet)packet).context.Update(((fletcher16Packet)packet).data);
-        }
-
-        static void updateFletcher32(object packet)
-        {
-            ((fletcher32Packet)packet).context.Update(((fletcher32Packet)packet).data);
-        }*/
-
-        static void updateMD5(object packet)
-        {
-            ((md5Packet)packet).context.Update(((md5Packet)packet).data);
-        }
-
-        static void updateRIPEMD160(object packet)
-        {
-            ((ripemd160Packet)packet).context.Update(((ripemd160Packet)packet).data);
-        }
-
-        static void updateSHA1(object packet)
-        {
-            ((sha1Packet)packet).context.Update(((sha1Packet)packet).data);
-        }
-
-        static void updateSHA256(object packet)
-        {
-            ((sha256Packet)packet).context.Update(((sha256Packet)packet).data);
-        }
-
-        static void updateSHA384(object packet)
-        {
-            ((sha384Packet)packet).context.Update(((sha384Packet)packet).data);
-        }
-
-        static void updateSHA512(object packet)
-        {
-            ((sha512Packet)packet).context.Update(((sha512Packet)packet).data);
-        }
-
-        static void updateSpamSum(object packet)
-        {
-            ((spamsumPacket)packet).context.Update(((spamsumPacket)packet).data);
-        }
-
-        #endregion Threading helpers
-
     }
 }
 

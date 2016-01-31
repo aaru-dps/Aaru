@@ -58,10 +58,14 @@
     </Compile>
     <Compile Include="Commands\CreateSidecar.cs" />
     <Compile Include="Commands\MediaScan.cs" />
+    <Compile Include="Commands\DumpMedia.cs" />
+    <Compile Include="Core\Checksum.cs" />
+    <Compile Include="Commands\DeviceReport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Commands\" />
+    <Folder Include="Core\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

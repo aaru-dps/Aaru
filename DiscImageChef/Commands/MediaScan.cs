@@ -41,6 +41,7 @@ using System.IO;
 using DiscImageChef.Devices;
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DiscImageChef.Commands
 {
@@ -48,6 +49,22 @@ namespace DiscImageChef.Commands
     {
         static bool aborted;
         static FileStream mhddFs;
+        static FileStream ibgFs;
+        static StringBuilder ibgSb;
+        static DateTime ibgDatePoint;
+        static CultureInfo ibgCulture;
+        static double ibgStartSpeed;
+        static string ibgMediaType;
+        static double ibgDivider;
+        static bool ibgStartSet;
+        static int ibgMinSampleRate;
+        static double ibgMaxSpeed;
+        static double ibgIntSpeed;
+        static int ibgSnaps;
+static ulong                 ibgIntSector = 0;
+static double ibgIntTime = 0;
+static int ibgSampleRate;
+
 
         public static void doMediaScan(MediaScanSubOptions options)
         {
@@ -55,6 +72,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MHDDLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IBGLogPath);
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -63,6 +81,7 @@ namespace DiscImageChef.Commands
             }
 
             mhddFs = null;
+            ibgFs = null;
 
             Device dev = new Device(options.DevicePath);
 
@@ -75,40 +94,40 @@ namespace DiscImageChef.Commands
             switch (dev.Type)
             {
                 case DeviceType.ATA:
-                    doATAMediaScan(options.MHDDLogPath, dev);
+                    doATAMediaScan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    doSDMediaScan(options.MHDDLogPath, dev);
+                    doSDMediaScan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.NVMe:
-                    doNVMeMediaScan(options.MHDDLogPath, dev);
+                    doNVMeMediaScan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    doSCSIMediaScan(options.MHDDLogPath, dev);
+                    doSCSIMediaScan(options.MHDDLogPath, options.IBGLogPath, options.DevicePath, dev);
                     break;
                 default:
                     throw new NotSupportedException("Unknown device type.");
             }
         }
 
-        static void doATAMediaScan(string MHDDLogPath, Device dev)
+        static void doATAMediaScan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
         {
             throw new NotImplementedException("ATA devices not yet supported.");
         }
 
-        static void doNVMeMediaScan(string MHDDLogPath, Device dev)
+        static void doNVMeMediaScan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }
 
-        static void doSDMediaScan(string MHDDLogPath, Device dev)
+        static void doSDMediaScan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
         {
             throw new NotImplementedException("MMC/SD devices not yet supported.");
         }
 
-        static void doSCSIMediaScan(string MHDDLogPath, Device dev)
+        static void doSCSIMediaScan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
         {
             byte[] cmdBuf;
             byte[] senseBuf;
@@ -116,6 +135,7 @@ namespace DiscImageChef.Commands
             double duration;
             ulong blocks = 0;
             uint blockSize = 0;
+            ushort currentProfile = 0x0001;
 
             if (dev.IsRemovable)
             {
@@ -249,6 +269,8 @@ namespace DiscImageChef.Commands
                 {
                     Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
 
+                    currentProfile = ftr.CurrentProfile;
+
                     switch (ftr.CurrentProfile)
                     {
                         case 0x0005:
@@ -267,6 +289,7 @@ namespace DiscImageChef.Commands
 
                 if (compactDisc)
                 {
+                    currentProfile = 0x0008;
                     // We discarded all discs that falsify a TOC before requesting a real TOC
                     // No TOC, no CD (or an empty one)
                     bool tocSense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
@@ -342,6 +365,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 initMHDDLogFile(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                initIBGLogFile(IBGLogPath, currentProfile);
 
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -395,6 +419,7 @@ namespace DiscImageChef.Commands
                         }
 
                         writeMHDDLogFile(i, cmdDuration);
+                        writeIBGLogFile(i, currentSpeed * 1024);
                     }
                     else
                     {
@@ -416,6 +441,8 @@ namespace DiscImageChef.Commands
                                     writeMHDDLogFile(i, 65535);
                                 else
                                     writeMHDDLogFile(i, cmdDuration);
+                                    
+                                writeIBGLogFile(i, 0);
                             }
                         }
                         else
@@ -426,6 +453,8 @@ namespace DiscImageChef.Commands
                                 writeMHDDLogFile(i, 65535);
                             else
                                 writeMHDDLogFile(i, cmdDuration);
+                                
+                            writeIBGLogFile(i, 0);
                         }
                     }
 
@@ -435,6 +464,7 @@ namespace DiscImageChef.Commands
                 end = DateTime.UtcNow;
                 DicConsole.WriteLine();
                 closeMHDDLogFile();
+                closeIBGLogFile(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
             }
             else
             {
@@ -460,7 +490,7 @@ namespace DiscImageChef.Commands
 
                 if (!read16 && blocks > ((long)0xFFFFFFFF + (long)1))
                 {
-                    DicConsole.ErrorWriteLine("Device only supports SCSI READ (16) but has more than {0} blocks ({1} blocks total)", (long)0xFFFFFFFF + (long)1, blocks);
+                    DicConsole.ErrorWriteLine("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)", (long)0xFFFFFFFF + (long)1, blocks);
                     return;
                 }
 
@@ -515,6 +545,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 initMHDDLogFile(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                initIBGLogFile(IBGLogPath, currentProfile);
 
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -570,6 +601,7 @@ namespace DiscImageChef.Commands
                             A += blocksToRead;
 
                         writeMHDDLogFile(i, cmdDuration);
+                        writeIBGLogFile(i, currentSpeed * 1024);
                     }
                     // TODO: Separate errors on kind of errors.
                     else
@@ -581,6 +613,7 @@ namespace DiscImageChef.Commands
                             writeMHDDLogFile(i, 65535);
                         else
                             writeMHDDLogFile(i, cmdDuration);
+                        writeIBGLogFile(i, 0);
                     }
 
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
@@ -588,6 +621,7 @@ namespace DiscImageChef.Commands
                 end = DateTime.UtcNow;
                 DicConsole.WriteLine();
                 closeMHDDLogFile();
+                closeIBGLogFile(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
             }
 
             bool seek6, seek10;
@@ -798,6 +832,245 @@ namespace DiscImageChef.Commands
 
                 mhddFs.Write(sectorBytes, 0, 8);
                 mhddFs.Write(durationBytes, 0, 8);
+            }
+        }
+
+        static void writeIBGLogFile(ulong sector, double currentSpeed)
+        {
+            if (ibgFs != null)
+            {
+                ibgIntSpeed += currentSpeed;
+                ibgSampleRate += (int)Math.Floor((DateTime.Now - ibgDatePoint).TotalMilliseconds);
+                ibgSnaps++;
+                
+                if(ibgSampleRate >= 100)
+                {
+                if (ibgIntSpeed > 0 && !ibgStartSet)
+                {
+                    ibgStartSpeed = ibgIntSpeed / ibgSnaps / ibgDivider;
+                    ibgStartSet = true;
+                }
+                
+                ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector, ibgSampleRate).AppendLine();
+                if ((ibgIntSpeed / ibgSnaps / ibgDivider) > ibgMaxSpeed)
+                    ibgMaxSpeed = ibgIntSpeed / ibgDivider;
+                    
+                ibgDatePoint = DateTime.Now;
+                    ibgIntSpeed = 0;
+                    ibgSampleRate = 0;
+                    ibgSnaps = 0;
+                    ibgIntSector = sector;
+                }
+            }
+        }
+
+        static void initIBGLogFile(string outputFile, ushort currentProfile)
+        {
+            if (!string.IsNullOrEmpty(outputFile))
+            {
+                ibgFs = new FileStream(outputFile, FileMode.Create);
+                ibgSb = new StringBuilder();
+                ibgDatePoint = DateTime.Now;
+                ibgCulture = new CultureInfo("en-US");
+                ibgStartSet = false;
+                ibgMinSampleRate = int.MaxValue;
+                ibgMaxSpeed = 0;
+ ibgIntSpeed = 0;
+         ibgSnaps = 0;
+         ibgIntSector = 0;
+ibgIntTime = 0;
+                
+                switch (currentProfile)
+                {
+                    case 0x0001:
+                        ibgMediaType = "HDD";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0005:
+                        ibgMediaType = "CD-MO";
+                        ibgDivider = 150;
+                        break;
+                    case 0x0008:
+                        ibgMediaType = "CD-ROM";
+                        ibgDivider = 150;
+                        break;
+                    case 0x0009:
+                        ibgMediaType = "CD-R";
+                        ibgDivider = 150;
+                        break;
+                    case 0x000A:
+                        ibgMediaType = "CD-RW";
+                        ibgDivider = 150;
+                        break;
+                    case 0x0010:
+                        ibgMediaType = "DVD-ROM";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0011:
+                        ibgMediaType = "DVD-R";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0012:
+                        ibgMediaType = "DVD-RAM";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0013:
+                    case 0x0014:
+                        ibgMediaType = "DVD-RW";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0015:
+                    case 0x0016:
+                        ibgMediaType = "DVD-R DL";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0017:
+                        ibgMediaType = "DVD-RW DL";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0018:
+                        ibgMediaType = "DVD-Download";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x001A:
+                        ibgMediaType = "DVD+RW";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x001B:
+                        ibgMediaType = "DVD+R";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0020:
+                        ibgMediaType = "DDCD-ROM";
+                        ibgDivider = 150;
+                        break;
+                    case 0x0021:
+                        ibgMediaType = "DDCD-R";
+                        ibgDivider = 150;
+                        break;
+                    case 0x0022:
+                        ibgMediaType = "DDCD-RW";
+                        ibgDivider = 150;
+                        break;
+                    case 0x002A:
+                        ibgMediaType = "DVD+RW DL";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x002B:
+                        ibgMediaType = "DVD+R DL";
+                        ibgDivider = 1353;
+                        break;
+                    case 0x0040:
+                        ibgMediaType = "BD-ROM";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0041:
+                    case 0x0042:
+                        ibgMediaType = "BD-R";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0043:
+                        ibgMediaType = "BD-RE";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0050:
+                        ibgMediaType = "HD DVD-ROM";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0051:
+                        ibgMediaType = "HD DVD-R";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0052:
+                        ibgMediaType = "HD DVD-RAM";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0053:
+                        ibgMediaType = "HD DVD-RW";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x0058:
+                        ibgMediaType = "HD DVD-R DL";
+                        ibgDivider = 4500;
+                        break;
+                    case 0x005A:
+                        ibgMediaType = "HD DVD-RW DL";
+                        ibgDivider = 4500;
+                        break;
+                    default:
+                        ibgMediaType = "Unknown";
+                        ibgDivider = 1353;
+                        break;
+                }
+
+            }
+        }
+
+        static void closeIBGLogFile(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed, double averageSpeed, string devicePath)
+        {
+            if (ibgFs != null)
+            {
+                StringBuilder ibgHeader = new StringBuilder();
+                string ibgBusType;
+                
+                if (dev.IsUSB)
+                    ibgBusType = "USB";
+                else if (dev.IsFireWire)
+                    ibgBusType = "FireWire";
+                else
+                    ibgBusType = dev.Type.ToString();
+                                
+                ibgHeader.AppendLine("IBGD");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendLine("[START_CONFIGURATION]");
+                ibgHeader.AppendLine("IBGD_VERSION=2");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendFormat("DATE={0}", DateTime.Now).AppendLine();
+                ibgHeader.AppendLine();
+                ibgHeader.AppendFormat("SAMPLE_RATE={0}", 100).AppendLine();
+                
+                ibgHeader.AppendLine();
+                ibgHeader.AppendFormat("DEVICE=[0:0:0] {0} {1} ({2}) ({3})",
+                    dev.Manufacturer, dev.Model, devicePath, ibgBusType).AppendLine();
+                ibgHeader.AppendLine("DEVICE_ADDRESS=0:0:0");
+                ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}", dev.Manufacturer, dev.Model).AppendLine();
+                ibgHeader.AppendFormat("DEVICE_FIRMWAREVERSION={0}", dev.Revision).AppendLine();
+                ibgHeader.AppendFormat("DEVICE_DRIVELETTER={0}", devicePath).AppendLine();
+                ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}", ibgBusType).AppendLine();
+                ibgHeader.AppendLine();
+                
+                ibgHeader.AppendFormat("MEDIA_TYPE={0}", ibgMediaType).AppendLine();
+                ibgHeader.AppendLine("MEDIA_BOOKTYPE=Unknown");
+                ibgHeader.AppendLine("MEDIA_ID=N/A");
+                ibgHeader.AppendLine("MEDIA_TRACKPATH=PTP");
+                ibgHeader.AppendLine("MEDIA_SPEEDS=N/A");
+                ibgHeader.AppendFormat("MEDIA_CAPACITY={0}", blocks).AppendLine();
+                ibgHeader.AppendLine("MEDIA_LAYER_BREAK=0");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendLine("DATA_IMAGEFILE=/dev/null");
+                ibgHeader.AppendFormat("DATA_SECTORS={0}", blocks).AppendLine();
+                ibgHeader.AppendFormat("DATA_TYPE=MODE1/{0}", blockSize).AppendLine();
+                ibgHeader.AppendLine("DATA_VOLUMEIDENTIFIER=");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_START={0:0.00}", ibgStartSpeed).AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / ibgDivider).AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider).AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", ibgMaxSpeed).AppendLine();
+                ibgHeader.AppendFormat(ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
+                ibgHeader.AppendLine("[END_CONFIGURATION]");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendLine("HRPC=True");
+                ibgHeader.AppendLine();
+                ibgHeader.AppendLine("[START_VERIFY_GRAPH_VALUES]");
+                ibgHeader.Append(ibgSb.ToString());
+                ibgHeader.AppendLine("[END_VERIFY_GRAPH_VALUES]");
+                ibgHeader.AppendLine();
+                ibgHeader.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                    
+                StreamWriter sr = new StreamWriter(ibgFs);
+                sr.Write(ibgHeader.ToString());
+                sr.Close();
+                ibgFs.Close();
             }
         }
     }

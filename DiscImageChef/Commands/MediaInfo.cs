@@ -175,6 +175,51 @@ namespace DiscImageChef.Commands
                 }
             }
 
+            byte[] modeBuf;
+            Decoders.SCSI.Modes.DecodedMode? decMode = null;
+            Decoders.SCSI.PeripheralDeviceTypes devType = dev.SCSIType;
+
+            sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
+            if (sense || dev.Error)
+            {
+                sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+            }
+
+            if (!sense && !dev.Error)
+            {
+                decMode = Decoders.SCSI.Modes.DecodeMode10(modeBuf, devType);
+            }
+
+            if(sense || dev.Error || !decMode.HasValue)
+            {
+                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                if (sense || dev.Error)
+                    sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                if (sense || dev.Error)
+                    sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out duration);
+
+                if (!sense && !dev.Error)
+                    decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
+            }
+
+            if (!sense)
+                doWriteFile(outputPrefix, "_scsi_modesense.bin", "SCSI MODE SENSE", modeBuf);
+
+            byte scsiMediumType = 0;
+            byte scsiDensityCode = 0;
+            bool containsFloppyPage = false;
+
+            if(decMode.HasValue)
+            {
+                scsiMediumType = (byte)decMode.Value.Header.MediumType;
+                if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
+                    scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+
+                foreach(Decoders.SCSI.Modes.ModePage modePage in decMode.Value.Pages)
+                    if(modePage.Page == 0x05)
+                        containsFloppyPage = true;
+            }
+
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                 dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
                 dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
@@ -280,7 +325,7 @@ namespace DiscImageChef.Commands
             {
                 sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout, out duration);
                 if (sense)
-                    DicConsole.ErrorWriteLine("READ GET CONFIGURATION:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ GET CONFIGURATION:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                 {
                     doWriteFile(outputPrefix, "_getconfiguration_current.bin", "SCSI GET CONFIGURATION", cmdBuf);
@@ -383,12 +428,12 @@ namespace DiscImageChef.Commands
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.RecognizedFormatLayers, 0, dev.Timeout, out duration);
                 if (sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Recognized Format Layers\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Recognized Format Layers\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_formatlayers.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.WriteProtectionStatus, 0, dev.Timeout, out duration);
                 if (sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Write Protection Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Write Protection Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_writeprotection.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
 
@@ -396,7 +441,7 @@ namespace DiscImageChef.Commands
                 /*
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Capability List\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Capability List\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_capabilitylist.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 */
@@ -415,15 +460,78 @@ namespace DiscImageChef.Commands
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                        DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
+                        Decoders.DVD.PFI.PhysicalFormatInformation? decPfi = Decoders.DVD.PFI.Decode(cmdBuf);
+                        if(decPfi.HasValue)
+                        {
+                            DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(decPfi));
+
+                            // False book types
+                            if(dskType == MediaType.DVDROM)
+                            {
+                                switch(decPfi.Value.DiskCategory)
+                                {
+                                    case Decoders.DVD.DiskCategory.DVDPR:
+                                        dskType = MediaType.DVDPR;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDPRDL:
+                                        dskType = MediaType.DVDPRDL;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDPRW:
+                                        dskType = MediaType.DVDPRW;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDPRWDL:
+                                        dskType = MediaType.DVDPRWDL;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDR:
+                                        if(decPfi.Value.PartVersion == 6)
+                                            dskType = MediaType.DVDRDL;
+                                        else
+                                            dskType = MediaType.DVDR;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDRAM:
+                                        dskType = MediaType.DVDRAM;
+                                        break;
+                                    default:
+                                        dskType = MediaType.DVDROM;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.DVDRW:
+                                        if(decPfi.Value.PartVersion == 3)
+                                            dskType = MediaType.DVDRWDL;
+                                        else
+                                            dskType = MediaType.DVDRW;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.HDDVDR:
+                                        dskType = MediaType.HDDVDR;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.HDDVDRAM:
+                                        dskType = MediaType.HDDVDRAM;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.HDDVDROM:
+                                        dskType = MediaType.HDDVDROM;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.HDDVDRW:
+                                        dskType = MediaType.HDDVDRW;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.Nintendo:
+                                        if(decPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                            dskType = MediaType.GOD;
+                                        else    
+                                            dskType = MediaType.WOD;
+                                        break;
+                                    case Decoders.DVD.DiskCategory.UMD:
+                                        dskType = MediaType.UMD;
+                                        break;
+                                }
+                            }
+                        }
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -445,7 +553,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_cmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -460,12 +568,12 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVD_AACS, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD AACS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DVD AACS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_aacs.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -475,57 +583,57 @@ namespace DiscImageChef.Commands
                 /*
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscKey, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Disc Key\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Disc Key\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_dvd_disckey.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.SectorCopyrightInformation, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Sector CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Sector CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_dvd_sectorcmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MediaIdentifier, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_dvd_mediaid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MediaKeyBlock, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_dvd_mkb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSVolId, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS Volume ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS Volume ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacsvolid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSMediaSerial, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS Media Serial Number\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS Media Serial Number\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacssn.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSMediaId, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacsmediaid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSMKB, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacsmkb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSLBAExtents, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS LBA Extents\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS LBA Extents\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacslbaextents.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSMKBCPRM, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS CPRM MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS CPRM MKB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacscprmmkb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.AACSDataKeys, 0, dev.Timeout, out duration);
                 if(sense)
-                    DicConsole.ErrorWriteLine("READ DISC STRUCTURE: AACS Data Keys\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: AACS Data Keys\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                 else
                     doWriteFile(outputPrefix, "_readdiscstructure_aacsdatakeys.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 */
@@ -536,7 +644,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_DDS, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdram_dds.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -544,7 +652,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_MediumStatus, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdram_status.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -552,7 +660,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_SpareAreaInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: SAI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: SAI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdram_spare.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -566,7 +674,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.LastBorderOutRMD, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Last-Out Border RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Last-Out Border RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_lastrmd.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -577,7 +685,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Pre-Recorded Info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Pre-Recorded Info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pri.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -588,12 +696,12 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_MediaIdentifier, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DVD-R Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdr_mediaid.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DVD-R PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DVD-R PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdr_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -603,18 +711,15 @@ namespace DiscImageChef.Commands
                 if (dskType == MediaType.DVDPR || dskType == MediaType.DVDPRDL ||
                    dskType == MediaType.DVDPRW || dskType == MediaType.DVDPRWDL)
                 {
-                    // TODO: None of my test discs return an ADIP. Also, it just seems to contain pre-recorded PFI, and drive is returning it on blank media using standard PFI command
-                    /*
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ADIP, 0, dev.Timeout, out duration);
                     if(sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: ADIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: ADIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd+_adip.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                    */
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DCB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DCB\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd+_dcb.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -625,7 +730,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: HDDVD CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: HDDVD CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvd_cmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -636,12 +741,12 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVDR_MediumStatus, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: HDDVD-R Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: HDDVD-R Medium Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvdr_status.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVDR_LastRMD, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Last RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Last RMD\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_hddvdr_lastrmd.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -653,7 +758,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Layer Capacity\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Layer Capacity\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvdr_layercap.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -664,22 +769,22 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Middle Zone Start\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Middle Zone Start\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_mzs.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.JumpIntervalSize, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Jump Interval Size\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Jump Interval Size\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_jis.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.ManualLayerJumpStartLBA, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Manual Layer Jump Start LBA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Manual Layer Jump Start LBA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_manuallj.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.RemapAnchorPoint, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Remap Anchor Point\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Remap Anchor Point\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_remapanchor.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -691,7 +796,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_di.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -699,7 +804,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.PAC, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: PAC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: PAC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_pac.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
@@ -710,7 +815,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_BurstCuttingArea, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: BCA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_bca.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -725,7 +830,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_DDS, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DDS\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_dds.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -733,7 +838,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CartridgeStatus, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Cartridge Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Cartridge Status\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_cartstatus.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -741,7 +846,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_SpareAreaInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Spare Area Information\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Spare Area Information\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_spare.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -749,12 +854,12 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.RawDFL, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: Raw DFL\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Raw DFL\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_bd_dfl.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                     sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.TrackResources, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC INFORMATION 001b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 001b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         DicConsole.WriteLine("Track Resources Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(cmdBuf));
@@ -762,7 +867,7 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.POWResources, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC INFORMATION 010b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 010b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         DicConsole.WriteLine("POW Resources Information:\n{0}", Decoders.SCSI.MMC.DiscInformation.Prettify(cmdBuf));
@@ -784,7 +889,7 @@ namespace DiscImageChef.Commands
                     // No TOC, no CD (or an empty one)
                     bool tocSense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out duration);
                     if (tocSense)
-                        DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         toc = Decoders.CD.TOC.Decode(cmdBuf);
@@ -799,7 +904,7 @@ namespace DiscImageChef.Commands
                     // ATIP exists on blank CDs
                     sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: ATIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: ATIP\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
@@ -817,7 +922,7 @@ namespace DiscImageChef.Commands
                     {
                         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation, dev.Timeout, out duration);
                         if (sense)
-                            DicConsole.ErrorWriteLine("READ DISC INFORMATION 000b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 000b\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
                         {
                             Decoders.SCSI.MMC.DiscInformation.StandardDiscInformation? discInfo = Decoders.SCSI.MMC.DiscInformation.Decode000b(cmdBuf);
@@ -847,7 +952,7 @@ namespace DiscImageChef.Commands
 
                         sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                         if (sense)
-                            DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: Session info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Session info\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
                         {
                             doWriteFile(outputPrefix, "_session.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
@@ -904,7 +1009,7 @@ namespace DiscImageChef.Commands
 
                         sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out duration);
                         if (sense)
-                            DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: Raw TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Raw TOC\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
                         {
                             doWriteFile(outputPrefix, "_rawtoc.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
@@ -912,7 +1017,7 @@ namespace DiscImageChef.Commands
                         }
                         sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                         if (sense)
-                            DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: PMA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: PMA\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
                         {
                             doWriteFile(outputPrefix, "_pma.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
@@ -921,7 +1026,7 @@ namespace DiscImageChef.Commands
 
                         sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                         if (sense)
-                            DicConsole.ErrorWriteLine("READ TOC/PMA/ATIP: CD-TEXT\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            DicConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: CD-TEXT\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         else
                         {
                             doWriteFile(outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP", cmdBuf);
@@ -937,7 +1042,7 @@ namespace DiscImageChef.Commands
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: PFI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_pfi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
@@ -957,18 +1062,24 @@ namespace DiscImageChef.Commands
                     }
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout, out duration);
                     if (sense)
-                        DicConsole.ErrorWriteLine("READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        DicConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                     else
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 }
                 #endregion Nintendo
             }
 
+            if(dskType == MediaType.Unknown)
+                dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumType, scsiDensityCode, blocks, blockSize);
+
+            if(dskType == MediaType.Unknown && dev.IsUSB && containsFloppyPage)
+                dskType = MediaType.FlashDrive;
+
             DicConsole.WriteLine("Media identified as {0}", dskType);
 
             sense = dev.ReadMediaSerialNumber(out cmdBuf, out senseBuf, dev.Timeout, out duration);
             if (sense)
-                DicConsole.ErrorWriteLine("READ MEDIA SERIAL NUMBER\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                DicConsole.DebugWriteLine("Media-Info command", "READ MEDIA SERIAL NUMBER\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
             else
             {
                 doWriteFile(outputPrefix, "_mediaserialnumber.bin", "SCSI READ MEDIA SERIAL NUMBER", cmdBuf);

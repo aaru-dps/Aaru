@@ -673,11 +673,11 @@ namespace DiscImageChef.ImagePlugins
                     case 481520640:
                         return MediaType.ECMA_183_512;
                     case 533403648:
-                        return MediaType.ECMA_183_1024;
+                        return MediaType.ECMA_183;
                     case 596787200:
                         return MediaType.ECMA_184_512;
                     case 654540800:
-                        return MediaType.ECMA_184_1024;
+                        return MediaType.ECMA_184;
                     default:
                         return MediaType.GENERIC_HDD;
                 }

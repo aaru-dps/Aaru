@@ -184,9 +184,12 @@ namespace DiscImageChef.CommonTypes
         #endregion MiniDisc based
 
         #region Plasmon UDO
-        /// <summary>Ultra Density Optical</summary>
+        /// <summary>5.25", Phase-Change, 1834348 sectors, 8192 bytes/sector, Ultra Density Optical, ECMA-350, ISO 17345</summary>
         UDO,
+        /// <summary>5.25", Phase-Change, 3669724 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
         UDO2,
+        /// <summary>5.25", Write-Once, 3668759 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
+        UDO2_WORM,
         #endregion Plasmon UDO
 
         #region Sony game media
@@ -399,18 +402,6 @@ namespace DiscImageChef.CommonTypes
         ECMA_78,
         /// <summary>5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM</summary>
         ECMA_78_2,
-        /// <summary>3,5", M.O., 250000 sectors, 512 bytes/sector</summary>
-        ECMA_154,
-        /// <summary>5,25", M.O., 940470 sectors, 512 bytes/sector</summary>
-        ECMA_183_512,
-        /// <summary>5,25", M.O., 520902 sectors, 1024 bytes/sector</summary>
-        ECMA_183_1024,
-        /// <summary>5,25", M.O., 1165600 sectors, 512 bytes/sector</summary>
-        ECMA_184_512,
-        /// <summary>5,25", M.O., 639200 sectors, 1024 bytes/sector</summary>
-        ECMA_184_1024,
-        /// <summary>3,5", M.O., 448500 sectors, 512 bytes/sector</summary>
-        ECMA_201,
         #endregion ECMA floppy standards
 
         #region FDFORMAT, non-standard floppy formats
@@ -449,7 +440,6 @@ namespace DiscImageChef.CommonTypes
         #region Iomega
         Bernoulli,
         Bernoulli2,
-        DataPlay,
         Ditto,
         DittoMax,
         Jaz,
@@ -501,7 +491,9 @@ namespace DiscImageChef.CommonTypes
 
         #region Exatape
         Exatape15m,
+        Exatape22m,
         Exatape22mAME,
+        Exatape28m,
         Exatape40m,
         Exatape45m,
         Exatape54m,
@@ -509,7 +501,7 @@ namespace DiscImageChef.CommonTypes
         Exatape76m,
         Exatape80m,
         Exatape106m,
-        Exatape106mXL,
+        Exatape160mXL,
         Exatape112m,
         Exatape125m,
         Exatape150m,
@@ -540,6 +532,7 @@ namespace DiscImageChef.CommonTypes
         SQ800,
         SQ1500,
         SQ2000,
+        SyJet,
         #endregion SyQuest
 
         #region Nintendo
@@ -679,9 +672,64 @@ namespace DiscImageChef.CommonTypes
         VXA3,
         #endregion VXA
 
+        #region Magneto-optical
+        /// <summary>5,25", M.O., ??? sectors, 1024 bytes/sector, ECMA-153, ISO 11560</summary>
+        ECMA_153,
+        /// <summary>5,25", M.O., ??? sectors, 512 bytes/sector, ECMA-153, ISO 11560</summary>
+        ECMA_153_512,
+        /// <summary>3,5", M.O., 249850 sectors, 512 bytes/sector, ECMA-154, ISO 10090</summary>
+        ECMA_154,
+        /// <summary>5,25", M.O., 904995 sectors, 512 bytes/sector, ECMA-183, ISO 13481</summary>
+        ECMA_183_512,
+        /// <summary>5,25", M.O., 498526 sectors, 1024 bytes/sector, ECMA-183, ISO 13481</summary>
+        ECMA_183,
+        /// <summary>5,25", M.O., 1128772 or 1163337 sectors, 512 bytes/sector, ECMA-183, ISO 13549</summary>
+        ECMA_184_512,
+        /// <summary>5,25", M.O., 603466 or 637041 sectors, 1024 bytes/sector, ECMA-183, ISO 13549</summary>
+        ECMA_184,
+        /// <summary>300mm, M.O., ??? sectors, 1024 bytes/sector, ECMA-189, ISO 13614</summary>
+        ECMA_189,
+        /// <summary>300mm, M.O., ??? sectors, 1024 bytes/sector, ECMA-190, ISO 13403</summary>
+        ECMA_190,
+        /// <summary>5,25", M.O., 936921 or 948770 sectors, 1024 bytes/sector, ECMA-195, ISO 13842</summary>
+        ECMA_195,
+        /// <summary>5,25", M.O., 1644581 or 1647371 sectors, 512 bytes/sector, ECMA-195, ISO 13842</summary>
+        ECMA_195_512,
+        /// <summary>3,5", M.O., 446325 sectors, 512 bytes/sector, ECMA-201, ISO 13963</summary>
+        ECMA_201,
+        /// <summary>3,5", M.O., 429975 sectors, 512 bytes/sector, embossed, ISO 13963</summary>
+        ECMA_201_ROM,
+        /// <summary>3,5", M.O., 371371 sectors, 1024 bytes/sector, ECMA-223</summary>
+        ECMA_223,
+        /// <summary>3,5", M.O., 694929 sectors, 512 bytes/sector, ECMA-223</summary>
+        ECMA_223_512,
+        /// <summary>5,25", M.O., 1244621 sectors, 1024 bytes/sector, ECMA-238, ISO 15486</summary>
+        ECMA_238,
+        /// <summary>3,5", M.O., 318988, 320332 or 321100 sectors, 2048 bytes/sector, ECMA-239, ISO 15498</summary>
+        ECMA_239,
+        /// <summary>356mm, M.O., 14476734 sectors, 1024 bytes/sector, ECMA-260, ISO 15898</summary>
+        ECMA_260,
+        /// <summary>356mm, M.O., 24445990 sectors, 1024 bytes/sector, ECMA-260, ISO 15898</summary>
+        ECMA_260_Double,
+        /// <summary>5,25", M.O., 1128134 sectors, 2048 bytes/sector, ECMA-280, ISO 18093</summary>
+        ECMA_280,
+        /// <summary>300mm, M.O., 7355716 sectors, 2048 bytes/sector, ECMA-317, ISO 20162</summary>
+        ECMA_317,
+        /// <summary>5,25", M.O., 1095840 sectors, 4096 bytes/sector, ECMA-322, ISO 22092</summary>
+        ECMA_322,
+        /// <summary>5,25", M.O., 2043664 sectors, 2048 bytes/sector, ECMA-322, ISO 22092</summary>
+        ECMA_322_2k,
+        /// <summary>3,5", M.O., 605846 sectors, 2048 bytes/sector, Cherry Book, GigaMo, ECMA-351, ISO 17346</summary>
+        GigaMo,
+        /// <summary>3,5", M.O., 1063146 sectors, 2048 bytes/sector, Cherry Book 2, GigaMo 2, ECMA-353, ISO 22533</summary>
+        GigaMo2,
+        UnknownMO,
+        #endregion Magneto-optical
+
         #region Other floppy standards
         CompactFloppy,
         DemiDiskette,
+        /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
         Floptical,
         HiFD,
         LS120,
@@ -713,13 +761,23 @@ namespace DiscImageChef.CommonTypes
         SmartMedia,
         xD,
         XQD,
+        DataPlay,
+        /// <summary>120mm, Phase-Change, 1298496 sectors, 512 bytes/sector, PD650, ECMA-240, ISO 15485</summary>
+        PD650,
+        /// <summary>120mm, Write-Once, 1281856 sectors, 512 bytes/sector, PD650, ECMA-240, ISO 15485</summary>
+        PD650_WORM,
         #endregion Miscellaneous
 
         #region Generic hard disks
         Microdrive,
         RDX,
-        GENERIC_HDD
+        /// <summary>Imation 320Gb RDX</summary>
+        RDX320,
+        GENERIC_HDD,
+        Zone_HDD,
+        // USB flash drives
+        FlashDrive
         #endregion Generic hard disks
     };
 }
-
+    

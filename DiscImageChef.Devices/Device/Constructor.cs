@@ -91,6 +91,9 @@ namespace DiscImageChef.Devices
                     throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", platformID));
             }
 
+            if (error)
+                throw new SystemException(String.Format("Error {0} opening device.", lastError));
+
             type = DeviceType.Unknown;
             scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
 
@@ -101,6 +104,9 @@ namespace DiscImageChef.Devices
             byte[] inqBuf;
 
             bool scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
+
+            if (error)
+                throw new SystemException(String.Format("Error {0} trying device.", lastError));
 
             #region USB
             if(platformID == DiscImageChef.Interop.PlatformID.Linux)
@@ -251,9 +257,9 @@ namespace DiscImageChef.Devices
 
                 if (Inquiry.HasValue)
                 {
-                    revision = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductRevisionLevel);
-                    model = StringHandlers.SpacePaddedToString(Inquiry.Value.ProductIdentification);
-                    manufacturer = StringHandlers.SpacePaddedToString(Inquiry.Value.VendorIdentification);
+                    revision = StringHandlers.CToString(Inquiry.Value.ProductRevisionLevel).Trim();
+                    model = StringHandlers.CToString(Inquiry.Value.ProductIdentification).Trim();
+                    manufacturer = StringHandlers.CToString(Inquiry.Value.VendorIdentification).Trim();
                     removable = Inquiry.Value.RMB;
 
                     scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;

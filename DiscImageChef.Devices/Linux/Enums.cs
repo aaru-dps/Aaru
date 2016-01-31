@@ -145,7 +145,7 @@ namespace DiscImageChef.Devices.Linux
         Unknown = -5
     }
 
-    enum LinuxIoctl : ulong
+    enum LinuxIoctl : uint
     {
         // SCSI IOCtls
         SG_GET_VERSION_NUM = 0x2282,

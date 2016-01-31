@@ -107,8 +107,7 @@ namespace DiscImageChef.Devices
             cdb[9] = (byte)(endMsf & 0xFF);
             cdb[10] = (byte)subchannel;
 
-            uint transferLength = (uint)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
-
+            uint transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
             buffer = new byte[blockSize * transferLength];
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);

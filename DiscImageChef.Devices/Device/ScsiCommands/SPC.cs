@@ -382,9 +382,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        public bool SpcPreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
         {
-            return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
+            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
         }
 
         /// <summary>
@@ -394,9 +394,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
+        public bool SpcAllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
         {
-            return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
+            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
         }
 
         /// <summary>
@@ -407,12 +407,12 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="prevent"><c>true</c> to prevent medium removal, <c>false</c> to allow it.</param>
-        public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration)
+        public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration)
         {
             if (prevent)
-                return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
+                return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
             else
-                return PreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
+                return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
         }
 
         /// <summary>
@@ -423,7 +423,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="preventMode">Prevention mode.</param>
-        public bool PreventAllowMediumRemoval(out byte[] senseBuffer, ScsiPreventAllowMode preventMode, uint timeout, out double duration)
+        public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, ScsiPreventAllowMode preventMode, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];

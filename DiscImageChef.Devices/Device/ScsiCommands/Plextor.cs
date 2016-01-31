@@ -54,7 +54,7 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool ReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, PlextorSubchannel subchannel, uint timeout, out double duration)
+        public bool PlextorReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint transferLength, PlextorSubchannel subchannel, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
