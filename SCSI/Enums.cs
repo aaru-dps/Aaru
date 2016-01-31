@@ -39,7 +39,7 @@ using System;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    enum PeripheralQualifiers : byte
+    public enum PeripheralQualifiers : byte
     {
         /// <summary>
         /// Peripheral qualifier: Device is connected and supported
@@ -159,7 +159,7 @@ namespace DiscImageChef.Decoders.SCSI
         UnknownDevice = 0x1F
     }
 
-    enum ANSIVersions : byte
+    public enum ANSIVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ANSI version
@@ -191,7 +191,7 @@ namespace DiscImageChef.Decoders.SCSI
         ANSI2008Version = 0x06
     }
 
-    enum ECMAVersions : byte
+    public enum ECMAVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ECMA version
@@ -203,7 +203,7 @@ namespace DiscImageChef.Decoders.SCSI
         ECMA111 = 0x01
     }
 
-    enum ISOVersions : byte
+    public enum ISOVersions : byte
     {
         /// <summary>
         /// Device does not claim conformance to any ISO/IEC version
@@ -215,7 +215,7 @@ namespace DiscImageChef.Decoders.SCSI
         ISO1995Version = 0x02
     }
 
-    enum SPIClocking : byte
+    public enum SPIClocking : byte
     {
         /// <summary>
         /// Supports only ST
@@ -235,7 +235,7 @@ namespace DiscImageChef.Decoders.SCSI
         STandDT = 0x03,
     }
 
-    enum TGPSValues : byte
+    public enum TGPSValues : byte
     {
         /// <summary>
         /// Assymetrical access not supported

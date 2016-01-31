@@ -204,9 +204,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat("Device vendor: {0}", VendorString.Prettify(StringHandlers.SpacePaddedToString(response.VendorIdentification))).AppendLine();
-            sb.AppendFormat("Device name: {0}", StringHandlers.SpacePaddedToString(response.ProductIdentification)).AppendLine();
-            sb.AppendFormat("Device release level: {0}", StringHandlers.SpacePaddedToString(response.ProductRevisionLevel)).AppendLine();
+            sb.AppendFormat("Device vendor: {0}", VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim())).AppendLine();
+            sb.AppendFormat("Device name: {0}", StringHandlers.CToString(response.ProductIdentification).Trim()).AppendLine();
+            sb.AppendFormat("Device release level: {0}", StringHandlers.CToString(response.ProductRevisionLevel).Trim()).AppendLine();
             switch ((PeripheralQualifiers)response.PeripheralQualifier)
             {
                 case PeripheralQualifiers.Supported:
