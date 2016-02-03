@@ -67,6 +67,8 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            Core.Statistics.AddDevice(dev);
+
             switch (dev.Type)
             {
                 case DeviceType.ATA:
@@ -86,6 +88,8 @@ namespace DiscImageChef.Commands
                 default:
                     throw new NotSupportedException("Unknown device type.");
             }
+
+            Core.Statistics.AddCommand("media-info");
         }
 
         static void doATAMediaInfo(string outputPrefix, Device dev)
@@ -1076,6 +1080,7 @@ namespace DiscImageChef.Commands
                 dskType = MediaType.FlashDrive;
 
             DicConsole.WriteLine("Media identified as {0}", dskType);
+            Core.Statistics.AddMedia(dskType, true);
 
             sense = dev.ReadMediaSerialNumber(out cmdBuf, out senseBuf, dev.Timeout, out duration);
             if (sense)

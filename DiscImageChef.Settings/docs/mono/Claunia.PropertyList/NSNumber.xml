@@ -1,0 +1,507 @@
+<Type Name="NSNumber" FullName="Claunia.PropertyList.NSNumber">
+  <TypeSignature Language="C#" Value="public class NSNumber : Claunia.PropertyList.NSObject, IComparable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NSNumber extends Claunia.PropertyList.NSObject implements class System.IComparable" />
+  <AssemblyInfo>
+    <AssemblyName>plist-cil</AssemblyName>
+    <AssemblyVersion>1.13.0.0</AssemblyVersion>
+    <AssemblyVersion>1.14.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Claunia.PropertyList.NSObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            A number whose value is either an integer, a real number or bool.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (bool b);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool b) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="b" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="b">The bool value.</param>
+        <summary>
+            Creates a bool number.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(float64 d) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="d">The real value.</param>
+        <summary>
+            Creates a real number.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (int i);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 i) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="i">The integer value.</param>
+        <summary>
+            Creates an integer number.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (long l);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 l) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="l" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="l">The long integer value.</param>
+        <summary>
+            Creates an integer number.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string text) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The textual representation of the number.</param>
+        <summary>
+            Creates a number from its textual representation.
+            </summary>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.Boolean.Parse(System.String)" />
+        <altmember cref="M:System.Int64.Parse(System.String)" />
+        <altmember cref="M:System.Double.Parse(System.String,System.IFormatProvider)" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSNumber (byte[] bytes, int type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] bytes, int32 type) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+        <Parameter Name="type" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The binary representation</param>
+        <param name="type">The type of number</param>
+        <summary>
+            Parses integers and real numbers from their binary representation.
+            <i>Note: real numbers are not yet supported.</i></summary>
+        <remarks>To be added.</remarks>
+        <altmember cref="F:Claunia.PropertyList.NSNumber.INTEGER" />
+        <altmember cref="F:Claunia.PropertyList.NSNumber.REAL" />
+      </Docs>
+    </Member>
+    <Member MemberName="BOOLEAN">
+      <MemberSignature Language="C#" Value="public const int BOOLEAN = 2;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 BOOLEAN = (2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>
+            Indicates that the number's value is bool.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object o) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">Object to compare to the current <see cref="T:Claunia.PropertyList.NSNumber" />.</param>
+        <summary>
+            Compares the current <see cref="T:Claunia.PropertyList.NSNumber" /> to the specified object.
+            </summary>
+        <returns>0 if the numbers are equal, 1 if the current <see cref="T:Claunia.PropertyList.NSNumber" /> is greater
+            than the argument and -1 if it is less, or the argument is not a number.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (Claunia.PropertyList.NSObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(class Claunia.PropertyList.NSObject obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="Claunia.PropertyList.NSObject" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:Claunia.PropertyList.NSObject" /> to compare with the current <see cref="T:Claunia.PropertyList.NSNumber" />.</param>
+        <summary>
+            Determines whether the specified <see cref="T:Claunia.PropertyList.NSObject" /> is equal to the current <see cref="T:Claunia.PropertyList.NSNumber" />.
+            </summary>
+        <returns>
+          <c>true</c> if the specified <see cref="T:Claunia.PropertyList.NSObject" /> is equal to the current
+            <see cref="T:Claunia.PropertyList.NSNumber" />; otherwise, <c>false</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The object to compare to.</param>
+        <summary>
+            Checks whether the other object is a NSNumber of the same value.
+            </summary>
+        <returns>Whether the objects are equal in terms of numeric value and type.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="floatValue">
+      <MemberSignature Language="C#" Value="public float floatValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 floatValue() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            The number's float value.
+            WARNING: Possible loss of precision if the value is outside the float range.
+            </summary>
+        <returns>The value of the number as float.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Serves as a hash function for a <see cref="T:Claunia.PropertyList.NSNumber" /> object.
+            </summary>
+        <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
+            hash table.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNSNumberType">
+      <MemberSignature Language="C#" Value="public int GetNSNumberType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetNSNumberType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets the type of this number's value.
+            </summary>
+        <returns>The type flag.</returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="F:Claunia.PropertyList.NSNumber.BOOLEAN" />
+        <altmember cref="F:Claunia.PropertyList.NSNumber.INTEGER" />
+        <altmember cref="F:Claunia.PropertyList.NSNumber.REAL" />
+      </Docs>
+    </Member>
+    <Member MemberName="INTEGER">
+      <MemberSignature Language="C#" Value="public const int INTEGER = 0;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 INTEGER = (0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>
+            Indicates that the number's value is an integer.
+            The number is stored as a .NET <see cref="T:System.Int64" />.
+            Its original value could have been char, short, int, long or even long long.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="isBoolean">
+      <MemberSignature Language="C#" Value="public bool isBoolean ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool isBoolean() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Checks whether the value of this NSNumber is a bool.
+            </summary>
+        <returns>Whether the number's value is a bool.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="isInteger">
+      <MemberSignature Language="C#" Value="public bool isInteger ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool isInteger() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Checks whether the value of this NSNumber is an integer.
+            </summary>
+        <returns>Whether the number's value is an integer.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="isReal">
+      <MemberSignature Language="C#" Value="public bool isReal ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool isReal() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Checks whether the value of this NSNumber is a real number.
+            </summary>
+        <returns>Whether the number's value is a real number.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="REAL">
+      <MemberSignature Language="C#" Value="public const int REAL = 1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 REAL = (1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>
+            Indicates that the number's value is a real number.
+            The number is stored as a .NET <see cref="T:System.Double" />.
+            Its original value could have been float or double.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToBool">
+      <MemberSignature Language="C#" Value="public bool ToBool ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool ToBool() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            The number's bool value.
+            </summary>
+        <returns>
+          <c>true</c> if the value is true or non-zero, <c>false</c> otherwise.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="C#" Value="public double ToDouble ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 ToDouble() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            The number's double value.
+            </summary>
+        <returns>The value of the number as double.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToInt">
+      <MemberSignature Language="C#" Value="public int ToInt ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 ToInt() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            The number's int value.
+            <i>Note: Even though the number's type might be INTEGER it can be larger than a Java int.
+            Use intValue() only if you are certain that it contains a number from the int range.
+            Otherwise the value might be innaccurate.</i></summary>
+        <returns>The value of the number as int.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToLong">
+      <MemberSignature Language="C#" Value="public long ToLong ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 ToLong() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            The number's long value.
+            </summary>
+        <returns>The value of the number as long</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:Claunia.PropertyList.NSNumber" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:Claunia.PropertyList.NSNumber" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

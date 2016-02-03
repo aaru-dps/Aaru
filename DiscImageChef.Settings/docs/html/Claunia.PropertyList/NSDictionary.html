@@ -1,0 +1,1790 @@
+<html>
+  <head>
+    <title>Claunia.PropertyList.NSDictionary</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+      a { text-decoration: none }
+
+      div.SideBar {
+        padding-left: 1em;
+        padding-right: 1em;
+        right: 0;
+        float: right;
+        border: thin solid black;
+        background-color: #f2f2f2;
+      }
+    
+      .CollectionTitle { font-weight: bold }
+      .PageTitle { font-size: 150%; font-weight: bold }
+
+      .Summary { }
+      .Signature { }          
+      .Remarks { }
+      .Members { }
+      .Copyright { }
+      
+      .Section { font-size: 125%; font-weight: bold }
+      p.Summary {
+        margin-left: 1em;
+      }
+      .SectionBox { margin-left: 2em }
+      .NamespaceName { font-size: 105%; font-weight: bold }
+      .NamespaceSumary { }
+      .MemberName { font-size: 115%; font-weight: bold; margin-top: 1em }
+      .Subsection { font-size: 105%; font-weight: bold }
+      .SubsectionBox { margin-left: 2em; margin-bottom: 1em }
+
+      .CodeExampleTable { background-color: #f5f5dd; border: thin solid black; padding: .25em; }
+      
+      .TypesListing {
+        border-collapse: collapse;
+      }
+
+      td {
+        vertical-align: top;
+      }
+      th {
+        text-align: left;
+      }
+
+      .TypesListing td { 
+        margin: 0px;  
+        padding: .25em;
+        border: solid gray 1px;
+      }
+
+      .TypesListing th { 
+        margin: 0px;  
+        padding: .25em;
+        background-color: #f2f2f2;
+        border: solid gray 1px;
+      }
+
+      div.Footer {
+        border-top: 1px solid gray;
+        margin-top: 1.5em;
+        padding-top: 0.6em;
+        text-align: center;
+        color: gray;
+      }
+
+      span.NotEntered /* Documentation for this section has not yet been entered */ {
+        font-style: italic;
+        color: red;	
+      }
+
+      div.Header {
+        background: #B0C4DE;
+        border: double;
+        border-color: white;
+        border-width: 7px;
+        padding: 0.5em;
+      }
+
+      div.Header * {
+        font-size: smaller;
+      }
+
+      div.Note {
+      }
+
+      i.ParamRef {
+      }
+
+      i.subtitle {
+      }
+
+      ul.TypeMembersIndex {
+        text-align: left;
+        background: #F8F8F8;
+      }
+
+      ul.TypeMembersIndex li {
+        display: inline;
+        margin:  0.5em;
+      }
+
+      table.HeaderTable {
+      }
+
+      table.SignatureTable {
+      }
+
+      table.Documentation, table.Enumeration, table.TypeDocumentation {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table.Documentation tr th, table.TypeMembers tr th, table.Enumeration tr th, table.TypeDocumentation tr th {
+        background: whitesmoke;
+        padding: 0.8em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: bottom;
+      }
+
+      table.Documentation tr td, table.TypeMembers tr td, table.Enumeration tr td, table.TypeDocumentation tr td {
+        padding: 0.5em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.TypeMembers {
+        border: 1px solid #C0C0C0;
+        width: 100%;
+      }
+
+      table.TypeMembers tr td {
+        background: #F8F8F8;
+        border: white;
+      }
+
+      table.Documentation {
+      }
+
+      table.TypeMembers {
+      }
+
+      div.CodeExample {
+        width: 100%;
+        border: 1px solid #DDDDDD;
+        background-color: #F8F8F8;
+      }
+
+      div.CodeExample p {
+        margin: 0.5em;
+        border-bottom: 1px solid #DDDDDD;
+      }
+
+      div.CodeExample div {
+        margin: 0.5em;
+      }
+
+      h4 {
+        margin-bottom: 0;
+      }
+
+      div.Signature {
+        border: 1px solid #C0C0C0;
+        background: #F2F2F2;
+        padding: 1em;
+      }
+    </style>
+    <script type="text/JavaScript">
+      function toggle_display (block) {
+        var w = document.getElementById (block);
+        var t = document.getElementById (block + ":toggle");
+        if (w.style.display == "none") {
+          w.style.display = "block";
+          t.innerHTML = "⊟";
+        } else {
+          w.style.display = "none";
+          t.innerHTML = "⊞";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="CollectionTitle">
+      <a href="../index.html">plist-cil</a> : <a href="index.html">Claunia.PropertyList Namespace</a></div>
+    <div class="SideBar">
+      <p>
+        <a href="#T:Claunia.PropertyList.NSDictionary">Overview</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.NSDictionary:Signature">Signature</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.NSDictionary:Docs">Remarks</a>
+      </p>
+      <p>
+        <a href="#Members">Members</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.NSDictionary:Members">Member Details</a>
+      </p>
+    </div>
+    <h1 class="PageTitle" id="T:Claunia.PropertyList.NSDictionary">NSDictionary  Class</h1>
+    <p class="Summary" id="T:Claunia.PropertyList.NSDictionary:Summary">
+      <p>
+            A NSDictionary is a collection of keys and values, essentially a Dictionary.
+            The keys are simple Strings whereas the values can be any kind of NSObject.
+            </p>
+      <p>
+            You can access the keys through the function <a href="../Claunia.PropertyList/NSDictionary.html#P:Claunia.PropertyList.NSDictionary.Keys">NSDictionary.Keys</a>.
+            </p>
+      <p>
+            Access to the objects stored for each key is given through the function
+            <a href="../Claunia.PropertyList/NSDictionary.html#M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String)">NSDictionary.ObjectForKey(string)</a>.
+            </p>
+    </p>
+    <div>
+      <h2>Syntax</h2>
+      <div class="Signature" id="T:Claunia.PropertyList.NSDictionary:Signature">public class  <b>NSDictionary</b> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>,	<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.ICollection`1">ICollection&lt;KeyValuePair&lt;string, NSObject&gt;&gt;</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.IDictionary`2">IDictionary&lt;string, NSObject&gt;</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.IEnumerable`1">IEnumerable&lt;KeyValuePair&lt;string, NSObject&gt;&gt;</a></div>
+    </div>
+    <div class="Remarks" id="T:Claunia.PropertyList.NSDictionary:Docs">
+      <h2 class="Section">Remarks</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.NSDictionary:Docs:Remarks">
+        <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+      </div>
+      <h2 class="Section">Requirements</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.NSDictionary:Docs:Version Information">
+        <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+      <h2 class="Section" id="Members">Members</h2>
+      <div class="SectionBox" id="_Members">
+        <p>
+								See Also: Inherited members from
+								<a href="../Claunia.PropertyList/NSObject.html">NSObject</a>.
+							</p>
+        <h2 class="Section">Public Constructors</h2>
+        <div class="SectionBox" id="Public Constructors">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <b>
+                      <a href="#C:Claunia.PropertyList.NSDictionary()">NSDictionary</a>
+                    </b>()</div>
+                </td>
+                <td>
+            Creates a new empty NSDictionary.
+            </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Public Properties</h2>
+        <div class="SectionBox" id="Public Properties">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>[read-only]<div></div></td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.Count">Count</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>
+                  </i>. 
+            Gets the count of items in the current instance.
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>[read-only]<div></div></td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.IsEmpty">IsEmpty</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a>
+                  </i>. 
+            Gets a value indicating whether this instance is empty.
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>[read-only]<div></div></td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.IsReadOnly">IsReadOnly</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a>
+                  </i>. 
+            Gets a value indicating whether this instance is read only.
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                    <i>default property</i>
+                  </div>
+                  <div>
+                  </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.Item(System.String)">Item</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)</td>
+                <td>
+                  <i>
+                    <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>
+                  </i>. 
+            Gets or sets the <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> at the specified index.
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>[read-only]<div></div></td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.Keys">Keys</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.ICollection`1">ICollection&lt;string&gt;</a>
+                  </i>. 
+            Gets an array with all the keys contained in the current instance.
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>[read-only]<div></div></td>
+                <td>
+                  <b>
+                    <a href="#P:Claunia.PropertyList.NSDictionary.Values">Values</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.ICollection`1">ICollection&lt;NSObject&gt;</a>
+                  </i>. 
+            Gets an array with all the objects contained in the current instance.
+            </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Public Methods</h2>
+        <div class="SectionBox" id="Public Methods">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a>)<blockquote>
+            Adds the specified item.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject)">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<blockquote>
+            Add the specified key and value.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean)">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a>)<blockquote>
+            Puts a new key-value pair into this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double)">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Double">double</a>)<blockquote>
+            Puts a new key-value pair into this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64)">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int64">long</a>)<blockquote>
+            Puts a new key-value pair into this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object)">Add</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>)<blockquote>
+            Puts a new key-value pair into this dictionary.
+            If the value is null, no operation will be performed on the dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Clear()">Clear</a>
+                  </b>()<blockquote>
+            Clears this instance.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Contains</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks if the current instance contains the specified item.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object)">ContainsKey</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks if the specified object key is contained in the current instance.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String)">ContainsKey</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks if there is any item contained in the current instance corresponding with the specified key.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject)">ContainsValue</a>
+                  </b>(<a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks if there is any item contained in the current instance corresponding with the specified value.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[])">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[])<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.DateTime">DateTime</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Double">double</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int64">long</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks if the current instance contains the object corresponding to the specified key.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String)">ContainsValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Checks whether a given value is contained in this dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32)">CopyTo</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a>[], <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>)<blockquote>
+            Copies the <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2.ValueCollection">System.Collections.Generic.Dictionary`2.ValueCollection</a> elements to an existing one-dimensional <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Array">Array</a>, starting at the specified array index.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>override </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject)">Equals</a>
+                  </b>(<a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Determines whether the specified <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> is equal to the current <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a>.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>abstract </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="../Claunia.PropertyList/NSObject.html#M:Claunia.PropertyList.NSObject.Equals(Claunia.PropertyList.NSObject)">Equals</a>
+                  </b>(<a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Determines if the specific NSObject is the same as the NSObject overriding this method.
+             (<i>Inherited from <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>.</i>)</blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Get(System.Object)">Get</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>)<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Gets the <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> corresponding to the specified key from the current instance.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.GetDictionary()">GetDictionary</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2">Dictionary&lt;string, NSObject&gt;</a></nobr><blockquote>
+            Gets the hashmap which stores the keys and values of this dictionary.
+            Changes to the hashmap's contents are directly reflected in this
+            dictionary.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.GetEnumerator()">GetEnumerator</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.IEnumerator`1">IEnumerator&lt;KeyValuePair&lt;string, NSObject&gt;&gt;</a></nobr><blockquote>
+            Gets the enumerator.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>override </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.GetHashCode()">GetHashCode</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a></nobr><blockquote>
+            Serves as a hash function for a <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a> object.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String)">ObjectForKey</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Gets the NSObject stored for the given key.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Remove</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Removes the specified item.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Remove(System.Object)">Remove</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Removes the item corresponding to the specified key from the current instance, if found.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.Remove(System.String)">Remove</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Removes the item belonging to the specified key.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList()">ToASCIIPropertyList</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a></nobr><blockquote>
+            Generates a valid ASCII property list which has this NSDictionary as its
+            root object. The generated property list complies with the format as
+            described in https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/PropertyLists/OldStylePlists/OldStylePLists.html
+            Property List Programming Guide - Old-Style ASCII Property Lists.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList()">ToGnuStepASCIIPropertyList</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a></nobr><blockquote>
+            Generates a valid ASCII property list in GnuStep format which has this
+            NSDictionary as its root object. The generated property list complies with
+            the format as described in http://www.gnustep.org/resources/documentation/Developer/Base/Reference/NSPropertyList.html
+            GnuStep - NSPropertyListSerialization class documentation.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="../Claunia.PropertyList/NSObject.html#M:Claunia.PropertyList.NSObject.ToObject()">ToObject</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a></nobr><blockquote>
+            Converts this NSObject into an equivalent object
+            of the .NET Runtime Environment.
+            <p><a href="../Claunia.PropertyList/NSArray.html">Claunia.PropertyList.NSArray</a> objects are converted to arrays.</p><p><a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a> objects are converted to objects extending the <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2">Dictionary`2</a> class.</p><p><a href="../Claunia.PropertyList/NSSet.html">Claunia.PropertyList.NSSet</a> objects are converted to objects extending the <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.List`1">List`1</a> class.</p><p><a href="../Claunia.PropertyList/NSNumber.html">Claunia.PropertyList.NSNumber</a> objects are converted to primitive number values (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int64">long</a>, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Double">double</a> or <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a>).</p><p><a href="../Claunia.PropertyList/NSString.html">Claunia.PropertyList.NSString</a> objects are converted to <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> objects.</p><p><a href="../Claunia.PropertyList/NSData.html">Claunia.PropertyList.NSData</a> objects are converted to <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a> arrays.</p><p><a href="../Claunia.PropertyList/NSDate.html">Claunia.PropertyList.NSDate</a> objects are converted to <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.DateTime">DateTime</a> objects.</p><p><a href="../Claunia.PropertyList/UID.html">Claunia.PropertyList.UID</a> objects are converted to <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a> arrays.</p> (<i>Inherited from <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>.</i>)</blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="../Claunia.PropertyList/NSObject.html#M:Claunia.PropertyList.NSObject.ToXmlPropertyList()">ToXmlPropertyList</a>
+                  </b>()<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a></nobr><blockquote>
+            Generates a valid XML property list including headers using this object as root.
+             (<i>Inherited from <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>.</i>)</blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@)">TryGetValue</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>, <i>out</i> <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a></nobr><blockquote>
+            Tries to get the item corresponding to the specified key
+            </blockquote></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Explicitly Implemented Interface Members</h2>
+        <div class="SectionBox" id="Explicitly Implemented Interface Members">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td>
+                  <a href="#M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator()">
+                    <b>IEnumerable.GetEnumerator</b>
+                  </a>
+                </td>
+                <td>
+                  <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Members" id="T:Claunia.PropertyList.NSDictionary:Members">
+      <h2 class="Section" id="MemberDetails">Member Details</h2>
+      <div class="SectionBox" id="_MemberDetails">
+        <h3 id="C:Claunia.PropertyList.NSDictionary()">NSDictionary Constructor</h3>
+        <blockquote id="C:Claunia.PropertyList.NSDictionary():member">
+          <div class="msummary">
+            Creates a new empty NSDictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public  <b>NSDictionary</b> ()</div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="C:Claunia.PropertyList.NSDictionary():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="C:Claunia.PropertyList.NSDictionary():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):member">
+          <div class="msummary">
+            Adds the specified item.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a> item)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Parameters">
+            <dl>
+              <dt>
+                <i>item</i>
+              </dt>
+              <dd>Item.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject)">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Add the specified key and value.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> value)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+              <dt>
+                <i>value</i>
+              </dt>
+              <dd>Value.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean)">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean):member">
+          <div class="msummary">
+            Puts a new key-value pair into this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> obj)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>The key.</dd>
+              <dt>
+                <i>obj</i>
+              </dt>
+              <dd>The value.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Boolean):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double)">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double):member">
+          <div class="msummary">
+            Puts a new key-value pair into this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Double">double</a> obj)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>The key.</dd>
+              <dt>
+                <i>obj</i>
+              </dt>
+              <dd>The value.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Double):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64)">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64):member">
+          <div class="msummary">
+            Puts a new key-value pair into this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int64">long</a> obj)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>The key.</dd>
+              <dt>
+                <i>obj</i>
+              </dt>
+              <dd>The value.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Int64):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object)">Add Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object):member">
+          <div class="msummary">
+            Puts a new key-value pair into this dictionary.
+            If the value is null, no operation will be performed on the dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Add</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a> obj)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>The key.</dd>
+              <dt>
+                <i>obj</i>
+              </dt>
+              <dd>The value. Supported object types are numbers, byte-arrays, dates, strings and arrays or sets of those.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Add(System.String,System.Object):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Clear()">Clear Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Clear():member">
+          <div class="msummary">
+            Clears this instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Clear</b> ()</div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Clear():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Clear():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Contains Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):member">
+          <div class="msummary">
+            Checks if the current instance contains the specified item.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>Contains</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a> item)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Parameters">
+            <dl>
+              <dt>
+                <i>item</i>
+              </dt>
+              <dd>Item.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Returns">
+            <tt>true</tt> if it is found, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Contains(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object)">ContainsKey Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object):member">
+          <div class="msummary">
+            Checks if the specified object key is contained in the current instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsKey</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object):Returns">
+            <tt>true</tt>, if key is contained, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.Object):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String)">ContainsKey Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String):member">
+          <div class="msummary">
+            Checks if there is any item contained in the current instance corresponding with the specified key.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsKey</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String):Returns">
+            <tt>true</tt>, if key was contained, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsKey(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Checks if there is any item contained in the current instance corresponding with the specified value.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="../Claunia.PropertyList/NSObject.html">NSObject</a> value)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>value</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject):Returns">
+            <tt>true</tt>, if value is contained, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Boolean):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[])">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[]):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[] val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[]):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[]):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[]):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Byte[]):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.DateTime">DateTime</a> val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.DateTime):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Double">double</a> val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Double):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int64">long</a> val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Int64):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object):member">
+          <div class="msummary">
+            Checks if the current instance contains the object corresponding to the specified key.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a> value)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object):Parameters">
+            <dl>
+              <dt>
+                <i>value</i>
+              </dt>
+              <dd>Object to search up in the current instance.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object):Returns">
+            <tt>true</tt>, if value is contained, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.Object):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String)">ContainsValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String):member">
+          <div class="msummary">
+            Checks whether a given value is contained in this dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>ContainsValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> val)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>val</i>
+              </dt>
+              <dd>The value that will be searched for.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String):Returns">Whether the key is contained in this dictionary.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ContainsValue(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32)">CopyTo Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32):member">
+          <div class="msummary">
+            Copies the <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2.ValueCollection">System.Collections.Generic.Dictionary`2.ValueCollection</a> elements to an existing one-dimensional <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Array">Array</a>, starting at the specified array index.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>CopyTo</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a>[] array, <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> arrayIndex)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32):Parameters">
+            <dl>
+              <dt>
+                <i>array</i>
+              </dt>
+              <dd>The one-dimensional <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Array">Array</a> that is the destination of the elements copied from <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2.ValueCollection">System.Collections.Generic.Dictionary`2.ValueCollection</a>. The <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Array">Array</a> must have zero-based indexing.</dd>
+              <dt>
+                <i>arrayIndex</i>
+              </dt>
+              <dd>The zero-based index in array at which copying begins.</dd>
+            </dl>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.CopyTo(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}[],System.Int32):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.Count">Count Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.Count:member">
+          <div class="msummary">
+            Gets the count of items in the current instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>Count</b>  { get; }</div>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.Count:Value">How many items are contained in the current instance.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Count:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Count:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject)">Equals Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Determines whether the specified <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> is equal to the current <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a>.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public override <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>Equals</b> (<a href="../Claunia.PropertyList/NSObject.html">NSObject</a> obj)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>obj</i>
+              </dt>
+              <dd>The <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> to compare with the current <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a>.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject):Returns">
+            <tt>true</tt> if the specified <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> is equal to the current
+            <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a>; otherwise, <tt>false</tt>.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Equals(Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Get(System.Object)">Get Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Get(System.Object):member">
+          <div class="msummary">
+            Gets the <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> corresponding to the specified key from the current instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>Get</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Get(System.Object):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Get(System.Object):Returns">The object corresponding to the specified key, null if not found in the current instance.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Get(System.Object):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Get(System.Object):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.GetDictionary()">GetDictionary Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.GetDictionary():member">
+          <div class="msummary">
+            Gets the hashmap which stores the keys and values of this dictionary.
+            Changes to the hashmap's contents are directly reflected in this
+            dictionary.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.Dictionary`2">Dictionary&lt;string, NSObject&gt;</a> <b>GetDictionary</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.GetDictionary():Returns">The hashmap which is used by this dictionary to store its contents.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetDictionary():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetDictionary():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.GetEnumerator()">GetEnumerator Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.GetEnumerator():member">
+          <div class="msummary">
+            Gets the enumerator.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.IEnumerator`1">IEnumerator&lt;KeyValuePair&lt;string, NSObject&gt;&gt;</a> <b>GetEnumerator</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.GetEnumerator():Returns">The enumerator.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetEnumerator():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetEnumerator():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.GetHashCode()">GetHashCode Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.GetHashCode():member">
+          <div class="msummary">
+            Serves as a hash function for a <a href="../Claunia.PropertyList/NSDictionary.html">Claunia.PropertyList.NSDictionary</a> object.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public override <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>GetHashCode</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.GetHashCode():Returns">A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
+            hash table.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetHashCode():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.GetHashCode():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.IsEmpty">IsEmpty Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.IsEmpty:member">
+          <div class="msummary">
+            Gets a value indicating whether this instance is empty.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>IsEmpty</b>  { get; }</div>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.IsEmpty:Value">
+            <tt>true</tt> if this instance is empty; otherwise, <tt>false</tt>.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.IsEmpty:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.IsEmpty:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.IsReadOnly">IsReadOnly Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.IsReadOnly:member">
+          <div class="msummary">
+            Gets a value indicating whether this instance is read only.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>IsReadOnly</b>  { get; }</div>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.IsReadOnly:Value">
+            <tt>true</tt> if this instance is read only; otherwise, <tt>false</tt>.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.IsReadOnly:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.IsReadOnly:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.Item(System.String)">Item Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.Item(System.String):member">
+          <div class="msummary">
+            Gets or sets the <a href="../Claunia.PropertyList/NSObject.html">Claunia.PropertyList.NSObject</a> at the specified index.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">
+            <p>
+              <i>This is the default property for this class.</i>
+            </p>public <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> this [<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> index] { get; set; }</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.Item(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>index</i>
+              </dt>
+              <dd>Index.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.Item(System.String):Value">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Item(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Item(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.Keys">Keys Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.Keys:member">
+          <div class="msummary">
+            Gets an array with all the keys contained in the current instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.ICollection`1">ICollection&lt;string&gt;</a> <b>Keys</b>  { get; }</div>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.Keys:Value">The keys.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Keys:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Keys:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String)">ObjectForKey Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String):member">
+          <div class="msummary">
+            Gets the NSObject stored for the given key.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>ObjectForKey</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>The key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String):Returns">The object.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ObjectForKey(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject})">Remove Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):member">
+          <div class="msummary">
+            Removes the specified item.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>Remove</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.KeyValuePair`2">KeyValuePair&lt;string, NSObject&gt;</a> item)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Parameters">
+            <dl>
+              <dt>
+                <i>item</i>
+              </dt>
+              <dd>Item to remove.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Returns">
+            <tt>true</tt> if successfully removed, <tt>false</tt> if not, or if item is not in current instance.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Collections.Generic.KeyValuePair{System.String,Claunia.PropertyList.NSObject}):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object)">Remove Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object):member">
+          <div class="msummary">
+            Removes the item corresponding to the specified key from the current instance, if found.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>Remove</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object):Returns">
+            <tt>true</tt>, if  removed, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.Object):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.Remove(System.String)">Remove Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.Remove(System.String):member">
+          <div class="msummary">
+            Removes the item belonging to the specified key.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>Remove</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.String):Returns">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.Remove(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator()">System.Collections.IEnumerable.GetEnumerator Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator():member">
+          <div class="msummary">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2>Syntax</h2>
+          <div class="Signature">
+            <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.IEnumerator">IEnumerator</a> <b>System.Collections.IEnumerable.GetEnumerator</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator():Returns">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.System#Collections#IEnumerable#GetEnumerator():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList()">ToASCIIPropertyList Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList():member">
+          <div class="msummary">
+            Generates a valid ASCII property list which has this NSDictionary as its
+            root object. The generated property list complies with the format as
+            described in https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/PropertyLists/OldStylePlists/OldStylePLists.html
+            Property List Programming Guide - Old-Style ASCII Property Lists.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> <b>ToASCIIPropertyList</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList():Returns">ASCII representation of this object.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ToASCIIPropertyList():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList()">ToGnuStepASCIIPropertyList Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList():member">
+          <div class="msummary">
+            Generates a valid ASCII property list in GnuStep format which has this
+            NSDictionary as its root object. The generated property list complies with
+            the format as described in http://www.gnustep.org/resources/documentation/Developer/Base/Reference/NSPropertyList.html
+            GnuStep - NSPropertyListSerialization class documentation.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> <b>ToGnuStepASCIIPropertyList</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList():Returns">GnuStep ASCII representation of this object.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.ToGnuStepASCIIPropertyList():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@)">TryGetValue Method</h3>
+        <blockquote id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@):member">
+          <div class="msummary">
+            Tries to get the item corresponding to the specified key
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Boolean">bool</a> <b>TryGetValue</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> key, <i>out</i> <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> value)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@):Parameters">
+            <dl>
+              <dt>
+                <i>key</i>
+              </dt>
+              <dd>Key.</dd>
+              <dt>
+                <i>value</i>
+              </dt>
+              <dd>Where to store the value.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@):Returns">
+            <tt>true</tt>, if get value was successfully found and retrieved, <tt>false</tt> otherwise.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.NSDictionary.TryGetValue(System.String,Claunia.PropertyList.NSObject@):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="P:Claunia.PropertyList.NSDictionary.Values">Values Property</h3>
+        <blockquote id="P:Claunia.PropertyList.NSDictionary.Values:member">
+          <div class="msummary">
+            Gets an array with all the objects contained in the current instance.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Collections.Generic.ICollection`1">ICollection&lt;NSObject&gt;</a> <b>Values</b>  { get; }</div>
+          <h4 class="Subsection">Value</h4>
+          <blockquote class="SubsectionBox" id="P:Claunia.PropertyList.NSDictionary.Values:Value">The objects.</blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Values:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="P:Claunia.PropertyList.NSDictionary.Values:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+      </div>
+    </div>
+    <hr size="1" />
+    <div class="Copyright">
+    </div>
+  </body>
+</html>

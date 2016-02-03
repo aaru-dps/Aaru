@@ -80,6 +80,8 @@ namespace DiscImageChef.PartPlugins
 
             byte[] APMB_sector = imagePlugin.ReadSector(0);
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
             APMB.signature = BigEndianBitConverter.ToUInt16(APMB_sector, 0x00);
             APMB.sector_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x02);
             APMB.sectors = BigEndianBitConverter.ToUInt32(APMB_sector, 0x04);
@@ -90,6 +92,17 @@ namespace DiscImageChef.PartPlugins
             APMB.first_driver_blk = BigEndianBitConverter.ToUInt32(APMB_sector, 0x12);
             APMB.driver_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x16);
             APMB.operating_system = BigEndianBitConverter.ToUInt16(APMB_sector, 0x18);
+
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.signature = {0:X4}", APMB.signature);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.sector_size = {0}", APMB.sector_size);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.sectors = {0}", APMB.sectors);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved1 = {0:X4}", APMB.reserved1);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved2 = {0:X4}", APMB.reserved2);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved3 = {0:X8}", APMB.reserved3);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.driver_entries = {0}", APMB.driver_entries);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.first_driver_blk = {0}", APMB.first_driver_blk);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.driver_size = {0}", APMB.driver_size);
+            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.operating_system = {0}", APMB.operating_system);
 
             ulong first_sector = 0;
 

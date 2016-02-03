@@ -1,0 +1,1612 @@
+<html>
+  <head>
+    <title>Claunia.PropertyList.ASCIIPropertyListParser</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+      a { text-decoration: none }
+
+      div.SideBar {
+        padding-left: 1em;
+        padding-right: 1em;
+        right: 0;
+        float: right;
+        border: thin solid black;
+        background-color: #f2f2f2;
+      }
+    
+      .CollectionTitle { font-weight: bold }
+      .PageTitle { font-size: 150%; font-weight: bold }
+
+      .Summary { }
+      .Signature { }          
+      .Remarks { }
+      .Members { }
+      .Copyright { }
+      
+      .Section { font-size: 125%; font-weight: bold }
+      p.Summary {
+        margin-left: 1em;
+      }
+      .SectionBox { margin-left: 2em }
+      .NamespaceName { font-size: 105%; font-weight: bold }
+      .NamespaceSumary { }
+      .MemberName { font-size: 115%; font-weight: bold; margin-top: 1em }
+      .Subsection { font-size: 105%; font-weight: bold }
+      .SubsectionBox { margin-left: 2em; margin-bottom: 1em }
+
+      .CodeExampleTable { background-color: #f5f5dd; border: thin solid black; padding: .25em; }
+      
+      .TypesListing {
+        border-collapse: collapse;
+      }
+
+      td {
+        vertical-align: top;
+      }
+      th {
+        text-align: left;
+      }
+
+      .TypesListing td { 
+        margin: 0px;  
+        padding: .25em;
+        border: solid gray 1px;
+      }
+
+      .TypesListing th { 
+        margin: 0px;  
+        padding: .25em;
+        background-color: #f2f2f2;
+        border: solid gray 1px;
+      }
+
+      div.Footer {
+        border-top: 1px solid gray;
+        margin-top: 1.5em;
+        padding-top: 0.6em;
+        text-align: center;
+        color: gray;
+      }
+
+      span.NotEntered /* Documentation for this section has not yet been entered */ {
+        font-style: italic;
+        color: red;	
+      }
+
+      div.Header {
+        background: #B0C4DE;
+        border: double;
+        border-color: white;
+        border-width: 7px;
+        padding: 0.5em;
+      }
+
+      div.Header * {
+        font-size: smaller;
+      }
+
+      div.Note {
+      }
+
+      i.ParamRef {
+      }
+
+      i.subtitle {
+      }
+
+      ul.TypeMembersIndex {
+        text-align: left;
+        background: #F8F8F8;
+      }
+
+      ul.TypeMembersIndex li {
+        display: inline;
+        margin:  0.5em;
+      }
+
+      table.HeaderTable {
+      }
+
+      table.SignatureTable {
+      }
+
+      table.Documentation, table.Enumeration, table.TypeDocumentation {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table.Documentation tr th, table.TypeMembers tr th, table.Enumeration tr th, table.TypeDocumentation tr th {
+        background: whitesmoke;
+        padding: 0.8em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: bottom;
+      }
+
+      table.Documentation tr td, table.TypeMembers tr td, table.Enumeration tr td, table.TypeDocumentation tr td {
+        padding: 0.5em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.TypeMembers {
+        border: 1px solid #C0C0C0;
+        width: 100%;
+      }
+
+      table.TypeMembers tr td {
+        background: #F8F8F8;
+        border: white;
+      }
+
+      table.Documentation {
+      }
+
+      table.TypeMembers {
+      }
+
+      div.CodeExample {
+        width: 100%;
+        border: 1px solid #DDDDDD;
+        background-color: #F8F8F8;
+      }
+
+      div.CodeExample p {
+        margin: 0.5em;
+        border-bottom: 1px solid #DDDDDD;
+      }
+
+      div.CodeExample div {
+        margin: 0.5em;
+      }
+
+      h4 {
+        margin-bottom: 0;
+      }
+
+      div.Signature {
+        border: 1px solid #C0C0C0;
+        background: #F2F2F2;
+        padding: 1em;
+      }
+    </style>
+    <script type="text/JavaScript">
+      function toggle_display (block) {
+        var w = document.getElementById (block);
+        var t = document.getElementById (block + ":toggle");
+        if (w.style.display == "none") {
+          w.style.display = "block";
+          t.innerHTML = "⊟";
+        } else {
+          w.style.display = "none";
+          t.innerHTML = "⊞";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="CollectionTitle">
+      <a href="../index.html">plist-cil</a> : <a href="index.html">Claunia.PropertyList Namespace</a></div>
+    <div class="SideBar">
+      <p>
+        <a href="#T:Claunia.PropertyList.ASCIIPropertyListParser">Overview</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.ASCIIPropertyListParser:Signature">Signature</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.ASCIIPropertyListParser:Docs">Remarks</a>
+      </p>
+      <p>
+        <a href="#Members">Members</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.ASCIIPropertyListParser:Members">Member Details</a>
+      </p>
+    </div>
+    <h1 class="PageTitle" id="T:Claunia.PropertyList.ASCIIPropertyListParser">ASCIIPropertyListParser  Class</h1>
+    <p class="Summary" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Summary">
+      <p>
+            Parser for ASCII property lists. Supports Apple OS X/iOS and GnuStep/NeXTSTEP format.
+            This parser is based on the recursive descent paradigm, but the underlying grammar
+            is not explicitely defined.
+            </p>
+      <p>
+            Resources on ASCII property list format:
+            </p>
+      <p>
+            https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/PropertyLists/OldStylePlists/OldStylePLists.html
+            </p>
+      <p>
+            Property List Programming Guide - Old-Style ASCII Property Lists
+            </p>
+      <p>
+            http://www.gnustep.org/resources/documentation/Developer/Base/Reference/NSPropertyList.html
+            </p>
+      <p>
+            GnuStep - NSPropertyListSerialization class documentation
+            </p>
+    </p>
+    <div>
+      <h2>Syntax</h2>
+      <div class="Signature" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Signature">public class  <b>ASCIIPropertyListParser</b></div>
+    </div>
+    <div class="Remarks" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Docs">
+      <h2 class="Section">Remarks</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Docs:Remarks">
+        <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+      </div>
+      <h2 class="Section">Requirements</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Docs:Version Information">
+        <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+      <h2 class="Section" id="Members">Members</h2>
+      <div class="SectionBox" id="_Members">
+        <p>
+								See Also: Inherited members from
+								<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>.
+							</p>
+        <h2 class="Section">Protected Constructors</h2>
+        <div class="SectionBox" id="Protected Constructors">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <b>
+                      <a href="#C:Claunia.PropertyList.ASCIIPropertyListParser()">ASCIIPropertyListParser</a>
+                    </b>()</div>
+                </td>
+                <td>
+                  <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Public Fields</h2>
+        <div class="SectionBox" id="Public Fields">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_BEGIN_TOKEN">ARRAY_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSArray start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_END_TOKEN">ARRAY_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSArray end
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_ITEM_DELIMITER_TOKEN">ARRAY_ITEM_DELIMITER_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSArray item delimiter
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.COMMENT_BEGIN_TOKEN">COMMENT_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for comment start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_BEGIN_TOKEN">DATA_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSData start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_END_TOKEN">DATA_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSData end
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_BEGIN_TOKEN">DATA_GSBOOL_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of GSBoolean start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_FALSE_TOKEN">DATA_GSBOOL_FALSE_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for GSBoolen's <tt>false</tt></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_TRUE_TOKEN">DATA_GSBOOL_TRUE_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for GSBoolen's <tt>true</tt></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSDATE_BEGIN_TOKEN">DATA_GSDATE_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of GSDate start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSINT_BEGIN_TOKEN">DATA_GSINT_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for GSInteger
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSOBJECT_BEGIN_TOKEN">DATA_GSOBJECT_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of GSObject start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSREAL_BEGIN_TOKEN">DATA_GSREAL_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for GSReal
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_DATE_TIME_DELIMITER">DATE_APPLE_DATE_TIME_DELIMITER</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for NSDate date and time delimiter
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_END_TOKEN">DATE_APPLE_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for NSDate end
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_DATE_FIELD_DELIMITER">DATE_DATE_FIELD_DELIMITER</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for NSDate date field delimited
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_GS_DATE_TIME_DELIMITER">DATE_GS_DATE_TIME_DELIMITER</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for GSDate date and time delimiter
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_TIME_FIELD_DELIMITER">DATE_TIME_FIELD_DELIMITER</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token for NSDate time field delimiter
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ASSIGN_TOKEN">DICTIONARY_ASSIGN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSDictionary assignment
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_BEGIN_TOKEN">DICTIONARY_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSDictionary start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_END_TOKEN">DICTIONARY_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSDictionary end
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ITEM_DELIMITER_TOKEN">DICTIONARY_ITEM_DELIMITER_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of NSDictionary item delimiter
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_END_TOKEN">MULTILINE_COMMENT_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            End token for multiline comment
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_SECOND_TOKEN">MULTILINE_COMMENT_SECOND_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Second token for multiline comment
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_BEGIN_TOKEN">QUOTEDSTRING_BEGIN_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of quoted NSString start
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_END_TOKEN">QUOTEDSTRING_END_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of quoted NSString end
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_ESCAPE_TOKEN">QUOTEDSTRING_ESCAPE_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Token of quoted NSString escaped character
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.SINGLELINE_COMMENT_SECOND_TOKEN">SINGLELINE_COMMENT_SECOND_TOKEN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            Second token for singleline comment
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_CARRIAGE_RETURN">WHITESPACE_CARRIAGE_RETURN</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            A carriage return
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_NEWLINE">WHITESPACE_NEWLINE</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            A newline
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_SPACE">WHITESPACE_SPACE</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            A space
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_TAB">WHITESPACE_TAB</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a>
+                  </i>. 
+            A tabulator
+            </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Public Methods</h2>
+        <div class="SectionBox" id="Public Methods">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.ASCIIPropertyListParser.Parse()">Parse</a>
+                  </b>()<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Parses the property list from the beginning and returns the root object
+            of the property list.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[])">Parse</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[])<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Parses an ASCII property list from a byte array.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo)">Parse</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.FileInfo">System.IO.FileInfo</a>)<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Parses an ASCII property list file.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream)">Parse</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.Stream">System.IO.Stream</a>)<nobr> : <a href="../Claunia.PropertyList/NSObject.html">NSObject</a></nobr><blockquote>
+            Parses an ASCII property list from an input stream.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String)">ParseQuotedString</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a></nobr><blockquote>
+            Parses a string according to the format specified for ASCII property lists.
+            Such strings can contain escape sequences which are unescaped in this method.
+            </blockquote></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Members" id="T:Claunia.PropertyList.ASCIIPropertyListParser:Members">
+      <h2 class="Section" id="MemberDetails">Member Details</h2>
+      <div class="SectionBox" id="_MemberDetails">
+        <h3 id="C:Claunia.PropertyList.ASCIIPropertyListParser()">ASCIIPropertyListParser Constructor</h3>
+        <blockquote id="C:Claunia.PropertyList.ASCIIPropertyListParser():member">
+          <div class="msummary">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2>Syntax</h2>
+          <div class="Signature">protected  <b>ASCIIPropertyListParser</b> ()</div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="C:Claunia.PropertyList.ASCIIPropertyListParser():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="C:Claunia.PropertyList.ASCIIPropertyListParser():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_BEGIN_TOKEN">ARRAY_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of NSArray start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>ARRAY_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_END_TOKEN">ARRAY_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_END_TOKEN:member">
+          <div class="msummary">
+            Token of NSArray end
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>ARRAY_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_ITEM_DELIMITER_TOKEN">ARRAY_ITEM_DELIMITER_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_ITEM_DELIMITER_TOKEN:member">
+          <div class="msummary">
+            Token of NSArray item delimiter
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>ARRAY_ITEM_DELIMITER_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_ITEM_DELIMITER_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.ARRAY_ITEM_DELIMITER_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.COMMENT_BEGIN_TOKEN">COMMENT_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.COMMENT_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token for comment start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>COMMENT_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.COMMENT_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.COMMENT_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_BEGIN_TOKEN">DATA_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of NSData start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_END_TOKEN">DATA_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_END_TOKEN:member">
+          <div class="msummary">
+            Token of NSData end
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_BEGIN_TOKEN">DATA_GSBOOL_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of GSBoolean start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSBOOL_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_FALSE_TOKEN">DATA_GSBOOL_FALSE_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_FALSE_TOKEN:member">
+          <div class="msummary">
+            Token for GSBoolen's <tt>false</tt></div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSBOOL_FALSE_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_FALSE_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_FALSE_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_TRUE_TOKEN">DATA_GSBOOL_TRUE_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_TRUE_TOKEN:member">
+          <div class="msummary">
+            Token for GSBoolen's <tt>true</tt></div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSBOOL_TRUE_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_TRUE_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSBOOL_TRUE_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSDATE_BEGIN_TOKEN">DATA_GSDATE_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSDATE_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of GSDate start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSDATE_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSDATE_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSDATE_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSINT_BEGIN_TOKEN">DATA_GSINT_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSINT_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token for GSInteger
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSINT_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSINT_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSINT_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSOBJECT_BEGIN_TOKEN">DATA_GSOBJECT_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSOBJECT_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of GSObject start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSOBJECT_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSOBJECT_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSOBJECT_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSREAL_BEGIN_TOKEN">DATA_GSREAL_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSREAL_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token for GSReal
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATA_GSREAL_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSREAL_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATA_GSREAL_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_DATE_TIME_DELIMITER">DATE_APPLE_DATE_TIME_DELIMITER Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_DATE_TIME_DELIMITER:member">
+          <div class="msummary">
+            Token for NSDate date and time delimiter
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATE_APPLE_DATE_TIME_DELIMITER</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_DATE_TIME_DELIMITER:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_DATE_TIME_DELIMITER:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_END_TOKEN">DATE_APPLE_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_END_TOKEN:member">
+          <div class="msummary">
+            Token for NSDate end
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATE_APPLE_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_APPLE_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_DATE_FIELD_DELIMITER">DATE_DATE_FIELD_DELIMITER Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_DATE_FIELD_DELIMITER:member">
+          <div class="msummary">
+            Token for NSDate date field delimited
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATE_DATE_FIELD_DELIMITER</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_DATE_FIELD_DELIMITER:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_DATE_FIELD_DELIMITER:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_GS_DATE_TIME_DELIMITER">DATE_GS_DATE_TIME_DELIMITER Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_GS_DATE_TIME_DELIMITER:member">
+          <div class="msummary">
+            Token for GSDate date and time delimiter
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATE_GS_DATE_TIME_DELIMITER</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_GS_DATE_TIME_DELIMITER:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_GS_DATE_TIME_DELIMITER:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_TIME_FIELD_DELIMITER">DATE_TIME_FIELD_DELIMITER Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_TIME_FIELD_DELIMITER:member">
+          <div class="msummary">
+            Token for NSDate time field delimiter
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DATE_TIME_FIELD_DELIMITER</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_TIME_FIELD_DELIMITER:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DATE_TIME_FIELD_DELIMITER:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ASSIGN_TOKEN">DICTIONARY_ASSIGN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ASSIGN_TOKEN:member">
+          <div class="msummary">
+            Token of NSDictionary assignment
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DICTIONARY_ASSIGN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ASSIGN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ASSIGN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_BEGIN_TOKEN">DICTIONARY_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of NSDictionary start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DICTIONARY_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_END_TOKEN">DICTIONARY_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_END_TOKEN:member">
+          <div class="msummary">
+            Token of NSDictionary end
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DICTIONARY_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ITEM_DELIMITER_TOKEN">DICTIONARY_ITEM_DELIMITER_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ITEM_DELIMITER_TOKEN:member">
+          <div class="msummary">
+            Token of NSDictionary item delimiter
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>DICTIONARY_ITEM_DELIMITER_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ITEM_DELIMITER_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.DICTIONARY_ITEM_DELIMITER_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_END_TOKEN">MULTILINE_COMMENT_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_END_TOKEN:member">
+          <div class="msummary">
+            End token for multiline comment
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>MULTILINE_COMMENT_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_SECOND_TOKEN">MULTILINE_COMMENT_SECOND_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_SECOND_TOKEN:member">
+          <div class="msummary">
+            Second token for multiline comment
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>MULTILINE_COMMENT_SECOND_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_SECOND_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.MULTILINE_COMMENT_SECOND_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse()">Parse Method</h3>
+        <blockquote id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse():member">
+          <div class="msummary">
+            Parses the property list from the beginning and returns the root object
+            of the property list.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>Parse</b> ()</div>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse():Returns">The root object of the property list. This can either be a NSDictionary or a NSArray.</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse():Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.FormatException">FormatException</a>
+                </td>
+                <td>When an error occured during parsing</td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse():Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse():Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[])">Parse Method</h3>
+        <blockquote id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):member">
+          <div class="msummary">
+            Parses an ASCII property list from a byte array.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>Parse</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[] bytes)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):Parameters">
+            <dl>
+              <dt>
+                <i>bytes</i>
+              </dt>
+              <dd>The ASCII property list data.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):Returns">The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.FormatException">FormatException</a>
+                </td>
+                <td>When an error occurs during parsing.</td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.Byte[]):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo)">Parse Method</h3>
+        <blockquote id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):member">
+          <div class="msummary">
+            Parses an ASCII property list file.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>Parse</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.FileInfo">System.IO.FileInfo</a> f)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):Parameters">
+            <dl>
+              <dt>
+                <i>f</i>
+              </dt>
+              <dd>The ASCII property list file..</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):Returns">The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.FormatException">FormatException</a>
+                </td>
+                <td>When an error occurs during parsing.</td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.IOException">System.IO.IOException</a>
+                </td>
+                <td>When an error occured while reading from the input stream.</td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.FileInfo):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream)">Parse Method</h3>
+        <blockquote id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):member">
+          <div class="msummary">
+            Parses an ASCII property list from an input stream.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> <b>Parse</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.Stream">System.IO.Stream</a> fs)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):Parameters">
+            <dl>
+              <dt>
+                <i>fs</i>
+              </dt>
+              <dd>The input stream that points to the property list's data.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):Returns">The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.FormatException">FormatException</a>
+                </td>
+                <td>When an error occurs during parsing.</td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.IOException">System.IO.IOException</a>
+                </td>
+                <td>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.Parse(System.IO.Stream):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String)">ParseQuotedString Method</h3>
+        <blockquote id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):member">
+          <div class="msummary">
+            Parses a string according to the format specified for ASCII property lists.
+            Such strings can contain escape sequences which are unescaped in this method.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> <b>ParseQuotedString</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.String">string</a> s)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):Parameters">
+            <dl>
+              <dt>
+                <i>s</i>
+              </dt>
+              <dd>The escaped string according to the ASCII property list format, without leading and trailing quotation marks.</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):Returns">The unescaped string in UTF-8 or ASCII format, depending on the contained characters.</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.ArgumentException">ArgumentException</a>
+                </td>
+                <td>If the en-/decoder for the UTF-8 or ASCII encoding could not be loaded</td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Text.EncoderFallbackException">System.Text.EncoderFallbackException</a>
+                </td>
+                <td>If the string is encoded neither in ASCII nor in UTF-8</td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.ASCIIPropertyListParser.ParseQuotedString(System.String):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_BEGIN_TOKEN">QUOTEDSTRING_BEGIN_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_BEGIN_TOKEN:member">
+          <div class="msummary">
+            Token of quoted NSString start
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>QUOTEDSTRING_BEGIN_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_BEGIN_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_BEGIN_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_END_TOKEN">QUOTEDSTRING_END_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_END_TOKEN:member">
+          <div class="msummary">
+            Token of quoted NSString end
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>QUOTEDSTRING_END_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_END_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_END_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_ESCAPE_TOKEN">QUOTEDSTRING_ESCAPE_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_ESCAPE_TOKEN:member">
+          <div class="msummary">
+            Token of quoted NSString escaped character
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>QUOTEDSTRING_ESCAPE_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_ESCAPE_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.QUOTEDSTRING_ESCAPE_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.SINGLELINE_COMMENT_SECOND_TOKEN">SINGLELINE_COMMENT_SECOND_TOKEN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.SINGLELINE_COMMENT_SECOND_TOKEN:member">
+          <div class="msummary">
+            Second token for singleline comment
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>SINGLELINE_COMMENT_SECOND_TOKEN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.SINGLELINE_COMMENT_SECOND_TOKEN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.SINGLELINE_COMMENT_SECOND_TOKEN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_CARRIAGE_RETURN">WHITESPACE_CARRIAGE_RETURN Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_CARRIAGE_RETURN:member">
+          <div class="msummary">
+            A carriage return
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>WHITESPACE_CARRIAGE_RETURN</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_CARRIAGE_RETURN:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_CARRIAGE_RETURN:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_NEWLINE">WHITESPACE_NEWLINE Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_NEWLINE:member">
+          <div class="msummary">
+            A newline
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>WHITESPACE_NEWLINE</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_NEWLINE:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_NEWLINE:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_SPACE">WHITESPACE_SPACE Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_SPACE:member">
+          <div class="msummary">
+            A space
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>WHITESPACE_SPACE</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_SPACE:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_SPACE:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_TAB">WHITESPACE_TAB Field</h3>
+        <blockquote id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_TAB:member">
+          <div class="msummary">
+            A tabulator
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Char">char</a> <b>WHITESPACE_TAB</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_TAB:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.ASCIIPropertyListParser.WHITESPACE_TAB:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+      </div>
+    </div>
+    <hr size="1" />
+    <div class="Copyright">
+    </div>
+  </body>
+</html>

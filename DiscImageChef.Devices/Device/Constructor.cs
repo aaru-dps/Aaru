@@ -111,7 +111,7 @@ namespace DiscImageChef.Devices
             #region USB
             if(platformID == DiscImageChef.Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd"))
+                if(devicePath.StartsWith("/dev/sd") || devicePath.StartsWith("/dev/sr") || devicePath.StartsWith("/dev/st"))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -185,7 +185,7 @@ namespace DiscImageChef.Devices
             #region FireWire
             if(platformID == DiscImageChef.Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd"))
+                if(devicePath.StartsWith("/dev/sd") || devicePath.StartsWith("/dev/sr") || devicePath.StartsWith("/dev/st"))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -251,23 +251,29 @@ namespace DiscImageChef.Devices
                 Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
 
                 type = DeviceType.SCSI;
-                bool sense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
-                if (!sense)
+                bool serialSense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
+                if (!serialSense)
                     serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
-
+                
                 if (Inquiry.HasValue)
                 {
-                    revision = StringHandlers.CToString(Inquiry.Value.ProductRevisionLevel).Trim();
-                    model = StringHandlers.CToString(Inquiry.Value.ProductIdentification).Trim();
-                    manufacturer = StringHandlers.CToString(Inquiry.Value.VendorIdentification).Trim();
+                    string tmp = StringHandlers.CToString(Inquiry.Value.ProductRevisionLevel);
+                    if(tmp != null)
+                        revision = tmp.Trim();
+                    tmp = StringHandlers.CToString(Inquiry.Value.ProductIdentification);
+                    if(tmp != null)
+                        model = tmp.Trim();
+                    tmp = StringHandlers.CToString(Inquiry.Value.VendorIdentification);
+                    if(tmp != null)
+                        manufacturer = tmp.Trim();
                     removable = Inquiry.Value.RMB;
 
                     scsiType = (Decoders.SCSI.PeripheralDeviceTypes)Inquiry.Value.PeripheralDeviceType;
                 }
 
-                sense = AtapiIdentify(out ataBuf, out errorRegisters);
+                bool atapiSense = AtapiIdentify(out ataBuf, out errorRegisters);
 
-                if (!sense)
+                if (!atapiSense)
                 {
                     type = DeviceType.ATAPI;
                     Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
@@ -277,10 +283,10 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if (scsiSense || manufacturer == "ATA")
+            if ((scsiSense && (usb || firewire)) || manufacturer == "ATA")
             {
-                bool sense = AtaIdentify(out ataBuf, out errorRegisters);
-                if (!sense)
+                bool ataSense = AtaIdentify(out ataBuf, out errorRegisters);
+                if (!ataSense)
                 {
                     type = DeviceType.ATA;
                     Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);

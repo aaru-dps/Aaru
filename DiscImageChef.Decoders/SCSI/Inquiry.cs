@@ -189,7 +189,7 @@ namespace DiscImageChef.Decoders.SCSI
             if (SCSIInquiryResponse.Length > 96)
             {
                 decoded.VendorSpecific2 = new byte[SCSIInquiryResponse.Length - 96];
-                Array.Copy(SCSIInquiryResponse, 96, decoded.Reserved5, 0, SCSIInquiryResponse.Length - 96);
+                Array.Copy(SCSIInquiryResponse, 96, decoded.VendorSpecific2, 0, SCSIInquiryResponse.Length - 96);
             }
 
             return decoded;

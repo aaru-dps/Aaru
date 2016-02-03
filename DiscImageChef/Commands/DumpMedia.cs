@@ -81,6 +81,8 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            Core.Statistics.AddDevice(dev);
+
             switch (dev.Type)
             {
                 case DeviceType.ATA:
@@ -100,6 +102,8 @@ namespace DiscImageChef.Commands
                 default:
                     throw new NotSupportedException("Unknown device type.");
             }
+
+            Core.Statistics.AddCommand("dump-media");
         }
 
         static void doATAMediaScan(DumpMediaSubOptions options, Device dev)
@@ -1052,7 +1056,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Media identified as {0}", dskType);
 
             byte[] readBuffer;
-            uint blocksToRead = 255;
+            uint blocksToRead = 64;
 
             ulong errored = 0;
             DateTime start;
@@ -1337,7 +1341,7 @@ namespace DiscImageChef.Commands
                                     rawAble = true;
                                     if (decSense.Value.InformationValid && decSense.Value.ILI)
                                     {
-                                        longBlockSize = 0xFFFF - decSense.Value.Information;
+                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                         readLong16 = !dev.ReadLong16(out readBuffer, out senseBuf, false, 0, longBlockSize, dev.Timeout, out duration);
                                     }
                                 }
@@ -1356,7 +1360,7 @@ namespace DiscImageChef.Commands
                                     rawAble = true;
                                     if (decSense.Value.InformationValid && decSense.Value.ILI)
                                     {
-                                        longBlockSize = 0xFFFF - decSense.Value.Information;
+                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                         readLong10 = !dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, (ushort)longBlockSize, dev.Timeout, out duration);
                                     }
                                 }
@@ -1485,7 +1489,7 @@ namespace DiscImageChef.Commands
                                         rawAble = true;
                                         if (decSense.Value.InformationValid && decSense.Value.ILI)
                                         {
-                                            longBlockSize = 0xFFFF - decSense.Value.Information;
+                                            longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                             syqReadLong10 = !dev.SyQuestReadLong10(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
                                             ;
                                         }
@@ -1504,7 +1508,7 @@ namespace DiscImageChef.Commands
                                                     rawAble = true;
                                                     if (decSense.Value.InformationValid && decSense.Value.ILI)
                                                     {
-                                                        longBlockSize = 0xFFFF - decSense.Value.Information;
+                                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                                         syqReadLong6 = !dev.SyQuestReadLong6(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
                                                         ;
                                                     }
@@ -1932,6 +1936,8 @@ namespace DiscImageChef.Commands
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
             }
+
+            Core.Statistics.AddMedia(dskType, true);
         }
 
         static void initMHDDLogFile(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)

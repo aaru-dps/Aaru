@@ -919,7 +919,7 @@ namespace DiscImageChef.ImagePlugins
                         discimage.disktype = MediaType.CDI;
                     else if (firstaudio && data && discimage.sessions.Count > 1 && mode2)
                         discimage.disktype = MediaType.CDPLUS;
-                    else if ((firstdata && !data) || mode2)
+                    else if ((firstdata && audio) || mode2)
                         discimage.disktype = MediaType.CDROMXA;
                     else if (!audio)
                         discimage.disktype = MediaType.CDROM;

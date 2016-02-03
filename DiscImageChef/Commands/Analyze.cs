@@ -99,6 +99,9 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Analyze command", "Image without headers is {0} bytes.", _imageFormat.GetImageSize());
                     DicConsole.DebugWriteLine("Analyze command", "Image has {0} sectors.", _imageFormat.GetSectors());
                     DicConsole.DebugWriteLine("Analyze command", "Image identifies disk type as {0}.", _imageFormat.GetMediaType());
+
+                    Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
+                    Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
                 }
                 catch (Exception ex)
                 {
@@ -116,11 +119,11 @@ namespace DiscImageChef.Commands
                     foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
                     {
                         List<CommonTypes.Partition> _partitions;
-
                         if (_partplugin.GetInformation(_imageFormat, out _partitions))
                         {
                             partition_scheme = _partplugin.Name;
-                            partitions = _partitions;
+                            partitions.AddRange(_partitions);
+                            Core.Statistics.AddPartition(_partplugin.Name);
                             break;
                         }
                     }
@@ -128,7 +131,7 @@ namespace DiscImageChef.Commands
                     if (_imageFormat.ImageHasPartitions())
                     {
                         partition_scheme = _imageFormat.GetImageFormat();
-                        partitions = _imageFormat.GetPartitions();
+                        partitions.AddRange(_imageFormat.GetPartitions());
                     }
 
                     if (partition_scheme == "")
@@ -175,6 +178,7 @@ namespace DiscImageChef.Commands
                                             DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
                                             _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
                                             DicConsole.Write(information);
+                                            Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                         }
                                     }
                                 }
@@ -184,6 +188,7 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
                                     _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
                                     DicConsole.Write(information);
+                                    Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                 }
                             }
                         }
@@ -206,6 +211,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
                                 _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
                                 DicConsole.Write(information);
+                                Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                             }
                         }
                     }
@@ -215,6 +221,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
                         _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
                         DicConsole.Write(information);
+                        Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                     }
                 }
             }
@@ -223,6 +230,8 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
+
+            Core.Statistics.AddCommand("analyze");
         }
 
         static void IdentifyFilesystems(ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionStart, ulong partitionEnd)

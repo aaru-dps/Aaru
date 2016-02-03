@@ -57,14 +57,12 @@ namespace DiscImageChef.Commands
         static string ibgMediaType;
         static double ibgDivider;
         static bool ibgStartSet;
-        static int ibgMinSampleRate;
         static double ibgMaxSpeed;
         static double ibgIntSpeed;
         static int ibgSnaps;
-static ulong                 ibgIntSector = 0;
-static double ibgIntTime = 0;
-static int ibgSampleRate;
-
+        static ulong                 ibgIntSector = 0;
+        static double ibgIntTime = 0;
+        static int ibgSampleRate;
 
         public static void doMediaScan(MediaScanSubOptions options)
         {
@@ -91,6 +89,8 @@ static int ibgSampleRate;
                 return;
             }
 
+            Core.Statistics.AddDevice(dev);
+
             switch (dev.Type)
             {
                 case DeviceType.ATA:
@@ -110,6 +110,8 @@ static int ibgSampleRate;
                 default:
                     throw new NotSupportedException("Unknown device type.");
             }
+
+            Core.Statistics.AddCommand("media-scan");
         }
 
         static void doATAMediaScan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
@@ -301,7 +303,7 @@ static int ibgSampleRate;
                 compactDisc = false;
 
             byte[] readBuffer;
-            uint blocksToRead = 255;
+            uint blocksToRead = 64;
 
             ulong A = 0; // <3ms
             ulong B = 0; // >=3ms, <10ms
@@ -729,6 +731,8 @@ static int ibgSampleRate;
             if (seekTotal != 0 || seekMin != double.MaxValue || seekMax != double.MinValue)
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1} ms, fastest one took {2} ms. ({3} ms average)",
                     seekTimes, seekMax, seekMin, seekTotal / 1000);
+
+            Core.Statistics.AddMediaScan((long)A, (long)B, (long)C, (long)D, (long)E, (long)F, (long)blocks, (long)errored, (long)(blocks - errored));
         }
 
         static void initMHDDLogFile(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
@@ -873,12 +877,11 @@ static int ibgSampleRate;
                 ibgDatePoint = DateTime.Now;
                 ibgCulture = new CultureInfo("en-US");
                 ibgStartSet = false;
-                ibgMinSampleRate = int.MaxValue;
                 ibgMaxSpeed = 0;
- ibgIntSpeed = 0;
-         ibgSnaps = 0;
-         ibgIntSector = 0;
-ibgIntTime = 0;
+                ibgIntSpeed = 0;
+                ibgSnaps = 0;
+                ibgIntSector = 0;
+                ibgIntTime = 0;
                 
                 switch (currentProfile)
                 {

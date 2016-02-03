@@ -83,6 +83,8 @@ namespace DiscImageChef.Commands
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
             }
+
+            Core.Statistics.AddCommand("formats");
         }
     }
 }

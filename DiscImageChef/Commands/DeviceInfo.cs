@@ -67,6 +67,8 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            Core.Statistics.AddDevice(dev);
+
             if (dev.IsUSB)
             {
                 DicConsole.WriteLine("USB device");
@@ -1002,6 +1004,8 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
                     break;
             }
+
+            Core.Statistics.AddCommand("device-info");
         }
 
         static void doWriteFile(string outputPrefix, string outputSuffix, string whatWriting, byte[] data)

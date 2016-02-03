@@ -61,6 +61,9 @@
     <Compile Include="Commands\DumpMedia.cs" />
     <Compile Include="Core\Checksum.cs" />
     <Compile Include="Commands\DeviceReport.cs" />
+    <Compile Include="Commands\Configure.cs" />
+    <Compile Include="Core\Statistics.cs" />
+    <Compile Include="Commands\Statistics.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -72,14 +75,14 @@
       <Properties>
         <Policies>
           <VersionControlPolicy inheritsSet="Mono">
-            <CommitMessageStyle Indent="	" LastFilePostfix=":&#xA;  " IncludeDirectoryPaths="True" />
+            <CommitMessageStyle Indent="&#x9;" LastFilePostfix=":&#xA;  " IncludeDirectoryPaths="True" />
           </VersionControlPolicy>
           <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="RequireEntry" inheritsSet="Mono">
             <MessageStyle LastFilePostfix=":&#xA;  " IncludeDirectoryPaths="True" />
           </ChangeLogPolicy>
           <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
           <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
-          <CSharpFormattingPolicy IndentSwitchBody="True" AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" EventBraceStyle="NextLine" EventAddBraceStyle="NextLine" EventRemoveBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" WhileNewLinePlacement="DoNotCare" ArrayInitializerWrapping="DoNotChange" ArrayInitializerBraceStyle="NextLine" BeforeMethodDeclarationParentheses="False" BeforeMethodCallParentheses="False" BeforeConstructorDeclarationParentheses="False" BeforeDelegateDeclarationParentheses="False" NewParentheses="False" SpacesBeforeBrackets="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <CSharpFormattingPolicy NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceAfterMethodCallName="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
           <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
           <NameConventionPolicy>
             <Rules>
@@ -200,6 +203,10 @@
     <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
       <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
       <Name>DiscImageChef.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj">
+      <Project>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</Project>
+      <Name>DiscImageChef.Settings</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

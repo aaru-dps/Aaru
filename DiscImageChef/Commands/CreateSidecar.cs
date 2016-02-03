@@ -93,6 +93,8 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
+                Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
+
                 FileInfo fi = new FileInfo(options.InputFile);
                 FileStream fs = new FileStream(options.InputFile, FileMode.Open, FileAccess.Read);
 
@@ -303,6 +305,7 @@ namespace DiscImageChef.Commands
                             Metadata.MediaType.MediaTypeToString(dskType, out dscType, out dscSubType);
                             sidecar.OpticalDisc[0].DiscType = dscType;
                             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
+                            Core.Statistics.AddMedia(dskType, false);
 
                             try
                             {
@@ -502,6 +505,7 @@ namespace DiscImageChef.Commands
                                     if (_partplugin.GetInformation(_imageFormat, out _partitions))
                                     {
                                         partitions = _partitions;
+                                        Core.Statistics.AddPartition(_partplugin.Name);
                                         break;
                                     }
                                 }
@@ -531,6 +535,7 @@ namespace DiscImageChef.Commands
                                                     string foo;
                                                     _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
                                                     lstFs.Add(_plugin.XmlFSType);
+                                                    Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                                 }
                                             }
                                             catch
@@ -560,6 +565,7 @@ namespace DiscImageChef.Commands
                                                 string foo;
                                                 _plugin.GetInformation(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector, out foo);
                                                 lstFs.Add(_plugin.XmlFSType);
+                                                Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                             }
                                         }
                                         catch
@@ -660,6 +666,7 @@ namespace DiscImageChef.Commands
                             Metadata.MediaType.MediaTypeToString(_imageFormat.ImageInfo.mediaType, out dskType, out dskSubType);
                             sidecar.BlockMedia[0].DiskType = dskType;
                             sidecar.BlockMedia[0].DiskSubType = dskSubType;
+                            Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
 
                             sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(_imageFormat.ImageInfo.mediaType);
 
@@ -679,6 +686,7 @@ namespace DiscImageChef.Commands
                                 if (_partplugin.GetInformation(_imageFormat, out _partitions))
                                 {
                                     partitions = _partitions;
+                                    Core.Statistics.AddPartition(_partplugin.Name);
                                     break;
                                 }
                             }
@@ -708,6 +716,7 @@ namespace DiscImageChef.Commands
                                                 string foo;
                                                 _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
                                                 lstFs.Add(_plugin.XmlFSType);
+                                                Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                             }
                                         }
                                         catch
@@ -737,6 +746,7 @@ namespace DiscImageChef.Commands
                                             string foo;
                                             _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out foo);
                                             lstFs.Add(_plugin.XmlFSType);
+                                            Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                         }
                                     }
                                     catch
@@ -810,6 +820,8 @@ namespace DiscImageChef.Commands
                 System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
+
+                Core.Statistics.AddCommand("create-sidecar");
             }
             catch (Exception ex)
             {

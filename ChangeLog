@@ -1,3 +1,11 @@
+2016-02-03  Natalia Portillo  <claunia@claunia.com>
+
+	* commandline:
+	  Added supports for settings
+
+	* DiscImageChef.sln:
+	  Added supports for settings.
+
 2015-12-31  Natalia Portillo  <claunia@claunia.com>
 
 	* CICMMetadata:

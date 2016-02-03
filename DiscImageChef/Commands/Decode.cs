@@ -62,6 +62,8 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(options.InputFile);
+            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
             if (options.DiskTags)
             {
@@ -238,6 +240,8 @@ namespace DiscImageChef.Commands
                     }
                 }
             }
+
+            Core.Statistics.AddCommand("decode");
         }
     }
 }

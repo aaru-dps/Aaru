@@ -295,6 +295,14 @@ namespace DiscImageChef
         public string DevicePath { get; set; }
     }
 
+    public class ConfigureSubOptions : CommonSubOptions
+    {
+    }
+
+    public class StatsSubOptions : CommonSubOptions
+    {
+    }
+
     public class Options
     {
         public Options()
@@ -314,6 +322,8 @@ namespace DiscImageChef
             MediaScanVerb = new MediaScanSubOptions();
             DumpMediaVerb = new DumpMediaSubOptions();
             DeviceReportVerb = new DeviceReportSubOptions();
+            ConfigureVerb = new ConfigureSubOptions();
+            StatsVerb = new StatsSubOptions();
         }
 
         [VerbOption("analyze", HelpText = "Analyzes a disc image and searches for partitions and/or filesystems.")]
@@ -360,6 +370,12 @@ namespace DiscImageChef
 
         [VerbOption("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]
         public DeviceReportSubOptions DeviceReportVerb { get; set; }
+
+        [VerbOption("configure", HelpText = "Configures user settings and statistics.")]
+        public ConfigureSubOptions ConfigureVerb { get; set; }
+
+        [VerbOption("stats", HelpText = "Shows statistics.")]
+        public StatsSubOptions StatsVerb { get; set; }
 
         [HelpVerbOption]
         public string DoHelpForVerb(string verbName)

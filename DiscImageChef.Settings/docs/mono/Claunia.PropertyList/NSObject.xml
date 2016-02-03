@@ -1,0 +1,339 @@
+<Type Name="NSObject" FullName="Claunia.PropertyList.NSObject">
+  <TypeSignature Language="C#" Value="public abstract class NSObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit NSObject extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>plist-cil</AssemblyName>
+    <AssemblyVersion>1.13.0.0</AssemblyVersion>
+    <AssemblyVersion>1.14.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para>
+            Abstract interface for any object contained in a property list.
+            </para>
+      <para>
+            The names and functions of the various objects orient themselves
+            towards Apple's Cocoa API.
+            </para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NSObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public abstract bool Equals (Claunia.PropertyList.NSObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(class Claunia.PropertyList.NSObject obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="Claunia.PropertyList.NSObject" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:Claunia.PropertyList.NSObject" /> to compare with the current <see cref="T:Claunia.PropertyList.NSObject" />.</param>
+        <summary>
+            Determines if the specific NSObject is the same as the NSObject overriding this method.
+            </summary>
+        <returns>
+          <c>true</c> if the specified <see cref="T:Claunia.PropertyList.NSObject" /> is equal to the current
+            <see cref="T:Claunia.PropertyList.NSObject" />; otherwise, <c>false</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="C#" Value="public object ToObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object ToObject() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Converts this NSObject into an equivalent object
+            of the .NET Runtime Environment.
+            <para><see cref="T:Claunia.PropertyList.NSArray" /> objects are converted to arrays.</para><para><see cref="T:Claunia.PropertyList.NSDictionary" /> objects are converted to objects extending the <see cref="T:System.Collections.Generic.Dictionary`2" /> class.</para><para><see cref="T:Claunia.PropertyList.NSSet" /> objects are converted to objects extending the <see cref="T:System.Collections.Generic.List`1" /> class.</para><para><see cref="T:Claunia.PropertyList.NSNumber" /> objects are converted to primitive number values (<see cref="T:System.Int32" />, <see cref="T:System.Int64" />, <see cref="T:System.Double" /> or <see cref="T:System.Boolean" />).</para><para><see cref="T:Claunia.PropertyList.NSString" /> objects are converted to <see cref="T:System.String" /> objects.</para><para><see cref="T:Claunia.PropertyList.NSData" /> objects are converted to <see cref="T:System.Byte" /> arrays.</para><para><see cref="T:Claunia.PropertyList.NSDate" /> objects are converted to <see cref="T:System.DateTime" /> objects.</para><para><see cref="T:Claunia.PropertyList.UID" /> objects are converted to <see cref="T:System.Byte" /> arrays.</para></summary>
+        <returns>A native .NET object representing this NSObject's value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToXmlPropertyList">
+      <MemberSignature Language="C#" Value="public string ToXmlPropertyList ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToXmlPropertyList() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Generates a valid XML property list including headers using this object as root.
+            </summary>
+        <returns>The XML representation of the property list including XML header and doctype information.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSNumber Wrap (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSNumber Wrap(bool value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Wraps the given value inside a NSObject.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSData Wrap (byte[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSData Wrap(unsigned int8[] value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSData</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Wraps the given value inside a NSObject.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSDictionary Wrap (System.Collections.Generic.Dictionary&lt;string,object&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSDictionary Wrap(class System.Collections.Generic.Dictionary`2&lt;string, object&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSDictionary</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.Generic.Dictionary&lt;System.String,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Creates a NSDictionary with the contents of the given map.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.SystemException">When one of the values contained in the map cannot be represented by a NSObject.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSSet Wrap (System.Collections.Generic.List&lt;object&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSSet Wrap(class System.Collections.Generic.List`1&lt;object&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.Generic.List&lt;System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Creates a NSSet with the contents of this set.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.SystemException">When one of the values contained in the map cannot be represented by a NSObject.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSNumber Wrap (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSNumber Wrap(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Wraps the given value inside a NSObject.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSNumber Wrap (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSNumber Wrap(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Wraps the given value inside a NSObject.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Wrap (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Wrap(object o) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">The object to represent.</param>
+        <summary>
+          <para>
+            Creates a NSObject representing the given .NET Object.
+            </para>
+          <para>
+            Numerics of type <see cref="T:System.Boolean" />, <see cref="T:System.Int32" />, <see cref="T:System.Int64" />, <see cref="T:System.Int16" />, <see cref="T:System.Byte" />, <see cref="T:System.Single" /> or <see cref="T:System.Double" /> are wrapped as NSNumber objects.
+            </para>
+          <para>
+            Strings are wrapped as <see cref="T:Claunia.PropertyList.NSString" /> objects and byte arrays as <see cref="T:Claunia.PropertyList.NSData" /> objects.
+            </para>
+          <para>
+            DateTime objects are wrapped as <see cref="T:Claunia.PropertyList.NSDate" /> objects.
+            </para>
+          <para>
+            Serializable classes are serialized and their data is stored in <see cref="T:Claunia.PropertyList.NSData" /> objects.
+            </para>
+          <para>
+            Arrays and Collection objects are converted to <see cref="T:Claunia.PropertyList.NSArray" /> where each array member is wrapped into a <see cref="T:Claunia.PropertyList.NSObject" />.
+            </para>
+          <para>
+            Dictionaries are converted to <see cref="T:Claunia.PropertyList.NSDictionary" />. Each key is converted to a string and each value wrapped into a <see cref="T:Claunia.PropertyList.NSObject" />.
+            </para>
+        </summary>
+        <returns>A NSObject equivalent to the given object.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Wrap">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSArray Wrap (object[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSArray Wrap(object[] value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSArray</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="value">The value to represent as a NSObject.</param>
+        <summary>
+            Creates a NSArray with the contents of the given array.
+            </summary>
+        <returns>A NSObject representing the given value.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.SystemException">When one of the objects contained in the array cannot be represented by a NSObject.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WrapSerialized">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSData WrapSerialized (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSData WrapSerialized(object o) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSData</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="o" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="o">The object to serialize and wrap.</param>
+        <summary>
+            Serializes the given object using Java's default object serialization
+            and wraps the serialized object in a NSData object.
+            </summary>
+        <returns>A NSData object</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.SystemException">When the object could not be serialized.</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

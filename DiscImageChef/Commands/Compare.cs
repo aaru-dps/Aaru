@@ -96,6 +96,11 @@ namespace DiscImageChef.Commands
             input1Format.OpenImage(options.InputFile1);
             input2Format.OpenImage(options.InputFile2);
 
+            Core.Statistics.AddMediaFormat(input1Format.GetImageFormat());
+            Core.Statistics.AddMediaFormat(input2Format.GetImageFormat());
+            Core.Statistics.AddMedia(input1Format.ImageInfo.mediaType, false);
+            Core.Statistics.AddMedia(input2Format.ImageInfo.mediaType, false);
+
             StringBuilder sb = new StringBuilder();
 
             if (options.Verbose)
@@ -422,6 +427,8 @@ namespace DiscImageChef.Commands
                 sb.AppendLine("Images do not differ");
 
             DicConsole.WriteLine(sb.ToString());
+
+            Core.Statistics.AddCommand("compare");
         }
 
         private static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)

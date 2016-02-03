@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>DiscImageChef.Settings</RootNamespace>
+    <AssemblyName>DiscImageChef.Settings</AssemblyName>
+    <ReleaseVersion>2.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="plist-cil">
+      <HintPath>..\packages\plist-cil.1.14\lib\plist-cil.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
+      <Name>DiscImageChef.Interop</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="docs\ChangeLog.txt" />
+    <None Include="docs\LICENSE.txt" />
+    <None Include="docs\README.txt" />
+    <None Include="docs\html\index.html" />
+    <None Include="docs\html\Claunia.PropertyList\ASCIIPropertyListParser.html" />
+    <None Include="docs\html\Claunia.PropertyList\BinaryPropertyListParser.html" />
+    <None Include="docs\html\Claunia.PropertyList\BinaryPropertyListWriter.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSArray.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSData.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSDate.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSDictionary.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSNumber.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSObject.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSSet.html" />
+    <None Include="docs\html\Claunia.PropertyList\NSString.html" />
+    <None Include="docs\html\Claunia.PropertyList\PropertyListFormatException.html" />
+    <None Include="docs\html\Claunia.PropertyList\PropertyListParser.html" />
+    <None Include="docs\html\Claunia.PropertyList\UID.html" />
+    <None Include="docs\html\Claunia.PropertyList\XmlPropertyListParser.html" />
+    <None Include="docs\html\Claunia.PropertyList\index.html" />
+    <None Include="docs\mono\index.xml" />
+    <None Include="docs\mono\ns-Claunia.PropertyList.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\ASCIIPropertyListParser.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\BinaryPropertyListParser.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\BinaryPropertyListWriter.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSArray.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSData.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSDate.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSDictionary.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSNumber.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSObject.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSSet.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\NSString.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\PropertyListFormatException.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\PropertyListParser.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\UID.xml" />
+    <None Include="docs\mono\Claunia.PropertyList\XmlPropertyListParser.xml" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

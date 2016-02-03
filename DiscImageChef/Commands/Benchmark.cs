@@ -57,7 +57,7 @@ namespace DiscImageChef.Commands
             long mem;
             object ctx;
             double allSeparate = 0;
-
+            System.Collections.Generic.Dictionary<string, double> checksumTimes = new System.Collections.Generic.Dictionary<string, double>();
 
             DicConsole.WriteLine();
 
@@ -125,6 +125,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to Adler32 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("Adler32", (end - start).TotalSeconds);
             #endregion Adler32
 
             #region CRC16
@@ -155,6 +156,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to CRC16 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("CRC16", (end - start).TotalSeconds);
             #endregion CRC16
 
             #region CRC32
@@ -185,6 +187,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to CRC32 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("CRC32", (end - start).TotalSeconds);
             #endregion CRC32
 
             #region CRC64
@@ -215,6 +218,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to CRC64 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("CRC64", (end - start).TotalSeconds);
             #endregion CRC64
 
             #region Fletcher32
@@ -244,7 +248,8 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to Fletcher32 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
-			allSeparate += (end-start).TotalSeconds;*/
+			allSeparate += (end-start).TotalSeconds;
+			checksumTimes.Add("Fletcher32", (end - start).TotalSeconds);*/
             #endregion Fletcher32
 
             #region MD5
@@ -275,6 +280,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to MD5 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("MD5", (end - start).TotalSeconds);
             #endregion MD5
 
             #region RIPEMD160
@@ -305,6 +311,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to RIPEMD160 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("RIPEMD160", (end - start).TotalSeconds);
             #endregion RIPEMD160
 
             #region SHA1
@@ -335,6 +342,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to SHA1 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("SHA1", (end - start).TotalSeconds);
             #endregion SHA1
 
             #region SHA256
@@ -365,6 +373,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to SHA256 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("SHA256", (end - start).TotalSeconds);
             #endregion SHA256
 
             #region SHA384
@@ -395,6 +404,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to SHA384 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("SHA384", (end - start).TotalSeconds);
             #endregion SHA384
 
             #region SHA512
@@ -425,6 +435,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to SHA512 buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("SHA512", (end - start).TotalSeconds);
             #endregion SHA512
 
             #region SpamSum
@@ -455,6 +466,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to SpamSum buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
             allSeparate += (end - start).TotalSeconds;
+            checksumTimes.Add("SpamSum", (end - start).TotalSeconds);
             #endregion SpamSum
 
             #region Entropy
@@ -489,6 +501,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to entropy buffer, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
+            double entropyTime = (end - start).TotalSeconds;
             #endregion Entropy
 
             #region Multitasking
@@ -657,6 +670,9 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Max memory used is {0} bytes", maxMemory);
             DicConsole.WriteLine("Min memory used is {0} bytes", minMemory);
+
+            Core.Statistics.AddCommand("benchmark");
+            Core.Statistics.AddBenchmark(checksumTimes, entropyTime, (end - start).TotalSeconds, allSeparate, maxMemory, minMemory);
         }
 
         #region Threading helpers

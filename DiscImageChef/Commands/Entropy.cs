@@ -63,6 +63,8 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(options.InputFile);
+            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
             if (options.SeparatedTracks)
             {
@@ -170,7 +172,7 @@ namespace DiscImageChef.Commands
                 if(options.DuplicatedSectors)
                     DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count/(double)sectors);
 
-
+                Core.Statistics.AddCommand("entropy");
             }
         }
     }

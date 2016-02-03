@@ -1,0 +1,567 @@
+<html>
+  <head>
+    <title>Claunia.PropertyList.BinaryPropertyListWriter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+      a { text-decoration: none }
+
+      div.SideBar {
+        padding-left: 1em;
+        padding-right: 1em;
+        right: 0;
+        float: right;
+        border: thin solid black;
+        background-color: #f2f2f2;
+      }
+    
+      .CollectionTitle { font-weight: bold }
+      .PageTitle { font-size: 150%; font-weight: bold }
+
+      .Summary { }
+      .Signature { }          
+      .Remarks { }
+      .Members { }
+      .Copyright { }
+      
+      .Section { font-size: 125%; font-weight: bold }
+      p.Summary {
+        margin-left: 1em;
+      }
+      .SectionBox { margin-left: 2em }
+      .NamespaceName { font-size: 105%; font-weight: bold }
+      .NamespaceSumary { }
+      .MemberName { font-size: 115%; font-weight: bold; margin-top: 1em }
+      .Subsection { font-size: 105%; font-weight: bold }
+      .SubsectionBox { margin-left: 2em; margin-bottom: 1em }
+
+      .CodeExampleTable { background-color: #f5f5dd; border: thin solid black; padding: .25em; }
+      
+      .TypesListing {
+        border-collapse: collapse;
+      }
+
+      td {
+        vertical-align: top;
+      }
+      th {
+        text-align: left;
+      }
+
+      .TypesListing td { 
+        margin: 0px;  
+        padding: .25em;
+        border: solid gray 1px;
+      }
+
+      .TypesListing th { 
+        margin: 0px;  
+        padding: .25em;
+        background-color: #f2f2f2;
+        border: solid gray 1px;
+      }
+
+      div.Footer {
+        border-top: 1px solid gray;
+        margin-top: 1.5em;
+        padding-top: 0.6em;
+        text-align: center;
+        color: gray;
+      }
+
+      span.NotEntered /* Documentation for this section has not yet been entered */ {
+        font-style: italic;
+        color: red;	
+      }
+
+      div.Header {
+        background: #B0C4DE;
+        border: double;
+        border-color: white;
+        border-width: 7px;
+        padding: 0.5em;
+      }
+
+      div.Header * {
+        font-size: smaller;
+      }
+
+      div.Note {
+      }
+
+      i.ParamRef {
+      }
+
+      i.subtitle {
+      }
+
+      ul.TypeMembersIndex {
+        text-align: left;
+        background: #F8F8F8;
+      }
+
+      ul.TypeMembersIndex li {
+        display: inline;
+        margin:  0.5em;
+      }
+
+      table.HeaderTable {
+      }
+
+      table.SignatureTable {
+      }
+
+      table.Documentation, table.Enumeration, table.TypeDocumentation {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table.Documentation tr th, table.TypeMembers tr th, table.Enumeration tr th, table.TypeDocumentation tr th {
+        background: whitesmoke;
+        padding: 0.8em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: bottom;
+      }
+
+      table.Documentation tr td, table.TypeMembers tr td, table.Enumeration tr td, table.TypeDocumentation tr td {
+        padding: 0.5em;
+        border: 1px solid gray;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.TypeMembers {
+        border: 1px solid #C0C0C0;
+        width: 100%;
+      }
+
+      table.TypeMembers tr td {
+        background: #F8F8F8;
+        border: white;
+      }
+
+      table.Documentation {
+      }
+
+      table.TypeMembers {
+      }
+
+      div.CodeExample {
+        width: 100%;
+        border: 1px solid #DDDDDD;
+        background-color: #F8F8F8;
+      }
+
+      div.CodeExample p {
+        margin: 0.5em;
+        border-bottom: 1px solid #DDDDDD;
+      }
+
+      div.CodeExample div {
+        margin: 0.5em;
+      }
+
+      h4 {
+        margin-bottom: 0;
+      }
+
+      div.Signature {
+        border: 1px solid #C0C0C0;
+        background: #F2F2F2;
+        padding: 1em;
+      }
+    </style>
+    <script type="text/JavaScript">
+      function toggle_display (block) {
+        var w = document.getElementById (block);
+        var t = document.getElementById (block + ":toggle");
+        if (w.style.display == "none") {
+          w.style.display = "block";
+          t.innerHTML = "⊟";
+        } else {
+          w.style.display = "none";
+          t.innerHTML = "⊞";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="CollectionTitle">
+      <a href="../index.html">plist-cil</a> : <a href="index.html">Claunia.PropertyList Namespace</a></div>
+    <div class="SideBar">
+      <p>
+        <a href="#T:Claunia.PropertyList.BinaryPropertyListWriter">Overview</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.BinaryPropertyListWriter:Signature">Signature</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.BinaryPropertyListWriter:Docs">Remarks</a>
+      </p>
+      <p>
+        <a href="#Members">Members</a>
+      </p>
+      <p>
+        <a href="#T:Claunia.PropertyList.BinaryPropertyListWriter:Members">Member Details</a>
+      </p>
+    </div>
+    <h1 class="PageTitle" id="T:Claunia.PropertyList.BinaryPropertyListWriter">BinaryPropertyListWriter  Class</h1>
+    <p class="Summary" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Summary">
+      <p>
+            A BinaryPropertyListWriter is a helper class for writing out
+            binary property list files.
+            </p>
+      <p>
+            It contains an output stream and various structures for keeping track
+            of which NSObjects have already been serialized, and where they were
+            put in the file.
+            </p>
+    </p>
+    <div>
+      <h2>Syntax</h2>
+      <div class="Signature" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Signature">public class  <b>BinaryPropertyListWriter</b></div>
+    </div>
+    <div class="Remarks" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Docs">
+      <h2 class="Section">Remarks</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Docs:Remarks">
+        <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+      </div>
+      <h2 class="Section">Requirements</h2>
+      <div class="SectionBox" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Docs:Version Information">
+        <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+      <h2 class="Section" id="Members">Members</h2>
+      <div class="SectionBox" id="_Members">
+        <p>
+								See Also: Inherited members from
+								<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Object">object</a>.
+							</p>
+        <h2 class="Section">Public Fields</h2>
+        <div class="SectionBox" id="Public Fields">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_00">VERSION_00</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>
+                  </i> (0). 
+            Binary property list version 0.0
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_10">VERSION_10</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>
+                  </i> (10). 
+            Binary property list version 1.0
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_15">VERSION_15</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>
+                  </i> (15). 
+            Binary property list version 1.5
+            </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>const </div>
+                </td>
+                <td>
+                  <b>
+                    <a href="#F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_20">VERSION_20</a>
+                  </b>
+                </td>
+                <td>
+                  <i>
+                    <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a>
+                  </i> (20). 
+            Binary property list version 2.0
+            </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h2 class="Section">Public Methods</h2>
+        <div class="SectionBox" id="Public Methods">
+          <div class="SubsectionBox">
+            <table class="TypeMembers">
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject)">Write</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.FileInfo">System.IO.FileInfo</a>, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<blockquote>
+            Writes a binary plist file with the given object as the root.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject)">Write</a>
+                  </b>(<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.Stream">System.IO.Stream</a>, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<blockquote>
+            Writes a binary plist serialization of the given object as the root.
+            </blockquote></td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <div>static </div>
+                </td>
+                <td colspan="2">
+                  <b>
+                    <a href="#M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject)">WriteToArray</a>
+                  </b>(<a href="../Claunia.PropertyList/NSObject.html">NSObject</a>)<nobr> : <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[]</nobr><blockquote>
+            Writes a binary plist serialization of the given object as the root
+            into a byte array.
+            </blockquote></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Members" id="T:Claunia.PropertyList.BinaryPropertyListWriter:Members">
+      <h2 class="Section" id="MemberDetails">Member Details</h2>
+      <div class="SectionBox" id="_MemberDetails">
+        <h3 id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_00">VERSION_00 Field</h3>
+        <blockquote id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_00:member">
+          <div class="msummary">
+            Binary property list version 0.0
+            </div>
+          <p>
+            <b>Value: </b>0</p>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>VERSION_00</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_00:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_00:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_10">VERSION_10 Field</h3>
+        <blockquote id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_10:member">
+          <div class="msummary">
+            Binary property list version 1.0
+            </div>
+          <p>
+            <b>Value: </b>10</p>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>VERSION_10</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_10:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_10:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_15">VERSION_15 Field</h3>
+        <blockquote id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_15:member">
+          <div class="msummary">
+            Binary property list version 1.5
+            </div>
+          <p>
+            <b>Value: </b>15</p>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>VERSION_15</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_15:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_15:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_20">VERSION_20 Field</h3>
+        <blockquote id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_20:member">
+          <div class="msummary">
+            Binary property list version 2.0
+            </div>
+          <p>
+            <b>Value: </b>20</p>
+          <h2>Syntax</h2>
+          <div class="Signature">public const <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Int32">int</a> <b>VERSION_20</b> </div>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_20:Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="F:Claunia.PropertyList.BinaryPropertyListWriter.VERSION_20:Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject)">Write Method</h3>
+        <blockquote id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Writes a binary plist file with the given object as the root.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Write</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.FileInfo">System.IO.FileInfo</a> file, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> root)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>file</i>
+              </dt>
+              <dd>the file to write to</dd>
+              <dt>
+                <i>root</i>
+              </dt>
+              <dd>the source of the data to write to the file</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.IOException">System.IO.IOException</a>
+                </td>
+                <td>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.FileInfo,Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject)">Write Method</h3>
+        <blockquote id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Writes a binary plist serialization of the given object as the root.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Void">void</a> <b>Write</b> (<a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.Stream">System.IO.Stream</a> outStream, <a href="../Claunia.PropertyList/NSObject.html">NSObject</a> root)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>outStream</i>
+              </dt>
+              <dd>the stream to write to</dd>
+              <dt>
+                <i>root</i>
+              </dt>
+              <dd>the source of the data to write to the stream</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.IOException">System.IO.IOException</a>
+                </td>
+                <td>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.Write(System.IO.Stream,Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+        <h3 id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject)">WriteToArray Method</h3>
+        <blockquote id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):member">
+          <div class="msummary">
+            Writes a binary plist serialization of the given object as the root
+            into a byte array.
+            </div>
+          <h2>Syntax</h2>
+          <div class="Signature">public static <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.Byte">byte</a>[] <b>WriteToArray</b> (<a href="../Claunia.PropertyList/NSObject.html">NSObject</a> root)</div>
+          <h4 class="Subsection">Parameters</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):Parameters">
+            <dl>
+              <dt>
+                <i>root</i>
+              </dt>
+              <dd>The root object of the property list</dd>
+            </dl>
+          </blockquote>
+          <h4 class="Subsection">Returns</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):Returns">The byte array containing the serialized property list</blockquote>
+          <h4 class="Subsection">Exceptions</h4>
+          <blockquote class="SubsectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):Exceptions">
+            <table class="TypeDocumentation">
+              <tr>
+                <th>Type</th>
+                <th>Reason</th>
+              </tr>
+              <tr valign="top">
+                <td>
+                  <a href="http://www.go-mono.com/docs/monodoc.ashx?link=T:System.IO.IOException">System.IO.IOException</a>
+                </td>
+                <td>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+          <h2 class="Section">Remarks</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):Remarks">
+            <span class="NotEntered">Documentation for this section has not yet been entered.</span>
+          </div>
+          <h2 class="Section">Requirements</h2>
+          <div class="SectionBox" id="M:Claunia.PropertyList.BinaryPropertyListWriter.WriteToArray(Claunia.PropertyList.NSObject):Version Information">
+            <b>Namespace: </b>Claunia.PropertyList<br /><b>Assembly: </b>plist-cil (in plist-cil.dll)<br /><b>Assembly Versions: </b>1.13.0.0, 1.14.0.0</div>
+          <hr size="1" />
+        </blockquote>
+      </div>
+    </div>
+    <hr size="1" />
+    <div class="Copyright">
+    </div>
+  </body>
+</html>

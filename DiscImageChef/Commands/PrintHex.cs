@@ -89,6 +89,8 @@ namespace DiscImageChef.Commands
 
                 DiscImageChef.PrintHex.PrintHexArray(sector, options.WidthBytes);
             }
+
+            Core.Statistics.AddCommand("print-hex");
         }
     }
 }

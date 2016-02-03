@@ -66,6 +66,8 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            Core.Statistics.AddDevice(dev);
+
             switch (dev.Type)
             {
                 case DeviceType.ATA:
@@ -85,6 +87,8 @@ namespace DiscImageChef.Commands
                 default:
                     throw new NotSupportedException("Unknown device type.");
             }
+
+            Core.Statistics.AddCommand("device-report");
         }
 
         static void doATADeviceReport(DeviceReportSubOptions options, Device dev)
@@ -679,7 +683,7 @@ namespace DiscImageChef.Commands
             else
                 xmlFile = dev.Model + ".xml";
             ConsoleKeyInfo pressedKey;
-            bool removable = true;
+            bool removable = false;
 
             if (dev.IsUSB)
             {
@@ -1280,20 +1284,23 @@ namespace DiscImageChef.Commands
                     report.SCSI.Inquiry.ResponseDataFormat = inq.ResponseDataFormat;
                     report.SCSI.Inquiry.ResponseDataFormatSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.VendorIdentification).Trim()))
+                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.VendorIdentification)))
                 {
                     report.SCSI.Inquiry.VendorIdentification = StringHandlers.CToString(inq.VendorIdentification).Trim();
-                    report.SCSI.Inquiry.VendorIdentificationSpecified = true;
+                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.VendorIdentification))
+                        report.SCSI.Inquiry.VendorIdentificationSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductIdentification).Trim()))
+                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductIdentification)))
                 {
                     report.SCSI.Inquiry.ProductIdentification = StringHandlers.CToString(inq.ProductIdentification).Trim();
-                    report.SCSI.Inquiry.ProductIdentificationSpecified = true;
+                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductIdentification))
+                        report.SCSI.Inquiry.ProductIdentificationSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductRevisionLevel).Trim()))
+                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductRevisionLevel)))
                 {
                     report.SCSI.Inquiry.ProductRevisionLevel = StringHandlers.CToString(inq.ProductRevisionLevel).Trim();
-                    report.SCSI.Inquiry.ProductRevisionLevelSpecified = true;
+                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductRevisionLevel))
+                        report.SCSI.Inquiry.ProductRevisionLevelSpecified = true;
                 }
                 if (inq.VersionDescriptors != null)
                 {
@@ -1390,19 +1397,39 @@ namespace DiscImageChef.Commands
             Decoders.SCSI.PeripheralDeviceTypes devType = dev.SCSIType;
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
+            sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Default, 0x3F, 0xFF, timeout, out duration);
             if (sense || dev.Error)
             {
-                sense = dev.ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
+                DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
+                sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
+                if (!sense && dev.Error)
+                {
+                    report.SCSI.SupportsModeSense10 = true;
+                    report.SCSI.SupportsModeSubpages = false;
+                    decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, devType);
+                }
+            }
+            else
+            {
+                report.SCSI.SupportsModeSense10 = true;
+                report.SCSI.SupportsModeSubpages = true;
+                decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, devType);
+            }
+            
+            DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
+            sense = dev.ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF, timeout, out duration);
+            if (sense || dev.Error)
+            {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
+                sense = dev.ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
+                if (sense || dev.Error)
+                {
+                    DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
+                    sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
+                }
             }
             else
                 report.SCSI.SupportsModeSubpages = true;
-            
-            if (sense || dev.Error)
-            {
-                DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
-                sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-            }
 
             if (!sense && !dev.Error && !decMode.HasValue)
                 decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, devType);
@@ -2121,6 +2148,20 @@ namespace DiscImageChef.Commands
                 tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
                 tryNEC |= dev.Manufacturer.ToLowerInvariant() == "nec";
 
+                // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
+                // Also don't get confident, some drives didn't know CD-RW but are able to read them
+                if (mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
+                {
+                    if (!mediaTypes.Contains("CD-ROM"))
+                        mediaTypes.Add("CD-ROM");
+                    if (!mediaTypes.Contains("Audio CD"))
+                        mediaTypes.Add("Audio CD");
+                    if (!mediaTypes.Contains("CD-R"))
+                        mediaTypes.Add("CD-R");
+                    if (!mediaTypes.Contains("CD-RW"))
+                        mediaTypes.Add("CD-RW");
+                }
+
                 mediaTypes.Sort();
                 List<testedMediaType> mediaTests = new List<testedMediaType>();
                 foreach (string mediaType in mediaTypes)
@@ -2436,7 +2477,7 @@ namespace DiscImageChef.Commands
                                     mediaTest.SupportsReadCdMsfRaw = !dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000200, 0x00000201, 2352, MmcSectorTypes.AllTypes, false, false, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 }
 
-                                if (mediaTest.SupportsReadCdRaw)
+                                if (mediaTest.SupportsReadCdRaw || mediaType == "Audio CD")
                                 {
                                     DicConsole.WriteLine("Trying to read CD Lead-In...");
                                     for (int i = -150; i < 0; i++)
@@ -2453,7 +2494,10 @@ namespace DiscImageChef.Commands
                                     }
 
                                     DicConsole.WriteLine("Trying to read CD Lead-Out...");
-                                    mediaTest.CanReadLeadOut = !dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
+                                    if (mediaType == "Audio CD")
+                                        mediaTest.CanReadLeadOut = dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
+                                    else
+                                        mediaTest.CanReadLeadOut = !dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 }
 
                                 if (mediaType == "Audio CD" && mediaTest.SupportsReadCd)
@@ -2600,7 +2644,7 @@ namespace DiscImageChef.Commands
                                         mediaTest.SupportsReadLong = true;
                                         if (decSense.Value.InformationValid && decSense.Value.ILI)
                                         {
-                                            mediaTest.LongBlockSize = 0xFFFF - decSense.Value.Information;
+                                            mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                             mediaTest.LongBlockSizeSpecified = true;
                                         }
                                     }
@@ -2652,12 +2696,25 @@ namespace DiscImageChef.Commands
                                 }
                                 else if (mediaTest.BlockSize == 2048)
                                 {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
-                                    if (!sense && !dev.Error)
+                                    if (mediaType.StartsWith("DVD"))
                                     {
-                                        mediaTest.SupportsReadLong = true;
-                                        mediaTest.LongBlockSize = 2380;
-                                        mediaTest.LongBlockSizeSpecified = true;
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, timeout, out duration);
+                                        if (!sense && !dev.Error)
+                                        {
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = 37856;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
+                                        if (!sense && !dev.Error)
+                                        {
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize = 2380;
+                                            mediaTest.LongBlockSizeSpecified = true;
+                                        }
                                     }
                                 }
                                 else if (mediaTest.BlockSize == 4096)
@@ -2710,12 +2767,18 @@ namespace DiscImageChef.Commands
 
                                 if (pressedKey.Key == ConsoleKey.Y)
                                 {
-                                    for (ushort i = (ushort)mediaTest.BlockSize; i < 0x4000; i++)
+                                    for (ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
                                     {
                                         DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
                                         if (!sense)
                                         {
+                                            if (options.Debug)
+                                            {
+                                                FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", mediaType), FileMode.Create);
+                                                bingo.Write(buffer, 0, buffer.Length);
+                                                bingo.Close();
+                                            }
                                             mediaTest.LongBlockSize = i;
                                             mediaTest.LongBlockSizeSpecified = true;
                                             break;
@@ -3149,7 +3212,7 @@ namespace DiscImageChef.Commands
                                             mediaTest.SupportsReadLong = true;
                                             if (decSense.Value.InformationValid && decSense.Value.ILI)
                                             {
-                                                mediaTest.LongBlockSize = 0xFFFF - decSense.Value.Information;
+                                                mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                                 mediaTest.LongBlockSizeSpecified = true;
                                             }
                                         }
@@ -3227,12 +3290,18 @@ namespace DiscImageChef.Commands
 
                                     if (pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        for (ushort i = (ushort)mediaTest.BlockSize; i < 0x4000; i++)
+                                        for (ushort i = (ushort)mediaTest.BlockSize; i < 0x8000; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
                                             if (!sense)
                                             {
+                                                if (options.Debug)
+                                                {
+                                                    FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", mediaTest.MediumTypeName), FileMode.Create);
+                                                    bingo.Write(buffer, 0, buffer.Length);
+                                                    bingo.Close();
+                                                }
                                                 mediaTest.LongBlockSize = i;
                                                 mediaTest.LongBlockSizeSpecified = true;
                                                 break;
@@ -3344,7 +3413,7 @@ namespace DiscImageChef.Commands
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                 if (decSense.Value.InformationValid && decSense.Value.ILI)
                                 {
-                                    report.SCSI.ReadCapabilities.LongBlockSize = 0xFFFF - decSense.Value.Information;
+                                    report.SCSI.ReadCapabilities.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                     report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                                 }
                             }
@@ -3428,6 +3497,12 @@ namespace DiscImageChef.Commands
                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
                                 if (!sense)
                                 {
+                                    if (options.Debug)
+                                    {
+                                        FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", dev.Model), FileMode.Create);
+                                        bingo.Write(buffer, 0, buffer.Length);
+                                        bingo.Close();
+                                    }
                                     report.SCSI.ReadCapabilities.LongBlockSize = i;
                                     report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                                     break;
@@ -3445,6 +3520,23 @@ namespace DiscImageChef.Commands
             System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
+
+            if (Settings.Settings.Current.SaveReportsGlobally && !String.IsNullOrEmpty (Settings.Settings.ReportsPath))
+            {
+                xmlFs = new FileStream(Path.Combine(Settings.Settings.ReportsPath, xmlFile), FileMode.Create);
+                xmlSer.Serialize(xmlFs, report);
+                xmlFs.Close();
+            }
+
+            if (Settings.Settings.Current.ShareReports)
+            {
+                SubmitReport(xmlSer);
+            }
+        }
+
+        static void SubmitReport(System.Xml.Serialization.XmlSerializer xmlSer)
+        {
+            // TODO: Implement this
         }
     }
 }

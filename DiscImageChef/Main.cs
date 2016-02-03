@@ -37,12 +37,9 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 
 using System;
-using System.Collections.Generic;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
-using DiscImageChef.Plugins;
 using System.Reflection;
 using DiscImageChef.Console;
+using DiscImageChef.Settings;
 
 namespace DiscImageChef
 {
@@ -79,6 +76,9 @@ namespace DiscImageChef
             DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion);
             DicConsole.WriteLine("{0}", AssemblyCopyright);
             DicConsole.WriteLine();
+
+            Settings.Settings.LoadSettings();
+            Core.Statistics.LoadStats();
 
             switch (invokedVerb)
             {
@@ -202,9 +202,17 @@ namespace DiscImageChef
                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
                     Commands.DeviceReport.doDeviceReport(DeviceReportOptions);
                     break;
+                case "configure":
+                    Commands.Configure.doConfigure ();
+                    break;
+                case "stats":
+                    Commands.Statistics.showStats ();
+                    break;
                 default:
                     throw new ArgumentException("Should never arrive here!");
             }
+
+            Core.Statistics.SaveStats();
         }
     }
 }

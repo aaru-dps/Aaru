@@ -1,3 +1,11 @@
+2016-02-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/Constructor.cs:
+	  Corrected detecting USB or FireWire attached CD/DVD/BD and
+	  tape drives.
+	Try ATA identify on USB or FireWire that don't have SCSI
+	  INQUIRY.
+
 2016-01-15  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/ScsiCommands/SSC.cs:

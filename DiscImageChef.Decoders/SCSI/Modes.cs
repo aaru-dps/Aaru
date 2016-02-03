@@ -5173,14 +5173,17 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
             }
 
-            foreach (ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
+            if(page.WriteSpeedPerformanceDescriptors != null)
             {
-                if (descriptor.WriteSpeed > 0)
+                foreach (ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
                 {
-                    if (descriptor.RotationControl == 0)
-                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).AppendLine();
-                    else if (descriptor.RotationControl == 1)
-                        sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode", descriptor.WriteSpeed).AppendLine();
+                    if (descriptor.WriteSpeed > 0)
+                    {
+                        if (descriptor.RotationControl == 0)
+                            sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).AppendLine();
+                        else if (descriptor.RotationControl == 1)
+                            sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode", descriptor.WriteSpeed).AppendLine();
+                    }
                 }
             }
 
@@ -6530,22 +6533,38 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
                 ModePage pg = new ModePage();
+                byte pageNo = (byte)(modeResponse[offset] & 0x3F);
 
-                if (isSubpage)
-                {
-                    pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
+                if (pageNo == 0)
+                { 
+                    pg.PageResponse = new byte[modeResponse.Length - offset];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
-                    pg.Page = (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage = modeResponse[offset + 1];
+                    pg.Page = 0;
+                    pg.Subpage = 0;
                     offset += pg.PageResponse.Length;
                 }
                 else
                 {
-                    pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                    Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
-                    pg.Page = (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage = 0;
-                    offset += pg.PageResponse.Length;
+                    if (isSubpage)
+                    {
+                        pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
+                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                            return decoded;
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        pg.Page = (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage = modeResponse[offset + 1];
+                        offset += pg.PageResponse.Length;
+                    }
+                    else
+                    {
+                        pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                            return decoded;
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        pg.Page = (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage = 0;
+                        offset += pg.PageResponse.Length;
+                    }
                 }
 
                 listpages.Add(pg);
@@ -6587,30 +6606,42 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
                 ModePage pg = new ModePage();
+                byte pageNo = (byte)(modeResponse[offset] & 0x3F);
 
-                if (isSubpage)
+                if (pageNo == 0)
                 {
-                    pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-
-                    if ((pg.PageResponse.Length + offset) > modeResponse.Length)
-                        return decoded;
-
+                    pg.PageResponse = new byte[modeResponse.Length - offset];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
-                    pg.Page = (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage = modeResponse[offset + 1];
+                    pg.Page = 0;
+                    pg.Subpage = 0;
                     offset += pg.PageResponse.Length;
                 }
                 else
                 {
-                    pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+                    if (isSubpage)
+                    {
+                        pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
 
-                    if ((pg.PageResponse.Length + offset) > modeResponse.Length)
-                        return decoded;
+                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                            return decoded;
 
-                    Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
-                    pg.Page = (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage = 0;
-                    offset += pg.PageResponse.Length;
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        pg.Page = (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage = modeResponse[offset + 1];
+                        offset += pg.PageResponse.Length;
+                    }
+                    else
+                    {
+                        pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+
+                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                            return decoded;
+
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        pg.Page = (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage = 0;
+                        offset += pg.PageResponse.Length;
+                    }
                 }
 
                 listpages.Add(pg);

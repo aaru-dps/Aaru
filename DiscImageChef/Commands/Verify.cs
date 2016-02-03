@@ -61,6 +61,14 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(options.InputFile);
+            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+
+            bool? correctDisc = null;
+            long totalSectors = 0;
+            long errorSectors = 0;
+            long correctSectors = 0;
+            long unknownSectors = 0;
 
             if (options.VerifyDisc)
             {
@@ -83,6 +91,7 @@ namespace DiscImageChef.Commands
                         break;
                 }
 
+                correctDisc = discCheckStatus;
                 DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", CheckTime.TotalSeconds);
             }
 
@@ -253,7 +262,15 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Total errors............ {0}", FailingLBAs.Count);
                 DicConsole.WriteLine("Total unknowns.......... {0}", UnknownLBAs.Count);
                 DicConsole.WriteLine("Total errors+unknowns... {0}", FailingLBAs.Count + UnknownLBAs.Count);
+
+                totalSectors = (long)inputFormat.GetSectors();
+                errorSectors = FailingLBAs.Count;
+                unknownSectors = UnknownLBAs.Count;
+                correctSectors = totalSectors - errorSectors - unknownSectors;
             }
+
+            Core.Statistics.AddCommand("verify");
+            Core.Statistics.AddVerify(correctDisc, correctSectors, errorSectors, unknownSectors, totalSectors);
         }
     }
 }

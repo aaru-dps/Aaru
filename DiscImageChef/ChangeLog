@@ -1,3 +1,71 @@
+2016-02-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Configure.cs:
+	  Added support for settings.
+
+	* Core/Statistics.cs:
+	* Commands/Verify.cs:
+	* Commands/Entropy.cs:
+	* Commands/Formats.cs:
+	* Commands/PrintHex.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/Statistics.cs:
+	  Added statistics.
+
+
+	* Commands/Decode.cs:
+	* Commands/Analyze.cs:
+	* Commands/Compare.cs:
+	* Commands/Checksum.cs:
+	* Commands/Benchmark.cs:
+	* Commands/DeviceInfo.cs:
+	* Commands/CreateSidecar.cs:
+	  Added statistics.
+
+	* Commands/DeviceReport.cs:
+	  Added statistics.
+	Correct handling empty inquiry string fields.
+	Suppose it is not removable, til proved wrong.
+	Corrected MODE SENSE (6/10) detection and calling order.
+	If device is MMC type but reports neither mode page 2Ah
+	  neither GET CONFIGURATION, try all CDs (old drives work like
+	  that).
+	Try reading Lead-In and Lead-Out in Audio CD using Audio READ
+	  CD commands.
+	Corrected READ LONG information handling, some drives return
+	  2s-complement in 32 bit. Upper 16 bits are ignored.
+	Added support for DVD raw block (37856 bytes).
+	Check READ LONG up to 36 times the cooked block size. That
+	  should be enough to detect huge blocked media (like DVD and
+	  BD) without taking ages.
+	If READ LONG size had to be bruteforced, and debug is
+	  activated, save the result.
+
+
+	* Commands/DumpMedia.cs:
+	  Added statistics.
+	Corrected READ LONG information handling, some drives return
+	  2s-complement in 32 bit. Upper 16 bits are ignored.
+	Start trying with 64 blocks at a time. Some drives report to
+	  be able to read 255 at a time, but they really don't, they
+	  take a lot longer to read.
+
+	* Commands/MediaScan.cs:
+	  Added statistics.
+	Start trying with 64 blocks at a time. Some drives report to
+	  be able to read 255 at a time, but they really don't, they
+	  take a lot longer to read.
+
+	* DiscImageChef.csproj:
+	  Added support for settings.
+	Added statistics.
+
+
+	* Main.cs:
+	* Options.cs:
+	  Added support for settings.
+	Added statistics.
+
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Decode.cs:

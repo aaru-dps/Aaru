@@ -77,6 +77,8 @@ namespace DiscImageChef.Commands
             }
 
             inputFormat.OpenImage(options.InputFile);
+            Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
+            Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
             if (inputFormat.ImageInfo.imageHasPartitions)
             {
@@ -1045,6 +1047,8 @@ namespace DiscImageChef.Commands
                 if (options.DoSpamSum)
                     DicConsole.WriteLine("Disk's SpamSum: {0}", ssctx.End());
             }
+
+            Core.Statistics.AddCommand("checksum");
         }
 
         #region Threading helpers

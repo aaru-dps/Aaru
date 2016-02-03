@@ -1,0 +1,45 @@
+2016-02-03  Natalia Portillo  <claunia@claunia.com>
+
+	* Settings.cs:
+	* docs/README.txt:
+	* packages.config:
+	* docs/LICENSE.txt:
+	* docs/ChangeLog.txt:
+	* docs/mono/index.xml:
+	* docs/html/index.html:
+	* Properties/AssemblyInfo.cs:
+	* DiscImageChef.Settings.csproj:
+	* docs/mono/ns-Claunia.PropertyList.xml:
+	* docs/mono/Claunia.PropertyList/UID.xml:
+	* docs/html/Claunia.PropertyList/UID.html:
+	* docs/mono/Claunia.PropertyList/NSSet.xml:
+	* docs/mono/Claunia.PropertyList/NSDate.xml:
+	* docs/mono/Claunia.PropertyList/NSData.xml:
+	* docs/html/Claunia.PropertyList/NSSet.html:
+	* docs/html/Claunia.PropertyList/index.html:
+	* docs/html/Claunia.PropertyList/NSDate.html:
+	* docs/mono/Claunia.PropertyList/NSArray.xml:
+	* docs/html/Claunia.PropertyList/NSData.html:
+	* docs/mono/Claunia.PropertyList/NSNumber.xml:
+	* docs/mono/Claunia.PropertyList/NSObject.xml:
+	* docs/mono/Claunia.PropertyList/NSString.xml:
+	* docs/html/Claunia.PropertyList/NSArray.html:
+	* docs/html/Claunia.PropertyList/NSNumber.html:
+	* docs/html/Claunia.PropertyList/NSObject.html:
+	* docs/html/Claunia.PropertyList/NSString.html:
+	* docs/mono/Claunia.PropertyList/NSDictionary.xml:
+	* docs/html/Claunia.PropertyList/NSDictionary.html:
+	* docs/mono/Claunia.PropertyList/PropertyListParser.xml:
+	* docs/html/Claunia.PropertyList/PropertyListParser.html:
+	* docs/mono/Claunia.PropertyList/XmlPropertyListParser.xml:
+	* docs/html/Claunia.PropertyList/XmlPropertyListParser.html:
+	* docs/mono/Claunia.PropertyList/ASCIIPropertyListParser.xml:
+	* docs/mono/Claunia.PropertyList/BinaryPropertyListWriter.xml:
+	* docs/html/Claunia.PropertyList/ASCIIPropertyListParser.html:
+	* docs/mono/Claunia.PropertyList/BinaryPropertyListParser.xml:
+	* docs/html/Claunia.PropertyList/BinaryPropertyListWriter.html:
+	* docs/html/Claunia.PropertyList/BinaryPropertyListParser.html:
+	* docs/mono/Claunia.PropertyList/PropertyListFormatException.xml:
+	* docs/html/Claunia.PropertyList/PropertyListFormatException.html:
+	  Added supports for settings
+

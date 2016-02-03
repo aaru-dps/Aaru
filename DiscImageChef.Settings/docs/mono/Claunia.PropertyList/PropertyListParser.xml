@@ -1,0 +1,411 @@
+<Type Name="PropertyListParser" FullName="Claunia.PropertyList.PropertyListParser">
+  <TypeSignature Language="C#" Value="public static class PropertyListParser" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit PropertyListParser extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>plist-cil</AssemblyName>
+    <AssemblyVersion>1.13.0.0</AssemblyVersion>
+    <AssemblyVersion>1.14.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            This class provides methods to parse property lists. It can handle files,
+            input streams and byte arrays. All known property list formats are supported.
+            This class also provides methods to save and convert property lists.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ConvertToASCII">
+      <MemberSignature Language="C#" Value="public static void ConvertToASCII (System.IO.FileInfo inFile, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ConvertToASCII(class System.IO.FileInfo inFile, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inFile" Type="System.IO.FileInfo" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="inFile">The source file.</param>
+        <param name="outFile">The target file.</param>
+        <summary>
+            Converts a given property list file into ASCII format.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConvertToBinary">
+      <MemberSignature Language="C#" Value="public static void ConvertToBinary (System.IO.FileInfo inFile, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ConvertToBinary(class System.IO.FileInfo inFile, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inFile" Type="System.IO.FileInfo" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="inFile">The source file.</param>
+        <param name="outFile">The target file.</param>
+        <summary>
+            Converts a given property list file into the OS X and iOS binary format.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConvertToGnuStepASCII">
+      <MemberSignature Language="C#" Value="public static void ConvertToGnuStepASCII (System.IO.FileInfo inFile, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ConvertToGnuStepASCII(class System.IO.FileInfo inFile, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inFile" Type="System.IO.FileInfo" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="inFile">The source file.</param>
+        <param name="outFile">The target file.</param>
+        <summary>
+            Converts a given property list file into GnuStep ASCII format.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConvertToXml">
+      <MemberSignature Language="C#" Value="public static void ConvertToXml (System.IO.FileInfo inFile, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ConvertToXml(class System.IO.FileInfo inFile, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inFile" Type="System.IO.FileInfo" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="inFile">The source file.</param>
+        <param name="outFile">The target file.</param>
+        <summary>
+            Converts a given property list file into the OS X and iOS XML format.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The property list data as a byte array.</param>
+        <summary>
+            Parses a property list from a byte array.
+            </summary>
+        <returns>The root object in the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (System.IO.FileInfo f);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(class System.IO.FileInfo f) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="f">The property list file.</param>
+        <summary>
+            Parses a property list from a file.
+            </summary>
+        <returns>The root object in the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (System.IO.Stream fs);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(class System.IO.Stream fs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fs" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="fs">The Stream delivering the property list data.</param>
+        <summary>
+            Parses a property list from an Stream.
+            </summary>
+        <returns>The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (string filePath);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(string filePath) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filePath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filePath">Path to the property list file.</param>
+        <summary>
+            Parses a property list from a file.
+            </summary>
+        <returns>The root object in the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsASCII">
+      <MemberSignature Language="C#" Value="public static void SaveAsASCII (Claunia.PropertyList.NSArray root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsASCII(class Claunia.PropertyList.NSArray root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSArray" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a ASCII file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsASCII">
+      <MemberSignature Language="C#" Value="public static void SaveAsASCII (Claunia.PropertyList.NSDictionary root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsASCII(class Claunia.PropertyList.NSDictionary root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSDictionary" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a ASCII file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsBinary">
+      <MemberSignature Language="C#" Value="public static void SaveAsBinary (Claunia.PropertyList.NSObject root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsBinary(class Claunia.PropertyList.NSObject root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSObject" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a binary file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsBinary">
+      <MemberSignature Language="C#" Value="public static void SaveAsBinary (Claunia.PropertyList.NSObject root, System.IO.Stream outStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsBinary(class Claunia.PropertyList.NSObject root, class System.IO.Stream outStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSObject" />
+        <Parameter Name="outStream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outStream">The output stream.</param>
+        <summary>
+            Saves a property list with the given object as root in binary format into an output stream.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsGnuStepASCII">
+      <MemberSignature Language="C#" Value="public static void SaveAsGnuStepASCII (Claunia.PropertyList.NSArray root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsGnuStepASCII(class Claunia.PropertyList.NSArray root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSArray" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a GnuStep ASCII file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsGnuStepASCII">
+      <MemberSignature Language="C#" Value="public static void SaveAsGnuStepASCII (Claunia.PropertyList.NSDictionary root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsGnuStepASCII(class Claunia.PropertyList.NSDictionary root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSDictionary" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a GnuStep ASCII file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsXml">
+      <MemberSignature Language="C#" Value="public static void SaveAsXml (Claunia.PropertyList.NSObject root, System.IO.FileInfo outFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsXml(class Claunia.PropertyList.NSObject root, class System.IO.FileInfo outFile) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSObject" />
+        <Parameter Name="outFile" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outFile">The output file.</param>
+        <summary>
+            Saves a property list with the given object as root into a XML file.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsXml">
+      <MemberSignature Language="C#" Value="public static void SaveAsXml (Claunia.PropertyList.NSObject root, System.IO.Stream outStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SaveAsXml(class Claunia.PropertyList.NSObject root, class System.IO.Stream outStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Claunia.PropertyList.NSObject" />
+        <Parameter Name="outStream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="root">The root object.</param>
+        <param name="outStream">The output stream.</param>
+        <summary>
+            Saves a property list with the given object as root in XML format into an output stream.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.IOException">When an error occurs during the writing process.</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
