@@ -1,3 +1,14 @@
+2016-02-03  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Inquiry.cs:
+	  Corrected bug on inquiry decoding.
+
+	* SCSI/Modes.cs:
+	  Corrected bug on decoding mode page 2Ah without write
+	  performance descriptors.
+	Corrected bug when there is a vendor page 0 in mode sense
+	  decoding.
+
 2016-01-15  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
