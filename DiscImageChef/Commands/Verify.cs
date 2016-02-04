@@ -52,6 +52,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}", options.VerifyDisc);
             DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", options.VerifySectors);
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)

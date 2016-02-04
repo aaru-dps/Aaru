@@ -56,7 +56,7 @@ namespace DiscImageChef.Commands
 
             if (!System.IO.File.Exists(options.InputFile))
             {
-                DicConsole.WriteLine("Specified file does not exist.");
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
             }
 

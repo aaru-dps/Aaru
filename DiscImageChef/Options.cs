@@ -263,7 +263,6 @@ namespace DiscImageChef
         public string InputFile { get; set; }
     }
 
-    // TODO: Add more options
     public class DumpMediaSubOptions : CommonSubOptions
     {
         [Option('i', "device", Required = true, HelpText = "Device path.")]
@@ -277,16 +276,21 @@ namespace DiscImageChef
         public bool Raw { get; set; }
 
         [Option('s', "stop-on-error", DefaultValue = false,
-            HelpText = "Print sectors with tags included.")]
+            HelpText = "Stop media dump on first error.")]
         public bool StopOnError { get; set; }
 
         [Option('f', "force", DefaultValue = false,
             HelpText = "Continue dump whatever happens.")]
         public bool Force { get; set; }
 
-        [Option("reset", DefaultValue = (ushort)0,
-            HelpText = "Reset the device after these many errors. 0 to disable.")]
-        public ushort Reset { get; set; }
+        [Option('p', "retry-passes", DefaultValue = (ushort)5,
+                HelpText = "How many retry passes to do.")]
+        public ushort RetryPasses { get; set; }
+
+        [Option("persistent", DefaultValue = false,
+                HelpText = "Try to recover partial or incorrect data.")]
+        public bool Persistent { get; set; }
+
     }
 
     public class DeviceReportSubOptions : CommonSubOptions

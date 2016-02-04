@@ -308,9 +308,11 @@ namespace DiscImageChef.Plugins
             Array.Copy(ufs_sb_sectors, 0x00D4, strings_b, 0, 512);
             ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 512 bytes, name mounted on
             ufs_sb.fs_cgrotor_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);             /// <summary>0x02D4 last cg searched
+            ufs_sb.fs_cs_ufs1 = new byte[124];
             Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); /// <summary>0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers
             ufs_sb.fs_maxcluster_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);          /// <summary>0x0354
             ufs_sb.fs_cpc_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);                 /// <summary>0x0358 cyl per cycle in postbl
+            ufs_sb.fs_opostbl_ufs1 = new byte[256];
             Array.Copy(ufs_sb_sectors, 0x035C, ufs_sb.fs_opostbl_ufs1, 0, 256); /// <summary>0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head
             #endregion UFS1
             #region UFS2
@@ -323,6 +325,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_swuid_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02C8);               /// <summary>0x02C8 system-wide uid
             ufs_sb.fs_pad_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D0);                 /// <summary>0x02D0 due to alignment of fs_swuid
             ufs_sb.fs_cgrotor_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D4);             /// <summary>0x02D4 last cg searched
+            ufs_sb.fs_ocsp_ufs2 = new byte[112];
             Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_ocsp_ufs2, 0, 112); /// <summary>0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers
             ufs_sb.fs_contigdirs_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0348);          /// <summary>0x0348 # of contiguously allocated dirs
             ufs_sb.fs_csp_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x034C);                 /// <summary>0x034C cg summary info buffer for fs_cs
@@ -330,6 +333,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_active_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);              /// <summary>0x0354 used by snapshots to track fs
             ufs_sb.fs_old_cpc_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);             /// <summary>0x0358 cyl per cycle in postbl
             ufs_sb.fs_maxbsize_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x035C);            /// <summary>0x035C maximum blocking factor permitted
+            ufs_sb.fs_sparecon64_ufs2 = new byte[136];
             Array.Copy(ufs_sb_sectors, 0x0360, ufs_sb.fs_sparecon64_ufs2, 0, 136); /// <summary>0x0360, 136 bytes, UInt64s, old rotation block list head
             ufs_sb.fs_sblockloc_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03E8);           /// <summary>0x03E8 byte offset of standard superblock
             //cylinder summary information*/
@@ -350,6 +354,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_pendinginodes_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0458);       /// <summary>0x0458 inodes in process of being freed
             #endregion UFS2
             #region Sun
+            ufs_sb.fs_sparecon_sun = new byte[212];
             Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun, 0, 212); /// <summary>0x045C, 212 bytes, reserved for future constants
             ufs_sb.fs_reclaim_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);              /// <summary>0x0530
             ufs_sb.fs_sparecon2_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);            /// <summary>0x0534
@@ -360,6 +365,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_qfmask1_sun = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);              /// <summary>0x0548 ~usb_fmask
             #endregion Sun
             #region Sunx86
+            ufs_sb.fs_sparecon_sun86 = new byte[212];
             Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_sun86, 0, 212); /// <summary>0x045C, 212 bytes, reserved for future constants
             ufs_sb.fs_reclaim_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0530);            /// <summary>0x0530
             ufs_sb.fs_sparecon2_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0534);          /// <summary>0x0534
@@ -370,6 +376,7 @@ namespace DiscImageChef.Plugins
             ufs_sb.fs_qfmask1_sun86 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0548);            /// <summary>0x0548 ~usb_fmask
             #endregion Sunx86
             #region 44BSD
+            ufs_sb.fs_sparecon_44bsd = new byte[200];
             Array.Copy(ufs_sb_sectors, 0x045C, ufs_sb.fs_sparecon_44bsd, 0, 200); /// <summary>0x045C, 200 bytes
             ufs_sb.fs_contigsumsize_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0524);      /// <summary>0x0524 size of cluster summary array
             ufs_sb.fs_maxsymlinklen_44bsd = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0528);      /// <summary>0x0528 max length of an internal symlink

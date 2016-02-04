@@ -1,3 +1,8 @@
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/ScsiCommands/SPC.cs:
+	  Added MODE SELECT (6) and MODE SELECT (10) commands.
+
 2016-02-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/Constructor.cs:

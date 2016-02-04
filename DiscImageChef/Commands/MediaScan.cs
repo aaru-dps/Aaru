@@ -61,7 +61,6 @@ namespace DiscImageChef.Commands
         static double ibgIntSpeed;
         static int ibgSnaps;
         static ulong                 ibgIntSector = 0;
-        static double ibgIntTime = 0;
         static int ibgSampleRate;
 
         public static void doMediaScan(MediaScanSubOptions options)
@@ -71,6 +70,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MHDDLogPath);
             DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", options.IBGLogPath);
+
+            if (!System.IO.File.Exists(options.DevicePath))
+            {
+                DicConsole.ErrorWriteLine("Specified device does not exist.");
+                return;
+            }
 
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
@@ -881,8 +886,7 @@ namespace DiscImageChef.Commands
                 ibgIntSpeed = 0;
                 ibgSnaps = 0;
                 ibgIntSector = 0;
-                ibgIntTime = 0;
-                
+
                 switch (currentProfile)
                 {
                     case 0x0001:

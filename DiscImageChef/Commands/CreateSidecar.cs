@@ -58,6 +58,12 @@ namespace DiscImageChef.Commands
             plugins.RegisterAllPlugins();
             ImagePlugin _imageFormat;
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             try
             {
                 _imageFormat = ImageFormat.Detect(options.InputFile);

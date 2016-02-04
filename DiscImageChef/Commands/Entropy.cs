@@ -54,6 +54,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Entropy command", "--input={0}", options.InputFile);
             DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)

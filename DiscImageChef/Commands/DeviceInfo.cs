@@ -53,6 +53,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
 
+            if (!System.IO.File.Exists(options.DevicePath))
+            {
+                DicConsole.ErrorWriteLine("Specified device does not exist.");
+                return;
+            }
+
             if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
             {

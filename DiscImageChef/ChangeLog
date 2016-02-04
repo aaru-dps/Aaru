@@ -1,3 +1,29 @@
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Decode.cs:
+	* Commands/Verify.cs:
+	* Commands/Analyze.cs:
+	* Commands/Entropy.cs:
+	* Commands/Checksum.cs:
+	* Commands/PrintHex.cs:
+	* Commands/CreateSidecar.cs:
+	  Check if image file exists before proceeding.
+
+	* Commands/MediaInfo.cs:
+	* Commands/MediaScan.cs:
+	* Commands/DeviceInfo.cs:
+	* Commands/DeviceReport.cs:
+	  Check if device exists before proceeding.
+
+	* Commands/DumpMedia.cs:
+	  Check if device exists before proceeding.
+	Removed unused code.
+	Added error handling procedures for non CDs.
+
+	* Options.cs:
+	  Remove unused options.
+	Added options to control dump-media error handling.
+
 2016-02-03  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Configure.cs:

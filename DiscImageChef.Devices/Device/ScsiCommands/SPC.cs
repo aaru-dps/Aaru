@@ -690,6 +690,91 @@ namespace DiscImageChef.Devices
         {
             return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, cache, timeout, out duration);
         }
+
+        /// <summary>
+        /// Sends the SPC MODE SELECT(6) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer with the data to be sent to the device</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ModeSelect(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+
+            // Prevent overflows
+            if (buffer.Length > 255)
+            {
+                if (platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
+                    lastError = 75;
+                else
+                    lastError = 111;
+                error = true;
+                duration = 0;
+                return true;
+            }
+
+            byte[] cdb = new byte[6];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ModeSelect;
+            if (pageFormat)
+                cdb[1] += 0x10;
+            if (savePages)
+                cdb[1] += 0x01;
+            cdb[4] = (byte)buffer.Length;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(6) took {0} ms.", duration);
+
+            return sense;
+        }
+
+        /// <summary>
+        /// Sends the SPC MODE SELECT(10) command
+        /// </summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer"/> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer with the data to be sent to the device</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ModeSelect10(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+
+            // Prevent overflows
+            if (buffer.Length > 65535)
+            {
+                if (platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
+                    lastError = 75;
+                else
+                    lastError = 111;
+                error = true;
+                duration = 0;
+                return true;
+            }
+
+            byte[] cdb = new byte[10];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.ModeSelect10;
+            if (pageFormat)
+                cdb[1] += 0x10;
+            if (savePages)
+                cdb[1] += 0x01;
+            cdb[7] = (byte)((buffer.Length & 0xFF00) << 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(10) took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 

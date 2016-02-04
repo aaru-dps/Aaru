@@ -68,6 +68,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSHA512);
             DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)

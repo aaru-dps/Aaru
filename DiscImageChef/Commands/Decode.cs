@@ -53,6 +53,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Decode command", "--disk-tags={0}", options.DiskTags);
             DicConsole.DebugWriteLine("Decode command", "--sector-tags={0}", options.SectorTags);
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)

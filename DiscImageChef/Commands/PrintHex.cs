@@ -53,6 +53,12 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", options.LongSectors);
             DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", options.WidthBytes);
 
+            if (!System.IO.File.Exists(options.InputFile))
+            {
+                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                return;
+            }
+
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
             if (inputFormat == null)
