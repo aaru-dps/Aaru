@@ -229,10 +229,21 @@ namespace DiscImageChef.CommonTypes
         SATURNCD,
         /// <summary>Sega/Yamaha Gigabyte Disc</summary>
         GDROM,
-        /// <summary>Sega/Yamaha recordable Gigabyte Disc}}</summary>
+        /// <summary>Sega/Yamaha recordable Gigabyte Disc</summary>
         GDR,
         SegaCard,
         #endregion Sega game media
+
+        #region Other game media
+        /// <summary>PC-Engine / TurboGrafx cartridge</summary>
+        HuCard,
+        /// <summary>PC-Engine / TurboGrafx CD</summary>
+        SuperCDROM2,
+        /// <summary>Atari Jaguar CD</summary>
+        JaguarCD,
+        /// <summary>3DO CD</summary>
+        ThreeDO,
+        #endregion Other game media
 
         #region Apple standard floppy format
         /// <summary>5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
@@ -753,7 +764,6 @@ namespace DiscImageChef.CommonTypes
         Flextra3225,
         HiTC1,
         HiTC2,
-        HuCard,
         LT1,
         MiniCard,
         Orb,
