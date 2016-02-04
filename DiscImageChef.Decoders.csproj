@@ -90,6 +90,7 @@
     <Compile Include="SCSI\SSC\BlockLimits.cs" />
     <Compile Include="SCSI\SSC\DensitySupport.cs" />
     <Compile Include="SCSI\Types.cs" />
+    <Compile Include="SCSI\ModesEncoders.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

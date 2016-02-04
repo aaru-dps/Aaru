@@ -41,7 +41,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    public static class Modes
+    public static partial class Modes
     {
         public struct BlockDescriptor
         {

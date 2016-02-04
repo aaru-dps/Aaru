@@ -1,3 +1,11 @@
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Modes.cs:
+	* SCSI/ModesEncoders.cs:
+	* DiscImageChef.Decoders.csproj:
+	  Added encoders for Mode 6 and 10, Mode pages 0x01 and 0x01
+	  for MultiMedia Devices.
+
 2016-02-03  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Inquiry.cs:
