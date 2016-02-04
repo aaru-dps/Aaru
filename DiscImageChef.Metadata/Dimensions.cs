@@ -807,6 +807,7 @@ namespace DiscImageChef.Metadata
                     dmns.WidthSpecified = true;
                     dmns.Thickness = 25.4;
                     return dmns;
+                case CommonTypes.MediaType.LD:
                 case CommonTypes.MediaType.LDROM:
                 case CommonTypes.MediaType.LDROM2:
                 case CommonTypes.MediaType.MegaLD:
@@ -815,6 +816,81 @@ namespace DiscImageChef.Metadata
                     dmns.DiameterSpecified = true;
                     dmns.Thickness = 2.5;
                     return dmns;
+                
+                #region CD/DVD/BD
+                case CommonTypes.MediaType.CDDA:
+                case CommonTypes.MediaType.CDG:
+                case CommonTypes.MediaType.CDEG:
+                case CommonTypes.MediaType.CDI:
+                case CommonTypes.MediaType.CDROM:
+                case CommonTypes.MediaType.CDROMXA:
+                case CommonTypes.MediaType.CDPLUS:
+                case CommonTypes.MediaType.CDMO:
+                case CommonTypes.MediaType.CDR:
+                case CommonTypes.MediaType.CDRW:
+                case CommonTypes.MediaType.CDMRW:
+                case CommonTypes.MediaType.VCD:
+                case CommonTypes.MediaType.SVCD:
+                case CommonTypes.MediaType.PCD:
+                case CommonTypes.MediaType.SACD:
+                case CommonTypes.MediaType.DDCD:
+                case CommonTypes.MediaType.DDCDR:
+                case CommonTypes.MediaType.DDCDRW:
+                case CommonTypes.MediaType.DTSCD:
+                case CommonTypes.MediaType.CDMIDI:
+                case CommonTypes.MediaType.CDV:
+                case CommonTypes.MediaType.CD:
+                case CommonTypes.MediaType.DVDROM:
+                case CommonTypes.MediaType.DVDR:
+                case CommonTypes.MediaType.DVDRW:
+                case CommonTypes.MediaType.DVDPR:
+                case CommonTypes.MediaType.DVDPRW:
+                case CommonTypes.MediaType.DVDPRWDL:
+                case CommonTypes.MediaType.DVDRDL:
+                case CommonTypes.MediaType.DVDPRDL:
+                case CommonTypes.MediaType.DVDRAM:
+                case CommonTypes.MediaType.DVDRWDL:
+                case CommonTypes.MediaType.DVDDownload:
+                case CommonTypes.MediaType.HDDVDROM:
+                case CommonTypes.MediaType.HDDVDRAM:
+                case CommonTypes.MediaType.HDDVDR:
+                case CommonTypes.MediaType.HDDVDRW:
+                case CommonTypes.MediaType.HDDVDRDL:
+                case CommonTypes.MediaType.HDDVDRWDL:
+                case CommonTypes.MediaType.BDROM:
+                case CommonTypes.MediaType.BDR:
+                case CommonTypes.MediaType.BDRE:
+                case CommonTypes.MediaType.BDRXL:
+                case CommonTypes.MediaType.BDREXL:
+                case CommonTypes.MediaType.PS1CD:
+                case CommonTypes.MediaType.PS2CD:
+                case CommonTypes.MediaType.PS2DVD:
+                case CommonTypes.MediaType.PS3DVD:
+                case CommonTypes.MediaType.PS3BD:
+                case CommonTypes.MediaType.PS4BD:
+                case CommonTypes.MediaType.XGD:
+                case CommonTypes.MediaType.XGD2:
+                case CommonTypes.MediaType.XGD3:
+                case CommonTypes.MediaType.XGD4:
+                case CommonTypes.MediaType.MEGACD:
+                case CommonTypes.MediaType.SATURNCD:
+                case CommonTypes.MediaType.GDROM:
+                case CommonTypes.MediaType.GDR:
+                case CommonTypes.MediaType.SuperCDROM2:
+                case CommonTypes.MediaType.JaguarCD:
+                case CommonTypes.MediaType.ThreeDO:
+                case CommonTypes.MediaType.WOD:
+                case CommonTypes.MediaType.WUOD:
+                    dmns.Diameter = 120;
+                    dmns.DiameterSpecified = true;
+                    dmns.Thickness = 1.2;
+                    return dmns;
+                case CommonTypes.MediaType.GOD:
+                    dmns.Diameter = 80;
+                    dmns.DiameterSpecified = true;
+                    dmns.Thickness = 1.2;
+                    return dmns;
+                #endregion CD/DVD/BD
 
                 default:
                     return null;

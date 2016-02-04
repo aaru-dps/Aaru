@@ -1,3 +1,8 @@
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs:
+	  Added Jaguar CD, Super CD-ROM² and 3DO discs.
+
 2016-01-16  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs:

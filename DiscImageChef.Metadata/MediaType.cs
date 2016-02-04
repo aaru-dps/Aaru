@@ -636,9 +636,21 @@ namespace DiscImageChef.Metadata
                     DiscType = "3.5\" magneto-optical";
                     DiscSubType = "ECMA-201";
                     break;
-                case DiscImageChef.CommonTypes.MediaType.FlashDrive:
+                case CommonTypes.MediaType.FlashDrive:
                     DiscType = "USB flash drive";
                     DiscSubType = "USB flash drive";
+                    break;
+                case CommonTypes.MediaType.SuperCDROM2:
+                    DiscType = "CD";
+                    DiscSubType = "Super CD-ROM²";
+                    break;
+                case CommonTypes.MediaType.JaguarCD:
+                    DiscType = "CD";
+                    DiscSubType = "Atari Jaguar CD";
+                    break;
+                case CommonTypes.MediaType.ThreeDO:
+                    DiscType = "CD";
+                    DiscSubType = "3DO";
                     break;
                 default:
                     DiscType = "Unknown";

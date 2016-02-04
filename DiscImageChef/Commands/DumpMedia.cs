@@ -39,10 +39,12 @@ using System;
 using DiscImageChef.Console;
 using System.IO;
 using DiscImageChef.Devices;
-using System.Text;
 using System.Collections.Generic;
 using Schemas;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.ImagePlugins;
+using DiscImageChef.PartPlugins;
+using DiscImageChef.Plugins;
 
 namespace DiscImageChef.Commands
 {
@@ -51,6 +53,7 @@ namespace DiscImageChef.Commands
         static bool aborted;
         static FileStream dataFs;
         static Core.MHDDLog mhddLog;
+        static Core.IBGLog ibgLog;
         // TODO: Implement dump map
 
         public static void doDumpMedia(DumpMediaSubOptions options)
@@ -78,6 +81,7 @@ namespace DiscImageChef.Commands
             }
 
             mhddLog = null;
+            ibgLog = null;
 
             Device dev = new Device(options.DevicePath);
 
@@ -276,6 +280,7 @@ namespace DiscImageChef.Commands
             byte scsiMediumType = 0;
             byte scsiDensityCode = 0;
             bool containsFloppyPage = false;
+            ushort currentProfile = 0x0001;
 
             CICMMetadataType sidecar = new CICMMetadataType();
 
@@ -290,6 +295,7 @@ namespace DiscImageChef.Commands
                 if (!sense)
                 {
                     Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(cmdBuf);
+                    currentProfile = ftr.CurrentProfile;
 
                     switch (ftr.CurrentProfile)
                     {
@@ -1195,7 +1201,9 @@ namespace DiscImageChef.Commands
 
                 initDataFile(options.OutputPrefix + ".bin");
                 mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                ibgLog = new Core.IBGLog(options.OutputPrefix + ".ibg", 0x0008);
 
+                start = DateTime.UtcNow;
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
                     if (aborted)
@@ -1223,6 +1231,7 @@ namespace DiscImageChef.Commands
                     if (!sense && !dev.Error)
                     {
                         mhddLog.Write(i, cmdDuration);
+                        ibgLog.Write(i, currentSpeed * 1024);
                         writeToDataFile(readBuffer);
                     }
                     else
@@ -1243,12 +1252,16 @@ namespace DiscImageChef.Commands
                             mhddLog.Write(i, 65535);
                         else
                             mhddLog.Write(i, cmdDuration);
+
+                        ibgLog.Write(i, 0);
                     }
 
                     currentSpeed = ((double)2448 * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
                 }
                 DicConsole.WriteLine();
+                end = DateTime.UtcNow;
                 mhddLog.Close();
+                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
 
                 dataChk = new Core.Checksum();
                 dataFs.Seek(0, SeekOrigin.Begin);
@@ -1299,8 +1312,8 @@ namespace DiscImageChef.Commands
                 sidecar.OpticalDisc[0].Image.Value = options.OutputPrefix + ".bin";
                 sidecar.OpticalDisc[0].Sessions = 1;
                 sidecar.OpticalDisc[0].Tracks = new []{1};
-                sidecar.OpticalDisc[0].Track = new TrackType[1];
-                sidecar.OpticalDisc[0].Track[0] = new TrackType();
+                sidecar.OpticalDisc[0].Track = new Schemas.TrackType[1];
+                sidecar.OpticalDisc[0].Track[0] = new Schemas.TrackType();
                 sidecar.OpticalDisc[0].Track[0].BytesPerSector = (int)blockSize;
                 sidecar.OpticalDisc[0].Track[0].Checksums = sidecar.OpticalDisc[0].Checksums;
                 sidecar.OpticalDisc[0].Track[0].EndSector = (long)(blocks - 1);
@@ -1673,6 +1686,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                ibgLog = new Core.IBGLog(options.OutputPrefix + ".ibg", currentProfile);
                 initDataFile(options.OutputPrefix + ".bin");
 
                 start = DateTime.UtcNow;
@@ -1750,6 +1764,7 @@ namespace DiscImageChef.Commands
                     if (!sense && !dev.Error)
                     {
                         mhddLog.Write(i, cmdDuration);
+                        ibgLog.Write(i, currentSpeed * 1024);
                         writeToDataFile(readBuffer);
                     }
                     else
@@ -1770,12 +1785,16 @@ namespace DiscImageChef.Commands
                             mhddLog.Write(i, 65535);
                         else
                             mhddLog.Write(i, cmdDuration);
+
+                        ibgLog.Write(i, 0);
                     }
 
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
                 }
+                end = DateTime.UtcNow;
                 DicConsole.WriteLine();
                 mhddLog.Close();
+                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
 
                 #region Error handling
                 if (unreadableSectors.Count > 0 && !aborted)
@@ -2000,6 +2019,117 @@ namespace DiscImageChef.Commands
                 closeDataFile();
                 end = DateTime.UtcNow;
 
+                PluginBase plugins = new PluginBase();
+                plugins.RegisterAllPlugins();
+                ImagePlugin _imageFormat;
+                _imageFormat = ImageFormat.Detect(options.OutputPrefix + ".bin");
+                PartitionType[] xmlFileSysInfo = null;
+
+                try
+                {
+                    if (!_imageFormat.OpenImage(options.OutputPrefix + ".bin"))
+                        _imageFormat = null;
+                }
+                catch (Exception ex)
+                {
+                    _imageFormat = null;
+                }
+
+                if (_imageFormat != null)
+                {
+                    List<Partition> partitions = new List<Partition>();
+
+                    foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
+                    {
+                        List<Partition> _partitions;
+
+                        if (_partplugin.GetInformation(_imageFormat, out _partitions))
+                        {
+                            partitions = _partitions;
+                            Core.Statistics.AddPartition(_partplugin.Name);
+                            break;
+                        }
+                    }
+
+                    if (partitions.Count > 0)
+                    {
+                        xmlFileSysInfo = new PartitionType[partitions.Count];
+                        for (int i = 0; i < partitions.Count; i++)
+                        {
+                            xmlFileSysInfo[i] = new PartitionType();
+                            xmlFileSysInfo[i].Description = partitions[i].PartitionDescription;
+                            xmlFileSysInfo[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
+                            xmlFileSysInfo[i].Name = partitions[i].PartitionName;
+                            xmlFileSysInfo[i].Sequence = (int)partitions[i].PartitionSequence;
+                            xmlFileSysInfo[i].StartSector = (int)partitions[i].PartitionStartSector;
+                            xmlFileSysInfo[i].Type = partitions[i].PartitionType;
+
+                            List<FileSystemType> lstFs = new List<FileSystemType>();
+
+                            foreach (Plugin _plugin in plugins.PluginsList.Values)
+                            {
+                                try
+                                {
+                                    if (_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
+                                    {
+                                        string foo;
+                                        _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                        lstFs.Add(_plugin.XmlFSType);
+                                        Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+
+                                        if (_plugin.XmlFSType.Type == "Opera")
+                                            dskType = MediaType.ThreeDO;
+                                        if (_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                            dskType = MediaType.SuperCDROM2;
+                                    }
+                                }
+                                catch
+                                {
+                                    //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
+                                }
+                            }
+
+                            if (lstFs.Count > 0)
+                                xmlFileSysInfo[i].FileSystems = lstFs.ToArray();
+                        }
+                    }
+                    else
+                    {
+                        xmlFileSysInfo = new PartitionType[1];
+                        xmlFileSysInfo[0] = new PartitionType();
+                        xmlFileSysInfo[0].EndSector = (int)(blocks - 1);
+                        xmlFileSysInfo[0].StartSector = 0;
+
+                        List<FileSystemType> lstFs = new List<FileSystemType>();
+
+                        foreach (Plugin _plugin in plugins.PluginsList.Values)
+                        {
+                            try
+                            {
+                                if (_plugin.Identify(_imageFormat, (blocks - 1), 0))
+                                {
+                                    string foo;
+                                    _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out foo);
+                                    lstFs.Add(_plugin.XmlFSType);
+                                    Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+
+                                    if (_plugin.XmlFSType.Type == "Opera")
+                                        dskType = MediaType.ThreeDO;
+                                    if (_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                        dskType = MediaType.SuperCDROM2;
+                                }
+                            }
+                            catch
+                            {
+                                //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                            }
+                        }
+
+                        if (lstFs.Count > 0)
+                            xmlFileSysInfo[0].FileSystems = lstFs.ToArray();
+                    }
+                }
+
                 if (opticalDisc)
                 {
                     sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();
@@ -2023,8 +2153,8 @@ namespace DiscImageChef.Commands
                     //sidecar.OpticalDisc[0].Layers = new LayersType();
                     sidecar.OpticalDisc[0].Sessions = 1;
                     sidecar.OpticalDisc[0].Tracks = new []{1};
-                    sidecar.OpticalDisc[0].Track = new TrackType[1];
-                    sidecar.OpticalDisc[0].Track[0] = new TrackType();
+                    sidecar.OpticalDisc[0].Track = new Schemas.TrackType[1];
+                    sidecar.OpticalDisc[0].Track[0] = new Schemas.TrackType();
                     sidecar.OpticalDisc[0].Track[0].BytesPerSector = (int)blockSize;
                     sidecar.OpticalDisc[0].Track[0].Checksums = sidecar.OpticalDisc[0].Checksums;
                     sidecar.OpticalDisc[0].Track[0].EndSector = (long)(blocks - 1);
@@ -2038,6 +2168,8 @@ namespace DiscImageChef.Commands
                     sidecar.OpticalDisc[0].Track[0].Sequence.TrackNumber = 1;
                     sidecar.OpticalDisc[0].Track[0].Size = (long)(blocks * blockSize);
                     sidecar.OpticalDisc[0].Track[0].StartSector = 0;
+                    if (xmlFileSysInfo != null)
+                        sidecar.OpticalDisc [0].Track [0].FileSystemInformation = xmlFileSysInfo;
                     switch (dskType)
                     {
                         case MediaType.DDCD:
@@ -2106,6 +2238,8 @@ namespace DiscImageChef.Commands
                     sidecar.BlockMedia[0].Model = dev.Model;
                     sidecar.BlockMedia[0].Serial = dev.Serial;
                     sidecar.BlockMedia[0].Size = (long)(blocks * blockSize);
+                    if (xmlFileSysInfo != null)
+                        sidecar.BlockMedia[0].FileSystemInformation = xmlFileSysInfo;
                 }
             }
 

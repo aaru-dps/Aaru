@@ -1,5 +1,12 @@
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DumpMedia.cs:
+	  Added creation of IBG logs.
+	Added filesystem and partitions detection (does not work with
+	  raw).
+
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
 	* Core/MHDDLog.cs:
 	* DiscImageChef.csproj:
 	* Commands/DumpMedia.cs:
