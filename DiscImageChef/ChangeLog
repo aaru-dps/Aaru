@@ -1,5 +1,13 @@
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
+	* Core/MHDDLog.cs:
+	* DiscImageChef.csproj:
+	* Commands/DumpMedia.cs:
+	* Commands/MediaScan.cs:
+	  Separated MHDD and IBG log generations to separate classes.
+
+2016-02-04  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Decode.cs:
 	* Commands/Verify.cs:
 	* Commands/Analyze.cs:

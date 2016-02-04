@@ -37,31 +37,16 @@
 // //$Id$
 using System;
 using DiscImageChef.Console;
-using System.IO;
 using DiscImageChef.Devices;
-using System.Text;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace DiscImageChef.Commands
 {
     public static class MediaScan
     {
         static bool aborted;
-        static FileStream mhddFs;
-        static FileStream ibgFs;
-        static StringBuilder ibgSb;
-        static DateTime ibgDatePoint;
-        static CultureInfo ibgCulture;
-        static double ibgStartSpeed;
-        static string ibgMediaType;
-        static double ibgDivider;
-        static bool ibgStartSet;
-        static double ibgMaxSpeed;
-        static double ibgIntSpeed;
-        static int ibgSnaps;
-        static ulong                 ibgIntSector = 0;
-        static int ibgSampleRate;
+        static Core.MHDDLog mhddLog;
+        static Core.IBGLog ibgLog;
 
         public static void doMediaScan(MediaScanSubOptions options)
         {
@@ -83,8 +68,8 @@ namespace DiscImageChef.Commands
                 options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
             }
 
-            mhddFs = null;
-            ibgFs = null;
+            mhddLog = null;
+            ibgLog = null;
 
             Device dev = new Device(options.DevicePath);
 
@@ -371,8 +356,8 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                initMHDDLogFile(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                initIBGLogFile(IBGLogPath, currentProfile);
+                mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
 
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -425,8 +410,8 @@ namespace DiscImageChef.Commands
                             A += blocksToRead;
                         }
 
-                        writeMHDDLogFile(i, cmdDuration);
-                        writeIBGLogFile(i, currentSpeed * 1024);
+                        mhddLog.Write(i, cmdDuration);
+                        ibgLog.Write(i, currentSpeed * 1024);
                     }
                     else
                     {
@@ -445,11 +430,11 @@ namespace DiscImageChef.Commands
                                 errored += blocksToRead;
                                 unreadableSectors.Add(i);
                                 if (cmdDuration < 500)
-                                    writeMHDDLogFile(i, 65535);
+                                    mhddLog.Write(i, 65535);
                                 else
-                                    writeMHDDLogFile(i, cmdDuration);
+                                    mhddLog.Write(i, cmdDuration);
                                     
-                                writeIBGLogFile(i, 0);
+                                ibgLog.Write(i, 0);
                             }
                         }
                         else
@@ -457,11 +442,11 @@ namespace DiscImageChef.Commands
                             errored += blocksToRead;
                             unreadableSectors.Add(i);
                             if (cmdDuration < 500)
-                                writeMHDDLogFile(i, 65535);
+                                mhddLog.Write(i, 65535);
                             else
-                                writeMHDDLogFile(i, cmdDuration);
+                                mhddLog.Write(i, cmdDuration);
                                 
-                            writeIBGLogFile(i, 0);
+                            ibgLog.Write(i, 0);
                         }
                     }
 
@@ -470,8 +455,8 @@ namespace DiscImageChef.Commands
                 }
                 end = DateTime.UtcNow;
                 DicConsole.WriteLine();
-                closeMHDDLogFile();
-                closeIBGLogFile(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+                mhddLog.Close();
+                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
             }
             else
             {
@@ -551,8 +536,8 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                initMHDDLogFile(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                initIBGLogFile(IBGLogPath, currentProfile);
+                mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
 
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -607,8 +592,8 @@ namespace DiscImageChef.Commands
                         else
                             A += blocksToRead;
 
-                        writeMHDDLogFile(i, cmdDuration);
-                        writeIBGLogFile(i, currentSpeed * 1024);
+                        mhddLog.Write(i, cmdDuration);
+                        ibgLog.Write(i, currentSpeed * 1024);
                     }
                     // TODO: Separate errors on kind of errors.
                     else
@@ -617,18 +602,18 @@ namespace DiscImageChef.Commands
                         unreadableSectors.Add(i);
                         DicConsole.DebugWriteLine("Media-Scan", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if (cmdDuration < 500)
-                            writeMHDDLogFile(i, 65535);
+                            mhddLog.Write(i, 65535);
                         else
-                            writeMHDDLogFile(i, cmdDuration);
-                        writeIBGLogFile(i, 0);
+                            mhddLog.Write(i, cmdDuration);
+                        ibgLog.Write(i, 0);
                     }
 
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
                 }
                 end = DateTime.UtcNow;
                 DicConsole.WriteLine();
-                closeMHDDLogFile();
-                closeIBGLogFile(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
+                mhddLog.Close();
+                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), devicePath);
             }
 
             bool seek6, seek10;
@@ -725,7 +710,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", D);
             DicConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", E);
             DicConsole.WriteLine("{0} sectors took more than 500 ms.", F);
-            DicConsole.WriteLine("{0} sectors could not be read.", errored);
+            DicConsole.WriteLine("{0} sectors could not be read.", unreadableSectors.Count);
             if (unreadableSectors.Count > 0)
             {
                 foreach (ulong bad in unreadableSectors)
@@ -738,347 +723,6 @@ namespace DiscImageChef.Commands
                     seekTimes, seekMax, seekMin, seekTotal / 1000);
 
             Core.Statistics.AddMediaScan((long)A, (long)B, (long)C, (long)D, (long)E, (long)F, (long)blocks, (long)errored, (long)(blocks - errored));
-        }
-
-        static void initMHDDLogFile(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
-        {
-            if (dev != null && !string.IsNullOrEmpty(outputFile))
-            {
-                mhddFs = new FileStream(outputFile, FileMode.Create);
-
-                string device;
-                string mode;
-                string fw;
-                string sn;
-                string sectors;
-                string sectorsize;
-                string scanblocksize;
-                string ver;
-
-                switch (dev.Type)
-                {
-                    case DeviceType.ATA:
-                    case DeviceType.ATAPI:
-                        mode = "MODE: IDE";
-                        break;
-                    case DeviceType.SCSI:
-                        mode = "MODE: SCSI";
-                        break;
-                    case DeviceType.MMC:
-                        mode = "MODE: MMC";
-                        break;
-                    case DeviceType.NVMe:
-                        mode = "MODE: NVMe";
-                        break;
-                    case DeviceType.SecureDigital:
-                        mode = "MODE: SD";
-                        break;
-                    default:
-                        mode = "MODE: IDE";
-                        break;
-                }
-
-                device = String.Format("DEVICE: {0} {1}", dev.Manufacturer, dev.Model);
-                fw = String.Format("F/W: {0}", dev.Revision);
-                sn = String.Format("S/N: {0}", dev.Serial);
-                sectors = String.Format(new System.Globalization.CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-                sectorsize = String.Format(new System.Globalization.CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
-                scanblocksize = String.Format(new System.Globalization.CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
-                ver = "VER:2 ";
-
-                byte[] deviceBytes = Encoding.ASCII.GetBytes(device);
-                byte[] modeBytes = Encoding.ASCII.GetBytes(mode);
-                byte[] fwBytes = Encoding.ASCII.GetBytes(fw);
-                byte[] snBytes = Encoding.ASCII.GetBytes(sn);
-                byte[] sectorsBytes = Encoding.ASCII.GetBytes(sectors);
-                byte[] sectorsizeBytes = Encoding.ASCII.GetBytes(sectorsize);
-                byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
-                byte[] verBytes = Encoding.ASCII.GetBytes(ver);
-
-                uint Pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length +
-                               snBytes.Length + sectorsBytes.Length + sectorsizeBytes.Length +
-                               scanblocksizeBytes.Length + verBytes.Length +
-                               2 * 9 + // New lines
-                               4); // Pointer
-
-                byte[] newLine = new byte[2];
-                newLine[0] = 0x0D;
-                newLine[1] = 0x0A;
-
-                mhddFs.Write(BitConverter.GetBytes(Pointer), 0, 4);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(verBytes, 0, verBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(modeBytes, 0, modeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(fwBytes, 0, fwBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(snBytes, 0, snBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-            }
-        }
-
-        static void closeMHDDLogFile()
-        {
-            if (mhddFs != null)
-                mhddFs.Close();
-        }
-
-        static void writeMHDDLogFile(ulong sector, double duration)
-        {
-            if (mhddFs != null)
-            {
-                byte[] sectorBytes = BitConverter.GetBytes(sector);
-                byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
-
-                mhddFs.Write(sectorBytes, 0, 8);
-                mhddFs.Write(durationBytes, 0, 8);
-            }
-        }
-
-        static void writeIBGLogFile(ulong sector, double currentSpeed)
-        {
-            if (ibgFs != null)
-            {
-                ibgIntSpeed += currentSpeed;
-                ibgSampleRate += (int)Math.Floor((DateTime.Now - ibgDatePoint).TotalMilliseconds);
-                ibgSnaps++;
-                
-                if(ibgSampleRate >= 100)
-                {
-                if (ibgIntSpeed > 0 && !ibgStartSet)
-                {
-                    ibgStartSpeed = ibgIntSpeed / ibgSnaps / ibgDivider;
-                    ibgStartSet = true;
-                }
-                
-                ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector, ibgSampleRate).AppendLine();
-                if ((ibgIntSpeed / ibgSnaps / ibgDivider) > ibgMaxSpeed)
-                    ibgMaxSpeed = ibgIntSpeed / ibgDivider;
-                    
-                ibgDatePoint = DateTime.Now;
-                    ibgIntSpeed = 0;
-                    ibgSampleRate = 0;
-                    ibgSnaps = 0;
-                    ibgIntSector = sector;
-                }
-            }
-        }
-
-        static void initIBGLogFile(string outputFile, ushort currentProfile)
-        {
-            if (!string.IsNullOrEmpty(outputFile))
-            {
-                ibgFs = new FileStream(outputFile, FileMode.Create);
-                ibgSb = new StringBuilder();
-                ibgDatePoint = DateTime.Now;
-                ibgCulture = new CultureInfo("en-US");
-                ibgStartSet = false;
-                ibgMaxSpeed = 0;
-                ibgIntSpeed = 0;
-                ibgSnaps = 0;
-                ibgIntSector = 0;
-
-                switch (currentProfile)
-                {
-                    case 0x0001:
-                        ibgMediaType = "HDD";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0005:
-                        ibgMediaType = "CD-MO";
-                        ibgDivider = 150;
-                        break;
-                    case 0x0008:
-                        ibgMediaType = "CD-ROM";
-                        ibgDivider = 150;
-                        break;
-                    case 0x0009:
-                        ibgMediaType = "CD-R";
-                        ibgDivider = 150;
-                        break;
-                    case 0x000A:
-                        ibgMediaType = "CD-RW";
-                        ibgDivider = 150;
-                        break;
-                    case 0x0010:
-                        ibgMediaType = "DVD-ROM";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0011:
-                        ibgMediaType = "DVD-R";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0012:
-                        ibgMediaType = "DVD-RAM";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0013:
-                    case 0x0014:
-                        ibgMediaType = "DVD-RW";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0015:
-                    case 0x0016:
-                        ibgMediaType = "DVD-R DL";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0017:
-                        ibgMediaType = "DVD-RW DL";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0018:
-                        ibgMediaType = "DVD-Download";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x001A:
-                        ibgMediaType = "DVD+RW";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x001B:
-                        ibgMediaType = "DVD+R";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0020:
-                        ibgMediaType = "DDCD-ROM";
-                        ibgDivider = 150;
-                        break;
-                    case 0x0021:
-                        ibgMediaType = "DDCD-R";
-                        ibgDivider = 150;
-                        break;
-                    case 0x0022:
-                        ibgMediaType = "DDCD-RW";
-                        ibgDivider = 150;
-                        break;
-                    case 0x002A:
-                        ibgMediaType = "DVD+RW DL";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x002B:
-                        ibgMediaType = "DVD+R DL";
-                        ibgDivider = 1353;
-                        break;
-                    case 0x0040:
-                        ibgMediaType = "BD-ROM";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0041:
-                    case 0x0042:
-                        ibgMediaType = "BD-R";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0043:
-                        ibgMediaType = "BD-RE";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0050:
-                        ibgMediaType = "HD DVD-ROM";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0051:
-                        ibgMediaType = "HD DVD-R";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0052:
-                        ibgMediaType = "HD DVD-RAM";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0053:
-                        ibgMediaType = "HD DVD-RW";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x0058:
-                        ibgMediaType = "HD DVD-R DL";
-                        ibgDivider = 4500;
-                        break;
-                    case 0x005A:
-                        ibgMediaType = "HD DVD-RW DL";
-                        ibgDivider = 4500;
-                        break;
-                    default:
-                        ibgMediaType = "Unknown";
-                        ibgDivider = 1353;
-                        break;
-                }
-
-            }
-        }
-
-        static void closeIBGLogFile(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed, double averageSpeed, string devicePath)
-        {
-            if (ibgFs != null)
-            {
-                StringBuilder ibgHeader = new StringBuilder();
-                string ibgBusType;
-                
-                if (dev.IsUSB)
-                    ibgBusType = "USB";
-                else if (dev.IsFireWire)
-                    ibgBusType = "FireWire";
-                else
-                    ibgBusType = dev.Type.ToString();
-                                
-                ibgHeader.AppendLine("IBGD");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendLine("[START_CONFIGURATION]");
-                ibgHeader.AppendLine("IBGD_VERSION=2");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendFormat("DATE={0}", DateTime.Now).AppendLine();
-                ibgHeader.AppendLine();
-                ibgHeader.AppendFormat("SAMPLE_RATE={0}", 100).AppendLine();
-                
-                ibgHeader.AppendLine();
-                ibgHeader.AppendFormat("DEVICE=[0:0:0] {0} {1} ({2}) ({3})",
-                    dev.Manufacturer, dev.Model, devicePath, ibgBusType).AppendLine();
-                ibgHeader.AppendLine("DEVICE_ADDRESS=0:0:0");
-                ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}", dev.Manufacturer, dev.Model).AppendLine();
-                ibgHeader.AppendFormat("DEVICE_FIRMWAREVERSION={0}", dev.Revision).AppendLine();
-                ibgHeader.AppendFormat("DEVICE_DRIVELETTER={0}", devicePath).AppendLine();
-                ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}", ibgBusType).AppendLine();
-                ibgHeader.AppendLine();
-                
-                ibgHeader.AppendFormat("MEDIA_TYPE={0}", ibgMediaType).AppendLine();
-                ibgHeader.AppendLine("MEDIA_BOOKTYPE=Unknown");
-                ibgHeader.AppendLine("MEDIA_ID=N/A");
-                ibgHeader.AppendLine("MEDIA_TRACKPATH=PTP");
-                ibgHeader.AppendLine("MEDIA_SPEEDS=N/A");
-                ibgHeader.AppendFormat("MEDIA_CAPACITY={0}", blocks).AppendLine();
-                ibgHeader.AppendLine("MEDIA_LAYER_BREAK=0");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendLine("DATA_IMAGEFILE=/dev/null");
-                ibgHeader.AppendFormat("DATA_SECTORS={0}", blocks).AppendLine();
-                ibgHeader.AppendFormat("DATA_TYPE=MODE1/{0}", blockSize).AppendLine();
-                ibgHeader.AppendLine("DATA_VOLUMEIDENTIFIER=");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_START={0:0.00}", ibgStartSpeed).AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / ibgDivider).AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider).AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", ibgMaxSpeed).AppendLine();
-                ibgHeader.AppendFormat(ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
-                ibgHeader.AppendLine("[END_CONFIGURATION]");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendLine("HRPC=True");
-                ibgHeader.AppendLine();
-                ibgHeader.AppendLine("[START_VERIFY_GRAPH_VALUES]");
-                ibgHeader.Append(ibgSb.ToString());
-                ibgHeader.AppendLine("[END_VERIFY_GRAPH_VALUES]");
-                ibgHeader.AppendLine();
-                ibgHeader.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
-                    
-                StreamWriter sr = new StreamWriter(ibgFs);
-                sr.Write(ibgHeader.ToString());
-                sr.Close();
-                ibgFs.Close();
-            }
         }
     }
 }

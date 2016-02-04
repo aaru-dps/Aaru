@@ -64,6 +64,8 @@
     <Compile Include="Commands\Configure.cs" />
     <Compile Include="Core\Statistics.cs" />
     <Compile Include="Commands\Statistics.cs" />
+    <Compile Include="Core\IBGLog.cs" />
+    <Compile Include="Core\MHDDLog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

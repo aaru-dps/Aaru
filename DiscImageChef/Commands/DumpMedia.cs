@@ -49,8 +49,8 @@ namespace DiscImageChef.Commands
     public static class DumpMedia
     {
         static bool aborted;
-        static FileStream mhddFs;
         static FileStream dataFs;
+        static Core.MHDDLog mhddLog;
         // TODO: Implement dump map
 
         public static void doDumpMedia(DumpMediaSubOptions options)
@@ -77,7 +77,7 @@ namespace DiscImageChef.Commands
                 options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
             }
 
-            mhddFs = null;
+            mhddLog = null;
 
             Device dev = new Device(options.DevicePath);
 
@@ -1194,7 +1194,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 initDataFile(options.OutputPrefix + ".bin");
-                initMHDDLogFile(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
 
                 for (ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -1222,7 +1222,7 @@ namespace DiscImageChef.Commands
 
                     if (!sense && !dev.Error)
                     {
-                        writeMHDDLogFile(i, cmdDuration);
+                        mhddLog.Write(i, cmdDuration);
                         writeToDataFile(readBuffer);
                     }
                     else
@@ -1240,15 +1240,15 @@ namespace DiscImageChef.Commands
                         unreadableSectors.Add(i);
                         DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if (cmdDuration < 500)
-                            writeMHDDLogFile(i, 65535);
+                            mhddLog.Write(i, 65535);
                         else
-                            writeMHDDLogFile(i, cmdDuration);
+                            mhddLog.Write(i, cmdDuration);
                     }
 
                     currentSpeed = ((double)2448 * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
                 }
                 DicConsole.WriteLine();
-                closeMHDDLogFile();
+                mhddLog.Close();
 
                 dataChk = new Core.Checksum();
                 dataFs.Seek(0, SeekOrigin.Begin);
@@ -1672,7 +1672,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                initMHDDLogFile(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                 initDataFile(options.OutputPrefix + ".bin");
 
                 start = DateTime.UtcNow;
@@ -1749,7 +1749,7 @@ namespace DiscImageChef.Commands
 
                     if (!sense && !dev.Error)
                     {
-                        writeMHDDLogFile(i, cmdDuration);
+                        mhddLog.Write(i, cmdDuration);
                         writeToDataFile(readBuffer);
                     }
                     else
@@ -1767,15 +1767,15 @@ namespace DiscImageChef.Commands
                         unreadableSectors.Add(i);
                         DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if (cmdDuration < 500)
-                            writeMHDDLogFile(i, 65535);
+                            mhddLog.Write(i, 65535);
                         else
-                            writeMHDDLogFile(i, cmdDuration);
+                            mhddLog.Write(i, cmdDuration);
                     }
 
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
                 }
                 DicConsole.WriteLine();
-                closeMHDDLogFile();
+                mhddLog.Close();
 
                 #region Error handling
                 if (unreadableSectors.Count > 0 && !aborted)
@@ -2136,110 +2136,6 @@ namespace DiscImageChef.Commands
             }
 
             Core.Statistics.AddMedia(dskType, true);
-        }
-
-        static void initMHDDLogFile(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
-        {
-            if (dev != null && !string.IsNullOrEmpty(outputFile))
-            {
-                mhddFs = new FileStream(outputFile, FileMode.Create);
-
-                string device;
-                string mode;
-                string fw;
-                string sn;
-                string sectors;
-                string sectorsize;
-                string scanblocksize;
-                string ver;
-
-                switch (dev.Type)
-                {
-                    case DeviceType.ATA:
-                    case DeviceType.ATAPI:
-                        mode = "MODE: IDE";
-                        break;
-                    case DeviceType.SCSI:
-                        mode = "MODE: SCSI";
-                        break;
-                    case DeviceType.MMC:
-                        mode = "MODE: MMC";
-                        break;
-                    case DeviceType.NVMe:
-                        mode = "MODE: NVMe";
-                        break;
-                    case DeviceType.SecureDigital:
-                        mode = "MODE: SD";
-                        break;
-                    default:
-                        mode = "MODE: IDE";
-                        break;
-                }
-
-                device = String.Format("DEVICE: {0} {1}", dev.Manufacturer, dev.Model);
-                fw = String.Format("F/W: {0}", dev.Revision);
-                sn = String.Format("S/N: {0}", dev.Serial);
-                sectors = String.Format(new System.Globalization.CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-                sectorsize = String.Format(new System.Globalization.CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
-                scanblocksize = String.Format(new System.Globalization.CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
-                ver = "VER:2 ";
-
-                byte[] deviceBytes = Encoding.ASCII.GetBytes(device);
-                byte[] modeBytes = Encoding.ASCII.GetBytes(mode);
-                byte[] fwBytes = Encoding.ASCII.GetBytes(fw);
-                byte[] snBytes = Encoding.ASCII.GetBytes(sn);
-                byte[] sectorsBytes = Encoding.ASCII.GetBytes(sectors);
-                byte[] sectorsizeBytes = Encoding.ASCII.GetBytes(sectorsize);
-                byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
-                byte[] verBytes = Encoding.ASCII.GetBytes(ver);
-
-                uint Pointer = (uint)(deviceBytes.Length + modeBytes.Length + fwBytes.Length +
-                               snBytes.Length + sectorsBytes.Length + sectorsizeBytes.Length +
-                               scanblocksizeBytes.Length + verBytes.Length +
-                               2 * 9 + // New lines
-                               4); // Pointer
-
-                byte[] newLine = new byte[2];
-                newLine[0] = 0x0D;
-                newLine[1] = 0x0A;
-
-                mhddFs.Write(BitConverter.GetBytes(Pointer), 0, 4);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(verBytes, 0, verBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(modeBytes, 0, modeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(fwBytes, 0, fwBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(snBytes, 0, snBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-                mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
-                mhddFs.Write(newLine, 0, 2);
-            }
-        }
-
-        static void closeMHDDLogFile()
-        {
-            if (mhddFs != null)
-                mhddFs.Close();
-        }
-
-        static void writeMHDDLogFile(ulong sector, double duration)
-        {
-            if (mhddFs != null)
-            {
-                byte[] sectorBytes = BitConverter.GetBytes(sector);
-                byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
-
-                mhddFs.Write(sectorBytes, 0, 8);
-                mhddFs.Write(durationBytes, 0, 8);
-            }
         }
 
         static void writeToFile(string file, byte[] data)
