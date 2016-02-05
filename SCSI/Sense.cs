@@ -365,7 +365,8 @@ namespace DiscImageChef.Decoders.SCSI
                     byte[] desc = new byte[descLen];
                     Array.Copy(sense, offset, desc, 0, descLen);
 
-                    decoded.Descriptors.Add(descType, desc);
+                    if(!decoded.Descriptors.ContainsKey(descType))
+                        decoded.Descriptors.Add(descType, desc);
 
                     offset += descLen;
                 }

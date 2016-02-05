@@ -1,3 +1,9 @@
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
+	* SCSI/Sense.cs:
+	  Corrected handling when sense contains multiple repeated
+	  sense codes, in a not clean way (just ignoring repeats).
+
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Modes.cs:
