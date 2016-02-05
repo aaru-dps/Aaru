@@ -1,5 +1,14 @@
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Acorn.cs:
+	* DiscImageChef.Filesystems.csproj:
+	  Added support for Acorn ADFS.
+
+	* FFS.cs:
+	  Correct FFS information.
+
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
 	* FAT.cs:
 	  Correct null volume label and oem string
 

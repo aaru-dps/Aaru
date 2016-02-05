@@ -1,5 +1,10 @@
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DumpMedia.cs:
+	  Correct physical/logical block size in sidecar.
+
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Analyze.cs:
 	* Commands/CreateSidecar.cs:
 	  Check multiple partitioning schemes.

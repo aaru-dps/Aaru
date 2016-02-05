@@ -57,6 +57,7 @@
     <Compile Include="Symbian.cs" />
     <Compile Include="SysV.cs" />
     <Compile Include="UNIXBFS.cs" />
+    <Compile Include="Acorn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

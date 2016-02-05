@@ -142,6 +142,8 @@ namespace DiscImageChef.Commands
             byte[] tmpBuf;
             MediaType dskType = MediaType.Unknown;
             bool opticalDisc = false;
+            uint logicalBlockSize = 0;
+            uint physicalBlockSize = 0;
 
             if (dev.IsRemovable)
             {
@@ -262,6 +264,9 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
                         blocks, blockSize, blocks * (ulong)blockSize);
                 }
+
+                logicalBlockSize = blockSize;
+                physicalBlockSize = blockSize;
             }
 
             if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
@@ -545,6 +550,8 @@ namespace DiscImageChef.Commands
                             }
                         }
                     }
+
+                    physicalBlockSize = 2448;
                 }
                 #endregion CompactDisc
                 else
@@ -1604,6 +1611,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Reading {0} raw bytes ({1} cooked bytes) per sector.",
                             longBlockSize, blockSize);
                         blocksToRead = 1;
+                        physicalBlockSize = longBlockSize;
                         blockSize = longBlockSize;
                     }
                 }
@@ -2235,7 +2243,8 @@ namespace DiscImageChef.Commands
                             sidecar.BlockMedia[0].Interface = "SCSI";
                     }
                     sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
-                    sidecar.BlockMedia[0].LogicalBlockSize = (int)blockSize;
+                    sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
+                    sidecar.BlockMedia[0].LogicalBlockSize = (int)logicalBlockSize;
                     sidecar.BlockMedia[0].Manufacturer = dev.Manufacturer;
                     sidecar.BlockMedia[0].Model = dev.Model;
                     sidecar.BlockMedia[0].Serial = dev.Serial;

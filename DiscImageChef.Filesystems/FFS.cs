@@ -602,10 +602,10 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("First data block LBA: {0}", ufs_sb.fs_dblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_cgoffset).AppendLine();
             sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_t)).AppendLine();
-            sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_bsize).AppendLine();
+            sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_size, (ulong)ufs_sb.fs_size * (ulong)1024).AppendLine();
             xmlFSType.Clusters = ufs_sb.fs_size;
             xmlFSType.ClusterSize = (int)ufs_sb.fs_bsize;
-            sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_bsize).AppendLine();
+            sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_dsize, (ulong)ufs_sb.fs_dsize * (ulong)1024).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a basic block", ufs_sb.fs_bsize).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a frag block", ufs_sb.fs_fsize).AppendLine();

@@ -54,6 +54,7 @@ Supported partitioning schemes
 * NeXT disklabel
 * Amiga Rigid Disk Block (RDB)
 * Atari AHDI and ICDPro
+* Sun disklabel
 
 Supported file systems
 ======================
@@ -88,6 +89,7 @@ Supported file systems
 * Amiga Original File System, with international characters, directory cache and multi-user patches
 * Amiga Fast File System, with international characters, directory cache and multi-user patches
 * Amiga Fast File System v2, untested
+* Acorn Advanced Disc Filing System
 
 Supported checksums
 ===================
