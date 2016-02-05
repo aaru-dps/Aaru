@@ -67,18 +67,18 @@ namespace DiscImageChef.Plugins
             public byte bootoption;
             public byte lowsector;
             public byte nzones;
-            public short zone_spare;
-            public int root;
+            public ushort zone_spare;
+            public uint root;
             public uint disc_size;
-            public short disc_id;
+            public ushort disc_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public byte[] disc_name;
-            public int disc_type;
+            public uint disc_type;
             public uint disc_size_high;
             public byte flags;
             public byte nzones_high;
-            public int format_version;
-            public int root_size;
+            public uint format_version;
+            public uint root_size;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public byte[] reserved;
         }
@@ -96,10 +96,18 @@ namespace DiscImageChef.Plugins
                 sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
 
             byte[] sector = imagePlugin.ReadSector(sbSector + partitionStart);
+            DiscRecord drSb;
 
-            GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            DiscRecord drSb = (DiscRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiscRecord));
-            handle.Free();
+            try
+            {
+                GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
+                drSb = (DiscRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiscRecord));
+                handle.Free();
+            }
+            catch
+            {
+                return false;
+            }
 
             if (drSb.log2secsize < 8 || drSb.log2secsize > 10)
                 return false;

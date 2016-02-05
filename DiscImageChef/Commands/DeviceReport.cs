@@ -3296,7 +3296,7 @@ namespace DiscImageChef.Commands
 
                                     if (pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        for (ushort i = (ushort)mediaTest.BlockSize; i < 0x8000; i++)
+                                        for (ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
@@ -3497,10 +3497,10 @@ namespace DiscImageChef.Commands
 
                         if (pressedKey.Key == ConsoleKey.Y)
                         {
-                            for (ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < 0x4000; i++)
+                            for (ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < (ushort)report.SCSI.ReadCapabilities.BlockSize * 36; i++)
                             {
                                 DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
+                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, timeout, out duration);
                                 if (!sense)
                                 {
                                     if (options.Debug)

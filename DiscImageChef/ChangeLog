@@ -1,5 +1,15 @@
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceReport.cs:
+	  Check for 36 blocks in long block search in all cases.
+
+	* Commands/DumpMedia.cs:
+	  Only try the persistent pass one time. If it didn't correct
+	  in the previous cycle it won't magically do now.
+	Sort unreadalbe sectors before printing them.
+
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DumpMedia.cs:
 	  Correct physical/logical block size in sidecar.
 

@@ -45,7 +45,6 @@ Filesystem plugins:
 Partitioning scheme plugins:
 --- Add support for Acorn partitions
 --- Add support for AIX partitions
---- Add support for EFI GPT
 --- Add support for SGI partitions
 --- Add support for Ultrix partitions
 

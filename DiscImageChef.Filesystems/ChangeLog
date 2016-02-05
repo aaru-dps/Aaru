@@ -1,6 +1,12 @@
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Acorn.cs:
+	  Added exception catching and unsigned values to correct
+	  Acorn DiscRecord structure. Fixes #34
+
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Acorn.cs:
 	* DiscImageChef.Filesystems.csproj:
 	  Added support for Acorn ADFS.
 

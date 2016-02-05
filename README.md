@@ -55,6 +55,7 @@ Supported partitioning schemes
 * Amiga Rigid Disk Block (RDB)
 * Atari AHDI and ICDPro
 * Sun disklabel
+* EFI GUID Partition Table (GPT)
 
 Supported file systems
 ======================

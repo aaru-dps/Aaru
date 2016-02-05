@@ -1,5 +1,11 @@
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
+	* GPT.cs:
+	* DiscImageChef.Partitions.csproj:
+	  Added support for EFI GPT. Fixes #8.
+
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Sun.cs:
 	* DiscImageChef.Partitions.csproj:
 	  Added support for Sun disklabel.

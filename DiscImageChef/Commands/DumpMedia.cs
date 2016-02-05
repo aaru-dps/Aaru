@@ -1974,7 +1974,7 @@ namespace DiscImageChef.Commands
                         runningPersistent = true;
                         if (!sense && !dev.Error)
                         {
-                            pass = 0;
+                            pass--;
                             goto repeatRetry;
                         }
                     }
@@ -2280,6 +2280,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors could not be read.", unreadableSectors.Count);
             if (unreadableSectors.Count > 0)
             {
+                unreadableSectors.Sort();
                 foreach (ulong bad in unreadableSectors)
                     DicConsole.WriteLine("Sector {0} could not be read", bad);
             }

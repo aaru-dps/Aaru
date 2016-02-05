@@ -41,6 +41,7 @@
     <Compile Include="PartPlugin.cs" />
     <Compile Include="RDB.cs" />
     <Compile Include="Sun.cs" />
+    <Compile Include="GPT.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
