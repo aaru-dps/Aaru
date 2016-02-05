@@ -124,7 +124,6 @@ namespace DiscImageChef.Commands
                             partition_scheme = _partplugin.Name;
                             partitions.AddRange(_partitions);
                             Core.Statistics.AddPartition(_partplugin.Name);
-                            break;
                         }
                     }
 

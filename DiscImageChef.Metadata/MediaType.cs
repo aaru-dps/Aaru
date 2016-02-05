@@ -652,6 +652,18 @@ namespace DiscImageChef.Metadata
                     DiscType = "CD";
                     DiscSubType = "3DO";
                     break;
+                case CommonTypes.MediaType.ZIP100:
+                    DiscType = "Iomega ZIP";
+                    DiscSubType = "Iomega ZIP100";
+                break;
+                case CommonTypes.MediaType.ZIP250:
+                    DiscType = "Iomega ZIP";
+                    DiscSubType = "Iomega ZIP250";
+                break;
+                case CommonTypes.MediaType.ZIP750:
+                    DiscType = "Iomega ZIP";
+                    DiscSubType = "Iomega ZIP750";
+                break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

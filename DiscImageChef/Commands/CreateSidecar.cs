@@ -510,9 +510,8 @@ namespace DiscImageChef.Commands
 
                                     if (_partplugin.GetInformation(_imageFormat, out _partitions))
                                     {
-                                        partitions = _partitions;
+                                        partitions.AddRange(_partitions);
                                         Core.Statistics.AddPartition(_partplugin.Name);
-                                        break;
                                     }
                                 }
 

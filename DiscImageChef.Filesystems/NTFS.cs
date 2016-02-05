@@ -57,8 +57,8 @@ namespace DiscImageChef.Plugins
                 return false;
 
             byte[] eigth_bytes = new byte[8];
-            byte signature1, fats_no;
-            UInt16 spfat, signature2;
+            byte fats_no;
+            UInt16 spfat, signature;
             string oem_name;
 			
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
@@ -79,15 +79,9 @@ namespace DiscImageChef.Plugins
             if (spfat != 0)
                 return false;
 			
-            signature1 = ntfs_bpb[0x026];
+            signature = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
 			
-            if (signature1 != 0x80)
-                return false;
-			
-            signature2 = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
-			
-            return signature2 == 0xAA55;
-			
+            return signature == 0xAA55;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)

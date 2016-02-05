@@ -1,3 +1,11 @@
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
+	* FAT.cs:
+	  Correct null volume label and oem string
+
+	* NTFS.cs:
+	  Some NTFS do not contain signature1.
+
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
 	* FFS.cs:

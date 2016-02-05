@@ -1,3 +1,14 @@
+2016-02-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Analyze.cs:
+	* Commands/CreateSidecar.cs:
+	  Check multiple partitioning schemes.
+
+	* Commands/DumpMedia.cs:
+	  Check multiple partitioning schemes.
+	Do not add interface data to sidecar for removable devices.
+	Add dump hardware to sidecar for remocable block devices.
+
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DumpMedia.cs:

@@ -244,7 +244,7 @@ namespace DiscImageChef.Plugins
 			
                 dosString = new byte[8];
                 Array.Copy(bpb_sector, 0x03, dosString, 0, 8);
-                BPB.OEMName = Encoding.ASCII.GetString(dosString);
+                BPB.OEMName = StringHandlers.CToString(dosString);
                 BPB.bps = BitConverter.ToUInt16(bpb_sector, 0x0B);
                 BPB.spc = bpb_sector[0x0D];
                 BPB.rsectors = BitConverter.ToUInt16(bpb_sector, 0x0E);
@@ -272,10 +272,10 @@ namespace DiscImageChef.Plugins
                     FAT32PB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x43);
                     dosString = new byte[11];
                     Array.Copy(bpb_sector, 0x47, dosString, 0, 11);
-                    FAT32PB.volume_label = Encoding.ASCII.GetString(dosString);
+                    FAT32PB.volume_label = StringHandlers.CToString(dosString);
                     dosString = new byte[8];
                     Array.Copy(bpb_sector, 0x52, dosString, 0, 8);
-                    FAT32PB.fs_type = Encoding.ASCII.GetString(dosString);
+                    FAT32PB.fs_type = StringHandlers.CToString(dosString);
                 }
                 else
                 {
@@ -285,10 +285,10 @@ namespace DiscImageChef.Plugins
                     EPB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x27);
                     dosString = new byte[11];
                     Array.Copy(bpb_sector, 0x2B, dosString, 0, 11);
-                    EPB.volume_label = Encoding.ASCII.GetString(dosString);
+                    EPB.volume_label = StringHandlers.CToString(dosString);
                     dosString = new byte[8];
                     Array.Copy(bpb_sector, 0x36, dosString, 0, 8);
-                    EPB.fs_type = Encoding.ASCII.GetString(dosString);
+                    EPB.fs_type = StringHandlers.CToString(dosString);
                 }
 			
                 sb.AppendFormat("OEM Name: {0}", BPB.OEMName).AppendLine();
@@ -335,7 +335,8 @@ namespace DiscImageChef.Plugins
                     }
 					
                     sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
-                    xmlFSType.VolumeName = EPB.volume_label;
+                    if(!string.IsNullOrEmpty(EPB.volume_label))
+                        xmlFSType.VolumeName = EPB.volume_label;
                     sb.AppendFormat("Filesystem type: {0}", EPB.fs_type).AppendLine();
                 }
                 else if (EPB.signature == 0x28 || EPB.signature == 0x29)
@@ -354,7 +355,8 @@ namespace DiscImageChef.Plugins
                         }
 					
                         sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
-                        xmlFSType.VolumeName = EPB.volume_label;
+                        if(!string.IsNullOrEmpty(EPB.volume_label))
+                            xmlFSType.VolumeName = EPB.volume_label;
                         sb.AppendFormat("Filesystem type: {0}", EPB.fs_type).AppendLine();
                     }
                 }
