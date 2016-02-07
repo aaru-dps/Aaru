@@ -65,8 +65,11 @@
     <Compile Include="Device\ScsiCommands\HP.cs" />
     <Compile Include="Device\ScsiCommands\Plasmon.cs" />
     <Compile Include="Device\ScsiCommands\SyQuest.cs" />
-    <Compile Include="Device\AtaCommands\AtaCommands.cs" />
-    <Compile Include="Device\AtaCommands\AtapiCommands.cs" />
+    <Compile Include="Device\AtaCommands\AtaCHS.cs" />
+    <Compile Include="Device\AtaCommands\Atapi.cs" />
+    <Compile Include="Device\AtaCommands\Ata28.cs" />
+    <Compile Include="Device\AtaCommands\Ata48.cs" />
+    <Compile Include="Device\AtaCommands\Smart.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

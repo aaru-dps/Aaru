@@ -1,5 +1,15 @@
 2016-02-07  Natalia Portillo  <claunia@claunia.com>
 
+	* Device/AtaCommands/Ata28.cs:
+	* Device/AtaCommands/Ata48.cs:
+	* Device/AtaCommands/Smart.cs:
+	* Device/AtaCommands/Atapi.cs:
+	* DiscImageChef.Devices.csproj:
+	* Device/AtaCommands/AtaCHS.cs:
+	  Added ATA categories.
+
+2016-02-07  Natalia Portillo  <claunia@claunia.com>
+
 	* Device/AtaCommands.cs:
 	* DiscImageChef.Devices.csproj:
 	* Device/AtaCommands/AtaCommands.cs:
