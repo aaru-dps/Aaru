@@ -49,8 +49,6 @@
     <Compile Include="Device\Variables.cs" />
     <Compile Include="Device\Destructor.cs" />
     <Compile Include="Device\Commands.cs" />
-    <Compile Include="Device\AtaCommands.cs" />
-    <Compile Include="Device\AtapiCommands.cs" />
     <Compile Include="Device\ScsiCommands\MMC.cs" />
     <Compile Include="Device\ScsiCommands\SPC.cs" />
     <Compile Include="Device\ScsiCommands\SBC.cs" />
@@ -67,6 +65,8 @@
     <Compile Include="Device\ScsiCommands\HP.cs" />
     <Compile Include="Device\ScsiCommands\Plasmon.cs" />
     <Compile Include="Device\ScsiCommands\SyQuest.cs" />
+    <Compile Include="Device\AtaCommands\AtaCommands.cs" />
+    <Compile Include="Device\AtaCommands\AtapiCommands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -74,6 +74,7 @@
     <Folder Include="Windows\" />
     <Folder Include="Device\" />
     <Folder Include="Device\ScsiCommands\" />
+    <Folder Include="Device\AtaCommands\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
