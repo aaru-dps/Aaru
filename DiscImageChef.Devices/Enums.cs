@@ -674,9 +674,13 @@ namespace DiscImageChef.Devices
         /// <summary>
         /// Sets the device date and time
         /// </summary>
-        SetDateAndTimeExt = 0x77
+        SetDateAndTimeExt = 0x77,
 
         #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
+        #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
+        NativeMaxAddress = 0x78
+        #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
     }
     #endregion ATA Commands
 

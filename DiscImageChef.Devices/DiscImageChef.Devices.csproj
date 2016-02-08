@@ -70,6 +70,8 @@
     <Compile Include="Device\AtaCommands\Ata28.cs" />
     <Compile Include="Device\AtaCommands\Ata48.cs" />
     <Compile Include="Device\AtaCommands\Smart.cs" />
+    <Compile Include="Device\AtaCommands\Cfa.cs" />
+    <Compile Include="Device\AtaCommands\MCPT.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

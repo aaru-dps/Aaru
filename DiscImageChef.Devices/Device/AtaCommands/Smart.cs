@@ -43,5 +43,147 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
+        public bool SmartDisable(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.Disable;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+            registers.sectorCount = 0xF1;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.Enable;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLBA28 statusRegisters, byte subcommand, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+            registers.lbaLow = subcommand;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            buffer = new byte[512];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.ReadData;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, byte logAddress, uint timeout, out double duration)
+        {
+            buffer = new byte[512];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.ReadLog;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+            registers.lbaLow = logAddress;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartReturnStatus(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.ReturnStatus;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }

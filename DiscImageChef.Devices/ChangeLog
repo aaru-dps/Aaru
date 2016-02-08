@@ -1,3 +1,20 @@
+2016-02-08  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/AtaCommands/Cfa.cs:
+	* Device/AtaCommands/MCPT.cs:
+	* Device/AtaCommands/Ata28.cs:
+	* Device/AtaCommands/Ata48.cs:
+	* Device/AtaCommands/Smart.cs:
+	* Device/AtaCommands/AtaCHS.cs:
+	* DiscImageChef.Devices.csproj:
+	  Implemented ATA commands.
+
+	* Device/ScsiCommands/SPC.cs:
+	  Make MODE SENSE (6) buffer big enought.
+
+	* Enums.cs:
+	  Added new command found in ACS-3 rev. 6
+
 2016-02-07  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/AtaCommands/Ata28.cs:
