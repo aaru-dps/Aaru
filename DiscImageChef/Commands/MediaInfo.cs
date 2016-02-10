@@ -100,7 +100,7 @@ namespace DiscImageChef.Commands
 
         static void doATAMediaInfo(string outputPrefix, Device dev)
         {
-            throw new NotImplementedException("ATA devices not yet supported.");
+            DicConsole.ErrorWriteLine("Please use device-info command for ATA devices.");
         }
 
         static void doNVMeMediaInfo(string outputPrefix, Device dev)

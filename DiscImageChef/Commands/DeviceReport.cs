@@ -115,6 +115,7 @@ namespace DiscImageChef.Commands
                 xmlFile = dev.Model + ".xml";
             
             ConsoleKeyInfo pressedKey;
+            bool removable = false;
 
             if (dev.IsUSB)
             {
@@ -143,6 +144,7 @@ namespace DiscImageChef.Commands
                     }
 
                     report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
+                    removable = true;
                 }
             }
 
@@ -173,6 +175,7 @@ namespace DiscImageChef.Commands
                     }
 
                     report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
+                    removable = true;
                 }
             }
 
@@ -184,48 +187,35 @@ namespace DiscImageChef.Commands
             {
                 Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(buffer).Value;
 
-                report.ATA = new ataType();
-
-                if (ataId.CurrentCylinders != 0 ||
-                    ataId.CurrentHeads != 0 ||
-                    ataId.CurrentSectorsPerTrack != 0)
+                if ((ushort)ataId.GeneralConfiguration == 0x848A)
                 {
-                    report.ATA.CHS = new chsType();
-                    report.ATA.CHS.Cylinders = ataId.Cylinders;
-                    report.ATA.CHS.Heads = ataId.Heads;
-                    report.ATA.CHS.Sectors = ataId.SectorsPerTrack;
+                    report.CompactFlash = true;
+                    report.CompactFlashSpecified = true;
+                    removable = false;
                 }
-
-                if ((ataId.Cylinders != ataId.CurrentCylinders ||
-                    ataId.Heads != ataId.CurrentHeads ||
-                    ataId.SectorsPerTrack != ataId.CurrentSectorsPerTrack) &&
-                    (ataId.CurrentCylinders != 0 ||
-                    ataId.CurrentHeads != 0 ||
-                    ataId.CurrentSectorsPerTrack != 0))
+                else if (!removable && ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable))
                 {
-                    report.ATA.CurrentCHS = new chsType();
-                    report.ATA.CurrentCHS.Cylinders = ataId.CurrentCylinders;
-                    report.ATA.CurrentCHS.Heads = ataId.CurrentHeads;
-                    report.ATA.CurrentCHS.Sectors = ataId.CurrentSectorsPerTrack;
-                }
-
-                if (ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport) && ataId.LBASectors != 0)
-                {
-                    report.ATA.LBASectors = ataId.LBASectors;
-                    report.ATA.LBASectorsSpecified = true;
-
-                    if (ataId.LBASectors != 0 && ataId.LBASectors != ataId.CurrentSectors)
+                    pressedKey = new ConsoleKeyInfo();
+                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
-                        report.ATA.LBASectorsCurrent = ataId.LBASectors;
-                        report.ATA.LBASectorsCurrentSpecified = true;
+                        DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                        pressedKey = System.Console.ReadKey();
+                        DicConsole.WriteLine();
                     }
+
+                    removable = pressedKey.Key == ConsoleKey.Y;
                 }
 
-                if (ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48) && ataId.LBA48Sectors != 0)
-                {
-                    report.ATA.LBA48Sectors = ataId.LBA48Sectors;
-                    report.ATA.LBA48SectorsSpecified = true;
+                if(removable)
+                {            
+                    DicConsole.WriteLine("Please remove any media from the device and press any key when it is out.");
+                    System.Console.ReadKey(true);
+                    DicConsole.WriteLine("Querying ATA IDENTIFY...");
+                    dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
+                    ataId = Decoders.ATA.Identify.Decode(buffer).Value;
                 }
+
+                report.ATA = new ataType();
 
                 if (!string.IsNullOrWhiteSpace(ataId.AdditionalPID))
                 {
@@ -332,11 +322,6 @@ namespace DiscImageChef.Commands
                     report.ATA.DMATransferTimingMode = ataId.DMATransferTimingMode;
                     report.ATA.DMATransferTimingModeSpecified = true;
                 }
-                if (ataId.EccBytes != 0)
-                {
-                    report.ATA.EccBytes = ataId.EccBytes;
-                    report.ATA.EccBytesSpecified = true;
-                }
                 if (ataId.EnhancedSecurityEraseTime != 0)
                 {
                     report.ATA.EnhancedSecurityEraseTime = ataId.EnhancedSecurityEraseTime;
@@ -396,16 +381,6 @@ namespace DiscImageChef.Commands
                 {
                     report.ATA.InterseekDelay = ataId.InterseekDelay;
                     report.ATA.InterseekDelaySpecified = true;
-                }
-                if (ataId.LogicalAlignment != 0)
-                {
-                    report.ATA.LogicalAlignment = ataId.LogicalAlignment;
-                    report.ATA.LogicalAlignmentSpecified = true;
-                }
-                if (ataId.LogicalSectorWords != 0)
-                {
-                    report.ATA.LogicalSectorWords = ataId.LogicalSectorWords;
-                    report.ATA.LogicalSectorWordsSpecified = true;
                 }
                 if (ataId.MajorVersion != 0)
                 {
@@ -497,20 +472,10 @@ namespace DiscImageChef.Commands
                     report.ATA.NVEstimatedSpinUp = ataId.NVEstimatedSpinUp;
                     report.ATA.NVEstimatedSpinUpSpecified = true;
                 }
-                if (ataId.NominalRotationRate != 0)
-                {
-                    report.ATA.NominalRotationRate = ataId.NominalRotationRate;
-                    report.ATA.NominalRotationRateSpecified = true;
-                }
                 if (ataId.PacketBusRelease != 0)
                 {
                     report.ATA.PacketBusRelease = ataId.PacketBusRelease;
                     report.ATA.PacketBusReleaseSpecified = true;
-                }
-                if (ataId.PhysLogSectorSize != 0)
-                {
-                    report.ATA.PhysLogSectorSize = ataId.PhysLogSectorSize;
-                    report.ATA.PhysLogSectorSizeSpecified = true;
                 }
                 if (ataId.PIOTransferTimingMode != 0)
                 {
@@ -627,16 +592,6 @@ namespace DiscImageChef.Commands
                     report.ATA.UDMASupported = ataId.UDMASupported;
                     report.ATA.UDMASupportedSpecified = true;
                 }
-                if (ataId.UnformattedBPT != 0)
-                {
-                    report.ATA.UnformattedBPT = ataId.UnformattedBPT;
-                    report.ATA.UnformattedBPTSpecified = true;
-                }
-                if (ataId.UnformattedBPS != 0)
-                {
-                    report.ATA.UnformattedBPS = ataId.UnformattedBPS;
-                    report.ATA.UnformattedBPSSpecified = true;
-                }
                 if (ataId.WRVMode != 0)
                 {
                     report.ATA.WRVMode = ataId.WRVMode;
@@ -651,6 +606,464 @@ namespace DiscImageChef.Commands
                 {
                     report.ATA.WRVSectorCountMode2 = ataId.WRVSectorCountMode2;
                     report.ATA.WRVSectorCountMode2Specified = true;
+                }
+
+                if (removable)
+                {
+                    List<testedMediaType> mediaTests = new List<testedMediaType>();
+
+                    pressedKey = new ConsoleKeyInfo();
+                    while (pressedKey.Key != ConsoleKey.N)
+                    {
+                        pressedKey = new ConsoleKeyInfo();
+                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                        {
+                            DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                            pressedKey = System.Console.ReadKey();
+                            DicConsole.WriteLine();
+                        }
+
+                        if (pressedKey.Key == ConsoleKey.Y)
+                        {
+                            DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
+                            System.Console.ReadKey(true);
+
+                            testedMediaType mediaTest = new testedMediaType();
+                            DicConsole.Write("Please write a description of the media type and press enter: ");
+                            mediaTest.MediumTypeName = System.Console.ReadLine();
+                            DicConsole.Write("Please write the media model and press enter: ");
+                            mediaTest.Model = System.Console.ReadLine();
+
+                            mediaTest.ManufacturerSpecified = true;
+                            mediaTest.ModelSpecified = true;
+                            mediaTest.MediaIsRecognized = true;
+
+                            DicConsole.WriteLine("Querying ATA IDENTIFY...");
+                            dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
+
+                            if (Decoders.ATA.Identify.Decode(buffer).HasValue)
+                            {
+                                ataId = Decoders.ATA.Identify.Decode(buffer).Value;
+
+                                if (ataId.UnformattedBPT != 0)
+                                {
+                                    mediaTest.UnformattedBPT = ataId.UnformattedBPT;
+                                    mediaTest.UnformattedBPTSpecified = true;
+                                }
+                                if (ataId.UnformattedBPS != 0)
+                                {
+                                    mediaTest.UnformattedBPS = ataId.UnformattedBPS;
+                                    mediaTest.UnformattedBPSSpecified = true;
+                                }
+
+                                if (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
+                                {
+                                    mediaTest.CHS = new chsType();
+                                    mediaTest.CHS.Cylinders = ataId.Cylinders;
+                                    mediaTest.CHS.Heads = ataId.Heads;
+                                    mediaTest.CHS.Sectors = ataId.SectorsPerTrack;
+                                    mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
+                                    mediaTest.BlocksSpecified = true;
+                                }
+
+                                if (ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
+                                {
+                                    mediaTest.CurrentCHS = new chsType();
+                                    mediaTest.CurrentCHS.Cylinders = ataId.CurrentCylinders;
+                                    mediaTest.CurrentCHS.Heads = ataId.CurrentHeads;
+                                    mediaTest.CurrentCHS.Sectors = ataId.CurrentSectorsPerTrack;
+                                    mediaTest.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                                    mediaTest.BlocksSpecified = true;
+                                }
+
+                                if (ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                                {
+                                    mediaTest.LBASectors = ataId.LBASectors;
+                                    mediaTest.LBASectorsSpecified = true;
+                                    mediaTest.Blocks = ataId.LBASectors;
+                                    mediaTest.BlocksSpecified = true;
+                                }
+
+                                if (ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                                {
+                                    mediaTest.LBA48Sectors = ataId.LBA48Sectors;
+                                    mediaTest.LBA48SectorsSpecified = true;
+                                    mediaTest.Blocks = ataId.LBA48Sectors;
+                                    mediaTest.BlocksSpecified = true;
+                                }
+
+                                if (ataId.NominalRotationRate != 0x0000 &&
+                                ataId.NominalRotationRate != 0xFFFF)
+                                {
+                                    if (ataId.NominalRotationRate == 0x0001)
+                                    {
+                                        mediaTest.SolidStateDevice = true;
+                                        mediaTest.SolidStateDeviceSpecified = true;
+                                    }
+                                    else
+                                    {
+                                        mediaTest.SolidStateDevice = false;
+                                        mediaTest.SolidStateDeviceSpecified = true;
+                                        mediaTest.NominalRotationRate = ataId.NominalRotationRate;
+                                        mediaTest.NominalRotationRateSpecified = true;
+                                    }
+                                }
+
+                                uint logicalsectorsize = 0;
+                                uint physicalsectorsize;
+                                if ((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+                                (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+                                {
+                                    if ((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                                    {
+                                        if (ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
+                                            logicalsectorsize = 512;
+                                        else
+                                            logicalsectorsize = ataId.LogicalSectorWords * 2;
+                                    }
+                                    else
+                                        logicalsectorsize = 512;
+
+                                    if ((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
+                                    {
+                                        physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+                                    }
+                                    else
+                                        physicalsectorsize = logicalsectorsize;
+                                }
+                                else
+                                {
+                                    logicalsectorsize = 512;
+                                    physicalsectorsize = 512;
+                                }
+
+                                mediaTest.BlockSize = logicalsectorsize;
+                                mediaTest.BlockSizeSpecified = true;
+                                if (physicalsectorsize != logicalsectorsize)
+                                {
+                                    mediaTest.PhysicalBlockSize = physicalsectorsize;
+                                    mediaTest.PhysicalBlockSizeSpecified = true;
+
+                                    if ((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
+                                    (ataId.LogicalAlignment & 0x4000) == 0x4000)
+                                    {
+                                        mediaTest.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
+                                        mediaTest.LogicalAlignmentSpecified = true;
+                                    }
+                                }
+
+                                if (ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
+                                {
+                                    mediaTest.LongBlockSize = logicalsectorsize + ataId.EccBytes;
+                                    mediaTest.LongBlockSizeSpecified = true;
+                                }
+
+                                if (ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
+                                !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
+                                ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
+                                {
+                                    mediaTest.CanReadMediaSerial = true;
+                                    mediaTest.CanReadMediaSerialSpecified = true;
+                                    if (!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
+                                    {
+                                        mediaTest.Manufacturer = ataId.MediaManufacturer;
+                                        mediaTest.ManufacturerSpecified = true;
+                                    }
+                                }
+
+                                mediaTest.SupportsReadLbaSpecified = true;
+                                mediaTest.SupportsReadRetryLbaSpecified = true;
+                                mediaTest.SupportsReadDmaLbaSpecified = true;
+                                mediaTest.SupportsReadDmaRetryLbaSpecified = true;
+                                mediaTest.SupportsReadLongLbaSpecified = true;
+                                mediaTest.SupportsReadLongRetryLbaSpecified = true;
+                                mediaTest.SupportsSeekLbaSpecified = true;
+
+                                mediaTest.SupportsReadLba48Specified = true;
+                                mediaTest.SupportsReadDmaLba48Specified = true;
+
+                                mediaTest.SupportsReadSpecified = true;
+                                mediaTest.SupportsReadRetrySpecified = true;
+                                mediaTest.SupportsReadDmaSpecified = true;
+                                mediaTest.SupportsReadDmaRetrySpecified = true;
+                                mediaTest.SupportsReadLongSpecified = true;
+                                mediaTest.SupportsReadLongRetrySpecified = true;
+                                mediaTest.SupportsSeekSpecified = true;
+
+                                Decoders.ATA.AtaErrorRegistersCHS errorChs;
+                                Decoders.ATA.AtaErrorRegistersLBA28 errorLba;
+                                Decoders.ATA.AtaErrorRegistersLBA48 errorLba48;
+
+                                byte[] readBuf;
+                                ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
+                                bool sense = true;
+
+                                DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
+                                sense = dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
+                                mediaTest.SupportsRead = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
+                                sense = dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
+                                mediaTest.SupportsReadRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ DMA in CHS mode...");
+                                sense = dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
+                                mediaTest.SupportsReadDma = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
+                                sense = dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
+                                mediaTest.SupportsReadDmaRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ LONG in CHS mode...");
+                                sense = dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, mediaTest.LongBlockSize, timeout, out duration);
+                                mediaTest.SupportsReadLong = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                                DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+                                sense = dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize, timeout, out duration);
+                                mediaTest.SupportsReadLongRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                                DicConsole.WriteLine("Trying SEEK in CHS mode...");
+                                sense = dev.Seek(out errorChs, 0, 0, 1, timeout, out duration);
+                                mediaTest.SupportsSeek = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0);
+
+                                DicConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
+                                sense = dev.Read(out readBuf, out errorLba, false, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
+                                sense = dev.Read(out readBuf, out errorLba, true, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ DMA in LBA mode...");
+                                sense = dev.ReadDma(out readBuf, out errorLba, false, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadDmaLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
+                                sense = dev.ReadDma(out readBuf, out errorLba, true, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadDmaRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ LONG in LBA mode...");
+                                sense = dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize, timeout, out duration);
+                                mediaTest.SupportsReadLongLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                                DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+                                sense = dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize, timeout, out duration);
+                                mediaTest.SupportsReadLongRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                                DicConsole.WriteLine("Trying SEEK in LBA mode...");
+                                sense = dev.Seek(out errorLba, 0, timeout, out duration);
+                                mediaTest.SupportsSeekLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0);
+
+                                DicConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
+                                sense = dev.Read(out readBuf, out errorLba48, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadLba48 = (!sense && (errorLba48.status & 0x01) != 0x01 && errorLba48.error == 0 && readBuf.Length > 0);
+                                DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
+                                sense = dev.ReadDma(out readBuf, out errorLba48, 0, 1, timeout, out duration);
+                                mediaTest.SupportsReadDmaLba48 = (!sense && (errorLba48.status & 0x01) != 0x01 && errorLba48.error == 0 && readBuf.Length > 0);
+                            }
+                            else
+                                mediaTest.MediaIsRecognized = false;
+                            
+                            mediaTests.Add(mediaTest);
+                        }
+                    }    
+                    report.ATA.RemovableMedias = mediaTests.ToArray();
+                }
+                else
+                {
+                    report.ATA.ReadCapabilities = new testedMediaType();
+
+                    if (ataId.UnformattedBPT != 0)
+                    {
+                        report.ATA.ReadCapabilities.UnformattedBPT = ataId.UnformattedBPT;
+                        report.ATA.ReadCapabilities.UnformattedBPTSpecified = true;
+                    }
+                    if (ataId.UnformattedBPS != 0)
+                    {
+                        report.ATA.ReadCapabilities.UnformattedBPS = ataId.UnformattedBPS;
+                        report.ATA.ReadCapabilities.UnformattedBPSSpecified = true;
+                    }
+
+                    if (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
+                    {
+                        report.ATA.ReadCapabilities.CHS = new chsType();
+                        report.ATA.ReadCapabilities.CHS.Cylinders = ataId.Cylinders;
+                        report.ATA.ReadCapabilities.CHS.Heads = ataId.Heads;
+                        report.ATA.ReadCapabilities.CHS.Sectors = ataId.SectorsPerTrack;
+                        report.ATA.ReadCapabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
+                        report.ATA.ReadCapabilities.BlocksSpecified = true;
+                    }
+
+                    if (ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
+                    {
+                        report.ATA.ReadCapabilities.CurrentCHS = new chsType();
+                        report.ATA.ReadCapabilities.CurrentCHS.Cylinders = ataId.CurrentCylinders;
+                        report.ATA.ReadCapabilities.CurrentCHS.Heads = ataId.CurrentHeads;
+                        report.ATA.ReadCapabilities.CurrentCHS.Sectors = ataId.CurrentSectorsPerTrack;
+                        report.ATA.ReadCapabilities.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                        report.ATA.ReadCapabilities.BlocksSpecified = true;
+                    }
+
+                    if (ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                    {
+                        report.ATA.ReadCapabilities.LBASectors = ataId.LBASectors;
+                        report.ATA.ReadCapabilities.LBASectorsSpecified = true;
+                        report.ATA.ReadCapabilities.Blocks = ataId.LBASectors;
+                        report.ATA.ReadCapabilities.BlocksSpecified = true;
+                    }
+
+                    if (ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                    {
+                        report.ATA.ReadCapabilities.LBA48Sectors = ataId.LBA48Sectors;
+                        report.ATA.ReadCapabilities.LBA48SectorsSpecified = true;
+                        report.ATA.ReadCapabilities.Blocks = ataId.LBA48Sectors;
+                        report.ATA.ReadCapabilities.BlocksSpecified = true;
+                    }
+
+                    if (ataId.NominalRotationRate != 0x0000 &&
+                        ataId.NominalRotationRate != 0xFFFF)
+                    {
+                        if (ataId.NominalRotationRate == 0x0001)
+                        {
+                            report.ATA.ReadCapabilities.SolidStateDevice = true;
+                            report.ATA.ReadCapabilities.SolidStateDeviceSpecified = true;
+                        }
+                        else
+                        {
+                            report.ATA.ReadCapabilities.SolidStateDevice = false;
+                            report.ATA.ReadCapabilities.SolidStateDeviceSpecified = true;
+                            report.ATA.ReadCapabilities.NominalRotationRate = ataId.NominalRotationRate;
+                            report.ATA.ReadCapabilities.NominalRotationRateSpecified = true;
+                        }
+                    }
+
+                    uint logicalsectorsize = 0;
+                    uint physicalsectorsize;
+                    if ((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+                        (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+                    {
+                        if ((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                        {
+                            if (ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
+                                logicalsectorsize = 512;
+                            else
+                                logicalsectorsize = ataId.LogicalSectorWords * 2;
+                        }
+                        else
+                            logicalsectorsize = 512;
+
+                        if ((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
+                        {
+                            physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+                        }
+                        else
+                            physicalsectorsize = logicalsectorsize;
+                    }
+                    else
+                    {
+                        logicalsectorsize = 512;
+                        physicalsectorsize = 512;
+                    }
+
+                    report.ATA.ReadCapabilities.BlockSize = logicalsectorsize;
+                    report.ATA.ReadCapabilities.BlockSizeSpecified = true;
+                    if (physicalsectorsize != logicalsectorsize)
+                    {
+                        report.ATA.ReadCapabilities.PhysicalBlockSize = physicalsectorsize;
+                        report.ATA.ReadCapabilities.PhysicalBlockSizeSpecified = true;
+
+                        if ((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
+                           (ataId.LogicalAlignment & 0x4000) == 0x4000)
+                        {
+                            report.ATA.ReadCapabilities.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
+                            report.ATA.ReadCapabilities.LogicalAlignmentSpecified = true;
+                        }
+                    }
+
+                    if (ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
+                    {
+                        report.ATA.ReadCapabilities.LongBlockSize = logicalsectorsize + ataId.EccBytes;
+                        report.ATA.ReadCapabilities.LongBlockSizeSpecified = true;
+                    }
+
+                    if (ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
+                        !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
+                        ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
+                    {
+                        report.ATA.ReadCapabilities.CanReadMediaSerial = true;
+                        report.ATA.ReadCapabilities.CanReadMediaSerialSpecified = true;
+                        if (!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
+                        {
+                            report.ATA.ReadCapabilities.Manufacturer = ataId.MediaManufacturer;
+                            report.ATA.ReadCapabilities.ManufacturerSpecified = true;
+                        }
+                    }
+
+                    report.ATA.ReadCapabilities.SupportsReadLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadRetryLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadDmaLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadDmaRetryLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadLongLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadLongRetryLbaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsSeekLbaSpecified = true;
+
+                    report.ATA.ReadCapabilities.SupportsReadLba48Specified = true;
+                    report.ATA.ReadCapabilities.SupportsReadDmaLba48Specified = true;
+
+                    report.ATA.ReadCapabilities.SupportsReadSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadRetrySpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadDmaSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadDmaRetrySpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadLongSpecified = true;
+                    report.ATA.ReadCapabilities.SupportsReadLongRetrySpecified = true;
+                    report.ATA.ReadCapabilities.SupportsSeekSpecified = true;
+
+                    Decoders.ATA.AtaErrorRegistersCHS errorChs;
+                    Decoders.ATA.AtaErrorRegistersLBA28 errorLba;
+                    Decoders.ATA.AtaErrorRegistersLBA48 errorLba48;
+
+                    byte[] readBuf;
+                    ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
+                    bool sense = true;
+
+                    DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
+                    sense = dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsRead = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
+                    sense = dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ DMA in CHS mode...");
+                    sense = dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadDma = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
+                    sense = dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadDmaRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ LONG in CHS mode...");
+                    sense = dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, report.ATA.ReadCapabilities.LongBlockSize, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLong = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                    DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+                    sense = dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, report.ATA.ReadCapabilities.LongBlockSize, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLongRetry = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                    DicConsole.WriteLine("Trying SEEK in CHS mode...");
+                    sense = dev.Seek(out errorChs, 0, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsSeek = (!sense && (errorChs.status & 0x01) != 0x01 && errorChs.error == 0);
+
+                    DicConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
+                    sense = dev.Read(out readBuf, out errorLba, false, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
+                    sense = dev.Read(out readBuf, out errorLba, true, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ DMA in LBA mode...");
+                    sense = dev.ReadDma(out readBuf, out errorLba, false, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadDmaLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
+                    sense = dev.ReadDma(out readBuf, out errorLba, true, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadDmaRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ LONG in LBA mode...");
+                    sense = dev.ReadLong(out readBuf, out errorLba, false, 0, report.ATA.ReadCapabilities.LongBlockSize, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLongLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                    DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+                    sense = dev.ReadLong(out readBuf, out errorLba, true, 0, report.ATA.ReadCapabilities.LongBlockSize, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLongRetryLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0 && readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead);
+                    DicConsole.WriteLine("Trying SEEK in LBA mode...");
+                    sense = dev.Seek(out errorLba, 0, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsSeekLba = (!sense && (errorLba.status & 0x01) != 0x01 && errorLba.error == 0);
+
+                    DicConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
+                    sense = dev.Read(out readBuf, out errorLba48, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadLba48 = (!sense && (errorLba48.status & 0x01) != 0x01 && errorLba48.error == 0 && readBuf.Length > 0);
+                    DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
+                    sense = dev.ReadDma(out readBuf, out errorLba48, 0, 1, timeout, out duration);
+                    report.ATA.ReadCapabilities.SupportsReadDmaLba48 = (!sense && (errorLba48.status & 0x01) != 0x01 && errorLba48.error == 0 && readBuf.Length > 0);
                 }
             }
 
@@ -779,47 +1192,6 @@ namespace DiscImageChef.Commands
 
                     report.ATAPI = new ataType();
 
-                    if (atapiId.CurrentCylinders != 0 ||
-                        atapiId.CurrentHeads != 0 ||
-                        atapiId.CurrentSectorsPerTrack != 0)
-                    {
-                        report.ATAPI.CHS = new chsType();
-                        report.ATAPI.CHS.Cylinders = atapiId.Cylinders;
-                        report.ATAPI.CHS.Heads = atapiId.Heads;
-                        report.ATAPI.CHS.Sectors = atapiId.SectorsPerTrack;
-                    }
-
-                    if ((atapiId.Cylinders != atapiId.CurrentCylinders ||
-                        atapiId.Heads != atapiId.CurrentHeads ||
-                        atapiId.SectorsPerTrack != atapiId.CurrentSectorsPerTrack) &&
-                        (atapiId.CurrentCylinders != 0 ||
-                        atapiId.CurrentHeads != 0 ||
-                        atapiId.CurrentSectorsPerTrack != 0))
-                    {
-                        report.ATAPI.CurrentCHS = new chsType();
-                        report.ATAPI.CurrentCHS.Cylinders = atapiId.CurrentCylinders;
-                        report.ATAPI.CurrentCHS.Heads = atapiId.CurrentHeads;
-                        report.ATAPI.CurrentCHS.Sectors = atapiId.CurrentSectorsPerTrack;
-                    }
-
-                    if (atapiId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport) && atapiId.LBASectors != 0)
-                    {
-                        report.ATAPI.LBASectors = atapiId.LBASectors;
-                        report.ATAPI.LBASectorsSpecified = true;
-
-                        if (atapiId.LBASectors != 0 && atapiId.LBASectors != atapiId.CurrentSectors)
-                        {
-                            report.ATAPI.LBASectorsCurrent = atapiId.LBASectors;
-                            report.ATAPI.LBASectorsCurrentSpecified = true;
-                        }
-                    }
-
-                    if (atapiId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48) && atapiId.LBA48Sectors != 0)
-                    {
-                        report.ATAPI.LBA48Sectors = atapiId.LBA48Sectors;
-                        report.ATAPI.LBA48SectorsSpecified = true;
-                    }
-
                     if (!string.IsNullOrWhiteSpace(atapiId.AdditionalPID))
                     {
                         report.ATAPI.AdditionalPID = atapiId.AdditionalPID;
@@ -930,11 +1302,6 @@ namespace DiscImageChef.Commands
                         report.ATAPI.DMATransferTimingMode = atapiId.DMATransferTimingMode;
                         report.ATAPI.DMATransferTimingModeSpecified = true;
                     }
-                    if (atapiId.EccBytes != 0)
-                    {
-                        report.ATAPI.EccBytes = atapiId.EccBytes;
-                        report.ATAPI.EccBytesSpecified = true;
-                    }
                     if (atapiId.EnhancedSecurityEraseTime != 0)
                     {
                         report.ATAPI.EnhancedSecurityEraseTime = atapiId.EnhancedSecurityEraseTime;
@@ -994,16 +1361,6 @@ namespace DiscImageChef.Commands
                     {
                         report.ATAPI.InterseekDelay = atapiId.InterseekDelay;
                         report.ATAPI.InterseekDelaySpecified = true;
-                    }
-                    if (atapiId.LogicalAlignment != 0)
-                    {
-                        report.ATAPI.LogicalAlignment = atapiId.LogicalAlignment;
-                        report.ATAPI.LogicalAlignmentSpecified = true;
-                    }
-                    if (atapiId.LogicalSectorWords != 0)
-                    {
-                        report.ATAPI.LogicalSectorWords = atapiId.LogicalSectorWords;
-                        report.ATAPI.LogicalSectorWordsSpecified = true;
                     }
                     if (atapiId.MajorVersion != 0)
                     {
@@ -1095,20 +1452,10 @@ namespace DiscImageChef.Commands
                         report.ATAPI.NVEstimatedSpinUp = atapiId.NVEstimatedSpinUp;
                         report.ATAPI.NVEstimatedSpinUpSpecified = true;
                     }
-                    if (atapiId.NominalRotationRate != 0)
-                    {
-                        report.ATAPI.NominalRotationRate = atapiId.NominalRotationRate;
-                        report.ATAPI.NominalRotationRateSpecified = true;
-                    }
                     if (atapiId.PacketBusRelease != 0)
                     {
                         report.ATAPI.PacketBusRelease = atapiId.PacketBusRelease;
                         report.ATAPI.PacketBusReleaseSpecified = true;
-                    }
-                    if (atapiId.PhysLogSectorSize != 0)
-                    {
-                        report.ATAPI.PhysLogSectorSize = atapiId.PhysLogSectorSize;
-                        report.ATAPI.PhysLogSectorSizeSpecified = true;
                     }
                     if (atapiId.PIOTransferTimingMode != 0)
                     {
@@ -1224,16 +1571,6 @@ namespace DiscImageChef.Commands
                     {
                         report.ATAPI.UDMASupported = atapiId.UDMASupported;
                         report.ATAPI.UDMASupportedSpecified = true;
-                    }
-                    if (atapiId.UnformattedBPT != 0)
-                    {
-                        report.ATAPI.UnformattedBPT = atapiId.UnformattedBPT;
-                        report.ATAPI.UnformattedBPTSpecified = true;
-                    }
-                    if (atapiId.UnformattedBPS != 0)
-                    {
-                        report.ATAPI.UnformattedBPS = atapiId.UnformattedBPS;
-                        report.ATAPI.UnformattedBPSSpecified = true;
                     }
                     if (atapiId.WRVMode != 0)
                     {

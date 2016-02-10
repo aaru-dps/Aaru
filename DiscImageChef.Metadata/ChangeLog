@@ -1,3 +1,8 @@
+2016-02-10  Natalia Portillo  <claunia@claunia.com>
+
+	* DeviceReport.cs:
+	  Added support for ATA devices.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs:

@@ -84,7 +84,9 @@ namespace DiscImageChef.Devices.Linux
             Marshal.Copy(cdb, 0, io_hdr.cmdp, cdb.Length);
             Marshal.Copy(senseBuffer, 0, io_hdr.sbp, senseBuffer.Length);
 
+            DateTime start = DateTime.UtcNow;
             int error = Extern.ioctlSg(fd, LinuxIoctl.SG_IO, ref io_hdr);
+            DateTime end = DateTime.UtcNow;
 
             if (error < 0)
                 error = Marshal.GetLastWin32Error();
@@ -95,7 +97,10 @@ namespace DiscImageChef.Devices.Linux
 
             sense |= (io_hdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-            duration = (double)io_hdr.duration;
+            if (io_hdr.duration > 0)
+                duration = (double)io_hdr.duration;
+            else
+                duration = (end - start).TotalMilliseconds;
 
             Marshal.FreeHGlobal(io_hdr.dxferp);
             Marshal.FreeHGlobal(io_hdr.cmdp);

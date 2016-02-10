@@ -1,3 +1,15 @@
+2016-02-10  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Added support for Media Card Pass Through detection and
+	  information.
+
+	* Commands/DumpMedia.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/MediaScan.cs:
+	* Commands/DeviceReport.cs:
+	  Added support for ATA devices.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceReport.cs:

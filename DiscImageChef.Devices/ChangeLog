@@ -1,3 +1,22 @@
+2016-02-10  Natalia Portillo  <claunia@claunia.com>
+
+	* Device/AtaCommands/Ata28.cs:
+	  Correct SEEK command to not transfer anything.
+
+	* Device/AtaCommands/AtaCHS.cs:
+	  Correct SEEK command to not transfer anything.
+	Added differentiation between READ and READ WITH RETRIES for
+	  CHS mode.
+	Changed blocksize to unsigned on READ LONG.
+
+	* Device/AtaCommands/MCPT.cs:
+	  Change MCPT enable and disable commands to use CHS
+	  registers.
+
+	* Linux/Command.cs:
+	  Linux kernel granularity for SG_IO is only 1ms, use .NET
+	  counters for faster times. Solves "infinity" speeds on SSDs.
+
 2016-02-08  Natalia Portillo  <claunia@claunia.com>
 
 	* Device/AtaCommands/Cfa.cs:

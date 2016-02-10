@@ -125,6 +125,43 @@ namespace DiscImageChef.Commands
                         doWriteFile(options.OutputPrefix, "_ata_identify.bin", "ATA IDENTIFY", ataBuf);
 
                         DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+
+                        double duration;
+                        dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out duration);
+
+                        if (errorRegisters.sector == 0xAA && errorRegisters.sectorCount == 0x55)
+                        {
+                            DicConsole.WriteLine("Device supports the Media Card Pass Through Command Set");
+                            switch (errorRegisters.deviceHead & 0x7)
+                            {
+                                case 0:
+                                    DicConsole.WriteLine("Device reports incorrect media card type");
+                                    break;
+                                    case 1:
+                                    DicConsole.WriteLine("Device contains a Secure Digital card");
+                                    break;
+                                    case 2:
+                                    DicConsole.WriteLine("Device contains a MultiMediaCard ");
+                                    break;
+                                    case 3:
+                                    DicConsole.WriteLine("Device contains a Secure Digital I/O card");
+                                    break;
+                                    case 4:
+                                    DicConsole.WriteLine("Device contains a Smart Media card");
+                                    break;
+                                default:
+                                    DicConsole.WriteLine("Device contains unknown media card type {0}", errorRegisters.deviceHead & 0x07);
+                                    break;
+                            }
+
+                            if ((errorRegisters.deviceHead & 0x08) == 0x08)
+                                DicConsole.WriteLine("Media card is write protected");
+
+                            ushort specificData = (ushort)((errorRegisters.cylinderHigh * 0x100) + errorRegisters.cylinderLow);
+                            if (specificData != 0)
+                                DicConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
+                        }
+
                         break;
                     }
                 case DeviceType.ATAPI:

@@ -51,6 +51,10 @@ namespace DiscImageChef.Metadata
         public ataType ATA;
         public ataType ATAPI;
         public scsiType SCSI;
+        public bool CompactFlash;
+
+        [XmlIgnoreAttribute()]
+        public bool CompactFlashSpecified;
     }
 
     public class usbType
@@ -73,8 +77,6 @@ namespace DiscImageChef.Metadata
 
     public class ataType
     {
-        public chsType CHS;
-        public chsType CurrentCHS;
 
         public string AdditionalPID;
         public Identify.TransferMode APIOSupported;
@@ -98,7 +100,6 @@ namespace DiscImageChef.Metadata
         public Identify.TransferMode DMAActive;
         public Identify.TransferMode DMASupported;
         public byte DMATransferTimingMode;
-        public ushort EccBytes;
         public ushort EnhancedSecurityEraseTime;
         public Identify.CommandSetBit EnabledCommandSet;
         public Identify.CommandSetBit2 EnabledCommandSet2;
@@ -111,11 +112,6 @@ namespace DiscImageChef.Metadata
         public Identify.GeneralConfigurationBit GeneralConfiguration;
         public ushort HardwareResetResult;
         public ushort InterseekDelay;
-        public uint LBASectors;
-        public uint LBASectorsCurrent;
-        public ulong LBA48Sectors;
-        public ushort LogicalAlignment;
-        public uint LogicalSectorWords;
         public Identify.MajorVersionBit MajorVersion;
         public ushort MasterPasswordRevisionCode;
         public ushort MaxDownloadMicroMode3;
@@ -134,9 +130,7 @@ namespace DiscImageChef.Metadata
         public uint NVCacheSize;
         public ushort NVCacheWriteSpeed;
         public byte NVEstimatedSpinUp;
-        public ushort NominalRotationRate;
         public ushort PacketBusRelease;
-        public ushort PhysLogSectorSize;
         public byte PIOTransferTimingMode;
         public byte RecommendedAAM;
         public ushort RecommendedMDMACycleTime;
@@ -160,11 +154,13 @@ namespace DiscImageChef.Metadata
         public Identify.TrustedComputingBit TrustedComputing;
         public Identify.TransferMode UDMAActive;
         public Identify.TransferMode UDMASupported;
-        public ushort UnformattedBPT;
-        public ushort UnformattedBPS;
         public byte WRVMode;
         public uint WRVSectorCountMode3;
         public uint WRVSectorCountMode2;
+
+        public testedMediaType ReadCapabilities;
+        public testedMediaType[] RemovableMedias;
+
 
         [XmlIgnoreAttribute()]
         public bool AdditionalPIDSpecified;
@@ -211,8 +207,6 @@ namespace DiscImageChef.Metadata
         [XmlIgnoreAttribute()]
         public bool DMATransferTimingModeSpecified;
         [XmlIgnoreAttribute()]
-        public bool EccBytesSpecified;
-        [XmlIgnoreAttribute()]
         public bool EnhancedSecurityEraseTimeSpecified;
         [XmlIgnoreAttribute()]
         public bool EnabledCommandSetSpecified;
@@ -238,16 +232,6 @@ namespace DiscImageChef.Metadata
         public bool HardwareResetResultSpecified;
         [XmlIgnoreAttribute()]
         public bool InterseekDelaySpecified;
-        [XmlIgnoreAttribute()]
-        public bool LBASectorsSpecified;
-        [XmlIgnoreAttribute()]
-        public bool LBASectorsCurrentSpecified;
-        [XmlIgnoreAttribute()]
-        public bool LBA48SectorsSpecified;
-        [XmlIgnoreAttribute()]
-        public bool LogicalAlignmentSpecified;
-        [XmlIgnoreAttribute()]
-        public bool LogicalSectorWordsSpecified;
         [XmlIgnoreAttribute()]
         public bool MajorVersionSpecified;
         [XmlIgnoreAttribute()]
@@ -285,11 +269,7 @@ namespace DiscImageChef.Metadata
         [XmlIgnoreAttribute()]
         public bool NVEstimatedSpinUpSpecified;
         [XmlIgnoreAttribute()]
-        public bool NominalRotationRateSpecified;
-        [XmlIgnoreAttribute()]
         public bool PacketBusReleaseSpecified;
-        [XmlIgnoreAttribute()]
-        public bool PhysLogSectorSizeSpecified;
         [XmlIgnoreAttribute()]
         public bool PIOTransferTimingModeSpecified;
         [XmlIgnoreAttribute()]
@@ -336,10 +316,6 @@ namespace DiscImageChef.Metadata
         public bool UDMAActiveSpecified;
         [XmlIgnoreAttribute()]
         public bool UDMASupportedSpecified;
-        [XmlIgnoreAttribute()]
-        public bool UnformattedBPTSpecified;
-        [XmlIgnoreAttribute()]
-        public bool UnformattedBPSSpecified;
         [XmlIgnoreAttribute()]
         public bool WRVModeSpecified;
         [XmlIgnoreAttribute()]
@@ -888,6 +864,82 @@ namespace DiscImageChef.Metadata
         public bool SupportsReadLong16Specified;
         [XmlIgnoreAttribute()]
         public bool SupportsReadLongSpecified;
+
+        public chsType CHS;
+        public chsType CurrentCHS;
+        public uint LBASectors;
+        public ulong LBA48Sectors;
+        public ushort LogicalAlignment;
+        public ushort NominalRotationRate;
+        public uint PhysicalBlockSize;
+        public bool SolidStateDevice;
+        public ushort UnformattedBPT;
+        public ushort UnformattedBPS;
+
+        [XmlIgnoreAttribute()]
+        public bool LBASectorsSpecified;
+        [XmlIgnoreAttribute()]
+        public bool LBA48SectorsSpecified;
+        [XmlIgnoreAttribute()]
+        public bool LogicalAlignmentSpecified;
+        [XmlIgnoreAttribute()]
+        public bool NominalRotationRateSpecified;
+        [XmlIgnoreAttribute()]
+        public bool PhysicalBlockSizeSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SolidStateDeviceSpecified;
+        [XmlIgnoreAttribute()]
+        public bool UnformattedBPTSpecified;
+        [XmlIgnoreAttribute()]
+        public bool UnformattedBPSSpecified;
+
+        public bool SupportsReadDmaLba;
+        public bool SupportsReadDmaRetryLba;
+        public bool SupportsReadLba;
+        public bool SupportsReadRetryLba;
+        public bool SupportsReadLongLba;
+        public bool SupportsReadLongRetryLba;
+        public bool SupportsSeekLba;
+
+        public bool SupportsReadDmaLba48;
+        public bool SupportsReadLba48;
+
+        public bool SupportsReadDma;
+        public bool SupportsReadDmaRetry;
+        public bool SupportsReadRetry;
+        public bool SupportsReadLongRetry;
+        public bool SupportsSeek;
+
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadDmaLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadDmaRetryLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadRetryLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadLongLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadLongRetryLbaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsSeekLbaSpecified;
+
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadDmaLba48Specified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadLba48Specified;
+
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadDmaSpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadDmaRetrySpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadRetrySpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsReadLongRetrySpecified;
+        [XmlIgnoreAttribute()]
+        public bool SupportsSeekSpecified;
     }
 
     public class sscType

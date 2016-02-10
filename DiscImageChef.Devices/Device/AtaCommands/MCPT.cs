@@ -43,10 +43,10 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        public bool EnableMediaCardPassThrough(out AtaErrorRegistersLBA28 statusRegisters, uint lba, uint timeout, out double duration)
+        public bool EnableMediaCardPassThrough(out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
             registers.command = (byte)AtaCommands.CheckMediaCardType;
@@ -61,10 +61,10 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool DisableMediaCardPassThrough(out AtaErrorRegistersLBA28 statusRegisters, uint lba, uint timeout, out double duration)
+        public bool DisableMediaCardPassThrough(out AtaErrorRegistersCHS statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            AtaRegistersCHS registers = new AtaRegistersCHS();
             bool sense;
 
             registers.command = (byte)AtaCommands.CheckMediaCardType;
