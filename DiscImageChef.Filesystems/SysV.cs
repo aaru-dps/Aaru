@@ -48,7 +48,7 @@ namespace DiscImageChef.Plugins
         const UInt32 XENIX_MAGIC = 0x002B5544;
         const UInt32 XENIX_CIGAM = 0x44552B00;
         const UInt32 SYSV_MAGIC = 0xFD187E20;
-        const UInt32 SYSV_CIGAM = 0xFD187E20;
+        const UInt32 SYSV_CIGAM = 0x207E18FD;
         // Rest have no magic.
         // Per a Linux kernel, Coherent fs has following:
         const string COH_FNAME = "nonamexxxxx ";

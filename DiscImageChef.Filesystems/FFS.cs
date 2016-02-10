@@ -104,6 +104,15 @@ namespace DiscImageChef.Plugins
                     return true;
             }
 
+            if (imagePlugin.GetSectors() > (partitionStart + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors))
+            {
+                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + (sb_start_atari / imagePlugin.GetSectorSize()), sb_size_in_sectors);
+                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+
+                if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                    return true;
+            }
+
             return false;
         }
 
@@ -166,9 +175,20 @@ namespace DiscImageChef.Plugins
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-                
+
                 if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     sb_offset = partitionStart + sb_start_piggy * sb_size_in_sectors;
+                else
+                    magic = 0;
+            }
+
+            if (imagePlugin.GetSectors() > (partitionStart + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors) && magic == 0)
+                {
+                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_atari / imagePlugin.GetSectorSize(), sb_size_in_sectors);
+                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+
+                if (magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                    sb_offset = partitionStart + sb_start_atari / imagePlugin.GetSectorSize();
                 else
                     magic = 0;
             }
@@ -734,6 +754,8 @@ namespace DiscImageChef.Plugins
         const ulong sb_start_ufs1 = 1;
         // For UFS2, start at offset 65536
         const ulong sb_start_ufs2 = 8;
+        // Atari strange starting for Atari UNIX, in bytes not blocks
+        const ulong sb_start_atari = 110080;
         // For piggy devices (?), start at offset 262144
         const ulong sb_start_piggy = 32;
 

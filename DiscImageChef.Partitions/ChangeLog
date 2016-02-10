@@ -1,3 +1,8 @@
+2016-02-10  Natalia Portillo  <claunia@claunia.com>
+
+	* Atari.cs:
+	  Added support for Atari UNIX, MINIX and HFS partitions.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* GPT.cs:

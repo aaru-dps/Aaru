@@ -57,6 +57,10 @@ namespace DiscImageChef.PartPlugins
         const UInt32 TypeRAW = 0x00524157;
         const UInt32 TypeNetBSD = 0x004E4244;
         const UInt32 TypeNetBSDSwap = 0x004E4253;
+        const UInt32 TypeSysV = 0x00554E58;
+        const UInt32 TypeMac = 0x004D4143;
+        const UInt32 TypeMinix = 0x004D4958;
+        const UInt32 TypeMinix2 = 0x004D4E58;
 
         public AtariPartitions()
         {
@@ -139,7 +143,9 @@ namespace DiscImageChef.PartPlugins
                 UInt32 type = table.entries[i].type & 0x00FFFFFF;
 
                 if (type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
-                    type == TypeSwap || type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap)
+                    type == TypeSwap || type == TypeRAW || type == TypeNetBSD ||
+                    type == TypeNetBSDSwap || type == TypeSysV || type == TypeMac ||
+                    type == TypeMinix || type == TypeMinix2)
                 {
                     validTable = true;
 
@@ -189,6 +195,16 @@ namespace DiscImageChef.PartPlugins
                             case TypeNetBSDSwap:
                                 part.PartitionDescription = "NetBSD swap partition";
                                 break;
+                            case TypeSysV:
+                                part.PartitionDescription = "Atari UNIX partition";
+                                break;
+                            case TypeMac:
+                                part.PartitionDescription = "Macintosh partition";
+                                break;
+                            case TypeMinix:
+                            case TypeMinix2:
+                                part.PartitionDescription = "MINIX partition";
+                                break;
                             default:
                                 part.PartitionDescription = "Unknown partition type";
                                 break;
@@ -217,7 +233,9 @@ namespace DiscImageChef.PartPlugins
                         UInt32 extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
 
                         if (extendedType == TypeGEMDOS || extendedType == TypeBigGEMDOS || extendedType == TypeLinux ||
-                            extendedType == TypeSwap || extendedType == TypeRAW || extendedType == TypeNetBSD || extendedType == TypeNetBSDSwap)
+                            extendedType == TypeSwap || extendedType == TypeRAW || extendedType == TypeNetBSD ||
+                            extendedType == TypeNetBSDSwap || extendedType == TypeSysV || extendedType == TypeMac ||
+                            extendedType == TypeMinix || extendedType == TypeMinix2)
                         {
                             validTable = true;
                             if (extendedTable.entries[j].start <= imagePlugin.GetSectors())
@@ -266,6 +284,16 @@ namespace DiscImageChef.PartPlugins
                                     case TypeNetBSDSwap:
                                         part.PartitionDescription = "NetBSD swap partition";
                                         break;
+                                    case TypeSysV:
+                                        part.PartitionDescription = "Atari UNIX partition";
+                                    break;
+                                    case TypeMac:
+                                        part.PartitionDescription = "Macintosh partition";
+                                    break;
+                                    case TypeMinix:
+                                    case TypeMinix2:
+                                        part.PartitionDescription = "MINIX partition";
+                                    break;
                                     default:
                                         part.PartitionDescription = "Unknown partition type";
                                         break;
@@ -286,7 +314,9 @@ namespace DiscImageChef.PartPlugins
                     UInt32 type = table.icdEntries[i].type & 0x00FFFFFF;
 
                     if (type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
-                        type == TypeSwap || type == TypeRAW || type == TypeNetBSD || type == TypeNetBSDSwap)
+                        type == TypeSwap || type == TypeRAW || type == TypeNetBSD ||
+                        type == TypeNetBSDSwap || type == TypeSysV || type == TypeMac ||
+                        type == TypeMinix || type == TypeMinix2)
                     {
                         if (table.icdEntries[i].start <= imagePlugin.GetSectors())
                         {
@@ -334,6 +364,16 @@ namespace DiscImageChef.PartPlugins
                                 case TypeNetBSDSwap:
                                     part.PartitionDescription = "NetBSD swap partition";
                                     break;
+                                case TypeSysV:
+                                    part.PartitionDescription = "Atari UNIX partition";
+                                break;
+                                case TypeMac:
+                                    part.PartitionDescription = "Macintosh partition";
+                                break;
+                                case TypeMinix:
+                                case TypeMinix2:
+                                    part.PartitionDescription = "MINIX partition";
+                                break;
                                 default:
                                     part.PartitionDescription = "Unknown partition type";
                                     break;

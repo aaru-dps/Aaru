@@ -1,3 +1,11 @@
+2016-02-10  Natalia Portillo  <claunia@claunia.com>
+
+	* FFS.cs:
+	  Added support for superblock offset in Atari UNIX.
+
+	* SysV.cs:
+	  Corrected big endian magic.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Acorn.cs:
