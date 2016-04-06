@@ -235,6 +235,8 @@ namespace DiscImageChef.Decoders.CD
                                 sb.AppendFormat(" and ends at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR);
                             else
                                 sb.AppendFormat(" and ends at {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame);
+
+                            sb.AppendLine();
                         }
                         else
                             goto default;

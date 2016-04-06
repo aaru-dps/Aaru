@@ -256,7 +256,7 @@ namespace DiscImageChef.Commands
                 else if (Read)
                     DicConsole.WriteLine("Using ATA READ command (CHS).");
 
-                byte blocksToRead = 64;
+                byte blocksToRead = 254;
                 bool error = true;
                 while (lbaMode)
                 {

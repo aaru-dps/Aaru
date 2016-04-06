@@ -1885,7 +1885,7 @@ namespace DiscImageChef.Commands
 
                 if (options.Raw)
                 {
-                    throw new NotImplementedException("CD dumping not yet implemented");
+                    throw new NotImplementedException("Raw CD dumping not yet implemented");
                 }
                 else
                 {
