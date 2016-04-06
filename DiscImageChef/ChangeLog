@@ -1,5 +1,10 @@
 2016-04-06  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/MediaScan.cs:
+	  Scan more blocks
+
+2016-04-06  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DumpMedia.cs:
 	  Correct exception on raw cd dumping not implemented.
 
