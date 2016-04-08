@@ -1875,6 +1875,7 @@ namespace DiscImageChef.Commands
             bool readLong10 = false, readLong16 = false, hldtstReadRaw = false, necReadCDDA = false;
             bool pioneerReadCDDA = false, plextorReadCDDA = false, plextorReadRaw = false, syqReadLong6 = false, syqReadLong10 = false;
 
+            #region CompactDisc dump
             if (compactDisc)
             {
                 if (toc == null)
@@ -2048,6 +2049,129 @@ namespace DiscImageChef.Commands
                 mhddLog.Close();
                 ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
 
+                #region Compact Disc Error handling
+                if (unreadableSectors.Count > 0 && !aborted)
+                {
+                    List<ulong> tmpList = new List<ulong>();
+
+                    foreach (ulong ur in unreadableSectors)
+                    {
+                        for (ulong i = ur; i < ur + blocksToRead; i++)
+                            tmpList.Add(i);
+                    }
+
+                    tmpList.Sort();
+
+                    int pass = 0;
+                    bool forward = true;
+                    bool runningPersistent = false;
+
+                    unreadableSectors = tmpList;
+
+                cdRepeatRetry:
+                    ulong [] tmpArray = unreadableSectors.ToArray();
+                    foreach (ulong badSector in tmpArray)
+                    {
+                        if (aborted)
+                            break;
+
+                        double cmdDuration = 0;
+
+                        DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
+
+                        if (readcd)
+                        {
+                            sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)badSector, 2448, blocksToRead, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout, out cmdDuration);
+                            totalDuration += cmdDuration;
+                        }
+
+                        if (!sense && !dev.Error)
+                        {
+                            unreadableSectors.Remove(badSector);
+                            writeToDataFileAtPosition(readBuffer, badSector, blockSize);
+                        }
+                        else if (runningPersistent)
+                            writeToDataFileAtPosition(readBuffer, badSector, blockSize);
+                    }
+
+                    if (pass < options.RetryPasses && !aborted && unreadableSectors.Count > 0)
+                    {
+                        pass++;
+                        forward = !forward;
+                        unreadableSectors.Sort();
+                        unreadableSectors.Reverse();
+                        goto cdRepeatRetry;
+                    }
+
+                    Decoders.SCSI.Modes.DecodedMode? currentMode = null;
+                    Decoders.SCSI.Modes.ModePage? currentModePage = null;
+                    byte [] md6 = null;
+                    byte [] md10 = null;
+
+                    if (!runningPersistent && options.Persistent)
+                    {
+                        sense = dev.ModeSense6(out readBuffer, out senseBuf, false, ScsiModeSensePageControl.Current, 0x01, dev.Timeout, out duration);
+                        if (sense)
+                        {
+                            sense = dev.ModeSense10(out readBuffer, out senseBuf, false, ScsiModeSensePageControl.Current, 0x01, dev.Timeout, out duration);
+                            if (!sense)
+                                currentMode = Decoders.SCSI.Modes.DecodeMode10(readBuffer, dev.SCSIType);
+                        }
+                        else
+                            currentMode = Decoders.SCSI.Modes.DecodeMode6(readBuffer, dev.SCSIType);
+
+                        if (currentMode.HasValue)
+                            currentModePage = currentMode.Value.Pages [0];
+
+                        Decoders.SCSI.Modes.ModePage_01_MMC pgMMC = new Decoders.SCSI.Modes.ModePage_01_MMC();
+                        pgMMC.PS = false;
+                        pgMMC.ReadRetryCount = 255;
+                        pgMMC.Parameter = 0x20;
+
+                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode();
+                        md.Header = new Decoders.SCSI.Modes.ModeHeader();
+                        md.Pages = new Decoders.SCSI.Modes.ModePage [1];
+                        md.Pages [0] = new Decoders.SCSI.Modes.ModePage();
+                        md.Pages [0].Page = 0x01;
+                        md.Pages [0].Subpage = 0x00;
+                        md.Pages [0].PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC);
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+
+                        sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
+                        if (sense)
+                        {
+                            sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
+                        }
+
+                        runningPersistent = true;
+                        if (!sense && !dev.Error)
+                        {
+                            pass--;
+                            goto cdRepeatRetry;
+                        }
+                    }
+                    else if (runningPersistent && options.Persistent && currentModePage.HasValue)
+                    {
+                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode();
+                        md.Header = new Decoders.SCSI.Modes.ModeHeader();
+                        md.Pages = new Decoders.SCSI.Modes.ModePage [1];
+                        md.Pages [0] = currentModePage.Value;
+                        md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
+                        md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
+
+                        sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out duration);
+                        if (sense)
+                        {
+                            sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out duration);
+                        }
+                    }
+
+                    DicConsole.WriteLine();
+                }
+                #endregion Compact Disc Error handling
+
                 dataChk = new Core.Checksum();
                 dataFs.Seek(0, SeekOrigin.Begin);
                 blocksToRead = 500;
@@ -2119,6 +2243,7 @@ namespace DiscImageChef.Commands
                 sidecar.OpticalDisc[0].DiscType = xmlDskTyp;
                 sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
             }
+            #endregion CompactDisc dump
             else
             {
                 uint longBlockSize = blockSize;
