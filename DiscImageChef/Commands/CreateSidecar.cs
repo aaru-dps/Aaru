@@ -51,7 +51,7 @@ namespace DiscImageChef.Commands
 {
     public static class CreateSidecar
     {
-        public static void doSidecar(CreateSidecarSubOptions options)
+        public static void doSidecar(CreateSidecarOptions options)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();

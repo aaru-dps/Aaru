@@ -158,10 +158,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\commandline\src\libcmdline\CommandLine35.csproj">
-      <Project>{5DEA2811-2FFA-4959-830B-CAD3ACACABEB}</Project>
-      <Name>CommandLine35</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
@@ -209,6 +205,10 @@
     <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj">
       <Project>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</Project>
       <Name>DiscImageChef.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\commandline\src\CommandLine\CommandLine.csproj">
+      <Project>{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}</Project>
+      <Name>CommandLine</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

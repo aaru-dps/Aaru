@@ -46,7 +46,7 @@ namespace DiscImageChef.Commands
 {
     public static class Formats
     {
-        public static void ListFormats(FormatsSubOptions FormatsOptions)
+        public static void ListFormats(FormatsOptions FormatsOptions)
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();

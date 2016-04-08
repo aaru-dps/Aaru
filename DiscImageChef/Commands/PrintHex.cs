@@ -43,7 +43,7 @@ namespace DiscImageChef.Commands
 {
     public static class PrintHex
     {
-        public static void doPrintHex(PrintHexSubOptions options)
+        public static void doPrintHex(PrintHexOptions options)
         {
             DicConsole.DebugWriteLine("PrintHex command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", options.Verbose);

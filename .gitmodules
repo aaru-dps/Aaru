@@ -1,3 +1,6 @@
 [submodule "CICMMetadata"]
 	path = CICMMetadata
 	url = https://github.com/claunia/CICMMetadata
+[submodule "commandline"]
+	path = commandline
+	url = https://github.com/claunia/commandline

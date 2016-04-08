@@ -46,7 +46,7 @@ namespace DiscImageChef.Commands
 {
     public static class DeviceReport
     {
-        public static void doDeviceReport(DeviceReportSubOptions options)
+        public static void doDeviceReport(DeviceReportOptions options)
         {
             DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
@@ -97,7 +97,7 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddCommand("device-report");
         }
 
-        static void doATADeviceReport(DeviceReportSubOptions options, Device dev)
+        static void doATADeviceReport(DeviceReportOptions options, Device dev)
         {
             DiscImageChef.Decoders.ATA.AtaErrorRegistersCHS errorRegs;
             byte[] buffer;
@@ -1074,17 +1074,17 @@ namespace DiscImageChef.Commands
             xmlFs.Close();
         }
 
-        static void doNVMeDeviceReport(DeviceReportSubOptions options, Device dev)
+        static void doNVMeDeviceReport(DeviceReportOptions options, Device dev)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }
 
-        static void doSDDeviceReport(DeviceReportSubOptions options, Device dev)
+        static void doSDDeviceReport(DeviceReportOptions options, Device dev)
         {
             throw new NotImplementedException("MMC/SD devices not yet supported.");
         }
 
-        static void doSCSIDeviceReport(DeviceReportSubOptions options, Device dev)
+        static void doSCSIDeviceReport(DeviceReportOptions options, Device dev)
         {
             byte[] senseBuffer;
             byte[] buffer;

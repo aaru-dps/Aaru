@@ -45,7 +45,7 @@ namespace DiscImageChef.Commands
 {
     public static class Benchmark
     {
-        public static void doBenchmark(BenchmarkSubOptions options)
+        public static void doBenchmark(BenchmarkOptions options)
         {
             int bufferSize = options.BufferSize * 1024 * 1024;
             long minMemory = long.MaxValue;

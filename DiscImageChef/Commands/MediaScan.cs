@@ -48,7 +48,7 @@ namespace DiscImageChef.Commands
         static Core.MHDDLog mhddLog;
         static Core.IBGLog ibgLog;
 
-        public static void doMediaScan(MediaScanSubOptions options)
+        public static void doMediaScan(MediaScanOptions options)
         {
             DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", options.Verbose);

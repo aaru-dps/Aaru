@@ -56,7 +56,7 @@ namespace DiscImageChef.Commands
         static Core.IBGLog ibgLog;
         // TODO: Implement dump map
 
-        public static void doDumpMedia(DumpMediaSubOptions options)
+        public static void doDumpMedia(DumpMediaOptions options)
         {
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", options.Verbose);
@@ -116,7 +116,7 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddCommand("dump-media");
         }
 
-        static void doATAMediaScan(DumpMediaSubOptions options, Device dev)
+        static void doATAMediaScan(DumpMediaOptions options, Device dev)
         {
             if(options.Raw)
             {
@@ -899,17 +899,17 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Unable to communicate with ATA device.");
         }
 
-        static void doNVMeMediaScan(DumpMediaSubOptions options, Device dev)
+        static void doNVMeMediaScan(DumpMediaOptions options, Device dev)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }
 
-        static void doSDMediaScan(DumpMediaSubOptions options, Device dev)
+        static void doSDMediaScan(DumpMediaOptions options, Device dev)
         {
             throw new NotImplementedException("MMC/SD devices not yet supported.");
         }
 
-        static void doSCSIMediaScan(DumpMediaSubOptions options, Device dev)
+        static void doSCSIMediaScan(DumpMediaOptions options, Device dev)
         {
             byte[] cmdBuf = null;
             byte[] senseBuf = null;

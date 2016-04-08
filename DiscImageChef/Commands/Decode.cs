@@ -43,7 +43,7 @@ namespace DiscImageChef.Commands
 {
     public static class Decode
     {
-        public static void doDecode(DecodeSubOptions options)
+        public static void doDecode(DecodeOptions options)
         {
             DicConsole.DebugWriteLine("Decode command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Decode command", "--verbose={0}", options.Verbose);

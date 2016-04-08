@@ -45,7 +45,7 @@ namespace DiscImageChef.Commands
 {
     public static class Compare
     {
-        public static void doCompare(CompareSubOptions options)
+        public static void doCompare(CompareOptions options)
         {
             DicConsole.DebugWriteLine("Compare command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Compare command", "--verbose={0}", options.Verbose);

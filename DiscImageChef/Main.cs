@@ -40,34 +40,19 @@ using System;
 using System.Reflection;
 using DiscImageChef.Console;
 using DiscImageChef.Settings;
+using CommandLine;
 
 namespace DiscImageChef
 {
     class MainClass
     {
-        public static void Main(string[] args)
+        public static void Main(string [] args)
         {
-            string invokedVerb = "";
-            object invokedVerbInstance = null;
-
-            var options = new Options();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options,
-                (verb, subOptions) =>
-            {
-                // if parsing succeeds the verb name and correct instance
-                // will be passed to onVerbCommand delegate (string,object)
-                invokedVerb = verb;
-                invokedVerbInstance = subOptions;
-            }))
-            {
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
-            }
-
-            object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            string AssemblyTitle = ((AssemblyTitleAttribute) attributes[0]).Title;
+            object [] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            string AssemblyTitle = ((AssemblyTitleAttribute)attributes [0]).Title;
             attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
             Version AssemblyVersion = typeof(MainClass).Assembly.GetName().Version;
-            string AssemblyCopyright  = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
+            string AssemblyCopyright = ((AssemblyCopyrightAttribute)attributes [0]).Copyright;
 
             DicConsole.WriteLineEvent += System.Console.WriteLine;
             DicConsole.WriteEvent += System.Console.Write;
@@ -80,137 +65,145 @@ namespace DiscImageChef
             Settings.Settings.LoadSettings();
             Core.Statistics.LoadStats();
 
-            switch (invokedVerb)
+            Parser.Default.ParseArguments<AnalyzeOptions, CompareOptions, ChecksumOptions, EntropyOptions, VerifyOptions, PrintHexOptions,
+                  DecodeOptions, DeviceInfoOptions, MediaInfoOptions, MediaScanOptions, FormatsOptions, BenchmarkOptions, CreateSidecarOptions,
+                    DumpMediaOptions, DeviceReportOptions, ConfigureOptions, StatsOptions>(args)
+                  .WithParsed<AnalyzeOptions>(opts =>
+                  {
+                      if (opts.Debug)
+                          DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                      if (opts.Verbose)
+                          DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                      Commands.Analyze.doAnalyze(opts);
+                  })
+                .WithParsed<CompareOptions>(opts =>
+                 {
+                     if (opts.Debug)
+                         DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                     if (opts.Verbose)
+                         DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                     Commands.Compare.doCompare(opts);
+                 })
+            .WithParsed<ChecksumOptions>(opts =>
             {
-                case "analyze":
-                    AnalyzeSubOptions AnalyzeOptions = (AnalyzeSubOptions)invokedVerbInstance;
-                    if (AnalyzeOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (AnalyzeOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Analyze.doAnalyze(AnalyzeOptions);
-                    break;
-                case "compare":
-                    CompareSubOptions CompareOptions = (CompareSubOptions)invokedVerbInstance;
-                    if (CompareOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (CompareOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Compare.doCompare(CompareOptions);
-                    break;
-                case "checksum":
-                    ChecksumSubOptions ChecksumOptions = (ChecksumSubOptions)invokedVerbInstance;
-                    if (ChecksumOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (ChecksumOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Checksum.doChecksum(ChecksumOptions);
-                    break;
-                case "entropy":
-                    EntropySubOptions entropyOptions = (EntropySubOptions)invokedVerbInstance;
-                    if (entropyOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (entropyOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Entropy.doEntropy(entropyOptions);
-                    break;
-                case "verify":
-                    VerifySubOptions VerifyOptions = (VerifySubOptions)invokedVerbInstance;
-                    if (VerifyOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (VerifyOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Verify.doVerify(VerifyOptions);
-                    break;
-                case "printhex":
-                    PrintHexSubOptions PrintHexOptions = (PrintHexSubOptions)invokedVerbInstance;
-                    if (PrintHexOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (PrintHexOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.PrintHex.doPrintHex(PrintHexOptions);
-                    break;
-                case "decode":
-                    DecodeSubOptions DecodeOptions = (DecodeSubOptions)invokedVerbInstance;
-                    if (DecodeOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (DecodeOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Decode.doDecode(DecodeOptions);
-                    break;
-                case "formats":
-                    FormatsSubOptions FormatsOptions = (FormatsSubOptions)invokedVerbInstance;
-                    if (FormatsOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (FormatsOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Formats.ListFormats(FormatsOptions);
-                    break;
-                case "device-info":
-                    DeviceInfoSubOptions DeviceInfoOptions = (DeviceInfoSubOptions)invokedVerbInstance;
-                    if (DeviceInfoOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (DeviceInfoOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.DeviceInfo.doDeviceInfo(DeviceInfoOptions);
-                    break;
-                case "media-info":
-                    MediaInfoSubOptions MediaInfoOptions = (MediaInfoSubOptions)invokedVerbInstance;
-                    if (MediaInfoOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (MediaInfoOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.MediaInfo.doMediaInfo(MediaInfoOptions);
-                    break;
-                case "benchmark":
-                    BenchmarkSubOptions BenchmarkOptions = (BenchmarkSubOptions)invokedVerbInstance;
-                    if (BenchmarkOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (BenchmarkOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.Benchmark.doBenchmark(BenchmarkOptions);
-                    break;
-                case "create-sidecar":
-                    CreateSidecarSubOptions CreateSidecarOptions = (CreateSidecarSubOptions)invokedVerbInstance;
-                    if (CreateSidecarOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (CreateSidecarOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.CreateSidecar.doSidecar(CreateSidecarOptions);
-                    break;
-                case "media-scan":
-                    MediaScanSubOptions MediaScanOptions = (MediaScanSubOptions)invokedVerbInstance;
-                    if (MediaScanOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (MediaScanOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.MediaScan.doMediaScan(MediaScanOptions);
-                    break;
-                case "dump-media":
-                    DumpMediaSubOptions DumpMediaOptions = (DumpMediaSubOptions)invokedVerbInstance;
-                    if (DumpMediaOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (DumpMediaOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.DumpMedia.doDumpMedia(DumpMediaOptions);
-                    break;
-                case "device-report":
-                    DeviceReportSubOptions DeviceReportOptions = (DeviceReportSubOptions)invokedVerbInstance;
-                    if (DeviceReportOptions.Debug)
-                        DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-                    if (DeviceReportOptions.Verbose)
-                        DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-                    Commands.DeviceReport.doDeviceReport(DeviceReportOptions);
-                    break;
-                case "configure":
-                    Commands.Configure.doConfigure ();
-                    break;
-                case "stats":
-                    Commands.Statistics.showStats ();
-                    break;
-                default:
-                    throw new ArgumentException("Should never arrive here!");
-            }
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Checksum.doChecksum(opts);
+            })
+
+            .WithParsed<EntropyOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Entropy.doEntropy(opts);
+            })
+
+            .WithParsed<VerifyOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Verify.doVerify(opts);
+            })
+
+            .WithParsed<PrintHexOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.PrintHex.doPrintHex(opts);
+            })
+
+            .WithParsed<DecodeOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Decode.doDecode(opts);
+            })
+
+            .WithParsed<DeviceInfoOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.DeviceInfo.doDeviceInfo(opts);
+            })
+
+            .WithParsed<MediaInfoOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.MediaInfo.doMediaInfo(opts);
+            })
+
+            .WithParsed<MediaScanOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.MediaScan.doMediaScan(opts);
+            })
+
+            .WithParsed<FormatsOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Formats.ListFormats(opts);
+            })
+
+            .WithParsed<BenchmarkOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.Benchmark.doBenchmark(opts);
+            })
+
+            .WithParsed<CreateSidecarOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.CreateSidecar.doSidecar(opts);
+            })
+
+            .WithParsed<DumpMediaOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.DumpMedia.doDumpMedia(opts);
+            })
+
+            .WithParsed<DeviceReportOptions>(opts =>
+            {
+                if (opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if (opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                Commands.DeviceReport.doDeviceReport(opts);
+            })
+
+                  .WithParsed<ConfigureOptions>(opts => { Commands.Configure.doConfigure();})
+                  .WithParsed<StatsOptions>(opts => { Commands.Statistics.showStats(); })
+                  .WithNotParsed(errs => Environment.Exit(1));
 
             Core.Statistics.SaveStats();
         }

@@ -44,7 +44,7 @@ namespace DiscImageChef.Commands
 {
     public static class Verify
     {
-        public static void doVerify(VerifySubOptions options)
+        public static void doVerify(VerifyOptions options)
         {
             DicConsole.DebugWriteLine("Verify command", "--debug={0}", options.Debug);
             DicConsole.DebugWriteLine("Verify command", "--verbose={0}", options.Verbose);
