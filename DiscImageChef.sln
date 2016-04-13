@@ -102,9 +102,9 @@ Global
 		$1.Text = @/***************************************************************************\nThe Disc Image Chef\n----------------------------------------------------------------------------\n \nFilename       : ${FileName}\nVersion        : 1.0\nAuthor(s)      : ${AuthorName}\n \nComponent      : Component\n\nRevision       : $Revision$\nLast change by : $Author$\nDate           : $Date$\n \n--[ Description ] ----------------------------------------------------------\n \nDescription\n \n--[ License ] --------------------------------------------------------------\n \n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as\n    published by the Free Software Foundation, either version 3 of the\n    License, or (at your option) any later version.\n\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n    GNU General Public License for more details.\n\n    You should have received a copy of the GNU General Public License\n    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n----------------------------------------------------------------------------\nCopyright (C) 2011-2015 Claunia.com\n****************************************************************************/\n//$Id$
 		$1.IncludeInNewFiles = True
 		$0.TextStylePolicy = $2
-		$2.inheritsSet = null
+		$2.inheritsSet = VisualStudio
 		$2.inheritsScope = text/plain
-		$2.scope = application/config+xml
+		$2.scope = text/x-csharp
 		$2.FileWidth = 120
 		$0.CSharpFormattingPolicy = $3
 		$3.SpacingAfterMethodDeclarationName = False
@@ -130,6 +130,7 @@ Global
 		$3.NewLineForClausesInQuery = True
 		$3.IndentBlock = False
 		$3.IndentSwitchCaseSection = False
+		$3.SpaceAfterControlFlowStatementKeyword = False
 		$0.DotNetNamingPolicy = $4
 		$4.DirectoryNamespaceAssociation = Hierarchical
 		$4.ResourceNamePolicy = MSBuild
