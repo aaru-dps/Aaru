@@ -60,11 +60,11 @@ namespace DiscImageChef.Checksums
             hashInt = crc32Seed;
 
             table = new UInt32[256];
-            for (int i = 0; i < 256; i++)
+            for(int i = 0; i < 256; i++)
             {
                 UInt32 entry = (UInt32)i;
-                for (int j = 0; j < 8; j++)
-                    if ((entry & 1) == 1)
+                for(int j = 0; j < 8; j++)
+                    if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc32Poly;
                     else
                         entry = entry >> 1;
@@ -79,7 +79,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for (int i = 0; i < len; i++)
+            for(int i = 0; i < len; i++)
                 hashInt = (hashInt >> 8) ^ table[data[i] ^ hashInt & 0xff];
         }
 
@@ -111,7 +111,7 @@ namespace DiscImageChef.Checksums
             StringBuilder crc32Output = new StringBuilder();
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            for (int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt).Length; i++)
             {
                 crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt)[i].ToString("x2"));
             }
@@ -144,18 +144,18 @@ namespace DiscImageChef.Checksums
             localhashInt = crc32Seed;
 
             localTable = new UInt32[256];
-            for (int i = 0; i < 256; i++)
+            for(int i = 0; i < 256; i++)
             {
                 UInt32 entry = (UInt32)i;
-                for (int j = 0; j < 8; j++)
-                    if ((entry & 1) == 1)
+                for(int j = 0; j < 8; j++)
+                    if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc32Poly;
                     else
                         entry = entry >> 1;
                 localTable[i] = entry;
             }
 
-            for (int i = 0; i < fileStream.Length; i++)
+            for(int i = 0; i < fileStream.Length; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ localhashInt & 0xff];
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -163,7 +163,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc32Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 crc32Output.Append(hash[i].ToString("x2"));
             }
@@ -198,18 +198,18 @@ namespace DiscImageChef.Checksums
             localhashInt = seed;
 
             localTable = new UInt32[256];
-            for (int i = 0; i < 256; i++)
+            for(int i = 0; i < 256; i++)
             {
                 UInt32 entry = (UInt32)i;
-                for (int j = 0; j < 8; j++)
-                    if ((entry & 1) == 1)
+                for(int j = 0; j < 8; j++)
+                    if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
                         entry = entry >> 1;
                 localTable[i] = entry;
             }
 
-            for (int i = 0; i < len; i++)
+            for(int i = 0; i < len; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff];
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -217,7 +217,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder crc32Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 crc32Output.Append(hash[i].ToString("x2"));
             }

@@ -62,7 +62,7 @@ namespace DiscImageChef.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for (int i = 0; i < len; i++)
+            for(int i = 0; i < len; i++)
             {
                 sum1 = (ushort)((sum1 + data[i]) % AdlerModule);
                 sum2 = (ushort)((sum2 + sum1) % AdlerModule);
@@ -95,7 +95,7 @@ namespace DiscImageChef.Checksums
             UInt32 finalSum = (uint)((sum2 << 16) | sum1);
             StringBuilder adlerOutput = new StringBuilder();
 
-            for (int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
             {
                 adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
             }
@@ -137,7 +137,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 adlerOutput.Append(hash[i].ToString("x2"));
             }
@@ -159,7 +159,7 @@ namespace DiscImageChef.Checksums
             localSum1 = 1;
             localSum2 = 0;
 
-            for (int i = 0; i < len; i++)
+            for(int i = 0; i < len; i++)
             {
                 localSum1 = (ushort)((localSum1 + data[i]) % AdlerModule);
                 localSum2 = (ushort)((localSum2 + localSum1) % AdlerModule);
@@ -171,7 +171,7 @@ namespace DiscImageChef.Checksums
 
             StringBuilder adlerOutput = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 adlerOutput.Append(hash[i].ToString("x2"));
             }
