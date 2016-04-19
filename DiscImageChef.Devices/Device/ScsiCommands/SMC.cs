@@ -76,13 +76,13 @@ namespace DiscImageChef.Devices
             cdb[11] = (byte)((buffer.Length & 0xFF0000) >> 16);
             cdb[12] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[13] = (byte)(buffer.Length & 0xFF);
-            if (cache)
+            if(cache)
                 cdb[14] += 0x01;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             uint attrLen = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);

@@ -63,16 +63,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModeHeader? DecodeModeHeader6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
-            if (modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
+            if(modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
                 return null;
 
             ModeHeader header = new ModeHeader();
             header.MediumType = (MediumTypes)modeResponse[1];
 
-            if (modeResponse[3] > 0)
+            if(modeResponse[3] > 0)
             {
                 header.BlockDescriptors = new BlockDescriptor[modeResponse[3] / 8];
-                for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                for(int i = 0; i < header.BlockDescriptors.Length; i++)
                 {
                     header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 4];
                     header.BlockDescriptors[i].Blocks += (ulong)(modeResponse[1 + i * 8 + 4] << 16);
@@ -84,23 +84,23 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if (deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
+            if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
                 header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
                 header.DPOFUA = ((modeResponse[2] & 0x10) == 0x10);
             }
 
-            if (deviceType == PeripheralDeviceTypes.SequentialAccess)
+            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
                 header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
                 header.Speed = (byte)(modeResponse[2] & 0x0F);
                 header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
             }
 
-            if (deviceType == PeripheralDeviceTypes.PrinterDevice)
+            if(deviceType == PeripheralDeviceTypes.PrinterDevice)
                 header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
 
-            if (deviceType == PeripheralDeviceTypes.OpticalDevice)
+            if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
                 header.WriteProtected = ((modeResponse[2] & 0x80) == 0x80);
                 header.EBC = ((modeResponse[2] & 0x01) == 0x01);
@@ -117,23 +117,23 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
         {
-            if (!header.HasValue)
+            if(!header.HasValue)
                 return null;
 
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("SCSI Mode Sense Header:");
 
-            switch (deviceType)
+            switch(deviceType)
             {
                 #region Direct access device mode header
                 case PeripheralDeviceTypes.DirectAccess:
                     {
-                        if (header.Value.MediumType != MediumTypes.Default)
+                        if(header.Value.MediumType != MediumTypes.Default)
                         {
                             sb.Append("\tMedium is ");
 
-                            switch (header.Value.MediumType)
+                            switch(header.Value.MediumType)
                             {
                                 case MediumTypes.ECMA54:
                                     sb.AppendLine("ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side");
@@ -213,18 +213,18 @@ namespace DiscImageChef.Decoders.SCSI
                             }
                         }
 
-                        if (header.Value.WriteProtected)
+                        if(header.Value.WriteProtected)
                             sb.AppendLine("\tMedium is write protected");
 
-                        if (header.Value.DPOFUA)
+                        if(header.Value.DPOFUA)
                             sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        if (header.Value.BlockDescriptors != null)
+                        if(header.Value.BlockDescriptors != null)
                         {
-                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
                                 string density = "";
-                                switch (descriptor.Density)
+                                switch(descriptor.Density)
                                 {
                                     case DensityType.Default:
                                         break;
@@ -242,16 +242,16 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                 }
 
-                                if (density != "")
+                                if(density != "")
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                         sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
                                 }
                                 else
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                         sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
@@ -261,11 +261,11 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     }
-                    #endregion Direct access device mode header
-                    #region Sequential access device mode header
+                #endregion Direct access device mode header
+                #region Sequential access device mode header
                 case PeripheralDeviceTypes.SequentialAccess:
                     {
-                        switch (header.Value.BufferedMode)
+                        switch(header.Value.BufferedMode)
                         {
                             case 0:
                                 sb.AppendLine("\tDevice writes directly to media");
@@ -281,17 +281,17 @@ namespace DiscImageChef.Decoders.SCSI
                                 break;
                         }
 
-                        if (header.Value.Speed == 0)
+                        if(header.Value.Speed == 0)
                             sb.AppendLine("\tDevice uses default speed");
                         else
                             sb.AppendFormat("\tDevice uses speed {0}", header.Value.Speed).AppendLine();
 
-                        if (header.Value.WriteProtected)
+                        if(header.Value.WriteProtected)
                             sb.AppendLine("\tMedium is write protected");
 
                         string medium = "";
 
-                        switch (header.Value.MediumType)
+                        switch(header.Value.MediumType)
                         {
                             case MediumTypes.Default:
                                 medium = "undefined";
@@ -474,16 +474,16 @@ namespace DiscImageChef.Decoders.SCSI
 
                         sb.AppendFormat("\tMedium is {0}", medium).AppendLine();
 
-                        if (header.Value.BlockDescriptors != null)
+                        if(header.Value.BlockDescriptors != null)
                         {
-                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
                                 string density = "";
-                                switch (header.Value.MediumType)
+                                switch(header.Value.MediumType)
                                 {
                                     case MediumTypes.Default:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     break;
@@ -560,28 +560,28 @@ namespace DiscImageChef.Decoders.SCSI
                                                     density = "IBM 3490E";
                                                     break;
                                                 case DensityType.LTO1:
-                                                //case DensityType.SAIT1:
+                                                    //case DensityType.SAIT1:
                                                     density = "LTO Ultrium or Super AIT-1";
                                                     break;
                                                 case DensityType.LTO2Old:
                                                     density = "LTO Ultrium-2";
                                                     break;
                                                 case DensityType.LTO2:
-                                                //case DensityType.T9840:
+                                                    //case DensityType.T9840:
                                                     density = "LTO Ultrium-2 or T9840";
                                                     break;
                                                 case DensityType.T9940:
                                                     density = "T9940";
                                                     break;
                                                 case DensityType.LTO3:
-                                                //case DensityType.T9940:
+                                                    //case DensityType.T9940:
                                                     density = "LTO Ultrium-3 or T9940";
                                                     break;
                                                 case DensityType.T9840C:
                                                     density = "T9840C";
                                                     break;
                                                 case DensityType.LTO4:
-                                                //case DensityType.T9840D:
+                                                    //case DensityType.T9840D:
                                                     density = "LTO Ultrium-4 or T9840D";
                                                     break;
                                                 case DensityType.T10000A:
@@ -613,7 +613,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.LTOWORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "LTO Ultrium cleaning cartridge";
@@ -631,11 +631,11 @@ namespace DiscImageChef.Decoders.SCSI
                                                     density = String.Format("unknown density code 0x{0:X2}", descriptor.Density);
                                                     break;
                                             }
-                                            }
-                                            break;
+                                        }
+                                        break;
                                     case MediumTypes.LTO:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO1:
                                                     density = "LTO Ultrium";
@@ -648,7 +648,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.LTO2:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO2:
                                                     density = "LTO Ultrium-2";
@@ -661,7 +661,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DDS3:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "MLR1-26GB";
@@ -677,7 +677,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DDS4:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "DC-9200";
@@ -693,7 +693,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DAT72:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.DAT72:
                                                     density = "DAT-72";
@@ -707,7 +707,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.LTO3:
                                     case MediumTypes.LTO3WORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO3:
                                                     density = "LTO Ultrium-3";
@@ -720,7 +720,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DDSCleaning:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "DDS cleaning cartridge";
@@ -734,7 +734,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.LTO4:
                                     case MediumTypes.LTO4WORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO4:
                                                     density = "LTO Ultrium-4";
@@ -748,7 +748,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.LTO5:
                                     case MediumTypes.LTO5WORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO5:
                                                     density = "LTO Ultrium-5";
@@ -762,7 +762,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.LTO6:
                                     case MediumTypes.LTO6WORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO6:
                                                     density = "LTO Ultrium-6";
@@ -776,7 +776,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.LTO7:
                                     case MediumTypes.LTO7WORM:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO7:
                                                     density = "LTO Ultrium-7";
@@ -789,7 +789,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.LTOCD:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.LTO2:
                                                     density = "LTO Ultrium-2 in CD emulation mode";
@@ -811,7 +811,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape15m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -845,7 +845,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape28m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -888,7 +888,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape54m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -926,7 +926,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape80m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -958,7 +958,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape106m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1012,7 +1012,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape106mXL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1034,7 +1034,7 @@ namespace DiscImageChef.Decoders.SCSI
                                                     density = "Super DLTtape I at 133000 bpi";
                                                     break;
                                                 case DensityType.SDLT1:
-                                                //case DensityType.SDLT1Alt:
+                                                    //case DensityType.SDLT1Alt:
                                                     density = "Super DLTtape I";
                                                     break;
                                                 case DensityType.SDLT1c:
@@ -1051,7 +1051,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SDLT2:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.SDLT2:
                                                     density = "Super DLTtape II";
@@ -1064,7 +1064,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.VStapeI:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.VStape1:
                                                 case DensityType.VStape1Alt:
@@ -1081,7 +1081,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DLTtapeS4:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.DLTS4:
                                                     density = "DLTtape S4";
@@ -1094,7 +1094,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape22m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1116,7 +1116,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape40m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1141,7 +1141,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape76m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1166,7 +1166,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.Exatape112m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Ex8200:
                                                     density = "EXB-8200";
@@ -1197,7 +1197,7 @@ namespace DiscImageChef.Decoders.SCSI
                                     case MediumTypes.Exatape150m:
                                     case MediumTypes.Exatape75m:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Mammoth:
                                                     density = "Mammoth";
@@ -1213,7 +1213,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DC2900SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "DC-2900SL";
@@ -1226,7 +1226,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.DC9250:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "DC-9250";
@@ -1239,7 +1239,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLR32:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLR-32";
@@ -1252,7 +1252,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.MLR1SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "MRL1-26GBSL";
@@ -1265,7 +1265,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape50:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-50";
@@ -1278,7 +1278,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape50SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-50 SL";
@@ -1291,7 +1291,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLR32SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLR-32 SL";
@@ -1304,7 +1304,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLR5:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLR-5";
@@ -1317,7 +1317,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLR5SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLR-5 SL";
@@ -1330,7 +1330,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape7:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-7";
@@ -1343,7 +1343,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape7SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-7 SL";
@@ -1356,7 +1356,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape24:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-24";
@@ -1369,7 +1369,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape24SL:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-24 SL";
@@ -1382,7 +1382,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape140:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-140";
@@ -1395,7 +1395,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape40:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-40";
@@ -1408,7 +1408,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape60:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-60 or SLRtape-75";
@@ -1421,7 +1421,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLRtape100:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLRtape-100";
@@ -1434,7 +1434,7 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                     case MediumTypes.SLR40_60_100:
                                         {
-                                            switch (descriptor.Density)
+                                            switch(descriptor.Density)
                                             {
                                                 case DensityType.Default:
                                                     density = "SLR40, SLR60 or SLR100";
@@ -1445,23 +1445,23 @@ namespace DiscImageChef.Decoders.SCSI
                                             }
                                         }
                                         break;
-                                                default:
-                                                    density = String.Format("unknown density code 0x{0:X2}", descriptor.Density);
-                                                    break;
+                                    default:
+                                        density = String.Format("unknown density code 0x{0:X2}", descriptor.Density);
+                                        break;
                                 }
 
-                                if (density != "")
+                                if(density != "")
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\tAll remaining blocks conform to {0} and have a variable length", density).AppendLine();
                                         else
                                             sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
                                     }
                                     else
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length", descriptor.Blocks, density).AppendLine();
                                         else
                                             sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
@@ -1469,16 +1469,16 @@ namespace DiscImageChef.Decoders.SCSI
                                 }
                                 else
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                                         else
                                             sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
                                     }
                                     else
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                                         else
                                             sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
@@ -1493,7 +1493,7 @@ namespace DiscImageChef.Decoders.SCSI
                 #region Printer device mode header
                 case PeripheralDeviceTypes.PrinterDevice:
                     {
-                        switch (header.Value.BufferedMode)
+                        switch(header.Value.BufferedMode)
                         {
                             case 0:
                                 sb.AppendLine("\tDevice prints directly");
@@ -1511,11 +1511,11 @@ namespace DiscImageChef.Decoders.SCSI
                 #region Optical device mode header
                 case PeripheralDeviceTypes.OpticalDevice:
                     {
-                        if (header.Value.MediumType != MediumTypes.Default)
+                        if(header.Value.MediumType != MediumTypes.Default)
                         {
                             sb.Append("\tMedium is ");
 
-                            switch (header.Value.MediumType)
+                            switch(header.Value.MediumType)
                             {
                                 case MediumTypes.ReadOnly:
                                     sb.AppendLine("a Read-only optical");
@@ -1544,19 +1544,19 @@ namespace DiscImageChef.Decoders.SCSI
                             }
                         }
 
-                        if (header.Value.WriteProtected)
+                        if(header.Value.WriteProtected)
                             sb.AppendLine("\tMedium is write protected");
-                        if (header.Value.EBC)
+                        if(header.Value.EBC)
                             sb.AppendLine("\tBlank checking during write is enabled");
-                        if (header.Value.DPOFUA)
+                        if(header.Value.DPOFUA)
                             sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        if (header.Value.BlockDescriptors != null)
+                        if(header.Value.BlockDescriptors != null)
                         {
-                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
                                 string density = "";
-                                switch (descriptor.Density)
+                                switch(descriptor.Density)
                                 {
                                     case DensityType.Default:
                                         break;
@@ -1592,18 +1592,18 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                 }
 
-                                if (density != "")
+                                if(density != "")
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length", density).AppendLine();
                                         else
                                             sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
                                     }
                                     else
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\t{0} blocks are {1} and have a variable length", descriptor.Blocks, density).AppendLine();
                                         else
                                             sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
@@ -1611,16 +1611,16 @@ namespace DiscImageChef.Decoders.SCSI
                                 }
                                 else
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                                         else
                                             sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
                                     }
                                     else
                                     {
-                                        if (descriptor.BlockLength == 0)
+                                        if(descriptor.BlockLength == 0)
                                             sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                                         else
                                             sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
@@ -1631,13 +1631,13 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     }
-                            #endregion Optical device mode header
-                            #region Multimedia device mode header
+                #endregion Optical device mode header
+                #region Multimedia device mode header
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     {
                         sb.Append("\tMedium is ");
 
-                        switch (header.Value.MediumType)
+                        switch(header.Value.MediumType)
                         {
                             case MediumTypes.CDROM:
                                 sb.AppendLine("120 mm CD-ROM");
@@ -1752,18 +1752,18 @@ namespace DiscImageChef.Decoders.SCSI
                                 break;
                         }
 
-                        if (header.Value.WriteProtected)
+                        if(header.Value.WriteProtected)
                             sb.AppendLine("\tMedium is write protected");
 
-                        if (header.Value.DPOFUA)
+                        if(header.Value.DPOFUA)
                             sb.AppendLine("\tDrive supports DPO and FUA bits");
 
-                        if (header.Value.BlockDescriptors != null)
+                        if(header.Value.BlockDescriptors != null)
                         {
-                            foreach (BlockDescriptor descriptor in header.Value.BlockDescriptors)
+                            foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                             {
                                 string density = "";
-                                switch (descriptor.Density)
+                                switch(descriptor.Density)
                                 {
                                     case DensityType.Default:
                                         break;
@@ -1796,16 +1796,16 @@ namespace DiscImageChef.Decoders.SCSI
                                         break;
                                 }
 
-                                if (density != "")
+                                if(density != "")
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                         sb.AppendFormat("\tAll remaining blocks have {0} and are {1} bytes each", density, descriptor.BlockLength).AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks have {1} and are {2} bytes each", descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
                                 }
                                 else
                                 {
-                                    if (descriptor.Blocks == 0)
+                                    if(descriptor.Blocks == 0)
                                         sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).AppendLine();
                                     else
                                         sb.AppendFormat("\t{0} blocks are {1} bytes each", descriptor.Blocks, descriptor.BlockLength).AppendLine();
@@ -1815,7 +1815,7 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     }
-                            #endregion Multimedia device mode header
+                #endregion Multimedia device mode header
                 default:
                     break;
             }
@@ -1825,7 +1825,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModeHeader? DecodeModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
-            if (modeResponse == null || modeResponse.Length < 8)
+            if(modeResponse == null || modeResponse.Length < 8)
                 return null;
 
             ushort modeLength;
@@ -1834,7 +1834,7 @@ namespace DiscImageChef.Decoders.SCSI
             modeLength = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
             blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
 
-            if (modeResponse.Length < modeLength)
+            if(modeResponse.Length < modeLength)
                 return null;
 
             ModeHeader header = new ModeHeader();
@@ -1842,12 +1842,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             bool longLBA = (modeResponse[4] & 0x01) == 0x01;
 
-            if (blockDescLength > 0)
+            if(blockDescLength > 0)
             {
-                if (longLBA)
+                if(longLBA)
                 {
                     header.BlockDescriptors = new BlockDescriptor[blockDescLength / 16];
-                    for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                    for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
                         header.BlockDescriptors[i] = new BlockDescriptor();
                         header.BlockDescriptors[i].Density = DensityType.Default;
@@ -1870,10 +1870,10 @@ namespace DiscImageChef.Decoders.SCSI
                 else
                 {
                     header.BlockDescriptors = new BlockDescriptor[blockDescLength / 8];
-                    for (int i = 0; i < header.BlockDescriptors.Length; i++)
+                    for(int i = 0; i < header.BlockDescriptors.Length; i++)
                     {
                         header.BlockDescriptors[i] = new BlockDescriptor();
-                        if (deviceType != PeripheralDeviceTypes.DirectAccess)
+                        if(deviceType != PeripheralDeviceTypes.DirectAccess)
                         {
                             header.BlockDescriptors[i].Density = (DensityType)modeResponse[0 + i * 8 + 8];
                         }
@@ -1892,23 +1892,23 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if (deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
+            if(deviceType == PeripheralDeviceTypes.DirectAccess || deviceType == PeripheralDeviceTypes.MultiMediaDevice)
             {
                 header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
                 header.DPOFUA = ((modeResponse[3] & 0x10) == 0x10);
             }
 
-            if (deviceType == PeripheralDeviceTypes.SequentialAccess)
+            if(deviceType == PeripheralDeviceTypes.SequentialAccess)
             {
                 header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
                 header.Speed = (byte)(modeResponse[3] & 0x0F);
                 header.BufferedMode = (byte)((modeResponse[3] & 0x70) >> 4);
             }
 
-            if (deviceType == PeripheralDeviceTypes.PrinterDevice)
+            if(deviceType == PeripheralDeviceTypes.PrinterDevice)
                 header.BufferedMode = (byte)((modeResponse[3] & 0x70) >> 4);
 
-            if (deviceType == PeripheralDeviceTypes.OpticalDevice)
+            if(deviceType == PeripheralDeviceTypes.OpticalDevice)
             {
                 header.WriteProtected = ((modeResponse[3] & 0x80) == 0x80);
                 header.EBC = ((modeResponse[3] & 0x01) == 0x01);
@@ -2049,19 +2049,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0A? DecodeModePage_0A(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0A)
+            if((pageResponse[0] & 0x3F) != 0x0A)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_0A decoded = new ModePage_0A();
@@ -2080,7 +2080,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.ReadyAENHoldOffPeriod = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
-            if (pageResponse.Length < 10)
+            if(pageResponse.Length < 10)
                 return decoded;
 
             // SPC-1
@@ -2120,7 +2120,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0A(ModePage_0A? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0A page = modePage.Value;
@@ -2128,46 +2128,46 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Control mode page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.RLEC)
+            if(page.RLEC)
                 sb.AppendLine("\tIf set, target shall report log exception conditions");
-            if (page.DQue)
+            if(page.DQue)
                 sb.AppendLine("\tTagged queuing is disabled");
-            if (page.EECA)
+            if(page.EECA)
                 sb.AppendLine("\tExtended Contingent Allegiance is enabled");
-            if (page.RAENP)
+            if(page.RAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification upon completing its initialization");
-            if (page.UAAENP)
+            if(page.UAAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a unit attention condition");
-            if (page.EAENP)
+            if(page.EAENP)
                 sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a deferred error");
-            if (page.GLTSD)
+            if(page.GLTSD)
                 sb.AppendLine("\tGlobal logging target save disabled");
-            if (page.RAC)
+            if(page.RAC)
                 sb.AppendLine("\tCHECK CONDITION should be reported rather than a long busy condition");
-            if (page.SWP)
+            if(page.SWP)
                 sb.AppendLine("\tSoftware write protect is active");
-            if (page.TAS)
+            if(page.TAS)
                 sb.AppendLine("\tTasks aborted by other initiator's actions should be terminated with TASK ABORTED");
-            if (page.TMF_ONLY)
+            if(page.TMF_ONLY)
                 sb.AppendLine("\tAll tasks received in nexus with ACA ACTIVE is set and an ACA condition is established shall terminate");
-            if (page.D_SENSE)
+            if(page.D_SENSE)
                 sb.AppendLine("\tDevice shall return descriptor format sense data when returning sense data in the same transactions as a CHECK CONDITION");
-            if (page.ATO)
+            if(page.ATO)
                 sb.AppendLine("\tLOGICAL BLOCK APPLICATION TAG should not be modified");
-            if (page.DPICZ)
+            if(page.DPICZ)
                 sb.AppendLine("\tProtector information checking is disabled");
-            if (page.NUAR)
+            if(page.NUAR)
                 sb.AppendLine("\tNo unit attention on release");
-            if (page.ATMPE)
+            if(page.ATMPE)
                 sb.AppendLine("\tApplication Tag mode page is enabled");
-            if (page.RWWP)
+            if(page.RWWP)
                 sb.AppendLine("\tAbort any write command without protection information");
-            if (page.SBLP)
+            if(page.SBLP)
                 sb.AppendLine("\tSupportes block lengths and protection information");
 
-            switch (page.TST)
+            switch(page.TST)
             {
                 case 0:
                     sb.AppendLine("\tThe logical unit maintains one task set for all nexuses");
@@ -2180,7 +2180,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.QueueAlgorithm)
+            switch(page.QueueAlgorithm)
             {
                 case 0:
                     sb.AppendLine("\tCommands should be sent strictly ordered");
@@ -2193,7 +2193,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.QErr)
+            switch(page.QErr)
             {
                 case 0:
                     sb.AppendLine("\tIf ACA is established, the task set commands shall resume after it is cleared, otherwise they shall terminate with CHECK CONDITION");
@@ -2209,7 +2209,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.UA_INTLCK_CTRL)
+            switch(page.UA_INTLCK_CTRL)
             {
                 case 0:
                     sb.AppendLine("\tLUN shall clear unit attention condition reported in the same nexus");
@@ -2225,7 +2225,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.AutoloadMode)
+            switch(page.AutoloadMode)
             {
                 case 0:
                     sb.AppendLine("\tOn medium insertion, it shall be loaded for full access");
@@ -2241,18 +2241,18 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.ReadyAENHoldOffPeriod > 0)
+            if(page.ReadyAENHoldOffPeriod > 0)
                 sb.AppendFormat("\t{0} ms before attempting asynchronous event notifications after initialization", page.ReadyAENHoldOffPeriod).AppendLine();
 
-            if (page.BusyTimeoutPeriod > 0)
+            if(page.BusyTimeoutPeriod > 0)
             {
-                if (page.BusyTimeoutPeriod == 0xFFFF)
+                if(page.BusyTimeoutPeriod == 0xFFFF)
                     sb.AppendLine("\tThere is no limit on the maximum time that is allowed to remain busy");
                 else
                     sb.AppendFormat("\tA maximum of {0} ms are allowed to remain busy", (int)page.BusyTimeoutPeriod * 100).AppendLine();
             }
 
-            if (page.ExtendedSelfTestCompletionTime > 0)
+            if(page.ExtendedSelfTestCompletionTime > 0)
                 sb.AppendFormat("\t{0} seconds to complete extended self-test", page.ExtendedSelfTestCompletionTime);
 
             return sb.ToString();
@@ -2322,19 +2322,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_02? DecodeModePage_02(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x02)
+            if((pageResponse[0] & 0x3F) != 0x02)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_02 decoded = new ModePage_02();
@@ -2362,7 +2362,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_02(ModePage_02? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_02 page = modePage.Value;
@@ -2370,29 +2370,29 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Disconnect-Reconnect mode page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.BufferFullRatio > 0)
+            if(page.BufferFullRatio > 0)
                 sb.AppendFormat("\t{0} ratio of buffer that shall be full prior to attempting a reselection", page.BufferFullRatio).AppendLine();
-            if (page.BufferEmptyRatio > 0)
+            if(page.BufferEmptyRatio > 0)
                 sb.AppendFormat("\t{0} ratio of buffer that shall be empty prior to attempting a reselection", page.BufferEmptyRatio).AppendLine();
-            if (page.BusInactivityLimit > 0)
+            if(page.BusInactivityLimit > 0)
                 sb.AppendFormat("\t{0} µs maximum permitted to assert BSY without a REQ/ACK handshake", (int)page.BusInactivityLimit * 100).AppendLine();
-            if (page.DisconnectTimeLimit > 0)
+            if(page.DisconnectTimeLimit > 0)
                 sb.AppendFormat("\t{0} µs maximum permitted wait after releasing the bus before attempting reselection", (int)page.DisconnectTimeLimit * 100).AppendLine();
-            if (page.ConnectTimeLimit > 0)
+            if(page.ConnectTimeLimit > 0)
                 sb.AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted", (int)page.ConnectTimeLimit * 100).AppendLine();
-            if (page.MaxBurstSize > 0)
+            if(page.MaxBurstSize > 0)
                 sb.AppendFormat("\t{0} bytes maximum can be transferred before disconnecting", (int)page.MaxBurstSize * 512).AppendLine();
-            if (page.FirstBurstSize > 0)
+            if(page.FirstBurstSize > 0)
                 sb.AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command", (int)page.FirstBurstSize * 512).AppendLine();
 
-            if (page.DIMM)
+            if(page.DIMM)
                 sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");
-            if (page.EMDP)
+            if(page.EMDP)
                 sb.AppendLine("\tTarget is allowed to re-order the data transfer");
 
-            switch (page.DTDC)
+            switch(page.DTDC)
             {
                 case 0:
                     sb.AppendLine("\tData transfer disconnect control is not used");
@@ -2514,19 +2514,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x08)
+            if((pageResponse[0] & 0x3F) != 0x08)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_08 decoded = new ModePage_08();
@@ -2543,7 +2543,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MaximumPreFetch = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
             decoded.MaximumPreFetchCeiling = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
-            if (pageResponse.Length < 20)
+            if(pageResponse.Length < 20)
                 return decoded;
 
             decoded.IC |= (pageResponse[2] & 0x80) == 0x80;
@@ -2572,7 +2572,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_08(ModePage_08? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_08 page = modePage.Value;
@@ -2580,14 +2580,14 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Caching mode page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.RCD)
+            if(page.RCD)
                 sb.AppendLine("\tRead-cache is enabled");
-            if (page.WCE)
+            if(page.WCE)
                 sb.AppendLine("\tWrite-cache is enabled");
-            
-            switch (page.DemandReadRetentionPrio)
+
+            switch(page.DemandReadRetentionPrio)
             {
                 case 0:
                     sb.AppendLine("\tDrive does not distinguish between cached read data");
@@ -2603,7 +2603,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.WriteRetentionPriority)
+            switch(page.WriteRetentionPriority)
             {
                 case 0:
                     sb.AppendLine("\tDrive does not distinguish between cached write data");
@@ -2619,45 +2619,45 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.DRA)
+            if(page.DRA)
                 sb.AppendLine("\tRead-ahead is disabled");
             else
             {
-                if (page.MF)
+                if(page.MF)
                     sb.AppendLine("\tPre-fetch values indicate a block multiplier");
 
-                if (page.DisablePreFetch == 0)
+                if(page.DisablePreFetch == 0)
                     sb.AppendLine("\tNo pre-fetch will be done");
                 else
                 {
                     sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less", page.DisablePreFetch).AppendLine();
 
-                    if (page.MinimumPreFetch > 0)
+                    if(page.MinimumPreFetch > 0)
                         sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).AppendLine();
-                    if (page.MaximumPreFetch > 0)
+                    if(page.MaximumPreFetch > 0)
                         sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
-                    if (page.MaximumPreFetchCeiling > 0)
+                    if(page.MaximumPreFetchCeiling > 0)
                         sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more", page.MaximumPreFetchCeiling).AppendLine();
 
-                    if (page.IC)
+                    if(page.IC)
                         sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
-                    if (page.ABPF)
+                    if(page.ABPF)
                         sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
-                    if (page.CAP)
+                    if(page.CAP)
                         sb.AppendLine("\tCaching analysis is permitted");
-                    if (page.Disc)
+                    if(page.Disc)
                         sb.AppendLine("\tPre-fetch can continue across discontinuities (such as cylinders or tracks)");
                 }
             }
 
-            if (page.FSW)
+            if(page.FSW)
                 sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
 
-            if (page.Size)
+            if(page.Size)
             {
-                if (page.CacheSegmentSize > 0)
+                if(page.CacheSegmentSize > 0)
                 {
-                    if (page.LBCSS)
+                    if(page.LBCSS)
                         sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize).AppendLine();
                     else
                         sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize).AppendLine();
@@ -2665,14 +2665,14 @@ namespace DiscImageChef.Decoders.SCSI
             }
             else
             {
-                if (page.CacheSegments > 0)
+                if(page.CacheSegments > 0)
                     sb.AppendFormat("\tDrive should have {0} cache segments", page.CacheSegments).AppendLine();
             }
 
-            if (page.NonCacheSegmentSize > 0)
+            if(page.NonCacheSegmentSize > 0)
                 sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted", page.NonCacheSegmentSize).AppendLine();
 
-            if (page.NV_DIS)
+            if(page.NV_DIS)
                 sb.AppendLine("\tNon-Volatile cache is disabled");
 
             return sb.ToString();
@@ -2798,19 +2798,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_05? DecodeModePage_05(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x05)
+            if((pageResponse[0] & 0x3F) != 0x05)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 32)
+            if(pageResponse.Length < 32)
                 return null;
 
             ModePage_05 decoded = new ModePage_05();
@@ -2851,7 +2851,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_05(ModePage_05? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_05 page = modePage.Value;
@@ -2859,7 +2859,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Flexible disk page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tTransfer rate: {0} kbit/s", page.TransferRate).AppendLine();
@@ -2867,141 +2867,141 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
             sb.AppendFormat("\t{0} sectors per track", page.SectorsPerTrack).AppendLine();
             sb.AppendFormat("\t{0} bytes per sector", page.BytesPerSector).AppendLine();
-            if (page.WritePrecompCylinder < page.Cylinders)
+            if(page.WritePrecompCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
-            if (page.WriteReduceCylinder < page.Cylinders)
+            if(page.WriteReduceCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
-            if (page.DriveStepRate > 0)
+            if(page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} μs", (uint)page.DriveStepRate * 100).AppendLine();
-            if (page.DriveStepPulse > 0)
+            if(page.DriveStepPulse > 0)
                 sb.AppendFormat("\tEach step pulse is {0} ms", page.DriveStepPulse).AppendLine();
-            if (page.HeadSettleDelay > 0)
+            if(page.HeadSettleDelay > 0)
                 sb.AppendFormat("\tHeads settles in {0} μs", (uint)page.HeadSettleDelay * 100).AppendLine();
 
-            if (!page.TRDY)
+            if(!page.TRDY)
                 sb.AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
                     (double)page.MotorOnDelay * 10).AppendLine();
             else
                 sb.AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
                     (double)page.MotorOnDelay * 10).AppendLine();
 
-            if (page.MotorOffDelay != 0xFF)
+            if(page.MotorOffDelay != 0xFF)
                 sb.AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
                     (double)page.MotorOffDelay * 10).AppendLine();
             else
                 sb.AppendLine("\tTarget shall never release the motor on signal");
 
-            if (page.TRDY)
+            if(page.TRDY)
                 sb.AppendLine("\tThere is a drive ready signal");
-            if (page.SSN)
+            if(page.SSN)
                 sb.AppendLine("\tSectors start at 1");
-            if (page.MO)
+            if(page.MO)
                 sb.AppendLine("\tThe motor on signal shall remain released");
 
             sb.AppendFormat("\tDrive needs to do {0} step pulses per cylinder", page.SPC + 1).AppendLine();
 
-            if (page.WriteCompensation > 0)
+            if(page.WriteCompensation > 0)
                 sb.AppendFormat("\tWrite pre-compensation is {0}", page.WriteCompensation).AppendLine();
-            if (page.HeadLoadDelay > 0)
+            if(page.HeadLoadDelay > 0)
                 sb.AppendFormat("\tHead takes {0} ms to load", page.HeadLoadDelay).AppendLine();
-            if (page.HeadUnloadDelay > 0)
+            if(page.HeadUnloadDelay > 0)
                 sb.AppendFormat("\tHead takes {0} ms to unload", page.HeadUnloadDelay).AppendLine();
 
-            if (page.MediumRotationRate > 0)
+            if(page.MediumRotationRate > 0)
                 sb.AppendFormat("\tMedium rotates at {0} rpm", page.MediumRotationRate).AppendLine();
 
-            switch (page.Pin34 & 0x07)
+            switch(page.Pin34 & 0x07)
             {
                 case 0:
                     sb.AppendLine("\tPin 34 is unconnected");
                     break;
                 case 1:
                     sb.Append("\tPin 34 indicates drive is ready when active ");
-                    if ((page.Pin34 & 0x08) == 0x08)
+                    if((page.Pin34 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 case 2:
                     sb.Append("\tPin 34 indicates disk has changed when active ");
-                    if ((page.Pin34 & 0x08) == 0x08)
+                    if((page.Pin34 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 34 indicates unknown function {0} when active ", page.Pin34 & 0x07);
-                    if ((page.Pin34 & 0x08) == 0x08)
+                    if((page.Pin34 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
             }
 
-            switch (page.Pin4 & 0x07)
+            switch(page.Pin4 & 0x07)
             {
                 case 0:
                     sb.AppendLine("\tPin 4 is unconnected");
                     break;
                 case 1:
                     sb.Append("\tPin 4 indicates drive is in use when active ");
-                    if ((page.Pin4 & 0x08) == 0x08)
+                    if((page.Pin4 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 case 2:
                     sb.Append("\tPin 4 indicates eject when active ");
-                    if ((page.Pin4 & 0x08) == 0x08)
+                    if((page.Pin4 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 case 3:
                     sb.Append("\tPin 4 indicates head load when active ");
-                    if ((page.Pin4 & 0x08) == 0x08)
+                    if((page.Pin4 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 4 indicates unknown function {0} when active ", page.Pin4 & 0x07);
-                    if ((page.Pin4 & 0x08) == 0x08)
+                    if((page.Pin4 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
             }
 
-            switch (page.Pin2 & 0x07)
+            switch(page.Pin2 & 0x07)
             {
                 case 0:
                     sb.AppendLine("\tPin 2 is unconnected");
                     break;
                 default:
                     sb.AppendFormat("\tPin 2 indicates unknown function {0} when active ", page.Pin2 & 0x07);
-                    if ((page.Pin2 & 0x08) == 0x08)
+                    if((page.Pin2 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
             }
 
-            switch (page.Pin1 & 0x07)
+            switch(page.Pin1 & 0x07)
             {
                 case 0:
                     sb.AppendLine("\tPin 1 is unconnected");
                     break;
                 case 1:
                     sb.Append("\tPin 1 indicates disk change reset when active ");
-                    if ((page.Pin1 & 0x08) == 0x08)
+                    if((page.Pin1 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
                     break;
                 default:
                     sb.AppendFormat("\tPin 1 indicates unknown function {0} when active ", page.Pin1 & 0x07);
-                    if ((page.Pin1 & 0x08) == 0x08)
+                    if((page.Pin1 & 0x08) == 0x08)
                         sb.Append("high");
                     else
                         sb.Append("low");
@@ -3083,19 +3083,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_03? DecodeModePage_03(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x03)
+            if((pageResponse[0] & 0x3F) != 0x03)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 24)
+            if(pageResponse.Length < 24)
                 return null;
 
             ModePage_03 decoded = new ModePage_03();
@@ -3125,7 +3125,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_03(ModePage_03? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_03 page = modePage.Value;
@@ -3133,7 +3133,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Format device page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors", page.TracksPerZone).AppendLine();
@@ -3145,13 +3145,13 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("\tTarget-dependent interleave value is {0}", page.Interleave).AppendLine();
             sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next", page.TrackSkew).AppendLine();
             sb.AppendFormat("\t{0} sectors between last block of a cylinder and first block of the next one", page.CylinderSkew).AppendLine();
-            if (page.SSEC)
+            if(page.SSEC)
                 sb.AppendLine("\tDrive supports soft-sectoring format");
-            if (page.HSEC)
+            if(page.HSEC)
                 sb.AppendLine("\tDrive supports hard-sectoring format");
-            if (page.RMB)
+            if(page.RMB)
                 sb.AppendLine("\tDrive media is removable");
-            if (page.SURF)
+            if(page.SURF)
                 sb.AppendLine("\tSector addressing is progressively incremented in one surface before going to the next");
             else
                 sb.AppendLine("\tSector addressing is progressively incremented in one cylinder before going to the next");
@@ -3182,19 +3182,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0B)
+            if((pageResponse[0] & 0x3F) != 0x0B)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_0B decoded = new ModePage_0B();
@@ -3215,7 +3215,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0B(ModePage_0B? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0B page = modePage.Value;
@@ -3223,7 +3223,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Medium types supported page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
             // TODO: Implement it when all known medium types are supported
@@ -3318,19 +3318,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x01)
+            if((pageResponse[0] & 0x3F) != 0x01)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_01 decoded = new ModePage_01();
@@ -3350,7 +3350,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.HeadOffsetCount = (sbyte)pageResponse[5];
             decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return decoded;
 
             decoded.WriteRetryCount = pageResponse[8];
@@ -3367,7 +3367,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_01(ModePage_01? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_01 page = modePage.Value;
@@ -3375,32 +3375,32 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Read-write error recovery page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.AWRE)
+            if(page.AWRE)
                 sb.AppendLine("\tAutomatic write reallocation is enabled");
-            if (page.ARRE)
+            if(page.ARRE)
                 sb.AppendLine("\tAutomatic read reallocation is enabled");
-            if (page.TB)
+            if(page.TB)
                 sb.AppendLine("\tData not recovered within limits shall be transferred back before a CHECK CONDITION");
-            if (page.RC)
+            if(page.RC)
                 sb.AppendLine("\tDrive will transfer the entire requested length without delaying to perform error recovery");
-            if (page.EER)
+            if(page.EER)
                 sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
-            if (page.PER)
+            if(page.PER)
                 sb.AppendLine("\tDrive shall report recovered errors");
-            if (page.DTE)
+            if(page.DTE)
                 sb.AppendLine("\tTransfer will be terminated upon error detection");
-            if (page.DCR)
+            if(page.DCR)
                 sb.AppendLine("\tError correction is disabled");
-            if (page.ReadRetryCount > 0)
+            if(page.ReadRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
-            if (page.WriteRetryCount > 0)
+            if(page.WriteRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
-            if (page.RecoveryTimeLimit > 0)
+            if(page.RecoveryTimeLimit > 0)
                 sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
-            if (page.LBPERE)
+            if(page.LBPERE)
                 sb.AppendLine("Logical block provisioning error reporting is enabled");
 
             return sb.ToString();
@@ -3461,19 +3461,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_04? DecodeModePage_04(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x04)
+            if((pageResponse[0] & 0x3F) != 0x04)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 24)
+            if(pageResponse.Length < 24)
                 return null;
 
             ModePage_04 decoded = new ModePage_04();
@@ -3499,7 +3499,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_04(ModePage_04? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_04 page = modePage.Value;
@@ -3507,24 +3507,24 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Rigid disk drive geometry page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
-            if (page.WritePrecompCylinder < page.Cylinders)
+            if(page.WritePrecompCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
-            if (page.WriteReduceCylinder < page.Cylinders)
+            if(page.WriteReduceCylinder < page.Cylinders)
                 sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
-            if (page.DriveStepRate > 0)
+            if(page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();
 
             sb.AppendFormat("\tHeads park in cylinder {0}", page.LandingCylinder).AppendLine();
 
-            if (page.MediumRotationRate > 0)
+            if(page.MediumRotationRate > 0)
                 sb.AppendFormat("\tMedium rotates at {0} rpm", page.MediumRotationRate).AppendLine();
 
-            switch (page.RPL)
+            switch(page.RPL)
             {
                 case 0:
                     sb.AppendLine("\tSpindle synchronization is disable or unsupported");
@@ -3590,19 +3590,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_07? DecodeModePage_07(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x07)
+            if((pageResponse[0] & 0x3F) != 0x07)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_07 decoded = new ModePage_07();
@@ -3627,7 +3627,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_07(ModePage_07? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_07 page = modePage.Value;
@@ -3635,20 +3635,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Verify error recovery page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.EER)
+            if(page.EER)
                 sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
-            if (page.PER)
+            if(page.PER)
                 sb.AppendLine("\tDrive shall report recovered errors");
-            if (page.DTE)
+            if(page.DTE)
                 sb.AppendLine("\tTransfer will be terminated upon error detection");
-            if (page.DCR)
+            if(page.DCR)
                 sb.AppendLine("\tError correction is disabled");
-            if (page.VerifyRetryCount > 0)
+            if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
-            if (page.RecoveryTimeLimit > 0)
+            if(page.RecoveryTimeLimit > 0)
                 sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
 
             return sb.ToString();
@@ -3783,19 +3783,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x10)
+            if((pageResponse[0] & 0x3F) != 0x10)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_10_SSC decoded = new ModePage_10_SSC();
@@ -3843,7 +3843,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_10_SSC(ModePage_10_SSC? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_10_SSC page = modePage.Value;
@@ -3851,27 +3851,27 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Device configuration page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            
+
             sb.AppendFormat("\tActive format: {0}", page.ActiveFormat).AppendLine();
             sb.AppendFormat("\tActive partition: {0}", page.ActivePartition).AppendLine();
             sb.AppendFormat("\tWrite buffer shall have a full ratio of {0} before being flushed to medium", page.WriteBufferFullRatio).AppendLine();
             sb.AppendFormat("\tRead buffer shall have an empty ratio of {0} before more data is read from medium", page.ReadBufferEmptyRatio).AppendLine();
             sb.AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full", (int)page.WriteDelayTime * 100).AppendLine();
-            if (page.DBR)
+            if(page.DBR)
             {
                 sb.AppendLine("\tDrive supports recovering data from buffer");
-                if (page.RBO)
+                if(page.RBO)
                     sb.AppendLine("\tRecovered buffer data comes in LIFO order");
                 else
                     sb.AppendLine("\tRecovered buffer data comes in FIFO order");
             }
-            if (page.BIS)
+            if(page.BIS)
                 sb.AppendLine("\tMedium supports block IDs");
-            if (page.RSmk)
+            if(page.RSmk)
                 sb.AppendLine("\tDrive reports setmarks");
-            switch (page.SOCF)
+            switch(page.SOCF)
             {
                 case 0:
                     sb.AppendLine("\tDrive will pre-read until buffer is full");
@@ -3887,14 +3887,14 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.REW)
+            if(page.REW)
             {
                 sb.AppendLine("\tDrive reports early warnings");
-                if (page.SEW)
+                if(page.SEW)
                     sb.AppendLine("\tDrive will synchronize buffer to medium on early warnings");
             }
 
-            switch (page.GapSize)
+            switch(page.GapSize)
             {
                 case 0:
                     break;
@@ -3922,10 +3922,10 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.EEG)
+            if(page.EEG)
                 sb.AppendLine("\tDrive generates end-of-data");
 
-            switch (page.SelectedCompression)
+            switch(page.SelectedCompression)
             {
                 case 0:
                     sb.AppendLine("\tDrive does not use compression");
@@ -3938,24 +3938,24 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.SWP)
+            if(page.SWP)
                 sb.AppendLine("\tSoftware write protect is enabled");
-            if (page.ASOCWP)
+            if(page.ASOCWP)
                 sb.AppendLine("\tAssociated write protect is enabled");
-            if (page.PERSWP)
+            if(page.PERSWP)
                 sb.AppendLine("\tPersistent write protect is enabled");
-            if (page.PRMWP)
+            if(page.PRMWP)
                 sb.AppendLine("\tPermanent write protect is enabled");
 
-            if (page.BAML)
+            if(page.BAML)
             {
-                if (page.BAM)
+                if(page.BAM)
                     sb.AppendLine("\tDrive operates using explicit address mode");
                 else
                     sb.AppendLine("\tDrive operates using implicit address mode");
             }
 
-            switch (page.RewindOnReset)
+            switch(page.RewindOnReset)
             {
                 case 1:
                     sb.AppendLine("\tDrive shall position to beginning of default data partition on reset");
@@ -3965,7 +3965,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch (page.WTRE)
+            switch(page.WTRE)
             {
                 case 1:
                     sb.AppendLine("\tDrive will do nothing on WORM tampered medium");
@@ -3975,7 +3975,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.OIR)
+            if(page.OIR)
                 sb.AppendLine("\tDrive will only respond to commands if it has received a reservation");
 
             return sb.ToString();
@@ -4052,19 +4052,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0E? DecodeModePage_0E(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0E)
+            if((pageResponse[0] & 0x3F) != 0x0E)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_0E decoded = new ModePage_0E();
@@ -4094,7 +4094,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0E(ModePage_0E? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0E page = modePage.Value;
@@ -4102,19 +4102,19 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI CD-ROM audio control parameters page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.Immed)
+            if(page.Immed)
                 sb.AppendLine("\tDrive will return from playback command immediately");
             else
                 sb.AppendLine("\tDrive will return from playback command when playback ends");
-            if (page.SOTC)
+            if(page.SOTC)
                 sb.AppendLine("\tDrive will stop playback on track end");
 
-            if (page.APRVal)
+            if(page.APRVal)
             {
                 double blocks;
-                if (page.LBAFormat == 8)
+                if(page.LBAFormat == 8)
                     blocks = page.BlocksPerSecondOfAudio * (1 / 256);
                 else
                     blocks = page.BlocksPerSecondOfAudio;
@@ -4122,19 +4122,19 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("\tThere are {0} blocks per each second of audio", blocks).AppendLine();
             }
 
-            if (page.OutputPort0ChannelSelection > 0)
+            if(page.OutputPort0ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 0 has channels ");
-                if ((page.OutputPort0ChannelSelection & 0x01) == 0x01)
+                if((page.OutputPort0ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
-                if ((page.OutputPort0ChannelSelection & 0x02) == 0x02)
+                if((page.OutputPort0ChannelSelection & 0x02) == 0x02)
                     sb.Append("1 ");
-                if ((page.OutputPort0ChannelSelection & 0x04) == 0x04)
+                if((page.OutputPort0ChannelSelection & 0x04) == 0x04)
                     sb.Append("2 ");
-                if ((page.OutputPort0ChannelSelection & 0x08) == 0x08)
+                if((page.OutputPort0ChannelSelection & 0x08) == 0x08)
                     sb.Append("3 ");
 
-                switch (page.OutputPort0Volume)
+                switch(page.OutputPort0Volume)
                 {
                     case 0:
                         sb.AppendLine("muted");
@@ -4148,19 +4148,19 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if (page.OutputPort1ChannelSelection > 0)
+            if(page.OutputPort1ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 1 has channels ");
-                if ((page.OutputPort1ChannelSelection & 0x01) == 0x01)
+                if((page.OutputPort1ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
-                if ((page.OutputPort1ChannelSelection & 0x02) == 0x02)
+                if((page.OutputPort1ChannelSelection & 0x02) == 0x02)
                     sb.Append("1 ");
-                if ((page.OutputPort1ChannelSelection & 0x04) == 0x04)
+                if((page.OutputPort1ChannelSelection & 0x04) == 0x04)
                     sb.Append("2 ");
-                if ((page.OutputPort1ChannelSelection & 0x08) == 0x08)
+                if((page.OutputPort1ChannelSelection & 0x08) == 0x08)
                     sb.Append("3 ");
 
-                switch (page.OutputPort1Volume)
+                switch(page.OutputPort1Volume)
                 {
                     case 0:
                         sb.AppendLine("muted");
@@ -4174,19 +4174,19 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if (page.OutputPort2ChannelSelection > 0)
+            if(page.OutputPort2ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 2 has channels ");
-                if ((page.OutputPort2ChannelSelection & 0x01) == 0x01)
+                if((page.OutputPort2ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
-                if ((page.OutputPort2ChannelSelection & 0x02) == 0x02)
+                if((page.OutputPort2ChannelSelection & 0x02) == 0x02)
                     sb.Append("1 ");
-                if ((page.OutputPort2ChannelSelection & 0x04) == 0x04)
+                if((page.OutputPort2ChannelSelection & 0x04) == 0x04)
                     sb.Append("2 ");
-                if ((page.OutputPort2ChannelSelection & 0x08) == 0x08)
+                if((page.OutputPort2ChannelSelection & 0x08) == 0x08)
                     sb.Append("3 ");
 
-                switch (page.OutputPort2Volume)
+                switch(page.OutputPort2Volume)
                 {
                     case 0:
                         sb.AppendLine("muted");
@@ -4200,19 +4200,19 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            if (page.OutputPort3ChannelSelection > 0)
+            if(page.OutputPort3ChannelSelection > 0)
             {
                 sb.Append("\tOutput port 3 has channels ");
-                if ((page.OutputPort3ChannelSelection & 0x01) == 0x01)
+                if((page.OutputPort3ChannelSelection & 0x01) == 0x01)
                     sb.Append("0 ");
-                if ((page.OutputPort3ChannelSelection & 0x02) == 0x02)
+                if((page.OutputPort3ChannelSelection & 0x02) == 0x02)
                     sb.Append("1 ");
-                if ((page.OutputPort3ChannelSelection & 0x04) == 0x04)
+                if((page.OutputPort3ChannelSelection & 0x04) == 0x04)
                     sb.Append("2 ");
-                if ((page.OutputPort3ChannelSelection & 0x08) == 0x08)
+                if((page.OutputPort3ChannelSelection & 0x08) == 0x08)
                     sb.Append("3 ");
 
-                switch (page.OutputPort3Volume)
+                switch(page.OutputPort3Volume)
                 {
                     case 0:
                         sb.AppendLine("muted");
@@ -4260,19 +4260,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0D? DecodeModePage_0D(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0D)
+            if((pageResponse[0] & 0x3F) != 0x0D)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_0D decoded = new ModePage_0D();
@@ -4292,7 +4292,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0D(ModePage_0D? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0D page = modePage.Value;
@@ -4300,9 +4300,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI CD-ROM parameters page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            switch (page.InactivityTimerMultiplier)
+            switch(page.InactivityTimerMultiplier)
             {
                 case 0:
                     sb.AppendLine("\tDrive will remain in track hold state a vendor-specified time after a seek or read");
@@ -4354,9 +4354,9 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.SecondsPerMinute > 0)
+            if(page.SecondsPerMinute > 0)
                 sb.AppendFormat("\tEach minute has {0} seconds", page.SecondsPerMinute).AppendLine();
-            if (page.FramesPerSecond > 0)
+            if(page.FramesPerSecond > 0)
                 sb.AppendFormat("\tEach second has {0} frames", page.FramesPerSecond).AppendLine();
 
             return sb.ToString();
@@ -4398,19 +4398,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_01_MMC? DecodeModePage_01_MMC(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x01)
+            if((pageResponse[0] & 0x3F) != 0x01)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_01_MMC decoded = new ModePage_01_MMC();
@@ -4419,7 +4419,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.Parameter = pageResponse[2];
             decoded.ReadRetryCount = pageResponse[3];
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return decoded;
 
             decoded.WriteRetryCount = pageResponse[8];
@@ -4435,7 +4435,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_01_MMC(ModePage_01_MMC? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_01_MMC page = modePage.Value;
@@ -4443,11 +4443,11 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Read error recovery page for MultiMedia Devices:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.ReadRetryCount > 0)
+            if(page.ReadRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
-            
+
             string AllUsed = "\tAll available recovery procedures will be used.\n";
             string CIRCRetriesUsed = "\tOnly retries and CIRC are used.\n";
             string RetriesUsed = "\tOnly retries are used.\n";
@@ -4461,7 +4461,7 @@ namespace DiscImageChef.Decoders.SCSI
             string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
             string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
-            switch (page.Parameter)
+            switch(page.Parameter)
             {
                 case 0x00:
                     sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbort);
@@ -4524,11 +4524,11 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.WriteRetryCount > 0)
+            if(page.WriteRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
-            if (page.RecoveryTimeLimit > 0)
+            if(page.RecoveryTimeLimit > 0)
                 sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).AppendLine();
-            
+
             return sb.ToString();
         }
 
@@ -4559,19 +4559,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_07_MMC? DecodeModePage_07_MMC(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x07)
+            if((pageResponse[0] & 0x3F) != 0x07)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_07_MMC decoded = new ModePage_07_MMC();
@@ -4590,7 +4590,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_07_MMC(ModePage_07_MMC? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_07_MMC page = modePage.Value;
@@ -4598,9 +4598,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.VerifyRetryCount > 0)
+            if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
 
             string AllUsed = "\tAll available recovery procedures will be used.\n";
@@ -4616,7 +4616,7 @@ namespace DiscImageChef.Decoders.SCSI
             string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
             string UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
-            switch (page.Parameter)
+            switch(page.Parameter)
             {
                 case 0x00:
                     sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbort);
@@ -4705,19 +4705,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_06? DecodeModePage_06(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x06)
+            if((pageResponse[0] & 0x3F) != 0x06)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 4)
+            if(pageResponse.Length < 4)
                 return null;
 
             ModePage_06 decoded = new ModePage_06();
@@ -4735,7 +4735,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_06(ModePage_06? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_06 page = modePage.Value;
@@ -4743,9 +4743,9 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI optical memory:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            if (page.RUBR)
+            if(page.RUBR)
                 sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
 
             return sb.ToString();
@@ -4903,19 +4903,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x2A)
+            if((pageResponse[0] & 0x3F) != 0x2A)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_2A decoded = new ModePage_2A();
@@ -4949,7 +4949,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.BufferSize = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
             decoded.CurrentSpeed = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
-            if (pageResponse.Length < 20)
+            if(pageResponse.Length < 20)
                 return decoded;
 
             decoded.Method2 |= (pageResponse[2] & 0x04) == 0x04;
@@ -4971,7 +4971,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.RCK |= (pageResponse[17] & 0x04) == 0x04;
             decoded.BCK |= (pageResponse[17] & 0x02) == 0x02;
 
-            if (pageResponse.Length < 22)
+            if(pageResponse.Length < 22)
                 return decoded;
 
             decoded.TestWrite |= (pageResponse[3] & 0x04) == 0x04;
@@ -4980,7 +4980,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
 
-            if (pageResponse.Length < 26)
+            if(pageResponse.Length < 26)
                 return decoded;
 
             decoded.ReadDVDRAM |= (pageResponse[2] & 0x20) == 0x20;
@@ -4995,7 +4995,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
-            if (pageResponse.Length < 32)
+            if(pageResponse.Length < 32)
                 return decoded;
 
             decoded.BUF |= (pageResponse[4] & 0x80) == 0x80;
@@ -5005,7 +5005,7 @@ namespace DiscImageChef.Decoders.SCSI
             ushort descriptors = (ushort)((pageResponse[30] << 8) + pageResponse[31]);
             decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
 
-            for (int i = 0; i < descriptors; i++)
+            for(int i = 0; i < descriptors; i++)
             {
                 decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor();
                 decoded.WriteSpeedPerformanceDescriptors[i].RotationControl = (byte)(pageResponse[1 + 32 + i * 4] & 0x07);
@@ -5022,7 +5022,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_2A(ModePage_2A? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_2A page = modePage.Value;
@@ -5030,34 +5030,34 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI CD-ROM capabilities page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.AudioPlay)
+            if(page.AudioPlay)
                 sb.AppendLine("\tDrive can play audio");
-            if (page.Mode2Form1)
+            if(page.Mode2Form1)
                 sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
-            if (page.Mode2Form2)
+            if(page.Mode2Form2)
                 sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
-            if (page.MultiSession)
+            if(page.MultiSession)
                 sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
 
-            if (page.CDDACommand)
+            if(page.CDDACommand)
                 sb.AppendLine("\tDrive can read digital audio");
-            if (page.AccurateCDDA)
+            if(page.AccurateCDDA)
                 sb.AppendLine("\tDrive can continue from streaming loss");
-            if (page.Subchannel)
+            if(page.Subchannel)
                 sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
-            if (page.DeinterlaveSubchannel)
+            if(page.DeinterlaveSubchannel)
                 sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
-            if (page.C2Pointer)
+            if(page.C2Pointer)
                 sb.AppendLine("\tDrive supports C2 pointers");
-            if (page.UPC)
+            if(page.UPC)
                 sb.AppendLine("\tDrive can read Media Catalogue Number");
-            if (page.ISRC)
+            if(page.ISRC)
                 sb.AppendLine("\tDrive can read ISRC");
 
-            switch (page.LoadingMechanism)
+            switch(page.LoadingMechanism)
             {
                 case 0:
                     sb.AppendLine("\tDrive uses media caddy");
@@ -5079,129 +5079,129 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (page.Lock)
+            if(page.Lock)
                 sb.AppendLine("\tDrive can lock media");
-            if (page.PreventJumper)
+            if(page.PreventJumper)
             {
                 sb.AppendLine("\tDrive power ups locked");
-                if (page.LockState)
+                if(page.LockState)
                     sb.AppendLine("\tDrive is locked, media cannot be ejected or inserted");
                 else
                     sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
             }
             else
             {
-                if (page.LockState)
+                if(page.LockState)
                     sb.AppendLine("\tDrive is locked, media cannot be ejected, but if empty, can be inserted");
                 else
                     sb.AppendLine("\tDrive is not locked, media can be ejected and inserted");
             }
-            if (page.Eject)
+            if(page.Eject)
                 sb.AppendLine("\tDrive can eject media");
 
-            if (page.SeparateChannelMute)
+            if(page.SeparateChannelMute)
                 sb.AppendLine("\tEach channel can be muted independently");
-            if (page.SeparateChannelVolume)
+            if(page.SeparateChannelVolume)
                 sb.AppendLine("\tEach channel's volume can be controlled independently");
 
-            if (page.SupportedVolumeLevels > 0)
+            if(page.SupportedVolumeLevels > 0)
                 sb.AppendFormat("\tDrive supports {0} volume levels", page.SupportedVolumeLevels).AppendLine();
-            if (page.BufferSize > 0)
+            if(page.BufferSize > 0)
                 sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
-            if (page.MaximumSpeed > 0)
+            if(page.MaximumSpeed > 0)
                 sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
-            if (page.CurrentSpeed > 0)
+            if(page.CurrentSpeed > 0)
                 sb.AppendFormat("\tDrive's current reading speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
 
-            if (page.ReadCDR)
+            if(page.ReadCDR)
             {
-                if (page.WriteCDR)
+                if(page.WriteCDR)
                     sb.AppendLine("\tDrive can read and write CD-R");
                 else
                     sb.AppendLine("\tDrive can read CD-R");
 
-                if (page.Method2)
+                if(page.Method2)
                     sb.AppendLine("\tDrive supports reading CD-R packet media");
             }
 
-            if (page.ReadCDRW)
+            if(page.ReadCDRW)
             {
-                if (page.WriteCDRW)
+                if(page.WriteCDRW)
                     sb.AppendLine("\tDrive can read and write CD-RW");
                 else
                     sb.AppendLine("\tDrive can read CD-RW");
             }
 
-            if (page.ReadDVDROM)
+            if(page.ReadDVDROM)
                 sb.AppendLine("\tDrive can read DVD-ROM");
-            if (page.ReadDVDR)
+            if(page.ReadDVDR)
             {
-                if (page.WriteDVDR)
+                if(page.WriteDVDR)
                     sb.AppendLine("\tDrive can read and write DVD-R");
                 else
                     sb.AppendLine("\tDrive can read DVD-R");
             }
-            if (page.ReadDVDRAM)
+            if(page.ReadDVDRAM)
             {
-                if (page.WriteDVDRAM)
+                if(page.WriteDVDRAM)
                     sb.AppendLine("\tDrive can read and write DVD-RAM");
                 else
                     sb.AppendLine("\tDrive can read DVD-RAM");
             }
 
-            if (page.Composite)
+            if(page.Composite)
                 sb.AppendLine("\tDrive can deliver a compositve audio and video data stream");
-            if (page.DigitalPort1)
+            if(page.DigitalPort1)
                 sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
-            if (page.DigitalPort2)
+            if(page.DigitalPort2)
                 sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
 
-            if (page.SDP)
+            if(page.SDP)
                 sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
-            if (page.CurrentWriteSpeedSelected > 0)
+            if(page.CurrentWriteSpeedSelected > 0)
             {
-                if (page.RotationControlSelected == 0)
+                if(page.RotationControlSelected == 0)
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode", page.CurrentWriteSpeedSelected).AppendLine();
-                else if (page.RotationControlSelected == 1)
+                else if(page.RotationControlSelected == 1)
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode", page.CurrentWriteSpeedSelected).AppendLine();
             }
             else
             {
-                if (page.MaxWriteSpeed > 0)
+                if(page.MaxWriteSpeed > 0)
                     sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
-                if (page.CurrentWriteSpeed > 0)
+                if(page.CurrentWriteSpeed > 0)
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).AppendLine();
             }
 
             if(page.WriteSpeedPerformanceDescriptors != null)
             {
-                foreach (ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
+                foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors)
                 {
-                    if (descriptor.WriteSpeed > 0)
+                    if(descriptor.WriteSpeed > 0)
                     {
-                        if (descriptor.RotationControl == 0)
+                        if(descriptor.RotationControl == 0)
                             sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).AppendLine();
-                        else if (descriptor.RotationControl == 1)
+                        else if(descriptor.RotationControl == 1)
                             sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode", descriptor.WriteSpeed).AppendLine();
                     }
                 }
             }
 
-            if (page.TestWrite)
+            if(page.TestWrite)
                 sb.AppendLine("\tDrive supports test writing");
 
-            if (page.ReadBarcode)
+            if(page.ReadBarcode)
                 sb.AppendLine("\tDrive can read barcode");
 
-            if (page.SCC)
+            if(page.SCC)
                 sb.AppendLine("\tDrive can read both sides of a disc");
-            if (page.LeadInPW)
+            if(page.LeadInPW)
                 sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
 
-            if (page.CMRSupported == 1)
+            if(page.CMRSupported == 1)
                 sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
 
-            if (page.BUF)
+            if(page.BUF)
                 sb.AppendLine("\tDrive supports buffer under-run free recording");
 
             return sb.ToString();
@@ -5268,19 +5268,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C? DecodeModePage_1C(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1C)
+            if((pageResponse[0] & 0x3F) != 0x1C)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_1C decoded = new ModePage_1C();
@@ -5312,7 +5312,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C(ModePage_1C? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1C page = modePage.Value;
@@ -5320,16 +5320,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Informational exceptions control page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.DExcpt)
+            if(page.DExcpt)
                 sb.AppendLine("\tInformational exceptions are disabled");
             else
             {
                 sb.AppendLine("\tInformational exceptions are enabled");
 
-                switch (page.MRIE)
+                switch(page.MRIE)
                 {
                     case 0:
                         sb.AppendLine("\tNo reporting of informational exception condition");
@@ -5357,30 +5357,30 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                 }
 
-                if (page.Perf)
+                if(page.Perf)
                     sb.AppendLine("\tInformational exceptions reporting should not affect drive performance");
-                if (page.Test)
+                if(page.Test)
                     sb.AppendLine("\tA test informational exception will raise on next timer");
-                if (page.LogErr)
+                if(page.LogErr)
                     sb.AppendLine("\tDrive shall log informational exception conditions");
 
-                if (page.IntervalTimer > 0)
+                if(page.IntervalTimer > 0)
                 {
-                    if (page.IntervalTimer == 0xFFFFFFFF)
+                    if(page.IntervalTimer == 0xFFFFFFFF)
                         sb.AppendLine("\tTimer interval is vendor-specific");
                     else
                         sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
                 }
 
-                if (page.ReportCount > 0)
+                if(page.ReportCount > 0)
                     sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times", page.ReportCount);
             }
 
-            if (page.EWasc)
+            if(page.EWasc)
                 sb.AppendLine("\tWarning reporting is enabled");
-            if (page.EBF)
+            if(page.EBF)
                 sb.AppendLine("\tBackground functions are enabled");
-            if (page.EBACKERR)
+            if(page.EBACKERR)
                 sb.AppendLine("\tDrive will report background self-test errors");
 
             return sb.ToString();
@@ -5454,19 +5454,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1A? DecodeModePage_1A(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1A)
+            if((pageResponse[0] & 0x3F) != 0x1A)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_1A decoded = new ModePage_1A();
@@ -5479,7 +5479,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
             decoded.StandbyTimer = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
 
-            if (pageResponse.Length < 40)
+            if(pageResponse.Length < 40)
                 return decoded;
 
             decoded.PM_BG_Precedence = (byte)((pageResponse[2] & 0xC0) >> 6);
@@ -5505,7 +5505,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1A(ModePage_1A? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1A page = modePage.Value;
@@ -5513,35 +5513,35 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Power condition page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if ((page.Standby && page.StandbyTimer > 0) ||
+            if((page.Standby && page.StandbyTimer > 0) ||
                 (page.Standby_Y && page.StandbyTimer_Y > 0))
             {
-                if (page.Standby && page.StandbyTimer > 0)
+                if(page.Standby && page.StandbyTimer > 0)
                     sb.AppendFormat("\tStandby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
-                if (page.Standby_Y && page.StandbyTimer_Y > 0)
+                if(page.Standby_Y && page.StandbyTimer_Y > 0)
                     sb.AppendFormat("\tStandby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
             }
             else
                 sb.AppendLine("\tDrive will not enter standy mode");
 
-            if ((page.Idle && page.IdleTimer > 0) ||
+            if((page.Idle && page.IdleTimer > 0) ||
                 (page.Idle_B && page.IdleTimer_B > 0) ||
                 (page.Idle_C && page.IdleTimer_C > 0))
             {
-                if (page.Idle && page.IdleTimer > 0)
+                if(page.Idle && page.IdleTimer > 0)
                     sb.AppendFormat("\tIdle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
-                if (page.Idle_B && page.IdleTimer_B > 0)
+                if(page.Idle_B && page.IdleTimer_B > 0)
                     sb.AppendFormat("\tIdle timer B is set to {0} ms", page.IdleTimer_B * 100).AppendLine();
-                if (page.Idle_C && page.IdleTimer_C > 0)
+                if(page.Idle_C && page.IdleTimer_C > 0)
                     sb.AppendFormat("\tIdle timer C is set to {0} ms", page.IdleTimer_C * 100).AppendLine();
             }
             else
                 sb.AppendLine("\tDrive will not enter idle mode");
 
-            switch (page.PM_BG_Precedence)
+            switch(page.PM_BG_Precedence)
             {
                 case 0:
                     break;
@@ -5601,22 +5601,22 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0A_S01? DecodeModePage_0A_S01(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) != 0x40)
+            if((pageResponse[0] & 0x40) != 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0A)
+            if((pageResponse[0] & 0x3F) != 0x0A)
                 return null;
 
-            if (pageResponse[1] != 0x01)
+            if(pageResponse[1] != 0x01)
                 return null;
 
-            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 32)
+            if(pageResponse.Length < 32)
                 return null;
 
             ModePage_0A_S01 decoded = new ModePage_0A_S01();
@@ -5639,7 +5639,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0A_S01(ModePage_0A_S01? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0A_S01 page = modePage.Value;
@@ -5647,28 +5647,28 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Control extension page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
-            
-            if (page.TCMOS)
+
+            if(page.TCMOS)
             {
                 sb.Append("\tTimestamp can be initialized by methods outside of the SCSI standards");
 
-                if (page.SCSIP)
+                if(page.SCSIP)
                     sb.Append(", but SCSI's SET TIMESTAMP shall take precedence over them");
 
                 sb.AppendLine();
             }
 
-            if (page.IALUAE)
+            if(page.IALUAE)
                 sb.AppendLine("\tImplicit Asymmetric Logical Unit Access is enabled");
 
             sb.AppendFormat("\tInitial priority is {0}", page.InitialPriority).AppendLine();
 
-            if (page.DLC)
+            if(page.DLC)
                 sb.AppendLine("\tDevice will not degrade performance to extend its life");
 
-            if (page.MaximumSenseLength > 0)
+            if(page.MaximumSenseLength > 0)
                 sb.AppendFormat("\tMaximum sense data would be {0} bytes", page.MaximumSenseLength).AppendLine();
 
             return sb.ToString();
@@ -5702,22 +5702,22 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1A_S01? DecodeModePage_1A_S01(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) != 0x40)
+            if((pageResponse[0] & 0x40) != 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1A)
+            if((pageResponse[0] & 0x3F) != 0x1A)
                 return null;
 
-            if (pageResponse[1] != 0x01)
+            if(pageResponse[1] != 0x01)
                 return null;
 
-            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_1A_S01 decoded = new ModePage_1A_S01();
@@ -5736,7 +5736,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1A_S01(ModePage_1A_S01? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1A_S01 page = modePage.Value;
@@ -5744,10 +5744,10 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Power Consumption page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            switch (page.ActiveLevel)
+            switch(page.ActiveLevel)
             {
                 case 0:
                     sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD", page.PowerConsumptionIdentifier).AppendLine();
@@ -5805,19 +5805,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x10)
+            if((pageResponse[0] & 0x3F) != 0x10)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 24)
+            if(pageResponse.Length < 24)
                 return null;
 
             ModePage_10 decoded = new ModePage_10();
@@ -5840,7 +5840,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_10(ModePage_10? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_10 page = modePage.Value;
@@ -5848,20 +5848,20 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI XOR control mode page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.XORDIS)
+            if(page.XORDIS)
                 sb.AppendLine("\tXOR operations are disabled");
             else
             {
-                if (page.MaxXorWrite > 0)
+                if(page.MaxXorWrite > 0)
                     sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a single XOR WRITE command", page.MaxXorWrite).AppendLine();
-                if (page.MaxRegenSize > 0)
+                if(page.MaxRegenSize > 0)
                     sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command", page.MaxRegenSize).AppendLine();
-                if (page.MaxRebuildRead > 0)
+                if(page.MaxRebuildRead > 0)
                     sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild", page.MaxRebuildRead).AppendLine();
-                if (page.RebuildDelay > 0)
+                if(page.RebuildDelay > 0)
                     sb.AppendFormat("\tDrive needs a minimum of {0} ms between READ commands during rebuild", page.RebuildDelay).AppendLine();
             }
 
@@ -5920,22 +5920,22 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C_S01? DecodeModePage_1C_S01(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) != 0x40)
+            if((pageResponse[0] & 0x40) != 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1C)
+            if((pageResponse[0] & 0x3F) != 0x1C)
                 return null;
 
-            if (pageResponse[1] != 0x01)
+            if(pageResponse[1] != 0x01)
                 return null;
 
-            if (((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
+            if(((pageResponse[2] << 8) + pageResponse[3] + 4) != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_1C_S01 decoded = new ModePage_1C_S01();
@@ -5962,7 +5962,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C_S01(ModePage_1C_S01? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1C_S01 page = modePage.Value;
@@ -5970,28 +5970,28 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Background Control page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.S_L_Full)
+            if(page.S_L_Full)
                 sb.AppendLine("\tBackground scans will be halted if log is full");
-            if (page.LOWIR)
+            if(page.LOWIR)
                 sb.AppendLine("\tBackground scans will only be logged if they require intervention");
-            if (page.En_Bms)
+            if(page.En_Bms)
                 sb.AppendLine("\tBackground medium scans are enabled");
-            if (page.En_Ps)
+            if(page.En_Ps)
                 sb.AppendLine("\tBackground pre-scans are enabled");
 
-            if (page.BackgroundScanInterval > 0)
+            if(page.BackgroundScanInterval > 0)
                 sb.AppendFormat("\t{0} hours shall be between the start of a background scan operation and the next", page.BackgroundScanInterval).AppendLine();
 
-            if (page.BackgroundPrescanTimeLimit > 0)
+            if(page.BackgroundPrescanTimeLimit > 0)
                 sb.AppendFormat("\tBackgroun pre-scan operations can take a maximum of {0} hours", page.BackgroundPrescanTimeLimit).AppendLine();
 
-            if (page.MinIdleBeforeBgScan > 0)
+            if(page.MinIdleBeforeBgScan > 0)
                 sb.AppendFormat("\tAt least {0} ms must be idle before resuming a suspended background scan operation", page.MinIdleBeforeBgScan).AppendLine();
 
-            if (page.MaxTimeSuspendBgScan > 0)
+            if(page.MaxTimeSuspendBgScan > 0)
                 sb.AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands", page.MaxTimeSuspendBgScan).AppendLine();
 
             return sb.ToString();
@@ -6040,19 +6040,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_0F? DecodeModePage_0F(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x0F)
+            if((pageResponse[0] & 0x3F) != 0x0F)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 16)
+            if(pageResponse.Length < 16)
                 return null;
 
             ModePage_0F decoded = new ModePage_0F();
@@ -6077,7 +6077,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_0F(ModePage_0F? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_0F page = modePage.Value;
@@ -6085,16 +6085,16 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Data compression page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.DCC)
+            if(page.DCC)
             {
                 sb.AppendLine("\tDrive supports data compression");
-                if (page.DCE)
+                if(page.DCE)
                 {
                     sb.Append("\tData compression is enabled with ");
-                    switch (page.CompressionAlgo)
+                    switch(page.CompressionAlgo)
                     {
                         case 3:
                             sb.AppendLine("IBM ALDC with 512 byte buffer");
@@ -6119,15 +6119,15 @@ namespace DiscImageChef.Decoders.SCSI
                             break;
                     }
                 }
-                if (page.DDE)
+                if(page.DDE)
                 {
                     sb.AppendLine("\tData decompression is enabled");
-                    if (page.DecompressionAlgo == 0)
+                    if(page.DecompressionAlgo == 0)
                         sb.AppendLine("\tLast data read was uncompressed");
                     else
                     {
                         sb.Append("\tLast data read was compressed with ");
-                        switch (page.CompressionAlgo)
+                        switch(page.CompressionAlgo)
                         {
                             case 3:
                                 sb.AppendLine("IBM ALDC with 512 byte buffer");
@@ -6201,19 +6201,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1B? DecodeModePage_1B(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1B)
+            if((pageResponse[0] & 0x3F) != 0x1B)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 12)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_1B decoded = new ModePage_1B();
@@ -6236,7 +6236,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1B(ModePage_1B? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1B page = modePage.Value;
@@ -6244,18 +6244,18 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Removable Block Access Capabilities page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.SFLP)
+            if(page.SFLP)
                 sb.AppendLine("\tDrive can be used as a system floppy device");
-            if (page.SRFP)
+            if(page.SRFP)
                 sb.AppendLine("\tDrive supports reporting progress of format");
-            if (page.NCD)
+            if(page.NCD)
                 sb.AppendLine("\tDrive is a Non-CD Optical Device");
-            if (page.SML)
+            if(page.SML)
                 sb.AppendLine("\tDevice is a dual device supporting CD and Non-CD Optical");
-            if (page.TLUN > 0)
+            if(page.TLUN > 0)
                 sb.AppendFormat("\tDrive supports {0} LUNs", page.TLUN).AppendLine();
 
             return sb.ToString();
@@ -6292,19 +6292,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1C_SFF? DecodeModePage_1C_SFF(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x1C)
+            if((pageResponse[0] & 0x3F) != 0x1C)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 8)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_1C_SFF decoded = new ModePage_1C_SFF();
@@ -6325,7 +6325,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1C_SFF(ModePage_1C_SFF? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_1C_SFF page = modePage.Value;
@@ -6333,15 +6333,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Timer & Protect page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.DISP)
+            if(page.DISP)
                 sb.AppendLine("\tDrive is disabled until power is cycled");
-            if (page.SWPP)
+            if(page.SWPP)
                 sb.AppendLine("\tDrive is software write-protected until powered down");
 
-            switch (page.InactivityTimeMultiplier)
+            switch(page.InactivityTimeMultiplier)
             {
                 case 0:
                     sb.AppendLine("\tDrive will remain in same status a vendor-specified time after a seek, read or write operation");
@@ -6431,19 +6431,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_00_SFF? DecodeModePage_00_SFF(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x00)
+            if((pageResponse[0] & 0x3F) != 0x00)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length < 4)
+            if(pageResponse.Length < 4)
                 return null;
 
             ModePage_00_SFF decoded = new ModePage_00_SFF();
@@ -6466,7 +6466,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_00_SFF(ModePage_00_SFF? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             ModePage_00_SFF page = modePage.Value;
@@ -6474,18 +6474,18 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("SCSI Drive Operation Mode page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.DVW)
+            if(page.DVW)
                 sb.AppendLine("\tVerifying after writing is disabled");
-            if (page.DDE)
+            if(page.DDE)
                 sb.AppendLine("\tDrive will abort when a writing error is detected");
 
-            if (page.SLM)
+            if(page.SLM)
             {
                 sb.Append("\tDrive has two LUNs with rewritable being ");
-                if (page.SLM)
+                if(page.SLM)
                     sb.AppendLine("LUN 1");
                 else
                     sb.AppendLine("LUN 0");
@@ -6512,31 +6512,31 @@ namespace DiscImageChef.Decoders.SCSI
         public static DecodedMode? DecodeMode6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader6(modeResponse, deviceType);
-            if (!hdr.HasValue)
+            if(!hdr.HasValue)
                 return null;
 
             DecodedMode decoded = new DecodedMode();
             decoded.Header = hdr.Value;
             int blkDrLength = 0;
-            if (decoded.Header.BlockDescriptors != null)
+            if(decoded.Header.BlockDescriptors != null)
                 blkDrLength = decoded.Header.BlockDescriptors.Length;
 
             int offset = 4 + blkDrLength * 8;
             int length = modeResponse[0] + 1;
 
-            if (length != modeResponse.Length)
+            if(length != modeResponse.Length)
                 return decoded;
 
             List<ModePage> listpages = new List<ModePage>();
 
-            while (offset < modeResponse.Length)
+            while(offset < modeResponse.Length)
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
                 ModePage pg = new ModePage();
                 byte pageNo = (byte)(modeResponse[offset] & 0x3F);
 
-                if (pageNo == 0)
-                { 
+                if(pageNo == 0)
+                {
                     pg.PageResponse = new byte[modeResponse.Length - offset];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                     pg.Page = 0;
@@ -6545,10 +6545,10 @@ namespace DiscImageChef.Decoders.SCSI
                 }
                 else
                 {
-                    if (isSubpage)
+                    if(isSubpage)
                     {
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
                             return decoded;
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6558,7 +6558,7 @@ namespace DiscImageChef.Decoders.SCSI
                     else
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
                             return decoded;
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page = (byte)(modeResponse[offset] & 0x3F);
@@ -6578,7 +6578,7 @@ namespace DiscImageChef.Decoders.SCSI
         public static DecodedMode? DecodeMode10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader10(modeResponse, deviceType);
-            if (!hdr.HasValue)
+            if(!hdr.HasValue)
                 return null;
 
             DecodedMode decoded = new DecodedMode();
@@ -6586,10 +6586,10 @@ namespace DiscImageChef.Decoders.SCSI
             bool longlba = (modeResponse[4] & 0x01) == 0x01;
             int offset;
             int blkDrLength = 0;
-            if (decoded.Header.BlockDescriptors != null)
+            if(decoded.Header.BlockDescriptors != null)
                 blkDrLength = decoded.Header.BlockDescriptors.Length;
 
-            if (longlba)
+            if(longlba)
                 offset = 8 + blkDrLength * 16;
             else
                 offset = 8 + blkDrLength * 8;
@@ -6597,18 +6597,18 @@ namespace DiscImageChef.Decoders.SCSI
             length += modeResponse[1];
             length += 2;
 
-            if (length != modeResponse.Length)
+            if(length != modeResponse.Length)
                 return decoded;
 
             List<ModePage> listpages = new List<ModePage>();
 
-            while (offset < modeResponse.Length)
+            while(offset < modeResponse.Length)
             {
                 bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
                 ModePage pg = new ModePage();
                 byte pageNo = (byte)(modeResponse[offset] & 0x3F);
 
-                if (pageNo == 0)
+                if(pageNo == 0)
                 {
                     pg.PageResponse = new byte[modeResponse.Length - offset];
                     Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
@@ -6618,11 +6618,11 @@ namespace DiscImageChef.Decoders.SCSI
                 }
                 else
                 {
-                    if (isSubpage)
+                    if(isSubpage)
                     {
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
 
-                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
                             return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
@@ -6634,7 +6634,7 @@ namespace DiscImageChef.Decoders.SCSI
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
 
-                        if ((pg.PageResponse.Length + offset) > modeResponse.Length)
+                        if((pg.PageResponse.Length + offset) > modeResponse.Length)
                             return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
@@ -6699,19 +6699,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
         {
-            if (pageResponse == null)
+            if(pageResponse == null)
                 return null;
 
-            if ((pageResponse[0] & 0x40) == 0x40)
+            if((pageResponse[0] & 0x40) == 0x40)
                 return null;
 
-            if ((pageResponse[0] & 0x3F) != 0x3E)
+            if((pageResponse[0] & 0x3F) != 0x3E)
                 return null;
 
-            if (pageResponse[1] + 2 != pageResponse.Length)
+            if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if (pageResponse.Length != 8)
+            if(pageResponse.Length != 8)
                 return null;
 
             Fujitsu_ModePage_3E decoded = new Fujitsu_ModePage_3E();
@@ -6739,7 +6739,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
         {
-            if (!modePage.HasValue)
+            if(!modePage.HasValue)
                 return null;
 
             Fujitsu_ModePage_3E page = modePage.Value;
@@ -6747,15 +6747,15 @@ namespace DiscImageChef.Decoders.SCSI
 
             sb.AppendLine("Fujitsu Verify Control Page:");
 
-            if (page.PS)
+            if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if (page.audioVisualMode)
+            if(page.audioVisualMode)
                 sb.AppendLine("\tAudio/Visual data support mode is applied");
-            if (page.streamingMode)
+            if(page.streamingMode)
                 sb.AppendLine("\tTest write operation is restricted during read or write operations.");
 
-            switch (page.verifyMode)
+            switch(page.verifyMode)
             {
                 case Fujitsu_VerifyModes.Always:
                     sb.AppendLine("\tAlways apply the verify operation");

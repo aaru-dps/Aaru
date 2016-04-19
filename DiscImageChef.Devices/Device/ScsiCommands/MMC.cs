@@ -97,7 +97,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             ushort confLength = (ushort)(((int)buffer[2] << 8) + buffer[3] + 4);
@@ -149,7 +149,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             ushort strctLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
@@ -299,7 +299,7 @@ namespace DiscImageChef.Devices
                 tmpBuffer = new byte[1024];
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
-            if (MSF)
+            if(MSF)
                 cdb[1] = 0x02;
             cdb[2] = (byte)(format & 0x0F);
             cdb[6] = trackSessionNumber;
@@ -312,7 +312,7 @@ namespace DiscImageChef.Devices
             uint strctLength = (uint)(((int)tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
             buffer = new byte[strctLength];
 
-            if (buffer.Length <= tmpBuffer.Length)
+            if(buffer.Length <= tmpBuffer.Length)
             {
                 Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
                 DicConsole.DebugWriteLine("SCSI Device", "READ TOC/PMA/ATIP took {0} ms.", duration);
@@ -511,9 +511,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
-            if (prevent)
+            if(prevent)
                 cdb[4] += 0x01;
-            if (persistent)
+            if(persistent)
                 cdb[4] += 0x02;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
@@ -552,9 +552,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.StartStopUnit;
-            if (immediate)
+            if(immediate)
                 cdb[1] += 0x01;
-            if (changeFormatLayer)
+            if(changeFormatLayer)
             {
                 cdb[3] = (byte)(formatLayer & 0x03);
                 cdb[4] += 0x04;

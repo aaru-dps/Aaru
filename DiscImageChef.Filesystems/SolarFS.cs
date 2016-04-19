@@ -56,7 +56,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte signature; /// <summary>0x29
@@ -70,7 +70,7 @@ namespace DiscImageChef.Plugins
             Array.Copy(bpb, 0x35, fs_type_b, 0, 8);
             fs_type = StringHandlers.CToString(fs_type_b);
 
-            if (signature == 0x29 && fs_type == "SOL_FS  ")
+            if(signature == 0x29 && fs_type == "SOL_FS  ")
                 return true;
             return false;
         }
@@ -78,7 +78,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
             byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] bpb_strings;
@@ -131,19 +131,19 @@ namespace DiscImageChef.Plugins
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", BPB.media).AppendLine();
             sb.AppendFormat("{0} bytes per sector", BPB.bps).AppendLine();
-            if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
             {
-                if (BPB.bps != imagePlugin.GetSectorSize())
+                if(BPB.bps != imagePlugin.GetSectorSize())
                 {
                     sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, 2048).AppendLine();
                 }
             }
-            else if (BPB.bps != imagePlugin.GetSectorSize())
+            else if(BPB.bps != imagePlugin.GetSectorSize())
             {
                 sb.AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector", BPB.bps, imagePlugin.GetSectorSize()).AppendLine();
             }
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
-            if (BPB.sectors > imagePlugin.GetSectors())
+            if(BPB.sectors > imagePlugin.GetSectors())
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)", BPB.sectors, imagePlugin.GetSectors());
             sb.AppendFormat("{0} heads", BPB.heads).AppendLine();
             sb.AppendFormat("{0} sectors per track", BPB.sptrk).AppendLine();

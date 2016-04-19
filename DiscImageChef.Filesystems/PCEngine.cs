@@ -52,7 +52,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] system_descriptor = new byte[23];

@@ -84,41 +84,41 @@ namespace DiscImageChef.Core
 
         internal Checksum()
         {
-             adler32ctx = new Adler32Context();
-             crc16ctx = new CRC16Context();
-             crc32ctx = new CRC32Context();
-             crc64ctx = new CRC64Context();
-             md5ctx = new MD5Context();
-             ripemd160ctx = new RIPEMD160Context();
-             sha1ctx = new SHA1Context();
-             sha256ctx = new SHA256Context();
-             sha384ctx = new SHA384Context();
-             sha512ctx = new SHA512Context();
-             ssctx = new SpamSumContext();
+            adler32ctx = new Adler32Context();
+            crc16ctx = new CRC16Context();
+            crc32ctx = new CRC32Context();
+            crc64ctx = new CRC64Context();
+            md5ctx = new MD5Context();
+            ripemd160ctx = new RIPEMD160Context();
+            sha1ctx = new SHA1Context();
+            sha256ctx = new SHA256Context();
+            sha384ctx = new SHA384Context();
+            sha512ctx = new SHA512Context();
+            ssctx = new SpamSumContext();
 
-             adlerThread = new Thread(updateAdler);
-             crc16Thread = new Thread(updateCRC16);
-             crc32Thread = new Thread(updateCRC32);
-             crc64Thread = new Thread(updateCRC64);
-             md5Thread = new Thread(updateMD5);
-             ripemd160Thread = new Thread(updateRIPEMD160);
-             sha1Thread = new Thread(updateSHA1);
-             sha256Thread = new Thread(updateSHA256);
-             sha384Thread = new Thread(updateSHA384);
-             sha512Thread = new Thread(updateSHA512);
-             spamsumThread = new Thread(updateSpamSum);
+            adlerThread = new Thread(updateAdler);
+            crc16Thread = new Thread(updateCRC16);
+            crc32Thread = new Thread(updateCRC32);
+            crc64Thread = new Thread(updateCRC64);
+            md5Thread = new Thread(updateMD5);
+            ripemd160Thread = new Thread(updateRIPEMD160);
+            sha1Thread = new Thread(updateSHA1);
+            sha256Thread = new Thread(updateSHA256);
+            sha384Thread = new Thread(updateSHA384);
+            sha512Thread = new Thread(updateSHA512);
+            spamsumThread = new Thread(updateSpamSum);
 
-             adlerPkt = new adlerPacket();
-             crc16Pkt = new crc16Packet();
-             crc32Pkt = new crc32Packet();
-             crc64Pkt = new crc64Packet();
-             md5Pkt = new md5Packet();
-             ripemd160Pkt = new ripemd160Packet();
-             sha1Pkt = new sha1Packet();
-             sha256Pkt = new sha256Packet();
-             sha384Pkt = new sha384Packet();
-             sha512Pkt = new sha512Packet();
-             spamsumPkt = new spamsumPacket();
+            adlerPkt = new adlerPacket();
+            crc16Pkt = new crc16Packet();
+            crc32Pkt = new crc32Packet();
+            crc64Pkt = new crc64Packet();
+            md5Pkt = new md5Packet();
+            ripemd160Pkt = new ripemd160Packet();
+            sha1Pkt = new sha1Packet();
+            sha256Pkt = new sha256Packet();
+            sha384Pkt = new sha384Packet();
+            sha512Pkt = new sha512Packet();
+            spamsumPkt = new spamsumPacket();
 
             adler32ctx.Init();
             adlerPkt.context = adler32ctx;
@@ -146,49 +146,49 @@ namespace DiscImageChef.Core
 
         internal void Update(byte[] data)
         {
-                adlerPkt.data = data;
-                adlerThread.Start(adlerPkt);
-                crc16Pkt.data = data;
-                crc16Thread.Start(crc16Pkt);
-                crc32Pkt.data = data;
-                crc32Thread.Start(crc32Pkt);
-                crc64Pkt.data = data;
-                crc64Thread.Start(crc64Pkt);
-                md5Pkt.data = data;
-                md5Thread.Start(md5Pkt);
-                ripemd160Pkt.data = data;
-                ripemd160Thread.Start(ripemd160Pkt);
-                sha1Pkt.data = data;
-                sha1Thread.Start(sha1Pkt);
-                sha256Pkt.data = data;
-                sha256Thread.Start(sha256Pkt);
-                sha384Pkt.data = data;
-                sha384Thread.Start(sha384Pkt);
-                sha512Pkt.data = data;
-                sha512Thread.Start(sha512Pkt);
-                spamsumPkt.data = data;
-                spamsumThread.Start(spamsumPkt);
+            adlerPkt.data = data;
+            adlerThread.Start(adlerPkt);
+            crc16Pkt.data = data;
+            crc16Thread.Start(crc16Pkt);
+            crc32Pkt.data = data;
+            crc32Thread.Start(crc32Pkt);
+            crc64Pkt.data = data;
+            crc64Thread.Start(crc64Pkt);
+            md5Pkt.data = data;
+            md5Thread.Start(md5Pkt);
+            ripemd160Pkt.data = data;
+            ripemd160Thread.Start(ripemd160Pkt);
+            sha1Pkt.data = data;
+            sha1Thread.Start(sha1Pkt);
+            sha256Pkt.data = data;
+            sha256Thread.Start(sha256Pkt);
+            sha384Pkt.data = data;
+            sha384Thread.Start(sha384Pkt);
+            sha512Pkt.data = data;
+            sha512Thread.Start(sha512Pkt);
+            spamsumPkt.data = data;
+            spamsumThread.Start(spamsumPkt);
 
-                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
-                       crc32Thread.IsAlive || crc64Thread.IsAlive ||
-                       md5Thread.IsAlive || ripemd160Thread.IsAlive ||
-                       sha1Thread.IsAlive || sha256Thread.IsAlive ||
-                       sha384Thread.IsAlive || sha512Thread.IsAlive ||
-                       spamsumThread.IsAlive)
-                {
-                }
+            while(adlerThread.IsAlive || crc16Thread.IsAlive ||
+                   crc32Thread.IsAlive || crc64Thread.IsAlive ||
+                   md5Thread.IsAlive || ripemd160Thread.IsAlive ||
+                   sha1Thread.IsAlive || sha256Thread.IsAlive ||
+                   sha384Thread.IsAlive || sha512Thread.IsAlive ||
+                   spamsumThread.IsAlive)
+            {
+            }
 
-                adlerThread = new Thread(updateAdler);
-                crc16Thread = new Thread(updateCRC16);
-                crc32Thread = new Thread(updateCRC32);
-                crc64Thread = new Thread(updateCRC64);
-                md5Thread = new Thread(updateMD5);
-                ripemd160Thread = new Thread(updateRIPEMD160);
-                sha1Thread = new Thread(updateSHA1);
-                sha256Thread = new Thread(updateSHA256);
-                sha384Thread = new Thread(updateSHA384);
-                sha512Thread = new Thread(updateSHA512);
-                spamsumThread = new Thread(updateSpamSum);
+            adlerThread = new Thread(updateAdler);
+            crc16Thread = new Thread(updateCRC16);
+            crc32Thread = new Thread(updateCRC32);
+            crc64Thread = new Thread(updateCRC64);
+            md5Thread = new Thread(updateMD5);
+            ripemd160Thread = new Thread(updateRIPEMD160);
+            sha1Thread = new Thread(updateSHA1);
+            sha256Thread = new Thread(updateSHA256);
+            sha384Thread = new Thread(updateSHA384);
+            sha512Thread = new Thread(updateSHA512);
+            spamsumThread = new Thread(updateSpamSum);
         }
 
         internal List<ChecksumType> End()
@@ -337,7 +337,7 @@ namespace DiscImageChef.Core
             spamsumPktData.data = data;
             spamsumThreadData.Start(spamsumPktData);
 
-            while (adlerThreadData.IsAlive || crc16ThreadData.IsAlive ||
+            while(adlerThreadData.IsAlive || crc16ThreadData.IsAlive ||
                 crc32ThreadData.IsAlive || crc64ThreadData.IsAlive ||
                 md5ThreadData.IsAlive || ripemd160ThreadData.IsAlive ||
                 sha1ThreadData.IsAlive || sha256ThreadData.IsAlive ||

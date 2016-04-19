@@ -54,7 +54,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Entropy command", "--input={0}", options.InputFile);
             DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
 
-            if (!System.IO.File.Exists(options.InputFile))
+            if(!System.IO.File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -62,7 +62,7 @@ namespace DiscImageChef.Commands
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
-            if (inputFormat == null)
+            if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
                 return;
@@ -72,13 +72,13 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
             Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
-            if (options.SeparatedTracks)
+            if(options.SeparatedTracks)
             {
                 try
                 {
                     List<Track> inputTracks = inputFormat.GetTracks();
 
-                    foreach (Track currentTrack in inputTracks)
+                    foreach(Track currentTrack in inputTracks)
                     {
                         SHA1Context sha1ctxTrack = new SHA1Context();
                         ulong[] entTable = new ulong[256];
@@ -88,7 +88,7 @@ namespace DiscImageChef.Commands
                         ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
-                        for (ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
+                        for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
                         {
                             DicConsole.Write("\rEntropying sector {0} of track {1}", i + 1, currentTrack.TrackSequence);
                             byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
@@ -110,21 +110,21 @@ namespace DiscImageChef.Commands
                         double entropy = 0;
                         foreach(ulong l in entTable)
                         {
-                            double frequency = (double)l/(double)trackSize;
+                            double frequency = (double)l / (double)trackSize;
                             entropy += -(frequency * Math.Log(frequency, 2));
                         }
-                        
+
                         DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
 
                         if(options.DuplicatedSectors)
-                            DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", currentTrack.TrackSequence, uniqueSectorsPerTrack.Count, (double)uniqueSectorsPerTrack.Count/(double)sectors);
+                            DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", currentTrack.TrackSequence, uniqueSectorsPerTrack.Count, (double)uniqueSectorsPerTrack.Count / (double)sectors);
 
                         DicConsole.WriteLine();
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
-                    if (options.Debug)
+                    if(options.Debug)
                         DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                     else
                         DicConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
@@ -132,7 +132,7 @@ namespace DiscImageChef.Commands
             }
 
 
-            if (options.WholeDisc)
+            if(options.WholeDisc)
             {
                 SHA1Context sha1Ctx = new SHA1Context();
                 ulong[] entTable = new ulong[256];
@@ -144,7 +144,7 @@ namespace DiscImageChef.Commands
 
                 sha1Ctx.Init();
 
-                for (ulong i = 0; i < sectors; i++)
+                for(ulong i = 0; i < sectors; i++)
                 {
                     DicConsole.Write("\rEntropying sector {0}", i + 1);
                     byte[] sector = inputFormat.ReadSector(i);
@@ -167,7 +167,7 @@ namespace DiscImageChef.Commands
                 double entropy = 0;
                 foreach(ulong l in entTable)
                 {
-                    double frequency = (double)l/(double)diskSize;
+                    double frequency = (double)l / (double)diskSize;
                     entropy += -(frequency * Math.Log(frequency, 2));
                 }
 
@@ -176,7 +176,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
 
                 if(options.DuplicatedSectors)
-                    DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count/(double)sectors);
+                    DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count / (double)sectors);
 
                 Core.Statistics.AddCommand("entropy");
             }

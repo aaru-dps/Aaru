@@ -63,7 +63,7 @@ namespace DiscImageChef.Devices.Windows
             duration = 0;
             sense = false;
 
-            if (buffer == null)
+            if(buffer == null)
                 return -1;
 
             ScsiPassThroughDirectAndSenseBuffer sptd_sb = new ScsiPassThroughDirectAndSenseBuffer();
@@ -88,7 +88,7 @@ namespace DiscImageChef.Devices.Windows
                             (uint)Marshal.SizeOf(sptd_sb), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
-            if (hasError)
+            if(hasError)
                 error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(sptd_sb.sptd.DataBuffer, buffer, 0, buffer.Length);

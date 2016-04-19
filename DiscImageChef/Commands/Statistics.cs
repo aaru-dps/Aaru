@@ -52,39 +52,39 @@ namespace DiscImageChef.Commands
 
             bool thereAreStats = false;
 
-            if (Core.Statistics.AllStats.Commands != null)
+            if(Core.Statistics.AllStats.Commands != null)
             {
                 DicConsole.WriteLine("Commands statistics");
                 DicConsole.WriteLine("===================");
-                if (Core.Statistics.AllStats.Commands.Analyze > 0)
+                if(Core.Statistics.AllStats.Commands.Analyze > 0)
                     DicConsole.WriteLine("You have called the Analyze command {0} times", Core.Statistics.AllStats.Commands.Analyze);
-                if (Core.Statistics.AllStats.Commands.Benchmark > 0)
+                if(Core.Statistics.AllStats.Commands.Benchmark > 0)
                     DicConsole.WriteLine("You have called the Benchmark command {0} times", Core.Statistics.AllStats.Commands.Benchmark);
-                if (Core.Statistics.AllStats.Commands.Checksum > 0)
+                if(Core.Statistics.AllStats.Commands.Checksum > 0)
                     DicConsole.WriteLine("You have called the Checksum command {0} times", Core.Statistics.AllStats.Commands.Checksum);
-                if (Core.Statistics.AllStats.Commands.Compare > 0)
+                if(Core.Statistics.AllStats.Commands.Compare > 0)
                     DicConsole.WriteLine("You have called the Compare command {0} times", Core.Statistics.AllStats.Commands.Compare);
-                if (Core.Statistics.AllStats.Commands.CreateSidecar > 0)
+                if(Core.Statistics.AllStats.Commands.CreateSidecar > 0)
                     DicConsole.WriteLine("You have called the Create-Sidecar command {0} times", Core.Statistics.AllStats.Commands.CreateSidecar);
-                if (Core.Statistics.AllStats.Commands.Decode > 0)
+                if(Core.Statistics.AllStats.Commands.Decode > 0)
                     DicConsole.WriteLine("You have called the Decode command {0} times", Core.Statistics.AllStats.Commands.Decode);
-                if (Core.Statistics.AllStats.Commands.DeviceInfo > 0)
+                if(Core.Statistics.AllStats.Commands.DeviceInfo > 0)
                     DicConsole.WriteLine("You have called the Device-Info command {0} times", Core.Statistics.AllStats.Commands.DeviceInfo);
-                if (Core.Statistics.AllStats.Commands.DeviceReport > 0)
+                if(Core.Statistics.AllStats.Commands.DeviceReport > 0)
                     DicConsole.WriteLine("You have called the Device-Report command {0} times", Core.Statistics.AllStats.Commands.DeviceReport);
-                if (Core.Statistics.AllStats.Commands.DumpMedia > 0)
+                if(Core.Statistics.AllStats.Commands.DumpMedia > 0)
                     DicConsole.WriteLine("You have called the Dump-Media command {0} times", Core.Statistics.AllStats.Commands.DumpMedia);
-                if (Core.Statistics.AllStats.Commands.Entropy > 0)
+                if(Core.Statistics.AllStats.Commands.Entropy > 0)
                     DicConsole.WriteLine("You have called the Entropy command {0} times", Core.Statistics.AllStats.Commands.Entropy);
-                if (Core.Statistics.AllStats.Commands.Formats > 0)
+                if(Core.Statistics.AllStats.Commands.Formats > 0)
                     DicConsole.WriteLine("You have called the Formats command {0} times", Core.Statistics.AllStats.Commands.Formats);
-                if (Core.Statistics.AllStats.Commands.MediaInfo > 0)
+                if(Core.Statistics.AllStats.Commands.MediaInfo > 0)
                     DicConsole.WriteLine("You have called the Media-Info command {0} times", Core.Statistics.AllStats.Commands.MediaInfo);
-                if (Core.Statistics.AllStats.Commands.MediaScan > 0)
+                if(Core.Statistics.AllStats.Commands.MediaScan > 0)
                     DicConsole.WriteLine("You have called the Media-Scan command {0} times", Core.Statistics.AllStats.Commands.MediaScan);
-                if (Core.Statistics.AllStats.Commands.PrintHex > 0)
+                if(Core.Statistics.AllStats.Commands.PrintHex > 0)
                     DicConsole.WriteLine("You have called the Print-Hex command {0} times", Core.Statistics.AllStats.Commands.PrintHex);
-                if (Core.Statistics.AllStats.Commands.Verify > 0)
+                if(Core.Statistics.AllStats.Commands.Verify > 0)
                     DicConsole.WriteLine("You have called the Verify command {0} times", Core.Statistics.AllStats.Commands.Verify);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -94,7 +94,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Benchmark statistics");
                 DicConsole.WriteLine("====================");
-                foreach (Core.ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
+                foreach(Core.ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
                 {
                     DicConsole.WriteLine("Took {0} seconds to calculate {1} algorithm", chk.Value, chk.algorithm);
                 }
@@ -107,53 +107,53 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.MediaImages != null && Core.Statistics.AllStats.MediaImages.Count > 0)
+            if(Core.Statistics.AllStats.MediaImages != null && Core.Statistics.AllStats.MediaImages.Count > 0)
             {
                 DicConsole.WriteLine("Media image statistics");
                 DicConsole.WriteLine("======================");
-                foreach (Core.NameValueStats nvs in Core.Statistics.AllStats.MediaImages)
+                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.MediaImages)
                     DicConsole.WriteLine("Format {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.Partitions != null && Core.Statistics.AllStats.Partitions.Count > 0)
+            if(Core.Statistics.AllStats.Partitions != null && Core.Statistics.AllStats.Partitions.Count > 0)
             {
                 DicConsole.WriteLine("Partition statistics");
                 DicConsole.WriteLine("====================");
-                foreach (Core.NameValueStats nvs in Core.Statistics.AllStats.Partitions)
+                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Partitions)
                     DicConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.Filesystems != null && Core.Statistics.AllStats.Filesystems.Count > 0)
+            if(Core.Statistics.AllStats.Filesystems != null && Core.Statistics.AllStats.Filesystems.Count > 0)
             {
                 DicConsole.WriteLine("Filesystem statistics");
                 DicConsole.WriteLine("=====================");
-                foreach (Core.NameValueStats nvs in Core.Statistics.AllStats.Filesystems)
+                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Filesystems)
                     DicConsole.WriteLine("Filesystem {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.Devices != null && Core.Statistics.AllStats.Devices.Count > 0)
+            if(Core.Statistics.AllStats.Devices != null && Core.Statistics.AllStats.Devices.Count > 0)
             {
                 DicConsole.WriteLine("Device statistics");
                 DicConsole.WriteLine("=================");
-                foreach (Core.DeviceStats ds in Core.Statistics.AllStats.Devices)
+                foreach(Core.DeviceStats ds in Core.Statistics.AllStats.Devices)
                     DicConsole.WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.", ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
                 DicConsole.WriteLine();
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.Medias != null && Core.Statistics.AllStats.Medias.Count > 0)
+            if(Core.Statistics.AllStats.Medias != null && Core.Statistics.AllStats.Medias.Count > 0)
             {
                 DicConsole.WriteLine("Media statistics");
                 DicConsole.WriteLine("================");
-                foreach (Core.MediaStats ms in Core.Statistics.AllStats.Medias)
+                foreach(Core.MediaStats ms in Core.Statistics.AllStats.Medias)
                 {
-                    if (ms.real)
+                    if(ms.real)
                         DicConsole.WriteLine("Media type {0} has been found {1} times in a real device.", ms.type, ms.Value);
                     else
                         DicConsole.WriteLine("Media type {0} has been found {1} times in a media image.", ms.type, ms.Value);
@@ -162,7 +162,7 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.MediaScan != null)
+            if(Core.Statistics.AllStats.MediaScan != null)
             {
                 DicConsole.WriteLine("Media scan statistics");
                 DicConsole.WriteLine("=====================");
@@ -178,7 +178,7 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
-            if (Core.Statistics.AllStats.Verify != null)
+            if(Core.Statistics.AllStats.Verify != null)
             {
                 DicConsole.WriteLine("Verification statistics");
                 DicConsole.WriteLine("=======================");
@@ -191,7 +191,7 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
-            if (!thereAreStats)
+            if(!thereAreStats)
                 DicConsole.WriteLine("There are no statistics.");
         }
     }

@@ -76,7 +76,7 @@ namespace DiscImageChef.Plugins
         {
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags==null)
+                if(imagePlugin.ImageInfo.readableSectorTags == null)
                     return false;
 
                 if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
@@ -86,18 +86,18 @@ namespace DiscImageChef.Plugins
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if (imagePlugin.GetSectors() < 800)
+                if(imagePlugin.GetSectors() < 800)
                     return false;
 
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
-                for (int i = 0; i < 100; i++)
+                for(int i = 0; i < 100; i++)
                 {
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
                     UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, fileid);
 
-                    if (fileid == FILEID_MDDF)
+                    if(fileid == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
                         Lisa_MDDF mddf = new Lisa_MDDF();
@@ -119,25 +119,25 @@ namespace DiscImageChef.Plugins
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", mddf.blocksize);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", mddf.datasize);
 
-                        if (mddf.mddf_block != i)
+                        if(mddf.mddf_block != i)
                             return false;
 
-                        if (mddf.vol_size > imagePlugin.GetSectors())
+                        if(mddf.vol_size > imagePlugin.GetSectors())
                             return false;
 
-                        if (mddf.vol_size - 1 != mddf.volsize_minus_one)
+                        if(mddf.vol_size - 1 != mddf.volsize_minus_one)
                             return false;
 
-                        if (mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
+                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
                             return false;
 
-                        if (mddf.datasize > mddf.blocksize)
+                        if(mddf.datasize > mddf.blocksize)
                             return false;
 
-                        if (mddf.blocksize < imagePlugin.GetSectorSize())
+                        if(mddf.blocksize < imagePlugin.GetSectorSize())
                             return false;
 
-                        if (mddf.datasize != imagePlugin.GetSectorSize())
+                        if(mddf.datasize != imagePlugin.GetSectorSize())
                             return false;
 
                         return true;
@@ -146,7 +146,7 @@ namespace DiscImageChef.Plugins
 
                 return false;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
                 return false;
@@ -160,7 +160,7 @@ namespace DiscImageChef.Plugins
 
             try
             {
-                if(imagePlugin.ImageInfo.readableSectorTags==null)
+                if(imagePlugin.ImageInfo.readableSectorTags == null)
                     return;
 
                 if(!imagePlugin.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
@@ -170,18 +170,18 @@ namespace DiscImageChef.Plugins
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-                if (imagePlugin.GetSectors() < 800)
+                if(imagePlugin.GetSectors() < 800)
                     return;
 
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
-                for (int i = 0; i < 100; i++)
+                for(int i = 0; i < 100; i++)
                 {
                     byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
                     UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, fileid);
 
-                    if (fileid == FILEID_MDDF)
+                    if(fileid == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
                         Lisa_MDDF mddf = new Lisa_MDDF();
@@ -196,7 +196,7 @@ namespace DiscImageChef.Plugins
                         mddf.unknown1 = sector[0x2D];
                         Array.Copy(sector, 0x2E, pString, 0, 33);
                         // Prevent garbage
-                        if (pString[0] <= 32)
+                        if(pString[0] <= 32)
                             mddf.password = StringHandlers.PascalToString(pString);
                         else
                             mddf.password = "";
@@ -309,28 +309,28 @@ namespace DiscImageChef.Plugins
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown38 = 0x{0:X8} ({0})", mddf.unknown38);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})", mddf.unknown_timestamp, DateHandlers.LisaToDateTime(mddf.unknown_timestamp));
 
-                        if (mddf.mddf_block != i)
+                        if(mddf.mddf_block != i)
                             return;
 
-                        if (mddf.vol_size > imagePlugin.GetSectors())
+                        if(mddf.vol_size > imagePlugin.GetSectors())
                             return;
 
-                        if (mddf.vol_size - 1 != mddf.volsize_minus_one)
+                        if(mddf.vol_size - 1 != mddf.volsize_minus_one)
                             return;
 
-                        if (mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
+                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
                             return;
 
-                        if (mddf.datasize > mddf.blocksize)
+                        if(mddf.datasize > mddf.blocksize)
                             return;
 
-                        if (mddf.blocksize < imagePlugin.GetSectorSize())
+                        if(mddf.blocksize < imagePlugin.GetSectorSize())
                             return;
 
-                        if (mddf.datasize != imagePlugin.GetSectorSize())
+                        if(mddf.datasize != imagePlugin.GetSectorSize())
                             return;
 
-                        switch (mddf.fsversion)
+                        switch(mddf.fsversion)
                         {
                             case LisaFSv1:
                                 sb.AppendLine("LisaFS v1");
@@ -379,7 +379,7 @@ namespace DiscImageChef.Plugins
                         sb.AppendFormat("Boot environment:  0x{0:X8}", mddf.boot_environ).AppendLine();
                         sb.AppendFormat("Overmount stamp: 0x{0:X16}", mddf.overmount_stamp).AppendLine();
 
-                        if (mddf.vol_left_mounted == 0)
+                        if(mddf.vol_left_mounted == 0)
                             sb.AppendLine("Volume is clean");
                         else
                             sb.AppendLine("Volume is dirty");
@@ -414,7 +414,7 @@ namespace DiscImageChef.Plugins
 
                 return;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
                 return;

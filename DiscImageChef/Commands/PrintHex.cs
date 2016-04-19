@@ -53,7 +53,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", options.LongSectors);
             DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", options.WidthBytes);
 
-            if (!System.IO.File.Exists(options.InputFile))
+            if(!System.IO.File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -61,7 +61,7 @@ namespace DiscImageChef.Commands
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
-            if (inputFormat == null)
+            if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
                 return;
@@ -74,21 +74,21 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Sector {0}", options.StartSector + i);
                 byte[] sector;
 
-                if (inputFormat.ImageInfo.readableSectorTags == null)
+                if(inputFormat.ImageInfo.readableSectorTags == null)
                 {
                     DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                     options.LongSectors = false;
                 }
                 else
                 {
-                    if (inputFormat.ImageInfo.readableSectorTags.Count == 0)
+                    if(inputFormat.ImageInfo.readableSectorTags.Count == 0)
                     {
                         DicConsole.WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
                         options.LongSectors = false;
                     }
                 }
 
-                if (options.LongSectors)
+                if(options.LongSectors)
                     sector = inputFormat.ReadSectorLong(options.StartSector + i);
                 else
                     sector = inputFormat.ReadSector(options.StartSector + i);

@@ -79,13 +79,13 @@ namespace DiscImageChef.Devices
         /// <param name="sense"><c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer"/> contains SCSI sense</param>
         public static int SendScsiCommand(Interop.PlatformID ptID, object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
-            switch (ptID)
+            switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
                     {
                         Windows.ScsiIoctlDirection dir;
 
-                        switch (direction)
+                        switch(direction)
                         {
                             case ScsiDirection.In:
                                 dir = Windows.ScsiIoctlDirection.In;
@@ -104,7 +104,7 @@ namespace DiscImageChef.Devices
                     {
                         Linux.ScsiIoctlDirection dir;
 
-                        switch (direction)
+                        switch(direction)
                         {
                             case ScsiDirection.In:
                                 dir = Linux.ScsiIoctlDirection.In;
@@ -146,7 +146,7 @@ namespace DiscImageChef.Devices
             AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptID)
+            switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
                     {
@@ -178,7 +178,7 @@ namespace DiscImageChef.Devices
             AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptID)
+            switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
                     {
@@ -210,7 +210,7 @@ namespace DiscImageChef.Devices
             AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
             bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptID)
+            switch(ptID)
             {
                 case Interop.PlatformID.Win32NT:
                     {

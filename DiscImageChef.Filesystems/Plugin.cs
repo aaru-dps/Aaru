@@ -44,7 +44,7 @@ namespace DiscImageChef.Plugins
     /// Abstract class to implement filesystem plugins.
     /// </summary>
 	public abstract class Plugin
-	{
+    {
         /// <summary>Plugin name.</summary>
         public string Name;
         /// <summary>Plugin UUID.</summary>
@@ -66,7 +66,7 @@ namespace DiscImageChef.Plugins
         protected Plugin()
         {
         }
-		
+
         /// <summary>
         /// Identifies the filesystem in the specified LBA
         /// </summary>
@@ -84,6 +84,6 @@ namespace DiscImageChef.Plugins
         /// <param name="partitionEnd">Partition end sector (LBA).</param>
         /// <param name="information">Filesystem information.</param>
         public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information);
-	}
+    }
 }
 

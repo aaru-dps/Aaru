@@ -43,7 +43,7 @@ using DiscImageChef.Decoders.SCSI;
 namespace DiscImageChef.Metadata
 {
     [SerializableAttribute()]
-    [XmlRootAttribute("DicDeviceReport", Namespace="", IsNullable=false)]
+    [XmlRootAttribute("DicDeviceReport", Namespace = "", IsNullable = false)]
     public class DeviceReport
     {
         public usbType USB;
@@ -412,7 +412,7 @@ namespace DiscImageChef.Metadata
     public class pageType
     {
         [XmlAttributeAttribute()]
-        public byte page; 
+        public byte page;
 
         [XmlTextAttribute()]
         public byte[] value;
@@ -453,10 +453,10 @@ namespace DiscImageChef.Metadata
     public class modePageType
     {
         [XmlAttributeAttribute()]
-        public byte page; 
+        public byte page;
 
         [XmlAttributeAttribute()]
-        public byte subpage; 
+        public byte subpage;
 
         [XmlTextAttribute()]
         public byte[] value;
@@ -641,7 +641,7 @@ namespace DiscImageChef.Metadata
         public bool DVDMultiRead;
         public bool EmbeddedChanger;
         public bool ErrorRecoveryPage;
-        [XmlElementAttribute(DataType="date")]
+        [XmlElementAttribute(DataType = "date")]
         public DateTime FirmwareDate;
         public byte LoadingMechanismType;
         public bool Locked;

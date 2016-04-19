@@ -73,10 +73,10 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static DiscInformation? Decode(byte[] DIResponse)
         {
-            if (DIResponse == null)
+            if(DIResponse == null)
                 return null;
 
-            if (DIResponse.Length != 4100)
+            if(DIResponse.Length != 4100)
             {
                 DicConsole.DebugWriteLine("BD Disc Information decoder", "Found incorrect Blu-ray Disc Information size ({0} bytes)", DIResponse.Length);
                 return null;
@@ -93,15 +93,15 @@ namespace DiscImageChef.Decoders.Bluray
             int offset = 4;
             List<DiscInformationUnits> units = new List<DiscInformationUnits>();
 
-            while (true)
+            while(true)
             {
-                if (offset >= 100)
+                if(offset >= 100)
                     break;
 
                 DiscInformationUnits unit = new DiscInformationUnits();
                 unit.Signature = BigEndianBitConverter.ToUInt16(DIResponse, 0 + offset);
 
-                if (unit.Signature != DIUIdentifier)
+                if(unit.Signature != DIUIdentifier)
                     break;
 
                 unit.Format = DIResponse[2 + offset];
@@ -113,7 +113,7 @@ namespace DiscImageChef.Decoders.Bluray
                 unit.DiscTypeIdentifier = new byte[3];
                 Array.Copy(DIResponse, 8 + offset, unit.DiscTypeIdentifier, 0, 3);
                 unit.DiscSizeClassVersion = DIResponse[11 + offset];
-                switch (Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
+                switch(Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
                 {
                     case DiscTypeBDROM:
                         {
@@ -146,10 +146,10 @@ namespace DiscImageChef.Decoders.Bluray
                 offset += unit.Length;
             }
 
-            if (units.Count > 0)
+            if(units.Count > 0)
             {
                 decoded.Units = new DiscInformationUnits[units.Count];
-                for (int i = 0; i < units.Count; i++)
+                for(int i = 0; i < units.Count; i++)
                     decoded.Units[i] = units[i];
             }
 
@@ -158,24 +158,24 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(DiscInformation? DIResponse)
         {
-            if (DIResponse == null)
+            if(DIResponse == null)
                 return null;
 
             DiscInformation response = DIResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (DiscInformationUnits unit in response.Units)
+            foreach(DiscInformationUnits unit in response.Units)
             {
                 sb.AppendFormat("DI Unit Sequence: {0}", unit.Sequence).AppendLine();
                 sb.AppendFormat("DI Unit Format: 0x{0:X2}", unit.Format).AppendLine();
                 sb.AppendFormat("There are {0} per block", unit.UnitsPerBlock).AppendLine();
-                if (Encoding.ASCII.GetString(unit.DiscTypeIdentifier) != DiscTypeBDROM)
+                if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) != DiscTypeBDROM)
                     sb.AppendFormat("Legacy value: 0x{0:X2}", unit.Legacy).AppendLine();
                 sb.AppendFormat("DI Unit is {0} bytes", unit.Length).AppendLine();
                 sb.AppendFormat("Disc type identifier: \"{0}\"", Encoding.ASCII.GetString(unit.DiscTypeIdentifier)).AppendLine();
                 sb.AppendFormat("Disc size/class/version: {0}", unit.DiscSizeClassVersion).AppendLine();
-                if (Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR ||
+                if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR ||
                     Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
                 {
                     sb.AppendFormat("Disc manufacturer ID: \"{0}\"", Encoding.ASCII.GetString(unit.ManufacturerID)).AppendLine();

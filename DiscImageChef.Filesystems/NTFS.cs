@@ -53,49 +53,49 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] eigth_bytes = new byte[8];
             byte fats_no;
             UInt16 spfat, signature;
             string oem_name;
-			
+
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
-			
+
             Array.Copy(ntfs_bpb, 0x003, eigth_bytes, 0, 8);
             oem_name = StringHandlers.CToString(eigth_bytes);
-			
-            if (oem_name != "NTFS    ")
+
+            if(oem_name != "NTFS    ")
                 return false;
-			
+
             fats_no = ntfs_bpb[0x010];
-			
-            if (fats_no != 0)
+
+            if(fats_no != 0)
                 return false;
-			
+
             spfat = BitConverter.ToUInt16(ntfs_bpb, 0x016);
-			
-            if (spfat != 0)
+
+            if(spfat != 0)
                 return false;
-			
+
             signature = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
-			
+
             return signature == 0xAA55;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
-			
+
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
-			
+
             NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
-			
+
             byte[] oem_name = new byte[8];
-			
+
             ntfs_bb.jmp1 = ntfs_bpb[0x000];
             ntfs_bb.jmp2 = BitConverter.ToUInt16(ntfs_bpb, 0x001);
             Array.Copy(ntfs_bpb, 0x003, oem_name, 0, 8);
@@ -127,46 +127,46 @@ namespace DiscImageChef.Plugins
             ntfs_bb.dummy5 = BitConverter.ToUInt16(ntfs_bpb, 0x046);
             ntfs_bb.serial_no = BitConverter.ToUInt64(ntfs_bpb, 0x048);
             ntfs_bb.signature2 = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
-			
+
             sb.AppendFormat("{0} bytes per sector", ntfs_bb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfs_bb.spc, ntfs_bb.spc * ntfs_bb.bps).AppendLine();
-//			sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
-//			sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
-//			sb.AppendFormat("{0} entries in the root folder", ntfs_bb.root_ent).AppendLine();
-//			sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
+            //			sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
+            //			sb.AppendFormat("{0} FATs", ntfs_bb.fats_no).AppendLine();
+            //			sb.AppendFormat("{0} entries in the root folder", ntfs_bb.root_ent).AppendLine();
+            //			sb.AppendFormat("{0} sectors on volume (small)", ntfs_bb.sml_sectors).AppendLine();
             sb.AppendFormat("Media descriptor: 0x{0:X2}", ntfs_bb.media).AppendLine();
-//			sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
+            //			sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
             sb.AppendFormat("{0} sectors per track", ntfs_bb.sptrk).AppendLine();
             sb.AppendFormat("{0} heads", ntfs_bb.heads).AppendLine();
             sb.AppendFormat("{0} hidden sectors before filesystem", ntfs_bb.hsectors).AppendLine();
-//			sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
+            //			sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
             sb.AppendFormat("BIOS drive number: 0x{0:X2}", ntfs_bb.drive_no).AppendLine();
-//			sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
-//			sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
+            //			sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
+            //			sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfs_bb.sectors, ntfs_bb.sectors * ntfs_bb.bps).AppendLine();
             sb.AppendFormat("Sectors where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
             sb.AppendFormat("Sectors where $MFTMirr starts: {0}", ntfs_bb.mftmirror_lsn).AppendLine();
 
-            if (ntfs_bb.mft_rc_clusters > 0)
+            if(ntfs_bb.mft_rc_clusters > 0)
                 sb.AppendFormat("{0} clusters per MFT record ({1} bytes)", ntfs_bb.mft_rc_clusters,
                     ntfs_bb.mft_rc_clusters * ntfs_bb.bps * ntfs_bb.spc).AppendLine();
             else
                 sb.AppendFormat("{0} bytes per MFT record", 1 << -ntfs_bb.mft_rc_clusters).AppendLine();
-            if (ntfs_bb.index_blk_cts > 0)
+            if(ntfs_bb.index_blk_cts > 0)
                 sb.AppendFormat("{0} clusters per Index block ({1} bytes)", ntfs_bb.index_blk_cts,
                     ntfs_bb.index_blk_cts * ntfs_bb.bps * ntfs_bb.spc).AppendLine();
             else
                 sb.AppendFormat("{0} bytes per Index block", 1 << -ntfs_bb.index_blk_cts).AppendLine();
 
             sb.AppendFormat("Volume serial number: {0:X16}", ntfs_bb.serial_no).AppendLine();
-//			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
+            //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.ClusterSize = ntfs_bb.spc * ntfs_bb.bps;
             xmlFSType.Clusters = ntfs_bb.sectors / ntfs_bb.spc;
             xmlFSType.VolumeSerial = String.Format("{0:X16}", ntfs_bb.serial_no);
             xmlFSType.Type = "NTFS";
-			
+
             information = sb.ToString();
         }
 

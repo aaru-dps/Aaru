@@ -89,20 +89,30 @@ namespace DiscImageChef.Devices.Windows
     struct AtaTaskFile
     {
         // Fields for commands sent
-        [FieldOffset(0)] public byte Features;
-        [FieldOffset(6)] public byte Command;
+        [FieldOffset(0)]
+        public byte Features;
+        [FieldOffset(6)]
+        public byte Command;
 
         // Fields on command return
-        [FieldOffset(0)] public byte Error;
-        [FieldOffset(6)] public byte Status;
+        [FieldOffset(0)]
+        public byte Error;
+        [FieldOffset(6)]
+        public byte Status;
 
         // Common fields
-        [FieldOffset(1)] public byte SectorCount;
-        [FieldOffset(2)] public byte SectorNumber;
-        [FieldOffset(3)] public byte CylinderLow;
-        [FieldOffset(4)] public byte CylinderHigh;
-        [FieldOffset(5)] public byte DeviceHead;
-        [FieldOffset(7)] public byte Reserved;
+        [FieldOffset(1)]
+        public byte SectorCount;
+        [FieldOffset(2)]
+        public byte SectorNumber;
+        [FieldOffset(3)]
+        public byte CylinderLow;
+        [FieldOffset(4)]
+        public byte CylinderHigh;
+        [FieldOffset(5)]
+        public byte DeviceHead;
+        [FieldOffset(7)]
+        public byte Reserved;
     }
 }
 

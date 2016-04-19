@@ -58,16 +58,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static SCSIInquiry? Decode(byte[] SCSIInquiryResponse)
         {
-            if (SCSIInquiryResponse == null)
+            if(SCSIInquiryResponse == null)
                 return null;
 
-            if (SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
+            if(SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
             {
                 DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length);
                 return null;
             }
 
-            if (SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 5)
+            if(SCSIInquiryResponse.Length != SCSIInquiryResponse[4] + 5)
             {
                 DicConsole.DebugWriteLine("SCSI INQUIRY decoder", "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.", SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
                 return null;
@@ -75,23 +75,23 @@ namespace DiscImageChef.Decoders.SCSI
 
             SCSIInquiry decoded = new SCSIInquiry();
 
-            if (SCSIInquiryResponse.Length >= 1)
+            if(SCSIInquiryResponse.Length >= 1)
             {
                 decoded.PeripheralQualifier = (byte)((SCSIInquiryResponse[0] & 0xE0) >> 5);
                 decoded.PeripheralDeviceType = (byte)(SCSIInquiryResponse[0] & 0x1F);
             }
-            if (SCSIInquiryResponse.Length >= 2)
+            if(SCSIInquiryResponse.Length >= 2)
             {
                 decoded.RMB = Convert.ToBoolean((SCSIInquiryResponse[1] & 0x80));
                 decoded.DeviceTypeModifier = (byte)(SCSIInquiryResponse[1] & 0x7F);
             }
-            if (SCSIInquiryResponse.Length >= 3)
+            if(SCSIInquiryResponse.Length >= 3)
             {
                 decoded.ISOVersion = (byte)((SCSIInquiryResponse[2] & 0xC0) >> 6);
                 decoded.ECMAVersion = (byte)((SCSIInquiryResponse[2] & 0x38) >> 3);
                 decoded.ANSIVersion = (byte)(SCSIInquiryResponse[2] & 0x07);
             }
-            if (SCSIInquiryResponse.Length >= 4)
+            if(SCSIInquiryResponse.Length >= 4)
             {
                 decoded.AERC = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x80));
                 decoded.TrmTsk = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x40));
@@ -99,9 +99,9 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.HiSup = Convert.ToBoolean((SCSIInquiryResponse[3] & 0x10));
                 decoded.ResponseDataFormat = (byte)(SCSIInquiryResponse[3] & 0x07);
             }
-            if (SCSIInquiryResponse.Length >= 5)
+            if(SCSIInquiryResponse.Length >= 5)
                 decoded.AdditionalLength = SCSIInquiryResponse[4];
-            if (SCSIInquiryResponse.Length >= 6)
+            if(SCSIInquiryResponse.Length >= 6)
             {
                 decoded.SCCS = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x80));
                 decoded.ACC = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x40));
@@ -110,7 +110,7 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Reserved2 = (byte)((SCSIInquiryResponse[5] & 0x06) >> 1);
                 decoded.Protect = Convert.ToBoolean((SCSIInquiryResponse[5] & 0x01));
             }
-            if (SCSIInquiryResponse.Length >= 7)
+            if(SCSIInquiryResponse.Length >= 7)
             {
                 decoded.BQue = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x80));
                 decoded.EncServ = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x40));
@@ -121,7 +121,7 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Addr32 = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x02));
                 decoded.Addr16 = Convert.ToBoolean((SCSIInquiryResponse[6] & 0x01));
             }
-            if (SCSIInquiryResponse.Length >= 8)
+            if(SCSIInquiryResponse.Length >= 8)
             {
                 decoded.RelAddr = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x80));
                 decoded.WBus32 = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x40));
@@ -132,61 +132,61 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.CmdQue = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x02));
                 decoded.SftRe = Convert.ToBoolean((SCSIInquiryResponse[7] & 0x01));
             }
-            if (SCSIInquiryResponse.Length >= 16)
+            if(SCSIInquiryResponse.Length >= 16)
             {
                 decoded.VendorIdentification = new byte[8];
                 Array.Copy(SCSIInquiryResponse, 8, decoded.VendorIdentification, 0, 8);
             }
-            if (SCSIInquiryResponse.Length >= 32)
+            if(SCSIInquiryResponse.Length >= 32)
             {
                 decoded.ProductIdentification = new byte[16];
                 Array.Copy(SCSIInquiryResponse, 16, decoded.ProductIdentification, 0, 16);
             }
-            if (SCSIInquiryResponse.Length >= 36)
+            if(SCSIInquiryResponse.Length >= 36)
             {
                 decoded.ProductRevisionLevel = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 32, decoded.ProductRevisionLevel, 0, 4);
             }
-            if (SCSIInquiryResponse.Length >= 56)
+            if(SCSIInquiryResponse.Length >= 56)
             {
                 decoded.VendorSpecific = new byte[20];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.VendorSpecific, 0, 20);
             }
-            if (SCSIInquiryResponse.Length >= 57)
+            if(SCSIInquiryResponse.Length >= 57)
             {
                 decoded.Reserved3 = (byte)((SCSIInquiryResponse[56] & 0xF0) >> 4);
                 decoded.Clocking = (byte)((SCSIInquiryResponse[56] & 0x0C) >> 2);
                 decoded.QAS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x02));
                 decoded.IUS = Convert.ToBoolean((SCSIInquiryResponse[56] & 0x01));
             }
-            if (SCSIInquiryResponse.Length >= 58)
+            if(SCSIInquiryResponse.Length >= 58)
                 decoded.Reserved4 = SCSIInquiryResponse[57];
-            if (SCSIInquiryResponse.Length >= 60)
+            if(SCSIInquiryResponse.Length >= 60)
             {
                 int descriptorsNo;
 
-                if (SCSIInquiryResponse.Length >= 74)
+                if(SCSIInquiryResponse.Length >= 74)
                     descriptorsNo = 8;
                 else
                     descriptorsNo = (SCSIInquiryResponse.Length - 58) / 2;
-                
+
                 decoded.VersionDescriptors = new ushort[descriptorsNo];
-                for (int i = 0; i < descriptorsNo; i++)
+                for(int i = 0; i < descriptorsNo; i++)
                 {
                     decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
                 }
             }
-            if (SCSIInquiryResponse.Length >= 75 && SCSIInquiryResponse.Length < 96)
+            if(SCSIInquiryResponse.Length >= 75 && SCSIInquiryResponse.Length < 96)
             {
                 decoded.Reserved5 = new byte[SCSIInquiryResponse.Length - 74];
                 Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, SCSIInquiryResponse.Length - 74);
             }
-            if (SCSIInquiryResponse.Length >= 96)
+            if(SCSIInquiryResponse.Length >= 96)
             {
                 decoded.Reserved5 = new byte[22];
                 Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, 22);
             }
-            if (SCSIInquiryResponse.Length > 96)
+            if(SCSIInquiryResponse.Length > 96)
             {
                 decoded.VendorSpecific2 = new byte[SCSIInquiryResponse.Length - 96];
                 Array.Copy(SCSIInquiryResponse, 96, decoded.VendorSpecific2, 0, SCSIInquiryResponse.Length - 96);
@@ -197,7 +197,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string Prettify(SCSIInquiry? SCSIInquiryResponse)
         {
-            if (SCSIInquiryResponse == null)
+            if(SCSIInquiryResponse == null)
                 return null;
 
             SCSIInquiry response = SCSIInquiryResponse.Value;
@@ -207,7 +207,7 @@ namespace DiscImageChef.Decoders.SCSI
             sb.AppendFormat("Device vendor: {0}", VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim())).AppendLine();
             sb.AppendFormat("Device name: {0}", StringHandlers.CToString(response.ProductIdentification).Trim()).AppendLine();
             sb.AppendFormat("Device release level: {0}", StringHandlers.CToString(response.ProductRevisionLevel).Trim()).AppendLine();
-            switch ((PeripheralQualifiers)response.PeripheralQualifier)
+            switch((PeripheralQualifiers)response.PeripheralQualifier)
             {
                 case PeripheralQualifiers.Supported:
                     sb.AppendLine("Device is connected and supported.");
@@ -226,7 +226,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((PeripheralDeviceTypes)response.PeripheralDeviceType)
+            switch((PeripheralDeviceTypes)response.PeripheralDeviceType)
             {
                 case PeripheralDeviceTypes.DirectAccess: //0x00,
                     sb.AppendLine("Direct-access device");
@@ -302,7 +302,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((ANSIVersions)response.ANSIVersion)
+            switch((ANSIVersions)response.ANSIVersion)
             {
                 case ANSIVersions.ANSINoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ANSI standard");
@@ -330,7 +330,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((ECMAVersions)response.ECMAVersion)
+            switch((ECMAVersions)response.ECMAVersion)
             {
                 case ECMAVersions.ECMANoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ECMA standard");
@@ -343,7 +343,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((ISOVersions)response.ISOVersion)
+            switch((ISOVersions)response.ISOVersion)
             {
                 case ISOVersions.ISONoVersion:
                     sb.AppendLine("Device does not claim to comply with any SCSI ISO/IEC standard");
@@ -356,64 +356,64 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (response.RMB)
+            if(response.RMB)
                 sb.AppendLine("Device is removable");
-            if (response.AERC)
+            if(response.AERC)
                 sb.AppendLine("Device supports Asynchronous Event Reporting Capability");
-            if (response.TrmTsk)
+            if(response.TrmTsk)
                 sb.AppendLine("Device supports TERMINATE TASK command");
-            if (response.NormACA)
+            if(response.NormACA)
                 sb.AppendLine("Device supports setting Normal ACA");
-            if (response.HiSup)
+            if(response.HiSup)
                 sb.AppendLine("Device supports LUN hierarchical addressing");
-            if (response.SCCS)
+            if(response.SCCS)
                 sb.AppendLine("Device contains an embedded storage array controller");
-            if (response.ACC)
+            if(response.ACC)
                 sb.AppendLine("Device contains an Access Control Coordinator");
-            if (response.ThreePC)
+            if(response.ThreePC)
                 sb.AppendLine("Device supports third-party copy commands");
-            if (response.Protect)
+            if(response.Protect)
                 sb.AppendLine("Device supports protection information");
-            if (response.BQue)
+            if(response.BQue)
                 sb.AppendLine("Device supports basic queueing");
-            if (response.EncServ)
+            if(response.EncServ)
                 sb.AppendLine("Device contains an embedded enclosure services component");
-            if (response.MultiP)
+            if(response.MultiP)
                 sb.AppendLine("Multi-port device");
-            if (response.MChngr)
+            if(response.MChngr)
                 sb.AppendLine("Device contains or is attached to a medium changer");
-            if (response.ACKREQQ)
+            if(response.ACKREQQ)
                 sb.AppendLine("Device supports request and acknowledge handshakes");
-            if (response.Addr32)
+            if(response.Addr32)
                 sb.AppendLine("Device supports 32-bit wide SCSI addresses");
-            if (response.Addr16)
+            if(response.Addr16)
                 sb.AppendLine("Device supports 16-bit wide SCSI addresses");
-            if (response.RelAddr)
+            if(response.RelAddr)
                 sb.AppendLine("Device supports relative addressing");
-            if (response.WBus32)
+            if(response.WBus32)
                 sb.AppendLine("Device supports 32-bit wide data transfers");
-            if (response.WBus16)
+            if(response.WBus16)
                 sb.AppendLine("Device supports 16-bit wide data transfers");
-            if (response.Sync)
+            if(response.Sync)
                 sb.AppendLine("Device supports synchronous data transfer");
-            if (response.Linked)
+            if(response.Linked)
                 sb.AppendLine("Device supports linked commands");
-            if (response.TranDis)
+            if(response.TranDis)
                 sb.AppendLine("Device supports CONTINUE TASK and TARGET TRANSFER DISABLE commands");
-            if (response.QAS)
+            if(response.QAS)
                 sb.AppendLine("Device supports Quick Arbitration and Selection");
-            if (response.CmdQue)
+            if(response.CmdQue)
                 sb.AppendLine("Device supports TCQ queue");
-            if (response.IUS)
+            if(response.IUS)
                 sb.AppendLine("Device supports information unit transfers");
-            if (response.SftRe)
+            if(response.SftRe)
                 sb.AppendLine("Device implements RESET as a soft reset");
-            #if DEBUG
-            if (response.VS1)
+#if DEBUG
+            if(response.VS1)
                 sb.AppendLine("Vendor specific bit 5 on byte 6 of INQUIRY response is set");
-            #endif
+#endif
 
-            switch ((TGPSValues)response.TPGS)
+            switch((TGPSValues)response.TPGS)
             {
                 case TGPSValues.NotSupported:
                     sb.AppendLine("Device does not support assymetrical access");
@@ -432,7 +432,7 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            switch ((SPIClocking)response.Clocking)
+            switch((SPIClocking)response.Clocking)
             {
                 case SPIClocking.ST:
                     sb.AppendLine("Device supports only ST clocking");
@@ -451,11 +451,11 @@ namespace DiscImageChef.Decoders.SCSI
                     break;
             }
 
-            if (response.VersionDescriptors != null)
+            if(response.VersionDescriptors != null)
             {
-                foreach (UInt16 VersionDescriptor in response.VersionDescriptors)
+                foreach(UInt16 VersionDescriptor in response.VersionDescriptors)
                 {
-                    switch (VersionDescriptor)
+                    switch(VersionDescriptor)
                     {
                         case 0xFFFF:
                         case 0x0000:
@@ -1871,7 +1871,7 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
-            #if DEBUG
+#if DEBUG
             if(response.DeviceTypeModifier != 0)
                 sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
             if(response.Reserved2 != 0)
@@ -1881,7 +1881,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(response.Reserved4 != 0)
                 sb.AppendFormat("Reserved byte 57 = 0x{0:X2}", response.Reserved4).AppendLine();
 
-            if (response.Reserved5 != null)
+            if(response.Reserved5 != null)
             {
                 sb.AppendLine("Reserved bytes 74 to 95");
                 sb.AppendLine("============================================================");
@@ -1889,7 +1889,7 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("============================================================");
             }
 
-            if (response.VendorSpecific != null)
+            if(response.VendorSpecific != null)
             {
                 sb.AppendLine("Vendor-specific bytes 36 to 55");
                 sb.AppendLine("============================================================");
@@ -1897,14 +1897,14 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("============================================================");
             }
 
-            if (response.VendorSpecific2 != null)
+            if(response.VendorSpecific2 != null)
             {
-                sb.AppendFormat("Vendor-specific bytes 96 to {0}", response.AdditionalLength+4).AppendLine();
+                sb.AppendFormat("Vendor-specific bytes 96 to {0}", response.AdditionalLength + 4).AppendLine();
                 sb.AppendLine("============================================================");
                 sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
                 sb.AppendLine("============================================================");
             }
-            #endif
+#endif
 
             return sb.ToString();
         }

@@ -139,7 +139,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDPMA? Decode(byte[] CDPMAResponse)
         {
-            if (CDPMAResponse == null)
+            if(CDPMAResponse == null)
                 return null;
 
             CDPMA decoded = new CDPMA();
@@ -151,13 +151,13 @@ namespace DiscImageChef.Decoders.CD
             decoded.Reserved2 = CDPMAResponse[3];
             decoded.PMADescriptors = new CDPMADescriptors[(decoded.DataLength - 2) / 11];
 
-            if (decoded.DataLength + 2 != CDPMAResponse.Length)
+            if(decoded.DataLength + 2 != CDPMAResponse.Length)
             {
                 DicConsole.DebugWriteLine("CD PMA decoder", "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDPMAResponse.Length);
                 return null;
             }
 
-            for (int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
+            for(int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
             {
                 decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + i * 11 + 4];
                 decoded.PMADescriptors[i].ADR = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);
@@ -179,34 +179,34 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDPMA? CDPMAResponse)
         {
-            if (CDPMAResponse == null)
+            if(CDPMAResponse == null)
                 return null;
 
             CDPMA response = CDPMAResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
 
-            foreach (CDPMADescriptors descriptor in response.PMADescriptors)
+            foreach(CDPMADescriptors descriptor in response.PMADescriptors)
             {
-                #if DEBUG
+#if DEBUG
                 if(descriptor.Reserved != 0)
                     sb.AppendFormat("Reserved = 0x{0:X2}", descriptor.Reserved).AppendLine();
-                #endif
+#endif
 
-                switch (descriptor.ADR)
+                switch(descriptor.ADR)
                 {
                     case 1:
-                        if (descriptor.POINT > 0)
+                        if(descriptor.POINT > 0)
                         {
                             sb.AppendFormat("Track {0}", descriptor.POINT);
-                            switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                            switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                             {
                                 case TOC_CONTROL.TwoChanNoPreEmph:
                                     sb.Append(" (Stereo audio track with no pre-emphasis)");
@@ -227,11 +227,11 @@ namespace DiscImageChef.Decoders.CD
                                     sb.Append(" (Data track, recorded incrementally)");
                                     break;
                             }
-                            if (descriptor.PHOUR > 0)
+                            if(descriptor.PHOUR > 0)
                                 sb.AppendFormat(" starts at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR);
                             else
                                 sb.AppendFormat(" starts at {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME);
-                            if (descriptor.PHOUR > 0)
+                            if(descriptor.PHOUR > 0)
                                 sb.AppendFormat(" and ends at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR);
                             else
                                 sb.AppendFormat(" and ends at {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame);

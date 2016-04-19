@@ -114,7 +114,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
         {
-            if (CDSessionInfoResponse == null)
+            if(CDSessionInfoResponse == null)
                 return null;
 
             CDSessionInfo decoded = new CDSessionInfo();
@@ -126,13 +126,13 @@ namespace DiscImageChef.Decoders.CD
             decoded.LastCompleteSession = CDSessionInfoResponse[3];
             decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
-            if (decoded.DataLength + 2 != CDSessionInfoResponse.Length)
+            if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {
                 DicConsole.DebugWriteLine("CD Session Info decoder", "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDSessionInfoResponse.Length);
                 return null;
             }
 
-            for (int i = 0; i < ((decoded.DataLength - 2) / 8); i++)
+            for(int i = 0; i < ((decoded.DataLength - 2) / 8); i++)
             {
                 decoded.TrackDescriptors[i].Reserved1 = CDSessionInfoResponse[0 + i * 8 + 4];
                 decoded.TrackDescriptors[i].ADR = (byte)((CDSessionInfoResponse[1 + i * 8 + 4] & 0xF0) >> 4);
@@ -147,7 +147,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
         {
-            if (CDSessionInfoResponse == null)
+            if(CDSessionInfoResponse == null)
                 return null;
 
             CDSessionInfo response = CDSessionInfoResponse.Value;
@@ -156,7 +156,7 @@ namespace DiscImageChef.Decoders.CD
 
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
-            foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
+            foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
                 sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).AppendLine();
                 sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
@@ -164,7 +164,7 @@ namespace DiscImageChef.Decoders.CD
                     (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
                     (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
 
-                switch ((TOC_ADR)descriptor.ADR)
+                switch((TOC_ADR)descriptor.ADR)
                 {
                     case TOC_ADR.NoInformation:
                         sb.AppendLine("Q subchannel mode not given");
@@ -184,7 +184,7 @@ namespace DiscImageChef.Decoders.CD
                     sb.AppendFormat("Reserved flags 0x{0:X2} set", descriptor.CONTROL).AppendLine();
                 else
                 {
-                    switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                    switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                     {
                         case TOC_CONTROL.TwoChanNoPreEmph:
                             sb.AppendLine("Stereo audio track with no pre-emphasis");
@@ -206,17 +206,17 @@ namespace DiscImageChef.Decoders.CD
                             break;
                     }
 
-                    if ((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) == (byte)TOC_CONTROL.CopyPermissionMask)
+                    if((descriptor.CONTROL & (byte)TOC_CONTROL.CopyPermissionMask) == (byte)TOC_CONTROL.CopyPermissionMask)
                         sb.AppendLine("Digital copy of track is permitted");
                     else
                         sb.AppendLine("Digital copy of track is prohibited");
 
-                    #if DEBUG
+#if DEBUG
                     if(descriptor.Reserved1 != 0)
                         sb.AppendFormat("Reserved1 = 0x{0:X2}", descriptor.Reserved1).AppendLine();
                     if(descriptor.Reserved2 != 0)
                         sb.AppendFormat("Reserved2 = 0x{0:X2}", descriptor.Reserved2).AppendLine();
-                    #endif
+#endif
 
                     sb.AppendLine();
                 }

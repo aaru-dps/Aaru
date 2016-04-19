@@ -54,7 +54,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", options.SearchForFilesystems);
             DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", options.SearchForPartitions);
 
-            if (!System.IO.File.Exists(options.InputFile))
+            if(!System.IO.File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -88,7 +88,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    if (!_imageFormat.OpenImage(options.InputFile))
+                    if(!_imageFormat.OpenImage(options.InputFile))
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
@@ -103,23 +103,23 @@ namespace DiscImageChef.Commands
                     Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                     Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     return;
                 }
 
-                if (options.SearchForPartitions)
+                if(options.SearchForPartitions)
                 {
                     List<CommonTypes.Partition> partitions = new List<CommonTypes.Partition>();
                     string partition_scheme = "";
 
                     // TODO: Solve possibility of multiple partition schemes (CUE + MBR, MBR + RDB, CUE + APM, etc)
-                    foreach (PartPlugin _partplugin in plugins.PartPluginsList.Values)
+                    foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
                     {
                         List<CommonTypes.Partition> _partitions;
-                        if (_partplugin.GetInformation(_imageFormat, out _partitions))
+                        if(_partplugin.GetInformation(_imageFormat, out _partitions))
                         {
                             partition_scheme = _partplugin.Name;
                             partitions.AddRange(_partitions);
@@ -127,16 +127,16 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (_imageFormat.ImageHasPartitions())
+                    if(_imageFormat.ImageHasPartitions())
                     {
                         partition_scheme = _imageFormat.GetImageFormat();
                         partitions.AddRange(_imageFormat.GetPartitions());
                     }
 
-                    if (partition_scheme == "")
+                    if(partition_scheme == "")
                     {
                         DicConsole.DebugWriteLine("Analyze command", "No partitions found");
-                        if (!options.SearchForFilesystems)
+                        if(!options.SearchForFilesystems)
                         {
                             DicConsole.WriteLine("No partitions founds, not searching for filesystems");
                             return;
@@ -148,34 +148,34 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Partition scheme identified as {0}", partition_scheme);
                         DicConsole.WriteLine("{0} partitions found.", partitions.Count);
 
-                        for (int i = 0; i < partitions.Count; i++)
+                        for(int i = 0; i < partitions.Count; i++)
                         {
                             DicConsole.WriteLine();
-                            DicConsole.WriteLine("Partition {0}:", partitions[i].PartitionSequence);   
-                            DicConsole.WriteLine("Partition name: {0}", partitions[i].PartitionName);  
-                            DicConsole.WriteLine("Partition type: {0}", partitions[i].PartitionType);  
-                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);   
-                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);   
-                            DicConsole.WriteLine("Partition description:");    
+                            DicConsole.WriteLine("Partition {0}:", partitions[i].PartitionSequence);
+                            DicConsole.WriteLine("Partition name: {0}", partitions[i].PartitionName);
+                            DicConsole.WriteLine("Partition type: {0}", partitions[i].PartitionType);
+                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);
+                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);
+                            DicConsole.WriteLine("Partition description:");
                             DicConsole.WriteLine(partitions[i].PartitionDescription);
 
-                            if (options.SearchForFilesystems)
+                            if(options.SearchForFilesystems)
                             {
                                 DicConsole.WriteLine("Identifying filesystem on partition");
 
-                                IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors);
-                                if (id_plugins.Count == 0)
+                                IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors);
+                                if(id_plugins.Count == 0)
                                     DicConsole.WriteLine("Filesystem not identified");
-                                else if (id_plugins.Count > 1)
+                                else if(id_plugins.Count > 1)
                                 {
                                     DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
 
-                                    foreach (string plugin_name in id_plugins)
+                                    foreach(string plugin_name in id_plugins)
                                     {
-                                        if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
+                                        if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                         {
                                             DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
+                                            _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, out information);
                                             DicConsole.Write(information);
                                             Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                         }
@@ -185,7 +185,7 @@ namespace DiscImageChef.Commands
                                 {
                                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                                     DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector+partitions[i].PartitionSectors, out information);
+                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, out information);
                                     DicConsole.Write(information);
                                     Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                 }
@@ -194,21 +194,21 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                if (checkraw)
+                if(checkraw)
                 {
-                    IdentifyFilesystems(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors()-1);
-                    if (id_plugins.Count == 0)
+                    IdentifyFilesystems(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors() - 1);
+                    if(id_plugins.Count == 0)
                         DicConsole.WriteLine("Filesystem not identified");
-                    else if (id_plugins.Count > 1)
+                    else if(id_plugins.Count > 1)
                     {
                         DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
 
-                        foreach (string plugin_name in id_plugins)
+                        foreach(string plugin_name in id_plugins)
                         {
-                            if (plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
+                            if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                             {
                                 DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                                _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
+                                _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out information);
                                 DicConsole.Write(information);
                                 Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                             }
@@ -218,13 +218,13 @@ namespace DiscImageChef.Commands
                     {
                         plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                         DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                        _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors()-1, out information);
+                        _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out information);
                         DicConsole.Write(information);
                         Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
@@ -239,9 +239,9 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            foreach (Plugin _plugin in plugins.PluginsList.Values)
+            foreach(Plugin _plugin in plugins.PluginsList.Values)
             {
-                if (_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
+                if(_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
                     id_plugins.Add(_plugin.Name.ToLower());
             }
         }

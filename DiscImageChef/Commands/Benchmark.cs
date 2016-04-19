@@ -62,7 +62,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
 
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rWriting block {0} of {1} with random data.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -76,12 +76,12 @@ namespace DiscImageChef.Commands
 
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rReading block {0} of {1}.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -89,9 +89,9 @@ namespace DiscImageChef.Commands
             }
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -102,12 +102,12 @@ namespace DiscImageChef.Commands
             ((Adler32Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with Adler32.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -117,9 +117,9 @@ namespace DiscImageChef.Commands
             ((Adler32Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -133,12 +133,12 @@ namespace DiscImageChef.Commands
             ((CRC16Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with CRC16.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -148,9 +148,9 @@ namespace DiscImageChef.Commands
             ((CRC16Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -164,12 +164,12 @@ namespace DiscImageChef.Commands
             ((CRC32Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with CRC32.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -179,9 +179,9 @@ namespace DiscImageChef.Commands
             ((CRC32Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -195,12 +195,12 @@ namespace DiscImageChef.Commands
             ((CRC64Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with CRC64.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -210,9 +210,9 @@ namespace DiscImageChef.Commands
             ((CRC64Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -257,12 +257,12 @@ namespace DiscImageChef.Commands
             ((MD5Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with MD5.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -272,9 +272,9 @@ namespace DiscImageChef.Commands
             ((MD5Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -288,12 +288,12 @@ namespace DiscImageChef.Commands
             ((RIPEMD160Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with RIPEMD160.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -303,9 +303,9 @@ namespace DiscImageChef.Commands
             ((RIPEMD160Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -319,12 +319,12 @@ namespace DiscImageChef.Commands
             ((SHA1Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with SHA1.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -334,9 +334,9 @@ namespace DiscImageChef.Commands
             ((SHA1Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -350,12 +350,12 @@ namespace DiscImageChef.Commands
             ((SHA256Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with SHA256.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -365,9 +365,9 @@ namespace DiscImageChef.Commands
             ((SHA256Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -381,12 +381,12 @@ namespace DiscImageChef.Commands
             ((SHA384Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with SHA384.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -396,9 +396,9 @@ namespace DiscImageChef.Commands
             ((SHA384Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -412,12 +412,12 @@ namespace DiscImageChef.Commands
             ((SHA512Context)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with SHA512.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -427,9 +427,9 @@ namespace DiscImageChef.Commands
             ((SHA512Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -443,12 +443,12 @@ namespace DiscImageChef.Commands
             ((SpamSumContext)ctx).Init();
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with SpamSum.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -458,9 +458,9 @@ namespace DiscImageChef.Commands
             ((SpamSumContext)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -473,30 +473,30 @@ namespace DiscImageChef.Commands
             ulong[] entTable = new ulong[256];
             ms.Seek(0, SeekOrigin.Begin);
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
             start = DateTime.Now;
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rEntropying block {0} of {1}.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
                 ms.Read(tmp, 0, options.BlockSize);
-                foreach (byte b in tmp)
+                foreach(byte b in tmp)
                     entTable[b]++;
             }
             double entropy = 0;
-            foreach (ulong l in entTable)
+            foreach(ulong l in entTable)
             {
                 double frequency = (double)l / (double)bufferSize;
                 entropy += -(frequency * Math.Log(frequency, 2));
             }
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
@@ -510,8 +510,8 @@ namespace DiscImageChef.Commands
             CRC16Context crc16ctx = new CRC16Context();
             CRC32Context crc32ctx = new CRC32Context();
             CRC64Context crc64ctx = new CRC64Context();
-			//Fletcher16Context fletcher16ctx = new Fletcher16Context();
-			//Fletcher32Context fletcher32ctx = new Fletcher32Context();
+            //Fletcher16Context fletcher16ctx = new Fletcher16Context();
+            //Fletcher32Context fletcher32ctx = new Fletcher32Context();
             MD5Context md5ctx = new MD5Context();
             RIPEMD160Context ripemd160ctx = new RIPEMD160Context();
             SHA1Context sha1ctx = new SHA1Context();
@@ -524,8 +524,8 @@ namespace DiscImageChef.Commands
             Thread crc16Thread = new Thread(updateCRC16);
             Thread crc32Thread = new Thread(updateCRC32);
             Thread crc64Thread = new Thread(updateCRC64);
-			//Thread fletcher16Thread = new Thread(updateFletcher16);
-			//Thread fletcher32Thread = new Thread(updateFletcher32);
+            //Thread fletcher16Thread = new Thread(updateFletcher16);
+            //Thread fletcher32Thread = new Thread(updateFletcher32);
             Thread md5Thread = new Thread(updateMD5);
             Thread ripemd160Thread = new Thread(updateRIPEMD160);
             Thread sha1Thread = new Thread(updateSHA1);
@@ -538,8 +538,8 @@ namespace DiscImageChef.Commands
             crc16Packet crc16Pkt = new crc16Packet();
             crc32Packet crc32Pkt = new crc32Packet();
             crc64Packet crc64Pkt = new crc64Packet();
-			//fletcher16Packet fletcher16Pkt = new fletcher16Packet();
-			//fletcher32Packet fletcher32Pkt = new fletcher32Packet();
+            //fletcher16Packet fletcher16Pkt = new fletcher16Packet();
+            //fletcher32Packet fletcher32Pkt = new fletcher32Packet();
             md5Packet md5Pkt = new md5Packet();
             ripemd160Packet ripemd160Pkt = new ripemd160Packet();
             sha1Packet sha1Pkt = new sha1Packet();
@@ -557,10 +557,10 @@ namespace DiscImageChef.Commands
             crc32Pkt.context = crc32ctx;
             crc64ctx.Init();
             crc64Pkt.context = crc64ctx;
-			//fletcher16ctx.Init();
-			//fletcher16Pkt.context = fletcher16ctx;
-			//fletcher32ctx.Init();
-			//fletcher32Pkt.context = fletcher32ctx;
+            //fletcher16ctx.Init();
+            //fletcher16Pkt.context = fletcher16ctx;
+            //fletcher32ctx.Init();
+            //fletcher32Pkt.context = fletcher32ctx;
             md5ctx.Init();
             md5Pkt.context = md5ctx;
             ripemd160ctx.Init();
@@ -576,7 +576,7 @@ namespace DiscImageChef.Commands
             ssctx.Init();
             spamsumPkt.context = ssctx;
 
-            for (int i = 0; i < bufferSize / options.BlockSize; i++)
+            for(int i = 0; i < bufferSize / options.BlockSize; i++)
             {
                 DicConsole.Write("\rChecksumming block {0} of {1} with all algorithms at the same time.", i + 1, bufferSize / options.BlockSize);
                 byte[] tmp = new byte[options.BlockSize];
@@ -586,8 +586,8 @@ namespace DiscImageChef.Commands
                 crc16Thread = new Thread(updateCRC16);
                 crc32Thread = new Thread(updateCRC32);
                 crc64Thread = new Thread(updateCRC64);
-//            fletcher16Thread = new Thread(updateFletcher16);
-//            fletcher32Thread = new Thread(updateFletcher32);
+                //            fletcher16Thread = new Thread(updateFletcher16);
+                //            fletcher32Thread = new Thread(updateFletcher32);
                 md5Thread = new Thread(updateMD5);
                 ripemd160Thread = new Thread(updateRIPEMD160);
                 sha1Thread = new Thread(updateSHA1);
@@ -604,10 +604,10 @@ namespace DiscImageChef.Commands
                 crc32Thread.Start(crc32Pkt);
                 crc64Pkt.data = tmp;
                 crc64Thread.Start(crc64Pkt);
-				//fletcher16Pkt.data = tmp;
-				//fletcher16Thread.Start(fletcher16Pkt);
-				//fletcher32Pkt.data = tmp;
-				//fletcher32Thread.Start(fletcher32Pkt);
+                //fletcher16Pkt.data = tmp;
+                //fletcher16Thread.Start(fletcher16Pkt);
+                //fletcher32Pkt.data = tmp;
+                //fletcher32Thread.Start(fletcher32Pkt);
                 md5Pkt.data = tmp;
                 md5Thread.Start(md5Pkt);
                 ripemd160Pkt.data = tmp;
@@ -629,23 +629,23 @@ namespace DiscImageChef.Commands
             	if (mem < minMemory)
 	                minMemory = mem;*/
 
-                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                        crc32Thread.IsAlive || crc64Thread.IsAlive ||
-						//fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
+                       //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                        md5Thread.IsAlive || ripemd160Thread.IsAlive ||
                        sha1Thread.IsAlive || sha256Thread.IsAlive ||
                        sha384Thread.IsAlive || sha512Thread.IsAlive ||
                        spamsumThread.IsAlive)
                 {
                 }
-                                
+
             }
             adler32ctx.End();
             crc16ctx.End();
             crc32ctx.End();
             crc64ctx.End();
-			//fletcher16ctx.End();
-			//fletcher32ctx.End();
+            //fletcher16ctx.End();
+            //fletcher32ctx.End();
             md5ctx.End();
             ripemd160ctx.End();
             sha1ctx.End();
@@ -655,16 +655,16 @@ namespace DiscImageChef.Commands
             ssctx.End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
-            if (mem > maxMemory)
+            if(mem > maxMemory)
                 maxMemory = mem;
-            if (mem < minMemory)
+            if(mem < minMemory)
                 minMemory = mem;
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1} MiB/sec.", (end - start).TotalSeconds, (bufferSize / 1048576) / (end - start).TotalSeconds);
 
             #endregion
-            
+
             DicConsole.WriteLine("Took {0} seconds to do all algorithms sequentially, {1} MiB/sec.", allSeparate, (bufferSize / 1048576) / allSeparate);
 
             DicConsole.WriteLine();

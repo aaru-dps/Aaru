@@ -53,13 +53,13 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
 
-            if (!System.IO.File.Exists(options.DevicePath))
+            if(!System.IO.File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
-            if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
+            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
             {
                 options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
@@ -67,7 +67,7 @@ namespace DiscImageChef.Commands
 
             Device dev = new Device(options.DevicePath);
 
-            if (dev.Error)
+            if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
                 return;
@@ -75,7 +75,7 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            if (dev.IsUSB)
+            if(dev.IsUSB)
             {
                 DicConsole.WriteLine("USB device");
                 if(dev.USBDescriptors != null)
@@ -88,7 +88,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
-            if (dev.IsFireWire)
+            if(dev.IsFireWire)
             {
                 DicConsole.WriteLine("FireWire device");
                 DicConsole.WriteLine("FireWire Vendor ID: {0:X6}", dev.FireWireVendor);
@@ -99,7 +99,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
-            switch (dev.Type)
+            switch(dev.Type)
             {
                 case DeviceType.ATA:
                     {
@@ -108,7 +108,7 @@ namespace DiscImageChef.Commands
                         byte[] ataBuf;
                         bool sense = dev.AtaIdentify(out ataBuf, out errorRegisters);
 
-                        if (sense)
+                        if(sense)
                         {
                             DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
                             DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
@@ -129,24 +129,24 @@ namespace DiscImageChef.Commands
                         double duration;
                         dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out duration);
 
-                        if (errorRegisters.sector == 0xAA && errorRegisters.sectorCount == 0x55)
+                        if(errorRegisters.sector == 0xAA && errorRegisters.sectorCount == 0x55)
                         {
                             DicConsole.WriteLine("Device supports the Media Card Pass Through Command Set");
-                            switch (errorRegisters.deviceHead & 0x7)
+                            switch(errorRegisters.deviceHead & 0x7)
                             {
                                 case 0:
                                     DicConsole.WriteLine("Device reports incorrect media card type");
                                     break;
-                                    case 1:
+                                case 1:
                                     DicConsole.WriteLine("Device contains a Secure Digital card");
                                     break;
-                                    case 2:
+                                case 2:
                                     DicConsole.WriteLine("Device contains a MultiMediaCard ");
                                     break;
-                                    case 3:
+                                case 3:
                                     DicConsole.WriteLine("Device contains a Secure Digital I/O card");
                                     break;
-                                    case 4:
+                                case 4:
                                     DicConsole.WriteLine("Device contains a Smart Media card");
                                     break;
                                 default:
@@ -154,11 +154,11 @@ namespace DiscImageChef.Commands
                                     break;
                             }
 
-                            if ((errorRegisters.deviceHead & 0x08) == 0x08)
+                            if((errorRegisters.deviceHead & 0x08) == 0x08)
                                 DicConsole.WriteLine("Media card is write protected");
 
                             ushort specificData = (ushort)((errorRegisters.cylinderHigh * 0x100) + errorRegisters.cylinderLow);
-                            if (specificData != 0)
+                            if(specificData != 0)
                                 DicConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
                         }
 
@@ -171,7 +171,7 @@ namespace DiscImageChef.Commands
                         byte[] ataBuf;
                         bool sense = dev.AtapiIdentify(out ataBuf, out errorRegisters);
 
-                        if (sense)
+                        if(sense)
                         {
                             DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.status);
                             DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.error);
@@ -199,14 +199,14 @@ namespace DiscImageChef.Commands
 
                         bool sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
 
-                        if (sense)
+                        if(sense)
                         {
                             DicConsole.ErrorWriteLine("SCSI error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
 
                             break;
                         }
 
-                        if (dev.Type != DeviceType.ATAPI)
+                        if(dev.Type != DeviceType.ATAPI)
                             DicConsole.WriteLine("SCSI device");
 
                         doWriteFile(options.OutputPrefix, "_scsi_inquiry.bin", "SCSI INQUIRY", inqBuf);
@@ -220,30 +220,30 @@ namespace DiscImageChef.Commands
 
                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
 
-                        if (!sense)
+                        if(!sense)
                         {
                             byte[] pages = Decoders.SCSI.EVPD.DecodePage00(inqBuf);
 
-                            if (pages != null)
+                            if(pages != null)
                             {
-                                foreach (byte page in pages)
+                                foreach(byte page in pages)
                                 {
-                                    if (page >= 0x01 && page <= 0x7F)
+                                    if(page >= 0x01 && page <= 0x7F)
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                        if (!sense)
+                                        if(!sense)
                                         {
-                                            if (sb == null)
+                                            if(sb == null)
                                                 sb = new StringBuilder();
                                             sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
 
                                             doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
-                                    else if (page == 0x80)
+                                    else if(page == 0x80)
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                        if (!sense)
+                                        if(!sense)
                                         {
                                             scsi80 = true;
                                             scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
@@ -253,12 +253,12 @@ namespace DiscImageChef.Commands
                                     }
                                     else
                                     {
-                                        if (page != 0x00)
+                                        if(page != 0x00)
                                         {
                                             DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}", page);
 
                                             sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
-                                            if (!sense)
+                                            if(!sense)
                                             {
                                                 doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                             }
@@ -268,10 +268,10 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        if (scsi80)
+                        if(scsi80)
                             DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
 
-                        if (sb != null)
+                        if(sb != null)
                         {
                             DicConsole.WriteLine("ASCII VPDs:");
                             DicConsole.WriteLine(sb.ToString());
@@ -283,12 +283,12 @@ namespace DiscImageChef.Commands
                         Decoders.SCSI.PeripheralDeviceTypes devType = (DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
                         sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
-                        if (sense || dev.Error)
+                        if(sense || dev.Error)
                         {
                             sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
                         }
 
-                        if (!sense && !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             decMode = Decoders.SCSI.Modes.DecodeMode10(modeBuf, devType);
                         }
@@ -296,36 +296,36 @@ namespace DiscImageChef.Commands
                         if(sense || dev.Error || !decMode.HasValue)
                         {
                             sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
-                            if (sense || dev.Error)
+                            if(sense || dev.Error)
                                 sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
-                            if (sense || dev.Error)
+                            if(sense || dev.Error)
                                 sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out duration);
 
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(modeBuf, devType);
                         }
 
-                        if (!sense)
+                        if(!sense)
                             doWriteFile(options.OutputPrefix, "_scsi_modesense.bin", "SCSI MODE SENSE", modeBuf);
 
-                        if (decMode.HasValue)
+                        if(decMode.HasValue)
                         {
                             DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModeHeader(decMode.Value.Header, devType));
 
-                            if (decMode.Value.Pages != null)
+                            if(decMode.Value.Pages != null)
                             {
-                                foreach (Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
+                                foreach(Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
                                 {
                                     //DicConsole.WriteLine("Page {0:X2}h subpage {1:X2}h is {2} bytes long", page.Page, page.Subpage, page.PageResponse.Length);
-                                    switch (page.Page)
+                                    switch(page.Page)
                                     {
                                         case 0x00:
                                             {
-                                                if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
+                                                if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_00_SFF(page.PageResponse));
                                                 else
                                                 {
-                                                    if (page.Subpage != 0)
+                                                    if(page.Subpage != 0)
                                                         DicConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h", page.Page, page.Subpage);
                                                     else
                                                         DicConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
@@ -334,9 +334,9 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x01:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                 {
-                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01_MMC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01(page.PageResponse));
@@ -348,7 +348,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x02:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_02(page.PageResponse));
                                                 else
                                                     goto default;
@@ -357,7 +357,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x03:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_03(page.PageResponse));
                                                 else
                                                     goto default;
@@ -366,7 +366,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x04:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_04(page.PageResponse));
                                                 else
                                                     goto default;
@@ -375,7 +375,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x05:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_05(page.PageResponse));
                                                 else
                                                     goto default;
@@ -384,7 +384,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x06:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_06(page.PageResponse));
                                                 else
                                                     goto default;
@@ -393,9 +393,9 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x07:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                 {
-                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07_MMC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07(page.PageResponse));
@@ -407,7 +407,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x08:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_08(page.PageResponse));
                                                 else
                                                     goto default;
@@ -416,9 +416,9 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x0A:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0A(page.PageResponse));
-                                                else if (page.Subpage == 1)
+                                                else if(page.Subpage == 1)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0A_S01(page.PageResponse));
                                                 else
                                                     goto default;
@@ -427,7 +427,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x0B:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0B(page.PageResponse));
                                                 else
                                                     goto default;
@@ -436,7 +436,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x0D:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0D(page.PageResponse));
                                                 else
                                                     goto default;
@@ -445,7 +445,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x0E:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0E(page.PageResponse));
                                                 else
                                                     goto default;
@@ -454,7 +454,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x0F:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_0F(page.PageResponse));
                                                 else
                                                     goto default;
@@ -463,9 +463,9 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x10:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                 {
-                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10_SSC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10(page.PageResponse));
@@ -477,9 +477,9 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x1A:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1A(page.PageResponse));
-                                                else if (page.Subpage == 1)
+                                                else if(page.Subpage == 1)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1A_S01(page.PageResponse));
                                                 else
                                                     goto default;
@@ -488,7 +488,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x1B:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1B(page.PageResponse));
                                                 else
                                                     goto default;
@@ -497,14 +497,14 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x1C:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                 {
-                                                    if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_SFF(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C(page.PageResponse));
                                                 }
-                                                else if (page.Subpage == 1)
+                                                else if(page.Subpage == 1)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_S01(page.PageResponse));
                                                 else
                                                     goto default;
@@ -513,7 +513,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x2A:
                                             {
-                                                if (page.Subpage == 0)
+                                                if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_2A(page.PageResponse));
                                                 else
                                                     goto default;
@@ -522,7 +522,7 @@ namespace DiscImageChef.Commands
                                             }
                                         case 0x3E:
                                             {
-                                                if (StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "FUJITSU")
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "FUJITSU")
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
                                                 else
                                                     goto default;
@@ -531,7 +531,7 @@ namespace DiscImageChef.Commands
                                             }
                                         default:
                                             {
-                                                if (page.Subpage != 0)
+                                                if(page.Subpage != 0)
                                                     DicConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h", page.Page, page.Subpage);
                                                 else
                                                     DicConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
@@ -542,13 +542,13 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                        if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                         {
-                            
+
                             byte[] confBuf;
                             sense = dev.GetConfiguration(out confBuf, out senseBuf, dev.Timeout, out duration);
 
-                            if (!sense)
+                            if(!sense)
                             {
                                 doWriteFile(options.OutputPrefix, "_mmc_getconfiguration.bin", "MMC GET CONFIGURATION", confBuf);
 
@@ -556,14 +556,14 @@ namespace DiscImageChef.Commands
 
                                 DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
                                 DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
-                                if (ftr.Descriptors != null)
+                                if(ftr.Descriptors != null)
                                 {
                                     DicConsole.WriteLine("SCSI MMC GET CONFIGURATION Features:");
-                                    foreach (Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
+                                    foreach(Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
                                     {
                                         DicConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
 
-                                        switch (desc.Code)
+                                        switch(desc.Code)
                                         {
                                             case 0x0000:
                                                 DicConsole.WriteLine(Decoders.SCSI.MMC.Features.Prettify_0000(desc.Data));
@@ -795,13 +795,13 @@ namespace DiscImageChef.Commands
                             */
 
                             #region Plextor
-                            if (dev.Manufacturer == "PLEXTOR")
+                            if(dev.Manufacturer == "PLEXTOR")
                             {
                                 bool plxtSense = true;
                                 bool plxtDvd = false;
                                 byte[] plxtBuf = null;
 
-                                switch (dev.Model)
+                                switch(dev.Model)
                                 {
                                     case "DVDR   PX-708A":
                                     case "DVDR   PX-708A2":
@@ -817,10 +817,10 @@ namespace DiscImageChef.Commands
                                         {
                                             byte[] plxtBufSmall;
                                             plxtBuf = new byte[256 * 4];
-                                            for (byte i = 0; i < 4; i++)
+                                            for(byte i = 0; i < 4; i++)
                                             {
                                                 plxtSense = dev.PlextorReadEepromBlock(out plxtBufSmall, out senseBuf, i, 256, dev.Timeout, out duration);
-                                                if (plxtSense)
+                                                if(plxtSense)
                                                     break;
                                                 Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
                                             }
@@ -829,7 +829,7 @@ namespace DiscImageChef.Commands
                                         }
                                     default:
                                         {
-                                            if (dev.Model.StartsWith("CD-R   "))
+                                            if(dev.Model.StartsWith("CD-R   "))
                                             {
                                                 plxtSense = dev.PlextorReadEepromCDR(out plxtBuf, out senseBuf, dev.Timeout, out duration);
                                             }
@@ -837,7 +837,7 @@ namespace DiscImageChef.Commands
                                         }
                                 }
 
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     doWriteFile(options.OutputPrefix, "_plextor_eeprom.bin", "PLEXTOR READ EEPROM", plxtBuf);
 
@@ -845,7 +845,7 @@ namespace DiscImageChef.Commands
                                     uint cdReadTime, cdWriteTime, dvdReadTime = 0, dvdWriteTime = 0;
 
                                     BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-                                    if (plxtDvd)
+                                    if(plxtDvd)
                                     {
                                         discs = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
                                         cdReadTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
@@ -865,7 +865,7 @@ namespace DiscImageChef.Commands
                                         cdReadTime / 3600, (cdReadTime / 60) % 60, cdReadTime % 60);
                                     DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
                                         cdWriteTime / 3600, (cdWriteTime / 60) % 60, cdWriteTime % 60);
-                                    if (plxtDvd)
+                                    if(plxtDvd)
                                     {
                                         DicConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
                                             dvdReadTime / 3600, (dvdReadTime / 60) % 60, dvdReadTime % 60);
@@ -877,14 +877,14 @@ namespace DiscImageChef.Commands
                                 bool plxtPwrRecEnabled;
                                 ushort plxtPwrRecSpeed;
                                 plxtSense = dev.PlextorGetPoweRec(out senseBuf, out plxtPwrRecEnabled, out plxtPwrRecSpeed, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.Write("Drive supports PoweRec");
-                                    if (plxtPwrRecEnabled)
+                                    if(plxtPwrRecEnabled)
                                     {
                                         DicConsole.Write(", has it enabled");
 
-                                        if (plxtPwrRecSpeed > 0)
+                                        if(plxtPwrRecSpeed > 0)
                                             DicConsole.WriteLine(" and recommends {0} Kb/sec.", plxtPwrRecSpeed);
                                         else
                                             DicConsole.WriteLine(".");
@@ -892,13 +892,13 @@ namespace DiscImageChef.Commands
                                         ushort plxtPwrRecSelected, plxtPwrRecMax, plxtPwrRecLast;
                                         plxtSense = dev.PlextorGetSpeeds(out senseBuf, out plxtPwrRecSelected, out plxtPwrRecMax, out plxtPwrRecLast, dev.Timeout, out duration);
 
-                                        if (!plxtSense)
+                                        if(!plxtSense)
                                         {
-                                            if (plxtPwrRecSelected > 0)
+                                            if(plxtPwrRecSelected > 0)
                                                 DicConsole.WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecSelected, plxtPwrRecSelected / 177);
-                                            if (plxtPwrRecMax > 0)
+                                            if(plxtPwrRecMax > 0)
                                                 DicConsole.WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)", plxtPwrRecMax, plxtPwrRecMax / 177);
-                                            if (plxtPwrRecLast > 0)
+                                            if(plxtPwrRecLast > 0)
                                                 DicConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)", plxtPwrRecLast, plxtPwrRecLast / 177);
                                         }
                                     }
@@ -908,101 +908,101 @@ namespace DiscImageChef.Commands
 
                                 // TODO: Check it with a drive
                                 plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports Plextor SilentMode");
-                                    if (plxtBuf[0] == 1)
+                                    if(plxtBuf[0] == 1)
                                     {
                                         DicConsole.WriteLine("Plextor SilentMode is enabled:");
-                                        if (plxtBuf[1] == 2)
+                                        if(plxtBuf[1] == 2)
                                             DicConsole.WriteLine("\tAccess time is slow");
                                         else
                                             DicConsole.WriteLine("\tAccess time is fast");
 
-                                        if (plxtBuf[2] > 0)
+                                        if(plxtBuf[2] > 0)
                                             DicConsole.WriteLine("\tCD read speed limited to {0}x", plxtBuf[2]);
-                                        if (plxtBuf[3] > 0 && plxtDvd)
+                                        if(plxtBuf[3] > 0 && plxtDvd)
                                             DicConsole.WriteLine("\tDVD read speed limited to {0}x", plxtBuf[3]);
-                                        if (plxtBuf[4] > 0)
+                                        if(plxtBuf[4] > 0)
                                             DicConsole.WriteLine("\tCD write speed limited to {0}x", plxtBuf[4]);
-                                        if (plxtBuf[6] > 0)
+                                        if(plxtBuf[6] > 0)
                                             DicConsole.WriteLine("\tTray eject speed limited to {0}", -(plxtBuf[6] + 48));
-                                        if (plxtBuf[7] > 0)
+                                        if(plxtBuf[7] > 0)
                                             DicConsole.WriteLine("\tTray eject speed limited to {0}", plxtBuf[7] - 47);
                                     }
                                 }
 
                                 plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports Plextor GigaRec");
                                     // TODO: Pretty print it
                                 }
 
                                 plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports Plextor SecuRec");
                                     // TODO: Pretty print it
                                 }
 
                                 plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.Write("Drive supports Plextor SpeedRead");
-                                    if ((plxtBuf[2] & 0x01) == 0x01)
+                                    if((plxtBuf[2] & 0x01) == 0x01)
                                         DicConsole.WriteLine("and has it enabled");
                                     else
                                         DicConsole.WriteLine();
                                 }
 
                                 plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
 
-                                    if ((plxtBuf[2] & 0x02) == 0x02)
+                                    if((plxtBuf[2] & 0x02) == 0x02)
                                         DicConsole.WriteLine("Drive currently hides CD-Rs");
-                                    if ((plxtBuf[2] & 0x01) == 0x01)
+                                    if((plxtBuf[2] & 0x01) == 0x01)
                                         DicConsole.WriteLine("Drive currently forces single session");
                                 }
 
                                 plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
-                                if (!plxtSense)
+                                if(!plxtSense)
                                 {
                                     DicConsole.WriteLine("Drive supports Plextor VariRec");
                                     // TODO: Pretty print it
                                 }
 
-                                if (plxtDvd)
+                                if(plxtDvd)
                                 {
                                     plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
-                                    if (!plxtSense)
+                                    if(!plxtSense)
                                     {
                                         DicConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
                                         // TODO: Pretty print it
                                     }
 
                                     plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout, out duration);
-                                    if (!plxtSense)
+                                    if(!plxtSense)
                                         DicConsole.WriteLine("Drive supports bitsetting DVD+R book type");
                                     plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout, out duration);
-                                    if (!plxtSense)
+                                    if(!plxtSense)
                                         DicConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
                                     plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout, out duration);
-                                    if (!plxtSense)
+                                    if(!plxtSense)
                                         DicConsole.WriteLine("Drive supports test writing DVD+");
                                 }
                             }
                             #endregion Plextor
                         }
 
-                        if (devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                        if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                         {
                             byte[] seqBuf;
 
                             sense = dev.ReadBlockLimits(out seqBuf, out senseBuf, dev.Timeout, out duration);
-                            if (sense)
+                            if(sense)
                                 DicConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             else
                             {
@@ -1012,13 +1012,13 @@ namespace DiscImageChef.Commands
                             }
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out duration);
-                            if (sense)
+                            if(sense)
                                 DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             else
                             {
                                 doWriteFile(options.OutputPrefix, "_ssc_reportdensitysupport.bin", "SSC REPORT DENSITY SUPPORT", seqBuf);
                                 Decoders.SCSI.SSC.DensitySupport.DensitySupportHeader? dens = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
-                                if (dens.HasValue)
+                                if(dens.HasValue)
                                 {
                                     DicConsole.WriteLine("Densities supported by device:");
                                     DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyDensity(dens));
@@ -1026,13 +1026,13 @@ namespace DiscImageChef.Commands
                             }
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out duration);
-                            if (sense)
+                            if(sense)
                                 DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                             else
                             {
                                 doWriteFile(options.OutputPrefix, "_ssc_reportdensitysupport_medium.bin", "SSC REPORT DENSITY SUPPORT (MEDIUM)", seqBuf);
                                 Decoders.SCSI.SSC.DensitySupport.MediaTypeSupportHeader? meds = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
-                                if (meds.HasValue)
+                                if(meds.HasValue)
                                 {
                                     DicConsole.WriteLine("Medium types supported by device:");
                                     DicConsole.WriteLine(Decoders.SCSI.SSC.DensitySupport.PrettifyMediumType(meds));
@@ -1055,7 +1055,7 @@ namespace DiscImageChef.Commands
         {
             if(!string.IsNullOrEmpty(outputPrefix))
             {
-                if (!File.Exists(outputPrefix + outputSuffix))
+                if(!File.Exists(outputPrefix + outputSuffix))
                 {
                     try
                     {

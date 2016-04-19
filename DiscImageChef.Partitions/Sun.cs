@@ -102,18 +102,18 @@ namespace DiscImageChef.PartPlugins
             Array.Copy(sunSector, 0x80 + 0x04, tmpString, 0, 8);
             sdl.vtoc.volname = StringHandlers.CToString(tmpString);
             sdl.vtoc.nparts = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0C);
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 sdl.vtoc.infos[i] = new SunInfo();
                 sdl.vtoc.infos[i].id = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x00);
                 sdl.vtoc.infos[i].flags = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x02);
             }
             sdl.vtoc.padding = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x2E);
-            for (int i = 0; i < 3; i++)
+            for(int i = 0; i < 3; i++)
                 sdl.vtoc.bootinfo[i] = BigEndianBitConverter.ToUInt32(sunSector, 0x80 + 0x30 + i * 4);
             sdl.vtoc.sanity = BigEndianBitConverter.ToUInt32(sunSector, 0x80 + 0x3C);
             Array.Copy(sunSector, 0x80 + 0x40, sdl.vtoc.reserved, 0, 40);
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
                 sdl.vtoc.timestamp[i] = BigEndianBitConverter.ToUInt32(sunSector, 0x80 + 0x68 + i * 4);
 
             sdl.write_reinstruct = BigEndianBitConverter.ToUInt32(sunSector, 0x108);
@@ -132,7 +132,7 @@ namespace DiscImageChef.PartPlugins
             sdl.bhead = BigEndianBitConverter.ToUInt16(sunSector, 0x1B8);
             sdl.ppart = BigEndianBitConverter.ToUInt16(sunSector, 0x1BA);
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 sdl.partitions[i] = new SunPartition();
                 sdl.partitions[i].start_cylinder = BigEndianBitConverter.ToUInt32(sunSector, 0x1BC + i * 8 + 0x00);
@@ -143,23 +143,23 @@ namespace DiscImageChef.PartPlugins
             sdl.csum = BigEndianBitConverter.ToUInt16(sunSector, 0x1FE);
 
             ushort csum = 0;
-            for (int i = 0; i < 510; i += 2)
+            for(int i = 0; i < 510; i += 2)
                 csum ^= BigEndianBitConverter.ToUInt16(sunSector, i);
 
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.info = {0}", sdl.info);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.version = {0}", sdl.vtoc.version);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.volname = {0}", sdl.vtoc.volname);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.nparts = {0}", sdl.vtoc.nparts);
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.infos[{1}].id = 0x{0:X4}", sdl.vtoc.infos[i].id, i);
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.infos[{1}].flags = 0x{0:X4}", sdl.vtoc.infos[i].flags, i);
             }
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.padding = 0x{0:X4}", sdl.vtoc.padding);
-            for (int i = 0; i < 3; i++)
+            for(int i = 0; i < 3; i++)
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.bootinfo[{1}].id = 0x{0:X8}", sdl.vtoc.bootinfo[i], i);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.sanity = 0x{0:X8}", sdl.vtoc.sanity);
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.vtoc.timestamp[{1}] = 0x{0:X8}", sdl.vtoc.timestamp[i], i);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.rspeed = {0}", sdl.rspeed);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.pcylcount = {0}", sdl.pcylcount);
@@ -173,7 +173,7 @@ namespace DiscImageChef.PartPlugins
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.nsect = {0}", sdl.nsect);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.bhead = {0}", sdl.bhead);
             DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.ppart = {0}", sdl.ppart);
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.partitions[{1}].start_cylinder = {0}", sdl.partitions[i].start_cylinder, i);
                 DicConsole.DebugWriteLine("Sun Disklabel plugin", "sdl.partitions[{1}].num_sectors = {0}", sdl.partitions[i].num_sectors, i);
@@ -184,12 +184,12 @@ namespace DiscImageChef.PartPlugins
 
             ulong sectorsPerCylinder = (ulong)(sdl.nsect * sdl.ntrks);
 
-            if (sectorsPerCylinder == 0 || sectorsPerCylinder * sdl.pcylcount > imagePlugin.GetSectors() || sdl.magic != SUN_MAGIC)
+            if(sectorsPerCylinder == 0 || sectorsPerCylinder * sdl.pcylcount > imagePlugin.GetSectors() || sdl.magic != SUN_MAGIC)
                 return false;
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
-                if ((SunTypes)sdl.vtoc.infos[i].id != SunTypes.SunWholeDisk && sdl.partitions[i].num_sectors > 0)
+                if((SunTypes)sdl.vtoc.infos[i].id != SunTypes.SunWholeDisk && sdl.partitions[i].num_sectors > 0)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
                     part.PartitionDescription = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags);
@@ -201,7 +201,7 @@ namespace DiscImageChef.PartPlugins
                     part.PartitionStartSector = sdl.partitions[i].start_cylinder * sectorsPerCylinder;
                     part.PartitionType = SunIdToString((SunTypes)sdl.vtoc.infos[i].id);
 
-                    if (part.PartitionStartSector > imagePlugin.GetSectors() || (part.PartitionStartSector + part.PartitionSectors) > imagePlugin.GetSectors())
+                    if(part.PartitionStartSector > imagePlugin.GetSectors() || (part.PartitionStartSector + part.PartitionSectors) > imagePlugin.GetSectors())
                         return false;
 
                     partitions.Add(part);
@@ -214,21 +214,21 @@ namespace DiscImageChef.PartPlugins
         public static string SunFlagsToString(SunFlags flags)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            if (flags.HasFlag(SunFlags.NoMount))
+            if(flags.HasFlag(SunFlags.NoMount))
                 sb.AppendLine("Unmountable");
-            if (flags.HasFlag(SunFlags.ReadOnly))
+            if(flags.HasFlag(SunFlags.ReadOnly))
                 sb.AppendLine("Read-only");
             return sb.ToString();
         }
 
         public static string SunIdToString(SunTypes id)
         {
-            switch (id)
+            switch(id)
             {
                 case SunTypes.Linux:
                     return "Linux";
                 case SunTypes.LinuxRaid:
-                return "Linux RAID";
+                    return "Linux RAID";
                 case SunTypes.LinuxSwap:
                     return "Linux swap";
                 case SunTypes.LVM:

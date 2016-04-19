@@ -58,23 +58,23 @@ namespace DiscImageChef.PartPlugins
             byte cyl_sect1, cyl_sect2; // For decoding cylinder and sector
             UInt16 signature;
             ulong counter = 0;
-			
+
             partitions = new List<CommonTypes.Partition>();
 
-            if (imagePlugin.GetSectorSize() < 512)
+            if(imagePlugin.GetSectorSize() < 512)
                 return false;
 
             byte[] sector = imagePlugin.ReadSector(0);
 
             signature = BitConverter.ToUInt16(sector, 0x1FE);
 
-            if (signature != MBRSignature)
+            if(signature != MBRSignature)
                 return false; // Not MBR
-			
-            for (int i = 0; i < 4; i++)
+
+            for(int i = 0; i < 4; i++)
             {
                 MBRPartitionEntry entry = new MBRPartitionEntry();
-				
+
                 entry.status = sector[0x1BE + 16 * i + 0x00];
                 entry.start_head = sector[0x1BE + 16 * i + 0x01];
 
@@ -83,36 +83,36 @@ namespace DiscImageChef.PartPlugins
 
                 entry.start_sector = (byte)(cyl_sect1 & 0x3F);
                 entry.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-				
+
                 entry.type = sector[0x1BE + 16 * i + 0x04];
                 entry.end_head = sector[0x1BE + 16 * i + 0x05];
 
                 cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
                 cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
-				
+
                 entry.end_sector = (byte)(cyl_sect1 & 0x3F);
                 entry.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-				
+
                 entry.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
                 entry.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
-				
+
                 // Let's start the fun...
-				
+
                 bool valid = true;
                 bool extended = false;
                 bool disklabel = false;
 
-                if (entry.status != 0x00 && entry.status != 0x80)
+                if(entry.status != 0x00 && entry.status != 0x80)
                     return false; // Maybe a FAT filesystem
                 valid &= entry.type != 0x00;
-                if (entry.type == 0xEE || entry.type == 0xEF)
+                if(entry.type == 0xEE || entry.type == 0xEF)
                     return false; // This is a GPT
-                if (entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x85)
+                if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x85)
                 {
                     valid = false;
                     extended = true; // Extended partition
                 }
-                if (entry.type == 0x82 || entry.type == 0xBF || entry.type == 0xA5 || entry.type == 0xA6 || entry.type == 0xA9 ||
+                if(entry.type == 0x82 || entry.type == 0xBF || entry.type == 0xA5 || entry.type == 0xA6 || entry.type == 0xA9 ||
                     entry.type == 0xB7 || entry.type == 0x81 || entry.type == 0x63)
                 {
                     valid = false;
@@ -120,24 +120,24 @@ namespace DiscImageChef.PartPlugins
                 }
 
                 valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
-                if (entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
+                if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
                     entry.lba_start = CHStoLBA(entry.start_cylinder, entry.start_head, entry.start_sector);
                     entry.lba_sectors = CHStoLBA(entry.end_cylinder, entry.end_head, entry.end_sector) - entry.lba_start;
                 }
 
-                if (entry.lba_start > imagePlugin.GetSectors() || entry.lba_start + entry.lba_sectors > imagePlugin.GetSectors())
+                if(entry.lba_start > imagePlugin.GetSectors() || entry.lba_start + entry.lba_sectors > imagePlugin.GetSectors())
                 {
                     valid = false;
                     disklabel = false;
                     extended = false;
                 }
-				
-                if (disklabel)
+
+                if(disklabel)
                 {
                     byte[] disklabel_sector = imagePlugin.ReadSector(entry.lba_start);
-					
-                    switch (entry.type)
+
+                    switch(entry.type)
                     {
                         case 0xA5:
                         case 0xA6:
@@ -145,13 +145,13 @@ namespace DiscImageChef.PartPlugins
                         case 0xB7: // BSD disklabels
                             {
                                 UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 0);
-							
-                                if (magic == 0x82564557)
+
+                                if(magic == 0x82564557)
                                 {
                                     UInt16 no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
-									
+
                                     // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                    for (int j = 0; j < no_parts; j++)
+                                    for(int j = 0; j < no_parts; j++)
                                     {
                                         CommonTypes.Partition part = new CommonTypes.Partition();
                                         byte bsd_type;
@@ -164,11 +164,11 @@ namespace DiscImageChef.PartPlugins
 
                                         part.PartitionType = String.Format("BSD: {0}", bsd_type);
                                         part.PartitionName = decodeBSDType(bsd_type);
-								
+
                                         part.PartitionSequence = counter;
                                         part.PartitionDescription = "Partition inside a BSD disklabel.";
-								
-                                        if (bsd_type != 0)
+
+                                        if(bsd_type != 0)
                                         {
                                             partitions.Add(part);
                                             counter++;
@@ -185,7 +185,7 @@ namespace DiscImageChef.PartPlugins
                                 byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                 magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
-                                if (magic == UNIXDiskLabel_MAGIC)
+                                if(magic == UNIXDiskLabel_MAGIC)
                                 {
                                     UNIXDiskLabel dl = new UNIXDiskLabel();
                                     UNIXVTOC vtoc = new UNIXVTOC(); // old/new
@@ -193,7 +193,7 @@ namespace DiscImageChef.PartPlugins
                                     int vtocoffset = 0;
 
                                     vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                    if (vtoc.magic == UNIXVTOC_MAGIC)
+                                    if(vtoc.magic == UNIXVTOC_MAGIC)
                                     {
                                         isNewDL = true;
                                         vtocoffset = 72;
@@ -201,7 +201,7 @@ namespace DiscImageChef.PartPlugins
                                     else
                                     {
                                         vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                        if (vtoc.magic != UNIXDiskLabel_MAGIC)
+                                        if(vtoc.magic != UNIXDiskLabel_MAGIC)
                                         {
                                             valid = true;
                                             break;
@@ -220,8 +220,8 @@ namespace DiscImageChef.PartPlugins
                                     //dl.unknown1 = br.ReadBytes(48); // 44
                                     dl.alt_tbl = BitConverter.ToUInt32(unix_dl_sector, 92); // 92
                                     dl.alt_len = BitConverter.ToUInt32(unix_dl_sector, 96); // 96
-                                    
-                                    if (isNewDL) // Old version VTOC starts here
+
+                                    if(isNewDL) // Old version VTOC starts here
                                     {
                                         dl.phys_cyl = BitConverter.ToUInt32(unix_dl_sector, 100); // 100
                                         dl.phys_trk = BitConverter.ToUInt32(unix_dl_sector, 104); // 104
@@ -231,8 +231,8 @@ namespace DiscImageChef.PartPlugins
                                         dl.unknown3 = BitConverter.ToUInt32(unix_dl_sector, 120); // 120
                                         //dl.pad = br.ReadBytes(48); // 124
                                     }
-								
-                                    if (vtoc.magic == UNIXVTOC_MAGIC)
+
+                                    if(vtoc.magic == UNIXVTOC_MAGIC)
                                     {
                                         vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
                                         byte[] vtoc_name = new byte[8];
@@ -240,10 +240,10 @@ namespace DiscImageChef.PartPlugins
                                         vtoc.name = StringHandlers.CToString(vtoc_name); // 108/180
                                         vtoc.slices = BitConverter.ToUInt16(unix_dl_sector, 116 + vtocoffset); // 116/188
                                         vtoc.unknown = BitConverter.ToUInt16(unix_dl_sector, 118 + vtocoffset); // 118/190
-                                        //vtoc.reserved = br.ReadBytes(40); // 120/192
-							
+                                                                                                                //vtoc.reserved = br.ReadBytes(40); // 120/192
+
                                         // TODO: What if number of slices overlaps sector (>23)?
-                                        for (int j = 0; j < vtoc.slices; j++)
+                                        for(int j = 0; j < vtoc.slices; j++)
                                         {
                                             UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
 
@@ -252,7 +252,7 @@ namespace DiscImageChef.PartPlugins
                                             vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
                                             vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
 
-                                            if ((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+                                            if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
                                             {
                                                 CommonTypes.Partition part = new CommonTypes.Partition();
                                                 // TODO: Check if device bps == disklabel bps
@@ -265,13 +265,13 @@ namespace DiscImageChef.PartPlugins
 
                                                 string info = "";
 
-                                                if ((vtoc_ent.flags & 0x01) == 0x01)
+                                                if((vtoc_ent.flags & 0x01) == 0x01)
                                                     info += " (do not mount)";
-                                                if ((vtoc_ent.flags & 0x10) == 0x10)
+                                                if((vtoc_ent.flags & 0x10) == 0x10)
                                                     info += " (do not mount)";
 
                                                 part.PartitionDescription = "UNIX slice" + info + ".";
-									
+
                                                 partitions.Add(part);
                                                 counter++;
                                             }
@@ -288,9 +288,9 @@ namespace DiscImageChef.PartPlugins
                                 UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
                                 UInt32 version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
 
-                                if (magic == 0x600DDEEE && version == 1)
+                                if(magic == 0x600DDEEE && version == 1)
                                 {
-                                    for (int j = 0; j < 16; j++)
+                                    for(int j = 0; j < 16; j++)
                                     {
                                         CommonTypes.Partition part = new CommonTypes.Partition();
                                         part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
@@ -298,10 +298,10 @@ namespace DiscImageChef.PartPlugins
                                         part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize(); // 68+4+j*12
                                         part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize(); // 68+8+j*12
                                         part.PartitionDescription = "Solaris slice.";
-									
+
                                         part.PartitionSequence = counter;
-								
-                                        if (part.PartitionLength > 0)
+
+                                        if(part.PartitionLength > 0)
                                         {
                                             partitions.Add(part);
                                             counter++;
@@ -316,12 +316,12 @@ namespace DiscImageChef.PartPlugins
                             {
                                 bool minix_subs = false;
                                 byte type;
-						
-                                for (int j = 0; j < 4; j++)
+
+                                for(int j = 0; j < 4; j++)
                                 {
                                     type = disklabel_sector[0x1BE + j * 16 + 4];
-								
-                                    if (type == 0x81)
+
+                                    if(type == 0x81)
                                     {
                                         CommonTypes.Partition part = new CommonTypes.Partition();
                                         minix_subs = true;
@@ -337,7 +337,7 @@ namespace DiscImageChef.PartPlugins
                                     }
                                 }
                                 valid |= !minix_subs;
-							
+
                                 break;
                             }
                         default:
@@ -345,41 +345,41 @@ namespace DiscImageChef.PartPlugins
                             break;
                     }
                 }
-				
-                if (valid)
+
+                if(valid)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
-                    if (entry.lba_start > 0 && entry.lba_sectors > 0)
+                    if(entry.lba_start > 0 && entry.lba_sectors > 0)
                     {
                         part.PartitionStartSector = entry.lba_start;
                         part.PartitionSectors = entry.lba_sectors;
                         part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
                         part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
                     }
-/*					else if(entry.start_head < 255 && entry.end_head < 255 &&
-					        entry.start_sector > 0 && entry.start_sector < 64 &&
-					        entry.end_sector > 0 && entry.end_sector < 64 &&
-					        entry.start_cylinder < 1024 && entry.end_cylinder < 1024)
-					{
-						
-					} */ // As we don't know the maxium cyl, head or sect of the device we need LBA
-					else
+                    /*					else if(entry.start_head < 255 && entry.end_head < 255 &&
+                                                entry.start_sector > 0 && entry.start_sector < 64 &&
+                                                entry.end_sector > 0 && entry.end_sector < 64 &&
+                                                entry.start_cylinder < 1024 && entry.end_cylinder < 1024)
+                                        {
+
+                                        } */ // As we don't know the maxium cyl, head or sect of the device we need LBA
+                    else
                         valid = false;
-					
-                    if (valid)
+
+                    if(valid)
                     {
                         part.PartitionType = String.Format("0x{0:X2}", entry.type);
                         part.PartitionName = decodeMBRType(entry.type);
                         part.PartitionSequence = counter;
                         part.PartitionDescription = entry.status == 0x80 ? "Partition is bootable." : "";
-						
+
                         counter++;
-						
+
                         partitions.Add(part);
                     }
                 }
-				
-                if (extended) // Let's extend the fun
+
+                if(extended) // Let's extend the fun
                 {
                     bool ext_valid = true;
                     bool ext_disklabel = false;
@@ -387,46 +387,46 @@ namespace DiscImageChef.PartPlugins
 
                     sector = imagePlugin.ReadSector(entry.lba_start);
 
-                    while (processing_extended)
+                    while(processing_extended)
                     {
-                        for (int l = 0; l < 2; l++)
+                        for(int l = 0; l < 2; l++)
                         {
                             bool ext_extended = false;
-							
+
                             MBRPartitionEntry entry2 = new MBRPartitionEntry();
-					
+
                             entry2.status = sector[0x1BE + 16 * i + 0x00];
                             entry2.start_head = sector[0x1BE + 16 * i + 0x01];
-							
+
                             cyl_sect1 = sector[0x1BE + 16 * i + 0x02];
                             cyl_sect2 = sector[0x1BE + 16 * i + 0x03];
-							
+
                             entry2.start_sector = (byte)(cyl_sect1 & 0x3F);
                             entry2.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-							
+
                             entry2.type = sector[0x1BE + 16 * i + 0x04];
                             entry2.end_head = sector[0x1BE + 16 * i + 0x05];
-							
+
                             cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
                             cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
-							
+
                             entry2.end_sector = (byte)(cyl_sect1 & 0x3F);
                             entry2.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-							
+
                             entry2.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
                             entry2.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
 
                             // Let's start the fun...
-							
+
                             ext_valid &= entry2.status == 0x00 || entry2.status == 0x80;
                             valid &= entry2.type != 0x00;
-                            if (entry2.type == 0x82 || entry2.type == 0xBF || entry2.type == 0xA5 || entry2.type == 0xA6 ||
+                            if(entry2.type == 0x82 || entry2.type == 0xBF || entry2.type == 0xA5 || entry2.type == 0xA6 ||
                                 entry2.type == 0xA9 || entry2.type == 0xB7 || entry2.type == 0x81 || entry2.type == 0x63)
                             {
                                 ext_valid = false;
                                 ext_disklabel = true;
                             }
-                            if (entry2.type == 0x05 || entry2.type == 0x0F || entry2.type == 0x85)
+                            if(entry2.type == 0x05 || entry2.type == 0x0F || entry2.type == 0x85)
                             {
                                 ext_valid = false;
                                 ext_disklabel = false;
@@ -434,12 +434,12 @@ namespace DiscImageChef.PartPlugins
                             }
                             else
                                 processing_extended &= l != 1;
-							
-                            if (ext_disklabel)
+
+                            if(ext_disklabel)
                             {
                                 byte[] disklabel_sector = imagePlugin.ReadSector(entry2.lba_start);
 
-                                switch (entry2.type)
+                                switch(entry2.type)
                                 {
                                     case 0xA5:
                                     case 0xA6:
@@ -447,30 +447,30 @@ namespace DiscImageChef.PartPlugins
                                     case 0xB7: // BSD disklabels
                                         {
                                             UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 0);
-									
-                                            if (magic == 0x82564557)
+
+                                            if(magic == 0x82564557)
                                             {
                                                 UInt16 no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
-										
+
                                                 // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                                for (int j = 0; j < no_parts; j++)
+                                                for(int j = 0; j < no_parts; j++)
                                                 {
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
                                                     byte bsd_type;
-											
+
                                                     part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 4);
                                                     part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 0);
                                                     part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
                                                     part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
                                                     bsd_type = disklabel_sector[134 + j * 16 + 8];
-											
+
                                                     part.PartitionType = String.Format("BSD: {0}", bsd_type);
                                                     part.PartitionName = decodeBSDType(bsd_type);
-											
+
                                                     part.PartitionSequence = counter;
                                                     part.PartitionDescription = "Partition inside a BSD disklabel.";
-											
-                                                    if (bsd_type != 0)
+
+                                                    if(bsd_type != 0)
                                                     {
                                                         partitions.Add(part);
                                                         counter++;
@@ -487,7 +487,7 @@ namespace DiscImageChef.PartPlugins
                                             byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                             magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
-                                            if (magic == UNIXDiskLabel_MAGIC)
+                                            if(magic == UNIXDiskLabel_MAGIC)
                                             {
                                                 UNIXDiskLabel dl = new UNIXDiskLabel();
                                                 UNIXVTOC vtoc = new UNIXVTOC(); // old/new
@@ -495,7 +495,7 @@ namespace DiscImageChef.PartPlugins
                                                 int vtocoffset = 0;
 
                                                 vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                if (vtoc.magic == UNIXVTOC_MAGIC)
+                                                if(vtoc.magic == UNIXVTOC_MAGIC)
                                                 {
                                                     isNewDL = true;
                                                     vtocoffset = 72;
@@ -503,7 +503,7 @@ namespace DiscImageChef.PartPlugins
                                                 else
                                                 {
                                                     vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                    if (vtoc.magic != UNIXDiskLabel_MAGIC)
+                                                    if(vtoc.magic != UNIXDiskLabel_MAGIC)
                                                     {
                                                         valid = true;
                                                         break;
@@ -523,7 +523,7 @@ namespace DiscImageChef.PartPlugins
                                                 dl.alt_tbl = BitConverter.ToUInt32(unix_dl_sector, 92); // 92
                                                 dl.alt_len = BitConverter.ToUInt32(unix_dl_sector, 96); // 96
 
-                                                if (isNewDL) // Old version VTOC starts here
+                                                if(isNewDL) // Old version VTOC starts here
                                                 {
                                                     dl.phys_cyl = BitConverter.ToUInt32(unix_dl_sector, 100); // 100
                                                     dl.phys_trk = BitConverter.ToUInt32(unix_dl_sector, 104); // 104
@@ -534,7 +534,7 @@ namespace DiscImageChef.PartPlugins
                                                     //dl.pad = br.ReadBytes(48); // 124
                                                 }
 
-                                                if (vtoc.magic == UNIXVTOC_MAGIC)
+                                                if(vtoc.magic == UNIXVTOC_MAGIC)
                                                 {
                                                     vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
                                                     byte[] vtoc_name = new byte[8];
@@ -545,7 +545,7 @@ namespace DiscImageChef.PartPlugins
                                                     //vtoc.reserved = br.ReadBytes(40); // 120/192
 
                                                     // TODO: What if number of slices overlaps sector (>23)?
-                                                    for (int j = 0; j < vtoc.slices; j++)
+                                                    for(int j = 0; j < vtoc.slices; j++)
                                                     {
                                                         UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
 
@@ -554,7 +554,7 @@ namespace DiscImageChef.PartPlugins
                                                         vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
                                                         vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
 
-                                                        if ((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+                                                        if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
                                                         {
                                                             CommonTypes.Partition part = new CommonTypes.Partition();
                                                             // TODO: Check if device bps == disklabel bps
@@ -567,9 +567,9 @@ namespace DiscImageChef.PartPlugins
 
                                                             string info = "";
 
-                                                            if ((vtoc_ent.flags & 0x01) == 0x01)
+                                                            if((vtoc_ent.flags & 0x01) == 0x01)
                                                                 info += " (do not mount)";
-                                                            if ((vtoc_ent.flags & 0x10) == 0x10)
+                                                            if((vtoc_ent.flags & 0x10) == 0x10)
                                                                 info += " (do not mount)";
 
                                                             part.PartitionDescription = "UNIX slice" + info + ".";
@@ -590,9 +590,9 @@ namespace DiscImageChef.PartPlugins
                                             UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
                                             UInt32 version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
 
-                                            if (magic == 0x600DDEEE && version == 1)
+                                            if(magic == 0x600DDEEE && version == 1)
                                             {
-                                                for (int j = 0; j < 16; j++)
+                                                for(int j = 0; j < 16; j++)
                                                 {
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
                                                     part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
@@ -603,7 +603,7 @@ namespace DiscImageChef.PartPlugins
 
                                                     part.PartitionSequence = counter;
 
-                                                    if (part.PartitionLength > 0)
+                                                    if(part.PartitionLength > 0)
                                                     {
                                                         partitions.Add(part);
                                                         counter++;
@@ -619,11 +619,11 @@ namespace DiscImageChef.PartPlugins
                                             bool minix_subs = false;
                                             byte type;
 
-                                            for (int j = 0; j < 4; j++)
+                                            for(int j = 0; j < 4; j++)
                                             {
                                                 type = disklabel_sector[0x1BE + j * 16 + 4];
 
-                                                if (type == 0x81)
+                                                if(type == 0x81)
                                                 {
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
                                                     minix_subs = true;
@@ -639,50 +639,50 @@ namespace DiscImageChef.PartPlugins
                                                 }
                                             }
                                             ext_valid |= !minix_subs;
-										
+
                                             break;
                                         }
                                     default:
                                         ext_valid = true;
                                         break;
                                 }
-								
+
                             }
-							
-                            if (ext_valid)
+
+                            if(ext_valid)
                             {
                                 CommonTypes.Partition part = new CommonTypes.Partition();
-                                if (entry2.lba_start > 0 && entry2.lba_sectors > 0)
+                                if(entry2.lba_start > 0 && entry2.lba_sectors > 0)
                                 {
                                     part.PartitionStartSector = entry2.lba_start;
                                     part.PartitionSectors = entry2.lba_sectors;
                                     part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
                                     part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
                                 }
-			/*					else if(entry2.start_head < 255 && entry2.end_head < 255 &&
-								        entry2.start_sector > 0 && entry2.start_sector < 64 &&
-								        entry2.end_sector > 0 && entry2.end_sector < 64 &&
-								        entry2.start_cylinder < 1024 && entry2.end_cylinder < 1024)
-								{
-									
-								} */ // As we don't know the maxium cyl, head or sect of the device we need LBA
-								else
+                                /*					else if(entry2.start_head < 255 && entry2.end_head < 255 &&
+                                                            entry2.start_sector > 0 && entry2.start_sector < 64 &&
+                                                            entry2.end_sector > 0 && entry2.end_sector < 64 &&
+                                                            entry2.start_cylinder < 1024 && entry2.end_cylinder < 1024)
+                                                    {
+
+                                                    } */ // As we don't know the maxium cyl, head or sect of the device we need LBA
+                                else
                                     ext_valid = false;
-								
-                                if (ext_valid)
+
+                                if(ext_valid)
                                 {
                                     part.PartitionType = String.Format("0x{0:X2}", entry2.type);
                                     part.PartitionName = decodeMBRType(entry2.type);
                                     part.PartitionSequence = counter;
                                     part.PartitionDescription = entry2.status == 0x80 ? "Partition is bootable." : "";
-									
+
                                     counter++;
-									
+
                                     partitions.Add(part);
                                 }
                             }
-							
-                            if (ext_extended)
+
+                            if(ext_extended)
                             {
                                 break;
                             }
@@ -690,7 +690,7 @@ namespace DiscImageChef.PartPlugins
                     }
                 }
             }
-			
+
             // An empty MBR may exist, NeXT creates one and then hardcodes its disklabel
             return partitions.Count != 0;
         }
@@ -702,7 +702,7 @@ namespace DiscImageChef.PartPlugins
 
         static string decodeBSDType(byte type)
         {
-            switch (type)
+            switch(type)
             {
                 case 1:
                     return "Swap";
@@ -739,7 +739,7 @@ namespace DiscImageChef.PartPlugins
 
         static string decodeMBRType(byte type)
         {
-            switch (type)
+            switch(type)
             {
                 case 0x01:
                     return "FAT12";
@@ -1198,7 +1198,7 @@ namespace DiscImageChef.PartPlugins
         // volume mgt private partition
         static string decodeUNIXTAG(UInt16 type, bool isNew)
         {
-            switch (type)
+            switch(type)
             {
                 case UNIX_TAG_EMPTY:
                     return "Unused";

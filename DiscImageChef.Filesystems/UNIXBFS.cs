@@ -58,7 +58,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
@@ -71,7 +71,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
             byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] sb_strings = new byte[6];

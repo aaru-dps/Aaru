@@ -75,7 +75,7 @@ namespace DiscImageChef.Devices
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
-            if (drive1)
+            if(drive1)
                 cdb[1] += 0x20;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
@@ -117,7 +117,7 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.Adaptec_SetErrorThreshold;
-            if (drive1)
+            if(drive1)
                 cdb[1] += 0x20;
             cdb[4] = 1;
 
@@ -157,7 +157,7 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.Adaptec_Translate;
-            if (drive1)
+            if(drive1)
                 cdb[1] += 0x20;
             cdb[4] = (byte)buffer.Length;
 
@@ -179,7 +179,7 @@ namespace DiscImageChef.Devices
         public bool AdaptecWriteBuffer(byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             byte[] oneKBuffer = new byte[1024];
-            if (buffer.Length < 1024)
+            if(buffer.Length < 1024)
                 Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length);
             else
                 Array.Copy(buffer, 0, oneKBuffer, 0, 1024);

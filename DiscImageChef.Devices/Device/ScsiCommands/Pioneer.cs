@@ -145,12 +145,12 @@ namespace DiscImageChef.Devices
             cdb[8] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[9] = (byte)(transferLength & 0xFF);
 
-            if (errorFlags)
+            if(errorFlags)
             {
                 buffer = new byte[2646 * transferLength];
                 cdb[6] = 0x1F;
             }
-            else if (wholeSector)
+            else if(wholeSector)
             {
                 buffer = new byte[2352 * transferLength];
                 cdb[6] = 0x0F;

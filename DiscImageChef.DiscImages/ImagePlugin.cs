@@ -215,31 +215,31 @@ namespace DiscImageChef.ImagePlugins
         /// Gets the image format.
         /// </summary>
         /// <returns>The image format.</returns>
-        public abstract string   GetImageFormat();
+        public abstract string GetImageFormat();
 
         /// <summary>
         /// Gets the image version.
         /// </summary>
         /// <returns>The image version.</returns>
-        public abstract string   GetImageVersion();
+        public abstract string GetImageVersion();
 
         /// <summary>
         /// Gets the application that created the image.
         /// </summary>
         /// <returns>The application that created the image.</returns>
-        public abstract string   GetImageApplication();
+        public abstract string GetImageApplication();
 
         /// <summary>
         /// Gets the version of the application that created the image.
         /// </summary>
         /// <returns>The version of the application that created the image.</returns>
-        public abstract string   GetImageApplicationVersion();
+        public abstract string GetImageApplicationVersion();
 
         /// <summary>
         /// Gets the image creator.
         /// </summary>
         /// <returns>Who created the image.</returns>
-        public abstract string   GetImageCreator();
+        public abstract string GetImageCreator();
 
         /// <summary>
         /// Gets the image creation time.
@@ -257,13 +257,13 @@ namespace DiscImageChef.ImagePlugins
         /// Gets the name of the image.
         /// </summary>
         /// <returns>The image name.</returns>
-        public abstract string   GetImageName();
+        public abstract string GetImageName();
 
         /// <summary>
         /// Gets the image comments.
         /// </summary>
         /// <returns>The image comments.</returns>
-        public abstract string   GetImageComments();
+        public abstract string GetImageComments();
 
         // Functions to get information from disk represented by image
 
@@ -271,31 +271,31 @@ namespace DiscImageChef.ImagePlugins
         /// Gets the media manufacturer.
         /// </summary>
         /// <returns>The media manufacturer.</returns>
-        public abstract string   GetMediaManufacturer();
+        public abstract string GetMediaManufacturer();
 
         /// <summary>
         /// Gets the media model.
         /// </summary>
         /// <returns>The media model.</returns>
-        public abstract string   GetMediaModel();
+        public abstract string GetMediaModel();
 
         /// <summary>
         /// Gets the media serial number.
         /// </summary>
         /// <returns>The media serial number.</returns>
-        public abstract string   GetMediaSerialNumber();
+        public abstract string GetMediaSerialNumber();
 
         /// <summary>
         /// Gets the media (or product) barcode.
         /// </summary>
         /// <returns>The media barcode.</returns>
-        public abstract string   GetMediaBarcode();
+        public abstract string GetMediaBarcode();
 
         /// <summary>
         /// Gets the media part number.
         /// </summary>
         /// <returns>The media part number.</returns>
-        public abstract string   GetMediaPartNumber();
+        public abstract string GetMediaPartNumber();
 
         /// <summary>
         /// Gets the type of the media.
@@ -307,13 +307,13 @@ namespace DiscImageChef.ImagePlugins
         /// Gets the media sequence.
         /// </summary>
         /// <returns>The media sequence, starting at 1.</returns>
-        public abstract int      GetMediaSequence();
+        public abstract int GetMediaSequence();
 
         /// <summary>
         /// Gets the last media in the sequence.
         /// </summary>
         /// <returns>The last media in the sequence.</returns>
-        public abstract int      GetLastDiskSequence();
+        public abstract int GetLastDiskSequence();
 
         // Functions to get information from drive used to create image
 
@@ -727,7 +727,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureSupportedButNotImplementedImageException(System.Runtime.Serialization.SerializationInfo info,
                                                                   System.Runtime.Serialization.StreamingContext context)
         {
-            if (info == null)
+            if(info == null)
                 throw new ArgumentNullException("info");
         }
     }
@@ -763,7 +763,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureUnsupportedImageException(System.Runtime.Serialization.SerializationInfo info,
                                                    System.Runtime.Serialization.StreamingContext context)
         {
-            if (info == null)
+            if(info == null)
                 throw new ArgumentNullException("info");
         }
     }
@@ -799,7 +799,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeatureNotPresentImageException(System.Runtime.Serialization.SerializationInfo info,
                                                   System.Runtime.Serialization.StreamingContext context)
         {
-            if (info == null)
+            if(info == null)
                 throw new ArgumentNullException("info");
         }
     }
@@ -835,7 +835,7 @@ namespace DiscImageChef.ImagePlugins
         protected FeaturedNotSupportedByDiscImageException(System.Runtime.Serialization.SerializationInfo info,
                                                            System.Runtime.Serialization.StreamingContext context)
         {
-            if (info == null)
+            if(info == null)
                 throw new ArgumentNullException("info");
         }
     }
@@ -871,7 +871,7 @@ namespace DiscImageChef.ImagePlugins
         protected ImageNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
                                              System.Runtime.Serialization.StreamingContext context)
         {
-            if (info == null)
+            if(info == null)
                 throw new ArgumentNullException("info");
         }
     }

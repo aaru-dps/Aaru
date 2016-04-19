@@ -94,30 +94,30 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if (imagePlugin.GetSectors() < 3)
+            if(imagePlugin.GetSectors() < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionStart);
 
             UInt16 prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
-            if (prePointer != 0)
+            if(prePointer != 0)
                 return false;
 
             byte storage_type = (byte)((rootDirectoryKeyBlock[0x04] & ProDOSStorageTypeMask) >> 4);
-            if (storage_type != RootDirectoryType)
+            if(storage_type != RootDirectoryType)
                 return false;
 
             byte entry_length = rootDirectoryKeyBlock[0x23];
-            if (entry_length != ProDOSEntryLength)
+            if(entry_length != ProDOSEntryLength)
                 return false;
 
             byte entries_per_block = rootDirectoryKeyBlock[0x24];
-            if (entries_per_block != ProDOSEntriesPerBlock)
+            if(entries_per_block != ProDOSEntriesPerBlock)
                 return false;
 
             UInt16 bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
-            if (bit_map_pointer > imagePlugin.GetSectors())
+            if(bit_map_pointer > imagePlugin.GetSectors())
                 return false;
 
             UInt16 total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
@@ -157,7 +157,7 @@ namespace DiscImageChef.Plugins
             hour = (int)((temp_timestamp & ProDOSHourMask) >> 8);
             minute = (int)(temp_timestamp & ProDOSMinuteMask);
             year += 1900;
-            if (year < 1940)
+            if(year < 1940)
                 year += 100;
 
             DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
@@ -177,18 +177,18 @@ namespace DiscImageChef.Plugins
             rootDirectoryKeyBlock.header.bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x27);
             rootDirectoryKeyBlock.header.total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
-            if (rootDirectoryKeyBlock.header.version != ProDOSVersion1 || rootDirectoryKeyBlock.header.min_version != ProDOSVersion1)
+            if(rootDirectoryKeyBlock.header.version != ProDOSVersion1 || rootDirectoryKeyBlock.header.min_version != ProDOSVersion1)
             {
                 sbInformation.AppendLine("Warning! Detected unknown ProDOS version ProDOS filesystem.");
                 sbInformation.AppendLine("All of the following information may be incorrect");
             }
 
-            if (rootDirectoryKeyBlock.header.version == ProDOSVersion1)
+            if(rootDirectoryKeyBlock.header.version == ProDOSVersion1)
                 sbInformation.AppendLine("ProDOS version 1 used to create this volume.");
             else
                 sbInformation.AppendFormat("Unknown ProDOS version with field {0} used to create this volume.", rootDirectoryKeyBlock.header.version).AppendLine();
 
-            if (rootDirectoryKeyBlock.header.min_version == ProDOSVersion1)
+            if(rootDirectoryKeyBlock.header.min_version == ProDOSVersion1)
                 sbInformation.AppendLine("ProDOS version 1 at least required for reading this volume.");
             else
                 sbInformation.AppendFormat("Unknown ProDOS version with field {0} is at least required for reading this volume.", rootDirectoryKeyBlock.header.min_version).AppendLine();
@@ -201,25 +201,25 @@ namespace DiscImageChef.Plugins
             sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks).AppendLine();
             sbInformation.AppendFormat("Bitmap starts at block {0}", rootDirectoryKeyBlock.header.bit_map_pointer).AppendLine();
 
-            if ((rootDirectoryKeyBlock.header.access & ProDOSReadAttribute) == ProDOSReadAttribute)
+            if((rootDirectoryKeyBlock.header.access & ProDOSReadAttribute) == ProDOSReadAttribute)
                 sbInformation.AppendLine("Volume can be read");
-            if ((rootDirectoryKeyBlock.header.access & ProDOSWriteAttribute) == ProDOSWriteAttribute)
+            if((rootDirectoryKeyBlock.header.access & ProDOSWriteAttribute) == ProDOSWriteAttribute)
                 sbInformation.AppendLine("Volume can be written");
-            if ((rootDirectoryKeyBlock.header.access & ProDOSRenameAttribute) == ProDOSRenameAttribute)
+            if((rootDirectoryKeyBlock.header.access & ProDOSRenameAttribute) == ProDOSRenameAttribute)
                 sbInformation.AppendLine("Volume can be renamed");
-            if ((rootDirectoryKeyBlock.header.access & ProDOSDestroyAttribute) == ProDOSDestroyAttribute)
+            if((rootDirectoryKeyBlock.header.access & ProDOSDestroyAttribute) == ProDOSDestroyAttribute)
                 sbInformation.AppendLine("Volume can be destroyed");
-            if ((rootDirectoryKeyBlock.header.access & ProDOSBackupAttribute) == ProDOSBackupAttribute)
+            if((rootDirectoryKeyBlock.header.access & ProDOSBackupAttribute) == ProDOSBackupAttribute)
                 sbInformation.AppendLine("Volume must be backed up");
 
-            if ((rootDirectoryKeyBlock.header.access & ProDOSReservedAttributeMask) != 0)
+            if((rootDirectoryKeyBlock.header.access & ProDOSReservedAttributeMask) != 0)
                 DicConsole.DebugWriteLine("ProDOS plugin", "Reserved attributes are set: {0:X2}", rootDirectoryKeyBlock.header.access);
 
             information = sbInformation.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
-            if (year != 0 || month != 0 || day != 0 || hour != 0 || minute != 0)
+            if(year != 0 || month != 0 || day != 0 || hour != 0 || minute != 0)
             {
                 xmlFSType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
                 xmlFSType.CreationDateSpecified = true;

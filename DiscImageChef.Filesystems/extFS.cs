@@ -53,20 +53,20 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
 
             UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
-			
+
             return magic == extFSMagic;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
 
             byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400

@@ -65,7 +65,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
@@ -76,24 +76,24 @@ namespace DiscImageChef.Plugins
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
-            if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
 
-            if (sb_sector.Length >= 0x400)
+            if(sb_sector.Length >= 0x400)
             {
                 magic = BitConverter.ToUInt32(sb_sector, 0x220);
                 magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x220);
             }
 
-            if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
 
             sb_sector = imagePlugin.ReadSector(1 + partitionStart);
-				
+
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
-            if (magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
+            if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
             return false;
         }
@@ -104,7 +104,7 @@ namespace DiscImageChef.Plugins
             byte[] name_bytes = new byte[32];
 
             StringBuilder sb = new StringBuilder();
-			
+
             BeSuperBlock besb = new BeSuperBlock();
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
@@ -112,7 +112,7 @@ namespace DiscImageChef.Plugins
             BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            if (besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
+            if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
             {
                 BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
             }
@@ -120,20 +120,20 @@ namespace DiscImageChef.Plugins
             {
                 sb_sector = imagePlugin.ReadSector(1 + partitionStart);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-				
-                if (besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+
+                if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                 {
                     BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
                 }
-                else if (sb_sector.Length >= 0x400)
+                else if(sb_sector.Length >= 0x400)
                 {
                     byte[] temp = imagePlugin.ReadSector(0 + partitionStart);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
-                    if (besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+                    if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     {
                         BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
-                        sb_sector = new byte[0x200]; 
+                        sb_sector = new byte[0x200];
                         Array.Copy(temp, 0x200, sb_sector, 0, 0x200);
                     }
                     else
@@ -169,13 +169,13 @@ namespace DiscImageChef.Plugins
             besb.indices_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x7C);
             besb.indices_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x80);
             besb.indices_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x82);
-			
-            if (!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
-				sb.AppendLine("Little-endian BeFS");
+
+            if(!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
+                sb.AppendLine("Little-endian BeFS");
             else
                 sb.AppendLine("Big-endian BeFS");
-			
-            if (besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
+
+            if(besb.magic1 != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
             besb.magic2 != BEFS_MAGIC2 || besb.magic3 != BEFS_MAGIC3 ||
             besb.root_dir_len != 1 || besb.indices_len != 1 ||
             (1 << (int)besb.block_shift) != besb.block_size)
@@ -190,19 +190,19 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("1 << block_shift == block_size => 1 << {0} == {1} (Should be {2})", besb.block_shift,
                     1 << (int)besb.block_shift, besb.block_size).AppendLine();
             }
-			
-            if (besb.flags == BEFS_CLEAN)
+
+            if(besb.flags == BEFS_CLEAN)
             {
-                if (besb.log_start == besb.log_end)
+                if(besb.log_start == besb.log_end)
                     sb.AppendLine("Filesystem is clean");
                 else
                     sb.AppendLine("Filesystem is dirty");
             }
-            else if (besb.flags == BEFS_DIRTY)
+            else if(besb.flags == BEFS_DIRTY)
                 sb.AppendLine("Filesystem is dirty");
             else
                 sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
-			
+
             sb.AppendFormat("Volume name: {0}", besb.name).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size).AppendLine();
@@ -217,7 +217,7 @@ namespace DiscImageChef.Plugins
                 besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).AppendLine();
             sb.AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", besb.indices_start,
                 besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).AppendLine();
-			
+
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();

@@ -98,7 +98,7 @@ namespace DiscImageChef.Devices
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
-            if (immediate)
+            if(immediate)
                 cdb[1] += 0x01;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);

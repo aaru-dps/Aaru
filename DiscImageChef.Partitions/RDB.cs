@@ -897,9 +897,9 @@ namespace DiscImageChef.PartPlugins
             ulong RDBBlock = 0;
             bool foundRDB = false;
 
-            while (RDBBlock < 16 && !foundRDB)
+            while(RDBBlock < 16 && !foundRDB)
             {
-                if (imagePlugin.GetSectors() <= RDBBlock)
+                if(imagePlugin.GetSectors() <= RDBBlock)
                     return false;
 
                 byte[] tmpSector = imagePlugin.ReadSector(RDBBlock);
@@ -907,18 +907,18 @@ namespace DiscImageChef.PartPlugins
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", RDBBlock, magic);
 
-                if (magic == RigidDiskBlockMagic)
+                if(magic == RigidDiskBlockMagic)
                 {
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Found RDB magic at block {0}", RDBBlock);
-                    
+
                     foundRDB = true;
                     break;
                 }
-                    
+
                 RDBBlock++;
             }
 
-            if (!foundRDB)
+            if(!foundRDB)
                 return false;
 
             byte[] sector;
@@ -1061,14 +1061,14 @@ namespace DiscImageChef.PartPlugins
             // Reading BadBlock list
             List<BadBlockList> BadBlockChain = new List<BadBlockList>();
             nextBlock = RDB.badblock_ptr;
-            while (nextBlock != 0xFFFFFFFF)
+            while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
                 UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-                if (magic != BadBlockListMagic)
+                if(magic != BadBlockListMagic)
                     break;
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found BadBlock block");
@@ -1091,7 +1091,7 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.next_ptr = {0}", chainEntry.next_ptr);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.reserved = 0x{0:X8}", chainEntry.reserved);
 
-                for (ulong i = 0; i < entries; i++)
+                for(ulong i = 0; i < entries; i++)
                 {
                     chainEntry.blockPairs[i].badBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
                     chainEntry.blockPairs[i].goodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
@@ -1107,14 +1107,14 @@ namespace DiscImageChef.PartPlugins
             // Reading BadBlock list
             List<PartitionEntry> PartitionEntries = new List<PartitionEntry>();
             nextBlock = RDB.partition_ptr;
-            while (nextBlock != 0xFFFFFFFF)
+            while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
                 UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-                if (magic != PartitionBlockMagic)
+                if(magic != PartitionBlockMagic)
                     break;
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found PartitionEntry block");
@@ -1227,14 +1227,14 @@ namespace DiscImageChef.PartPlugins
             List<FileSystemHeader> FSHDEntries = new List<FileSystemHeader>();
             List<LoadSegment> SegmentEntries = new List<LoadSegment>();
             nextBlock = RDB.fsheader_ptr;
-            while (nextBlock != 0xFFFFFFFF)
+            while(nextBlock != 0xFFFFFFFF)
             {
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
                 UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-                if (magic != FilesystemHeaderMagic)
+                if(magic != FilesystemHeaderMagic)
                     break;
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found FileSystemHeader block");
@@ -1290,14 +1290,14 @@ namespace DiscImageChef.PartPlugins
                 bool thereAreLoadSegments = false;
                 Checksums.SHA1Context sha1Ctx = new Checksums.SHA1Context();
                 sha1Ctx.Init();
-                while (nextBlock != 0xFFFFFFFF)
+                while(nextBlock != 0xFFFFFFFF)
                 {
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block", nextBlock);
 
                     sector = imagePlugin.ReadSector(nextBlock);
                     UInt32 magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
-                    if (magicSeg != LoadSegMagic)
+                    if(magicSeg != LoadSegMagic)
                         break;
 
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
@@ -1323,7 +1323,7 @@ namespace DiscImageChef.PartPlugins
 
                     sha1Ctx.Update(loadSeg.loadData);
                 }
-                if (thereAreLoadSegments)
+                if(thereAreLoadSegments)
                 {
                     string loadSegSHA1 = sha1Ctx.End();
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "LoadSegment data SHA1: {0}", loadSegSHA1);
@@ -1334,7 +1334,7 @@ namespace DiscImageChef.PartPlugins
             }
 
             ulong sequence = 0;
-            foreach (PartitionEntry RDBEntry in PartitionEntries)
+            foreach(PartitionEntry RDBEntry in PartitionEntries)
             {
                 CommonTypes.Partition entry = new CommonTypes.Partition();
 
@@ -1356,7 +1356,7 @@ namespace DiscImageChef.PartPlugins
 
         static string AmigaDOSTypeToDescriptionString(UInt32 AmigaDOSType)
         {
-            switch (AmigaDOSType)
+            switch(AmigaDOSType)
             {
 
                 case TypeIDOFS:
@@ -1443,35 +1443,35 @@ namespace DiscImageChef.PartPlugins
 
                 default:
                     {
-                        if ((AmigaDOSType & TypeIDOFS) == TypeIDOFS)
+                        if((AmigaDOSType & TypeIDOFS) == TypeIDOFS)
                             return String.Format("Unknown Amiga DOS filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDAMIXSysV) == TypeIDAMIXSysV)
+                        if((AmigaDOSType & TypeIDAMIXSysV) == TypeIDAMIXSysV)
                             return String.Format("Unknown Amiga UNIX filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & 0x50465300) == 0x50465300 ||
+                        if((AmigaDOSType & 0x50465300) == 0x50465300 ||
                            (AmigaDOSType & 0x41465300) == 0x41465300)
                             return String.Format("Unknown ProfessionalFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDSFS) == TypeIDSFS)
+                        if((AmigaDOSType & TypeIDSFS) == TypeIDSFS)
                             return String.Format("Unknown SmartFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
-                        
-                        if ((AmigaDOSType & TypeIDmuOFS) == TypeIDmuOFS)
+
+                        if((AmigaDOSType & TypeIDmuOFS) == TypeIDmuOFS)
                             return String.Format("Unknown Amiga DOS multi-user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDOldBSDUnused) == TypeIDOldBSDUnused)
+                        if((AmigaDOSType & TypeIDOldBSDUnused) == TypeIDOldBSDUnused)
                             return String.Format("Unknown BSD filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDNetBSDRootUnused) == TypeIDNetBSDRootUnused)
+                        if((AmigaDOSType & TypeIDNetBSDRootUnused) == TypeIDNetBSDRootUnused)
                             return String.Format("Unknown NetBSD root filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDNetBSDUserUnused) == TypeIDNetBSDUserUnused)
+                        if((AmigaDOSType & TypeIDNetBSDUserUnused) == TypeIDNetBSDUserUnused)
                             return String.Format("Unknown NetBSD user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        if ((AmigaDOSType & TypeIDNetBSDSwap) == TypeIDNetBSDSwap)
+                        if((AmigaDOSType & TypeIDNetBSDSwap) == TypeIDNetBSDSwap)
                             return String.Format("Unknown NetBSD swap filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
-                        
-                        if ((AmigaDOSType & TypeIDLinux) == TypeIDLinux ||
+
+                        if((AmigaDOSType & TypeIDLinux) == TypeIDLinux ||
                            (AmigaDOSType & TypeIDLinuxSwap) == TypeIDLinuxSwap)
                             return String.Format("Unknown Linux filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 

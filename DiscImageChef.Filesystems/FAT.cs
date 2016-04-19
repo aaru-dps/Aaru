@@ -57,7 +57,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
@@ -75,17 +75,17 @@ namespace DiscImageChef.Plugins
             media_descriptor = bpb_sector[0x015]; // Media Descriptor if present is in 0x15
             Array.Copy(bpb_sector, 0x52, fat32_signature, 0, 8); // FAT32 signature, if present, is in 0x52
             bps = BitConverter.ToUInt16(bpb_sector, 0x00B); // Bytes per sector
-            if (bps == 0)
+            if(bps == 0)
                 bps = 0x200;
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
-            if (rsectors == 0)
+            if(rsectors == 0)
                 rsectors = 1;
-            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+            if(imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
-			else
-                bpb_found=false;
+            else
+                bpb_found = false;
 
-            if (bpb_found)
+            if(bpb_found)
             {
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0); // Easier to manage
 
@@ -95,19 +95,19 @@ namespace DiscImageChef.Plugins
                 DicConsole.DebugWriteLine("FAT plugin", "bps = {0}", bps);
                 DicConsole.DebugWriteLine("FAT plugin", "first_fat_entry = 0x{0:X8}", first_fat_entry);
 
-                if (fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
-				return false;
+                if(fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
+                    return false;
 
                 // Let's start the fun
-                if (Encoding.ASCII.GetString(fat32_signature) == "FAT32   ")
+                if(Encoding.ASCII.GetString(fat32_signature) == "FAT32   ")
                     return true; // Seems easy, check reading
-			
-                if ((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
+
+                if((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
                 {
-                    if ((first_fat_entry & 0xFF) == media_descriptor)
+                    if((first_fat_entry & 0xFF) == media_descriptor)
                         return true; // It MUST be FAT16, or... maybe not :S
                 }
-                else if ((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
+                else if((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
                 {
                     //if((first_fat_entry & 0xFF) == media_descriptor) // Pre DOS<4 does not implement this, TOS does and is !=
                     return true; // It MUST be FAT12, or... maybe not :S
@@ -120,20 +120,20 @@ namespace DiscImageChef.Plugins
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0);
                 byte fat_id = fat_sector[0];
 
-                if ((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
+                if((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
                 {
-                    if (fat_id == 0xFF)
+                    if(fat_id == 0xFF)
                     {
-                        if (imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 640)
+                        if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 640)
                             return true;
-                        if (imagePlugin.GetSectorSize() == 128)
+                        if(imagePlugin.GetSectorSize() == 128)
                         {
                             if(imagePlugin.GetSectors() == 2002)
                                 return true;
                             if(imagePlugin.GetSectors() == 4004)
                                 return true;
                         }
-                        if (imagePlugin.GetSectorSize() == 1024)
+                        if(imagePlugin.GetSectorSize() == 1024)
                         {
                             if(imagePlugin.GetSectors() == 616)
                                 return true;
@@ -143,18 +143,18 @@ namespace DiscImageChef.Plugins
 
                         return false;
                     }
-                    if (fat_id == 0xFE)
+                    if(fat_id == 0xFE)
                     {
-                        if (imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 320)
+                        if(imagePlugin.GetSectorSize() == 512 && imagePlugin.GetSectors() == 320)
                             return true;
-                        if (imagePlugin.GetSectorSize() == 128)
+                        if(imagePlugin.GetSectorSize() == 128)
                         {
                             if(imagePlugin.GetSectors() == 2002)
                                 return true;
                             if(imagePlugin.GetSectors() == 4004)
                                 return true;
                         }
-                        if (imagePlugin.GetSectorSize() == 1024)
+                        if(imagePlugin.GetSectorSize() == 1024)
                         {
                             if(imagePlugin.GetSectors() == 616)
                                 return true;
@@ -164,7 +164,7 @@ namespace DiscImageChef.Plugins
 
                         return false;
                     }
-                    if (fat_id == 0xFD && imagePlugin.GetSectors() == 2002)
+                    if(fat_id == 0xFD && imagePlugin.GetSectors() == 2002)
                         return true;
                 }
             }
@@ -175,7 +175,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
 
@@ -197,39 +197,39 @@ namespace DiscImageChef.Plugins
             Array.Copy(bpb_sector, 0x52, dosString, 0, 8); // FAT32 signature, if present, is in 0x52
             fat32_signature = Encoding.ASCII.GetString(dosString);
             bps = BitConverter.ToUInt16(bpb_sector, 0x00B); // Bytes per sector
-            if (bps == 0)
+            if(bps == 0)
                 bps = 0x200;
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
-            if (rsectors == 0)
+            if(rsectors == 0)
                 rsectors = 1;
-            if (imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+            if(imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
-                bpb_found=false;
+                bpb_found = false;
 
-            if (bpb_found)
+            if(bpb_found)
             {
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0); // Easier to manage
 
-                if (fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
-				return;
+                if(fats_no > 2) // Must be 1 or 2, but as TOS makes strange things and I have not checked if it puts this to 0, ignore if 0. MUST NOT BE BIGGER THAN 2!
+                    return;
 
                 // Let's start the fun
-                if (fat32_signature == "FAT32   ")
+                if(fat32_signature == "FAT32   ")
                 {
                     sb.AppendLine("Microsoft FAT32"); // Seems easy, check reading
                     xmlFSType.Type = "FAT32";
                     isFAT32 = true;
                 }
-                else if ((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
+                else if((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
                 {
-                    if ((first_fat_entry & 0xFF) == media_descriptor)
+                    if((first_fat_entry & 0xFF) == media_descriptor)
                     {
                         sb.AppendLine("Microsoft FAT16"); // It MUST be FAT16, or... maybe not :S
                         xmlFSType.Type = "FAT16";
                     }
                 }
-                else if ((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
+                else if((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)
                 {
                     //if((first_fat_entry & 0xFF) == media_descriptor) // Pre DOS<4 does not implement this, TOS does and is !=
                     sb.AppendLine("Microsoft FAT12"); // It MUST be FAT12, or... maybe not :S
@@ -237,11 +237,11 @@ namespace DiscImageChef.Plugins
                 }
                 else
                     return;
-			
+
                 BIOSParameterBlock BPB = new BIOSParameterBlock();
                 ExtendedParameterBlock EPB = new ExtendedParameterBlock();
                 FAT32ParameterBlock FAT32PB = new FAT32ParameterBlock();
-			
+
                 dosString = new byte[8];
                 Array.Copy(bpb_sector, 0x03, dosString, 0, 8);
                 BPB.OEMName = StringHandlers.CToString(dosString);
@@ -257,8 +257,8 @@ namespace DiscImageChef.Plugins
                 BPB.heads = BitConverter.ToUInt16(bpb_sector, 0x1A);
                 BPB.hsectors = BitConverter.ToUInt32(bpb_sector, 0x1C);
                 BPB.big_sectors = BitConverter.ToUInt32(bpb_sector, 0x20);
-			
-                if (isFAT32)
+
+                if(isFAT32)
                 {
                     FAT32PB.spfat = BitConverter.ToUInt32(bpb_sector, 0x24);
                     FAT32PB.fat_flags = BitConverter.ToUInt16(bpb_sector, 0x28);
@@ -290,7 +290,7 @@ namespace DiscImageChef.Plugins
                     Array.Copy(bpb_sector, 0x36, dosString, 0, 8);
                     EPB.fs_type = StringHandlers.CToString(dosString);
                 }
-			
+
                 sb.AppendFormat("OEM Name: {0}", BPB.OEMName).AppendLine();
                 sb.AppendFormat("{0} bytes per sector.", BPB.bps).AppendLine();
                 sb.AppendFormat("{0} sectors per cluster.", BPB.spc).AppendLine();
@@ -298,7 +298,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("{0} sectors reserved between BPB and FAT.", BPB.rsectors).AppendLine();
                 sb.AppendFormat("{0} FATs.", BPB.fats_no).AppendLine();
                 sb.AppendFormat("{0} entries on root directory.", BPB.root_ent).AppendLine();
-                if (BPB.sectors == 0)
+                if(BPB.sectors == 0)
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.big_sectors, BPB.big_sectors * BPB.bps).AppendLine();
                     xmlFSType.Clusters = BPB.big_sectors / BPB.spc;
@@ -308,17 +308,17 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", BPB.sectors, BPB.sectors * BPB.bps).AppendLine();
                     xmlFSType.Clusters = BPB.sectors / BPB.spc;
                 }
-                if ((BPB.media & 0xF0) == 0xF0)
+                if((BPB.media & 0xF0) == 0xF0)
                     sb.AppendFormat("Media format: 0x{0:X2}", BPB.media).AppendLine();
-                if (fat32_signature == "FAT32   ")
+                if(fat32_signature == "FAT32   ")
                     sb.AppendFormat("{0} sectors per FAT.", FAT32PB.spfat).AppendLine();
                 else
                     sb.AppendFormat("{0} sectors per FAT.", BPB.spfat).AppendLine();
                 sb.AppendFormat("{0} sectors per track.", BPB.sptrk).AppendLine();
                 sb.AppendFormat("{0} heads.", BPB.heads).AppendLine();
                 sb.AppendFormat("{0} hidden sectors before BPB.", BPB.hsectors).AppendLine();
-			
-                if (isFAT32)
+
+                if(isFAT32)
                 {
                     sb.AppendFormat("Cluster of root directory: {0}", FAT32PB.root_cluster).AppendLine();
                     sb.AppendFormat("Sector of FSINFO structure: {0}", FAT32PB.fsinfo_sector).AppendLine();
@@ -326,34 +326,34 @@ namespace DiscImageChef.Plugins
                     sb.AppendFormat("Drive number: 0x{0:X2}", FAT32PB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", FAT32PB.serial_no).AppendLine();
                     xmlFSType.VolumeSerial = String.Format("{0:X8}", FAT32PB.serial_no);
-                    if ((FAT32PB.nt_flags & 0x01) == 0x01)
+                    if((FAT32PB.nt_flags & 0x01) == 0x01)
                     {
-                        sb.AppendLine("Volume should be checked on next mount.");	
-                        if ((EPB.nt_flags & 0x02) == 0x02)
-                            sb.AppendLine("Disk surface should be checked also.");	
+                        sb.AppendLine("Volume should be checked on next mount.");
+                        if((EPB.nt_flags & 0x02) == 0x02)
+                            sb.AppendLine("Disk surface should be checked also.");
                         xmlFSType.Dirty = true;
                     }
-					
+
                     sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
                     if(!string.IsNullOrEmpty(EPB.volume_label))
                         xmlFSType.VolumeName = EPB.volume_label;
                     sb.AppendFormat("Filesystem type: {0}", EPB.fs_type).AppendLine();
                 }
-                else if (EPB.signature == 0x28 || EPB.signature == 0x29)
+                else if(EPB.signature == 0x28 || EPB.signature == 0x29)
                 {
                     sb.AppendFormat("Drive number: 0x{0:X2}", EPB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", EPB.serial_no).AppendLine();
                     xmlFSType.VolumeSerial = String.Format("{0:X8}", EPB.serial_no);
-                    if (EPB.signature == 0x29)
+                    if(EPB.signature == 0x29)
                     {
-                        if ((EPB.nt_flags & 0x01) == 0x01)
+                        if((EPB.nt_flags & 0x01) == 0x01)
                         {
-                            sb.AppendLine("Volume should be checked on next mount.");	
-                            if ((EPB.nt_flags & 0x02) == 0x02)
-                                sb.AppendLine("Disk surface should be checked also.");	
+                            sb.AppendLine("Volume should be checked on next mount.");
+                            if((EPB.nt_flags & 0x02) == 0x02)
+                                sb.AppendLine("Disk surface should be checked also.");
                             xmlFSType.Dirty = true;
                         }
-					
+
                         sb.AppendFormat("Volume label: {0}", EPB.volume_label).AppendLine();
                         if(!string.IsNullOrEmpty(EPB.volume_label))
                             xmlFSType.VolumeName = EPB.volume_label;
@@ -368,10 +368,10 @@ namespace DiscImageChef.Plugins
                 sb.AppendLine("This may be a false positive.");
                 sb.AppendFormat("Disk image identifies disk type as {0}.", imagePlugin.GetMediaType()).AppendLine();
             }
-			
+
             information = sb.ToString();
         }
-            
+
         /// <summary>FAT's BIOS Parameter Block.</summary>
         public struct BIOSParameterBlock
         {

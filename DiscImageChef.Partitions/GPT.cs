@@ -41,7 +41,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
-{   
+{
     class GuidPartitionTable : PartPlugin
     {
         const ulong GptMagic = 0x5452415020494645;
@@ -65,7 +65,7 @@ namespace DiscImageChef.PartPlugins
                 GCHandle handle = GCHandle.Alloc(hdrBytes, GCHandleType.Pinned);
                 hdr = (GptHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(GptHeader));
                 handle.Free();
-            }   
+            }
             catch
             {
                 return false;
@@ -86,10 +86,10 @@ namespace DiscImageChef.PartPlugins
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}", hdr.entriesSize);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
-            if (hdr.signature != GptMagic)
+            if(hdr.signature != GptMagic)
                 return false;
 
-            if (hdr.myLBA != 1)
+            if(hdr.myLBA != 1)
                 return false;
 
             uint totalEntriesSectors = (hdr.entries * hdr.entriesSize) / imagePlugin.GetSectorSize();
@@ -97,7 +97,7 @@ namespace DiscImageChef.PartPlugins
             byte[] entriesBytes = imagePlugin.ReadSectors(hdr.entryLBA, totalEntriesSectors);
             List<GptEntry> entries = new List<GptEntry>();
 
-            for (int i = 0; i < hdr.entries; i++)
+            for(int i = 0; i < hdr.entries; i++)
             {
                 try
                 {
@@ -113,14 +113,14 @@ namespace DiscImageChef.PartPlugins
                 }
             }
 
-            if (entries.Count == 0)
+            if(entries.Count == 0)
                 return false;
 
             ulong pseq = 0;
 
-            foreach (GptEntry entry in entries)
+            foreach(GptEntry entry in entries)
             {
-                if (entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)
+                if(entry.partitionType != Guid.Empty && entry.partitionId != Guid.Empty)
                 {
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
@@ -129,7 +129,7 @@ namespace DiscImageChef.PartPlugins
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
 
-                    if (entry.startLBA > imagePlugin.GetSectors() || entry.endLBA > imagePlugin.GetSectors())
+                    if(entry.startLBA > imagePlugin.GetSectors() || entry.endLBA > imagePlugin.GetSectors())
                         return false;
 
                     CommonTypes.Partition part = new CommonTypes.Partition();
@@ -152,7 +152,7 @@ namespace DiscImageChef.PartPlugins
         public string GetGuidTypeName(Guid type)
         {
             string strType = type.ToString().ToUpperInvariant();
-            switch (strType)
+            switch(strType)
             {
                 case "024DEE41-33E7-11D3-9D69-0008C781F39F":
                     return "MBR scheme";

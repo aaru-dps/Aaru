@@ -111,7 +111,7 @@ namespace DiscImageChef.Devices
 
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];
@@ -139,7 +139,7 @@ namespace DiscImageChef.Devices
 
         public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];
@@ -170,7 +170,7 @@ namespace DiscImageChef.Devices
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersCHS statusRegisters, bool retry, ushort cylinder, byte head, byte sector, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];

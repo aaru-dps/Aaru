@@ -67,50 +67,50 @@ namespace DiscImageChef.PartPlugins
             byte[] cString;
             bool magic_found;
             byte[] entry_sector;
-			
+
             UInt32 magic;
             UInt32 sector_size;
             UInt16 front_porch;
 
-            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 sector_size = 2048;
             else
                 sector_size = imagePlugin.GetSectorSize();
-			
+
             partitions = new List<CommonTypes.Partition>();
 
             entry_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
             magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
 
-            if (magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
+            if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
                 magic_found = true;
             else
             {
                 entry_sector = imagePlugin.ReadSector(15); // Starts on sector 15 on MBR machines
                 magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
 
-                if (magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
+                if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
                     magic_found = true;
                 else
                 {
-                    if (sector_size == 2048)
+                    if(sector_size == 2048)
                         entry_sector = imagePlugin.ReadSector(4); // Starts on sector 4 on RISC CDs
                     else
                         entry_sector = imagePlugin.ReadSector(16); // Starts on sector 16 on RISC disks
                     magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
-					
-                    if (magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
+
+                    if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
                         magic_found = true;
                     else
                         return false;
                 }
             }
-			
+
             front_porch = BigEndianBitConverter.ToUInt16(entry_sector, 0x6A);
 
-            if (magic_found)
+            if(magic_found)
             {
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     NeXTEntry entry = new NeXTEntry();
 
@@ -131,11 +131,11 @@ namespace DiscImageChef.PartPlugins
                     Array.Copy(entry_sector, disktabStart + disktabEntrySize * i + 0x24, cString, 0, 8);
                     entry.type = StringHandlers.CToString(cString);
 
-                    if (entry.sectors > 0 && entry.sectors < 0xFFFFFFFF && entry.start < 0xFFFFFFFF)
+                    if(entry.sectors > 0 && entry.sectors < 0xFFFFFFFF && entry.start < 0xFFFFFFFF)
                     {
                         CommonTypes.Partition part = new CommonTypes.Partition();
                         StringBuilder sb = new StringBuilder();
-						
+
                         part.PartitionLength = (ulong)entry.sectors * sector_size;
                         part.PartitionStart = ((ulong)entry.start + front_porch) * sector_size;
                         part.PartitionType = entry.type;
@@ -143,29 +143,29 @@ namespace DiscImageChef.PartPlugins
                         part.PartitionName = entry.mount_point;
                         part.PartitionSectors = (ulong)entry.sectors;
                         part.PartitionStartSector = ((ulong)entry.start + front_porch);
-						
+
                         sb.AppendFormat("{0} bytes per block", entry.block_size).AppendLine();
                         sb.AppendFormat("{0} bytes per fragment", entry.frag_size).AppendLine();
-                        if (entry.optimization == 's')
+                        if(entry.optimization == 's')
                             sb.AppendLine("Space optimized");
-                        else if (entry.optimization == 't')
+                        else if(entry.optimization == 't')
                             sb.AppendLine("Time optimized");
                         else
                             sb.AppendFormat("Unknown optimization {0:X2}", entry.optimization).AppendLine();
                         sb.AppendFormat("{0} cylinders per group", entry.cpg).AppendLine();
                         sb.AppendFormat("{0} bytes per inode", entry.bpi).AppendLine();
                         sb.AppendFormat("{0}% of space must be free at minimum", entry.freemin).AppendLine();
-                        if (entry.newfs != 1) // Seems to indicate newfs has been already run
-							sb.AppendLine("Filesystem should be formatted at start");
-                        if (entry.automount == 1)
+                        if(entry.newfs != 1) // Seems to indicate newfs has been already run
+                            sb.AppendLine("Filesystem should be formatted at start");
+                        if(entry.automount == 1)
                             sb.AppendLine("Filesystem should be automatically mounted");
-						
+
                         part.PartitionDescription = sb.ToString();
-						
+
                         partitions.Add(part);
                     }
                 }
-				
+
                 return true;
             }
             return false;

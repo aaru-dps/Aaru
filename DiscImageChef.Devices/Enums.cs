@@ -921,7 +921,7 @@ namespace DiscImageChef.Devices
     /// Commands 0xA0 to 0xBF are 12-byte
     /// </summary>
     #region SASI Commands
-        public enum SasiCommands : byte
+    public enum SasiCommands : byte
     {
         #region SASI Class 0 commands
 
@@ -2941,7 +2941,7 @@ namespace DiscImageChef.Devices
         /// READ/SEND DISC STRUCTURE capability list
         /// </summary>
         CapabilityList = 0xFF,
-            
+
         // DVD Disc Structures
         /// <summary>
         /// DVD Lead-in Physical Information

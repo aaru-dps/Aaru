@@ -98,7 +98,7 @@ namespace DiscImageChef.Devices
             cdb[3] = (byte)((address & 0xFF0000) >> 16);
             cdb[4] = (byte)((address & 0xFF00) >> 8);
             cdb[5] = (byte)(address & 0xFF);
-            if (pba)
+            if(pba)
                 cdb[9] += 0x80;
 
             buffer = new byte[8];

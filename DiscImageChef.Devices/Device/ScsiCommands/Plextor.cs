@@ -227,7 +227,7 @@ namespace DiscImageChef.Devices
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if (!sense && !error)
+            if(!sense && !error)
             {
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
                 selected = BigEndianBitConverter.ToUInt16(buf, 4);
@@ -266,7 +266,7 @@ namespace DiscImageChef.Devices
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if (!sense && !error)
+            if(!sense && !error)
             {
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
                 enabled = buf[2] != 0;

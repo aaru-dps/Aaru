@@ -54,7 +54,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Supported disc image formats:");
             if(FormatsOptions.Verbose)
                 DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-            foreach (KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
+            foreach(KeyValuePair<string, ImagePlugin> kvp in plugins.ImagePluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
@@ -65,7 +65,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Supported filesystems:");
             if(FormatsOptions.Verbose)
                 DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-            foreach (KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
+            foreach(KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);
@@ -76,7 +76,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Supported partitioning schemes:");
             if(FormatsOptions.Verbose)
                 DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-            foreach (KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
+            foreach(KeyValuePair<string, PartPlugin> kvp in plugins.PartPluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);

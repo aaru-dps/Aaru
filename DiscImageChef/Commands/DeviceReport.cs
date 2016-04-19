@@ -52,13 +52,13 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
-            if (!System.IO.File.Exists(options.DevicePath))
+            if(!System.IO.File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
-            if (options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
+            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
             {
                 options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
@@ -66,7 +66,7 @@ namespace DiscImageChef.Commands
 
             Device dev = new Device(options.DevicePath);
 
-            if (dev.Error)
+            if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
                 return;
@@ -74,7 +74,7 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            switch (dev.Type)
+            switch(dev.Type)
             {
                 case DeviceType.ATA:
                     doATADeviceReport(options, dev);
@@ -105,29 +105,29 @@ namespace DiscImageChef.Commands
             uint timeout = 5;
             Metadata.DeviceReport report = new Metadata.DeviceReport();
             string xmlFile;
-            if (!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
+            if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
-            else if (!string.IsNullOrWhiteSpace(dev.Manufacturer))
+            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
                 xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
-            else if (!string.IsNullOrWhiteSpace(dev.Revision))
+            else if(!string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile = dev.Model + "_" + dev.Revision + ".xml";
             else
                 xmlFile = dev.Model + ".xml";
-            
+
             ConsoleKeyInfo pressedKey;
             bool removable = false;
 
-            if (dev.IsUSB)
+            if(dev.IsUSB)
             {
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
 
-                if (pressedKey.Key == ConsoleKey.Y)
+                if(pressedKey.Key == ConsoleKey.Y)
                 {
                     report.USB = new usbType();
                     report.USB.Manufacturer = dev.USBManufacturerString;
@@ -136,7 +136,7 @@ namespace DiscImageChef.Commands
                     report.USB.VendorID = dev.USBVendorID;
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
@@ -148,17 +148,17 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if (dev.IsFireWire)
+            if(dev.IsFireWire)
             {
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
 
-                if (pressedKey.Key == ConsoleKey.Y)
+                if(pressedKey.Key == ConsoleKey.Y)
                 {
                     report.FireWire = new firewireType();
                     report.FireWire.Manufacturer = dev.FireWireVendorName;
@@ -167,7 +167,7 @@ namespace DiscImageChef.Commands
                     report.FireWire.VendorID = dev.FireWireVendor;
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
@@ -183,20 +183,20 @@ namespace DiscImageChef.Commands
 
             dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
 
-            if (Decoders.ATA.Identify.Decode(buffer).HasValue)
+            if(Decoders.ATA.Identify.Decode(buffer).HasValue)
             {
                 Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(buffer).Value;
 
-                if ((ushort)ataId.GeneralConfiguration == 0x848A)
+                if((ushort)ataId.GeneralConfiguration == 0x848A)
                 {
                     report.CompactFlash = true;
                     report.CompactFlashSpecified = true;
                     removable = false;
                 }
-                else if (!removable && ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable))
+                else if(!removable && ataId.GeneralConfiguration.HasFlag(Decoders.ATA.Identify.GeneralConfigurationBit.Removable))
                 {
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
@@ -207,7 +207,7 @@ namespace DiscImageChef.Commands
                 }
 
                 if(removable)
-                {            
+                {
                     DicConsole.WriteLine("Please remove any media from the device and press any key when it is out.");
                     System.Console.ReadKey(true);
                     DicConsole.WriteLine("Querying ATA IDENTIFY...");
@@ -217,413 +217,413 @@ namespace DiscImageChef.Commands
 
                 report.ATA = new ataType();
 
-                if (!string.IsNullOrWhiteSpace(ataId.AdditionalPID))
+                if(!string.IsNullOrWhiteSpace(ataId.AdditionalPID))
                 {
                     report.ATA.AdditionalPID = ataId.AdditionalPID;
                     report.ATA.AdditionalPIDSpecified = true;
                 }
-                if (ataId.APIOSupported != 0)
+                if(ataId.APIOSupported != 0)
                 {
                     report.ATA.APIOSupported = ataId.APIOSupported;
                     report.ATA.APIOSupportedSpecified = true;
                 }
-                if (ataId.BufferType != 0)
+                if(ataId.BufferType != 0)
                 {
                     report.ATA.BufferType = ataId.BufferType;
                     report.ATA.BufferTypeSpecified = true;
                 }
-                if (ataId.BufferSize != 0)
+                if(ataId.BufferSize != 0)
                 {
                     report.ATA.BufferSize = ataId.BufferSize;
                     report.ATA.BufferSizeSpecified = true;
                 }
-                if (ataId.Capabilities != 0)
+                if(ataId.Capabilities != 0)
                 {
                     report.ATA.Capabilities = ataId.Capabilities;
                     report.ATA.CapabilitiesSpecified = true;
                 }
-                if (ataId.Capabilities2 != 0)
+                if(ataId.Capabilities2 != 0)
                 {
                     report.ATA.Capabilities2 = ataId.Capabilities2;
                     report.ATA.Capabilities2Specified = true;
                 }
-                if (ataId.Capabilities3 != 0)
+                if(ataId.Capabilities3 != 0)
                 {
                     report.ATA.Capabilities3 = ataId.Capabilities3;
                     report.ATA.Capabilities3Specified = true;
                 }
-                if (ataId.CFAPowerMode != 0)
+                if(ataId.CFAPowerMode != 0)
                 {
                     report.ATA.CFAPowerMode = ataId.CFAPowerMode;
                     report.ATA.CFAPowerModeSpecified = true;
                 }
-                if (ataId.CommandSet != 0)
+                if(ataId.CommandSet != 0)
                 {
                     report.ATA.CommandSet = ataId.CommandSet;
                     report.ATA.CommandSetSpecified = true;
                 }
-                if (ataId.CommandSet2 != 0)
+                if(ataId.CommandSet2 != 0)
                 {
                     report.ATA.CommandSet2 = ataId.CommandSet2;
                     report.ATA.CommandSet2Specified = true;
                 }
-                if (ataId.CommandSet3 != 0)
+                if(ataId.CommandSet3 != 0)
                 {
                     report.ATA.CommandSet3 = ataId.CommandSet3;
                     report.ATA.CommandSet3Specified = true;
                 }
-                if (ataId.CommandSet4 != 0)
+                if(ataId.CommandSet4 != 0)
                 {
                     report.ATA.CommandSet4 = ataId.CommandSet4;
                     report.ATA.CommandSet4Specified = true;
                 }
-                if (ataId.CommandSet5 != 0)
+                if(ataId.CommandSet5 != 0)
                 {
                     report.ATA.CommandSet5 = ataId.CommandSet5;
                     report.ATA.CommandSet5Specified = true;
                 }
-                if (ataId.CurrentAAM != 0)
+                if(ataId.CurrentAAM != 0)
                 {
                     report.ATA.CurrentAAM = ataId.CurrentAAM;
                     report.ATA.CurrentAAMSpecified = true;
                 }
-                if (ataId.CurrentAPM != 0)
+                if(ataId.CurrentAPM != 0)
                 {
                     report.ATA.CurrentAPM = ataId.CurrentAPM;
                     report.ATA.CurrentAPMSpecified = true;
                 }
-                if (ataId.DataSetMgmt != 0)
+                if(ataId.DataSetMgmt != 0)
                 {
                     report.ATA.DataSetMgmt = ataId.DataSetMgmt;
                     report.ATA.DataSetMgmtSpecified = true;
                 }
-                if (ataId.DataSetMgmtSize != 0)
+                if(ataId.DataSetMgmtSize != 0)
                 {
                     report.ATA.DataSetMgmtSize = ataId.DataSetMgmtSize;
                     report.ATA.DataSetMgmtSizeSpecified = true;
                 }
-                if (ataId.DeviceFormFactor != 0)
+                if(ataId.DeviceFormFactor != 0)
                 {
                     report.ATA.DeviceFormFactor = ataId.DeviceFormFactor;
                     report.ATA.DeviceFormFactorSpecified = true;
                 }
-                if (ataId.DMAActive != 0)
+                if(ataId.DMAActive != 0)
                 {
                     report.ATA.DMAActive = ataId.DMAActive;
                     report.ATA.DMAActiveSpecified = true;
                 }
-                if (ataId.DMASupported != 0)
+                if(ataId.DMASupported != 0)
                 {
                     report.ATA.DMASupported = ataId.DMASupported;
                     report.ATA.DMASupportedSpecified = true;
                 }
-                if (ataId.DMATransferTimingMode != 0)
+                if(ataId.DMATransferTimingMode != 0)
                 {
                     report.ATA.DMATransferTimingMode = ataId.DMATransferTimingMode;
                     report.ATA.DMATransferTimingModeSpecified = true;
                 }
-                if (ataId.EnhancedSecurityEraseTime != 0)
+                if(ataId.EnhancedSecurityEraseTime != 0)
                 {
                     report.ATA.EnhancedSecurityEraseTime = ataId.EnhancedSecurityEraseTime;
                     report.ATA.EnhancedSecurityEraseTimeSpecified = true;
                 }
-                if (ataId.EnabledCommandSet != 0)
+                if(ataId.EnabledCommandSet != 0)
                 {
                     report.ATA.EnabledCommandSet = ataId.EnabledCommandSet;
                     report.ATA.EnabledCommandSetSpecified = true;
                 }
-                if (ataId.EnabledCommandSet2 != 0)
+                if(ataId.EnabledCommandSet2 != 0)
                 {
                     report.ATA.EnabledCommandSet2 = ataId.EnabledCommandSet2;
                     report.ATA.EnabledCommandSet2Specified = true;
                 }
-                if (ataId.EnabledCommandSet3 != 0)
+                if(ataId.EnabledCommandSet3 != 0)
                 {
                     report.ATA.EnabledCommandSet3 = ataId.EnabledCommandSet3;
                     report.ATA.EnabledCommandSet3Specified = true;
                 }
-                if (ataId.EnabledCommandSet4 != 0)
+                if(ataId.EnabledCommandSet4 != 0)
                 {
                     report.ATA.EnabledCommandSet4 = ataId.EnabledCommandSet4;
                     report.ATA.EnabledCommandSet4Specified = true;
                 }
-                if (ataId.EnabledSATAFeatures != 0)
+                if(ataId.EnabledSATAFeatures != 0)
                 {
                     report.ATA.EnabledSATAFeatures = ataId.EnabledSATAFeatures;
                     report.ATA.EnabledSATAFeaturesSpecified = true;
                 }
-                if (ataId.ExtendedUserSectors != 0)
+                if(ataId.ExtendedUserSectors != 0)
                 {
                     report.ATA.ExtendedUserSectors = ataId.ExtendedUserSectors;
                     report.ATA.ExtendedUserSectorsSpecified = true;
                 }
-                if (ataId.FreeFallSensitivity != 0)
+                if(ataId.FreeFallSensitivity != 0)
                 {
                     report.ATA.FreeFallSensitivity = ataId.FreeFallSensitivity;
                     report.ATA.FreeFallSensitivitySpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(ataId.FirmwareRevision))
+                if(!string.IsNullOrWhiteSpace(ataId.FirmwareRevision))
                 {
                     report.ATA.FirmwareRevision = ataId.FirmwareRevision;
                     report.ATA.FirmwareRevisionSpecified = true;
                 }
-                if (ataId.GeneralConfiguration != 0)
+                if(ataId.GeneralConfiguration != 0)
                 {
                     report.ATA.GeneralConfiguration = ataId.GeneralConfiguration;
                     report.ATA.GeneralConfigurationSpecified = true;
                 }
-                if (ataId.HardwareResetResult != 0)
+                if(ataId.HardwareResetResult != 0)
                 {
                     report.ATA.HardwareResetResult = ataId.HardwareResetResult;
                     report.ATA.HardwareResetResultSpecified = true;
                 }
-                if (ataId.InterseekDelay != 0)
+                if(ataId.InterseekDelay != 0)
                 {
                     report.ATA.InterseekDelay = ataId.InterseekDelay;
                     report.ATA.InterseekDelaySpecified = true;
                 }
-                if (ataId.MajorVersion != 0)
+                if(ataId.MajorVersion != 0)
                 {
                     report.ATA.MajorVersion = ataId.MajorVersion;
                     report.ATA.MajorVersionSpecified = true;
                 }
-                if (ataId.MasterPasswordRevisionCode != 0)
+                if(ataId.MasterPasswordRevisionCode != 0)
                 {
                     report.ATA.MasterPasswordRevisionCode = ataId.MasterPasswordRevisionCode;
                     report.ATA.MasterPasswordRevisionCodeSpecified = true;
                 }
-                if (ataId.MaxDownloadMicroMode3 != 0)
+                if(ataId.MaxDownloadMicroMode3 != 0)
                 {
                     report.ATA.MaxDownloadMicroMode3 = ataId.MaxDownloadMicroMode3;
                     report.ATA.MaxDownloadMicroMode3Specified = true;
                 }
-                if (ataId.MaxQueueDepth != 0)
+                if(ataId.MaxQueueDepth != 0)
                 {
                     report.ATA.MaxQueueDepth = ataId.MaxQueueDepth;
                     report.ATA.MaxQueueDepthSpecified = true;
                 }
-                if (ataId.MDMAActive != 0)
+                if(ataId.MDMAActive != 0)
                 {
                     report.ATA.MDMAActive = ataId.MDMAActive;
                     report.ATA.MDMAActiveSpecified = true;
                 }
-                if (ataId.MDMASupported != 0)
+                if(ataId.MDMASupported != 0)
                 {
                     report.ATA.MDMASupported = ataId.MDMASupported;
                     report.ATA.MDMASupportedSpecified = true;
                 }
-                if (ataId.MinDownloadMicroMode3 != 0)
+                if(ataId.MinDownloadMicroMode3 != 0)
                 {
                     report.ATA.MinDownloadMicroMode3 = ataId.MinDownloadMicroMode3;
                     report.ATA.MinDownloadMicroMode3Specified = true;
                 }
-                if (ataId.MinMDMACycleTime != 0)
+                if(ataId.MinMDMACycleTime != 0)
                 {
                     report.ATA.MinMDMACycleTime = ataId.MinMDMACycleTime;
                     report.ATA.MinMDMACycleTimeSpecified = true;
                 }
-                if (ataId.MinorVersion != 0)
+                if(ataId.MinorVersion != 0)
                 {
                     report.ATA.MinorVersion = ataId.MinorVersion;
                     report.ATA.MinorVersionSpecified = true;
                 }
-                if (ataId.MinPIOCycleTimeNoFlow != 0)
+                if(ataId.MinPIOCycleTimeNoFlow != 0)
                 {
                     report.ATA.MinPIOCycleTimeNoFlow = ataId.MinPIOCycleTimeNoFlow;
                     report.ATA.MinPIOCycleTimeNoFlowSpecified = true;
                 }
-                if (ataId.MinPIOCycleTimeFlow != 0)
+                if(ataId.MinPIOCycleTimeFlow != 0)
                 {
                     report.ATA.MinPIOCycleTimeFlow = ataId.MinPIOCycleTimeFlow;
                     report.ATA.MinPIOCycleTimeFlowSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(ataId.Model))
+                if(!string.IsNullOrWhiteSpace(ataId.Model))
                 {
                     report.ATA.Model = ataId.Model;
                     report.ATA.ModelSpecified = true;
                 }
-                if (ataId.MultipleMaxSectors != 0)
+                if(ataId.MultipleMaxSectors != 0)
                 {
                     report.ATA.MultipleMaxSectors = ataId.MultipleMaxSectors;
                     report.ATA.MultipleMaxSectorsSpecified = true;
                 }
-                if (ataId.MultipleSectorNumber != 0)
+                if(ataId.MultipleSectorNumber != 0)
                 {
                     report.ATA.MultipleSectorNumber = ataId.MultipleSectorNumber;
                     report.ATA.MultipleSectorNumberSpecified = true;
                 }
-                if (ataId.NVCacheCaps != 0)
+                if(ataId.NVCacheCaps != 0)
                 {
                     report.ATA.NVCacheCaps = ataId.NVCacheCaps;
                     report.ATA.NVCacheCapsSpecified = true;
                 }
-                if (ataId.NVCacheSize != 0)
+                if(ataId.NVCacheSize != 0)
                 {
                     report.ATA.NVCacheSize = ataId.NVCacheSize;
                     report.ATA.NVCacheSizeSpecified = true;
                 }
-                if (ataId.NVCacheWriteSpeed != 0)
+                if(ataId.NVCacheWriteSpeed != 0)
                 {
                     report.ATA.NVCacheWriteSpeed = ataId.NVCacheWriteSpeed;
                     report.ATA.NVCacheWriteSpeedSpecified = true;
                 }
-                if (ataId.NVEstimatedSpinUp != 0)
+                if(ataId.NVEstimatedSpinUp != 0)
                 {
                     report.ATA.NVEstimatedSpinUp = ataId.NVEstimatedSpinUp;
                     report.ATA.NVEstimatedSpinUpSpecified = true;
                 }
-                if (ataId.PacketBusRelease != 0)
+                if(ataId.PacketBusRelease != 0)
                 {
                     report.ATA.PacketBusRelease = ataId.PacketBusRelease;
                     report.ATA.PacketBusReleaseSpecified = true;
                 }
-                if (ataId.PIOTransferTimingMode != 0)
+                if(ataId.PIOTransferTimingMode != 0)
                 {
                     report.ATA.PIOTransferTimingMode = ataId.PIOTransferTimingMode;
                     report.ATA.PIOTransferTimingModeSpecified = true;
                 }
-                if (ataId.RecommendedAAM != 0)
+                if(ataId.RecommendedAAM != 0)
                 {
                     report.ATA.RecommendedAAM = ataId.RecommendedAAM;
                     report.ATA.RecommendedAAMSpecified = true;
                 }
-                if (ataId.RecMDMACycleTime != 0)
+                if(ataId.RecMDMACycleTime != 0)
                 {
                     report.ATA.RecommendedMDMACycleTime = ataId.RecMDMACycleTime;
                     report.ATA.RecommendedMDMACycleTimeSpecified = true;
                 }
-                if (ataId.RemovableStatusSet != 0)
+                if(ataId.RemovableStatusSet != 0)
                 {
                     report.ATA.RemovableStatusSet = ataId.RemovableStatusSet;
                     report.ATA.RemovableStatusSetSpecified = true;
                 }
-                if (ataId.SATACapabilities != 0)
+                if(ataId.SATACapabilities != 0)
                 {
                     report.ATA.SATACapabilities = ataId.SATACapabilities;
                     report.ATA.SATACapabilitiesSpecified = true;
                 }
-                if (ataId.SATACapabilities2 != 0)
+                if(ataId.SATACapabilities2 != 0)
                 {
                     report.ATA.SATACapabilities2 = ataId.SATACapabilities2;
                     report.ATA.SATACapabilities2Specified = true;
                 }
-                if (ataId.SATAFeatures != 0)
+                if(ataId.SATAFeatures != 0)
                 {
                     report.ATA.SATAFeatures = ataId.SATAFeatures;
                     report.ATA.SATAFeaturesSpecified = true;
                 }
-                if (ataId.SCTCommandTransport != 0)
+                if(ataId.SCTCommandTransport != 0)
                 {
                     report.ATA.SCTCommandTransport = ataId.SCTCommandTransport;
                     report.ATA.SCTCommandTransportSpecified = true;
                 }
-                if (ataId.SectorsPerCard != 0)
+                if(ataId.SectorsPerCard != 0)
                 {
                     report.ATA.SectorsPerCard = ataId.SectorsPerCard;
                     report.ATA.SectorsPerCardSpecified = true;
                 }
-                if (ataId.SecurityEraseTime != 0)
+                if(ataId.SecurityEraseTime != 0)
                 {
                     report.ATA.SecurityEraseTime = ataId.SecurityEraseTime;
                     report.ATA.SecurityEraseTimeSpecified = true;
                 }
-                if (ataId.SecurityStatus != 0)
+                if(ataId.SecurityStatus != 0)
                 {
                     report.ATA.SecurityStatus = ataId.SecurityStatus;
                     report.ATA.SecurityStatusSpecified = true;
                 }
-                if (ataId.ServiceBusyClear != 0)
+                if(ataId.ServiceBusyClear != 0)
                 {
                     report.ATA.ServiceBusyClear = ataId.ServiceBusyClear;
                     report.ATA.ServiceBusyClearSpecified = true;
                 }
-                if (ataId.SpecificConfiguration != 0)
+                if(ataId.SpecificConfiguration != 0)
                 {
                     report.ATA.SpecificConfiguration = ataId.SpecificConfiguration;
                     report.ATA.SpecificConfigurationSpecified = true;
                 }
-                if (ataId.StreamAccessLatency != 0)
+                if(ataId.StreamAccessLatency != 0)
                 {
                     report.ATA.StreamAccessLatency = ataId.StreamAccessLatency;
                     report.ATA.StreamAccessLatencySpecified = true;
                 }
-                if (ataId.StreamMinReqSize != 0)
+                if(ataId.StreamMinReqSize != 0)
                 {
                     report.ATA.StreamMinReqSize = ataId.StreamMinReqSize;
                     report.ATA.StreamMinReqSizeSpecified = true;
                 }
-                if (ataId.StreamPerformanceGranularity != 0)
+                if(ataId.StreamPerformanceGranularity != 0)
                 {
                     report.ATA.StreamPerformanceGranularity = ataId.StreamPerformanceGranularity;
                     report.ATA.StreamPerformanceGranularitySpecified = true;
                 }
-                if (ataId.StreamTransferTimeDMA != 0)
+                if(ataId.StreamTransferTimeDMA != 0)
                 {
                     report.ATA.StreamTransferTimeDMA = ataId.StreamTransferTimeDMA;
                     report.ATA.StreamTransferTimeDMASpecified = true;
                 }
-                if (ataId.StreamTransferTimePIO != 0)
+                if(ataId.StreamTransferTimePIO != 0)
                 {
                     report.ATA.StreamTransferTimePIO = ataId.StreamTransferTimePIO;
                     report.ATA.StreamTransferTimePIOSpecified = true;
                 }
-                if (ataId.TransportMajorVersion != 0)
+                if(ataId.TransportMajorVersion != 0)
                 {
                     report.ATA.TransportMajorVersion = ataId.TransportMajorVersion;
                     report.ATA.TransportMajorVersionSpecified = true;
                 }
-                if (ataId.TransportMinorVersion != 0)
+                if(ataId.TransportMinorVersion != 0)
                 {
                     report.ATA.TransportMinorVersion = ataId.TransportMinorVersion;
                     report.ATA.TransportMinorVersionSpecified = true;
                 }
-                if (ataId.TrustedComputing != 0)
+                if(ataId.TrustedComputing != 0)
                 {
                     report.ATA.TrustedComputing = ataId.TrustedComputing;
                     report.ATA.TrustedComputingSpecified = true;
                 }
-                if (ataId.UDMAActive != 0)
+                if(ataId.UDMAActive != 0)
                 {
                     report.ATA.UDMAActive = ataId.UDMAActive;
                     report.ATA.UDMAActiveSpecified = true;
                 }
-                if (ataId.UDMASupported != 0)
+                if(ataId.UDMASupported != 0)
                 {
                     report.ATA.UDMASupported = ataId.UDMASupported;
                     report.ATA.UDMASupportedSpecified = true;
                 }
-                if (ataId.WRVMode != 0)
+                if(ataId.WRVMode != 0)
                 {
                     report.ATA.WRVMode = ataId.WRVMode;
                     report.ATA.WRVModeSpecified = true;
                 }
-                if (ataId.WRVSectorCountMode3 != 0)
+                if(ataId.WRVSectorCountMode3 != 0)
                 {
                     report.ATA.WRVSectorCountMode3 = ataId.WRVSectorCountMode3;
                     report.ATA.WRVSectorCountMode3Specified = true;
                 }
-                if (ataId.WRVSectorCountMode2 != 0)
+                if(ataId.WRVSectorCountMode2 != 0)
                 {
                     report.ATA.WRVSectorCountMode2 = ataId.WRVSectorCountMode2;
                     report.ATA.WRVSectorCountMode2Specified = true;
                 }
 
-                if (removable)
+                if(removable)
                 {
                     List<testedMediaType> mediaTests = new List<testedMediaType>();
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.N)
                     {
                         pressedKey = new ConsoleKeyInfo();
-                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                         {
                             DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                             pressedKey = System.Console.ReadKey();
                             DicConsole.WriteLine();
                         }
 
-                        if (pressedKey.Key == ConsoleKey.Y)
+                        if(pressedKey.Key == ConsoleKey.Y)
                         {
                             DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                             System.Console.ReadKey(true);
@@ -641,22 +641,22 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Querying ATA IDENTIFY...");
                             dev.AtaIdentify(out buffer, out errorRegs, timeout, out duration);
 
-                            if (Decoders.ATA.Identify.Decode(buffer).HasValue)
+                            if(Decoders.ATA.Identify.Decode(buffer).HasValue)
                             {
                                 ataId = Decoders.ATA.Identify.Decode(buffer).Value;
 
-                                if (ataId.UnformattedBPT != 0)
+                                if(ataId.UnformattedBPT != 0)
                                 {
                                     mediaTest.UnformattedBPT = ataId.UnformattedBPT;
                                     mediaTest.UnformattedBPTSpecified = true;
                                 }
-                                if (ataId.UnformattedBPS != 0)
+                                if(ataId.UnformattedBPS != 0)
                                 {
                                     mediaTest.UnformattedBPS = ataId.UnformattedBPS;
                                     mediaTest.UnformattedBPSSpecified = true;
                                 }
 
-                                if (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
+                                if(ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
                                 {
                                     mediaTest.CHS = new chsType();
                                     mediaTest.CHS.Cylinders = ataId.Cylinders;
@@ -666,7 +666,7 @@ namespace DiscImageChef.Commands
                                     mediaTest.BlocksSpecified = true;
                                 }
 
-                                if (ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
+                                if(ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
                                 {
                                     mediaTest.CurrentCHS = new chsType();
                                     mediaTest.CurrentCHS.Cylinders = ataId.CurrentCylinders;
@@ -676,7 +676,7 @@ namespace DiscImageChef.Commands
                                     mediaTest.BlocksSpecified = true;
                                 }
 
-                                if (ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                                if(ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
                                 {
                                     mediaTest.LBASectors = ataId.LBASectors;
                                     mediaTest.LBASectorsSpecified = true;
@@ -684,7 +684,7 @@ namespace DiscImageChef.Commands
                                     mediaTest.BlocksSpecified = true;
                                 }
 
-                                if (ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                                if(ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
                                 {
                                     mediaTest.LBA48Sectors = ataId.LBA48Sectors;
                                     mediaTest.LBA48SectorsSpecified = true;
@@ -692,10 +692,10 @@ namespace DiscImageChef.Commands
                                     mediaTest.BlocksSpecified = true;
                                 }
 
-                                if (ataId.NominalRotationRate != 0x0000 &&
+                                if(ataId.NominalRotationRate != 0x0000 &&
                                 ataId.NominalRotationRate != 0xFFFF)
                                 {
-                                    if (ataId.NominalRotationRate == 0x0001)
+                                    if(ataId.NominalRotationRate == 0x0001)
                                     {
                                         mediaTest.SolidStateDevice = true;
                                         mediaTest.SolidStateDeviceSpecified = true;
@@ -711,12 +711,12 @@ namespace DiscImageChef.Commands
 
                                 uint logicalsectorsize = 0;
                                 uint physicalsectorsize;
-                                if ((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+                                if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
                                 (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
                                 {
-                                    if ((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                                    if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
                                     {
-                                        if (ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
+                                        if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                                             logicalsectorsize = 512;
                                         else
                                             logicalsectorsize = ataId.LogicalSectorWords * 2;
@@ -724,7 +724,7 @@ namespace DiscImageChef.Commands
                                     else
                                         logicalsectorsize = 512;
 
-                                    if ((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
+                                    if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                                     {
                                         physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
                                     }
@@ -739,12 +739,12 @@ namespace DiscImageChef.Commands
 
                                 mediaTest.BlockSize = logicalsectorsize;
                                 mediaTest.BlockSizeSpecified = true;
-                                if (physicalsectorsize != logicalsectorsize)
+                                if(physicalsectorsize != logicalsectorsize)
                                 {
                                     mediaTest.PhysicalBlockSize = physicalsectorsize;
                                     mediaTest.PhysicalBlockSizeSpecified = true;
 
-                                    if ((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
+                                    if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
                                     (ataId.LogicalAlignment & 0x4000) == 0x4000)
                                     {
                                         mediaTest.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
@@ -752,19 +752,19 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if (ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
+                                if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                                 {
                                     mediaTest.LongBlockSize = logicalsectorsize + ataId.EccBytes;
                                     mediaTest.LongBlockSizeSpecified = true;
                                 }
 
-                                if (ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
+                                if(ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
                                 !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
                                 ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
                                 {
                                     mediaTest.CanReadMediaSerial = true;
                                     mediaTest.CanReadMediaSerialSpecified = true;
-                                    if (!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
+                                    if(!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
                                     {
                                         mediaTest.Manufacturer = ataId.MediaManufacturer;
                                         mediaTest.ManufacturerSpecified = true;
@@ -851,28 +851,28 @@ namespace DiscImageChef.Commands
                             }
                             else
                                 mediaTest.MediaIsRecognized = false;
-                            
+
                             mediaTests.Add(mediaTest);
                         }
-                    }    
+                    }
                     report.ATA.RemovableMedias = mediaTests.ToArray();
                 }
                 else
                 {
                     report.ATA.ReadCapabilities = new testedMediaType();
 
-                    if (ataId.UnformattedBPT != 0)
+                    if(ataId.UnformattedBPT != 0)
                     {
                         report.ATA.ReadCapabilities.UnformattedBPT = ataId.UnformattedBPT;
                         report.ATA.ReadCapabilities.UnformattedBPTSpecified = true;
                     }
-                    if (ataId.UnformattedBPS != 0)
+                    if(ataId.UnformattedBPS != 0)
                     {
                         report.ATA.ReadCapabilities.UnformattedBPS = ataId.UnformattedBPS;
                         report.ATA.ReadCapabilities.UnformattedBPSSpecified = true;
                     }
 
-                    if (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
+                    if(ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0)
                     {
                         report.ATA.ReadCapabilities.CHS = new chsType();
                         report.ATA.ReadCapabilities.CHS.Cylinders = ataId.Cylinders;
@@ -882,7 +882,7 @@ namespace DiscImageChef.Commands
                         report.ATA.ReadCapabilities.BlocksSpecified = true;
                     }
 
-                    if (ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
+                    if(ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
                     {
                         report.ATA.ReadCapabilities.CurrentCHS = new chsType();
                         report.ATA.ReadCapabilities.CurrentCHS.Cylinders = ataId.CurrentCylinders;
@@ -892,7 +892,7 @@ namespace DiscImageChef.Commands
                         report.ATA.ReadCapabilities.BlocksSpecified = true;
                     }
 
-                    if (ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
+                    if(ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
                     {
                         report.ATA.ReadCapabilities.LBASectors = ataId.LBASectors;
                         report.ATA.ReadCapabilities.LBASectorsSpecified = true;
@@ -900,7 +900,7 @@ namespace DiscImageChef.Commands
                         report.ATA.ReadCapabilities.BlocksSpecified = true;
                     }
 
-                    if (ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
+                    if(ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
                     {
                         report.ATA.ReadCapabilities.LBA48Sectors = ataId.LBA48Sectors;
                         report.ATA.ReadCapabilities.LBA48SectorsSpecified = true;
@@ -908,10 +908,10 @@ namespace DiscImageChef.Commands
                         report.ATA.ReadCapabilities.BlocksSpecified = true;
                     }
 
-                    if (ataId.NominalRotationRate != 0x0000 &&
+                    if(ataId.NominalRotationRate != 0x0000 &&
                         ataId.NominalRotationRate != 0xFFFF)
                     {
-                        if (ataId.NominalRotationRate == 0x0001)
+                        if(ataId.NominalRotationRate == 0x0001)
                         {
                             report.ATA.ReadCapabilities.SolidStateDevice = true;
                             report.ATA.ReadCapabilities.SolidStateDeviceSpecified = true;
@@ -927,12 +927,12 @@ namespace DiscImageChef.Commands
 
                     uint logicalsectorsize = 0;
                     uint physicalsectorsize;
-                    if ((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+                    if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
                         (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
                     {
-                        if ((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                        if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
                         {
-                            if (ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
+                            if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                                 logicalsectorsize = 512;
                             else
                                 logicalsectorsize = ataId.LogicalSectorWords * 2;
@@ -940,7 +940,7 @@ namespace DiscImageChef.Commands
                         else
                             logicalsectorsize = 512;
 
-                        if ((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
+                        if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                         {
                             physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
                         }
@@ -955,12 +955,12 @@ namespace DiscImageChef.Commands
 
                     report.ATA.ReadCapabilities.BlockSize = logicalsectorsize;
                     report.ATA.ReadCapabilities.BlockSizeSpecified = true;
-                    if (physicalsectorsize != logicalsectorsize)
+                    if(physicalsectorsize != logicalsectorsize)
                     {
                         report.ATA.ReadCapabilities.PhysicalBlockSize = physicalsectorsize;
                         report.ATA.ReadCapabilities.PhysicalBlockSizeSpecified = true;
 
-                        if ((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
+                        if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
                            (ataId.LogicalAlignment & 0x4000) == 0x4000)
                         {
                             report.ATA.ReadCapabilities.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
@@ -968,19 +968,19 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
+                    if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                     {
                         report.ATA.ReadCapabilities.LongBlockSize = logicalsectorsize + ataId.EccBytes;
                         report.ATA.ReadCapabilities.LongBlockSizeSpecified = true;
                     }
 
-                    if (ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
+                    if(ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
                         !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
                         ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
                     {
                         report.ATA.ReadCapabilities.CanReadMediaSerial = true;
                         report.ATA.ReadCapabilities.CanReadMediaSerialSpecified = true;
-                        if (!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
+                        if(!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
                         {
                             report.ATA.ReadCapabilities.Manufacturer = ataId.MediaManufacturer;
                             report.ATA.ReadCapabilities.ManufacturerSpecified = true;
@@ -1093,28 +1093,28 @@ namespace DiscImageChef.Commands
             uint timeout = 5;
             Metadata.DeviceReport report = new Metadata.DeviceReport();
             string xmlFile;
-            if (!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
+            if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
-            else if (!string.IsNullOrWhiteSpace(dev.Manufacturer))
+            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
                 xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
-            else if (!string.IsNullOrWhiteSpace(dev.Revision))
+            else if(!string.IsNullOrWhiteSpace(dev.Revision))
                 xmlFile = dev.Model + "_" + dev.Revision + ".xml";
             else
                 xmlFile = dev.Model + ".xml";
             ConsoleKeyInfo pressedKey;
             bool removable = false;
 
-            if (dev.IsUSB)
+            if(dev.IsUSB)
             {
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
 
-                if (pressedKey.Key == ConsoleKey.Y)
+                if(pressedKey.Key == ConsoleKey.Y)
                 {
                     report.USB = new usbType();
                     report.USB.Manufacturer = dev.USBManufacturerString;
@@ -1123,7 +1123,7 @@ namespace DiscImageChef.Commands
                     report.USB.VendorID = dev.USBVendorID;
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
@@ -1135,17 +1135,17 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if (dev.IsFireWire)
+            if(dev.IsFireWire)
             {
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();
                 }
 
-                if (pressedKey.Key == ConsoleKey.Y)
+                if(pressedKey.Key == ConsoleKey.Y)
                 {
                     report.FireWire = new firewireType();
                     report.FireWire.Manufacturer = dev.FireWireVendorName;
@@ -1154,7 +1154,7 @@ namespace DiscImageChef.Commands
                     report.FireWire.VendorID = dev.FireWireVendor;
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
@@ -1166,10 +1166,10 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if (!dev.IsUSB && !dev.IsFireWire && dev.IsRemovable)
+            if(!dev.IsUSB && !dev.IsFireWire && dev.IsRemovable)
             {
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
                     DicConsole.Write("Is the media removable from the reading/writing elements (flash memories ARE NOT removable)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
@@ -1179,410 +1179,410 @@ namespace DiscImageChef.Commands
                 removable = pressedKey.Key == ConsoleKey.Y;
             }
 
-            if (dev.Type == DeviceType.ATAPI)
+            if(dev.Type == DeviceType.ATAPI)
             {
                 DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
 
                 DiscImageChef.Decoders.ATA.AtaErrorRegistersCHS errorRegs;
                 dev.AtapiIdentify(out buffer, out errorRegs, timeout, out duration);
 
-                if (Decoders.ATA.Identify.Decode(buffer).HasValue)
+                if(Decoders.ATA.Identify.Decode(buffer).HasValue)
                 {
                     Decoders.ATA.Identify.IdentifyDevice atapiId = Decoders.ATA.Identify.Decode(buffer).Value;
 
                     report.ATAPI = new ataType();
 
-                    if (!string.IsNullOrWhiteSpace(atapiId.AdditionalPID))
+                    if(!string.IsNullOrWhiteSpace(atapiId.AdditionalPID))
                     {
                         report.ATAPI.AdditionalPID = atapiId.AdditionalPID;
                         report.ATAPI.AdditionalPIDSpecified = true;
                     }
-                    if (atapiId.APIOSupported != 0)
+                    if(atapiId.APIOSupported != 0)
                     {
                         report.ATAPI.APIOSupported = atapiId.APIOSupported;
                         report.ATAPI.APIOSupportedSpecified = true;
                     }
-                    if (atapiId.ATAPIByteCount != 0)
+                    if(atapiId.ATAPIByteCount != 0)
                     {
                         report.ATAPI.ATAPIByteCount = atapiId.ATAPIByteCount;
                         report.ATAPI.ATAPIByteCountSpecified = true;
                     }
-                    if (atapiId.BufferType != 0)
+                    if(atapiId.BufferType != 0)
                     {
                         report.ATAPI.BufferType = atapiId.BufferType;
                         report.ATAPI.BufferTypeSpecified = true;
                     }
-                    if (atapiId.BufferSize != 0)
+                    if(atapiId.BufferSize != 0)
                     {
                         report.ATAPI.BufferSize = atapiId.BufferSize;
                         report.ATAPI.BufferSizeSpecified = true;
                     }
-                    if (atapiId.Capabilities != 0)
+                    if(atapiId.Capabilities != 0)
                     {
                         report.ATAPI.Capabilities = atapiId.Capabilities;
                         report.ATAPI.CapabilitiesSpecified = true;
                     }
-                    if (atapiId.Capabilities2 != 0)
+                    if(atapiId.Capabilities2 != 0)
                     {
                         report.ATAPI.Capabilities2 = atapiId.Capabilities2;
                         report.ATAPI.Capabilities2Specified = true;
                     }
-                    if (atapiId.Capabilities3 != 0)
+                    if(atapiId.Capabilities3 != 0)
                     {
                         report.ATAPI.Capabilities3 = atapiId.Capabilities3;
                         report.ATAPI.Capabilities3Specified = true;
                     }
-                    if (atapiId.CFAPowerMode != 0)
+                    if(atapiId.CFAPowerMode != 0)
                     {
                         report.ATAPI.CFAPowerMode = atapiId.CFAPowerMode;
                         report.ATAPI.CFAPowerModeSpecified = true;
                     }
-                    if (atapiId.CommandSet != 0)
+                    if(atapiId.CommandSet != 0)
                     {
                         report.ATAPI.CommandSet = atapiId.CommandSet;
                         report.ATAPI.CommandSetSpecified = true;
                     }
-                    if (atapiId.CommandSet2 != 0)
+                    if(atapiId.CommandSet2 != 0)
                     {
                         report.ATAPI.CommandSet2 = atapiId.CommandSet2;
                         report.ATAPI.CommandSet2Specified = true;
                     }
-                    if (atapiId.CommandSet3 != 0)
+                    if(atapiId.CommandSet3 != 0)
                     {
                         report.ATAPI.CommandSet3 = atapiId.CommandSet3;
                         report.ATAPI.CommandSet3Specified = true;
                     }
-                    if (atapiId.CommandSet4 != 0)
+                    if(atapiId.CommandSet4 != 0)
                     {
                         report.ATAPI.CommandSet4 = atapiId.CommandSet4;
                         report.ATAPI.CommandSet4Specified = true;
                     }
-                    if (atapiId.CommandSet5 != 0)
+                    if(atapiId.CommandSet5 != 0)
                     {
                         report.ATAPI.CommandSet5 = atapiId.CommandSet5;
                         report.ATAPI.CommandSet5Specified = true;
                     }
-                    if (atapiId.CurrentAAM != 0)
+                    if(atapiId.CurrentAAM != 0)
                     {
                         report.ATAPI.CurrentAAM = atapiId.CurrentAAM;
                         report.ATAPI.CurrentAAMSpecified = true;
                     }
-                    if (atapiId.CurrentAPM != 0)
+                    if(atapiId.CurrentAPM != 0)
                     {
                         report.ATAPI.CurrentAPM = atapiId.CurrentAPM;
                         report.ATAPI.CurrentAPMSpecified = true;
                     }
-                    if (atapiId.DataSetMgmt != 0)
+                    if(atapiId.DataSetMgmt != 0)
                     {
                         report.ATAPI.DataSetMgmt = atapiId.DataSetMgmt;
                         report.ATAPI.DataSetMgmtSpecified = true;
                     }
-                    if (atapiId.DataSetMgmtSize != 0)
+                    if(atapiId.DataSetMgmtSize != 0)
                     {
                         report.ATAPI.DataSetMgmtSize = atapiId.DataSetMgmtSize;
                         report.ATAPI.DataSetMgmtSizeSpecified = true;
                     }
-                    if (atapiId.DeviceFormFactor != 0)
+                    if(atapiId.DeviceFormFactor != 0)
                     {
                         report.ATAPI.DeviceFormFactor = atapiId.DeviceFormFactor;
                         report.ATAPI.DeviceFormFactorSpecified = true;
                     }
-                    if (atapiId.DMAActive != 0)
+                    if(atapiId.DMAActive != 0)
                     {
                         report.ATAPI.DMAActive = atapiId.DMAActive;
                         report.ATAPI.DMAActiveSpecified = true;
                     }
-                    if (atapiId.DMASupported != 0)
+                    if(atapiId.DMASupported != 0)
                     {
                         report.ATAPI.DMASupported = atapiId.DMASupported;
                         report.ATAPI.DMASupportedSpecified = true;
                     }
-                    if (atapiId.DMATransferTimingMode != 0)
+                    if(atapiId.DMATransferTimingMode != 0)
                     {
                         report.ATAPI.DMATransferTimingMode = atapiId.DMATransferTimingMode;
                         report.ATAPI.DMATransferTimingModeSpecified = true;
                     }
-                    if (atapiId.EnhancedSecurityEraseTime != 0)
+                    if(atapiId.EnhancedSecurityEraseTime != 0)
                     {
                         report.ATAPI.EnhancedSecurityEraseTime = atapiId.EnhancedSecurityEraseTime;
                         report.ATAPI.EnhancedSecurityEraseTimeSpecified = true;
                     }
-                    if (atapiId.EnabledCommandSet != 0)
+                    if(atapiId.EnabledCommandSet != 0)
                     {
                         report.ATAPI.EnabledCommandSet = atapiId.EnabledCommandSet;
                         report.ATAPI.EnabledCommandSetSpecified = true;
                     }
-                    if (atapiId.EnabledCommandSet2 != 0)
+                    if(atapiId.EnabledCommandSet2 != 0)
                     {
                         report.ATAPI.EnabledCommandSet2 = atapiId.EnabledCommandSet2;
                         report.ATAPI.EnabledCommandSet2Specified = true;
                     }
-                    if (atapiId.EnabledCommandSet3 != 0)
+                    if(atapiId.EnabledCommandSet3 != 0)
                     {
                         report.ATAPI.EnabledCommandSet3 = atapiId.EnabledCommandSet3;
                         report.ATAPI.EnabledCommandSet3Specified = true;
                     }
-                    if (atapiId.EnabledCommandSet4 != 0)
+                    if(atapiId.EnabledCommandSet4 != 0)
                     {
                         report.ATAPI.EnabledCommandSet4 = atapiId.EnabledCommandSet4;
                         report.ATAPI.EnabledCommandSet4Specified = true;
                     }
-                    if (atapiId.EnabledSATAFeatures != 0)
+                    if(atapiId.EnabledSATAFeatures != 0)
                     {
                         report.ATAPI.EnabledSATAFeatures = atapiId.EnabledSATAFeatures;
                         report.ATAPI.EnabledSATAFeaturesSpecified = true;
                     }
-                    if (atapiId.ExtendedUserSectors != 0)
+                    if(atapiId.ExtendedUserSectors != 0)
                     {
                         report.ATAPI.ExtendedUserSectors = atapiId.ExtendedUserSectors;
                         report.ATAPI.ExtendedUserSectorsSpecified = true;
                     }
-                    if (atapiId.FreeFallSensitivity != 0)
+                    if(atapiId.FreeFallSensitivity != 0)
                     {
                         report.ATAPI.FreeFallSensitivity = atapiId.FreeFallSensitivity;
                         report.ATAPI.FreeFallSensitivitySpecified = true;
                     }
-                    if (!string.IsNullOrWhiteSpace(atapiId.FirmwareRevision))
+                    if(!string.IsNullOrWhiteSpace(atapiId.FirmwareRevision))
                     {
                         report.ATAPI.FirmwareRevision = atapiId.FirmwareRevision;
                         report.ATAPI.FirmwareRevisionSpecified = true;
                     }
-                    if (atapiId.GeneralConfiguration != 0)
+                    if(atapiId.GeneralConfiguration != 0)
                     {
                         report.ATAPI.GeneralConfiguration = atapiId.GeneralConfiguration;
                         report.ATAPI.GeneralConfigurationSpecified = true;
                     }
-                    if (atapiId.HardwareResetResult != 0)
+                    if(atapiId.HardwareResetResult != 0)
                     {
                         report.ATAPI.HardwareResetResult = atapiId.HardwareResetResult;
                         report.ATAPI.HardwareResetResultSpecified = true;
                     }
-                    if (atapiId.InterseekDelay != 0)
+                    if(atapiId.InterseekDelay != 0)
                     {
                         report.ATAPI.InterseekDelay = atapiId.InterseekDelay;
                         report.ATAPI.InterseekDelaySpecified = true;
                     }
-                    if (atapiId.MajorVersion != 0)
+                    if(atapiId.MajorVersion != 0)
                     {
                         report.ATAPI.MajorVersion = atapiId.MajorVersion;
                         report.ATAPI.MajorVersionSpecified = true;
                     }
-                    if (atapiId.MasterPasswordRevisionCode != 0)
+                    if(atapiId.MasterPasswordRevisionCode != 0)
                     {
                         report.ATAPI.MasterPasswordRevisionCode = atapiId.MasterPasswordRevisionCode;
                         report.ATAPI.MasterPasswordRevisionCodeSpecified = true;
                     }
-                    if (atapiId.MaxDownloadMicroMode3 != 0)
+                    if(atapiId.MaxDownloadMicroMode3 != 0)
                     {
                         report.ATAPI.MaxDownloadMicroMode3 = atapiId.MaxDownloadMicroMode3;
                         report.ATAPI.MaxDownloadMicroMode3Specified = true;
                     }
-                    if (atapiId.MaxQueueDepth != 0)
+                    if(atapiId.MaxQueueDepth != 0)
                     {
                         report.ATAPI.MaxQueueDepth = atapiId.MaxQueueDepth;
                         report.ATAPI.MaxQueueDepthSpecified = true;
                     }
-                    if (atapiId.MDMAActive != 0)
+                    if(atapiId.MDMAActive != 0)
                     {
                         report.ATAPI.MDMAActive = atapiId.MDMAActive;
                         report.ATAPI.MDMAActiveSpecified = true;
                     }
-                    if (atapiId.MDMASupported != 0)
+                    if(atapiId.MDMASupported != 0)
                     {
                         report.ATAPI.MDMASupported = atapiId.MDMASupported;
                         report.ATAPI.MDMASupportedSpecified = true;
                     }
-                    if (atapiId.MinDownloadMicroMode3 != 0)
+                    if(atapiId.MinDownloadMicroMode3 != 0)
                     {
                         report.ATAPI.MinDownloadMicroMode3 = atapiId.MinDownloadMicroMode3;
                         report.ATAPI.MinDownloadMicroMode3Specified = true;
                     }
-                    if (atapiId.MinMDMACycleTime != 0)
+                    if(atapiId.MinMDMACycleTime != 0)
                     {
                         report.ATAPI.MinMDMACycleTime = atapiId.MinMDMACycleTime;
                         report.ATAPI.MinMDMACycleTimeSpecified = true;
                     }
-                    if (atapiId.MinorVersion != 0)
+                    if(atapiId.MinorVersion != 0)
                     {
                         report.ATAPI.MinorVersion = atapiId.MinorVersion;
                         report.ATAPI.MinorVersionSpecified = true;
                     }
-                    if (atapiId.MinPIOCycleTimeNoFlow != 0)
+                    if(atapiId.MinPIOCycleTimeNoFlow != 0)
                     {
                         report.ATAPI.MinPIOCycleTimeNoFlow = atapiId.MinPIOCycleTimeNoFlow;
                         report.ATAPI.MinPIOCycleTimeNoFlowSpecified = true;
                     }
-                    if (atapiId.MinPIOCycleTimeFlow != 0)
+                    if(atapiId.MinPIOCycleTimeFlow != 0)
                     {
                         report.ATAPI.MinPIOCycleTimeFlow = atapiId.MinPIOCycleTimeFlow;
                         report.ATAPI.MinPIOCycleTimeFlowSpecified = true;
                     }
-                    if (!string.IsNullOrWhiteSpace(atapiId.Model))
+                    if(!string.IsNullOrWhiteSpace(atapiId.Model))
                     {
                         report.ATAPI.Model = atapiId.Model;
                         report.ATAPI.ModelSpecified = true;
                     }
-                    if (atapiId.MultipleMaxSectors != 0)
+                    if(atapiId.MultipleMaxSectors != 0)
                     {
                         report.ATAPI.MultipleMaxSectors = atapiId.MultipleMaxSectors;
                         report.ATAPI.MultipleMaxSectorsSpecified = true;
                     }
-                    if (atapiId.MultipleSectorNumber != 0)
+                    if(atapiId.MultipleSectorNumber != 0)
                     {
                         report.ATAPI.MultipleSectorNumber = atapiId.MultipleSectorNumber;
                         report.ATAPI.MultipleSectorNumberSpecified = true;
                     }
-                    if (atapiId.NVCacheCaps != 0)
+                    if(atapiId.NVCacheCaps != 0)
                     {
                         report.ATAPI.NVCacheCaps = atapiId.NVCacheCaps;
                         report.ATAPI.NVCacheCapsSpecified = true;
                     }
-                    if (atapiId.NVCacheSize != 0)
+                    if(atapiId.NVCacheSize != 0)
                     {
                         report.ATAPI.NVCacheSize = atapiId.NVCacheSize;
                         report.ATAPI.NVCacheSizeSpecified = true;
                     }
-                    if (atapiId.NVCacheWriteSpeed != 0)
+                    if(atapiId.NVCacheWriteSpeed != 0)
                     {
                         report.ATAPI.NVCacheWriteSpeed = atapiId.NVCacheWriteSpeed;
                         report.ATAPI.NVCacheWriteSpeedSpecified = true;
                     }
-                    if (atapiId.NVEstimatedSpinUp != 0)
+                    if(atapiId.NVEstimatedSpinUp != 0)
                     {
                         report.ATAPI.NVEstimatedSpinUp = atapiId.NVEstimatedSpinUp;
                         report.ATAPI.NVEstimatedSpinUpSpecified = true;
                     }
-                    if (atapiId.PacketBusRelease != 0)
+                    if(atapiId.PacketBusRelease != 0)
                     {
                         report.ATAPI.PacketBusRelease = atapiId.PacketBusRelease;
                         report.ATAPI.PacketBusReleaseSpecified = true;
                     }
-                    if (atapiId.PIOTransferTimingMode != 0)
+                    if(atapiId.PIOTransferTimingMode != 0)
                     {
                         report.ATAPI.PIOTransferTimingMode = atapiId.PIOTransferTimingMode;
                         report.ATAPI.PIOTransferTimingModeSpecified = true;
                     }
-                    if (atapiId.RecommendedAAM != 0)
+                    if(atapiId.RecommendedAAM != 0)
                     {
                         report.ATAPI.RecommendedAAM = atapiId.RecommendedAAM;
                         report.ATAPI.RecommendedAAMSpecified = true;
                     }
-                    if (atapiId.RecMDMACycleTime != 0)
+                    if(atapiId.RecMDMACycleTime != 0)
                     {
                         report.ATAPI.RecommendedMDMACycleTime = atapiId.RecMDMACycleTime;
                         report.ATAPI.RecommendedMDMACycleTimeSpecified = true;
                     }
-                    if (atapiId.RemovableStatusSet != 0)
+                    if(atapiId.RemovableStatusSet != 0)
                     {
                         report.ATAPI.RemovableStatusSet = atapiId.RemovableStatusSet;
                         report.ATAPI.RemovableStatusSetSpecified = true;
                     }
-                    if (atapiId.SATACapabilities != 0)
+                    if(atapiId.SATACapabilities != 0)
                     {
                         report.ATAPI.SATACapabilities = atapiId.SATACapabilities;
                         report.ATAPI.SATACapabilitiesSpecified = true;
                     }
-                    if (atapiId.SATACapabilities2 != 0)
+                    if(atapiId.SATACapabilities2 != 0)
                     {
                         report.ATAPI.SATACapabilities2 = atapiId.SATACapabilities2;
                         report.ATAPI.SATACapabilities2Specified = true;
                     }
-                    if (atapiId.SATAFeatures != 0)
+                    if(atapiId.SATAFeatures != 0)
                     {
                         report.ATAPI.SATAFeatures = atapiId.SATAFeatures;
                         report.ATAPI.SATAFeaturesSpecified = true;
                     }
-                    if (atapiId.SCTCommandTransport != 0)
+                    if(atapiId.SCTCommandTransport != 0)
                     {
                         report.ATAPI.SCTCommandTransport = atapiId.SCTCommandTransport;
                         report.ATAPI.SCTCommandTransportSpecified = true;
                     }
-                    if (atapiId.SectorsPerCard != 0)
+                    if(atapiId.SectorsPerCard != 0)
                     {
                         report.ATAPI.SectorsPerCard = atapiId.SectorsPerCard;
                         report.ATAPI.SectorsPerCardSpecified = true;
                     }
-                    if (atapiId.SecurityEraseTime != 0)
+                    if(atapiId.SecurityEraseTime != 0)
                     {
                         report.ATAPI.SecurityEraseTime = atapiId.SecurityEraseTime;
                         report.ATAPI.SecurityEraseTimeSpecified = true;
                     }
-                    if (atapiId.SecurityStatus != 0)
+                    if(atapiId.SecurityStatus != 0)
                     {
                         report.ATAPI.SecurityStatus = atapiId.SecurityStatus;
                         report.ATAPI.SecurityStatusSpecified = true;
                     }
-                    if (atapiId.ServiceBusyClear != 0)
+                    if(atapiId.ServiceBusyClear != 0)
                     {
                         report.ATAPI.ServiceBusyClear = atapiId.ServiceBusyClear;
                         report.ATAPI.ServiceBusyClearSpecified = true;
                     }
-                    if (atapiId.SpecificConfiguration != 0)
+                    if(atapiId.SpecificConfiguration != 0)
                     {
                         report.ATAPI.SpecificConfiguration = atapiId.SpecificConfiguration;
                         report.ATAPI.SpecificConfigurationSpecified = true;
                     }
-                    if (atapiId.StreamAccessLatency != 0)
+                    if(atapiId.StreamAccessLatency != 0)
                     {
                         report.ATAPI.StreamAccessLatency = atapiId.StreamAccessLatency;
                         report.ATAPI.StreamAccessLatencySpecified = true;
                     }
-                    if (atapiId.StreamMinReqSize != 0)
+                    if(atapiId.StreamMinReqSize != 0)
                     {
                         report.ATAPI.StreamMinReqSize = atapiId.StreamMinReqSize;
                         report.ATAPI.StreamMinReqSizeSpecified = true;
                     }
-                    if (atapiId.StreamPerformanceGranularity != 0)
+                    if(atapiId.StreamPerformanceGranularity != 0)
                     {
                         report.ATAPI.StreamPerformanceGranularity = atapiId.StreamPerformanceGranularity;
                         report.ATAPI.StreamPerformanceGranularitySpecified = true;
                     }
-                    if (atapiId.StreamTransferTimeDMA != 0)
+                    if(atapiId.StreamTransferTimeDMA != 0)
                     {
                         report.ATAPI.StreamTransferTimeDMA = atapiId.StreamTransferTimeDMA;
                         report.ATAPI.StreamTransferTimeDMASpecified = true;
                     }
-                    if (atapiId.StreamTransferTimePIO != 0)
+                    if(atapiId.StreamTransferTimePIO != 0)
                     {
                         report.ATAPI.StreamTransferTimePIO = atapiId.StreamTransferTimePIO;
                         report.ATAPI.StreamTransferTimePIOSpecified = true;
                     }
-                    if (atapiId.TransportMajorVersion != 0)
+                    if(atapiId.TransportMajorVersion != 0)
                     {
                         report.ATAPI.TransportMajorVersion = atapiId.TransportMajorVersion;
                         report.ATAPI.TransportMajorVersionSpecified = true;
                     }
-                    if (atapiId.TransportMinorVersion != 0)
+                    if(atapiId.TransportMinorVersion != 0)
                     {
                         report.ATAPI.TransportMinorVersion = atapiId.TransportMinorVersion;
                         report.ATAPI.TransportMinorVersionSpecified = true;
                     }
-                    if (atapiId.TrustedComputing != 0)
+                    if(atapiId.TrustedComputing != 0)
                     {
                         report.ATAPI.TrustedComputing = atapiId.TrustedComputing;
                         report.ATAPI.TrustedComputingSpecified = true;
                     }
-                    if (atapiId.UDMAActive != 0)
+                    if(atapiId.UDMAActive != 0)
                     {
                         report.ATAPI.UDMAActive = atapiId.UDMAActive;
                         report.ATAPI.UDMAActiveSpecified = true;
                     }
-                    if (atapiId.UDMASupported != 0)
+                    if(atapiId.UDMASupported != 0)
                     {
                         report.ATAPI.UDMASupported = atapiId.UDMASupported;
                         report.ATAPI.UDMASupportedSpecified = true;
                     }
-                    if (atapiId.WRVMode != 0)
+                    if(atapiId.WRVMode != 0)
                     {
                         report.ATAPI.WRVMode = atapiId.WRVMode;
                         report.ATAPI.WRVModeSpecified = true;
                     }
-                    if (atapiId.WRVSectorCountMode3 != 0)
+                    if(atapiId.WRVSectorCountMode3 != 0)
                     {
                         report.ATAPI.WRVSectorCountMode3 = atapiId.WRVSectorCountMode3;
                         report.ATAPI.WRVSectorCountMode3Specified = true;
                     }
-                    if (atapiId.WRVSectorCountMode2 != 0)
+                    if(atapiId.WRVSectorCountMode2 != 0)
                     {
                         report.ATAPI.WRVSectorCountMode2 = atapiId.WRVSectorCountMode2;
                         report.ATAPI.WRVSectorCountMode2Specified = true;
@@ -1595,65 +1595,65 @@ namespace DiscImageChef.Commands
 
             report.SCSI = new scsiType();
 
-            if (!sense && Decoders.SCSI.Inquiry.Decode(buffer).HasValue)
+            if(!sense && Decoders.SCSI.Inquiry.Decode(buffer).HasValue)
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry inq = Decoders.SCSI.Inquiry.Decode(buffer).Value;
 
                 List<UInt16> versionDescriptors = new List<UInt16>();
                 report.SCSI.Inquiry = new scsiInquiryType();
 
-                if (inq.DeviceTypeModifier != 0)
+                if(inq.DeviceTypeModifier != 0)
                 {
                     report.SCSI.Inquiry.DeviceTypeModifier = inq.DeviceTypeModifier;
                     report.SCSI.Inquiry.DeviceTypeModifierSpecified = true;
                 }
-                if (inq.ISOVersion != 0)
+                if(inq.ISOVersion != 0)
                 {
                     report.SCSI.Inquiry.ISOVersion = inq.ISOVersion;
                     report.SCSI.Inquiry.ISOVersionSpecified = true;
                 }
-                if (inq.ECMAVersion != 0)
+                if(inq.ECMAVersion != 0)
                 {
                     report.SCSI.Inquiry.ECMAVersion = inq.ECMAVersion;
                     report.SCSI.Inquiry.ECMAVersionSpecified = true;
                 }
-                if (inq.ANSIVersion != 0)
+                if(inq.ANSIVersion != 0)
                 {
                     report.SCSI.Inquiry.ANSIVersion = inq.ANSIVersion;
                     report.SCSI.Inquiry.ANSIVersionSpecified = true;
                 }
-                if (inq.ResponseDataFormat != 0)
+                if(inq.ResponseDataFormat != 0)
                 {
                     report.SCSI.Inquiry.ResponseDataFormat = inq.ResponseDataFormat;
                     report.SCSI.Inquiry.ResponseDataFormatSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.VendorIdentification)))
+                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.VendorIdentification)))
                 {
                     report.SCSI.Inquiry.VendorIdentification = StringHandlers.CToString(inq.VendorIdentification).Trim();
-                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.VendorIdentification))
+                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.VendorIdentification))
                         report.SCSI.Inquiry.VendorIdentificationSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductIdentification)))
+                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductIdentification)))
                 {
                     report.SCSI.Inquiry.ProductIdentification = StringHandlers.CToString(inq.ProductIdentification).Trim();
-                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductIdentification))
+                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductIdentification))
                         report.SCSI.Inquiry.ProductIdentificationSpecified = true;
                 }
-                if (!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductRevisionLevel)))
+                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductRevisionLevel)))
                 {
                     report.SCSI.Inquiry.ProductRevisionLevel = StringHandlers.CToString(inq.ProductRevisionLevel).Trim();
-                    if (!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductRevisionLevel))
+                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductRevisionLevel))
                         report.SCSI.Inquiry.ProductRevisionLevelSpecified = true;
                 }
-                if (inq.VersionDescriptors != null)
+                if(inq.VersionDescriptors != null)
                 {
-                    foreach (UInt16 descriptor in inq.VersionDescriptors)
+                    foreach(UInt16 descriptor in inq.VersionDescriptors)
                     {
-                        if (descriptor != 0)
+                        if(descriptor != 0)
                             versionDescriptors.Add(descriptor);
                     }
 
-                    if (versionDescriptors.Count > 0)
+                    if(versionDescriptors.Count > 0)
                         report.SCSI.Inquiry.VersionDescriptors = versionDescriptors.ToArray();
                 }
 
@@ -1693,19 +1693,19 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Querying list of SCSI EVPDs...");
             sense = dev.ScsiInquiry(out buffer, out senseBuffer, 0x00);
 
-            if (!sense)
+            if(!sense)
             {
                 byte[] evpdPages = Decoders.SCSI.EVPD.DecodePage00(buffer);
-                if (evpdPages != null && evpdPages.Length > 0)
+                if(evpdPages != null && evpdPages.Length > 0)
                 {
                     List<pageType> evpds = new List<pageType>();
-                    foreach (byte page in evpdPages)
+                    foreach(byte page in evpdPages)
                     {
-                        if (page != 0x80)
+                        if(page != 0x80)
                         {
                             DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
                             sense = dev.ScsiInquiry(out buffer, out senseBuffer, page);
-                            if (!sense)
+                            if(!sense)
                             {
                                 pageType evpd = new pageType();
                                 evpd.page = page;
@@ -1714,19 +1714,19 @@ namespace DiscImageChef.Commands
                             }
                         }
                     }
-                    if (evpds.Count > 0)
+                    if(evpds.Count > 0)
                         report.SCSI.EVPDPages = evpds.ToArray();
                 }
             }
 
-            if (removable)
+            if(removable)
             {
-                if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     dev.AllowMediumRemoval(out senseBuffer, timeout, out duration);
                     dev.EjectTray(out senseBuffer, timeout, out duration);
                 }
-                else if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                else if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                 {
                     dev.SpcAllowMediumRemoval(out senseBuffer, timeout, out duration);
                     DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
@@ -1741,11 +1741,11 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
             sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Default, 0x3F, 0xFF, timeout, out duration);
-            if (sense || dev.Error)
+            if(sense || dev.Error)
             {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
                 sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
-                if (!sense && dev.Error)
+                if(!sense && dev.Error)
                 {
                     report.SCSI.SupportsModeSense10 = true;
                     report.SCSI.SupportsModeSubpages = false;
@@ -1758,14 +1758,14 @@ namespace DiscImageChef.Commands
                 report.SCSI.SupportsModeSubpages = true;
                 decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, devType);
             }
-            
+
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
             sense = dev.ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF, timeout, out duration);
-            if (sense || dev.Error)
+            if(sense || dev.Error)
             {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
                 sense = dev.ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Default, 0x3F, 0x00, timeout, out duration);
-                if (sense || dev.Error)
+                if(sense || dev.Error)
                 {
                     DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
                     sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
@@ -1774,37 +1774,37 @@ namespace DiscImageChef.Commands
             else
                 report.SCSI.SupportsModeSubpages = true;
 
-            if (!sense && !dev.Error && !decMode.HasValue)
+            if(!sense && !dev.Error && !decMode.HasValue)
                 decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, devType);
-            
-            if (!sense && !dev.Error)
+
+            if(!sense && !dev.Error)
                 report.SCSI.SupportsModeSense6 = true;
 
             Decoders.SCSI.Modes.ModePage_2A? cdromMode = null;
 
-            if (decMode.HasValue)
+            if(decMode.HasValue)
             {
                 report.SCSI.ModeSense = new modeType();
                 report.SCSI.ModeSense.BlankCheckEnabled = decMode.Value.Header.EBC;
                 report.SCSI.ModeSense.DPOandFUA = decMode.Value.Header.DPOFUA;
                 report.SCSI.ModeSense.WriteProtected = decMode.Value.Header.WriteProtected;
 
-                if (decMode.Value.Header.BufferedMode > 0)
+                if(decMode.Value.Header.BufferedMode > 0)
                 {
                     report.SCSI.ModeSense.BufferedMode = decMode.Value.Header.BufferedMode;
                     report.SCSI.ModeSense.BufferedModeSpecified = true;
                 }
 
-                if (decMode.Value.Header.Speed > 0)
+                if(decMode.Value.Header.Speed > 0)
                 {
                     report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
                     report.SCSI.ModeSense.SpeedSpecified = true;
                 }
 
-                if (decMode.Value.Pages != null)
+                if(decMode.Value.Pages != null)
                 {
                     List<modePageType> modePages = new List<modePageType>();
-                    foreach (Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
+                    foreach(Decoders.SCSI.Modes.ModePage page in decMode.Value.Pages)
                     {
                         modePageType modePage = new modePageType();
                         modePage.page = page.Page;
@@ -1812,13 +1812,13 @@ namespace DiscImageChef.Commands
                         modePage.value = page.PageResponse;
                         modePages.Add(modePage);
 
-                        if (modePage.page == 0x2A && modePage.subpage == 0x00)
+                        if(modePage.page == 0x2A && modePage.subpage == 0x00)
                         {
                             cdromMode = Decoders.SCSI.Modes.DecodeModePage_2A(page.PageResponse);
                         }
                     }
 
-                    if (modePages.Count > 0)
+                    if(modePages.Count > 0)
                         report.SCSI.ModeSense.ModePages = modePages.ToArray();
                 }
             }
@@ -1826,49 +1826,49 @@ namespace DiscImageChef.Commands
             List<string> mediaTypes = new List<string>();
 
             #region MultiMediaDevice
-            if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
                 report.SCSI.MultiMediaDevice = new mmcType();
 
-                if (cdromMode.HasValue)
+                if(cdromMode.HasValue)
                 {
                     report.SCSI.MultiMediaDevice.ModeSense2A = new mmcModeType();
-                    if (cdromMode.Value.BufferSize != 0)
+                    if(cdromMode.Value.BufferSize != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.BufferSize = cdromMode.Value.BufferSize;
                         report.SCSI.MultiMediaDevice.ModeSense2A.BufferSizeSpecified = true;
                     }
-                    if (cdromMode.Value.CurrentSpeed != 0)
+                    if(cdromMode.Value.CurrentSpeed != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentSpeed = cdromMode.Value.CurrentSpeed;
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentSpeedSpecified = true;
                     }
-                    if (cdromMode.Value.CurrentWriteSpeed != 0)
+                    if(cdromMode.Value.CurrentWriteSpeed != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeed = cdromMode.Value.CurrentWriteSpeed;
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSpecified = true;
                     }
-                    if (cdromMode.Value.CurrentWriteSpeedSelected != 0)
+                    if(cdromMode.Value.CurrentWriteSpeedSelected != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSelected = cdromMode.Value.CurrentWriteSpeedSelected;
                         report.SCSI.MultiMediaDevice.ModeSense2A.CurrentWriteSpeedSelectedSpecified = true;
                     }
-                    if (cdromMode.Value.MaximumSpeed != 0)
+                    if(cdromMode.Value.MaximumSpeed != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.MaximumSpeed = cdromMode.Value.MaximumSpeed;
                         report.SCSI.MultiMediaDevice.ModeSense2A.MaximumSpeedSpecified = true;
                     }
-                    if (cdromMode.Value.MaxWriteSpeed != 0)
+                    if(cdromMode.Value.MaxWriteSpeed != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.MaximumWriteSpeed = cdromMode.Value.MaxWriteSpeed;
                         report.SCSI.MultiMediaDevice.ModeSense2A.MaximumWriteSpeedSpecified = true;
                     }
-                    if (cdromMode.Value.RotationControlSelected != 0)
+                    if(cdromMode.Value.RotationControlSelected != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.RotationControlSelected = cdromMode.Value.RotationControlSelected;
                         report.SCSI.MultiMediaDevice.ModeSense2A.RotationControlSelectedSpecified = true;
                     }
-                    if (cdromMode.Value.SupportedVolumeLevels != 0)
+                    if(cdromMode.Value.SupportedVolumeLevels != 0)
                     {
                         report.SCSI.MultiMediaDevice.ModeSense2A.SupportedVolumeLevels = cdromMode.Value.SupportedVolumeLevels;
                         report.SCSI.MultiMediaDevice.ModeSense2A.SupportedVolumeLevelsSpecified = true;
@@ -1920,35 +1920,35 @@ namespace DiscImageChef.Commands
 
                     mediaTypes.Add("CD-ROM");
                     mediaTypes.Add("Audio CD");
-                    if (cdromMode.Value.ReadCDR)
+                    if(cdromMode.Value.ReadCDR)
                         mediaTypes.Add("CD-R");
-                    if (cdromMode.Value.ReadCDRW)
+                    if(cdromMode.Value.ReadCDRW)
                         mediaTypes.Add("CD-RW");
-                    if (cdromMode.Value.ReadDVDROM)
+                    if(cdromMode.Value.ReadDVDROM)
                         mediaTypes.Add("DVD-ROM");
-                    if (cdromMode.Value.ReadDVDRAM)
+                    if(cdromMode.Value.ReadDVDRAM)
                         mediaTypes.Add("DVD-RAM");
-                    if (cdromMode.Value.ReadDVDR)
+                    if(cdromMode.Value.ReadDVDR)
                         mediaTypes.Add("DVD-R");
                 }
 
                 DicConsole.WriteLine("Querying MMC GET CONFIGURATION...");
                 sense = dev.GetConfiguration(out buffer, out senseBuffer, timeout, out duration);
 
-                if (!sense)
+                if(!sense)
                 {
                     Decoders.SCSI.MMC.Features.SeparatedFeatures ftr = Decoders.SCSI.MMC.Features.Separate(buffer);
-                    if (ftr.Descriptors != null && ftr.Descriptors.Length > 0)
+                    if(ftr.Descriptors != null && ftr.Descriptors.Length > 0)
                     {
                         report.SCSI.MultiMediaDevice.Features = new mmcFeaturesType();
-                        foreach (Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
+                        foreach(Decoders.SCSI.MMC.Features.FeatureDescriptor desc in ftr.Descriptors)
                         {
-                            switch (desc.Code)
+                            switch(desc.Code)
                             {
                                 case 0x0001:
                                     {
                                         Decoders.SCSI.MMC.Feature_0001? ftr0001 = Decoders.SCSI.MMC.Features.Decode_0001(desc.Data);
-                                        if (ftr0001.HasValue)
+                                        if(ftr0001.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandard = ftr0001.Value.PhysicalInterfaceStandard;
                                             report.SCSI.MultiMediaDevice.Features.PhysicalInterfaceStandardSpecified = true;
@@ -1959,7 +1959,7 @@ namespace DiscImageChef.Commands
                                 case 0x0003:
                                     {
                                         Decoders.SCSI.MMC.Feature_0003? ftr0003 = Decoders.SCSI.MMC.Features.Decode_0003(desc.Data);
-                                        if (ftr0003.HasValue)
+                                        if(ftr0003.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.LoadingMechanismType = ftr0003.Value.LoadingMechanismType;
                                             report.SCSI.MultiMediaDevice.Features.LoadingMechanismTypeSpecified = true;
@@ -1974,7 +1974,7 @@ namespace DiscImageChef.Commands
                                 case 0x0004:
                                     {
                                         Decoders.SCSI.MMC.Feature_0004? ftr0004 = Decoders.SCSI.MMC.Features.Decode_0004(desc.Data);
-                                        if (ftr0004.HasValue)
+                                        if(ftr0004.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.SupportsWriteProtectPAC = ftr0004.Value.DWP;
                                             report.SCSI.MultiMediaDevice.Features.SupportsWriteInhibitDCB = ftr0004.Value.WDCB;
@@ -1986,14 +1986,14 @@ namespace DiscImageChef.Commands
                                 case 0x0010:
                                     {
                                         Decoders.SCSI.MMC.Feature_0010? ftr0010 = Decoders.SCSI.MMC.Features.Decode_0010(desc.Data);
-                                        if (ftr0010.HasValue)
+                                        if(ftr0010.HasValue)
                                         {
-                                            if (ftr0010.Value.LogicalBlockSize > 0)
+                                            if(ftr0010.Value.LogicalBlockSize > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.LogicalBlockSize = ftr0010.Value.LogicalBlockSize;
                                                 report.SCSI.MultiMediaDevice.Features.LogicalBlockSizeSpecified = true;
                                             }
-                                            if (ftr0010.Value.Blocking > 0)
+                                            if(ftr0010.Value.Blocking > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.BlocksPerReadableUnit = ftr0010.Value.Blocking;
                                                 report.SCSI.MultiMediaDevice.Features.BlocksPerReadableUnitSpecified = true;
@@ -2009,7 +2009,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadCD = true;
                                         Decoders.SCSI.MMC.Feature_001E? ftr001E = Decoders.SCSI.MMC.Features.Decode_001E(desc.Data);
-                                        if (ftr001E.HasValue)
+                                        if(ftr001E.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.SupportsDAP = ftr001E.Value.DAP;
                                             report.SCSI.MultiMediaDevice.Features.SupportsC2 = ftr001E.Value.C2;
@@ -2021,7 +2021,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadDVD = true;
                                         Decoders.SCSI.MMC.Feature_001F? ftr001F = Decoders.SCSI.MMC.Features.Decode_001F(desc.Data);
-                                        if (ftr001F.HasValue)
+                                        if(ftr001F.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.DVDMultiRead = ftr001F.Value.MULTI110;
                                             report.SCSI.MultiMediaDevice.Features.CanReadAllDualRW = ftr001F.Value.DualRW;
@@ -2036,7 +2036,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanFormat = true;
                                         Decoders.SCSI.MMC.Feature_0023? ftr0023 = Decoders.SCSI.MMC.Features.Decode_0023(desc.Data);
-                                        if (ftr0023.HasValue)
+                                        if(ftr0023.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanFormatBDREWithoutSpare = ftr0023.Value.RENoSA;
                                             report.SCSI.MultiMediaDevice.Features.CanExpandBDRESpareArea = ftr0023.Value.Expand;
@@ -2057,7 +2057,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadCDMRW = true;
                                         Decoders.SCSI.MMC.Feature_0028? ftr0028 = Decoders.SCSI.MMC.Features.Decode_0028(desc.Data);
-                                        if (ftr0028.HasValue)
+                                        if(ftr0028.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW = ftr0028.Value.DVDPRead;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusMRW = ftr0028.Value.DVDPWrite;
@@ -2069,7 +2069,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW = true;
                                         Decoders.SCSI.MMC.Feature_002A? ftr002A = Decoders.SCSI.MMC.Features.Decode_002A(desc.Data);
-                                        if (ftr002A.HasValue)
+                                        if(ftr002A.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRW = ftr002A.Value.Write;
                                         }
@@ -2079,7 +2079,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR = true;
                                         Decoders.SCSI.MMC.Feature_002B? ftr002B = Decoders.SCSI.MMC.Features.Decode_002B(desc.Data);
-                                        if (ftr002B.HasValue)
+                                        if(ftr002B.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusR = ftr002B.Value.Write;
                                         }
@@ -2089,7 +2089,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteCDTAO = true;
                                         Decoders.SCSI.MMC.Feature_002D? ftr002D = Decoders.SCSI.MMC.Features.Decode_002D(desc.Data);
-                                        if (ftr002D.HasValue)
+                                        if(ftr002D.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInTAO = ftr002D.Value.BUF;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteRawSubchannelInTAO = ftr002D.Value.RWRaw;
@@ -2104,7 +2104,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteCDSAO = true;
                                         Decoders.SCSI.MMC.Feature_002E? ftr002E = Decoders.SCSI.MMC.Features.Decode_002E(desc.Data);
-                                        if (ftr002E.HasValue)
+                                        if(ftr002E.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInSAO = ftr002E.Value.BUF;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteRawMultiSession = ftr002E.Value.RAWMS;
@@ -2119,7 +2119,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteDVDR = true;
                                         Decoders.SCSI.MMC.Feature_002F? ftr002F = Decoders.SCSI.MMC.Features.Decode_002F(desc.Data);
-                                        if (ftr002F.HasValue)
+                                        if(ftr002F.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.BufferUnderrunFreeInDVD = ftr002F.Value.BUF;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDRDL = ftr002F.Value.RDL;
@@ -2136,7 +2136,7 @@ namespace DiscImageChef.Commands
                                         report.SCSI.MultiMediaDevice.Features.CanWriteDDCDR = true;
                                         ;
                                         Decoders.SCSI.MMC.Feature_0031? ftr0031 = Decoders.SCSI.MMC.Features.Decode_0031(desc.Data);
-                                        if (ftr0031.HasValue)
+                                        if(ftr0031.HasValue)
                                             report.SCSI.MultiMediaDevice.Features.CanTestWriteDDCDR = ftr0031.Value.TestWrite;
                                     }
                                     break;
@@ -2153,7 +2153,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL = true;
                                         Decoders.SCSI.MMC.Feature_003A? ftr003A = Decoders.SCSI.MMC.Features.Decode_003A(desc.Data);
-                                        if (ftr003A.HasValue)
+                                        if(ftr003A.HasValue)
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRWDL = ftr003A.Value.Write;
                                     }
                                     break;
@@ -2161,7 +2161,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL = true;
                                         Decoders.SCSI.MMC.Feature_003B? ftr003B = Decoders.SCSI.MMC.Features.Decode_003B(desc.Data);
-                                        if (ftr003B.HasValue)
+                                        if(ftr003B.HasValue)
                                             report.SCSI.MultiMediaDevice.Features.CanWriteDVDPlusRDL = ftr003B.Value.Write;
                                     }
                                     break;
@@ -2169,7 +2169,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadBD = true;
                                         Decoders.SCSI.MMC.Feature_0040? ftr0040 = Decoders.SCSI.MMC.Features.Decode_0040(desc.Data);
-                                        if (ftr0040.HasValue)
+                                        if(ftr0040.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanReadBluBCA = ftr0040.Value.BCA;
                                             report.SCSI.MultiMediaDevice.Features.CanReadBDRE2 = ftr0040.Value.RE2;
@@ -2186,7 +2186,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteBD = true;
                                         Decoders.SCSI.MMC.Feature_0041? ftr0041 = Decoders.SCSI.MMC.Features.Decode_0041(desc.Data);
-                                        if (ftr0041.HasValue)
+                                        if(ftr0041.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanWriteBDRE2 = ftr0041.Value.RE2;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteBDRE1 = ftr0041.Value.RE1;
@@ -2200,7 +2200,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanReadHDDVD = true;
                                         Decoders.SCSI.MMC.Feature_0050? ftr0050 = Decoders.SCSI.MMC.Features.Decode_0050(desc.Data);
-                                        if (ftr0050.HasValue)
+                                        if(ftr0050.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR = ftr0050.Value.HDDVDR;
                                             report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM = ftr0050.Value.HDDVDRAM;
@@ -2210,7 +2210,7 @@ namespace DiscImageChef.Commands
                                 case 0x0051:
                                     {
                                         Decoders.SCSI.MMC.Feature_0051? ftr0051 = Decoders.SCSI.MMC.Features.Decode_0051(desc.Data);
-                                        if (ftr0051.HasValue)
+                                        if(ftr0051.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDR = ftr0051.Value.HDDVDR;
                                             report.SCSI.MultiMediaDevice.Features.CanWriteHDDVDRAM = ftr0051.Value.HDDVDRAM;
@@ -2227,7 +2227,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.EmbeddedChanger = true;
                                         Decoders.SCSI.MMC.Feature_0102? ftr0102 = Decoders.SCSI.MMC.Features.Decode_0102(desc.Data);
-                                        if (ftr0102.HasValue)
+                                        if(ftr0102.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.ChangerIsSideChangeCapable = ftr0102.Value.SCC;
                                             report.SCSI.MultiMediaDevice.Features.ChangerSupportsDiscPresent = ftr0102.Value.SDP;
@@ -2239,12 +2239,12 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanPlayCDAudio = true;
                                         Decoders.SCSI.MMC.Feature_0103? ftr0103 = Decoders.SCSI.MMC.Features.Decode_0103(desc.Data);
-                                        if (ftr0103.HasValue)
+                                        if(ftr0103.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanAudioScan = ftr0103.Value.Scan;
                                             report.SCSI.MultiMediaDevice.Features.CanMuteSeparateChannels = ftr0103.Value.SCM;
                                             report.SCSI.MultiMediaDevice.Features.SupportsSeparateVolume = ftr0103.Value.SV;
-                                            if (ftr0103.Value.VolumeLevels > 0)
+                                            if(ftr0103.Value.VolumeLevels > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.VolumeLevelsSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.VolumeLevels = ftr0103.Value.VolumeLevels;
@@ -2259,9 +2259,9 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.SupportsCSS = true;
                                         Decoders.SCSI.MMC.Feature_0106? ftr0106 = Decoders.SCSI.MMC.Features.Decode_0106(desc.Data);
-                                        if (ftr0106.HasValue)
+                                        if(ftr0106.HasValue)
                                         {
-                                            if (ftr0106.Value.CSSVersion > 0)
+                                            if(ftr0106.Value.CSSVersion > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.CSSVersionSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.CSSVersion = ftr0106.Value.CSSVersion;
@@ -2279,9 +2279,9 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.SupportsCPRM = true;
                                         Decoders.SCSI.MMC.Feature_010B? ftr010B = Decoders.SCSI.MMC.Features.Decode_010B(desc.Data);
-                                        if (ftr010B.HasValue)
+                                        if(ftr010B.HasValue)
                                         {
-                                            if (ftr010B.Value.CPRMVersion > 0)
+                                            if(ftr010B.Value.CPRMVersion > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.CPRMVersionSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.CPRMVersion = ftr010B.Value.CPRMVersion;
@@ -2292,7 +2292,7 @@ namespace DiscImageChef.Commands
                                 case 0x010C:
                                     {
                                         Decoders.SCSI.MMC.Feature_010C? ftr010C = Decoders.SCSI.MMC.Features.Decode_010C(desc.Data);
-                                        if (ftr010C.HasValue)
+                                        if(ftr010C.HasValue)
                                         {
                                             string syear, smonth, sday, shour, sminute, ssecond;
                                             byte[] temp;
@@ -2342,7 +2342,7 @@ namespace DiscImageChef.Commands
                                     {
                                         report.SCSI.MultiMediaDevice.Features.SupportsAACS = true;
                                         Decoders.SCSI.MMC.Feature_010D? ftr010D = Decoders.SCSI.MMC.Features.Decode_010D(desc.Data);
-                                        if (ftr010D.HasValue)
+                                        if(ftr010D.HasValue)
                                         {
                                             report.SCSI.MultiMediaDevice.Features.CanReadDriveAACSCertificate = ftr010D.Value.RDC;
                                             report.SCSI.MultiMediaDevice.Features.CanReadCPRM_MKB = ftr010D.Value.RMC;
@@ -2350,19 +2350,19 @@ namespace DiscImageChef.Commands
                                             report.SCSI.MultiMediaDevice.Features.SupportsBusEncryption = ftr010D.Value.BEC;
                                             report.SCSI.MultiMediaDevice.Features.CanGenerateBindingNonce = ftr010D.Value.BNG;
 
-                                            if (ftr010D.Value.BindNonceBlocks > 0)
+                                            if(ftr010D.Value.BindNonceBlocks > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.BindingNonceBlocksSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.BindingNonceBlocks = ftr010D.Value.BindNonceBlocks;
                                             }
 
-                                            if (ftr010D.Value.AGIDs > 0)
+                                            if(ftr010D.Value.AGIDs > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.AGIDsSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.AGIDs = ftr010D.Value.AGIDs;
                                             }
 
-                                            if (ftr010D.Value.AACSVersion > 0)
+                                            if(ftr010D.Value.AACSVersion > 0)
                                             {
                                                 report.SCSI.MultiMediaDevice.Features.AACSVersionSpecified = true;
                                                 report.SCSI.MultiMediaDevice.Features.AACSVersion = ftr010D.Value.AACSVersion;
@@ -2386,7 +2386,7 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadBD ||
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadBD ||
                         report.SCSI.MultiMediaDevice.Features.CanReadBDR ||
                         report.SCSI.MultiMediaDevice.Features.CanReadBDRE1 ||
                         report.SCSI.MultiMediaDevice.Features.CanReadBDRE2 ||
@@ -2395,91 +2395,91 @@ namespace DiscImageChef.Commands
                         report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
                         report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
                     {
-                        if (!mediaTypes.Contains("BD-ROM"))
+                        if(!mediaTypes.Contains("BD-ROM"))
                             mediaTypes.Add("BD-ROM");
-                        if (!mediaTypes.Contains("BD-R"))
+                        if(!mediaTypes.Contains("BD-R"))
                             mediaTypes.Add("BD-R");
-                        if (!mediaTypes.Contains("BD-RE"))
+                        if(!mediaTypes.Contains("BD-RE"))
                             mediaTypes.Add("BD-RE");
-                        if (!mediaTypes.Contains("BD-R LTH"))
+                        if(!mediaTypes.Contains("BD-R LTH"))
                             mediaTypes.Add("BD-R LTH");
-                        if (!mediaTypes.Contains("BD-R XL"))
+                        if(!mediaTypes.Contains("BD-R XL"))
                             mediaTypes.Add("BD-R XL");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadCD ||
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
                         report.SCSI.MultiMediaDevice.Features.MultiRead)
                     {
-                        if (!mediaTypes.Contains("CD-ROM"))
+                        if(!mediaTypes.Contains("CD-ROM"))
                             mediaTypes.Add("CD-ROM");
-                        if (!mediaTypes.Contains("Audio CD"))
+                        if(!mediaTypes.Contains("Audio CD"))
                             mediaTypes.Add("Audio CD");
-                        if (!mediaTypes.Contains("CD-R"))
+                        if(!mediaTypes.Contains("CD-R"))
                             mediaTypes.Add("CD-R");
-                        if (!mediaTypes.Contains("CD-RW"))
+                        if(!mediaTypes.Contains("CD-RW"))
                             mediaTypes.Add("CD-RW");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
                     {
-                        if (!mediaTypes.Contains("CD-MRW"))
+                        if(!mediaTypes.Contains("CD-MRW"))
                             mediaTypes.Add("CD-MRW");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
                     {
-                        if (!mediaTypes.Contains("DDCD-ROM"))
+                        if(!mediaTypes.Contains("DDCD-ROM"))
                             mediaTypes.Add("DDCD-ROM");
-                        if (!mediaTypes.Contains("DDCD-R"))
+                        if(!mediaTypes.Contains("DDCD-R"))
                             mediaTypes.Add("DDCD-R");
-                        if (!mediaTypes.Contains("DDCD-RW"))
+                        if(!mediaTypes.Contains("DDCD-RW"))
                             mediaTypes.Add("DDCD-RW");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadDVD ||
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadDVD ||
                         report.SCSI.MultiMediaDevice.Features.DVDMultiRead ||
                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR ||
                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW ||
                         report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
                     {
-                        if (!mediaTypes.Contains("DVD-ROM"))
+                        if(!mediaTypes.Contains("DVD-ROM"))
                             mediaTypes.Add("DVD-ROM");
-                        if (!mediaTypes.Contains("DVD-R"))
+                        if(!mediaTypes.Contains("DVD-R"))
                             mediaTypes.Add("DVD-R");
-                        if (!mediaTypes.Contains("DVD-RW"))
+                        if(!mediaTypes.Contains("DVD-RW"))
                             mediaTypes.Add("DVD-RW");
-                        if (!mediaTypes.Contains("DVD+R"))
+                        if(!mediaTypes.Contains("DVD+R"))
                             mediaTypes.Add("DVD+R");
-                        if (!mediaTypes.Contains("DVD+RW"))
+                        if(!mediaTypes.Contains("DVD+RW"))
                             mediaTypes.Add("DVD+RW");
-                        if (!mediaTypes.Contains("DVD-R DL"))
+                        if(!mediaTypes.Contains("DVD-R DL"))
                             mediaTypes.Add("DVD-R DL");
-                        if (!mediaTypes.Contains("DVD+R DL"))
+                        if(!mediaTypes.Contains("DVD+R DL"))
                             mediaTypes.Add("DVD+R DL");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
                     {
-                        if (!mediaTypes.Contains("DVD+MRW"))
+                        if(!mediaTypes.Contains("DVD+MRW"))
                             mediaTypes.Add("DVD+MRW");
                     }
 
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
                         report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
                     {
-                        if (!mediaTypes.Contains("HD DVD-ROM"))
+                        if(!mediaTypes.Contains("HD DVD-ROM"))
                             mediaTypes.Add("HD DVD-ROM");
-                        if (!mediaTypes.Contains("HD DVD-R"))
+                        if(!mediaTypes.Contains("HD DVD-R"))
                             mediaTypes.Add("HD DVD-R");
-                        if (!mediaTypes.Contains("HD DVD-RW"))
+                        if(!mediaTypes.Contains("HD DVD-RW"))
                             mediaTypes.Add("HD DVD-RW");
                     }
 
-                    if (report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
+                    if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
                     {
-                        if (!mediaTypes.Contains("HD DVD-RAM"))
+                        if(!mediaTypes.Contains("HD DVD-RAM"))
                             mediaTypes.Add("HD DVD-RAM");
                     }
                 }
@@ -2493,31 +2493,31 @@ namespace DiscImageChef.Commands
 
                 // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
                 // Also don't get confident, some drives didn't know CD-RW but are able to read them
-                if (mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
+                if(mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
                 {
-                    if (!mediaTypes.Contains("CD-ROM"))
+                    if(!mediaTypes.Contains("CD-ROM"))
                         mediaTypes.Add("CD-ROM");
-                    if (!mediaTypes.Contains("Audio CD"))
+                    if(!mediaTypes.Contains("Audio CD"))
                         mediaTypes.Add("Audio CD");
-                    if (!mediaTypes.Contains("CD-R"))
+                    if(!mediaTypes.Contains("CD-R"))
                         mediaTypes.Add("CD-R");
-                    if (!mediaTypes.Contains("CD-RW"))
+                    if(!mediaTypes.Contains("CD-RW"))
                         mediaTypes.Add("CD-RW");
                 }
 
                 mediaTypes.Sort();
                 List<testedMediaType> mediaTests = new List<testedMediaType>();
-                foreach (string mediaType in mediaTypes)
+                foreach(string mediaType in mediaTypes)
                 {
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ", mediaType);
                         pressedKey = System.Console.ReadKey();
                         DicConsole.WriteLine();
                     }
 
-                    if (pressedKey.Key == ConsoleKey.Y)
+                    if(pressedKey.Key == ConsoleKey.Y)
                     {
                         dev.AllowMediumRemoval(out senseBuffer, timeout, out duration);
                         dev.EjectTray(out senseBuffer, timeout, out duration);
@@ -2529,20 +2529,20 @@ namespace DiscImageChef.Commands
                         mediaTest.MediaIsRecognized = true;
 
                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                        if (sense)
+                        if(sense)
                         {
                             Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                            if (decSense.HasValue)
+                            if(decSense.HasValue)
                             {
-                                if (decSense.Value.ASC == 0x3A)
+                                if(decSense.Value.ASC == 0x3A)
                                 {
                                     int leftRetries = 20;
-                                    while (leftRetries > 0)
+                                    while(leftRetries > 0)
                                     {
                                         DicConsole.Write("\rWaiting for drive to become ready");
                                         System.Threading.Thread.Sleep(2000);
                                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                             break;
 
                                         leftRetries--;
@@ -2550,15 +2550,15 @@ namespace DiscImageChef.Commands
 
                                     mediaTest.MediaIsRecognized &= !sense;
                                 }
-                                else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                 {
                                     int leftRetries = 20;
-                                    while (leftRetries > 0)
+                                    while(leftRetries > 0)
                                     {
                                         DicConsole.Write("\rWaiting for drive to become ready");
                                         System.Threading.Thread.Sleep(2000);
                                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                             break;
 
                                         leftRetries--;
@@ -2573,14 +2573,14 @@ namespace DiscImageChef.Commands
                                 mediaTest.MediaIsRecognized = false;
                         }
 
-                        if (mediaTest.MediaIsRecognized)
+                        if(mediaTest.MediaIsRecognized)
                         {
                             mediaTest.SupportsReadCapacitySpecified = true;
                             mediaTest.SupportsReadCapacity16Specified = true;
 
                             DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
                             sense = dev.ReadCapacity(out buffer, out senseBuffer, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 mediaTest.SupportsReadCapacity = true;
                                 mediaTest.Blocks = (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3])) + 1;
@@ -2591,7 +2591,7 @@ namespace DiscImageChef.Commands
 
                             DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
                             sense = dev.ReadCapacity16(out buffer, out buffer, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 mediaTest.SupportsReadCapacity16 = true;
                                 byte[] temp = new byte[8];
@@ -2607,32 +2607,32 @@ namespace DiscImageChef.Commands
 
                             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
                             sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.SupportsModeSense10 = true;
                                 decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
                             }
                             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                             sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-                            if (!sense && !dev.Error)
-                            {   
+                            if(!sense && !dev.Error)
+                            {
                                 report.SCSI.SupportsModeSense6 = true;
-                                if (!decMode.HasValue)
+                                if(!decMode.HasValue)
                                     decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
                             }
 
-                            if (decMode.HasValue)
+                            if(decMode.HasValue)
                             {
                                 mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
                                 mediaTest.MediumTypeSpecified = true;
-                                if (decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
+                                if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
                                 {
                                     mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                                     mediaTest.DensitySpecified = true;
                                 }
                             }
 
-                            if (mediaType.StartsWith("CD-") || mediaType == "Audio CD")
+                            if(mediaType.StartsWith("CD-") || mediaType == "Audio CD")
                             {
                                 mediaTest.CanReadTOCSpecified = true;
                                 mediaTest.CanReadFullTOCSpecified = true;
@@ -2642,7 +2642,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadFullTOC = !dev.ReadRawToc(out buffer, out senseBuffer, 1, timeout, out duration);
                             }
 
-                            if (mediaType.StartsWith("CD-R"))
+                            if(mediaType.StartsWith("CD-R"))
                             {
                                 mediaTest.CanReadATIPSpecified = true;
                                 mediaTest.CanReadPMASpecified = true;
@@ -2652,7 +2652,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadPMA = !dev.ReadPma(out buffer, out senseBuffer, timeout, out duration);
                             }
 
-                            if (mediaType.StartsWith("DVD-") || mediaType.StartsWith("HD DVD-"))
+                            if(mediaType.StartsWith("DVD-") || mediaType.StartsWith("HD DVD-"))
                             {
                                 mediaTest.CanReadPFISpecified = true;
                                 mediaTest.CanReadDMISpecified = true;
@@ -2662,14 +2662,14 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadDMI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "DVD-ROM")
+                            if(mediaType == "DVD-ROM")
                             {
                                 mediaTest.CanReadCMISpecified = true;
                                 DicConsole.WriteLine("Querying DVD CMI...");
                                 mediaTest.CanReadCMI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CopyrightInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "DVD-ROM" || mediaType == "HD DVD-ROM")
+                            if(mediaType == "DVD-ROM" || mediaType == "HD DVD-ROM")
                             {
                                 mediaTest.CanReadBCASpecified = true;
                                 DicConsole.WriteLine("Querying DVD BCA...");
@@ -2679,14 +2679,14 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadAACS = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVD_AACS, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "BD-ROM")
+                            if(mediaType == "BD-ROM")
                             {
                                 mediaTest.CanReadBCASpecified = true;
                                 DicConsole.WriteLine("Querying BD BCA...");
                                 mediaTest.CanReadBCA = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_BurstCuttingArea, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "DVD-RAM" || mediaType == "HD DVD-RAM")
+                            if(mediaType == "DVD-RAM" || mediaType == "HD DVD-RAM")
                             {
                                 mediaTest.CanReadDDSSpecified = true;
                                 mediaTest.CanReadSpareAreaInformationSpecified = true;
@@ -2694,7 +2694,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadSpareAreaInformation = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_SpareAreaInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType.StartsWith("BD-R") && mediaType != "BD-ROM")
+                            if(mediaType.StartsWith("BD-R") && mediaType != "BD-ROM")
                             {
                                 mediaTest.CanReadDDSSpecified = true;
                                 mediaTest.CanReadSpareAreaInformationSpecified = true;
@@ -2704,14 +2704,14 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadSpareAreaInformation = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.BD_SpareAreaInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "DVD-R" || mediaType == "DVD-RW")
+                            if(mediaType == "DVD-R" || mediaType == "DVD-RW")
                             {
                                 mediaTest.CanReadPRISpecified = true;
                                 DicConsole.WriteLine("Querying DVD PRI...");
                                 mediaTest.CanReadPRI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PreRecordedInfo, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "DVD-R" || mediaType == "DVD-RW" || mediaType == "HD DVD-R")
+                            if(mediaType == "DVD-R" || mediaType == "DVD-RW" || mediaType == "HD DVD-R")
                             {
                                 mediaTest.CanReadMediaIDSpecified = true;
                                 mediaTest.CanReadRecordablePFISpecified = true;
@@ -2721,7 +2721,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadRecordablePFI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType.StartsWith("DVD+R"))
+                            if(mediaType.StartsWith("DVD+R"))
                             {
                                 mediaTest.CanReadADIPSpecified = true;
                                 mediaTest.CanReadDCBSpecified = true;
@@ -2731,21 +2731,21 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadDCB = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DCB, 0, timeout, out duration);
                             }
 
-                            if (mediaType == "HD DVD-ROM")
+                            if(mediaType == "HD DVD-ROM")
                             {
                                 mediaTest.CanReadHDCMISpecified = true;
                                 DicConsole.WriteLine("Querying HD DVD CMI...");
                                 mediaTest.CanReadHDCMI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, timeout, out duration);
                             }
 
-                            if (mediaType.EndsWith(" DL"))
+                            if(mediaType.EndsWith(" DL"))
                             {
                                 mediaTest.CanReadLayerCapacitySpecified = true;
                                 DicConsole.WriteLine("Querying DVD Layer Capacity...");
                                 mediaTest.CanReadLayerCapacity = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, timeout, out duration);
                             }
 
-                            if (mediaType.StartsWith("BD-R"))
+                            if(mediaType.StartsWith("BD-R"))
                             {
                                 mediaTest.CanReadDiscInformationSpecified = true;
                                 mediaTest.CanReadPACSpecified = true;
@@ -2769,12 +2769,12 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Trying SCSI READ (16)...");
                             mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0, 2048, 0, 1, false, timeout, out duration);
 
-                            if (options.Debug)
+                            if(options.Debug)
                             {
-                                if (!tryPlextor)
+                                if(!tryPlextor)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
-                                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
                                         DicConsole.Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
@@ -2785,7 +2785,7 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if (mediaType.StartsWith("CD-") || mediaType == "Audio CD")
+                            if(mediaType.StartsWith("CD-") || mediaType == "Audio CD")
                             {
                                 mediaTest.CanReadC2PointersSpecified = true;
                                 mediaTest.CanReadCorrectedSubchannelSpecified = true;
@@ -2801,7 +2801,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.SupportsReadCdMsfRawSpecified = true;
                                 mediaTest.SupportsReadCdRawSpecified = true;
 
-                                if (mediaType == "Audio CD")
+                                if(mediaType == "Audio CD")
                                 {
                                     DicConsole.WriteLine("Trying SCSI READ CD...");
                                     mediaTest.SupportsReadCd = !dev.ReadCd(out buffer, out senseBuffer, 0, 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
@@ -2820,16 +2820,16 @@ namespace DiscImageChef.Commands
                                     mediaTest.SupportsReadCdMsfRaw = !dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000200, 0x00000201, 2352, MmcSectorTypes.AllTypes, false, false, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 }
 
-                                if (mediaTest.SupportsReadCdRaw || mediaType == "Audio CD")
+                                if(mediaTest.SupportsReadCdRaw || mediaType == "Audio CD")
                                 {
                                     DicConsole.WriteLine("Trying to read CD Lead-In...");
-                                    for (int i = -150; i < 0; i++)
+                                    for(int i = -150; i < 0; i++)
                                     {
-                                        if (mediaType == "Audio CD")
+                                        if(mediaType == "Audio CD")
                                             sense = dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                         else
                                             sense = dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                         {
                                             mediaTest.CanReadLeadIn = true;
                                             break;
@@ -2837,17 +2837,17 @@ namespace DiscImageChef.Commands
                                     }
 
                                     DicConsole.WriteLine("Trying to read CD Lead-Out...");
-                                    if (mediaType == "Audio CD")
+                                    if(mediaType == "Audio CD")
                                         mediaTest.CanReadLeadOut = dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                     else
                                         mediaTest.CanReadLeadOut = !dev.ReadCd(out buffer, out senseBuffer, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, timeout, out duration);
                                 }
 
-                                if (mediaType == "Audio CD" && mediaTest.SupportsReadCd)
+                                if(mediaType == "Audio CD" && mediaTest.SupportsReadCd)
                                 {
                                     DicConsole.WriteLine("Trying to read C2 Pointers...");
                                     mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.None, timeout, out duration);
-                                    if (!mediaTest.CanReadC2Pointers)
+                                    if(!mediaTest.CanReadC2Pointers)
                                         mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2648, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.None, timeout, out duration);
 
                                     DicConsole.WriteLine("Trying to read subchannels...");
@@ -2857,22 +2857,22 @@ namespace DiscImageChef.Commands
 
                                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
                                     mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2662, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.Q16, timeout, out duration);
-                                    if (!mediaTest.CanReadPQSubchannelWithC2)
+                                    if(!mediaTest.CanReadPQSubchannelWithC2)
                                         mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2664, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Q16, timeout, out duration);
 
                                     mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.Raw, timeout, out duration);
-                                    if (!mediaTest.CanReadRWSubchannelWithC2)
+                                    if(!mediaTest.CanReadRWSubchannelWithC2)
                                         mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Raw, timeout, out duration);
 
                                     mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.RW, timeout, out duration);
-                                    if (!mediaTest.CanReadCorrectedSubchannelWithC2)
+                                    if(!mediaTest.CanReadCorrectedSubchannelWithC2)
                                         mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1, MmcSectorTypes.CDDA, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.RW, timeout, out duration);
                                 }
-                                else if (mediaTest.SupportsReadCdRaw)
+                                else if(mediaTest.SupportsReadCdRaw)
                                 {
                                     DicConsole.WriteLine("Trying to read C2 Pointers...");
                                     mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2Pointers, MmcSubchannel.None, timeout, out duration);
-                                    if (!mediaTest.CanReadC2Pointers)
+                                    if(!mediaTest.CanReadC2Pointers)
                                         mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2PointersAndBlock, MmcSubchannel.None, timeout, out duration);
 
                                     DicConsole.WriteLine("Trying to read subchannels...");
@@ -2882,22 +2882,22 @@ namespace DiscImageChef.Commands
 
                                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
                                     mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2662, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2Pointers, MmcSubchannel.Q16, timeout, out duration);
-                                    if (!mediaTest.CanReadPQSubchannelWithC2)
+                                    if(!mediaTest.CanReadPQSubchannelWithC2)
                                         mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2664, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Q16, timeout, out duration);
 
                                     mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2Pointers, MmcSubchannel.Raw, timeout, out duration);
-                                    if (!mediaTest.CanReadRWSubchannelWithC2)
+                                    if(!mediaTest.CanReadRWSubchannelWithC2)
                                         mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Raw, timeout, out duration);
 
                                     mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2Pointers, MmcSubchannel.RW, timeout, out duration);
-                                    if (!mediaTest.CanReadCorrectedSubchannelWithC2)
+                                    if(!mediaTest.CanReadCorrectedSubchannelWithC2)
                                         mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.C2PointersAndBlock, MmcSubchannel.RW, timeout, out duration);
                                 }
                                 else
                                 {
                                     DicConsole.WriteLine("Trying to read C2 Pointers...");
                                     mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2342, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.None, timeout, out duration);
-                                    if (!mediaTest.CanReadC2Pointers)
+                                    if(!mediaTest.CanReadC2Pointers)
                                         mediaTest.CanReadC2Pointers = !dev.ReadCd(out buffer, out senseBuffer, 0, 2344, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.None, timeout, out duration);
 
                                     DicConsole.WriteLine("Trying to read subchannels...");
@@ -2907,24 +2907,24 @@ namespace DiscImageChef.Commands
 
                                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
                                     mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2358, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.Q16, timeout, out duration);
-                                    if (!mediaTest.CanReadPQSubchannelWithC2)
+                                    if(!mediaTest.CanReadPQSubchannelWithC2)
                                         mediaTest.CanReadPQSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2360, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Q16, timeout, out duration);
 
                                     mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2438, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.Raw, timeout, out duration);
-                                    if (!mediaTest.CanReadRWSubchannelWithC2)
+                                    if(!mediaTest.CanReadRWSubchannelWithC2)
                                         mediaTest.CanReadRWSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2440, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.Raw, timeout, out duration);
 
                                     mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2438, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2Pointers, MmcSubchannel.RW, timeout, out duration);
-                                    if (!mediaTest.CanReadCorrectedSubchannelWithC2)
+                                    if(!mediaTest.CanReadCorrectedSubchannelWithC2)
                                         mediaTest.CanReadCorrectedSubchannelWithC2 = !dev.ReadCd(out buffer, out senseBuffer, 0, 2440, 1, MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.C2PointersAndBlock, MmcSubchannel.RW, timeout, out duration);
                                 }
 
-                                if (options.Debug)
+                                if(options.Debug)
                                 {
-                                    if (!tryNEC)
+                                    if(!tryNEC)
                                     {
                                         pressedKey = new ConsoleKeyInfo();
-                                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                         {
                                             DicConsole.Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                             pressedKey = System.Console.ReadKey();
@@ -2934,10 +2934,10 @@ namespace DiscImageChef.Commands
                                         tryNEC |= pressedKey.Key == ConsoleKey.Y;
                                     }
 
-                                    if (!tryPioneer)
+                                    if(!tryPioneer)
                                     {
                                         pressedKey = new ConsoleKeyInfo();
-                                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                         {
                                             DicConsole.Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                             pressedKey = System.Console.ReadKey();
@@ -2948,14 +2948,14 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if (tryPlextor)
+                                if(tryPlextor)
                                 {
                                     mediaTest.SupportsPlextorReadCDDASpecified = true;
                                     DicConsole.WriteLine("Trying Plextor READ CD-DA...");
                                     mediaTest.SupportsPlextorReadCDDA = !dev.PlextorReadCdDa(out buffer, out senseBuffer, 0, 2352, 1, PlextorSubchannel.None, timeout, out duration);
                                 }
 
-                                if (tryPioneer)
+                                if(tryPioneer)
                                 {
                                     mediaTest.SupportsPioneerReadCDDASpecified = true;
                                     mediaTest.SupportsPioneerReadCDDAMSFSpecified = true;
@@ -2965,7 +2965,7 @@ namespace DiscImageChef.Commands
                                     mediaTest.SupportsPioneerReadCDDAMSF = !dev.PioneerReadCdDaMsf(out buffer, out senseBuffer, 0x00000200, 0x00000201, 2352, PioneerSubchannel.None, timeout, out duration);
                                 }
 
-                                if (tryNEC)
+                                if(tryNEC)
                                 {
                                     mediaTest.SupportsNECReadCDDASpecified = true;
                                     DicConsole.WriteLine("Trying NEC READ CD-DA...");
@@ -2976,16 +2976,16 @@ namespace DiscImageChef.Commands
                             mediaTest.LongBlockSize = mediaTest.BlockSize;
                             DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout, out duration);
-                            if (sense && !dev.Error)
+                            if(sense && !dev.Error)
                             {
                                 Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                                if (decSense.HasValue)
+                                if(decSense.HasValue)
                                 {
-                                    if (decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                    if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
                                         decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                     {
                                         mediaTest.SupportsReadLong = true;
-                                        if (decSense.Value.InformationValid && decSense.Value.ILI)
+                                        if(decSense.Value.InformationValid && decSense.Value.ILI)
                                         {
                                             mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                             mediaTest.LongBlockSizeSpecified = true;
@@ -2994,12 +2994,12 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if (options.Debug)
+                            if(options.Debug)
                             {
-                                if (!tryHLDTST)
+                                if(!tryHLDTST)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
-                                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
                                         DicConsole.Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
@@ -3010,15 +3010,15 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if (mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                            if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                             {
-                                if (mediaTest.BlockSize == 512)
+                                if(mediaTest.BlockSize == 512)
                                 {
                                     // Long sector sizes for 512-byte magneto-opticals
-                                    foreach (ushort testSize in new []{ 600, 610, 630 })
+                                    foreach(ushort testSize in new[] { 600, 610, 630 })
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = testSize;
@@ -3027,22 +3027,22 @@ namespace DiscImageChef.Commands
                                         }
                                     }
                                 }
-                                else if (mediaTest.BlockSize == 1024)
+                                else if(mediaTest.BlockSize == 1024)
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                                    if (!sense && !dev.Error)
+                                    if(!sense && !dev.Error)
                                     {
                                         mediaTest.SupportsReadLong = true;
                                         mediaTest.LongBlockSize = 1200;
                                         mediaTest.LongBlockSizeSpecified = true;
                                     }
                                 }
-                                else if (mediaTest.BlockSize == 2048)
+                                else if(mediaTest.BlockSize == 2048)
                                 {
-                                    if (mediaType.StartsWith("DVD"))
+                                    if(mediaType.StartsWith("DVD"))
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 37856;
@@ -3052,7 +3052,7 @@ namespace DiscImageChef.Commands
                                     else
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 2380;
@@ -3060,20 +3060,20 @@ namespace DiscImageChef.Commands
                                         }
                                     }
                                 }
-                                else if (mediaTest.BlockSize == 4096)
+                                else if(mediaTest.BlockSize == 4096)
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, timeout, out duration);
-                                    if (!sense && !dev.Error)
+                                    if(!sense && !dev.Error)
                                     {
                                         mediaTest.SupportsReadLong = true;
                                         mediaTest.LongBlockSize = 4760;
                                         mediaTest.LongBlockSizeSpecified = true;
                                     }
                                 }
-                                else if (mediaTest.BlockSize == 8192)
+                                else if(mediaTest.BlockSize == 8192)
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, timeout, out duration);
-                                    if (!sense && !dev.Error)
+                                    if(!sense && !dev.Error)
                                     {
                                         mediaTest.SupportsReadLong = true;
                                         mediaTest.LongBlockSize = 9424;
@@ -3082,41 +3082,41 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if (tryPlextor)
+                            if(tryPlextor)
                             {
                                 mediaTest.SupportsPlextorReadRawDVDSpecified = true;
                                 DicConsole.WriteLine("Trying Plextor trick to raw read DVDs...");
                                 mediaTest.SupportsPlextorReadRawDVD = !dev.PlextorReadRawDvd(out buffer, out senseBuffer, 0, 1, timeout, out duration);
-                                if (mediaTest.SupportsPlextorReadRawDVD)
+                                if(mediaTest.SupportsPlextorReadRawDVD)
                                     mediaTest.SupportsPlextorReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
                             }
 
-                            if (tryHLDTST)
+                            if(tryHLDTST)
                             {
                                 mediaTest.SupportsHLDTSTReadRawDVDSpecified = true;
                                 DicConsole.WriteLine("Trying HL-DT-ST (aka LG) trick to raw read DVDs...");
                                 mediaTest.SupportsHLDTSTReadRawDVD = !dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 0, 1, timeout, out duration);
                             }
 
-                            if (mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                            if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                             {
                                 pressedKey = new ConsoleKeyInfo();
-                                while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                 {
                                     DicConsole.Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
                                     pressedKey = System.Console.ReadKey();
                                     DicConsole.WriteLine();
                                 }
 
-                                if (pressedKey.Key == ConsoleKey.Y)
+                                if(pressedKey.Key == ConsoleKey.Y)
                                 {
-                                    for (ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
+                                    for(ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
                                     {
                                         DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                         {
-                                            if (options.Debug)
+                                            if(options.Debug)
                                             {
                                                 FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", mediaType), FileMode.Create);
                                                 bingo.Write(buffer, 0, buffer.Length);
@@ -3132,33 +3132,33 @@ namespace DiscImageChef.Commands
                             }
                         }
                         mediaTests.Add(mediaTest);
-                    }       
+                    }
                     report.SCSI.MultiMediaDevice.TestedMedia = mediaTests.ToArray();
                 }
             }
             #endregion MultiMediaDevice
             #region SequentialAccessDevice
-            else if (dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+            else if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
                 report.SCSI.SequentialDevice = new sscType();
                 DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
                 sense = dev.ReadBlockLimits(out buffer, out senseBuffer, timeout, out duration);
-                if (!sense)
+                if(!sense)
                 {
                     Decoders.SCSI.SSC.BlockLimits.BlockLimitsData? decBL = Decoders.SCSI.SSC.BlockLimits.Decode(buffer);
-                    if (decBL.HasValue)
+                    if(decBL.HasValue)
                     {
-                        if (decBL.Value.granularity > 0)
+                        if(decBL.Value.granularity > 0)
                         {
                             report.SCSI.SequentialDevice.BlockSizeGranularitySpecified = true;
                             report.SCSI.SequentialDevice.BlockSizeGranularity = decBL.Value.granularity;
                         }
-                        if (decBL.Value.maxBlockLen > 0)
+                        if(decBL.Value.maxBlockLen > 0)
                         {
                             report.SCSI.SequentialDevice.MaxBlockLengthSpecified = true;
                             report.SCSI.SequentialDevice.MaxBlockLength = decBL.Value.maxBlockLen;
                         }
-                        if (decBL.Value.minBlockLen > 0)
+                        if(decBL.Value.minBlockLen > 0)
                         {
                             report.SCSI.SequentialDevice.MinBlockLengthSpecified = true;
                             report.SCSI.SequentialDevice.MinBlockLength = decBL.Value.minBlockLen;
@@ -3168,13 +3168,13 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
                 sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, false, timeout, out duration);
-                if (!sense)
+                if(!sense)
                 {
                     Decoders.SCSI.SSC.DensitySupport.DensitySupportHeader? dsh = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(buffer);
-                    if (dsh.HasValue)
+                    if(dsh.HasValue)
                     {
                         report.SCSI.SequentialDevice.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
-                        for (int i = 0; i < dsh.Value.descriptors.Length; i++)
+                        for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                         {
                             report.SCSI.SequentialDevice.SupportedDensities[i].BitsPerMm = dsh.Value.descriptors[i].bpmm;
                             report.SCSI.SequentialDevice.SupportedDensities[i].Capacity = dsh.Value.descriptors[i].capacity;
@@ -3194,13 +3194,13 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
                 sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, false, timeout, out duration);
-                if (!sense)
+                if(!sense)
                 {
                     Decoders.SCSI.SSC.DensitySupport.MediaTypeSupportHeader? mtsh = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(buffer);
-                    if (mtsh.HasValue)
+                    if(mtsh.HasValue)
                     {
                         report.SCSI.SequentialDevice.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
-                        for (int i = 0; i < mtsh.Value.descriptors.Length; i++)
+                        for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                         {
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].Description = mtsh.Value.descriptors[i].description;
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].Length = mtsh.Value.descriptors[i].length;
@@ -3208,10 +3208,10 @@ namespace DiscImageChef.Commands
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].Name = mtsh.Value.descriptors[i].name;
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
                             report.SCSI.SequentialDevice.SupportedMediaTypes[i].Width = mtsh.Value.descriptors[i].width;
-                            if (mtsh.Value.descriptors[i].densityCodes != null)
+                            if(mtsh.Value.descriptors[i].densityCodes != null)
                             {
                                 report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
-                                for (int j = 0; j < mtsh.Value.descriptors.Length; j++)
+                                for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
                                     report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes[j] = (int)mtsh.Value.descriptors[i].densityCodes[j];
                             }
                         }
@@ -3221,17 +3221,17 @@ namespace DiscImageChef.Commands
                 List<SequentialMedia> seqTests = new List<SequentialMedia>();
 
                 pressedKey = new ConsoleKeyInfo();
-                while (pressedKey.Key != ConsoleKey.N)
+                while(pressedKey.Key != ConsoleKey.N)
                 {
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                     {
                         DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
                         DicConsole.WriteLine();
                     }
 
-                    if (pressedKey.Key == ConsoleKey.Y)
+                    if(pressedKey.Key == ConsoleKey.Y)
                     {
                         DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                         System.Console.ReadKey(true);
@@ -3248,20 +3248,20 @@ namespace DiscImageChef.Commands
 
                         sense = dev.Load(out senseBuffer, timeout, out duration);
                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                        if (sense)
+                        if(sense)
                         {
                             Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                            if (decSense.HasValue)
+                            if(decSense.HasValue)
                             {
-                                if (decSense.Value.ASC == 0x3A)
+                                if(decSense.Value.ASC == 0x3A)
                                 {
                                     int leftRetries = 20;
-                                    while (leftRetries > 0)
+                                    while(leftRetries > 0)
                                     {
                                         DicConsole.Write("\rWaiting for drive to become ready");
                                         System.Threading.Thread.Sleep(2000);
                                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                             break;
 
                                         leftRetries--;
@@ -3269,15 +3269,15 @@ namespace DiscImageChef.Commands
 
                                     seqTest.MediaIsRecognized &= !sense;
                                 }
-                                else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                 {
                                     int leftRetries = 20;
-                                    while (leftRetries > 0)
+                                    while(leftRetries > 0)
                                     {
                                         DicConsole.Write("\rWaiting for drive to become ready");
                                         System.Threading.Thread.Sleep(2000);
                                         sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                        if (!sense)
+                                        if(!sense)
                                             break;
 
                                         leftRetries--;
@@ -3292,13 +3292,13 @@ namespace DiscImageChef.Commands
                                 seqTest.MediaIsRecognized = false;
                         }
 
-                        if (seqTest.MediaIsRecognized)
+                        if(seqTest.MediaIsRecognized)
                         {
                             decMode = null;
 
                             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
                             sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.SupportsModeSense10 = true;
                                 decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
@@ -3306,18 +3306,18 @@ namespace DiscImageChef.Commands
 
                             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                             sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.SupportsModeSense6 = true;
-                                if (!decMode.HasValue)
+                                if(!decMode.HasValue)
                                     decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
                             }
 
-                            if (decMode.HasValue)
+                            if(decMode.HasValue)
                             {
                                 seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
                                 seqTest.MediumTypeSpecified = true;
-                                if (decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
+                                if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
                                 {
                                     seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                                     seqTest.DensitySpecified = true;
@@ -3327,13 +3327,13 @@ namespace DiscImageChef.Commands
 
                         DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
                         sense = dev.ReportDensitySupport(out buffer, out senseBuffer, false, true, timeout, out duration);
-                        if (!sense)
+                        if(!sense)
                         {
                             Decoders.SCSI.SSC.DensitySupport.DensitySupportHeader? dsh = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(buffer);
-                            if (dsh.HasValue)
+                            if(dsh.HasValue)
                             {
                                 seqTest.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
-                                for (int i = 0; i < dsh.Value.descriptors.Length; i++)
+                                for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                                 {
                                     seqTest.SupportedDensities[i].BitsPerMm = dsh.Value.descriptors[i].bpmm;
                                     seqTest.SupportedDensities[i].Capacity = dsh.Value.descriptors[i].capacity;
@@ -3353,13 +3353,13 @@ namespace DiscImageChef.Commands
 
                         DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
                         sense = dev.ReportDensitySupport(out buffer, out senseBuffer, true, true, timeout, out duration);
-                        if (!sense)
+                        if(!sense)
                         {
                             Decoders.SCSI.SSC.DensitySupport.MediaTypeSupportHeader? mtsh = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(buffer);
-                            if (mtsh.HasValue)
+                            if(mtsh.HasValue)
                             {
                                 seqTest.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
-                                for (int i = 0; i < mtsh.Value.descriptors.Length; i++)
+                                for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                                 {
                                     seqTest.SupportedMediaTypes[i].Description = mtsh.Value.descriptors[i].description;
                                     seqTest.SupportedMediaTypes[i].Length = mtsh.Value.descriptors[i].length;
@@ -3367,10 +3367,10 @@ namespace DiscImageChef.Commands
                                     seqTest.SupportedMediaTypes[i].Name = mtsh.Value.descriptors[i].name;
                                     seqTest.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
                                     seqTest.SupportedMediaTypes[i].Width = mtsh.Value.descriptors[i].width;
-                                    if (mtsh.Value.descriptors[i].densityCodes != null)
+                                    if(mtsh.Value.descriptors[i].densityCodes != null)
                                     {
                                         seqTest.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
-                                        for (int j = 0; j < mtsh.Value.descriptors.Length; j++)
+                                        for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
                                             seqTest.SupportedMediaTypes[i].DensityCodes[j] = (int)mtsh.Value.descriptors[i].densityCodes[j];
                                     }
                                 }
@@ -3389,22 +3389,22 @@ namespace DiscImageChef.Commands
             #region OtherDevices
             else
             {
-                if (removable)
+                if(removable)
                 {
                     List<testedMediaType> mediaTests = new List<testedMediaType>();
 
                     pressedKey = new ConsoleKeyInfo();
-                    while (pressedKey.Key != ConsoleKey.N)
+                    while(pressedKey.Key != ConsoleKey.N)
                     {
                         pressedKey = new ConsoleKeyInfo();
-                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                         {
                             DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                             pressedKey = System.Console.ReadKey();
                             DicConsole.WriteLine();
                         }
 
-                        if (pressedKey.Key == ConsoleKey.Y)
+                        if(pressedKey.Key == ConsoleKey.Y)
                         {
                             DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                             System.Console.ReadKey(true);
@@ -3422,20 +3422,20 @@ namespace DiscImageChef.Commands
                             mediaTest.MediaIsRecognized = true;
 
                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                            if (sense)
+                            if(sense)
                             {
                                 Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                                if (decSense.HasValue)
+                                if(decSense.HasValue)
                                 {
-                                    if (decSense.Value.ASC == 0x3A)
+                                    if(decSense.Value.ASC == 0x3A)
                                     {
                                         int leftRetries = 20;
-                                        while (leftRetries > 0)
+                                        while(leftRetries > 0)
                                         {
                                             DicConsole.Write("\rWaiting for drive to become ready");
                                             System.Threading.Thread.Sleep(2000);
                                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                            if (!sense)
+                                            if(!sense)
                                                 break;
 
                                             leftRetries--;
@@ -3443,15 +3443,15 @@ namespace DiscImageChef.Commands
 
                                         mediaTest.MediaIsRecognized &= !sense;
                                     }
-                                    else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                                    else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                     {
                                         int leftRetries = 20;
-                                        while (leftRetries > 0)
+                                        while(leftRetries > 0)
                                         {
                                             DicConsole.Write("\rWaiting for drive to become ready");
                                             System.Threading.Thread.Sleep(2000);
                                             sense = dev.ScsiTestUnitReady(out senseBuffer, timeout, out duration);
-                                            if (!sense)
+                                            if(!sense)
                                                 break;
 
                                             leftRetries--;
@@ -3466,14 +3466,14 @@ namespace DiscImageChef.Commands
                                     mediaTest.MediaIsRecognized = false;
                             }
 
-                            if (mediaTest.MediaIsRecognized)
+                            if(mediaTest.MediaIsRecognized)
                             {
                                 mediaTest.SupportsReadCapacitySpecified = true;
                                 mediaTest.SupportsReadCapacity16Specified = true;
 
                                 DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
                                 sense = dev.ReadCapacity(out buffer, out senseBuffer, timeout, out duration);
-                                if (!sense && !dev.Error)
+                                if(!sense && !dev.Error)
                                 {
                                     mediaTest.SupportsReadCapacity = true;
                                     mediaTest.Blocks = (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3])) + 1;
@@ -3484,7 +3484,7 @@ namespace DiscImageChef.Commands
 
                                 DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
                                 sense = dev.ReadCapacity16(out buffer, out buffer, timeout, out duration);
-                                if (!sense && !dev.Error)
+                                if(!sense && !dev.Error)
                                 {
                                     mediaTest.SupportsReadCapacity16 = true;
                                     byte[] temp = new byte[8];
@@ -3500,7 +3500,7 @@ namespace DiscImageChef.Commands
 
                                 DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
                                 sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout, out duration);
-                                if (!sense && !dev.Error)
+                                if(!sense && !dev.Error)
                                 {
                                     report.SCSI.SupportsModeSense10 = true;
                                     decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
@@ -3508,18 +3508,18 @@ namespace DiscImageChef.Commands
 
                                 DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                                 sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-                                if (!sense && !dev.Error)
+                                if(!sense && !dev.Error)
                                 {
                                     report.SCSI.SupportsModeSense6 = true;
-                                    if (!decMode.HasValue)
+                                    if(!decMode.HasValue)
                                         decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
                                 }
 
-                                if (decMode.HasValue)
+                                if(decMode.HasValue)
                                 {
                                     mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
                                     mediaTest.MediumTypeSpecified = true;
-                                    if (decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
+                                    if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
                                     {
                                         mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                                         mediaTest.DensitySpecified = true;
@@ -3544,16 +3544,16 @@ namespace DiscImageChef.Commands
                                 mediaTest.LongBlockSize = mediaTest.BlockSize;
                                 DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout, out duration);
-                                if (sense && !dev.Error)
+                                if(sense && !dev.Error)
                                 {
                                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                                    if (decSense.HasValue)
+                                    if(decSense.HasValue)
                                     {
-                                        if (decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                        if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
                                             decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                         {
                                             mediaTest.SupportsReadLong = true;
-                                            if (decSense.Value.InformationValid && decSense.Value.ILI)
+                                            if(decSense.Value.InformationValid && decSense.Value.ILI)
                                             {
                                                 mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                                 mediaTest.LongBlockSizeSpecified = true;
@@ -3562,15 +3562,15 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if (mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                 {
-                                    if (mediaTest.BlockSize == 512)
+                                    if(mediaTest.BlockSize == 512)
                                     {
                                         // Long sector sizes for 512-byte magneto-opticals
-                                        foreach (ushort testSize in new []{ 600, 610, 630 })
+                                        foreach(ushort testSize in new[] { 600, 610, 630 })
                                         {
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
-                                            if (!sense && !dev.Error)
+                                            if(!sense && !dev.Error)
                                             {
                                                 mediaTest.SupportsReadLong = true;
                                                 mediaTest.LongBlockSize = testSize;
@@ -3579,40 +3579,40 @@ namespace DiscImageChef.Commands
                                             }
                                         }
                                     }
-                                    else if (mediaTest.BlockSize == 1024)
+                                    else if(mediaTest.BlockSize == 1024)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 1200;
                                             mediaTest.LongBlockSizeSpecified = true;
                                         }
                                     }
-                                    else if (mediaTest.BlockSize == 2048)
+                                    else if(mediaTest.BlockSize == 2048)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 2380;
                                             mediaTest.LongBlockSizeSpecified = true;
                                         }
                                     }
-                                    else if (mediaTest.BlockSize == 4096)
+                                    else if(mediaTest.BlockSize == 4096)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 4760;
                                             mediaTest.LongBlockSizeSpecified = true;
                                         }
                                     }
-                                    else if (mediaTest.BlockSize == 8192)
+                                    else if(mediaTest.BlockSize == 8192)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, timeout, out duration);
-                                        if (!sense && !dev.Error)
+                                        if(!sense && !dev.Error)
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             mediaTest.LongBlockSize = 9424;
@@ -3621,25 +3621,25 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if (mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
-                                    while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                                    while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                                     {
                                         DicConsole.Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
                                         DicConsole.WriteLine();
                                     }
 
-                                    if (pressedKey.Key == ConsoleKey.Y)
+                                    if(pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        for (ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
+                                        for(ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 36; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
-                                            if (!sense)
+                                            if(!sense)
                                             {
-                                                if (options.Debug)
+                                                if(options.Debug)
                                                 {
                                                     FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", mediaTest.MediumTypeName), FileMode.Create);
                                                     bingo.Write(buffer, 0, buffer.Length);
@@ -3660,7 +3660,7 @@ namespace DiscImageChef.Commands
                             }
                             mediaTests.Add(mediaTest);
                         }
-                    }    
+                    }
                     report.SCSI.RemovableMedias = mediaTests.ToArray();
                 }
                 else
@@ -3674,7 +3674,7 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
                     sense = dev.ReadCapacity(out buffer, out senseBuffer, timeout, out duration);
-                    if (!sense && !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         report.SCSI.ReadCapabilities.SupportsReadCapacity = true;
                         report.SCSI.ReadCapabilities.Blocks = (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3])) + 1;
@@ -3685,7 +3685,7 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
                     sense = dev.ReadCapacity16(out buffer, out buffer, timeout, out duration);
-                    if (!sense && !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         report.SCSI.ReadCapabilities.SupportsReadCapacity16 = true;
                         byte[] temp = new byte[8];
@@ -3701,7 +3701,7 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
                     sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, timeout, out duration);
-                    if (!sense && !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense10 = true;
                         decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
@@ -3709,18 +3709,18 @@ namespace DiscImageChef.Commands
 
                     DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                     sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
-                    if (!sense && !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         report.SCSI.SupportsModeSense6 = true;
-                        if (!decMode.HasValue)
+                        if(!decMode.HasValue)
                             decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
                     }
 
-                    if (decMode.HasValue)
+                    if(decMode.HasValue)
                     {
                         report.SCSI.ReadCapabilities.MediumType = (byte)decMode.Value.Header.MediumType;
                         report.SCSI.ReadCapabilities.MediumTypeSpecified = true;
-                        if (decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
+                        if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length > 0)
                         {
                             report.SCSI.ReadCapabilities.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                             report.SCSI.ReadCapabilities.DensitySpecified = true;
@@ -3745,16 +3745,16 @@ namespace DiscImageChef.Commands
                     report.SCSI.ReadCapabilities.LongBlockSize = report.SCSI.ReadCapabilities.BlockSize;
                     DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, timeout, out duration);
-                    if (sense && !dev.Error)
+                    if(sense && !dev.Error)
                     {
                         Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
-                        if (decSense.HasValue)
+                        if(decSense.HasValue)
                         {
-                            if (decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                            if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
                                 decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
-                                if (decSense.Value.InformationValid && decSense.Value.ILI)
+                                if(decSense.Value.InformationValid && decSense.Value.ILI)
                                 {
                                     report.SCSI.ReadCapabilities.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                     report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
@@ -3763,15 +3763,15 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (report.SCSI.ReadCapabilities.SupportsReadLong && report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
+                    if(report.SCSI.ReadCapabilities.SupportsReadLong && report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                     {
-                        if (report.SCSI.ReadCapabilities.BlockSize == 512)
+                        if(report.SCSI.ReadCapabilities.BlockSize == 512)
                         {
                             // Long sector sizes for 512-byte magneto-opticals
-                            foreach (ushort testSize in new []{ 600, 610, 630 })
+                            foreach(ushort testSize in new[] { 600, 610, 630 })
                             {
                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, timeout, out duration);
-                                if (!sense && !dev.Error)
+                                if(!sense && !dev.Error)
                                 {
                                     report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                     report.SCSI.ReadCapabilities.LongBlockSize = testSize;
@@ -3780,40 +3780,40 @@ namespace DiscImageChef.Commands
                                 }
                             }
                         }
-                        else if (report.SCSI.ReadCapabilities.BlockSize == 1024)
+                        else if(report.SCSI.ReadCapabilities.BlockSize == 1024)
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 1200, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                 report.SCSI.ReadCapabilities.LongBlockSize = 1200;
                                 report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                             }
                         }
-                        else if (report.SCSI.ReadCapabilities.BlockSize == 2048)
+                        else if(report.SCSI.ReadCapabilities.BlockSize == 2048)
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                 report.SCSI.ReadCapabilities.LongBlockSize = 2380;
                                 report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                             }
                         }
-                        else if (report.SCSI.ReadCapabilities.BlockSize == 4096)
+                        else if(report.SCSI.ReadCapabilities.BlockSize == 4096)
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                 report.SCSI.ReadCapabilities.LongBlockSize = 4760;
                                 report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                             }
                         }
-                        else if (report.SCSI.ReadCapabilities.BlockSize == 8192)
+                        else if(report.SCSI.ReadCapabilities.BlockSize == 8192)
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, timeout, out duration);
-                            if (!sense && !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                 report.SCSI.ReadCapabilities.LongBlockSize = 9424;
@@ -3822,25 +3822,25 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (report.SCSI.ReadCapabilities.SupportsReadLong && report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
+                    if(report.SCSI.ReadCapabilities.SupportsReadLong && report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                     {
                         pressedKey = new ConsoleKeyInfo();
-                        while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                        while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                         {
                             DicConsole.Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
                             pressedKey = System.Console.ReadKey();
                             DicConsole.WriteLine();
                         }
 
-                        if (pressedKey.Key == ConsoleKey.Y)
+                        if(pressedKey.Key == ConsoleKey.Y)
                         {
-                            for (ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < (ushort)report.SCSI.ReadCapabilities.BlockSize * 36; i++)
+                            for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < (ushort)report.SCSI.ReadCapabilities.BlockSize * 36; i++)
                             {
                                 DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, timeout, out duration);
-                                if (!sense)
+                                if(!sense)
                                 {
-                                    if (options.Debug)
+                                    if(options.Debug)
                                     {
                                         FileStream bingo = new FileStream(string.Format("{0}_readlong.bin", dev.Model), FileMode.Create);
                                         bingo.Write(buffer, 0, buffer.Length);
@@ -3864,14 +3864,14 @@ namespace DiscImageChef.Commands
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
 
-            if (Settings.Settings.Current.SaveReportsGlobally && !String.IsNullOrEmpty (Settings.Settings.ReportsPath))
+            if(Settings.Settings.Current.SaveReportsGlobally && !String.IsNullOrEmpty(Settings.Settings.ReportsPath))
             {
                 xmlFs = new FileStream(Path.Combine(Settings.Settings.ReportsPath, xmlFile), FileMode.Create);
                 xmlSer.Serialize(xmlFs, report);
                 xmlFs.Close();
             }
 
-            if (Settings.Settings.Current.ShareReports)
+            if(Settings.Settings.Current.ShareReports)
             {
                 SubmitReport(xmlSer);
             }

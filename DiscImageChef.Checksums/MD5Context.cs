@@ -89,10 +89,10 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-             _md5Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _md5Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder md5Output = new StringBuilder();
 
-            for (int i = 0; i < _md5Provider.Hash.Length; i++)
+            for(int i = 0; i < _md5Provider.Hash.Length; i++)
             {
                 md5Output.Append(_md5Provider.Hash[i].ToString("x2"));
             }
@@ -121,7 +121,7 @@ namespace DiscImageChef.Checksums
             hash = _md5Provider.ComputeHash(fileStream);
             StringBuilder md5Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 md5Output.Append(hash[i].ToString("x2"));
             }
@@ -140,7 +140,7 @@ namespace DiscImageChef.Checksums
             hash = _md5Provider.ComputeHash(data, 0, (int)len);
             StringBuilder md5Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 md5Output.Append(hash[i].ToString("x2"));
             }

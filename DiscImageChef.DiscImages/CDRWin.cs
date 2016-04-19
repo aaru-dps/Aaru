@@ -324,7 +324,7 @@ namespace DiscImageChef.ImagePlugins
                 cueStream = new StreamReader(this.imagePath);
                 int line = 0;
 
-                while (cueStream.Peek() >= 0)
+                while(cueStream.Peek() >= 0)
                 {
                     line++;
                     string _line = cueStream.ReadLine();
@@ -345,14 +345,14 @@ namespace DiscImageChef.ImagePlugins
                     Cm = Cr.Match(_line);
                     Fm = Fr.Match(_line);
 
-                    if (!Sm.Success && !Rm.Success && !Cm.Success && !Fm.Success)
+                    if(!Sm.Success && !Rm.Success && !Cm.Success && !Fm.Success)
                         return false;
                     return true;
                 }
 
                 return false;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", this.imagePath);
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
@@ -363,9 +363,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool OpenImage(string imagePath)
         {
-            if (imagePath == null)
+            if(imagePath == null)
                 return false;
-            if (imagePath == "")
+            if(imagePath == "")
                 return false;
 
             this.imagePath = imagePath;
@@ -439,23 +439,23 @@ namespace DiscImageChef.ImagePlugins
                 CDRWinTrack[] cuetracks;
                 int track_count = 0;
 
-                while (cueStream.Peek() >= 0)
+                while(cueStream.Peek() >= 0)
                 {
                     line++;
                     string _line = cueStream.ReadLine();
 
                     MatchTrack = RegexTrack.Match(_line);
-                    if (MatchTrack.Success)
+                    if(MatchTrack.Success)
                     {
                         uint track_seq = uint.Parse(MatchTrack.Groups[1].Value);
-                        if (track_count + 1 != track_seq)
+                        if(track_count + 1 != track_seq)
                             throw new FeatureUnsupportedImageException(String.Format("Found TRACK {0} out of order in line {1}", track_seq, line));
 
                         track_count++;
                     }
                 }
 
-                if (track_count == 0)
+                if(track_count == 0)
                     throw new FeatureUnsupportedImageException("No tracks found");
 
                 cuetracks = new CDRWinTrack[track_count];
@@ -470,7 +470,7 @@ namespace DiscImageChef.ImagePlugins
                 cueStream.Close();
                 cueStream = new StreamReader(imagePath);
 
-                while (cueStream.Peek() >= 0)
+                while(cueStream.Peek() >= 0)
                 {
                     line++;
                     string _line = cueStream.ReadLine();
@@ -481,36 +481,36 @@ namespace DiscImageChef.ImagePlugins
                     MatchLBA = RegexLBA.Match(_line);   // Unhandled, just ignored
                     MatchLeadOut = RegexLeadOut.Match(_line); // Unhandled, just ignored
 
-                    if (MatchDiskType.Success && !intrack)
+                    if(MatchDiskType.Success && !intrack)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}", line);
                         discimage.disktypestr = MatchDiskType.Groups[1].Value;
                     }
-                    else if (MatchDiskType.Success && intrack)
+                    else if(MatchDiskType.Success && intrack)
                     {
                         throw new FeatureUnsupportedImageException(String.Format("Found REM ORIGINAL MEDIA TYPE field after a track in line {0}", line));
                     }
-                    else if (MatchSession.Success)
+                    else if(MatchSession.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", line);
                         currentsession = Byte.Parse(MatchSession.Groups[1].Value);
 
                         // What happens between sessions
                     }
-                    else if (MatchLBA.Success)
+                    else if(MatchLBA.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", line);
                         // Just ignored
                     }
-                    else if (MatchLeadOut.Success)
+                    else if(MatchLeadOut.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", line);
                         // Just ignored
                     }
-                    else if (MatchComment.Success)
+                    else if(MatchComment.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM at line {0}", line);
-                        if (discimage.comment == "")
+                        if(discimage.comment == "")
                             discimage.comment = MatchComment.Groups[1].Value; // First comment
                         else
                             discimage.comment += Environment.NewLine + MatchComment.Groups[1].Value; // Append new comments as new lines
@@ -535,51 +535,51 @@ namespace DiscImageChef.ImagePlugins
                         MatchBarCode = RegexBarCode.Match(_line);
                         MatchArranger = RegexArranger.Match(_line);
 
-                        if (MatchArranger.Success)
+                        if(MatchArranger.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found ARRANGER at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.arranger = MatchArranger.Groups[1].Value;
                             else
                                 discimage.arranger = MatchArranger.Groups[1].Value;
                         }
-                        else if (MatchBarCode.Success)
+                        else if(MatchBarCode.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found UPC_EAN at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 discimage.barcode = MatchBarCode.Groups[1].Value;
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found barcode field in incorrect place at line {0}", line));
                         }
-                        else if (MatchCDText.Success)
+                        else if(MatchCDText.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found CDTEXTFILE at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 discimage.cdtextfile = MatchCDText.Groups[1].Value;
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found CD-Text file field in incorrect place at line {0}", line));
                         }
-                        else if (MatchComposer.Success)
+                        else if(MatchComposer.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found COMPOSER at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.arranger = MatchComposer.Groups[1].Value;
                             else
                                 discimage.arranger = MatchComposer.Groups[1].Value;
                         }
-                        else if (MatchDiskID.Success)
+                        else if(MatchDiskID.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found DISC_ID at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 discimage.disk_id = MatchDiskID.Groups[1].Value;
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found CDDB ID field in incorrect place at line {0}", line));
                         }
-                        else if (MatchFile.Success)
+                        else if(MatchFile.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found FILE at line {0}", line);
 
-                            if (currenttrack.sequence != 0)
+                            if(currenttrack.sequence != 0)
                             {
                                 currentfile.sequence = currenttrack.sequence;
                                 currenttrack.trackfile = currentfile;
@@ -595,51 +595,51 @@ namespace DiscImageChef.ImagePlugins
                             currentfile.filetype = MatchFile.Groups[2].Value;
 
                             // Check if file path is quoted
-                            if (currentfile.datafile[0] == '"' && currentfile.datafile[currentfile.datafile.Length - 1] == '"')
+                            if(currentfile.datafile[0] == '"' && currentfile.datafile[currentfile.datafile.Length - 1] == '"')
                             {
                                 currentfile.datafile = currentfile.datafile.Substring(1, currentfile.datafile.Length - 2); // Unquote it
                             }
 
                             // Check if file exists
-                            if (!File.Exists(currentfile.datafile))
+                            if(!File.Exists(currentfile.datafile))
                             {
-                                if (currentfile.datafile[0] == '/' || (currentfile.datafile[0] == '/' && currentfile.datafile[1] == '.')) // UNIX absolute path
+                                if(currentfile.datafile[0] == '/' || (currentfile.datafile[0] == '/' && currentfile.datafile[1] == '.')) // UNIX absolute path
                                 {
                                     Regex unixpath = new Regex("^(.+)/([^/]+)$");
                                     Match unixpathmatch = unixpath.Match(currentfile.datafile);
 
-                                    if (unixpathmatch.Success)
+                                    if(unixpathmatch.Success)
                                     {
                                         currentfile.datafile = unixpathmatch.Groups[1].Value;
 
-                                        if (!File.Exists(currentfile.datafile))
+                                        if(!File.Exists(currentfile.datafile))
                                         {
                                             string path = Path.GetPathRoot(imagePath);
                                             currentfile.datafile = path + Path.PathSeparator + currentfile.datafile;
 
-                                            if (!File.Exists(currentfile.datafile))
+                                            if(!File.Exists(currentfile.datafile))
                                                 throw new FeatureUnsupportedImageException(String.Format("File \"{0}\" not found.", MatchFile.Groups[1].Value));
                                         }
                                     }
                                     else
                                         throw new FeatureUnsupportedImageException(String.Format("File \"{0}\" not found.", MatchFile.Groups[1].Value));
                                 }
-                                else if ((currentfile.datafile[1] == ':' && currentfile.datafile[2] == '\\') ||
+                                else if((currentfile.datafile[1] == ':' && currentfile.datafile[2] == '\\') ||
                                          (currentfile.datafile[0] == '\\' && currentfile.datafile[1] == '\\') ||
                                          ((currentfile.datafile[0] == '.' && currentfile.datafile[1] == '\\'))) // Windows absolute path
                                 {
                                     Regex winpath = new Regex("^(?:[a-zA-Z]\\:(\\\\|\\/)|file\\:\\/\\/|\\\\\\\\|\\.(\\/|\\\\))([^\\\\\\/\\:\\*\\?\\<\\>\\\"\\|]+(\\\\|\\/){0,1})+$");
                                     Match winpathmatch = winpath.Match(currentfile.datafile);
-                                    if (winpathmatch.Success)
+                                    if(winpathmatch.Success)
                                     {
                                         currentfile.datafile = winpathmatch.Groups[1].Value;
 
-                                        if (!File.Exists(currentfile.datafile))
+                                        if(!File.Exists(currentfile.datafile))
                                         {
                                             string path = Path.GetPathRoot(imagePath);
                                             currentfile.datafile = path + Path.PathSeparator + currentfile.datafile;
 
-                                            if (!File.Exists(currentfile.datafile))
+                                            if(!File.Exists(currentfile.datafile))
                                                 throw new FeatureUnsupportedImageException(String.Format("File \"{0}\" not found.", MatchFile.Groups[1].Value));
                                         }
                                     }
@@ -651,7 +651,7 @@ namespace DiscImageChef.ImagePlugins
                                     string path = Path.GetDirectoryName(imagePath);
                                     currentfile.datafile = path + Path.DirectorySeparatorChar + currentfile.datafile;
 
-                                    if (!File.Exists(currentfile.datafile))
+                                    if(!File.Exists(currentfile.datafile))
                                         throw new FeatureUnsupportedImageException(String.Format("File \"{0}\" not found.", MatchFile.Groups[1].Value));
                                 }
                             }
@@ -659,7 +659,7 @@ namespace DiscImageChef.ImagePlugins
                             // File does exist, process it
                             DicConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found", currentfile.datafile);
 
-                            switch (currentfile.filetype)
+                            switch(currentfile.filetype)
                             {
                                 case CDRWinDiskTypeLittleEndian:
                                     break;
@@ -675,10 +675,10 @@ namespace DiscImageChef.ImagePlugins
                             currentfile.offset = 0;
                             currentfile.sequence = 0;
                         }
-                        else if (MatchFlags.Success)
+                        else if(MatchFlags.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found FLAGS field in incorrect place at line {0}", line));
 
                             const string FlagsRegEx = "FLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
@@ -687,30 +687,30 @@ namespace DiscImageChef.ImagePlugins
                             currenttrack.flag_pre |= MatchFile.Groups["pre"].Value == "PRE";
                             currenttrack.flag_scms |= MatchFile.Groups["scms"].Value == "SCMS";
                         }
-                        else if (MatchGenre.Success)
+                        else if(MatchGenre.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found GENRE at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.genre = MatchGenre.Groups[1].Value;
                             else
                                 discimage.genre = MatchGenre.Groups[1].Value;
                         }
-                        else if (MatchIndex.Success)
+                        else if(MatchIndex.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found INDEX before a track {0}", line));
                             else
                             {
                                 int index = int.Parse(MatchIndex.Groups[1].Value);
                                 ulong offset = CDRWinMSFToLBA(MatchIndex.Groups[2].Value);
 
-                                if ((index != 0 && index != 1) && currenttrack.indexes.Count == 0)
+                                if((index != 0 && index != 1) && currenttrack.indexes.Count == 0)
                                     throw new FeatureUnsupportedImageException(String.Format("Found INDEX {0} before INDEX 00 or INDEX 01", index));
 
-                                if ((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))))
+                                if((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))))
                                 {
-                                    if ((int)(currenttrack.sequence - 2) >= 0 && offset > 1)
+                                    if((int)(currenttrack.sequence - 2) >= 0 && offset > 1)
                                     {
                                         cuetracks[currenttrack.sequence - 2].sectors = offset - currentfileoffsetsector;
                                         currentfile.offset += cuetracks[currenttrack.sequence - 2].sectors * cuetracks[currenttrack.sequence - 2].bps;
@@ -720,83 +720,83 @@ namespace DiscImageChef.ImagePlugins
                                     }
                                 }
 
-                                if ((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))) && currenttrack.sequence == 1)
+                                if((index == 0 || (index == 1 && !currenttrack.indexes.ContainsKey(0))) && currenttrack.sequence == 1)
                                 {
                                     DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentfile.offset to {0} at line 559", offset * currenttrack.bps);
                                     currentfile.offset = offset * currenttrack.bps;
                                 }
-                                    
+
                                 currentfileoffsetsector = offset;
                                 currenttrack.indexes.Add(index, offset);
                             }
                         }
-                        else if (MatchISRC.Success)
+                        else if(MatchISRC.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 throw new FeatureUnsupportedImageException(String.Format("Found ISRC before a track {0}", line));
                             currenttrack.isrc = MatchISRC.Groups[1].Value;
                         }
-                        else if (MatchMCN.Success)
+                        else if(MatchMCN.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found CATALOG at line {0}", line);
-                            if (!intrack)
+                            if(!intrack)
                                 discimage.mcn = MatchMCN.Groups[1].Value;
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found CATALOG field in incorrect place at line {0}", line));
                         }
-                        else if (MatchPerformer.Success)
+                        else if(MatchPerformer.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found PERFORMER at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.performer = MatchPerformer.Groups[1].Value;
                             else
                                 discimage.performer = MatchPerformer.Groups[1].Value;
                         }
-                        else if (MatchPostgap.Success)
+                        else if(MatchPostgap.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found POSTGAP at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                             {
                                 currenttrack.postgap = CDRWinMSFToLBA(MatchPostgap.Groups[1].Value);
                             }
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found POSTGAP field before a track at line {0}", line));
                         }
-                        else if (MatchPregap.Success)
+                        else if(MatchPregap.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found PREGAP at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                             {
                                 currenttrack.pregap = CDRWinMSFToLBA(MatchPregap.Groups[1].Value);
                             }
                             else
                                 throw new FeatureUnsupportedImageException(String.Format("Found PREGAP field before a track at line {0}", line));
                         }
-                        else if (MatchSongWriter.Success)
+                        else if(MatchSongWriter.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found SONGWRITER at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.songwriter = MatchSongWriter.Groups[1].Value;
                             else
                                 discimage.songwriter = MatchSongWriter.Groups[1].Value;
                         }
-                        else if (MatchTitle.Success)
+                        else if(MatchTitle.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found TITLE at line {0}", line);
-                            if (intrack)
+                            if(intrack)
                                 currenttrack.title = MatchTitle.Groups[1].Value;
                             else
                                 discimage.title = MatchTitle.Groups[1].Value;
                         }
-                        else if (MatchTrack.Success)
+                        else if(MatchTrack.Success)
                         {
                             DicConsole.DebugWriteLine("CDRWin plugin", "Found TRACK at line {0}", line);
-                            if (currentfile.datafile == "")
+                            if(currentfile.datafile == "")
                                 throw new FeatureUnsupportedImageException(String.Format("Found TRACK field before a file is defined at line {0}", line));
-                            if (intrack)
+                            if(intrack)
                             {
-                                if (currenttrack.indexes.ContainsKey(0) && currenttrack.pregap == 0)
+                                if(currenttrack.indexes.ContainsKey(0) && currenttrack.pregap == 0)
                                 {
                                     currenttrack.indexes.TryGetValue(0, out currenttrack.pregap);
                                 }
@@ -814,7 +814,7 @@ namespace DiscImageChef.ImagePlugins
                             currenttrack.session = currentsession;
                             intrack = true;
                         }
-                        else if (_line == "") // Empty line, ignore it
+                        else if(_line == "") // Empty line, ignore it
                         {
 
                         }
@@ -825,7 +825,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                if (currenttrack.sequence != 0)
+                if(currenttrack.sequence != 0)
                 {
                     currentfile.sequence = currenttrack.sequence;
                     currenttrack.trackfile = currentfile;
@@ -835,11 +835,11 @@ namespace DiscImageChef.ImagePlugins
                 }
 
                 Session[] _sessions = new Session[currentsession];
-                for (int s = 1; s <= _sessions.Length; s++)
+                for(int s = 1; s <= _sessions.Length; s++)
                 {
                     _sessions[s - 1].SessionSequence = 1;
 
-                    if (s > 1)
+                    if(s > 1)
                         _sessions[s - 1].StartSector = _sessions[s - 2].EndSector + 1;
                     else
                         _sessions[s - 1].StartSector = 0;
@@ -847,12 +847,12 @@ namespace DiscImageChef.ImagePlugins
                     ulong session_sectors = 0;
                     int last_session_track = 0;
 
-                    for (int i = 0; i < cuetracks.Length; i++)
+                    for(int i = 0; i < cuetracks.Length; i++)
                     {
-                        if (cuetracks[i].session == s)
+                        if(cuetracks[i].session == s)
                         {
                             session_sectors += cuetracks[i].sectors;
-                            if (i > last_session_track)
+                            if(i > last_session_track)
                                 last_session_track = i;
                         }
                     }
@@ -861,15 +861,15 @@ namespace DiscImageChef.ImagePlugins
                     _sessions[s - 1].EndSector = session_sectors - 1;
                 }
 
-                for (int s = 1; s <= _sessions.Length; s++)
+                for(int s = 1; s <= _sessions.Length; s++)
                     discimage.sessions.Add(_sessions[s - 1]);
 
-                for (int t = 1; t <= cuetracks.Length; t++)
+                for(int t = 1; t <= cuetracks.Length; t++)
                     discimage.tracks.Add(cuetracks[t - 1]);
 
                 discimage.disktype = CDRWinIsoBusterDiscTypeToMediaType(discimage.disktypestr);
 
-                if (discimage.disktype == MediaType.Unknown || discimage.disktype == MediaType.CD)
+                if(discimage.disktype == MediaType.Unknown || discimage.disktype == MediaType.CD)
                 {
                     bool data = false;
                     bool cdg = false;
@@ -879,7 +879,7 @@ namespace DiscImageChef.ImagePlugins
                     bool firstdata = false;
                     bool audio = false;
 
-                    for (int i = 0; i < discimage.tracks.Count; i++)
+                    for(int i = 0; i < discimage.tracks.Count; i++)
                     {
                         // First track is audio
                         firstaudio |= i == 0 && discimage.tracks[i].tracktype == CDRWinTrackTypeAudio;
@@ -893,7 +893,7 @@ namespace DiscImageChef.ImagePlugins
                         // Any non first track is audio
                         audio |= i != 0 && discimage.tracks[i].tracktype == CDRWinTrackTypeAudio;
 
-                        switch (discimage.tracks[i].tracktype)
+                        switch(discimage.tracks[i].tracktype)
                         {
                             case CDRWinTrackTypeCDG:
                                 cdg = true;
@@ -911,17 +911,17 @@ namespace DiscImageChef.ImagePlugins
                         }
                     }
 
-                    if (!data && !firstdata)
+                    if(!data && !firstdata)
                         discimage.disktype = MediaType.CDDA;
-                    else if (cdg)
+                    else if(cdg)
                         discimage.disktype = MediaType.CDG;
-                    else if (cdi)
+                    else if(cdi)
                         discimage.disktype = MediaType.CDI;
-                    else if (firstaudio && data && discimage.sessions.Count > 1 && mode2)
+                    else if(firstaudio && data && discimage.sessions.Count > 1 && mode2)
                         discimage.disktype = MediaType.CDPLUS;
-                    else if ((firstdata && audio) || mode2)
+                    else if((firstdata && audio) || mode2)
                         discimage.disktype = MediaType.CDROMXA;
-                    else if (!audio)
+                    else if(!audio)
                         discimage.disktype = MediaType.CDROM;
                     else
                         discimage.disktype = MediaType.CD;
@@ -930,59 +930,59 @@ namespace DiscImageChef.ImagePlugins
                 // DEBUG information
                 DicConsole.DebugWriteLine("CDRWin plugin", "Disc image parsing results");
                 DicConsole.DebugWriteLine("CDRWin plugin", "Disc CD-TEXT:");
-                if (discimage.arranger == null)
+                if(discimage.arranger == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tArranger is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tArranger: {0}", discimage.arranger);
-                if (discimage.composer == null)
+                if(discimage.composer == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tComposer is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tComposer: {0}", discimage.composer);
-                if (discimage.genre == null)
+                if(discimage.genre == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tGenre is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tGenre: {0}", discimage.genre);
-                if (discimage.performer == null)
+                if(discimage.performer == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tPerformer is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tPerformer: {0}", discimage.performer);
-                if (discimage.songwriter == null)
+                if(discimage.songwriter == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter: {0}", discimage.songwriter);
-                if (discimage.title == null)
+                if(discimage.title == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tTitle is not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tTitle: {0}", discimage.title);
-                if (discimage.cdtextfile == null)
+                if(discimage.cdtextfile == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file: {0}", discimage.cdtextfile);
                 DicConsole.DebugWriteLine("CDRWin plugin", "Disc information:");
-                if (discimage.disktypestr == null)
+                if(discimage.disktypestr == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type: {0}", discimage.disktypestr);
                 DicConsole.DebugWriteLine("CDRWin plugin", "\tGuessed disk type: {0}", discimage.disktype);
-                if (discimage.barcode == null)
+                if(discimage.barcode == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tBarcode not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tBarcode: {0}", discimage.barcode);
-                if (discimage.disk_id == null)
+                if(discimage.disk_id == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID: {0}", discimage.disk_id);
-                if (discimage.mcn == null)
+                if(discimage.mcn == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tMCN not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tMCN: {0}", discimage.mcn);
-                if (discimage.comment == null)
+                if(discimage.comment == null)
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tComment not set.");
                 else
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tComment: \"{0}\"", discimage.comment);
                 DicConsole.DebugWriteLine("CDRWin plugin", "Session information:");
                 DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", discimage.sessions.Count);
-                for (int i = 0; i < discimage.sessions.Count; i++)
+                for(int i = 0; i < discimage.sessions.Count; i++)
                 {
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}", discimage.sessions[i].StartTrack);
@@ -992,7 +992,7 @@ namespace DiscImageChef.ImagePlugins
                 }
                 DicConsole.DebugWriteLine("CDRWin plugin", "Track information:");
                 DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} tracks", discimage.tracks.Count);
-                for (int i = 0; i < discimage.tracks.Count; i++)
+                for(int i = 0; i < discimage.tracks.Count; i++)
                 {
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:", discimage.tracks[i].sequence);
 
@@ -1001,48 +1001,48 @@ namespace DiscImageChef.ImagePlugins
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", discimage.tracks[i].sectors);
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors", discimage.tracks[i].postgap);
 
-                    if (discimage.tracks[i].flag_4ch)
+                    if(discimage.tracks[i].flag_4ch)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
-                    if (discimage.tracks[i].flag_dcp)
+                    if(discimage.tracks[i].flag_dcp)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack allows digital copy");
-                    if (discimage.tracks[i].flag_pre)
+                    if(discimage.tracks[i].flag_pre)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has pre-emphasis applied");
-                    if (discimage.tracks[i].flag_scms)
+                    if(discimage.tracks[i].flag_scms)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
 
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
                         discimage.tracks[i].trackfile.datafile, discimage.tracks[i].trackfile.filetype, discimage.tracks[i].trackfile.offset);
 
                     DicConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
-                    foreach (KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)
+                    foreach(KeyValuePair<int, ulong> kvp in discimage.tracks[i].indexes)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key, kvp.Value);
 
-                    if (discimage.tracks[i].isrc == null)
+                    if(discimage.tracks[i].isrc == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC: {0}", discimage.tracks[i].isrc);
 
-                    if (discimage.tracks[i].arranger == null)
+                    if(discimage.tracks[i].arranger == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger: {0}", discimage.tracks[i].arranger);
-                    if (discimage.tracks[i].composer == null)
+                    if(discimage.tracks[i].composer == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer: {0}", discimage.tracks[i].composer);
-                    if (discimage.tracks[i].genre == null)
+                    if(discimage.tracks[i].genre == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre: {0}", discimage.tracks[i].genre);
-                    if (discimage.tracks[i].performer == null)
+                    if(discimage.tracks[i].performer == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}", discimage.tracks[i].performer);
-                    if (discimage.tracks[i].songwriter == null)
+                    if(discimage.tracks[i].songwriter == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}", discimage.tracks[i].songwriter);
-                    if (discimage.tracks[i].title == null)
+                    if(discimage.tracks[i].title == null)
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle is not set.");
                     else
                         DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", discimage.tracks[i].title);
@@ -1061,16 +1061,16 @@ namespace DiscImageChef.ImagePlugins
 
                 offsetmap = new Dictionary<uint, ulong>();
 
-                for (int i = 0; i < discimage.tracks.Count; i++)
+                for(int i = 0; i < discimage.tracks.Count; i++)
                 {
                     ulong index0_len = 0;
 
-                    if (discimage.tracks[i].sequence == 1 && i != 0)
+                    if(discimage.tracks[i].sequence == 1 && i != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
                     CommonTypes.Partition partition = new CommonTypes.Partition();
 
-                    if (discimage.tracks[i].pregap > 0)
+                    if(discimage.tracks[i].pregap > 0)
                     {
                         partition.PartitionDescription = String.Format("Track {0} pregap.", discimage.tracks[i].sequence);
                         partition.PartitionName = discimage.tracks[i].title;
@@ -1085,14 +1085,14 @@ namespace DiscImageChef.ImagePlugins
                         byte_offset += partition.PartitionLength;
                         partitionSequence++;
 
-                        if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                         else
                         {
                             ulong old_start;
                             offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                            if (partition.PartitionStartSector < old_start)
+                            if(partition.PartitionStartSector < old_start)
                             {
                                 offsetmap.Remove(discimage.tracks[i].sequence);
                                 offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1105,10 +1105,10 @@ namespace DiscImageChef.ImagePlugins
 
                     index_zero |= discimage.tracks[i].indexes.TryGetValue(0, out index_zero_offset);
 
-                    if (!discimage.tracks[i].indexes.TryGetValue(1, out index_one_offset))
+                    if(!discimage.tracks[i].indexes.TryGetValue(1, out index_one_offset))
                         throw new ImageNotSupportedException(String.Format("Track {0} lacks index 01", discimage.tracks[i].sequence));
 
-                    if (index_zero && index_one_offset > index_zero_offset)
+                    if(index_zero && index_one_offset > index_zero_offset)
                     {
                         partition.PartitionDescription = String.Format("Track {0} index 00.", discimage.tracks[i].sequence);
                         partition.PartitionName = discimage.tracks[i].title;
@@ -1124,14 +1124,14 @@ namespace DiscImageChef.ImagePlugins
                         index0_len = partition.PartitionSectors;
                         partitionSequence++;
 
-                        if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                         else
                         {
                             ulong old_start;
                             offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                            if (partition.PartitionStartSector < old_start)
+                            if(partition.PartitionStartSector < old_start)
                             {
                                 offsetmap.Remove(discimage.tracks[i].sequence);
                                 offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1156,14 +1156,14 @@ namespace DiscImageChef.ImagePlugins
                     byte_offset += partition.PartitionLength;
                     partitionSequence++;
 
-                    if (!offsetmap.ContainsKey(discimage.tracks[i].sequence))
+                    if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
                         offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
                     else
                     {
                         ulong old_start;
                         offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                        if (partition.PartitionStartSector < old_start)
+                        if(partition.PartitionStartSector < old_start)
                         {
                             offsetmap.Remove(discimage.tracks[i].sequence);
                             offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
@@ -1176,7 +1176,7 @@ namespace DiscImageChef.ImagePlugins
 
                 // Print offset map
                 DicConsole.DebugWriteLine("CDRWin plugin", "printing partition map");
-                foreach (CommonTypes.Partition partition in partitions)
+                foreach(CommonTypes.Partition partition in partitions)
                 {
                     DicConsole.DebugWriteLine("CDRWin plugin", "Partition sequence: {0}", partition.PartitionSequence);
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition name: {0}", partition.PartitionName);
@@ -1188,25 +1188,25 @@ namespace DiscImageChef.ImagePlugins
                     DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition size in bytes: {0}", partition.PartitionLength);
                 }
 
-                foreach (CDRWinTrack track in discimage.tracks)
+                foreach(CDRWinTrack track in discimage.tracks)
                     ImageInfo.imageSize += track.bps * track.sectors;
-                foreach (CDRWinTrack track in discimage.tracks)
+                foreach(CDRWinTrack track in discimage.tracks)
                     ImageInfo.sectors += track.sectors;
 
-                if (discimage.disktype == MediaType.CDG || discimage.disktype == MediaType.CDEG || discimage.disktype == MediaType.CDMIDI)
+                if(discimage.disktype == MediaType.CDG || discimage.disktype == MediaType.CDEG || discimage.disktype == MediaType.CDMIDI)
                     ImageInfo.sectorSize = 2448; // CD+G subchannels ARE user data, as CD+G are useless without them
-                else if (discimage.disktype != MediaType.CDROMXA && discimage.disktype != MediaType.CDDA && discimage.disktype != MediaType.CDI && discimage.disktype != MediaType.CDPLUS)
+                else if(discimage.disktype != MediaType.CDROMXA && discimage.disktype != MediaType.CDDA && discimage.disktype != MediaType.CDI && discimage.disktype != MediaType.CDPLUS)
                     ImageInfo.sectorSize = 2048; // Only data tracks
                 else
                     ImageInfo.sectorSize = 2352; // All others
 
-                if (discimage.mcn != null)
+                if(discimage.mcn != null)
                     ImageInfo.readableMediaTags.Add(MediaTagType.CD_MCN);
-                if (discimage.cdtextfile != null)
+                if(discimage.cdtextfile != null)
                     ImageInfo.readableMediaTags.Add(MediaTagType.CD_TEXT);
 
                 // Detect ISOBuster extensions
-                if (discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
+                if(discimage.disktypestr != null || discimage.comment.ToLower().Contains("isobuster") || discimage.sessions.Count > 1)
                     ImageInfo.imageApplication = "ISOBuster";
                 else
                     ImageInfo.imageApplication = "CDRWin";
@@ -1223,61 +1223,61 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
 
-                foreach (CDRWinTrack track in discimage.tracks)
+                foreach(CDRWinTrack track in discimage.tracks)
                 {
-                    switch (track.tracktype)
+                    switch(track.tracktype)
                     {
                         case CDRWinTrackTypeAudio:
                             {
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
                                 break;
                             }
                         case CDRWinTrackTypeCDG:
                             {
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDTrackISRC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackISRC);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubchannel);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Formless:
                         case CDRWinTrackTypeCDI:
                             {
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode2Raw:
                         case CDRWinTrackTypeCDIRaw:
                             {
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
                         case CDRWinTrackTypeMode1Raw:
                             {
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSync))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSync);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorHeader))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorHeader);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubHeader))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorSubHeader);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_P))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_P);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorECC_Q))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorECC_Q);
-                                if (!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
+                                if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorEDC))
                                     ImageInfo.readableSectorTags.Add(SectorTagType.CDSectorEDC);
                                 break;
                             }
@@ -1288,7 +1288,7 @@ namespace DiscImageChef.ImagePlugins
 
                 return true;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imagePath);
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
@@ -1319,11 +1319,11 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadDiskTag(MediaTagType tag)
         {
-            switch (tag)
+            switch(tag)
             {
                 case MediaTagType.CD_MCN:
                     {
-                        if (discimage.mcn != null)
+                        if(discimage.mcn != null)
                         {
                             return Encoding.ASCII.GetBytes(discimage.mcn);
                         }
@@ -1331,7 +1331,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case MediaTagType.CD_TEXT:
                     {
-                        if (discimage.cdtextfile != null)
+                        if(discimage.cdtextfile != null)
                             // TODO: Check that binary text file exists, open it, read it, send it to caller.
                             throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                         throw new FeatureNotPresentImageException("Image does not contain CD-TEXT information.");
@@ -1363,15 +1363,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+                    foreach(CDRWinTrack cdrwin_track in discimage.tracks)
                     {
-                        if (cdrwin_track.sequence == kvp.Key)
+                        if(cdrwin_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -1383,15 +1383,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+                    foreach(CDRWinTrack cdrwin_track in discimage.tracks)
                     {
-                        if (cdrwin_track.sequence == kvp.Key)
+                        if(cdrwin_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
                         }
                     }
@@ -1407,26 +1407,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+            foreach(CDRWinTrack cdrwin_track in discimage.tracks)
             {
-                if (cdrwin_track.sequence == track)
+                if(cdrwin_track.sequence == track)
                 {
                     _track = cdrwin_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if (length > _track.sectors)
+            if(length > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode2Form1:
@@ -1493,14 +1493,14 @@ namespace DiscImageChef.ImagePlugins
             byte[] buffer = new byte[sector_size * length];
 
             imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
-            using (BinaryReader br = new BinaryReader(imageStream))
+            using(BinaryReader br = new BinaryReader(imageStream))
             {
                 br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if (sector_offset == 0 && sector_skip == 0)
+                if(sector_offset == 0 && sector_skip == 0)
                     buffer = br.ReadBytes((int)(sector_size * length));
                 else
                 {
-                    for (int i = 0; i < length; i++)
+                    for(int i = 0; i < length; i++)
                     {
                         byte[] sector;
                         br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -1522,26 +1522,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+            foreach(CDRWinTrack cdrwin_track in discimage.tracks)
             {
-                if (cdrwin_track.sequence == track)
+                if(cdrwin_track.sequence == track)
                 {
                     _track = cdrwin_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if (length > _track.sectors)
+            if(length > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (tag)
+            switch(tag)
             {
                 case SectorTagType.CDSectorECC:
                 case SectorTagType.CDSectorECC_P:
@@ -1556,16 +1556,16 @@ namespace DiscImageChef.ImagePlugins
                     {
                         byte[] flags = new byte[1];
 
-                        if (_track.tracktype != CDRWinTrackTypeAudio && _track.tracktype != CDRWinTrackTypeCDG)
+                        if(_track.tracktype != CDRWinTrackTypeAudio && _track.tracktype != CDRWinTrackTypeCDG)
                             flags[0] += 0x40;
 
-                        if (_track.flag_dcp)
+                        if(_track.flag_dcp)
                             flags[0] += 0x20;
 
-                        if (_track.flag_pre)
+                        if(_track.flag_pre)
                             flags[0] += 0x10;
 
-                        if (_track.flag_4ch)
+                        if(_track.flag_4ch)
                             flags[0] += 0x80;
 
                         return flags;
@@ -1578,7 +1578,7 @@ namespace DiscImageChef.ImagePlugins
                     throw new ArgumentException("Unsupported tag requested", "tag");
             }
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode2Form1:
@@ -1587,7 +1587,7 @@ namespace DiscImageChef.ImagePlugins
                 case CDRWinTrackTypeMode2Formless:
                 case CDRWinTrackTypeCDI:
                     {
-                        switch (tag)
+                        switch(tag)
                         {
                             case SectorTagType.CDSectorSync:
                             case SectorTagType.CDSectorHeader:
@@ -1619,7 +1619,7 @@ namespace DiscImageChef.ImagePlugins
                     throw new ArgumentException("There are no tags on audio tracks", "tag");
                 case CDRWinTrackTypeMode1Raw:
                     {
-                        switch (tag)
+                        switch(tag)
                         {
                             case SectorTagType.CDSectorSync:
                                 {
@@ -1676,7 +1676,7 @@ namespace DiscImageChef.ImagePlugins
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 case CDRWinTrackTypeCDG:
                     {
-                        if (tag != SectorTagType.CDSectorSubchannel)
+                        if(tag != SectorTagType.CDSectorSubchannel)
                             throw new ArgumentException("Unsupported tag requested for this track", "tag");
 
                         sector_offset = 2352;
@@ -1691,14 +1691,14 @@ namespace DiscImageChef.ImagePlugins
             byte[] buffer = new byte[sector_size * length];
 
             imageStream = new FileStream(_track.trackfile.datafile, FileMode.Open, FileAccess.Read);
-            using (BinaryReader br = new BinaryReader(imageStream))
+            using(BinaryReader br = new BinaryReader(imageStream))
             {
                 br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if (sector_offset == 0 && sector_skip == 0)
+                if(sector_offset == 0 && sector_skip == 0)
                     buffer = br.ReadBytes((int)(sector_size * length));
                 else
                 {
-                    for (int i = 0; i < length; i++)
+                    for(int i = 0; i < length; i++)
                     {
                         byte[] sector;
                         br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -1726,15 +1726,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+                    foreach(CDRWinTrack cdrwin_track in discimage.tracks)
                     {
-                        if (cdrwin_track.sequence == kvp.Key)
+                        if(cdrwin_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < cdrwin_track.sectors)
+                            if((sectorAddress - kvp.Value) < cdrwin_track.sectors)
                                 return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -1750,26 +1750,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (CDRWinTrack cdrwin_track in discimage.tracks)
+            foreach(CDRWinTrack cdrwin_track in discimage.tracks)
             {
-                if (cdrwin_track.sequence == track)
+                if(cdrwin_track.sequence == track)
                 {
                     _track = cdrwin_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if (length > _track.sectors)
+            if(length > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode2Form1:
@@ -1822,11 +1822,11 @@ namespace DiscImageChef.ImagePlugins
 
             br.BaseStream.Seek((long)_track.trackfile.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
-            if (sector_offset == 0 && sector_skip == 0)
+            if(sector_offset == 0 && sector_skip == 0)
                 buffer = br.ReadBytes((int)(sector_size * length));
             else
             {
-                for (int i = 0; i < length; i++)
+                for(int i = 0; i < length; i++)
                 {
                     byte[] sector;
                     br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -1840,22 +1840,22 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override string   GetImageFormat()
+        public override string GetImageFormat()
         {
             return "CDRWin CUESheet";
         }
 
-        public override string   GetImageVersion()
+        public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
         }
 
-        public override string   GetImageApplication()
+        public override string GetImageApplication()
         {
             return ImageInfo.imageApplication;
         }
 
-        public override string   GetImageApplicationVersion()
+        public override string GetImageApplicationVersion()
         {
             return ImageInfo.imageApplicationVersion;
         }
@@ -1870,7 +1870,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageLastModificationTime;
         }
 
-        public override string   GetImageComments()
+        public override string GetImageComments()
         {
             return ImageInfo.imageComments;
         }
@@ -1901,13 +1901,13 @@ namespace DiscImageChef.ImagePlugins
 
             UInt64 previousStartSector = 0;
 
-            foreach (CDRWinTrack cdr_track in discimage.tracks)
+            foreach(CDRWinTrack cdr_track in discimage.tracks)
             {
                 Track _track = new Track();
 
                 _track.Indexes = cdr_track.indexes;
                 _track.TrackDescription = cdr_track.title;
-                if (!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
+                if(!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
                     cdr_track.indexes.TryGetValue(1, out _track.TrackStartSector);
                 _track.TrackStartSector = previousStartSector;
                 _track.TrackEndSector = _track.TrackStartSector + cdr_track.sectors - 1;
@@ -1920,7 +1920,7 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackFileType = cdr_track.trackfile.filetype;
                 _track.TrackRawBytesPerSector = cdr_track.bps;
                 _track.TrackBytesPerSector = CDRWinTrackTypeToCookedBytesPerSector(cdr_track.tracktype);
-                if (cdr_track.bps == 2448)
+                if(cdr_track.bps == 2448)
                 {
                     _track.TrackSubchannelFile = cdr_track.trackfile.datafile;
                     _track.TrackSubchannelOffset = cdr_track.trackfile.offset;
@@ -1938,7 +1938,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Track> GetSessionTracks(Session session)
         {
-            if (discimage.sessions.Contains(session))
+            if(discimage.sessions.Contains(session))
             {
                 return GetSessionTracks(session.SessionSequence);
             }
@@ -1949,15 +1949,15 @@ namespace DiscImageChef.ImagePlugins
         {
             List<Track> tracks = new List<Track>();
 
-            foreach (CDRWinTrack cdr_track in discimage.tracks)
+            foreach(CDRWinTrack cdr_track in discimage.tracks)
             {
-                if (cdr_track.session == session)
+                if(cdr_track.session == session)
                 {
                     Track _track = new Track();
 
                     _track.Indexes = cdr_track.indexes;
                     _track.TrackDescription = cdr_track.title;
-                    if (!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
+                    if(!cdr_track.indexes.TryGetValue(0, out _track.TrackStartSector))
                         cdr_track.indexes.TryGetValue(1, out _track.TrackStartSector);
                     _track.TrackEndSector = _track.TrackStartSector + cdr_track.sectors - 1;
                     _track.TrackPregap = cdr_track.pregap;
@@ -1969,7 +1969,7 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackFileType = cdr_track.trackfile.filetype;
                     _track.TrackRawBytesPerSector = cdr_track.bps;
                     _track.TrackBytesPerSector = CDRWinTrackTypeToCookedBytesPerSector(cdr_track.tracktype);
-                    if (cdr_track.bps == 2448)
+                    if(cdr_track.bps == 2448)
                     {
                         _track.TrackSubchannelFile = cdr_track.trackfile.datafile;
                         _track.TrackSubchannelOffset = cdr_track.trackfile.offset;
@@ -2010,12 +2010,12 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (int i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
                 bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
 
-                switch (sectorStatus)
+                switch(sectorStatus)
                 {
                     case null:
                         UnknownLBAs.Add((ulong)i + sectorAddress);
@@ -2026,9 +2026,9 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if (UnknownLBAs.Count > 0)
+            if(UnknownLBAs.Count > 0)
                 return null;
-            if (FailingLBAs.Count > 0)
+            if(FailingLBAs.Count > 0)
                 return false;
             return true;
         }
@@ -2041,12 +2041,12 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (int i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
                 bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
 
-                switch (sectorStatus)
+                switch(sectorStatus)
                 {
                     case null:
                         UnknownLBAs.Add((ulong)i + sectorAddress);
@@ -2057,9 +2057,9 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if (UnknownLBAs.Count > 0)
+            if(UnknownLBAs.Count > 0)
                 return null;
-            if (FailingLBAs.Count > 0)
+            if(FailingLBAs.Count > 0)
                 return false;
             return true;
         }
@@ -2090,7 +2090,7 @@ namespace DiscImageChef.ImagePlugins
 
         static UInt16 CDRWinTrackTypeToBytesPerSector(string trackType)
         {
-            switch (trackType)
+            switch(trackType)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode2Form1:
@@ -2114,7 +2114,7 @@ namespace DiscImageChef.ImagePlugins
 
         static UInt16 CDRWinTrackTypeToCookedBytesPerSector(string trackType)
         {
-            switch (trackType)
+            switch(trackType)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode2Form1:
@@ -2138,7 +2138,7 @@ namespace DiscImageChef.ImagePlugins
 
         static TrackType CDRWinTrackTypeToTrackType(string trackType)
         {
-            switch (trackType)
+            switch(trackType)
             {
                 case CDRWinTrackTypeMode1:
                 case CDRWinTrackTypeMode1Raw:
@@ -2162,7 +2162,7 @@ namespace DiscImageChef.ImagePlugins
 
         static MediaType CDRWinIsoBusterDiscTypeToMediaType(string discType)
         {
-            switch (discType)
+            switch(discType)
             {
                 case CDRWinDiskTypeCD:
                     return MediaType.CD;
@@ -2223,12 +2223,12 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override int    GetMediaSequence()
+        public override int GetMediaSequence()
         {
             return ImageInfo.mediaSequence;
         }
 
-        public override int    GetLastDiskSequence()
+        public override int GetLastDiskSequence()
         {
             return ImageInfo.lastMediaSequence;
         }
@@ -2263,12 +2263,12 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.mediaModel;
         }
 
-        public override string   GetImageName()
+        public override string GetImageName()
         {
             return ImageInfo.imageName;
         }
 
-        public override string   GetImageCreator()
+        public override string GetImageCreator()
         {
             return ImageInfo.imageCreator;
         }

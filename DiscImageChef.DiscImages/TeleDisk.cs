@@ -242,7 +242,7 @@ namespace DiscImageChef.ImagePlugins
 
             header.signature = BitConverter.ToUInt16(headerBytes, 0);
 
-            if (header.signature != tdMagic && header.signature != tdAdvCompMagic)
+            if(header.signature != tdMagic && header.signature != tdAdvCompMagic)
                 return false;
 
             header.sequence = headerBytes[2];
@@ -275,16 +275,16 @@ namespace DiscImageChef.ImagePlugins
             // This may deny legal images
 
             // That would be much of a coincidence
-            if (header.crc == calculatedHeaderCRC)
+            if(header.crc == calculatedHeaderCRC)
                 return true;
 
-            if (header.sequence != 0x00)
+            if(header.sequence != 0x00)
                 return false;
 
-            if (header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
+            if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
                 return false;
 
-            if (header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+            if(header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
                 header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
                 return false;
 
@@ -296,14 +296,14 @@ namespace DiscImageChef.ImagePlugins
             header = new TD0Header();
             byte[] headerBytes = new byte[12];
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-            
+
             stream.Read(headerBytes, 0, 12);
-            
+
             header.signature = BitConverter.ToUInt16(headerBytes, 0);
-            
-            if (header.signature != tdMagic && header.signature != tdAdvCompMagic)
+
+            if(header.signature != tdMagic && header.signature != tdAdvCompMagic)
                 return false;
-            
+
             header.sequence = headerBytes[2];
             header.diskSet = headerBytes[3];
             header.version = headerBytes[4];
@@ -321,7 +321,7 @@ namespace DiscImageChef.ImagePlugins
             byte[] headerBytesForCRC = new byte[10];
             Array.Copy(headerBytes, headerBytesForCRC, 10);
             UInt16 calculatedHeaderCRC = TeleDiskCRC(0x0000, headerBytesForCRC);
-            
+
             DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", header.signature);
             DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", header.sequence);
             DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", header.diskSet);
@@ -336,30 +336,30 @@ namespace DiscImageChef.ImagePlugins
 
             // We need more checks as the magic is too simply.
             // This may deny legal images
-            
+
             // That would be much of a coincidence
-            if (header.crc != calculatedHeaderCRC)
+            if(header.crc != calculatedHeaderCRC)
             {
                 ADiskCRCHasFailed = true;
                 DicConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
             }
 
-            if (header.sequence != 0x00)
+            if(header.sequence != 0x00)
                 return false;
-            
-            if (header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
+
+            if(header.dataRate != DataRate250kbps && header.dataRate != DataRate300kbps && header.dataRate != DataRate500kbps)
                 return false;
-            
-            if (header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
+
+            if(header.driveType != DriveType35DD && header.driveType != DriveType35ED && header.driveType != DriveType35HD && header.driveType != DriveType525DD &&
                 header.driveType != DriveType525HD && header.driveType != DriveType525HD_DDDisk && header.driveType != DriveType8inch)
                 return false;
 
-            if (header.signature == tdAdvCompMagic)
+            if(header.signature == tdAdvCompMagic)
                 throw new NotImplementedException("TeleDisk Advanced Compression support not yet implemented");
 
             ImageInfo.imageCreationTime = DateTime.MinValue;
 
-            if ((header.stepping & CommentBlockPresent) == CommentBlockPresent)
+            if((header.stepping & CommentBlockPresent) == CommentBlockPresent)
             {
                 commentHeader = new TDCommentBlockHeader();
 
@@ -398,10 +398,10 @@ namespace DiscImageChef.ImagePlugins
 
                 ADiskCRCHasFailed |= cmtcrc != commentHeader.crc;
 
-                for (int i = 0; i < commentBlock.Length; i++)
+                for(int i = 0; i < commentBlock.Length; i++)
                 {
                     // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
-                    if (commentBlock[i] == 0x00)
+                    if(commentBlock[i] == 0x00)
                         commentBlock[i] = 0x0A;
                 }
 
@@ -415,7 +415,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             FileInfo fi = new FileInfo(imagePath);
-            if (ImageInfo.imageCreationTime == DateTime.MinValue)
+            if(ImageInfo.imageCreationTime == DateTime.MinValue)
                 ImageInfo.imageCreationTime = fi.CreationTimeUtc;
             ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
 
@@ -429,7 +429,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageSize = 0;
             sectorsData = new Dictionary<uint, byte[]>();
             ImageInfo.sectorSize = 0;
-            while (true)
+            while(true)
             {
                 TDTrackHeader TDTrack = new TDTrackHeader();
                 byte[] TDTrackForCRC = new byte[3];
@@ -454,7 +454,7 @@ namespace DiscImageChef.ImagePlugins
 
                 ADiskCRCHasFailed |= TDTrackCalculatedCRC != TDTrack.crc;
 
-                if (TDTrack.sectors == 0xFF) // End of disk image
+                if(TDTrack.sectors == 0xFF) // End of disk image
                 {
                     DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
                     DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", sectorsData.Count, totalDiskSize);
@@ -462,14 +462,14 @@ namespace DiscImageChef.ImagePlugins
                     break;
                 }
 
-                if (spt != TDTrack.sectors && TDTrack.sectors > 0)
+                if(spt != TDTrack.sectors && TDTrack.sectors > 0)
                 {
-                    if (spt != 0)
+                    if(spt != 0)
                         throw new FeatureUnsupportedImageException("Variable number of sectors per track. This kind of image is not yet supported");
                     spt = TDTrack.sectors;
                 }
 
-                for (byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
+                for(byte processedSectors = 0; processedSectors < TDTrack.sectors; processedSectors++)
                 {
                     TDSectorHeader TDSector = new TDSectorHeader();
                     TDDataHeader TDData = new TDDataHeader();
@@ -493,7 +493,7 @@ namespace DiscImageChef.ImagePlugins
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}", TDSector.crc);
 
                     UInt32 LBA = (uint)((TDSector.cylinder * header.sides * spt) + (TDSector.head * spt) + (TDSector.sectorNumber - 1));
-                    if ((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
+                    if((TDSector.flags & FlagsSectorDataless) != FlagsSectorDataless && (TDSector.flags & FlagsSectorSkipped) != FlagsSectorSkipped)
                     {
                         stream.Read(dataSizeBytes, 0, 2);
                         TDData.dataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
@@ -509,17 +509,17 @@ namespace DiscImageChef.ImagePlugins
 
                         byte TDSectorCalculatedCRC = (byte)(TeleDiskCRC(0, decodedData) & 0xFF);
 
-                        if (TDSectorCalculatedCRC != TDSector.crc)
+                        if(TDSectorCalculatedCRC != TDSector.crc)
                         {
                             DicConsole.DebugWriteLine("TeleDisk plugin", "Sector LBA {0} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}", LBA, TDSectorCalculatedCRC, TDSector.crc);
-                            if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
-                            if (!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
-                                SectorsWhereCRCHasFailed.Add((UInt64)LBA);
+                            if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+                                if(!sectorsData.ContainsKey(LBA) && (TDSector.flags & FlagsSectorDuplicate) != FlagsSectorDuplicate)
+                                    SectorsWhereCRCHasFailed.Add((UInt64)LBA);
                         }
                     }
                     else
                     {
-                        switch (TDSector.sectorSize)
+                        switch(TDSector.sectorSize)
                         {
                             case SectorSize128:
                                 decodedData = new byte[128];
@@ -550,11 +550,11 @@ namespace DiscImageChef.ImagePlugins
                     }
                     DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", LBA);
 
-                    if ((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
+                    if((TDSector.flags & FlagsSectorNoID) != FlagsSectorNoID)
                     {
-                        if (sectorsData.ContainsKey(LBA))
+                        if(sectorsData.ContainsKey(LBA))
                         {
-                            if ((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
+                            if((TDSector.flags & FlagsSectorDuplicate) == FlagsSectorDuplicate)
                             {
                                 DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so",
                                     TDSector.sectorNumber, TDSector.cylinder, TDSector.head);
@@ -571,7 +571,7 @@ namespace DiscImageChef.ImagePlugins
                             totalDiskSize += (uint)decodedData.Length;
                         }
                     }
-                    if (decodedData.Length > ImageInfo.sectorSize)
+                    if(decodedData.Length > ImageInfo.sectorSize)
                         ImageInfo.sectorSize = (uint)decodedData.Length;
                 }
             }
@@ -613,27 +613,27 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            if (sectorAddress > (ulong)sectorsData.Count - 1)
+            if(sectorAddress > (ulong)sectorsData.Count - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > (ulong)sectorsData.Count)
+            if(sectorAddress + length > (ulong)sectorsData.Count)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] data = new byte[1]; // To make compiler happy
             bool first = true;
             int dataPosition = 0;
 
-            for (ulong i = sectorAddress; i < (sectorAddress + length); i++)
+            for(ulong i = sectorAddress; i < (sectorAddress + length); i++)
             {
-                if (!sectorsData.ContainsKey((uint)i))
+                if(!sectorsData.ContainsKey((uint)i))
                     throw new ImageNotSupportedException(String.Format("Requested sector {0} not found", i));
 
                 byte[] sector;
 
-                if (!sectorsData.TryGetValue((uint)i, out sector))
+                if(!sectorsData.TryGetValue((uint)i, out sector))
                     throw new ImageNotSupportedException(String.Format("Error reading sector {0}", i));
 
-                if (first)
+                if(first)
                 {
                     data = new byte[sector.Length];
                     Array.Copy(sector, data, sector.Length);
@@ -660,22 +660,22 @@ namespace DiscImageChef.ImagePlugins
             return ReadSectors(sectorAddress, length);
         }
 
-        public override string   GetImageFormat()
-        { 
+        public override string GetImageFormat()
+        {
             return "Sydex TeleDisk";
         }
 
-        public override string   GetImageVersion()
+        public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
         }
 
-        public override string   GetImageApplication()
+        public override string GetImageApplication()
         {
             return ImageInfo.imageApplication;
         }
 
-        public override string   GetImageApplicationVersion()
+        public override string GetImageApplicationVersion()
         {
             return ImageInfo.imageApplicationVersion;
         }
@@ -690,7 +690,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageLastModificationTime;
         }
 
-        public override string   GetImageName()
+        public override string GetImageName()
         {
             return ImageInfo.imageName;
         }
@@ -715,8 +715,8 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
-                if (SectorsWhereCRCHasFailed.Contains(sectorAddress))
+            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+                if(SectorsWhereCRCHasFailed.Contains(sectorAddress))
                     FailingLBAs.Add(sectorAddress);
 
             return FailingLBAs.Count <= 0;
@@ -727,7 +727,7 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
@@ -744,13 +744,13 @@ namespace DiscImageChef.ImagePlugins
         {
             int counter = 0;
 
-            while (counter < buffer.Length)
+            while(counter < buffer.Length)
             {
                 crc ^= (UInt16)((buffer[counter] & 0xFF) << 8);
 
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
-                    if ((crc & 0x8000) > 0)
+                    if((crc & 0x8000) > 0)
                         crc = (UInt16)((crc << 1) ^ TeleDiskCRCPoly);
                     else
                         crc = (UInt16)(crc << 1);
@@ -765,7 +765,7 @@ namespace DiscImageChef.ImagePlugins
         static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
         {
             byte[] decodedData;
-            switch (sectorSize)
+            switch(sectorSize)
             {
                 case SectorSize128:
                     decodedData = new byte[128];
@@ -792,7 +792,7 @@ namespace DiscImageChef.ImagePlugins
                     throw new ImageNotSupportedException(String.Format("Sector size {0} is incorrect.", sectorSize));
             }
 
-            switch (encodingType)
+            switch(encodingType)
             {
                 case dataBlockCopy:
                     Array.Copy(encodedData, decodedData, decodedData.Length);
@@ -801,7 +801,7 @@ namespace DiscImageChef.ImagePlugins
                     {
                         int ins = 0;
                         int outs = 0;
-                        while (ins < encodedData.Length)
+                        while(ins < encodedData.Length)
                         {
                             UInt16 repeatNumber;
                             byte[] repeatValue = new byte[2];
@@ -825,7 +825,7 @@ namespace DiscImageChef.ImagePlugins
                     {
                         int ins = 0;
                         int outs = 0;
-                        while (ins < encodedData.Length)
+                        while(ins < encodedData.Length)
                         {
                             byte Run;
                             byte Length;
@@ -833,7 +833,7 @@ namespace DiscImageChef.ImagePlugins
                             byte[] Piece;
 
                             Encoding = encodedData[ins];
-                            if (Encoding == 0x00)
+                            if(Encoding == 0x00)
                             {
                                 Length = encodedData[ins + 1];
                                 Array.Copy(encodedData, ins + 2, decodedData, outs, Length);
@@ -870,18 +870,18 @@ namespace DiscImageChef.ImagePlugins
 
         MediaType DecodeTeleDiskDiskType()
         {
-            switch (header.driveType)
+            switch(header.driveType)
             {
                 case DriveType525DD:
                 case DriveType525HD_DDDisk:
                 case DriveType525HD:
                     {
-                        switch (totalDiskSize)
+                        switch(totalDiskSize)
                         {
                             case 163840:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if (ImageInfo.sectorSize == 256)
+                                    if(ImageInfo.sectorSize == 256)
                                         return MediaType.ACORN_525_SS_DD_40;
                                     else // DOS disks use 512 bytes/sector
                                         return MediaType.DOS_525_SS_DD_8;
@@ -889,7 +889,7 @@ namespace DiscImageChef.ImagePlugins
                             case 184320:
                                 {
                                     // Atari disk uses 256 bytes/sector
-                                    if (ImageInfo.sectorSize == 256)
+                                    if(ImageInfo.sectorSize == 256)
                                         return MediaType.ATARI_525_DD;
                                     else // DOS disks use 512 bytes/sector
                                         return MediaType.DOS_525_SS_DD_9;
@@ -897,7 +897,7 @@ namespace DiscImageChef.ImagePlugins
                             case 327680:
                                 {
                                     // Acorn disk uses 256 bytes/sector
-                                    if (ImageInfo.sectorSize == 256)
+                                    if(ImageInfo.sectorSize == 256)
                                         return MediaType.ACORN_525_SS_DD_80;
                                     else // DOS disks use 512 bytes/sector
                                         return MediaType.DOS_525_DS_DD_8;
@@ -947,7 +947,7 @@ namespace DiscImageChef.ImagePlugins
                 case DriveType35ED:
                 case DriveType35HD:
                     {
-                        switch (totalDiskSize)
+                        switch(totalDiskSize)
                         {
                             case 327680:
                                 return MediaType.DOS_35_SS_DD_8;
@@ -989,7 +989,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case DriveType8inch:
                     {
-                        switch (totalDiskSize)
+                        switch(totalDiskSize)
                         {
                             case 81664:
                                 return MediaType.IBM23FD;
@@ -1015,7 +1015,7 @@ namespace DiscImageChef.ImagePlugins
                             case 512512:
                                 {
                                     // DEC disk uses 256 bytes/sector
-                                    if (ImageInfo.sectorSize == 256)
+                                    if(ImageInfo.sectorSize == 256)
                                         return MediaType.RX02;
                                     else // ECMA disks use 128 bytes/sector
                                         return MediaType.ECMA_59;
@@ -1068,42 +1068,42 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageCreator;
         }
 
-        public override string   GetImageComments()
+        public override string GetImageComments()
         {
             return ImageInfo.imageComments;
         }
 
-        public override string   GetMediaManufacturer()
+        public override string GetMediaManufacturer()
         {
             return ImageInfo.mediaManufacturer;
         }
 
-        public override string   GetMediaModel()
+        public override string GetMediaModel()
         {
             return ImageInfo.mediaModel;
         }
 
-        public override string   GetMediaSerialNumber()
+        public override string GetMediaSerialNumber()
         {
             return ImageInfo.mediaSerialNumber;
         }
 
-        public override string   GetMediaBarcode()
+        public override string GetMediaBarcode()
         {
             return ImageInfo.mediaBarcode;
         }
 
-        public override string   GetMediaPartNumber()
+        public override string GetMediaPartNumber()
         {
             return ImageInfo.mediaPartNumber;
         }
 
-        public override int      GetMediaSequence()
+        public override int GetMediaSequence()
         {
             return ImageInfo.mediaSequence;
         }
 
-        public override int      GetLastDiskSequence()
+        public override int GetLastDiskSequence()
         {
             return ImageInfo.lastMediaSequence;
         }

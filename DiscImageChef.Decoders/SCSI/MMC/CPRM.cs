@@ -83,7 +83,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static CPRMMediaKeyBlock? DecodeCPRMMediaKeyBlock(byte[] CPRMMKBResponse)
         {
-            if (CPRMMKBResponse == null)
+            if(CPRMMKBResponse == null)
                 return null;
 
             CPRMMediaKeyBlock decoded = new CPRMMediaKeyBlock();
@@ -102,17 +102,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyCPRMMediaKeyBlock(CPRMMediaKeyBlock? CPRMMKBResponse)
         {
-            if (CPRMMKBResponse == null)
+            if(CPRMMKBResponse == null)
                 return null;
 
             CPRMMediaKeyBlock response = CPRMMKBResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved != 0)
                 sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("Total number of CPRM Media Key Blocks available to transfer: {0}", response.TotalPacks).AppendLine();
             sb.AppendFormat("CPRM Media Key Blocks in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MKBPackData, 80));

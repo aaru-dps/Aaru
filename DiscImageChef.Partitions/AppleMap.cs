@@ -68,13 +68,13 @@ namespace DiscImageChef.PartPlugins
             ulong apm_entries;
             uint sector_size;
 
-            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 sector_size = 2048;
             else
                 sector_size = imagePlugin.GetSectorSize();
-			
+
             partitions = new List<CommonTypes.Partition>();
-			
+
             AppleMapBootEntry APMB = new AppleMapBootEntry();
             AppleMapPartitionEntry APMEntry;
 
@@ -106,19 +106,19 @@ namespace DiscImageChef.PartPlugins
 
             ulong first_sector = 0;
 
-            if (APMB.signature == APM_MAGIC) // APM boot block found, APM starts in next sector
+            if(APMB.signature == APM_MAGIC) // APM boot block found, APM starts in next sector
                 first_sector = 1;
 
             // Read first entry
             byte[] APMEntry_sector;
             bool APMFromHDDOnCD = false;
 
-            if (sector_size == 2048)
+            if(sector_size == 2048)
             {
                 APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector);
                 APMEntry = DecodeAPMEntry(APMEntry_sector);
 
-                if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT)
+                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT)
                 {
                     sector_size = 512;
                     APMFromHDDOnCD = true;
@@ -129,7 +129,7 @@ namespace DiscImageChef.PartPlugins
                     APMEntry_sector = imagePlugin.ReadSector(first_sector);
                     APMEntry = DecodeAPMEntry(APMEntry_sector);
 
-                    if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
+                    if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
                         return false;
                 }
             }
@@ -138,16 +138,16 @@ namespace DiscImageChef.PartPlugins
                 APMEntry_sector = imagePlugin.ReadSector(first_sector);
                 APMEntry = DecodeAPMEntry(APMEntry_sector);
 
-                if (APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
+                if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
                     return false;
             }
 
-            if (APMEntry.entries <= 1)
+            if(APMEntry.entries <= 1)
                 return false;
 
             apm_entries = APMEntry.entries;
-			
-            for (ulong i = 0; i < apm_entries; i++) // For each partition
+
+            for(ulong i = 0; i < apm_entries; i++) // For each partition
             {
                 if(APMFromHDDOnCD)
                     APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
@@ -156,11 +156,11 @@ namespace DiscImageChef.PartPlugins
 
                 APMEntry = DecodeAPMEntry(APMEntry_sector);
 
-                if (APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
+                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
                 {
                     CommonTypes.Partition _partition = new CommonTypes.Partition();
                     StringBuilder sb = new StringBuilder();
-					
+
                     _partition.PartitionSequence = i;
                     _partition.PartitionType = APMEntry.type;
                     _partition.PartitionName = APMEntry.name;
@@ -168,24 +168,24 @@ namespace DiscImageChef.PartPlugins
                     _partition.PartitionLength = APMEntry.sectors * sector_size;
                     _partition.PartitionStartSector = APMEntry.start;
                     _partition.PartitionSectors = APMEntry.sectors;
-					
+
                     sb.AppendLine("Partition flags:");
-                    if ((APMEntry.status & 0x01) == 0x01)
+                    if((APMEntry.status & 0x01) == 0x01)
                         sb.AppendLine("Partition is valid.");
-                    if ((APMEntry.status & 0x02) == 0x02)
+                    if((APMEntry.status & 0x02) == 0x02)
                         sb.AppendLine("Partition entry is not available.");
-                    if ((APMEntry.status & 0x04) == 0x04)
+                    if((APMEntry.status & 0x04) == 0x04)
                         sb.AppendLine("Partition is mounted.");
-                    if ((APMEntry.status & 0x08) == 0x08)
+                    if((APMEntry.status & 0x08) == 0x08)
                         sb.AppendLine("Partition is bootable.");
-                    if ((APMEntry.status & 0x10) == 0x10)
+                    if((APMEntry.status & 0x10) == 0x10)
                         sb.AppendLine("Partition is readable.");
-                    if ((APMEntry.status & 0x20) == 0x20)
+                    if((APMEntry.status & 0x20) == 0x20)
                         sb.AppendLine("Partition is writable.");
-                    if ((APMEntry.status & 0x40) == 0x40)
+                    if((APMEntry.status & 0x40) == 0x40)
                         sb.AppendLine("Partition's boot code is position independent.");
-					
-                    if ((APMEntry.status & 0x08) == 0x08)
+
+                    if((APMEntry.status & 0x08) == 0x08)
                     {
                         sb.AppendFormat("First boot sector: {0}", APMEntry.first_boot_block).AppendLine();
                         sb.AppendFormat("Boot is {0} bytes.", APMEntry.boot_size).AppendLine();
@@ -194,15 +194,15 @@ namespace DiscImageChef.PartPlugins
                         sb.AppendFormat("Boot code checksum: 0x{0:X8}", APMEntry.checksum).AppendLine();
                         sb.AppendFormat("Processor: {0}", APMEntry.processor).AppendLine();
                     }
-					
+
                     _partition.PartitionDescription = sb.ToString();
-					
-                    if ((APMEntry.status & 0x01) == 0x01)
-                    if (APMEntry.type != "Apple_partition_map")
-                        partitions.Add(_partition);
+
+                    if((APMEntry.status & 0x01) == 0x01)
+                        if(APMEntry.type != "Apple_partition_map")
+                            partitions.Add(_partition);
                 }
             }
-			
+
             return true;
         }
 

@@ -60,10 +60,10 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            if (imagePlugin.GetSectorSize() < 512)
+            if(imagePlugin.GetSectorSize() < 512)
                 return false;
 
             byte[] magic_b = new byte[12];
@@ -72,22 +72,22 @@ namespace DiscImageChef.Plugins
 
             Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
             magic = Encoding.ASCII.GetString(magic_b);
-			
+
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
             ODSHomeBlock homeblock = new ODSHomeBlock();
             byte[] temp_string = new byte[12];
             homeblock.min_class = new byte[20];
             homeblock.max_class = new byte[20];
-			
+
             byte[] hb_sector = imagePlugin.ReadSector(1 + partitionStart);
-			
+
             homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
             homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);
             homeblock.altidxlbn = BitConverter.ToUInt32(hb_sector, 0x008);
@@ -136,12 +136,12 @@ namespace DiscImageChef.Plugins
             Array.Copy(hb_sector, 0x1F0, temp_string, 0, 12);
             homeblock.format = StringHandlers.CToString(temp_string);
             homeblock.checksum2 = BitConverter.ToUInt16(hb_sector, 0x1FE);
-			
-            if ((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || homeblock.format != "DECFILE11B  ")
+
+            if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || homeblock.format != "DECFILE11B  ")
                 sb.AppendLine("The following information may be incorrect for this volume.");
-            if (homeblock.resfiles < 5 || homeblock.devtype != 0)
+            if(homeblock.resfiles < 5 || homeblock.devtype != 0)
                 sb.AppendLine("This volume may be corrupted.");
-			
+
             sb.AppendFormat("Volume format is {0}", homeblock.format).AppendLine();
             sb.AppendFormat("Volume is Level {0} revision {1}", (homeblock.struclev & 0xFF00) >> 8, homeblock.struclev & 0xFF).AppendLine();
             sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}", (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).AppendLine();
@@ -154,121 +154,121 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("Backup INDEXF.SYS;1 is in sector {0} (cluster {1})", homeblock.altidxlbn, homeblock.altidxvbn).AppendLine();
             sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
             sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
-            if (homeblock.rvn > 0 && homeblock.setcount > 0 && homeblock.strucname != "            ")
+            if(homeblock.rvn > 0 && homeblock.setcount > 0 && homeblock.strucname != "            ")
                 sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount, homeblock.strucname).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})", homeblock.ownername, homeblock.volowner).AppendLine();
             sb.AppendFormat("Volume label: \"{0}\"", homeblock.volname).AppendLine();
             sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
             sb.AppendFormat("Volume was created on {0}", DateHandlers.VMSToDateTime(homeblock.credate)).AppendLine();
-            if (homeblock.revdate > 0)
+            if(homeblock.revdate > 0)
                 sb.AppendFormat("Volume was last modified on {0}", DateHandlers.VMSToDateTime(homeblock.revdate)).AppendLine();
-            if (homeblock.copydate > 0)
+            if(homeblock.copydate > 0)
                 sb.AppendFormat("Volume copied on {0}", DateHandlers.VMSToDateTime(homeblock.copydate)).AppendLine();
             sb.AppendFormat("Checksums: 0x{0:X4} and 0x{1:X4}", homeblock.checksum1, homeblock.checksum2).AppendLine();
             sb.AppendLine("Flags:");
             sb.AppendFormat("Window: {0}", homeblock.window).AppendLine();
             sb.AppendFormat("Cached directores: {0}", homeblock.lru_lim).AppendLine();
             sb.AppendFormat("Default allocation: {0} blocks", homeblock.extend).AppendLine();
-            if ((homeblock.volchar & 0x01) == 0x01)
+            if((homeblock.volchar & 0x01) == 0x01)
                 sb.AppendLine("Readings should be verified");
-            if ((homeblock.volchar & 0x02) == 0x02)
+            if((homeblock.volchar & 0x02) == 0x02)
                 sb.AppendLine("Writings should be verified");
-            if ((homeblock.volchar & 0x04) == 0x04)
+            if((homeblock.volchar & 0x04) == 0x04)
                 sb.AppendLine("Files should be erased or overwritten when deleted");
-            if ((homeblock.volchar & 0x08) == 0x08)
+            if((homeblock.volchar & 0x08) == 0x08)
                 sb.AppendLine("Highwater mark is to be disabled");
-            if ((homeblock.volchar & 0x10) == 0x10)
+            if((homeblock.volchar & 0x10) == 0x10)
                 sb.AppendLine("Classification checks are enabled");
             sb.AppendLine("Volume permissions (r = read, w = write, c = create, d = delete)");
             sb.AppendLine("System, owner, group, world");
             // System
-            if ((homeblock.protect & 0x1000) == 0x1000)
+            if((homeblock.protect & 0x1000) == 0x1000)
                 sb.Append("-");
             else
                 sb.Append("r");
-            if ((homeblock.protect & 0x2000) == 0x2000)
+            if((homeblock.protect & 0x2000) == 0x2000)
                 sb.Append("-");
             else
                 sb.Append("w");
-            if ((homeblock.protect & 0x4000) == 0x4000)
+            if((homeblock.protect & 0x4000) == 0x4000)
                 sb.Append("-");
             else
                 sb.Append("c");
-            if ((homeblock.protect & 0x8000) == 0x8000)
+            if((homeblock.protect & 0x8000) == 0x8000)
                 sb.Append("-");
             else
                 sb.Append("d");
             // Owner
-            if ((homeblock.protect & 0x100) == 0x100)
+            if((homeblock.protect & 0x100) == 0x100)
                 sb.Append("-");
             else
                 sb.Append("r");
-            if ((homeblock.protect & 0x200) == 0x200)
+            if((homeblock.protect & 0x200) == 0x200)
                 sb.Append("-");
             else
                 sb.Append("w");
-            if ((homeblock.protect & 0x400) == 0x400)
+            if((homeblock.protect & 0x400) == 0x400)
                 sb.Append("-");
             else
                 sb.Append("c");
-            if ((homeblock.protect & 0x800) == 0x800)
+            if((homeblock.protect & 0x800) == 0x800)
                 sb.Append("-");
             else
                 sb.Append("d");
             // Group
-            if ((homeblock.protect & 0x10) == 0x10)
+            if((homeblock.protect & 0x10) == 0x10)
                 sb.Append("-");
             else
                 sb.Append("r");
-            if ((homeblock.protect & 0x20) == 0x20)
+            if((homeblock.protect & 0x20) == 0x20)
                 sb.Append("-");
             else
                 sb.Append("w");
-            if ((homeblock.protect & 0x40) == 0x40)
+            if((homeblock.protect & 0x40) == 0x40)
                 sb.Append("-");
             else
                 sb.Append("c");
-            if ((homeblock.protect & 0x80) == 0x80)
+            if((homeblock.protect & 0x80) == 0x80)
                 sb.Append("-");
             else
                 sb.Append("d");
             // World (other)
-            if ((homeblock.protect & 0x1) == 0x1)
+            if((homeblock.protect & 0x1) == 0x1)
                 sb.Append("-");
             else
                 sb.Append("r");
-            if ((homeblock.protect & 0x2) == 0x2)
+            if((homeblock.protect & 0x2) == 0x2)
                 sb.Append("-");
             else
                 sb.Append("w");
-            if ((homeblock.protect & 0x4) == 0x4)
+            if((homeblock.protect & 0x4) == 0x4)
                 sb.Append("-");
             else
                 sb.Append("c");
-            if ((homeblock.protect & 0x8) == 0x8)
+            if((homeblock.protect & 0x8) == 0x8)
                 sb.Append("-");
             else
                 sb.Append("d");
-			
+
             sb.AppendLine();
-			
+
             sb.AppendLine("Unknown structures:");
             sb.AppendFormat("Security mask: 0x{0:X8}", homeblock.sec_mask).AppendLine();
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
-			
+
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "FILES-11";
             xmlFSType.ClusterSize = homeblock.cluster * 512;
             xmlFSType.Clusters = homeblock.cluster;
             xmlFSType.VolumeName = homeblock.volname;
             xmlFSType.VolumeSerial = String.Format("{0:X8}", homeblock.serialnum);
-            if (homeblock.credate > 0)
+            if(homeblock.credate > 0)
             {
                 xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
                 xmlFSType.CreationDateSpecified = true;
             }
-            if (homeblock.revdate > 0)
+            if(homeblock.revdate > 0)
             {
                 xmlFSType.ModificationDate = DateHandlers.VMSToDateTime(homeblock.revdate);
                 xmlFSType.ModificationDateSpecified = true;

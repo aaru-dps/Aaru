@@ -55,7 +55,7 @@ namespace DiscImageChef.Devices
             error = false;
             removable = false;
 
-            switch (platformID)
+            switch(platformID)
             {
                 case Interop.PlatformID.Win32NT:
                     {
@@ -65,7 +65,7 @@ namespace DiscImageChef.Devices
                             IntPtr.Zero, Windows.FileMode.OpenExisting,
                             Windows.FileAttributes.Normal, IntPtr.Zero);
 
-                        if (((SafeFileHandle)fd).IsInvalid)
+                        if(((SafeFileHandle)fd).IsInvalid)
                         {
                             error = true;
                             lastError = Marshal.GetLastWin32Error();
@@ -78,7 +78,7 @@ namespace DiscImageChef.Devices
                     {
                         fd = Linux.Extern.open(devicePath, Linux.FileFlags.Readonly | Linux.FileFlags.NonBlocking);
 
-                        if ((int)fd < 0)
+                        if((int)fd < 0)
                         {
                             error = true;
                             lastError = Marshal.GetLastWin32Error();
@@ -91,7 +91,7 @@ namespace DiscImageChef.Devices
                     throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", platformID));
             }
 
-            if (error)
+            if(error)
                 throw new SystemException(String.Format("Error {0} opening device.", lastError));
 
             type = DeviceType.Unknown;
@@ -105,7 +105,7 @@ namespace DiscImageChef.Devices
 
             bool scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
 
-            if (error)
+            if(error)
                 throw new SystemException(String.Format("Error {0} trying device.", lastError));
 
             #region USB
@@ -157,16 +157,16 @@ namespace DiscImageChef.Devices
 
                                     if(System.IO.File.Exists(resolvedLink + "/product"))
                                     {
-                                    usbSr = new System.IO.StreamReader(resolvedLink + "/product");
-                                    usbProductString = usbSr.ReadToEnd().Trim();
-                                    usbSr.Close();
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/product");
+                                        usbProductString = usbSr.ReadToEnd().Trim();
+                                        usbSr.Close();
                                     }
 
                                     if(System.IO.File.Exists(resolvedLink + "/serial"))
                                     {
-                                    usbSr = new System.IO.StreamReader(resolvedLink + "/serial");
-                                    usbSerialString = usbSr.ReadToEnd().Trim();
-                                    usbSr.Close();
+                                        usbSr = new System.IO.StreamReader(resolvedLink + "/serial");
+                                        usbSerialString = usbSr.ReadToEnd().Trim();
+                                        usbSr.Close();
                                     }
 
                                     usb = true;
@@ -246,16 +246,16 @@ namespace DiscImageChef.Devices
                 firewire = false;
             #endregion FireWire
 
-            if (!scsiSense)
+            if(!scsiSense)
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
 
                 type = DeviceType.SCSI;
                 bool serialSense = ScsiInquiry(out inqBuf, out senseBuf, 0x80);
-                if (!serialSense)
+                if(!serialSense)
                     serial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
-                
-                if (Inquiry.HasValue)
+
+                if(Inquiry.HasValue)
                 {
                     string tmp = StringHandlers.CToString(Inquiry.Value.ProductRevisionLevel);
                     if(tmp != null)
@@ -273,29 +273,29 @@ namespace DiscImageChef.Devices
 
                 bool atapiSense = AtapiIdentify(out ataBuf, out errorRegisters);
 
-                if (!atapiSense)
+                if(!atapiSense)
                 {
                     type = DeviceType.ATAPI;
                     Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
-                    if (ATAID.HasValue)
+                    if(ATAID.HasValue)
                         serial = ATAID.Value.SerialNumber;
                 }
             }
 
-            if ((scsiSense && (usb || firewire)) || manufacturer == "ATA")
+            if((scsiSense && (usb || firewire)) || manufacturer == "ATA")
             {
                 bool ataSense = AtaIdentify(out ataBuf, out errorRegisters);
-                if (!ataSense)
+                if(!ataSense)
                 {
                     type = DeviceType.ATA;
                     Identify.IdentifyDevice? ATAID = Identify.Decode(ataBuf);
 
-                    if (ATAID.HasValue)
+                    if(ATAID.HasValue)
                     {
                         string[] separated = ATAID.Value.Model.Split(' ');
 
-                        if (separated.Length == 1)
+                        if(separated.Length == 1)
                             model = separated[0];
                         else
                         {
@@ -308,7 +308,7 @@ namespace DiscImageChef.Devices
 
                         scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
 
-                        if ((ushort)ATAID.Value.GeneralConfiguration != 0x848A)
+                        if((ushort)ATAID.Value.GeneralConfiguration != 0x848A)
                         {
                             removable |= (ATAID.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) == Identify.GeneralConfigurationBit.Removable;
                         }
@@ -316,7 +316,7 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if (type == DeviceType.Unknown)
+            if(type == DeviceType.Unknown)
             {
                 manufacturer = null;
                 model = null;
@@ -324,17 +324,17 @@ namespace DiscImageChef.Devices
                 serial = null;
             }
 
-            if (usb)
+            if(usb)
             {
-                if (string.IsNullOrEmpty(manufacturer))
+                if(string.IsNullOrEmpty(manufacturer))
                     manufacturer = usbManufacturerString;
-                if (string.IsNullOrEmpty(model))
+                if(string.IsNullOrEmpty(model))
                     model = usbProductString;
-                if (string.IsNullOrEmpty(serial))
+                if(string.IsNullOrEmpty(serial))
                     serial = usbSerialString;
                 else
                 {
-                    foreach (char c in serial)
+                    foreach(char c in serial)
                     {
                         if(Char.IsControl(c))
                             serial = usbSerialString;
@@ -342,17 +342,17 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if (firewire)
+            if(firewire)
             {
-                if (string.IsNullOrEmpty(manufacturer))
+                if(string.IsNullOrEmpty(manufacturer))
                     manufacturer = firewireVendorName;
-                if (string.IsNullOrEmpty(model))
+                if(string.IsNullOrEmpty(model))
                     model = firewireModelName;
-                if (string.IsNullOrEmpty(serial))
+                if(string.IsNullOrEmpty(serial))
                     serial = String.Format("{0:X16}", firewireGuid);
                 else
                 {
-                    foreach (char c in serial)
+                    foreach(char c in serial)
                     {
                         if(Char.IsControl(c))
                             serial = String.Format("{0:X16}", firewireGuid);

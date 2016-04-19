@@ -48,7 +48,7 @@ namespace DiscImageChef.Core
 
         public MHDDLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
-            if (dev != null && !string.IsNullOrEmpty(outputFile))
+            if(dev != null && !string.IsNullOrEmpty(outputFile))
             {
                 mhddFs = new FileStream(outputFile, FileMode.Create);
 
@@ -61,27 +61,27 @@ namespace DiscImageChef.Core
                 string scanblocksize;
                 string ver;
 
-                switch (dev.Type)
+                switch(dev.Type)
                 {
-                case DeviceType.ATA:
-                case DeviceType.ATAPI:
-                    mode = "MODE: IDE";
-                    break;
-                case DeviceType.SCSI:
-                    mode = "MODE: SCSI";
-                    break;
-                case DeviceType.MMC:
-                    mode = "MODE: MMC";
-                    break;
-                case DeviceType.NVMe:
-                    mode = "MODE: NVMe";
-                    break;
-                case DeviceType.SecureDigital:
-                    mode = "MODE: SD";
-                    break;
-                default:
-                    mode = "MODE: IDE";
-                    break;
+                    case DeviceType.ATA:
+                    case DeviceType.ATAPI:
+                        mode = "MODE: IDE";
+                        break;
+                    case DeviceType.SCSI:
+                        mode = "MODE: SCSI";
+                        break;
+                    case DeviceType.MMC:
+                        mode = "MODE: MMC";
+                        break;
+                    case DeviceType.NVMe:
+                        mode = "MODE: NVMe";
+                        break;
+                    case DeviceType.SecureDigital:
+                        mode = "MODE: SD";
+                        break;
+                    default:
+                        mode = "MODE: IDE";
+                        break;
                 }
 
                 device = string.Format("DEVICE: {0} {1}", dev.Manufacturer, dev.Model);
@@ -134,7 +134,7 @@ namespace DiscImageChef.Core
 
         public void Write(ulong sector, double duration)
         {
-            if (mhddFs != null)
+            if(mhddFs != null)
             {
                 byte[] sectorBytes = BitConverter.GetBytes(sector);
                 byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
@@ -146,7 +146,7 @@ namespace DiscImageChef.Core
 
         public void Close()
         {
-            if (mhddFs != null)
+            if(mhddFs != null)
                 mhddFs.Close();
         }
     }

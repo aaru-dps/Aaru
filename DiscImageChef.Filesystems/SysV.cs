@@ -68,7 +68,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt32 magic;
@@ -98,27 +98,27 @@ namespace DiscImageChef.Plugins
 
             byte sb_size_in_sectors;
 
-            if (imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
+            if(imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if (imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
+            if(imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
                 return false;
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            for (int i = 0; i <= 16; i++)
+            for(int i = 0; i <= 16; i++)
             {
                 byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partitionStart, sb_size_in_sectors);
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
 
-                if (magic == XENIX_MAGIC || magic == XENIX_CIGAM)
+                if(magic == XENIX_MAGIC || magic == XENIX_CIGAM)
                     return true;
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
 
-                if (magic == SYSV_MAGIC || magic == SYSV_CIGAM)
+                if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     return true;
 
                 byte[] coherent_string = new byte[6];
@@ -127,7 +127,7 @@ namespace DiscImageChef.Plugins
                 Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string);
 
-                if (s_fname == COH_FNAME || s_fpack == COH_FPACK)
+                if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
                     return true;
 
                 // Now try to identify 7th edition
@@ -135,9 +135,9 @@ namespace DiscImageChef.Plugins
                 s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
                 s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
-                if (s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
+                if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
                 {
-                    if ((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
+                    if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
                     {
                         // Byteswap
                         s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) + ((s_fsize & 0xFF000000) >> 24);
@@ -145,11 +145,11 @@ namespace DiscImageChef.Plugins
                         s_ninode = (UInt16)(s_ninode >> 8);
                     }
 
-                    if ((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
+                    if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
                     {
-                        if (s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
+                        if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if ((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                                 return true;
                         }
                     }
@@ -162,7 +162,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-            
+
             StringBuilder sb = new StringBuilder();
             BigEndianBitConverter.IsLittleEndian = true; // Start in little endian until we know what are we handling here
             int start;
@@ -178,24 +178,24 @@ namespace DiscImageChef.Plugins
             byte[] sb_sector;
             byte sb_size_in_sectors;
 
-            if (imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
+            if(imagePlugin.GetSectorSize() <= 0x400) // Check if underlying device sector size is smaller than SuperBlock size
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.GetSectorSize());
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            for (start = 0; start <= 16; start++)
+            for(start = 0; start <= 16; start++)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location
-            
-                if (magic == XENIX_MAGIC)
+
+                if(magic == XENIX_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
                     xenix = true;
                     break;
                 }
-                if (magic == XENIX_CIGAM)
+                if(magic == XENIX_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     xenix = true;
@@ -203,14 +203,14 @@ namespace DiscImageChef.Plugins
                 }
 
                 magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8); // XENIX magic location
-            
-                if (magic == SYSV_MAGIC)
+
+                if(magic == SYSV_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
                     sysv = true;
                     break;
                 }
-                if (magic == SYSV_CIGAM)
+                if(magic == SYSV_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     sysv = true;
@@ -222,8 +222,8 @@ namespace DiscImageChef.Plugins
                 s_fname = StringHandlers.CToString(coherent_string);
                 Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
                 s_fpack = StringHandlers.CToString(coherent_string);
-            
-                if (s_fname == COH_FNAME    || s_fpack == COH_FPACK)
+
+                if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
                     coherent = true;
@@ -235,21 +235,21 @@ namespace DiscImageChef.Plugins
                 s_nfree = BitConverter.ToUInt16(sb_sector, 0x006); // 7th edition's s_nfree
                 s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0); // 7th edition's s_ninode
 
-                if (s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
+                if(s_fsize > 0 && s_fsize < 0xFFFFFFFF && s_nfree > 0 && s_nfree < 0xFFFF && s_ninode > 0 && s_ninode < 0xFFFF)
                 {
-                    if ((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
+                    if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
                     {
                         // Byteswap
                         s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) + ((s_fsize & 0xFF000000) >> 24);
                         s_nfree = (UInt16)(s_nfree >> 8);
                         s_ninode = (UInt16)(s_ninode >> 8);
                     }
-                    
-                    if ((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
+
+                    if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
                     {
-                        if (s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
+                        if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if ((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                             {
                                 sys7th = true;
                                 BigEndianBitConverter.IsLittleEndian = true;
@@ -259,17 +259,17 @@ namespace DiscImageChef.Plugins
                     }
                 }
             }
-            if (!sys7th && !sysv && !coherent && !xenix)
+            if(!sys7th && !sysv && !coherent && !xenix)
                 return;
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if (xenix)
+            if(xenix)
             {
                 byte[] xenix_strings = new byte[6];
                 XenixSuperBlock xnx_sb = new XenixSuperBlock();
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
-                
+
                 xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
                 xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
                 xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
@@ -296,7 +296,7 @@ namespace DiscImageChef.Plugins
                 UInt32 bs = 512;
                 sb.AppendLine("XENIX filesystem");
                 xmlFSType.Type = "XENIX fs";
-                switch (xnx_sb.s_type)
+                switch(xnx_sb.s_type)
                 {
                     case 1:
                         sb.AppendLine("512 bytes per block");
@@ -316,14 +316,14 @@ namespace DiscImageChef.Plugins
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
                         break;
                 }
-                if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 {
-                    if (bs != 2048)
+                    if(bs != 2048)
                         sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, 2048).AppendLine();
                 }
                 else
                 {
-                    if (bs != imagePlugin.GetSectorSize())
+                    if(bs != imagePlugin.GetSectorSize())
                         sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
                 }
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
@@ -334,16 +334,16 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("First data zone: {0}", xnx_sb.s_isize).AppendLine();
                 sb.AppendFormat("{0} free inodes on volume", xnx_sb.s_tinode).AppendLine();
                 sb.AppendFormat("{0} free inodes on list", xnx_sb.s_ninode).AppendLine();
-                if (xnx_sb.s_flock > 0)
+                if(xnx_sb.s_flock > 0)
                     sb.AppendLine("Free block list is locked");
-                if (xnx_sb.s_ilock > 0)
+                if(xnx_sb.s_ilock > 0)
                     sb.AppendLine("inode cache is locked");
-                if (xnx_sb.s_fmod > 0)
+                if(xnx_sb.s_fmod > 0)
                     sb.AppendLine("Superblock is being modified");
-                if (xnx_sb.s_ronly > 0)
+                if(xnx_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time)).AppendLine();
-                if (xnx_sb.s_time != 0)
+                if(xnx_sb.s_time != 0)
                 {
                     xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time);
                     xmlFSType.ModificationDateSpecified = true;
@@ -351,7 +351,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = xnx_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
-                if (xnx_sb.s_clean == 0x46)
+                if(xnx_sb.s_clean == 0x46)
                     sb.AppendLine("Volume is clean");
                 else
                 {
@@ -360,7 +360,7 @@ namespace DiscImageChef.Plugins
                 }
             }
 
-            if (sysv)
+            if(sysv)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 UInt16 pad0, pad1, pad2;
@@ -381,7 +381,7 @@ namespace DiscImageChef.Plugins
                 sysv_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F8);
                 sysv_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1FC);
 
-                if (sysvr4)
+                if(sysvr4)
                 {
                     sysv_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x004);
                     sysv_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x008);
@@ -425,7 +425,7 @@ namespace DiscImageChef.Plugins
                 }
 
                 UInt32 bs = 512;
-                if (sysvr4)
+                if(sysvr4)
                 {
                     sb.AppendLine("System V Release 4 filesystem");
                     xmlFSType.Type = "SVR4 fs";
@@ -435,7 +435,7 @@ namespace DiscImageChef.Plugins
                     sb.AppendLine("System V Release 2 filesystem");
                     xmlFSType.Type = "SVR2 fs";
                 }
-                switch (sysv_sb.s_type)
+                switch(sysv_sb.s_type)
                 {
                     case 1:
                         sb.AppendLine("512 bytes per block");
@@ -455,14 +455,14 @@ namespace DiscImageChef.Plugins
                         sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
                         break;
                 }
-                if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+                if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 {
-                    if (bs != 2048)
+                    if(bs != 2048)
                         sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, 2048).AppendLine();
                 }
                 else
                 {
-                    if (bs != imagePlugin.GetSectorSize())
+                    if(bs != imagePlugin.GetSectorSize())
                         sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", bs, imagePlugin.GetSectorSize()).AppendLine();
                 }
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
@@ -473,16 +473,16 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("First data zone: {0}", sysv_sb.s_isize).AppendLine();
                 sb.AppendFormat("{0} free inodes on volume", sysv_sb.s_tinode).AppendLine();
                 sb.AppendFormat("{0} free inodes on list", sysv_sb.s_ninode).AppendLine();
-                if (sysv_sb.s_flock > 0)
+                if(sysv_sb.s_flock > 0)
                     sb.AppendLine("Free block list is locked");
-                if (sysv_sb.s_ilock > 0)
+                if(sysv_sb.s_ilock > 0)
                     sb.AppendLine("inode cache is locked");
-                if (sysv_sb.s_fmod > 0)
+                if(sysv_sb.s_fmod > 0)
                     sb.AppendLine("Superblock is being modified");
-                if (sysv_sb.s_ronly > 0)
+                if(sysv_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time)).AppendLine();
-                if (sysv_sb.s_time != 0)
+                if(sysv_sb.s_time != 0)
                 {
                     xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(sysv_sb.s_time);
                     xmlFSType.ModificationDateSpecified = true;
@@ -490,7 +490,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
                 xmlFSType.VolumeName = sysv_sb.s_fname;
                 sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
-                if (sysv_sb.s_state == (0x7C269D38 - sysv_sb.s_time))
+                if(sysv_sb.s_state == (0x7C269D38 - sysv_sb.s_time))
                     sb.AppendLine("Volume is clean");
                 else
                 {
@@ -499,7 +499,7 @@ namespace DiscImageChef.Plugins
                 }
             }
 
-            if (coherent)
+            if(coherent)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 CoherentSuperBlock coh_sb = new CoherentSuperBlock();
@@ -527,7 +527,7 @@ namespace DiscImageChef.Plugins
                 xmlFSType.ClusterSize = 512;
 
                 sb.AppendLine("Coherent UNIX filesystem");
-                if (imagePlugin.GetSectorSize() != 512)
+                if(imagePlugin.GetSectorSize() != 512)
                     sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).AppendLine();
@@ -535,16 +535,16 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("First data zone: {0}", coh_sb.s_isize).AppendLine();
                 sb.AppendFormat("{0} free inodes on volume", coh_sb.s_tinode).AppendLine();
                 sb.AppendFormat("{0} free inodes on list", coh_sb.s_ninode).AppendLine();
-                if (coh_sb.s_flock > 0)
+                if(coh_sb.s_flock > 0)
                     sb.AppendLine("Free block list is locked");
-                if (coh_sb.s_ilock > 0)
+                if(coh_sb.s_ilock > 0)
                     sb.AppendLine("inode cache is locked");
-                if (coh_sb.s_fmod > 0)
+                if(coh_sb.s_fmod > 0)
                     sb.AppendLine("Superblock is being modified");
-                if (coh_sb.s_ronly > 0)
+                if(coh_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time)).AppendLine();
-                if (coh_sb.s_time != 0)
+                if(coh_sb.s_time != 0)
                 {
                     xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(coh_sb.s_time);
                     xmlFSType.ModificationDateSpecified = true;
@@ -554,7 +554,7 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
             }
 
-            if (sys7th)
+            if(sys7th)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
                 UNIX7thEditionSuperBlock v7_sb = new UNIX7thEditionSuperBlock();
@@ -581,7 +581,7 @@ namespace DiscImageChef.Plugins
                 xmlFSType.Type = "UNIX 7th Edition fs";
                 xmlFSType.ClusterSize = 512;
                 sb.AppendLine("UNIX 7th Edition filesystem");
-                if (imagePlugin.GetSectorSize() != 512)
+                if(imagePlugin.GetSectorSize() != 512)
                     sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector", 512, 2048).AppendLine();
                 sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
                 sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).AppendLine();
@@ -589,16 +589,16 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("First data zone: {0}", v7_sb.s_isize).AppendLine();
                 sb.AppendFormat("{0} free inodes on volume", v7_sb.s_tinode).AppendLine();
                 sb.AppendFormat("{0} free inodes on list", v7_sb.s_ninode).AppendLine();
-                if (v7_sb.s_flock > 0)
+                if(v7_sb.s_flock > 0)
                     sb.AppendLine("Free block list is locked");
-                if (v7_sb.s_ilock > 0)
+                if(v7_sb.s_ilock > 0)
                     sb.AppendLine("inode cache is locked");
-                if (v7_sb.s_fmod > 0)
+                if(v7_sb.s_fmod > 0)
                     sb.AppendLine("Superblock is being modified");
-                if (v7_sb.s_ronly > 0)
+                if(v7_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
                 sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time)).AppendLine();
-                if (v7_sb.s_time != 0)
+                if(v7_sb.s_time != 0)
                 {
                     xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(v7_sb.s_time);
                     xmlFSType.ModificationDateSpecified = true;

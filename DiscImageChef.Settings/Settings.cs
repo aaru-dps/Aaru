@@ -100,25 +100,25 @@ namespace DiscImageChef.Settings
 
             try
             {
-                switch (ptID)
+                switch(ptID)
                 {
                     case Interop.PlatformID.MacOSX:
                     case Interop.PlatformID.iOS:
                         {
                             string appSupportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Application Support", "Claunia.com");
-                            if (!Directory.Exists(appSupportPath))
+                            if(!Directory.Exists(appSupportPath))
                                 Directory.CreateDirectory(appSupportPath);
 
                             string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
-                            if (!Directory.Exists(dicPath))
+                            if(!Directory.Exists(dicPath))
                                 Directory.CreateDirectory(dicPath);
 
                             reportsPath = Path.Combine(dicPath, "Reports");
-                            if (!Directory.Exists(reportsPath))
+                            if(!Directory.Exists(reportsPath))
                                 Directory.CreateDirectory(reportsPath);
 
                             statsPath = Path.Combine(dicPath, "Statistics");
-                            if (!Directory.Exists(statsPath))
+                            if(!Directory.Exists(statsPath))
                                 Directory.CreateDirectory(statsPath);
                         }
                         break;
@@ -129,41 +129,41 @@ namespace DiscImageChef.Settings
                     case Interop.PlatformID.WindowsPhone:
                         {
                             string appSupportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Claunia.com");
-                            if (!Directory.Exists(appSupportPath))
+                            if(!Directory.Exists(appSupportPath))
                                 Directory.CreateDirectory(appSupportPath);
 
                             string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
-                            if (!Directory.Exists(dicPath))
+                            if(!Directory.Exists(dicPath))
                                 Directory.CreateDirectory(dicPath);
 
                             reportsPath = Path.Combine(dicPath, "Reports");
-                            if (!Directory.Exists(reportsPath))
+                            if(!Directory.Exists(reportsPath))
                                 Directory.CreateDirectory(reportsPath);
 
                             statsPath = Path.Combine(dicPath, "Statistics");
-                            if (!Directory.Exists(statsPath))
+                            if(!Directory.Exists(statsPath))
                                 Directory.CreateDirectory(statsPath);
                         }
                         break;
                     default:
                         {
                             string appSupportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".claunia.com");
-                            if (!Directory.Exists(appSupportPath))
+                            if(!Directory.Exists(appSupportPath))
                                 Directory.CreateDirectory(appSupportPath);
 
                             string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
-                            if (!Directory.Exists(dicPath))
+                            if(!Directory.Exists(dicPath))
                                 Directory.CreateDirectory(dicPath);
 
                             reportsPath = Path.Combine(dicPath, "Reports");
-                            if (!Directory.Exists(reportsPath))
+                            if(!Directory.Exists(reportsPath))
                                 Directory.CreateDirectory(reportsPath);
 
                             statsPath = Path.Combine(dicPath, "Statistics");
-                            if (!Directory.Exists(statsPath))
+                            if(!Directory.Exists(statsPath))
                                 Directory.CreateDirectory(statsPath);
                         }
-                    break;
+                        break;
                 }
             }
             catch
@@ -173,7 +173,7 @@ namespace DiscImageChef.Settings
 
             try
             {
-                switch (ptID)
+                switch(ptID)
                 {
                     case Interop.PlatformID.MacOSX:
                     case Interop.PlatformID.iOS:
@@ -181,25 +181,25 @@ namespace DiscImageChef.Settings
                             string preferencesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Preferences");
                             string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
 
-                            if (!File.Exists(preferencesFilePath))
+                            if(!File.Exists(preferencesFilePath))
                             {
                                 SetDefaultSettings();
                                 SaveSettings();
                             }
 
                             NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(new FileInfo(preferencesFilePath));
-                            if (parsedPreferences != null)
+                            if(parsedPreferences != null)
                             {
                                 NSObject obj;
 
-                                if (parsedPreferences.TryGetValue("SaveReportsGlobally", out obj))
+                                if(parsedPreferences.TryGetValue("SaveReportsGlobally", out obj))
                                 {
                                     Current.SaveReportsGlobally = ((NSNumber)obj).ToBool();
                                 }
                                 else
                                     Current.SaveReportsGlobally = false;
 
-                                if (parsedPreferences.TryGetValue("ShareReports", out obj))
+                                if(parsedPreferences.TryGetValue("ShareReports", out obj))
                                 {
                                     Current.ShareReports = ((NSNumber)obj).ToBool();
                                 }
@@ -207,79 +207,79 @@ namespace DiscImageChef.Settings
                                     Current.ShareReports = false;
 
                                 NSDictionary stats;
-                                if (parsedPreferences.TryGetValue("Stats", out obj))
+                                if(parsedPreferences.TryGetValue("Stats", out obj))
                                 {
                                     stats = (NSDictionary)obj;
 
-                                    if (stats != null)
+                                    if(stats != null)
                                     {
                                         NSObject obj2;
                                         Current.Stats = new StatsSettings();
 
-                                        if (stats.TryGetValue("ShareStats", out obj2))
+                                        if(stats.TryGetValue("ShareStats", out obj2))
                                         {
                                             Current.Stats.ShareStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.ShareStats = false;
 
-                                        if (stats.TryGetValue("BenchmarkStats", out obj2))
+                                        if(stats.TryGetValue("BenchmarkStats", out obj2))
                                         {
                                             Current.Stats.BenchmarkStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.BenchmarkStats = false;
 
-                                        if (stats.TryGetValue("CommandStats", out obj2))
+                                        if(stats.TryGetValue("CommandStats", out obj2))
                                         {
                                             Current.Stats.CommandStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.CommandStats = false;
 
-                                        if (stats.TryGetValue("DeviceStats", out obj2))
+                                        if(stats.TryGetValue("DeviceStats", out obj2))
                                         {
                                             Current.Stats.DeviceStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.DeviceStats = false;
 
-                                        if (stats.TryGetValue("FilesystemStats", out obj2))
+                                        if(stats.TryGetValue("FilesystemStats", out obj2))
                                         {
                                             Current.Stats.FilesystemStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.FilesystemStats = false;
 
-                                        if (stats.TryGetValue("MediaImageStats", out obj2))
+                                        if(stats.TryGetValue("MediaImageStats", out obj2))
                                         {
                                             Current.Stats.MediaImageStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.MediaImageStats = false;
 
-                                        if (stats.TryGetValue("MediaScanStats", out obj2))
+                                        if(stats.TryGetValue("MediaScanStats", out obj2))
                                         {
                                             Current.Stats.MediaScanStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.MediaScanStats = false;
 
-                                        if (stats.TryGetValue("PartitionStats", out obj2))
+                                        if(stats.TryGetValue("PartitionStats", out obj2))
                                         {
                                             Current.Stats.PartitionStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.PartitionStats = false;
 
-                                        if (stats.TryGetValue("MediaStats", out obj2))
+                                        if(stats.TryGetValue("MediaStats", out obj2))
                                         {
                                             Current.Stats.MediaStats = ((NSNumber)obj2).ToBool();
                                         }
                                         else
                                             Current.Stats.MediaStats = false;
 
-                                        if (stats.TryGetValue("VerifyStats", out obj2))
+                                        if(stats.TryGetValue("VerifyStats", out obj2))
                                         {
                                             Current.Stats.VerifyStats = ((NSNumber)obj2).ToBool();
                                         }
@@ -304,7 +304,7 @@ namespace DiscImageChef.Settings
                     case Interop.PlatformID.WindowsPhone:
                         {
                             RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE").OpenSubKey("Claunia.com");
-                            if (parentKey == null)
+                            if(parentKey == null)
                             {
                                 SetDefaultSettings();
                                 SaveSettings();
@@ -312,7 +312,7 @@ namespace DiscImageChef.Settings
                             }
 
                             RegistryKey key = parentKey.OpenSubKey("DiscImageChef");
-                            if (key == null)
+                            if(key == null)
                             {
                                 SetDefaultSettings();
                                 SaveSettings();
@@ -323,7 +323,7 @@ namespace DiscImageChef.Settings
                             Current.ShareReports = Convert.ToBoolean(key.GetValue("ShareReports"));
 
                             bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
-                            if (stats)
+                            if(stats)
                             {
                                 Current.Stats = new StatsSettings();
                                 Current.Stats.ShareStats = Convert.ToBoolean(key.GetValue("ShareStats"));
@@ -345,7 +345,7 @@ namespace DiscImageChef.Settings
                             string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
                             string settingsPath = Path.Combine(configPath, "DiscImageChef.xml");
 
-                            if (!Directory.Exists(configPath))
+                            if(!Directory.Exists(configPath))
                             {
                                 SetDefaultSettings();
                                 SaveSettings();
@@ -372,7 +372,7 @@ namespace DiscImageChef.Settings
             {
                 Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
 
-                switch (ptID)
+                switch(ptID)
                 {
                     case Interop.PlatformID.MacOSX:
                     case Interop.PlatformID.iOS:
@@ -380,7 +380,7 @@ namespace DiscImageChef.Settings
                             NSDictionary root = new NSDictionary();
                             root.Add("SaveReportsGlobally", Current.SaveReportsGlobally);
                             root.Add("ShareReports", Current.ShareReports);
-                            if (Current.Stats != null)
+                            if(Current.Stats != null)
                             {
                                 NSDictionary stats = new NSDictionary();
                                 stats.Add("ShareStats", Current.Stats.ShareStats);
@@ -416,7 +416,7 @@ namespace DiscImageChef.Settings
                             key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
                             key.SetValue("ShareReports", Current.ShareReports);
 
-                            if (Current.Stats != null)
+                            if(Current.Stats != null)
                             {
                                 key.SetValue("Statistics", true);
                                 key.SetValue("ShareStats", Current.Stats.ShareStats);
@@ -451,7 +451,7 @@ namespace DiscImageChef.Settings
                             string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
                             string settingsPath = Path.Combine(configPath, "DiscImageChef.xml");
 
-                            if (!Directory.Exists(configPath))
+                            if(!Directory.Exists(configPath))
                                 Directory.CreateDirectory(configPath);
 
                             FileStream fs = new FileStream(settingsPath, FileMode.Create);

@@ -45,7 +45,7 @@ namespace DiscImageChef.Metadata
         {
             DimensionsType dmns = new DimensionsType();
 
-            switch (dskType)
+            switch(dskType)
             {
                 #region 5.25" floppy disk
                 case CommonTypes.MediaType.Apple32SS:
@@ -816,7 +816,7 @@ namespace DiscImageChef.Metadata
                     dmns.DiameterSpecified = true;
                     dmns.Thickness = 2.5;
                     return dmns;
-                
+
                 #region CD/DVD/BD
                 case CommonTypes.MediaType.CDDA:
                 case CommonTypes.MediaType.CDG:

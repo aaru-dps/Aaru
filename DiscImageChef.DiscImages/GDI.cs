@@ -143,7 +143,7 @@ namespace DiscImageChef.ImagePlugins
                 int tracksFound = 0;
                 int tracks = 0;
 
-                while (gdiStream.Peek() >= 0)
+                while(gdiStream.Peek() >= 0)
                 {
                     line++;
                     string _line = gdiStream.ReadLine();
@@ -171,7 +171,7 @@ namespace DiscImageChef.ImagePlugins
 
                 return tracks == tracksFound;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", this.imagePath);
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
@@ -182,9 +182,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override bool OpenImage(string imagePath)
         {
-            if (imagePath == null)
+            if(imagePath == null)
                 return false;
-            if (imagePath == "")
+            if(imagePath == "")
                 return false;
 
             this.imagePath = imagePath;
@@ -214,7 +214,7 @@ namespace DiscImageChef.ImagePlugins
                 GDITrack currentTrack;
                 densitySeparationSectors = 0;
 
-                while (gdiStream.Peek() >= 0)
+                while(gdiStream.Peek() >= 0)
                 {
                     line++;
                     string _line = gdiStream.ReadLine();
@@ -233,8 +233,8 @@ namespace DiscImageChef.ImagePlugins
 
                         tracksFound++;
 
-                        DicConsole.DebugWriteLine("GDI plugin", "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}", 
-                            TrackMatch.Groups["track"].Value, TrackMatch.Groups["start"].Value, TrackMatch.Groups["flags"].Value, 
+                        DicConsole.DebugWriteLine("GDI plugin", "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
+                            TrackMatch.Groups["track"].Value, TrackMatch.Groups["start"].Value, TrackMatch.Groups["flags"].Value,
                             TrackMatch.Groups["type"].Value, TrackMatch.Groups["filename"].Value, TrackMatch.Groups["offset"].Value, line);
 
                         currentTrack = new GDITrack();
@@ -243,7 +243,7 @@ namespace DiscImageChef.ImagePlugins
                         currentTrack.offset = long.Parse(TrackMatch.Groups["offset"].Value);
                         currentTrack.sequence = uint.Parse(TrackMatch.Groups["track"].Value);
                         currentTrack.startSector = ulong.Parse(TrackMatch.Groups["start"].Value);
-                        currentTrack.trackfile = TrackMatch.Groups["filename"].Value.Replace("\\\"", "\"").Trim(new []{'"'});
+                        currentTrack.trackfile = TrackMatch.Groups["filename"].Value.Replace("\\\"", "\"").Trim(new[] { '"' });
 
                         if((currentTrack.startSector - currentStart) > 0)
                         {
@@ -280,7 +280,7 @@ namespace DiscImageChef.ImagePlugins
                 }
 
                 Session[] _sessions = new Session[2];
-                for (int s = 0; s < _sessions.Length; s++)
+                for(int s = 0; s < _sessions.Length; s++)
                 {
                     if(s == 0)
                     {
@@ -342,7 +342,7 @@ namespace DiscImageChef.ImagePlugins
 
                 DicConsole.DebugWriteLine("GDI plugin", "Session information:");
                 DicConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", discimage.sessions.Count);
-                for (int i = 0; i < discimage.sessions.Count; i++)
+                for(int i = 0; i < discimage.sessions.Count; i++)
                 {
                     DicConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
                     DicConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}", discimage.sessions[i].StartTrack);
@@ -352,19 +352,19 @@ namespace DiscImageChef.ImagePlugins
                 }
                 DicConsole.DebugWriteLine("GDI plugin", "Track information:");
                 DicConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", discimage.tracks.Count);
-                for (int i = 0; i < discimage.tracks.Count; i++)
+                for(int i = 0; i < discimage.tracks.Count; i++)
                 {
                     DicConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", discimage.tracks[i].sequence);
                     DicConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", discimage.tracks[i].bps);
                     DicConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors", discimage.tracks[i].pregap);
 
-                    if ((discimage.tracks[i].flags & 0x80) == 0x80)
+                    if((discimage.tracks[i].flags & 0x80) == 0x80)
                         DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
-                    if ((discimage.tracks[i].flags & 0x40) == 0x40)
+                    if((discimage.tracks[i].flags & 0x40) == 0x40)
                         DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
-                    if ((discimage.tracks[i].flags & 0x20) == 0x20)
+                    if((discimage.tracks[i].flags & 0x20) == 0x20)
                         DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
-                    if ((discimage.tracks[i].flags & 0x10) == 0x10)
+                    if((discimage.tracks[i].flags & 0x10) == 0x10)
                         DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
 
                     DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
@@ -376,9 +376,9 @@ namespace DiscImageChef.ImagePlugins
                 partitions = new List<Partition>();
                 ulong byte_offset = 0;
 
-                for (int i = 0; i < discimage.tracks.Count; i++)
+                for(int i = 0; i < discimage.tracks.Count; i++)
                 {
-                    if (discimage.tracks[i].sequence == 1 && i != 0)
+                    if(discimage.tracks[i].sequence == 1 && i != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
                     Partition partition = new Partition();
@@ -398,16 +398,16 @@ namespace DiscImageChef.ImagePlugins
                     partitions.Add(partition);
                 }
 
-                foreach (GDITrack track in discimage.tracks)
+                foreach(GDITrack track in discimage.tracks)
                     ImageInfo.imageSize += track.bps * track.sectors;
-                foreach (GDITrack track in discimage.tracks)
+                foreach(GDITrack track in discimage.tracks)
                     ImageInfo.sectors += track.sectors;
 
                 ImageInfo.sectors += densitySeparationSectors;
 
                 ImageInfo.sectorSize = 2352; // All others
 
-                foreach (GDITrack track in discimage.tracks)
+                foreach(GDITrack track in discimage.tracks)
                 {
                     if((track.flags & 0x40) == 0x40 && track.bps == 2352)
                     {
@@ -434,7 +434,7 @@ namespace DiscImageChef.ImagePlugins
 
                 return true;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imagePath);
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
@@ -490,15 +490,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (GDITrack gdi_track in discimage.tracks)
+                    foreach(GDITrack gdi_track in discimage.tracks)
                     {
-                        if (gdi_track.sequence == kvp.Key)
+                        if(gdi_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < gdi_track.sectors)
+                            if((sectorAddress - kvp.Value) < gdi_track.sectors)
                                 return ReadSectors((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -507,7 +507,7 @@ namespace DiscImageChef.ImagePlugins
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
-            if (sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
+            if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
                 return ReadSectors((sectorAddress - transitionStart), length, 0);
 
             throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
@@ -515,15 +515,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (GDITrack gdi_track in discimage.tracks)
+                    foreach(GDITrack gdi_track in discimage.tracks)
                     {
-                        if (gdi_track.sequence == kvp.Key)
+                        if(gdi_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < gdi_track.sectors)
+                            if((sectorAddress - kvp.Value) < gdi_track.sectors)
                                 return ReadSectorsTag((sectorAddress - kvp.Value), length, kvp.Key, tag);
                         }
                     }
@@ -532,7 +532,7 @@ namespace DiscImageChef.ImagePlugins
 
             ulong transitionStart;
             offsetmap.TryGetValue(0, out transitionStart);
-            if (sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
+            if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
                 return ReadSectorsTag((sectorAddress - transitionStart), length, 0, tag);
 
             throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
@@ -540,7 +540,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
-            if (track == 0)
+            if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
@@ -552,26 +552,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (GDITrack gdi_track in discimage.tracks)
+            foreach(GDITrack gdi_track in discimage.tracks)
             {
-                if (gdi_track.sequence == track)
+                if(gdi_track.sequence == track)
                 {
                     _track = gdi_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if ((sectorAddress + length) > _track.sectors)
+            if((sectorAddress + length) > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case TrackType.Audio:
                     {
@@ -582,7 +582,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case TrackType.CDMode1:
                     {
-                        if (_track.bps == 2352)
+                        if(_track.bps == 2352)
                         {
                             sector_offset = 16;
                             sector_size = 2048;
@@ -604,11 +604,11 @@ namespace DiscImageChef.ImagePlugins
 
             ulong remainingSectors = length;
 
-            if (_track.pregap > 0 && sectorAddress < _track.pregap)
+            if(_track.pregap > 0 && sectorAddress < _track.pregap)
             {
                 ulong remainingPregap = _track.pregap - sectorAddress;
                 byte[] zero;
-                if (length > remainingPregap)
+                if(length > remainingPregap)
                 {
                     zero = new byte[remainingPregap * sector_size];
                     remainingSectors -= remainingPregap;
@@ -626,14 +626,14 @@ namespace DiscImageChef.ImagePlugins
                 return buffer;
 
             imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using (BinaryReader br = new BinaryReader(imageStream))
+            using(BinaryReader br = new BinaryReader(imageStream))
             {
                 br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if (sector_offset == 0 && sector_skip == 0)
+                if(sector_offset == 0 && sector_skip == 0)
                     buffer = br.ReadBytes((int)(sector_size * remainingSectors));
                 else
                 {
-                    for (ulong i = 0; i < remainingSectors; i++)
+                    for(ulong i = 0; i < remainingSectors; i++)
                     {
                         byte[] sector;
                         br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -649,12 +649,12 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
         {
-            if (track == 0)
+            if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
-                if (tag == SectorTagType.CDTrackFlags)
+                if(tag == SectorTagType.CDTrackFlags)
                     return new byte[] { 0x00 };
 
                 throw new ArgumentException("Unsupported tag requested for this track", "tag");
@@ -664,26 +664,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (GDITrack gdi_track in discimage.tracks)
+            foreach(GDITrack gdi_track in discimage.tracks)
             {
-                if (gdi_track.sequence == track)
+                if(gdi_track.sequence == track)
                 {
                     _track = gdi_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if (length > _track.sectors)
+            if(length > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (tag)
+            switch(tag)
             {
                 case SectorTagType.CDSectorECC:
                 case SectorTagType.CDSectorECC_P:
@@ -704,16 +704,16 @@ namespace DiscImageChef.ImagePlugins
                     throw new ArgumentException("Unsupported tag requested", "tag");
             }
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case TrackType.Audio:
                     throw new ArgumentException("There are no tags on audio tracks", "tag");
                 case TrackType.CDMode1:
                     {
-                        if (_track.bps != 2352)
+                        if(_track.bps != 2352)
                             throw new FeatureNotPresentImageException("Image does not include tags for mode 1 sectors");
-                        
-                        switch (tag)
+
+                        switch(tag)
                         {
                             case SectorTagType.CDSectorSync:
                                 {
@@ -773,11 +773,11 @@ namespace DiscImageChef.ImagePlugins
 
             ulong remainingSectors = length;
 
-            if (_track.pregap > 0 && sectorAddress < _track.pregap)
+            if(_track.pregap > 0 && sectorAddress < _track.pregap)
             {
                 ulong remainingPregap = _track.pregap - sectorAddress;
                 byte[] zero;
-                if (length > remainingPregap)
+                if(length > remainingPregap)
                 {
                     zero = new byte[remainingPregap * sector_size];
                     remainingSectors -= remainingPregap;
@@ -795,14 +795,14 @@ namespace DiscImageChef.ImagePlugins
                 return buffer;
 
             imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using (BinaryReader br = new BinaryReader(imageStream))
+            using(BinaryReader br = new BinaryReader(imageStream))
             {
                 br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if (sector_offset == 0 && sector_skip == 0)
+                if(sector_offset == 0 && sector_skip == 0)
                     buffer = br.ReadBytes((int)(sector_size * remainingSectors));
                 else
                 {
-                    for (ulong i = 0; i < remainingSectors; i++)
+                    for(ulong i = 0; i < remainingSectors; i++)
                     {
                         byte[] sector;
                         br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -828,15 +828,15 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
         {
-            foreach (KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
-                if (sectorAddress >= kvp.Value)
+                if(sectorAddress >= kvp.Value)
                 {
-                    foreach (GDITrack gdi_track in discimage.tracks)
+                    foreach(GDITrack gdi_track in discimage.tracks)
                     {
-                        if (gdi_track.sequence == kvp.Key)
+                        if(gdi_track.sequence == kvp.Key)
                         {
-                            if ((sectorAddress - kvp.Value) < gdi_track.sectors)
+                            if((sectorAddress - kvp.Value) < gdi_track.sectors)
                                 return ReadSectorsLong((sectorAddress - kvp.Value), length, kvp.Key);
                         }
                     }
@@ -848,7 +848,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
-            if (track == 0)
+            if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
                     throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
@@ -860,26 +860,26 @@ namespace DiscImageChef.ImagePlugins
 
             _track.sequence = 0;
 
-            foreach (GDITrack gdi_track in discimage.tracks)
+            foreach(GDITrack gdi_track in discimage.tracks)
             {
-                if (gdi_track.sequence == track)
+                if(gdi_track.sequence == track)
                 {
                     _track = gdi_track;
                     break;
                 }
             }
 
-            if (_track.sequence == 0)
+            if(_track.sequence == 0)
                 throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
 
-            if ((sectorAddress + length) > _track.sectors)
+            if((sectorAddress + length) > _track.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
             uint sector_skip;
 
-            switch (_track.tracktype)
+            switch(_track.tracktype)
             {
                 case TrackType.Audio:
                     {
@@ -890,7 +890,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case TrackType.CDMode1:
                     {
-                        if (_track.bps == 2352)
+                        if(_track.bps == 2352)
                         {
                             sector_offset = 0;
                             sector_size = 2352;
@@ -912,11 +912,11 @@ namespace DiscImageChef.ImagePlugins
 
             ulong remainingSectors = length;
 
-            if (_track.pregap > 0 && sectorAddress < _track.pregap)
+            if(_track.pregap > 0 && sectorAddress < _track.pregap)
             {
                 ulong remainingPregap = _track.pregap - sectorAddress;
                 byte[] zero;
-                if (length > remainingPregap)
+                if(length > remainingPregap)
                 {
                     zero = new byte[remainingPregap * sector_size];
                     remainingSectors -= remainingPregap;
@@ -934,14 +934,14 @@ namespace DiscImageChef.ImagePlugins
                 return buffer;
 
             imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using (BinaryReader br = new BinaryReader(imageStream))
+            using(BinaryReader br = new BinaryReader(imageStream))
             {
                 br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if (sector_offset == 0 && sector_skip == 0)
+                if(sector_offset == 0 && sector_skip == 0)
                     buffer = br.ReadBytes((int)(sector_size * remainingSectors));
                 else
                 {
-                    for (ulong i = 0; i < remainingSectors; i++)
+                    for(ulong i = 0; i < remainingSectors; i++)
                     {
                         byte[] sector;
                         br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
@@ -955,22 +955,22 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override string   GetImageFormat()
+        public override string GetImageFormat()
         {
             return "Dreamcast GDI image";
         }
 
-        public override string   GetImageVersion()
+        public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
         }
 
-        public override string   GetImageApplication()
+        public override string GetImageApplication()
         {
             return ImageInfo.imageApplication;
         }
 
-        public override string   GetImageApplicationVersion()
+        public override string GetImageApplicationVersion()
         {
             return ImageInfo.imageApplicationVersion;
         }
@@ -985,7 +985,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageLastModificationTime;
         }
 
-        public override string   GetImageComments()
+        public override string GetImageComments()
         {
             return ImageInfo.imageComments;
         }
@@ -1014,7 +1014,7 @@ namespace DiscImageChef.ImagePlugins
         {
             List<Track> tracks = new List<Track>();
 
-            foreach (GDITrack gdi_track in discimage.tracks)
+            foreach(GDITrack gdi_track in discimage.tracks)
             {
                 Track _track = new Track();
 
@@ -1023,7 +1023,7 @@ namespace DiscImageChef.ImagePlugins
                 _track.TrackStartSector = gdi_track.startSector;
                 _track.TrackEndSector = _track.TrackStartSector + gdi_track.sectors - 1;
                 _track.TrackPregap = gdi_track.pregap;
-                if (gdi_track.highDensity)
+                if(gdi_track.highDensity)
                     _track.TrackSession = 2;
                 else
                     _track.TrackSession = 1;
@@ -1047,7 +1047,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Track> GetSessionTracks(Session session)
         {
-            if (discimage.sessions.Contains(session))
+            if(discimage.sessions.Contains(session))
             {
                 return GetSessionTracks(session.SessionSequence);
             }
@@ -1071,9 +1071,9 @@ namespace DiscImageChef.ImagePlugins
                     throw new ImageNotSupportedException("Session does not exist in disc image");
             }
 
-            foreach (GDITrack gdi_track in discimage.tracks)
+            foreach(GDITrack gdi_track in discimage.tracks)
             {
-                if (gdi_track.highDensity == expectedDensity)
+                if(gdi_track.highDensity == expectedDensity)
                 {
                     Track _track = new Track();
 
@@ -1082,7 +1082,7 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackStartSector = gdi_track.startSector;
                     _track.TrackEndSector = _track.TrackStartSector + gdi_track.sectors - 1;
                     _track.TrackPregap = gdi_track.pregap;
-                    if (gdi_track.highDensity)
+                    if(gdi_track.highDensity)
                         _track.TrackSession = 2;
                     else
                         _track.TrackSession = 1;
@@ -1130,12 +1130,12 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (int i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
                 bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
 
-                switch (sectorStatus)
+                switch(sectorStatus)
                 {
                     case null:
                         UnknownLBAs.Add((ulong)i + sectorAddress);
@@ -1146,9 +1146,9 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if (UnknownLBAs.Count > 0)
+            if(UnknownLBAs.Count > 0)
                 return null;
-            if (FailingLBAs.Count > 0)
+            if(FailingLBAs.Count > 0)
                 return false;
             return true;
         }
@@ -1161,12 +1161,12 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (int i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 Array.Copy(buffer, i * bps, sector, 0, bps);
                 bool? sectorStatus = Checksums.CDChecksums.CheckCDSector(sector);
 
-                switch (sectorStatus)
+                switch(sectorStatus)
                 {
                     case null:
                         UnknownLBAs.Add((ulong)i + sectorAddress);
@@ -1177,9 +1177,9 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if (UnknownLBAs.Count > 0)
+            if(UnknownLBAs.Count > 0)
                 return null;
-            if (FailingLBAs.Count > 0)
+            if(FailingLBAs.Count > 0)
                 return false;
             return true;
         }
@@ -1193,12 +1193,12 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override int    GetMediaSequence()
+        public override int GetMediaSequence()
         {
             return ImageInfo.mediaSequence;
         }
 
-        public override int    GetLastDiskSequence()
+        public override int GetLastDiskSequence()
         {
             return ImageInfo.lastMediaSequence;
         }
@@ -1233,12 +1233,12 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.mediaModel;
         }
 
-        public override string   GetImageName()
+        public override string GetImageName()
         {
             return ImageInfo.imageName;
         }
 
-        public override string   GetImageCreator()
+        public override string GetImageCreator()
         {
             return ImageInfo.imageCreator;
         }

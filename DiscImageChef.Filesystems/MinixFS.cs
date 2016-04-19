@@ -75,20 +75,20 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             UInt16 magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
-			
-            if (magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
+
+            if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
                 magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM || magic == MINIX2_CIGAM2)
                 return true;
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x018); // Here should reside magic number on Minix V3
 
-            if (magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
+            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
                 return true;
             return false;
         }
@@ -96,7 +96,7 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
 
             bool minix3 = false;
@@ -109,7 +109,7 @@ namespace DiscImageChef.Plugins
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if (magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
+            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
             {
                 filenamesize = 60;
                 minixVersion = "Minix V3 filesystem";
@@ -123,7 +123,7 @@ namespace DiscImageChef.Plugins
             {
                 magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x010);
 
-                switch (magic)
+                switch(magic)
                 {
                     case MINIX_MAGIC:
                         filenamesize = 14;
@@ -178,7 +178,7 @@ namespace DiscImageChef.Plugins
                 }
             }
 
-            if (minix3)
+            if(minix3)
             {
                 Minix3SuperBlock mnx_sb = new Minix3SuperBlock();
 
@@ -214,7 +214,7 @@ namespace DiscImageChef.Plugins
             else
             {
                 MinixSuperBlock mnx_sb = new MinixSuperBlock();
-				
+
                 mnx_sb.s_ninodes = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x00);
                 mnx_sb.s_nzones = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x02);
                 mnx_sb.s_imap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x04);
@@ -228,8 +228,8 @@ namespace DiscImageChef.Plugins
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
-                if (mnx_sb.s_zones > 0) // On V2
-					sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * 1024).AppendLine();
+                if(mnx_sb.s_zones > 0) // On V2
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * 1024).AppendLine();
                 else
                     sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_nzones, mnx_sb.s_nzones * 1024).AppendLine();
                 sb.AppendFormat("{0} inodes on volume", mnx_sb.s_ninodes).AppendLine();

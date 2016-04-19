@@ -63,7 +63,7 @@ namespace DiscImageChef.Devices.Linux
             duration = 0;
             sense = false;
 
-            if (buffer == null)
+            if(buffer == null)
                 return -1;
 
             sg_io_hdr_t io_hdr = new sg_io_hdr_t();
@@ -88,7 +88,7 @@ namespace DiscImageChef.Devices.Linux
             int error = Extern.ioctlSg(fd, LinuxIoctl.SG_IO, ref io_hdr);
             DateTime end = DateTime.UtcNow;
 
-            if (error < 0)
+            if(error < 0)
                 error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(io_hdr.dxferp, buffer, 0, buffer.Length);
@@ -97,7 +97,7 @@ namespace DiscImageChef.Devices.Linux
 
             sense |= (io_hdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-            if (io_hdr.duration > 0)
+            if(io_hdr.duration > 0)
                 duration = (double)io_hdr.duration;
             else
                 duration = (end - start).TotalMilliseconds;
@@ -111,7 +111,7 @@ namespace DiscImageChef.Devices.Linux
 
         static ScsiIoctlDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
         {
-            switch (protocol)
+            switch(protocol)
             {
                 case AtaProtocol.DeviceDiagnostic:
                 case AtaProtocol.DeviceReset:
@@ -140,16 +140,16 @@ namespace DiscImageChef.Devices.Linux
             sense = false;
             errorRegisters = new AtaErrorRegistersCHS();
 
-            if (buffer == null)
+            if(buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != AtaTransferRegister.NoTransfer &&
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
                protocol != AtaProtocol.NonData)
             {
-                switch (protocol)
+                switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
@@ -160,7 +160,7 @@ namespace DiscImageChef.Devices.Linux
                         break;
                 }
 
-                if (transferBlocks)
+                if(transferBlocks)
                     cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
@@ -179,7 +179,7 @@ namespace DiscImageChef.Devices.Linux
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
             errorRegisters.error = senseBuffer[11];
@@ -205,16 +205,16 @@ namespace DiscImageChef.Devices.Linux
             sense = false;
             errorRegisters = new AtaErrorRegistersLBA28();
 
-            if (buffer == null)
+            if(buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != AtaTransferRegister.NoTransfer &&
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
                 protocol != AtaProtocol.NonData)
             {
-                switch (protocol)
+                switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
@@ -225,7 +225,7 @@ namespace DiscImageChef.Devices.Linux
                         break;
                 }
 
-                if (transferBlocks)
+                if(transferBlocks)
                     cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
@@ -244,7 +244,7 @@ namespace DiscImageChef.Devices.Linux
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
             errorRegisters.error = senseBuffer[11];
@@ -270,17 +270,17 @@ namespace DiscImageChef.Devices.Linux
             sense = false;
             errorRegisters = new AtaErrorRegistersLBA48();
 
-            if (buffer == null)
+            if(buffer == null)
                 return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] |= 0x01;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if (transferRegister != AtaTransferRegister.NoTransfer &&
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
                 protocol != AtaProtocol.NonData)
             {
-                switch (protocol)
+                switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
@@ -291,7 +291,7 @@ namespace DiscImageChef.Devices.Linux
                         break;
                 }
 
-                if (transferBlocks)
+                if(transferBlocks)
                     cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
@@ -315,7 +315,7 @@ namespace DiscImageChef.Devices.Linux
             byte[] senseBuffer;
             int error = SendScsiCommand(fd, cdb, ref buffer, out senseBuffer, timeout, AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if (senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+            if(senseBuffer.Length < 22 || (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
                 return error;
 
             errorRegisters.error = senseBuffer[11];
@@ -339,18 +339,18 @@ namespace DiscImageChef.Devices.Linux
             IntPtr buf = Marshal.AllocHGlobal(4096);
             int resultSize;
 
-            if (Interop.DetectOS.Is64Bit())
+            if(Interop.DetectOS.Is64Bit())
             {
                 long result64 = Extern.readlink64(path, buf, (long)4096);
-                if (result64 <= 0)
+                if(result64 <= 0)
                     return null;
-                
+
                 resultSize = (int)result64;
             }
             else
             {
                 int result = Extern.readlink(path, buf, 4096);
-                if (result <= 0)
+                if(result <= 0)
                     return null;
 
                 resultSize = result;

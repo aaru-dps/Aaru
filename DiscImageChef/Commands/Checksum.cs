@@ -68,7 +68,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", options.DoSHA512);
             DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", options.DoSpamSum);
 
-            if (!System.IO.File.Exists(options.InputFile))
+            if(!System.IO.File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -76,7 +76,7 @@ namespace DiscImageChef.Commands
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
-            if (inputFormat == null)
+            if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
                 return;
@@ -86,7 +86,7 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
             Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
-            if (inputFormat.ImageInfo.imageHasPartitions)
+            if(inputFormat.ImageInfo.imageHasPartitions)
             {
                 try
                 {
@@ -160,24 +160,24 @@ namespace DiscImageChef.Commands
                     sha512Packet sha512PktTrack = new sha512Packet();
                     spamsumPacket spamsumPktTrack = new spamsumPacket();
 
-                    if (options.WholeDisc)
+                    if(options.WholeDisc)
                     {
-                        if (options.DoAdler32)
+                        if(options.DoAdler32)
                         {
                             adler32ctx.Init();
                             adlerPkt.context = adler32ctx;
                         }
-                        if (options.DoCRC16)
+                        if(options.DoCRC16)
                         {
                             crc16ctx.Init();
                             crc16Pkt.context = crc16ctx;
                         }
-                        if (options.DoCRC32)
+                        if(options.DoCRC32)
                         {
                             crc32ctx.Init();
                             crc32Pkt.context = crc32ctx;
                         }
-                        if (options.DoCRC64)
+                        if(options.DoCRC64)
                         {
                             crc64ctx.Init();
                             crc64Pkt.context = crc64ctx;
@@ -192,37 +192,37 @@ namespace DiscImageChef.Commands
                             fletcher32ctx.Init();
                             fletcher32Pkt.context = fletcher32ctx;
                         }*/
-                        if (options.DoMD5)
+                        if(options.DoMD5)
                         {
                             md5ctx.Init();
                             md5Pkt.context = md5ctx;
                         }
-                        if (options.DoRIPEMD160)
+                        if(options.DoRIPEMD160)
                         {
                             ripemd160ctx.Init();
                             ripemd160Pkt.context = ripemd160ctx;
                         }
-                        if (options.DoSHA1)
+                        if(options.DoSHA1)
                         {
                             sha1ctx.Init();
                             sha1Pkt.context = sha1ctx;
                         }
-                        if (options.DoSHA256)
+                        if(options.DoSHA256)
                         {
                             sha256ctx.Init();
                             sha256Pkt.context = sha256ctx;
                         }
-                        if (options.DoSHA384)
+                        if(options.DoSHA384)
                         {
                             sha384ctx.Init();
                             sha384Pkt.context = sha384ctx;
                         }
-                        if (options.DoSHA512)
+                        if(options.DoSHA512)
                         {
                             sha512ctx.Init();
                             sha512Pkt.context = sha512ctx;
                         }
-                        if (options.DoSpamSum)
+                        if(options.DoSpamSum)
                         {
                             ssctx.Init();
                             spamsumPkt.context = ssctx;
@@ -232,33 +232,33 @@ namespace DiscImageChef.Commands
                     ulong previousTrackEnd = 0;
 
                     List<Track> inputTracks = inputFormat.GetTracks();
-                    foreach (Track currentTrack in inputTracks)
+                    foreach(Track currentTrack in inputTracks)
                     {
-                        if ((currentTrack.TrackStartSector - previousTrackEnd) != 0 &&
+                        if((currentTrack.TrackStartSector - previousTrackEnd) != 0 &&
                             options.WholeDisc)
                         {
-                            for (ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                            for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                             {
                                 DicConsole.Write("\rHashing track-less sector {0}", i);
 
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
 
-                                if (options.DoAdler32)
+                                if(options.DoAdler32)
                                 {
                                     adlerPkt.data = hiddenSector;
                                     adlerThread.Start(adlerPkt);
                                 }
-                                if (options.DoCRC16)
+                                if(options.DoCRC16)
                                 {
                                     crc16Pkt.data = hiddenSector;
                                     crc16Thread.Start(crc16Pkt);
                                 }
-                                if (options.DoCRC32)
+                                if(options.DoCRC32)
                                 {
                                     crc32Pkt.data = hiddenSector;
                                     crc32Thread.Start(crc32Pkt);
                                 }
-                                if (options.DoCRC64)
+                                if(options.DoCRC64)
                                 {
                                     crc64Pkt.data = hiddenSector;
                                     crc64Thread.Start(crc64Pkt);
@@ -273,43 +273,43 @@ namespace DiscImageChef.Commands
                                     fletcher32Pkt.data = hiddenSector;
                                     fletcher32Thread.Start(fletcher32Pkt);
                                 }*/
-                                if (options.DoMD5)
+                                if(options.DoMD5)
                                 {
                                     md5Pkt.data = hiddenSector;
                                     md5Thread.Start(md5Pkt);
                                 }
-                                if (options.DoRIPEMD160)
+                                if(options.DoRIPEMD160)
                                 {
                                     ripemd160Pkt.data = hiddenSector;
                                     ripemd160Thread.Start(ripemd160Pkt);
                                 }
-                                if (options.DoSHA1)
+                                if(options.DoSHA1)
                                 {
                                     sha1Pkt.data = hiddenSector;
                                     sha1Thread.Start(sha1Pkt);
                                 }
-                                if (options.DoSHA256)
+                                if(options.DoSHA256)
                                 {
                                     sha256Pkt.data = hiddenSector;
                                     sha256Thread.Start(sha256Pkt);
                                 }
-                                if (options.DoSHA384)
+                                if(options.DoSHA384)
                                 {
                                     sha384Pkt.data = hiddenSector;
                                     sha384Thread.Start(sha384Pkt);
                                 }
-                                if (options.DoSHA512)
+                                if(options.DoSHA512)
                                 {
                                     sha512Pkt.data = hiddenSector;
                                     sha512Thread.Start(sha512Pkt);
                                 }
-                                if (options.DoSpamSum)
+                                if(options.DoSpamSum)
                                 {
                                     spamsumPkt.data = hiddenSector;
                                     spamsumThread.Start(spamsumPkt);
                                 }
 
-                                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                                while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                                     md5Thread.IsAlive || ripemd160Thread.IsAlive ||
@@ -338,27 +338,27 @@ namespace DiscImageChef.Commands
                         DicConsole.DebugWriteLine("Checksum command", "Track {0} starts at sector {1} and ends at sector {2}", currentTrack.TrackSequence,
                             currentTrack.TrackStartSector, currentTrack.TrackEndSector);
 
-                        if (options.SeparatedTracks)
+                        if(options.SeparatedTracks)
                         {
-                            if (options.DoAdler32)
+                            if(options.DoAdler32)
                             {
                                 adler32ctxTrack = new Adler32Context();
                                 adler32ctxTrack.Init();
                                 adlerPktTrack.context = adler32ctxTrack;
                             }
-                            if (options.DoCRC16)
+                            if(options.DoCRC16)
                             {
                                 crc16ctxTrack = new CRC16Context();
                                 crc16ctxTrack.Init();
                                 crc16PktTrack.context = crc16ctxTrack;
                             }
-                            if (options.DoCRC32)
+                            if(options.DoCRC32)
                             {
                                 crc32ctxTrack = new CRC32Context();
                                 crc32ctxTrack.Init();
                                 crc32PktTrack.context = crc32ctxTrack;
                             }
-                            if (options.DoCRC64)
+                            if(options.DoCRC64)
                             {
                                 crc64ctxTrack = new CRC64Context();
                                 crc64ctxTrack.Init();
@@ -376,43 +376,43 @@ namespace DiscImageChef.Commands
                                 fletcher32ctxTrack.Init();
                                 fletcher32PktTrack.context = fletcher32ctxTrack;
                             }*/
-                            if (options.DoMD5)
+                            if(options.DoMD5)
                             {
                                 md5ctxTrack = new MD5Context();
                                 md5ctxTrack.Init();
                                 md5PktTrack.context = md5ctxTrack;
                             }
-                            if (options.DoRIPEMD160)
+                            if(options.DoRIPEMD160)
                             {
                                 ripemd160ctxTrack = new RIPEMD160Context();
                                 ripemd160ctxTrack.Init();
                                 ripemd160PktTrack.context = ripemd160ctxTrack;
                             }
-                            if (options.DoSHA1)
+                            if(options.DoSHA1)
                             {
                                 sha1ctxTrack = new SHA1Context();
                                 sha1ctxTrack.Init();
                                 sha1PktTrack.context = sha1ctxTrack;
                             }
-                            if (options.DoSHA256)
+                            if(options.DoSHA256)
                             {
                                 sha256ctxTrack = new SHA256Context();
                                 sha256ctxTrack.Init();
                                 sha256PktTrack.context = sha256ctxTrack;
                             }
-                            if (options.DoSHA384)
+                            if(options.DoSHA384)
                             {
                                 sha384ctxTrack = new SHA384Context();
                                 sha384ctxTrack.Init();
                                 sha384PktTrack.context = sha384ctxTrack;
                             }
-                            if (options.DoSHA512)
+                            if(options.DoSHA512)
                             {
                                 sha512ctxTrack = new SHA512Context();
                                 sha512ctxTrack.Init();
                                 sha512PktTrack.context = sha512ctxTrack;
                             }
-                            if (options.DoSpamSum)
+                            if(options.DoSpamSum)
                             {
                                 ssctxTrack = new SpamSumContext();
                                 ssctxTrack.Init();
@@ -424,11 +424,11 @@ namespace DiscImageChef.Commands
                         ulong doneSectors = 0;
                         DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
-                        while (doneSectors < sectors)
+                        while(doneSectors < sectors)
                         {
                             byte[] sector;
 
-                            if ((sectors - doneSectors) >= sectorsToRead)
+                            if((sectors - doneSectors) >= sectorsToRead)
                             {
                                 sector = inputFormat.ReadSectors(doneSectors, sectorsToRead, currentTrack.TrackSequence);
                                 DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors, currentTrack.TrackSequence, doneSectors + sectorsToRead);
@@ -441,24 +441,24 @@ namespace DiscImageChef.Commands
                                 doneSectors += (sectors - doneSectors);
                             }
 
-                            if (options.WholeDisc)
+                            if(options.WholeDisc)
                             {
-                                if (options.DoAdler32)
+                                if(options.DoAdler32)
                                 {
                                     adlerPkt.data = sector;
                                     adlerThread.Start(adlerPkt);
                                 }
-                                if (options.DoCRC16)
+                                if(options.DoCRC16)
                                 {
                                     crc16Pkt.data = sector;
                                     crc16Thread.Start(crc16Pkt);
                                 }
-                                if (options.DoCRC32)
+                                if(options.DoCRC32)
                                 {
                                     crc32Pkt.data = sector;
                                     crc32Thread.Start(crc32Pkt);
                                 }
-                                if (options.DoCRC64)
+                                if(options.DoCRC64)
                                 {
                                     crc64Pkt.data = sector;
                                     crc64Thread.Start(crc64Pkt);
@@ -473,43 +473,43 @@ namespace DiscImageChef.Commands
                                     fletcher32Pkt.data = sector;
                                     fletcher32Thread.Start(fletcher32Pkt);
                                 }*/
-                                if (options.DoMD5)
+                                if(options.DoMD5)
                                 {
                                     md5Pkt.data = sector;
                                     md5Thread.Start(md5Pkt);
                                 }
-                                if (options.DoRIPEMD160)
+                                if(options.DoRIPEMD160)
                                 {
                                     ripemd160Pkt.data = sector;
                                     ripemd160Thread.Start(ripemd160Pkt);
                                 }
-                                if (options.DoSHA1)
+                                if(options.DoSHA1)
                                 {
                                     sha1Pkt.data = sector;
                                     sha1Thread.Start(sha1Pkt);
                                 }
-                                if (options.DoSHA256)
+                                if(options.DoSHA256)
                                 {
                                     sha256Pkt.data = sector;
                                     sha256Thread.Start(sha256Pkt);
                                 }
-                                if (options.DoSHA384)
+                                if(options.DoSHA384)
                                 {
                                     sha384Pkt.data = sector;
                                     sha384Thread.Start(sha384Pkt);
                                 }
-                                if (options.DoSHA512)
+                                if(options.DoSHA512)
                                 {
                                     sha512Pkt.data = sector;
                                     sha512Thread.Start(sha512Pkt);
                                 }
-                                if (options.DoSpamSum)
+                                if(options.DoSpamSum)
                                 {
                                     spamsumPkt.data = sector;
                                     spamsumThread.Start(spamsumPkt);
                                 }
 
-                                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                                while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                                     md5Thread.IsAlive || ripemd160Thread.IsAlive ||
@@ -534,24 +534,24 @@ namespace DiscImageChef.Commands
                                 spamsumThread = new Thread(updateSpamSum);
                             }
 
-                            if (options.SeparatedTracks)
+                            if(options.SeparatedTracks)
                             {
-                                if (options.DoAdler32)
+                                if(options.DoAdler32)
                                 {
                                     adlerPktTrack.data = sector;
                                     adlerThread.Start(adlerPktTrack);
                                 }
-                                if (options.DoCRC16)
+                                if(options.DoCRC16)
                                 {
                                     crc16PktTrack.data = sector;
                                     crc16Thread.Start(crc16PktTrack);
                                 }
-                                if (options.DoCRC32)
+                                if(options.DoCRC32)
                                 {
                                     crc32PktTrack.data = sector;
                                     crc32Thread.Start(crc32PktTrack);
                                 }
-                                if (options.DoCRC64)
+                                if(options.DoCRC64)
                                 {
                                     crc64PktTrack.data = sector;
                                     crc64Thread.Start(crc64PktTrack);
@@ -566,43 +566,43 @@ namespace DiscImageChef.Commands
                                     fletcher32PktTrack.data = sector;
                                     fletcher32Thread.Start(fletcher32PktTrack);
                                 }*/
-                                if (options.DoMD5)
+                                if(options.DoMD5)
                                 {
                                     md5PktTrack.data = sector;
                                     md5Thread.Start(md5PktTrack);
                                 }
-                                if (options.DoRIPEMD160)
+                                if(options.DoRIPEMD160)
                                 {
                                     ripemd160PktTrack.data = sector;
                                     ripemd160Thread.Start(ripemd160PktTrack);
                                 }
-                                if (options.DoSHA1)
+                                if(options.DoSHA1)
                                 {
                                     sha1PktTrack.data = sector;
                                     sha1Thread.Start(sha1PktTrack);
                                 }
-                                if (options.DoSHA256)
+                                if(options.DoSHA256)
                                 {
                                     sha256PktTrack.data = sector;
                                     sha256Thread.Start(sha256PktTrack);
                                 }
-                                if (options.DoSHA384)
+                                if(options.DoSHA384)
                                 {
                                     sha384PktTrack.data = sector;
                                     sha384Thread.Start(sha384PktTrack);
                                 }
-                                if (options.DoSHA512)
+                                if(options.DoSHA512)
                                 {
                                     sha512PktTrack.data = sector;
                                     sha512Thread.Start(sha512PktTrack);
                                 }
-                                if (options.DoSpamSum)
+                                if(options.DoSpamSum)
                                 {
                                     spamsumPktTrack.data = sector;
                                     spamsumThread.Start(spamsumPktTrack);
                                 }
 
-                                while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                                while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                                     crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                     //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                                     md5Thread.IsAlive || ripemd160Thread.IsAlive ||
@@ -630,64 +630,64 @@ namespace DiscImageChef.Commands
 
                         DicConsole.WriteLine();
 
-                        if (options.SeparatedTracks)
+                        if(options.SeparatedTracks)
                         {
-                            if (options.DoAdler32)
+                            if(options.DoAdler32)
                                 DicConsole.WriteLine("Track {0}'s Adler-32: 0x{1}", currentTrack.TrackSequence, adler32ctxTrack.End());
-                            if (options.DoCRC16)
+                            if(options.DoCRC16)
                                 DicConsole.WriteLine("Track {0}'s CRC16: 0x{1}", currentTrack.TrackSequence, crc16ctxTrack.End());
-                            if (options.DoCRC32)
+                            if(options.DoCRC32)
                                 DicConsole.WriteLine("Track {0}'s CRC32: 0x{1}", currentTrack.TrackSequence, crc32ctxTrack.End());
-                            if (options.DoCRC64)
+                            if(options.DoCRC64)
                                 DicConsole.WriteLine("Track {0}'s CRC64 (ECMA): 0x{1}", currentTrack.TrackSequence, crc64ctxTrack.End());
                             /*if (options.DoFletcher16)
                                 DicConsole.WriteLine("Track {0}'s Fletcher-16: 0x{1}", currentTrack.TrackSequence, fletcher16ctxTrack.End());
                             if (options.DoFletcher32)
                                 DicConsole.WriteLine("Track {0}'s Fletcher-32: 0x{1}", currentTrack.TrackSequence, fletcher32ctxTrack.End());*/
-                            if (options.DoMD5)
+                            if(options.DoMD5)
                                 DicConsole.WriteLine("Track {0}'s MD5: {1}", currentTrack.TrackSequence, md5ctxTrack.End());
-                            if (options.DoRIPEMD160)
+                            if(options.DoRIPEMD160)
                                 DicConsole.WriteLine("Track {0}'s RIPEMD160: {1}", currentTrack.TrackSequence, ripemd160ctxTrack.End());
-                            if (options.DoSHA1)
+                            if(options.DoSHA1)
                                 DicConsole.WriteLine("Track {0}'s SHA1: {1}", currentTrack.TrackSequence, sha1ctxTrack.End());
-                            if (options.DoSHA256)
+                            if(options.DoSHA256)
                                 DicConsole.WriteLine("Track {0}'s SHA256: {1}", currentTrack.TrackSequence, sha256ctxTrack.End());
-                            if (options.DoSHA384)
+                            if(options.DoSHA384)
                                 DicConsole.WriteLine("Track {0}'s SHA384: {1}", currentTrack.TrackSequence, sha384ctxTrack.End());
-                            if (options.DoSHA512)
+                            if(options.DoSHA512)
                                 DicConsole.WriteLine("Track {0}'s SHA512: {1}", currentTrack.TrackSequence, sha512ctxTrack.End());
-                            if (options.DoSpamSum)
+                            if(options.DoSpamSum)
                                 DicConsole.WriteLine("Track {0}'s SpamSum: {1}", currentTrack.TrackSequence, ssctxTrack.End());
                         }
 
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if ((inputFormat.GetSectors() - previousTrackEnd) != 0 &&
+                    if((inputFormat.GetSectors() - previousTrackEnd) != 0 &&
                         options.WholeDisc)
                     {
-                        for (ulong i = previousTrackEnd + 1; i < inputFormat.GetSectors(); i++)
+                        for(ulong i = previousTrackEnd + 1; i < inputFormat.GetSectors(); i++)
                         {
                             DicConsole.Write("\rHashing track-less sector {0}", i);
 
                             byte[] hiddenSector = inputFormat.ReadSector(i);
 
-                            if (options.DoAdler32)
+                            if(options.DoAdler32)
                             {
                                 adlerPkt.data = hiddenSector;
                                 adlerThread.Start(adlerPkt);
                             }
-                            if (options.DoCRC16)
+                            if(options.DoCRC16)
                             {
                                 crc16Pkt.data = hiddenSector;
                                 crc16Thread.Start(crc16Pkt);
                             }
-                            if (options.DoCRC32)
+                            if(options.DoCRC32)
                             {
                                 crc32Pkt.data = hiddenSector;
                                 crc32Thread.Start(crc32Pkt);
                             }
-                            if (options.DoCRC64)
+                            if(options.DoCRC64)
                             {
                                 crc64Pkt.data = hiddenSector;
                                 crc64Thread.Start(crc64Pkt);
@@ -702,43 +702,43 @@ namespace DiscImageChef.Commands
                                 fletcher32Pkt.data = hiddenSector;
                                 fletcher32Thread.Start(fletcher32Pkt);
                             }*/
-                            if (options.DoMD5)
+                            if(options.DoMD5)
                             {
                                 md5Pkt.data = hiddenSector;
                                 md5Thread.Start(md5Pkt);
                             }
-                            if (options.DoRIPEMD160)
+                            if(options.DoRIPEMD160)
                             {
                                 ripemd160Pkt.data = hiddenSector;
                                 ripemd160Thread.Start(ripemd160Pkt);
                             }
-                            if (options.DoSHA1)
+                            if(options.DoSHA1)
                             {
                                 sha1Pkt.data = hiddenSector;
                                 sha1Thread.Start(sha1Pkt);
                             }
-                            if (options.DoSHA256)
+                            if(options.DoSHA256)
                             {
                                 sha256Pkt.data = hiddenSector;
                                 sha256Thread.Start(sha256Pkt);
                             }
-                            if (options.DoSHA384)
+                            if(options.DoSHA384)
                             {
                                 sha384Pkt.data = hiddenSector;
                                 sha384Thread.Start(sha384Pkt);
                             }
-                            if (options.DoSHA512)
+                            if(options.DoSHA512)
                             {
                                 sha512Pkt.data = hiddenSector;
                                 sha512Thread.Start(sha512Pkt);
                             }
-                            if (options.DoSpamSum)
+                            if(options.DoSpamSum)
                             {
                                 spamsumPkt.data = hiddenSector;
                                 spamsumThread.Start(spamsumPkt);
                             }
 
-                            while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                            while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                                 crc32Thread.IsAlive || crc64Thread.IsAlive ||
                                 //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                                 md5Thread.IsAlive || ripemd160Thread.IsAlive ||
@@ -764,39 +764,39 @@ namespace DiscImageChef.Commands
                         }
                     }
 
-                    if (options.WholeDisc)
+                    if(options.WholeDisc)
                     {
-                        if (options.DoAdler32)
+                        if(options.DoAdler32)
                             DicConsole.WriteLine("Disk's Adler-32: 0x{0}", adler32ctx.End());
-                        if (options.DoCRC16)
+                        if(options.DoCRC16)
                             DicConsole.WriteLine("Disk's CRC16: 0x{0}", crc16ctx.End());
-                        if (options.DoCRC32)
+                        if(options.DoCRC32)
                             DicConsole.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
-                        if (options.DoCRC64)
+                        if(options.DoCRC64)
                             DicConsole.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
                         /*if (options.DoFletcher16)
                             DicConsole.WriteLine("Disk's Fletcher-16: 0x{0}", fletcher16ctx.End());
                         if (options.DoFletcher32)
                             DicConsole.WriteLine("Disk's Fletcher-32: 0x{0}", fletcher32ctx.End());*/
-                        if (options.DoMD5)
+                        if(options.DoMD5)
                             DicConsole.WriteLine("Disk's MD5: {0}", md5ctx.End());
-                        if (options.DoRIPEMD160)
+                        if(options.DoRIPEMD160)
                             DicConsole.WriteLine("Disk's RIPEMD160: {0}", ripemd160ctx.End());
-                        if (options.DoSHA1)
+                        if(options.DoSHA1)
                             DicConsole.WriteLine("Disk's SHA1: {0}", sha1ctx.End());
-                        if (options.DoSHA256)
+                        if(options.DoSHA256)
                             DicConsole.WriteLine("Disk's SHA256: {0}", sha256ctx.End());
-                        if (options.DoSHA384)
+                        if(options.DoSHA384)
                             DicConsole.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
-                        if (options.DoSHA512)
+                        if(options.DoSHA512)
                             DicConsole.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
-                        if (options.DoSpamSum)
+                        if(options.DoSpamSum)
                             DicConsole.WriteLine("Disk's SpamSum: {0}", ssctx.End());
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
-                    if (options.Debug)
+                    if(options.Debug)
                         DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                     else
                         DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
@@ -846,22 +846,22 @@ namespace DiscImageChef.Commands
                 sha512Packet sha512Pkt = new sha512Packet();
                 spamsumPacket spamsumPkt = new spamsumPacket();
 
-                if (options.DoAdler32)
+                if(options.DoAdler32)
                 {
                     adler32ctx.Init();
                     adlerPkt.context = adler32ctx;
                 }
-                if (options.DoCRC16)
+                if(options.DoCRC16)
                 {
                     crc16ctx.Init();
                     crc16Pkt.context = crc16ctx;
                 }
-                if (options.DoCRC32)
+                if(options.DoCRC32)
                 {
                     crc32ctx.Init();
                     crc32Pkt.context = crc32ctx;
                 }
-                if (options.DoCRC64)
+                if(options.DoCRC64)
                 {
                     crc64ctx.Init();
                     crc64Pkt.context = crc64ctx;
@@ -876,37 +876,37 @@ namespace DiscImageChef.Commands
                     fletcher32ctx.Init();
                     fletcher32Pkt.context = fletcher32ctx;
                 }*/
-                if (options.DoMD5)
+                if(options.DoMD5)
                 {
                     md5ctx.Init();
                     md5Pkt.context = md5ctx;
                 }
-                if (options.DoRIPEMD160)
+                if(options.DoRIPEMD160)
                 {
                     ripemd160ctx.Init();
                     ripemd160Pkt.context = ripemd160ctx;
                 }
-                if (options.DoSHA1)
+                if(options.DoSHA1)
                 {
                     sha1ctx.Init();
                     sha1Pkt.context = sha1ctx;
                 }
-                if (options.DoSHA256)
+                if(options.DoSHA256)
                 {
                     sha256ctx.Init();
                     sha256Pkt.context = sha256ctx;
                 }
-                if (options.DoSHA384)
+                if(options.DoSHA384)
                 {
                     sha384ctx.Init();
                     sha384Pkt.context = sha384ctx;
                 }
-                if (options.DoSHA512)
+                if(options.DoSHA512)
                 {
                     sha512ctx.Init();
                     sha512Pkt.context = sha512ctx;
                 }
-                if (options.DoSpamSum)
+                if(options.DoSpamSum)
                 {
                     ssctx.Init();
                     spamsumPkt.context = ssctx;
@@ -916,11 +916,11 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Sectors {0}", sectors);
                 ulong doneSectors = 0;
 
-                while (doneSectors < sectors)
+                while(doneSectors < sectors)
                 {
                     byte[] sector;
 
-                    if ((sectors - doneSectors) >= sectorsToRead)
+                    if((sectors - doneSectors) >= sectorsToRead)
                     {
                         sector = inputFormat.ReadSectors(doneSectors, sectorsToRead);
                         DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors, doneSectors + sectorsToRead);
@@ -933,22 +933,22 @@ namespace DiscImageChef.Commands
                         doneSectors += (sectors - doneSectors);
                     }
 
-                    if (options.DoAdler32)
+                    if(options.DoAdler32)
                     {
                         adlerPkt.data = sector;
                         adlerThread.Start(adlerPkt);
                     }
-                    if (options.DoCRC16)
+                    if(options.DoCRC16)
                     {
                         crc16Pkt.data = sector;
                         crc16Thread.Start(crc16Pkt);
                     }
-                    if (options.DoCRC32)
+                    if(options.DoCRC32)
                     {
                         crc32Pkt.data = sector;
                         crc32Thread.Start(crc32Pkt);
                     }
-                    if (options.DoCRC64)
+                    if(options.DoCRC64)
                     {
                         crc64Pkt.data = sector;
                         crc64Thread.Start(crc64Pkt);
@@ -963,43 +963,43 @@ namespace DiscImageChef.Commands
                         fletcher32Pkt.data = sector;
                         fletcher32Thread.Start(fletcher32Pkt);
                     }*/
-                    if (options.DoMD5)
+                    if(options.DoMD5)
                     {
                         md5Pkt.data = sector;
                         md5Thread.Start(md5Pkt);
                     }
-                    if (options.DoRIPEMD160)
+                    if(options.DoRIPEMD160)
                     {
                         ripemd160Pkt.data = sector;
                         ripemd160Thread.Start(ripemd160Pkt);
                     }
-                    if (options.DoSHA1)
+                    if(options.DoSHA1)
                     {
                         sha1Pkt.data = sector;
                         sha1Thread.Start(sha1Pkt);
                     }
-                    if (options.DoSHA256)
+                    if(options.DoSHA256)
                     {
                         sha256Pkt.data = sector;
                         sha256Thread.Start(sha256Pkt);
                     }
-                    if (options.DoSHA384)
+                    if(options.DoSHA384)
                     {
                         sha384Pkt.data = sector;
                         sha384Thread.Start(sha384Pkt);
                     }
-                    if (options.DoSHA512)
+                    if(options.DoSHA512)
                     {
                         sha512Pkt.data = sector;
                         sha512Thread.Start(sha512Pkt);
                     }
-                    if (options.DoSpamSum)
+                    if(options.DoSpamSum)
                     {
                         spamsumPkt.data = sector;
                         spamsumThread.Start(spamsumPkt);
                     }
 
-                    while (adlerThread.IsAlive || crc16Thread.IsAlive ||
+                    while(adlerThread.IsAlive || crc16Thread.IsAlive ||
                         crc32Thread.IsAlive || crc64Thread.IsAlive ||
                         //fletcher16Thread.IsAlive || fletcher32Thread.IsAlive ||
                         md5Thread.IsAlive || ripemd160Thread.IsAlive ||
@@ -1026,31 +1026,31 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine();
 
-                if (options.DoAdler32)
+                if(options.DoAdler32)
                     DicConsole.WriteLine("Disk's Adler-32: 0x{0}", adler32ctx.End());
-                if (options.DoCRC16)
+                if(options.DoCRC16)
                     DicConsole.WriteLine("Disk's CRC16: 0x{0}", crc16ctx.End());
-                if (options.DoCRC32)
+                if(options.DoCRC32)
                     DicConsole.WriteLine("Disk's CRC32: 0x{0}", crc32ctx.End());
-                if (options.DoCRC64)
+                if(options.DoCRC64)
                     DicConsole.WriteLine("Disk's CRC64 (ECMA): 0x{0}", crc64ctx.End());
                 /*if (options.DoFletcher16)
                     DicConsole.WriteLine("Disk's Fletcher-16: 0x{0}", fletcher16ctx.End());
                 if (options.DoFletcher32)
                     DicConsole.WriteLine("Disk's Fletcher-32: 0x{0}", fletcher32ctx.End());*/
-                if (options.DoMD5)
+                if(options.DoMD5)
                     DicConsole.WriteLine("Disk's MD5: {0}", md5ctx.End());
-                if (options.DoRIPEMD160)
+                if(options.DoRIPEMD160)
                     DicConsole.WriteLine("Disk's RIPEMD160: {0}", ripemd160ctx.End());
-                if (options.DoSHA1)
+                if(options.DoSHA1)
                     DicConsole.WriteLine("Disk's SHA1: {0}", sha1ctx.End());
-                if (options.DoSHA256)
+                if(options.DoSHA256)
                     DicConsole.WriteLine("Disk's SHA256: {0}", sha256ctx.End());
-                if (options.DoSHA384)
+                if(options.DoSHA384)
                     DicConsole.WriteLine("Disk's SHA384: {0}", sha384ctx.End());
-                if (options.DoSHA512)
+                if(options.DoSHA512)
                     DicConsole.WriteLine("Disk's SHA512: {0}", sha512ctx.End());
-                if (options.DoSpamSum)
+                if(options.DoSpamSum)
                     DicConsole.WriteLine("Disk's SpamSum: {0}", ssctx.End());
             }
 

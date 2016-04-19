@@ -71,7 +71,7 @@ namespace DiscImageChef.Interop
 
         public static Interop.PlatformID GetRealPlatformID()
         {
-            if ((int)Environment.OSVersion.Platform < 4 ||
+            if((int)Environment.OSVersion.Platform < 4 ||
                 (int)Environment.OSVersion.Platform == 5)
             {
                 return (Interop.PlatformID)((int)Environment.OSVersion.Platform);
@@ -79,19 +79,19 @@ namespace DiscImageChef.Interop
 
             utsname unixname;
             int error = uname(out unixname);
-            if (error != 0)
+            if(error != 0)
                 throw new Exception(String.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
 
-            switch (unixname.sysname)
+            switch(unixname.sysname)
             {
                 // TODO: Differentiate Linux, Android, Tizen
                 case "Linux":
                     {
-                        #if __ANDROID__
+#if __ANDROID__
                         return PlatformID.Android;
-                        #else
+#else
                         return PlatformID.Linux;
-                        #endif
+#endif
                     }
                 case "Darwin":
                     {
@@ -99,7 +99,7 @@ namespace DiscImageChef.Interop
 
                         IntPtr pLen = Marshal.AllocHGlobal(sizeof(int));
                         osx_error = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
-                        if (osx_error != 0)
+                        if(osx_error != 0)
                         {
                             Marshal.FreeHGlobal(pLen);
 
@@ -109,7 +109,7 @@ namespace DiscImageChef.Interop
                         int length = Marshal.ReadInt32(pLen);
                         IntPtr pStr = Marshal.AllocHGlobal(length);
                         osx_error = OSX_sysctlbyname("hw.machine", pStr, pLen, IntPtr.Zero, 0);
-                        if (osx_error != 0)
+                        if(osx_error != 0)
                         {
                             Marshal.FreeHGlobal(pStr);
                             Marshal.FreeHGlobal(pLen);
@@ -122,7 +122,7 @@ namespace DiscImageChef.Interop
                         Marshal.FreeHGlobal(pStr);
                         Marshal.FreeHGlobal(pLen);
 
-                        if (machine.StartsWith("iPad", StringComparison.Ordinal) ||
+                        if(machine.StartsWith("iPad", StringComparison.Ordinal) ||
                             machine.StartsWith("iPod", StringComparison.Ordinal) ||
                             machine.StartsWith("iPhone", StringComparison.Ordinal))
                             return PlatformID.iOS;
@@ -174,7 +174,7 @@ namespace DiscImageChef.Interop
                     return PlatformID.Win32NT;
                 default:
                     {
-                        if (unixname.sysname.StartsWith("CYGWIN_NT", StringComparison.Ordinal) ||
+                        if(unixname.sysname.StartsWith("CYGWIN_NT", StringComparison.Ordinal) ||
                             unixname.sysname.StartsWith("MINGW32_NT", StringComparison.Ordinal) ||
                             unixname.sysname.StartsWith("MSYS_NT", StringComparison.Ordinal) ||
                             unixname.sysname.StartsWith("UWIN", StringComparison.Ordinal))

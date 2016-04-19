@@ -84,7 +84,7 @@ namespace DiscImageChef.Devices
 
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, bool retry, uint lba, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];
@@ -113,7 +113,7 @@ namespace DiscImageChef.Devices
 
         public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, uint lba, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];
@@ -151,7 +151,7 @@ namespace DiscImageChef.Devices
                                        ref buffer, timeout, false, out duration, out sense);
             error = lastError != 0;
 
-            if ((statusRegisters.status & 0x23) == 0)
+            if((statusRegisters.status & 0x23) == 0)
             {
                 lba += (uint)(statusRegisters.deviceHead & 0xF);
                 lba *= 0x1000000;
@@ -172,7 +172,7 @@ namespace DiscImageChef.Devices
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersLBA28 statusRegisters, bool retry, uint lba, byte count, uint timeout, out double duration)
         {
-            if (count == 0)
+            if(count == 0)
                 buffer = new byte[512 * 256];
             else
                 buffer = new byte[512 * count];

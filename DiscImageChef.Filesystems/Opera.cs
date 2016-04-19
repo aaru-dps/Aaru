@@ -53,7 +53,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
@@ -61,15 +61,15 @@ namespace DiscImageChef.Plugins
             byte record_type;
             byte[] sync_bytes = new byte[5];
             byte record_version;
-			
+
             record_type = sb_sector[0x000];
             Array.Copy(sb_sector, 0x001, sync_bytes, 0, 5);
             record_version = sb_sector[0x006];
-			
-            if (record_type != 1 || record_version != 1)
+
+            if(record_type != 1 || record_version != 1)
                 return false;
             return Encoding.ASCII.GetString(sync_bytes) == "ZZZZZ";
-			
+
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
@@ -99,15 +99,15 @@ namespace DiscImageChef.Plugins
             sb.rootdir_bsize = BigEndianBitConverter.ToInt32(sb_sector, 0x05C);
             sb.last_root_copy = BigEndianBitConverter.ToInt32(sb_sector, 0x060);
 
-            if (sb.record_type != 1 || sb.record_version != 1)
+            if(sb.record_type != 1 || sb.record_version != 1)
                 return;
-            if (Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ")
+            if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ")
                 return;
 
-            if (sb.volume_comment.Length == 0)
+            if(sb.volume_comment.Length == 0)
                 sb.volume_comment = "Not set.";
 
-            if (sb.volume_label.Length == 0)
+            if(sb.volume_label.Length == 0)
                 sb.volume_label = "Not set.";
 
             SuperBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
@@ -115,15 +115,15 @@ namespace DiscImageChef.Plugins
             SuperBlockMetadata.AppendFormat("Volume comment: {0}", sb.volume_comment).AppendLine();
             SuperBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             SuperBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
-            if (imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
+            if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
             {
-                if (sb.block_size != 2048)
+                if(sb.block_size != 2048)
                     SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, 2048);
             }
-            else if (imagePlugin.GetSectorSize() != sb.block_size)
+            else if(imagePlugin.GetSectorSize() != sb.block_size)
                 SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/block", sb.block_size, imagePlugin.GetSectorSize());
             SuperBlockMetadata.AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count).AppendLine();
-            if ((ulong)sb.block_count > imagePlugin.GetSectors())
+            if((ulong)sb.block_count > imagePlugin.GetSectors())
                 SuperBlockMetadata.AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks", sb.block_count, imagePlugin.GetSectors());
             SuperBlockMetadata.AppendFormat("Root directory identifier: 0x{0:X8}", sb.root_dirid).AppendLine();
             SuperBlockMetadata.AppendFormat("Root directory block size: {0} bytes", sb.rootdir_bsize).AppendLine();

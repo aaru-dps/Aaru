@@ -202,37 +202,37 @@ namespace DiscImageChef.ImagePlugins
             FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
             stream.Seek(0, SeekOrigin.Begin);
 
-            if (stream.Length < 65)
+            if(stream.Length < 65)
                 return false;
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
             UInt32 magic = BitConverter.ToUInt32(header, 0x00);
-            if (magic != MAGIC)
+            if(magic != MAGIC)
                 return false;
 
             UInt32 dataoff = BitConverter.ToUInt32(header, 0x18);
-            if (dataoff > stream.Length)
+            if(dataoff > stream.Length)
                 return false;
 
             UInt32 datasize = BitConverter.ToUInt32(header, 0x1C);
             // There seems to be incorrect endian in some images on the wild
-            if (datasize == 0x00800C00)
+            if(datasize == 0x00800C00)
                 datasize = 0x000C8000;
-            if (dataoff + datasize > stream.Length)
+            if(dataoff + datasize > stream.Length)
                 return false;
 
             UInt32 commentoff = BitConverter.ToUInt32(header, 0x20);
-            if (commentoff > stream.Length)
+            if(commentoff > stream.Length)
                 return false;
 
             UInt32 commentsize = BitConverter.ToUInt32(header, 0x24);
-            if (commentoff + commentsize > stream.Length)
+            if(commentoff + commentsize > stream.Length)
                 return false;
 
             UInt32 creatoroff = BitConverter.ToUInt32(header, 0x28);
-            if (creatoroff > stream.Length)
+            if(creatoroff > stream.Length)
                 return false;
 
             UInt32 creatorsize = BitConverter.ToUInt32(header, 0x2C);
@@ -272,7 +272,7 @@ namespace DiscImageChef.ImagePlugins
             ImageHeader.reserved3 = BitConverter.ToUInt32(header, 0x38);
             ImageHeader.reserved4 = BitConverter.ToUInt32(header, 0x3C);
 
-            if (ImageHeader.dataSize == 0x00800C00)
+            if(ImageHeader.dataSize == 0x00800C00)
             {
                 ImageHeader.dataSize = 0x000C8000;
                 DicConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
@@ -296,17 +296,17 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", ImageHeader.reserved3);
             DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", ImageHeader.reserved4);
 
-            if (ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 && ImageHeader.imageFormat != ProDOSSectorOrder)
+            if(ImageHeader.dataSize == 0 && ImageHeader.blocks == 0 && ImageHeader.imageFormat != ProDOSSectorOrder)
                 return false;
 
-            if (ImageHeader.imageFormat == ProDOSSectorOrder && ImageHeader.blocks == 0)
+            if(ImageHeader.imageFormat == ProDOSSectorOrder && ImageHeader.blocks == 0)
                 return false;
 
-            if (ImageHeader.imageFormat == ProDOSSectorOrder)
+            if(ImageHeader.imageFormat == ProDOSSectorOrder)
                 ImageHeader.dataSize = ImageHeader.blocks * 512;
-            else if (ImageHeader.blocks == 0 && ImageHeader.dataSize != 0)
+            else if(ImageHeader.blocks == 0 && ImageHeader.dataSize != 0)
                 ImageHeader.blocks = ImageHeader.dataSize / 256;
-            else if (ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
+            else if(ImageHeader.dataSize == 0 && ImageHeader.blocks != 0)
                 ImageHeader.dataSize = ImageHeader.blocks * 256;
 
             ImageInfo.sectorSize = (uint)(ImageHeader.imageFormat == ProDOSSectorOrder ? 512 : 256);
@@ -314,9 +314,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.sectors = ImageHeader.blocks;
             ImageInfo.imageSize = ImageHeader.dataSize;
 
-            switch (ImageHeader.creator)
+            switch(ImageHeader.creator)
             {
-                
+
                 case CreatorAsimov:
                     ImageInfo.imageApplication = "ASIMOV2";
                     break;
@@ -342,7 +342,7 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.imageVersion = ImageHeader.version.ToString();
 
-            if (ImageHeader.commentOffset != 0 && ImageHeader.commentSize != 0)
+            if(ImageHeader.commentOffset != 0 && ImageHeader.commentSize != 0)
             {
                 stream.Seek(ImageHeader.commentOffset, SeekOrigin.Begin);
 
@@ -432,7 +432,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override MediaType GetMediaType()
         {
-            switch (ImageInfo.sectors)
+            switch(ImageInfo.sectors)
             {
                 case 455:
                     return MediaType.Apple32SS;
@@ -458,10 +458,10 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if (sectorAddress > ImageInfo.sectors - 1)
+            if(sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-            if (sectorAddress + length > ImageInfo.sectors)
+            if(sectorAddress + length > ImageInfo.sectors)
                 throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
             byte[] buffer = new byte[length * ImageInfo.sectorSize];
@@ -623,7 +623,7 @@ namespace DiscImageChef.ImagePlugins
         {
             FailingLBAs = new List<ulong>();
             UnknownLBAs = new List<ulong>();
-            for (ulong i = 0; i < ImageInfo.sectors; i++)
+            for(ulong i = 0; i < ImageInfo.sectors; i++)
                 UnknownLBAs.Add(i);
             return null;
         }

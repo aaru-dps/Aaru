@@ -87,9 +87,9 @@ namespace DiscImageChef.Devices
             cdb[5] = (byte)(address & 0xFF);
             cdb[7] = (byte)((transferLen & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLen & 0xFF);
-            if (pba)
+            if(pba)
                 cdb[9] += 0x80;
-            if (sectorCount)
+            if(sectorCount)
                 cdb[9] += 0x40;
 
             if(sectorCount)

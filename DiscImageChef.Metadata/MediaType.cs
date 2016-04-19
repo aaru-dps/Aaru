@@ -42,7 +42,7 @@ namespace DiscImageChef.Metadata
     {
         public static void MediaTypeToString(CommonTypes.MediaType dskType, out string DiscType, out string DiscSubType)
         {
-            switch (dskType)
+            switch(dskType)
             {
                 case CommonTypes.MediaType.BDR:
                     DiscType = "BD";
@@ -655,15 +655,15 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ZIP100:
                     DiscType = "Iomega ZIP";
                     DiscSubType = "Iomega ZIP100";
-                break;
+                    break;
                 case CommonTypes.MediaType.ZIP250:
                     DiscType = "Iomega ZIP";
                     DiscSubType = "Iomega ZIP250";
-                break;
+                    break;
                 case CommonTypes.MediaType.ZIP750:
                     DiscType = "Iomega ZIP";
                     DiscSubType = "Iomega ZIP750";
-                break;
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

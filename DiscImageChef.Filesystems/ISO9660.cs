@@ -52,13 +52,13 @@ namespace DiscImageChef.Plugins
 {
     class ISO9660Plugin : Plugin
     {
-		//static bool alreadyLaunched;
+        //static bool alreadyLaunched;
 
         public ISO9660Plugin()
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-			//alreadyLaunched = false;
+            //alreadyLaunched = false;
         }
 
         struct DecodedVolumeDescriptor
@@ -80,43 +80,43 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-/*            if (alreadyLaunched)
-                return false;
-            alreadyLaunched = true;*/
+            /*            if (alreadyLaunched)
+                            return false;
+                        alreadyLaunched = true;*/
 
             byte VDType;
 
             // ISO9660 is designed for 2048 bytes/sector devices
-            if (imagePlugin.GetSectorSize() < 2048)
+            if(imagePlugin.GetSectorSize() < 2048)
                 return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if (imagePlugin.GetSectors() <= (16 + partitionStart))
+            if(imagePlugin.GetSectors() <= (16 + partitionStart))
                 return false;
 
             // Read to Volume Descriptor
             byte[] vd_sector = imagePlugin.ReadSector(16 + partitionStart);
 
             int xa_off = 0;
-            if (vd_sector.Length == 2336)
+            if(vd_sector.Length == 2336)
                 xa_off = 8;
 
             VDType = vd_sector[0 + xa_off];
             byte[] VDMagic = new byte[5];
 
             // Wrong, VDs can be any order!
-            if (VDType == 255) // Supposedly we are in the PVD.
-	            return false;
+            if(VDType == 255) // Supposedly we are in the PVD.
+                return false;
 
             Array.Copy(vd_sector, 0x001 + xa_off, VDMagic, 0, 5);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(VDMagic));
 
-            return Encoding.ASCII.GetString(VDMagic) == "CD001";			
+            return Encoding.ASCII.GetString(VDMagic) == "CD001";
         }
-		
-        public override void GetInformation (ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
-		{
+
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        {
             information = "";
             StringBuilder ISOMetadata = new StringBuilder();
             bool Joliet = false;
@@ -154,23 +154,23 @@ namespace DiscImageChef.Plugins
             byte[] RootDirectoryLocation = new byte[4];
 
             // ISO9660 is designed for 2048 bytes/sector devices
-            if (imagePlugin.GetSectorSize() < 2048)
+            if(imagePlugin.GetSectorSize() < 2048)
                 return;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if (imagePlugin.GetSectors() < 16)
+            if(imagePlugin.GetSectors() < 16)
                 return;
 
             ulong counter = 0;
 
-            while (true)
+            while(true)
             {
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partitionStart);
                 byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partitionStart);
                 byte[] vd_sector;
-                if (vd_sector_tmp.Length == 2336)
+                if(vd_sector_tmp.Length == 2336)
                 {
                     vd_sector = new byte[2336 - 8];
                     Array.Copy(vd_sector_tmp, 8, vd_sector, 0, 2336 - 8);
@@ -181,18 +181,18 @@ namespace DiscImageChef.Plugins
                 VDType = vd_sector[0];
                 DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", VDType);
 
-                if (VDType == 255) // Supposedly we are in the PVD.
+                if(VDType == 255) // Supposedly we are in the PVD.
                 {
-                    if (counter == 0)
+                    if(counter == 0)
                         return;
                     break;
                 }
 
                 Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
 
-                if (Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
+                if(Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
                 {
-                    if (counter == 0)
+                    if(counter == 0)
                         return;
                     break;
                 }
@@ -207,7 +207,7 @@ namespace DiscImageChef.Plugins
                             // Read to boot system identifier
                             Array.Copy(vd_sector, 0x007, BootSysId, 0, 32);
 
-                            if (Encoding.ASCII.GetString(BootSysId).Substring(0, 23) == "EL TORITO SPECIFICATION")
+                            if(Encoding.ASCII.GetString(BootSysId).Substring(0, 23) == "EL TORITO SPECIFICATION")
                                 BootSpec = "El Torito";
 
                             break;
@@ -239,9 +239,9 @@ namespace DiscImageChef.Plugins
                         {
                             // Check if this is Joliet
                             Array.Copy(vd_sector, 0x058, JolietMagic, 0, 3);
-                            if (JolietMagic[0] == '%' && JolietMagic[1] == '/')
+                            if(JolietMagic[0] == '%' && JolietMagic[1] == '/')
                             {
-                                if (JolietMagic[2] == '@' || JolietMagic[2] == 'C' || JolietMagic[2] == 'E')
+                                if(JolietMagic[2] == '@' || JolietMagic[2] == 'C' || JolietMagic[2] == 'E')
                                 {
                                     Joliet = true;
                                 }
@@ -276,19 +276,19 @@ namespace DiscImageChef.Plugins
                 counter++;
             }
 
-			DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
-			DecodedVolumeDescriptor decodedJolietVD = new DecodedVolumeDescriptor();
+            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
+            DecodedVolumeDescriptor decodedJolietVD = new DecodedVolumeDescriptor();
 
-				decodedVD = DecodeVolumeDescriptor(VDSysId, VDVolId, VDVolSetId, VDPubId, VDDataPrepId, VDAppId, VCTime, VMTime, VXTime, VETime);
-			if(Joliet)
-				decodedJolietVD = DecodeJolietDescriptor(JolietSysId, JolietVolId, JolietVolSetId, JolietPubId, JolietDataPrepId, JolietAppId, JolietCTime, JolietMTime, JolietXTime, JolietETime);
+            decodedVD = DecodeVolumeDescriptor(VDSysId, VDVolId, VDVolSetId, VDPubId, VDDataPrepId, VDAppId, VCTime, VMTime, VXTime, VETime);
+            if(Joliet)
+                decodedJolietVD = DecodeJolietDescriptor(JolietSysId, JolietVolId, JolietVolSetId, JolietPubId, JolietDataPrepId, JolietAppId, JolietCTime, JolietMTime, JolietXTime, JolietETime);
 
 
             ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i,  partitionStart, i + partitionStart);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partitionStart, i + partitionStart);
 
             // TODO: Check this
-            if ((i + partitionStart) < imagePlugin.GetSectors())
+            if((i + partitionStart) < imagePlugin.GetSectors())
             {
 
                 byte[] path_table = imagePlugin.ReadSector(i + partitionStart);
@@ -300,7 +300,7 @@ namespace DiscImageChef.Plugins
                 byte[] RRMagic = new byte[2];
 
                 Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
-                if (Encoding.ASCII.GetString(SUSPMagic) == "SP")
+                if(Encoding.ASCII.GetString(SUSPMagic) == "SP")
                 {
                     Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
                     RockRidge |= Encoding.ASCII.GetString(RRMagic) == "RR";
@@ -308,7 +308,7 @@ namespace DiscImageChef.Plugins
             }
 
             #region SEGA IP.BIN Read and decoding
-            
+
             bool SegaCD = false;
             bool Saturn = false;
             bool Dreamcast = false;
@@ -320,7 +320,7 @@ namespace DiscImageChef.Plugins
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "SegaHardwareID = \"{0}\"", Encoding.ASCII.GetString(SegaHardwareID));
 
-            switch (Encoding.ASCII.GetString(SegaHardwareID))
+            switch(Encoding.ASCII.GetString(SegaHardwareID))
             {
                 case "SEGADISCSYSTEM  ":
                 case "SEGADATADISC    ":
@@ -389,7 +389,7 @@ namespace DiscImageChef.Plugins
                         Array.Copy(ipbin_sector, 0x060, system_reserved, 0, 160); // System Reserved Area
                         Array.Copy(ipbin_sector, 0x100, hardware_id, 0, 16);      // Hardware ID
                         Array.Copy(ipbin_sector, 0x110, copyright, 0, 3);         // "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
-                        if (Encoding.ASCII.GetString(copyright) == "(C)")
+                        if(Encoding.ASCII.GetString(copyright) == "(C)")
                             Array.Copy(ipbin_sector, 0x113, developer_code, 0, 5);    // "SEGA" or "T-xx"
                         else
                             Array.Copy(ipbin_sector, 0x110, developer_code, 0, 5);    // "SEGA" or "T-xx"
@@ -439,7 +439,7 @@ namespace DiscImageChef.Plugins
                             {
                                 ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date2), "yyyy.MMM", provider);
                             }
-                            catch {}
+                            catch { }
                         }
 
                         /*
@@ -524,9 +524,9 @@ namespace DiscImageChef.Plugins
                             }
                         }
                         IPBinInformation.AppendLine("Regions supported:");
-                        foreach (byte region in region_codes)
+                        foreach(byte region in region_codes)
                         {
-                            switch ((char)region)
+                            switch((char)region)
                             {
                                 case 'J':
                                     IPBinInformation.AppendLine("Japanese NTSC.");
@@ -609,9 +609,9 @@ namespace DiscImageChef.Plugins
                         IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
 
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
-                        foreach (byte peripheral in peripherals)
+                        foreach(byte peripheral in peripherals)
                         {
-                            switch ((char)peripheral)
+                            switch((char)peripheral)
                             {
                                 case 'A':
                                     IPBinInformation.AppendLine("Game supports analog controller.");
@@ -639,9 +639,9 @@ namespace DiscImageChef.Plugins
                             }
                         }
                         IPBinInformation.AppendLine("Regions supported:");
-                        foreach (byte region in region_codes)
+                        foreach(byte region in region_codes)
                         {
-                            switch ((char)region)
+                            switch((char)region)
                             {
                                 case 'J':
                                     IPBinInformation.AppendLine("Japanese NTSC.");
@@ -740,7 +740,7 @@ namespace DiscImageChef.Plugins
                         IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(dreamcast_media)).AppendLine();
                         IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
                         IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-                        switch (Encoding.ASCII.GetString(boot_filename))
+                        switch(Encoding.ASCII.GetString(boot_filename))
                         {
                             case "1ST_READ.BIN":
                                 IPBinInformation.AppendLine("Disc boots natively.");
@@ -753,9 +753,9 @@ namespace DiscImageChef.Plugins
                                 break;
                         }
                         IPBinInformation.AppendLine("Regions supported:");
-                        foreach (byte region in region_codes)
+                        foreach(byte region in region_codes)
                         {
-                            switch ((char)region)
+                            switch((char)region)
                             {
                                 case 'J':
                                     IPBinInformation.AppendLine("Japanese NTSC.");
@@ -781,47 +781,47 @@ namespace DiscImageChef.Plugins
 
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
 
-                        if ((iPeripherals & 0x00000010) == 0x00000010)
+                        if((iPeripherals & 0x00000010) == 0x00000010)
                             IPBinInformation.AppendLine("Game supports the VGA Box.");
-                        if ((iPeripherals & 0x00000100) == 0x00000100)
+                        if((iPeripherals & 0x00000100) == 0x00000100)
                             IPBinInformation.AppendLine("Game supports other expansion.");
-                        if ((iPeripherals & 0x00000200) == 0x00000200)
+                        if((iPeripherals & 0x00000200) == 0x00000200)
                             IPBinInformation.AppendLine("Game supports Puru Puru pack.");
-                        if ((iPeripherals & 0x00000400) == 0x00000400)
+                        if((iPeripherals & 0x00000400) == 0x00000400)
                             IPBinInformation.AppendLine("Game supports Mike Device.");
-                        if ((iPeripherals & 0x00000800) == 0x00000800)
+                        if((iPeripherals & 0x00000800) == 0x00000800)
                             IPBinInformation.AppendLine("Game supports Memory Card.");
-                        if ((iPeripherals & 0x00001000) == 0x00001000)
+                        if((iPeripherals & 0x00001000) == 0x00001000)
                             IPBinInformation.AppendLine("Game requires A + B + Start buttons and D-Pad.");
-                        if ((iPeripherals & 0x00002000) == 0x00002000)
+                        if((iPeripherals & 0x00002000) == 0x00002000)
                             IPBinInformation.AppendLine("Game requires C button.");
-                        if ((iPeripherals & 0x00004000) == 0x00004000)
+                        if((iPeripherals & 0x00004000) == 0x00004000)
                             IPBinInformation.AppendLine("Game requires D button.");
-                        if ((iPeripherals & 0x00008000) == 0x00008000)
+                        if((iPeripherals & 0x00008000) == 0x00008000)
                             IPBinInformation.AppendLine("Game requires X button.");
-                        if ((iPeripherals & 0x00010000) == 0x00010000)
+                        if((iPeripherals & 0x00010000) == 0x00010000)
                             IPBinInformation.AppendLine("Game requires Y button.");
-                        if ((iPeripherals & 0x00020000) == 0x00020000)
+                        if((iPeripherals & 0x00020000) == 0x00020000)
                             IPBinInformation.AppendLine("Game requires Z button.");
-                        if ((iPeripherals & 0x00040000) == 0x00040000)
+                        if((iPeripherals & 0x00040000) == 0x00040000)
                             IPBinInformation.AppendLine("Game requires expanded direction buttons.");
-                        if ((iPeripherals & 0x00080000) == 0x00080000)
+                        if((iPeripherals & 0x00080000) == 0x00080000)
                             IPBinInformation.AppendLine("Game requires analog R trigger.");
-                        if ((iPeripherals & 0x00100000) == 0x00100000)
+                        if((iPeripherals & 0x00100000) == 0x00100000)
                             IPBinInformation.AppendLine("Game requires analog L trigger.");
-                        if ((iPeripherals & 0x00200000) == 0x00200000)
+                        if((iPeripherals & 0x00200000) == 0x00200000)
                             IPBinInformation.AppendLine("Game requires analog horizontal controller.");
-                        if ((iPeripherals & 0x00400000) == 0x00400000)
+                        if((iPeripherals & 0x00400000) == 0x00400000)
                             IPBinInformation.AppendLine("Game requires analog vertical controller.");
-                        if ((iPeripherals & 0x00800000) == 0x00800000)
+                        if((iPeripherals & 0x00800000) == 0x00800000)
                             IPBinInformation.AppendLine("Game requires expanded analog horizontal controller.");
-                        if ((iPeripherals & 0x01000000) == 0x01000000)
+                        if((iPeripherals & 0x01000000) == 0x01000000)
                             IPBinInformation.AppendLine("Game requires expanded analog vertical controller.");
-                        if ((iPeripherals & 0x02000000) == 0x02000000)
+                        if((iPeripherals & 0x02000000) == 0x02000000)
                             IPBinInformation.AppendLine("Game supports Gun.");
-                        if ((iPeripherals & 0x04000000) == 0x04000000)
+                        if((iPeripherals & 0x04000000) == 0x04000000)
                             IPBinInformation.AppendLine("Game supports Keyboard.");
-                        if ((iPeripherals & 0x08000000) == 0x08000000)
+                        if((iPeripherals & 0x08000000) == 0x08000000)
                             IPBinInformation.AppendLine("Game supports Mouse.");
 
                         if((iPeripherals & 0xEE) != 0)
@@ -835,21 +835,21 @@ namespace DiscImageChef.Plugins
             ISOMetadata.AppendFormat("ISO9660 file system").AppendLine();
             if(Joliet)
                 ISOMetadata.AppendFormat("Joliet extensions present.").AppendLine();
-            if (RockRidge)
+            if(RockRidge)
                 ISOMetadata.AppendFormat("Rock Ridge Interchange Protocol present.").AppendLine();
-            if (Bootable)
+            if(Bootable)
                 ISOMetadata.AppendFormat("Disc bootable following {0} specifications.", BootSpec).AppendLine();
-            if (SegaCD)
+            if(SegaCD)
             {
                 ISOMetadata.AppendLine("This is a SegaCD / MegaCD disc.");
                 ISOMetadata.AppendLine(IPBinInformation.ToString());
             }
-            if (Saturn)
+            if(Saturn)
             {
                 ISOMetadata.AppendLine("This is a Sega Saturn disc.");
                 ISOMetadata.AppendLine(IPBinInformation.ToString());
             }
-            if (Dreamcast)
+            if(Dreamcast)
             {
                 ISOMetadata.AppendLine("This is a Sega Dreamcast disc.");
                 ISOMetadata.AppendLine(IPBinInformation.ToString());
@@ -864,49 +864,49 @@ namespace DiscImageChef.Plugins
             ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedVD.DataPreparerIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Application identifier: {0}", decodedVD.ApplicationIdentifier).AppendLine();
             ISOMetadata.AppendFormat("Volume creation date: {0}", decodedVD.CreationTime).AppendLine();
-            if (decodedVD.HasModificationTime)
+            if(decodedVD.HasModificationTime)
                 ISOMetadata.AppendFormat("Volume modification date: {0}", decodedVD.ModificationTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
-            if (decodedVD.HasExpirationTime)
+            if(decodedVD.HasExpirationTime)
                 ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedVD.ExpirationTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
-            if (decodedVD.HasEffectiveTime)
+            if(decodedVD.HasEffectiveTime)
                 ISOMetadata.AppendFormat("Volume effective date: {0}", decodedVD.EffectiveTime).AppendLine();
             else
                 ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
 
-			if(Joliet)
-			{
-				ISOMetadata.AppendLine("---------------------------------------");
-				ISOMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
-				ISOMetadata.AppendLine("---------------------------------------");
-				ISOMetadata.AppendFormat("System identifier: {0}", decodedJolietVD.SystemIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVD.VolumeIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVD.VolumeSetIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVD.PublisherIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVD.DataPreparerIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Application identifier: {0}", decodedJolietVD.ApplicationIdentifier).AppendLine();
-				ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime).AppendLine();
-				if (decodedJolietVD.HasModificationTime)
-					ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime).AppendLine();
-				else
-					ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
-				if (decodedJolietVD.HasExpirationTime)
-					ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime).AppendLine();
-				else
-					ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
-				if (decodedJolietVD.HasEffectiveTime)
+            if(Joliet)
+            {
+                ISOMetadata.AppendLine("---------------------------------------");
+                ISOMetadata.AppendLine("JOLIET VOLUME DESCRIPTOR INFORMATION:");
+                ISOMetadata.AppendLine("---------------------------------------");
+                ISOMetadata.AppendFormat("System identifier: {0}", decodedJolietVD.SystemIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVD.VolumeIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVD.VolumeSetIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVD.PublisherIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVD.DataPreparerIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Application identifier: {0}", decodedJolietVD.ApplicationIdentifier).AppendLine();
+                ISOMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVD.CreationTime).AppendLine();
+                if(decodedJolietVD.HasModificationTime)
+                    ISOMetadata.AppendFormat("Volume modification date: {0}", decodedJolietVD.ModificationTime).AppendLine();
+                else
+                    ISOMetadata.AppendFormat("Volume has not been modified.").AppendLine();
+                if(decodedJolietVD.HasExpirationTime)
+                    ISOMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVD.ExpirationTime).AppendLine();
+                else
+                    ISOMetadata.AppendFormat("Volume does not expire.").AppendLine();
+                if(decodedJolietVD.HasEffectiveTime)
                     ISOMetadata.AppendFormat("Volume effective date: {0}", decodedJolietVD.EffectiveTime).AppendLine();
-				else
-					ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
-			}
+                else
+                    ISOMetadata.AppendFormat("Volume has always been effective.").AppendLine();
+            }
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ISO9660";
 
-            if (Joliet)
+            if(Joliet)
             {
                 xmlFSType.VolumeName = decodedJolietVD.VolumeIdentifier;
 
@@ -914,22 +914,22 @@ namespace DiscImageChef.Plugins
                     xmlFSType.SystemIdentifier = decodedVD.SystemIdentifier;
                 else
                     xmlFSType.SystemIdentifier = decodedJolietVD.SystemIdentifier;
-                
+
                 if(decodedJolietVD.VolumeSetIdentifier == null || decodedVD.VolumeSetIdentifier.Length > decodedJolietVD.VolumeSetIdentifier.Length)
                     xmlFSType.VolumeSetIdentifier = decodedVD.VolumeSetIdentifier;
                 else
                     xmlFSType.VolumeSetIdentifier = decodedJolietVD.VolumeSetIdentifier;
-                
+
                 if(decodedJolietVD.PublisherIdentifier == null || decodedVD.PublisherIdentifier.Length > decodedJolietVD.PublisherIdentifier.Length)
                     xmlFSType.PublisherIdentifier = decodedVD.PublisherIdentifier;
                 else
                     xmlFSType.PublisherIdentifier = decodedJolietVD.PublisherIdentifier;
-                
+
                 if(decodedJolietVD.DataPreparerIdentifier == null || decodedVD.DataPreparerIdentifier.Length > decodedJolietVD.DataPreparerIdentifier.Length)
                     xmlFSType.DataPreparerIdentifier = decodedVD.DataPreparerIdentifier;
                 else
                     xmlFSType.DataPreparerIdentifier = decodedJolietVD.SystemIdentifier;
-                
+
                 if(decodedJolietVD.ApplicationIdentifier == null || decodedVD.ApplicationIdentifier.Length > decodedJolietVD.ApplicationIdentifier.Length)
                     xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
                 else
@@ -937,17 +937,17 @@ namespace DiscImageChef.Plugins
 
                 xmlFSType.CreationDate = decodedJolietVD.CreationTime;
                 xmlFSType.CreationDateSpecified = true;
-                if (decodedJolietVD.HasModificationTime)
+                if(decodedJolietVD.HasModificationTime)
                 {
                     xmlFSType.ModificationDate = decodedJolietVD.ModificationTime;
                     xmlFSType.ModificationDateSpecified = true;
                 }
-                if (decodedJolietVD.HasExpirationTime)
+                if(decodedJolietVD.HasExpirationTime)
                 {
                     xmlFSType.ExpirationDate = decodedJolietVD.ExpirationTime;
                     xmlFSType.ExpirationDateSpecified = true;
                 }
-                if (decodedJolietVD.HasEffectiveTime)
+                if(decodedJolietVD.HasEffectiveTime)
                 {
                     xmlFSType.EffectiveDate = decodedJolietVD.EffectiveTime;
                     xmlFSType.EffectiveDateSpecified = true;
@@ -963,17 +963,17 @@ namespace DiscImageChef.Plugins
                 xmlFSType.ApplicationIdentifier = decodedVD.ApplicationIdentifier;
                 xmlFSType.CreationDate = decodedVD.CreationTime;
                 xmlFSType.CreationDateSpecified = true;
-                if (decodedVD.HasModificationTime)
+                if(decodedVD.HasModificationTime)
                 {
                     xmlFSType.ModificationDate = decodedVD.ModificationTime;
                     xmlFSType.ModificationDateSpecified = true;
                 }
-                if (decodedVD.HasExpirationTime)
+                if(decodedVD.HasExpirationTime)
                 {
                     xmlFSType.ExpirationDate = decodedVD.ExpirationTime;
                     xmlFSType.ExpirationDateSpecified = true;
                 }
-                if (decodedVD.HasEffectiveTime)
+                if(decodedVD.HasEffectiveTime)
                 {
                     xmlFSType.EffectiveDate = decodedVD.EffectiveTime;
                     xmlFSType.EffectiveDateSpecified = true;
@@ -991,93 +991,93 @@ namespace DiscImageChef.Plugins
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd().Trim(new []{'\u0000'});
-            if (VCTime[0] == '0' || VCTime[0] == 0x00)
+            decodedVD.SystemIdentifier = Encoding.BigEndianUnicode.GetString(VDSysId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.VolumeIdentifier = Encoding.BigEndianUnicode.GetString(VDVolId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(VDVolSetId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd().Trim(new[] { '\u0000' });
+            if(VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
                 decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
 
-            if (VMTime[0] == '0' || VMTime[0] == 0x00)
+            if(VMTime[0] == '0' || VMTime[0] == 0x00)
             {
                 decodedVD.HasModificationTime = false;
             }
             else
             {
                 decodedVD.HasModificationTime = true;
-				decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
+                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
             }
 
-            if (VXTime[0] == '0' || VXTime[0] == 0x00)
+            if(VXTime[0] == '0' || VXTime[0] == 0x00)
             {
                 decodedVD.HasExpirationTime = false;
             }
             else
             {
                 decodedVD.HasExpirationTime = true;
-				decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
+                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
             }
 
-            if (VETime[0] == '0' || VETime[0] == 0x00)
+            if(VETime[0] == '0' || VETime[0] == 0x00)
             {
                 decodedVD.HasEffectiveTime = false;
             }
             else
             {
                 decodedVD.HasEffectiveTime = true;
-				decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
+                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
             }
 
             return decodedVD;
         }
 
-		static DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
+        static DecodedVolumeDescriptor DecodeVolumeDescriptor(byte[] VDSysId, byte[] VDVolId, byte[] VDVolSetId, byte[] VDPubId, byte[] VDDataPrepId, byte[] VDAppId, byte[] VCTime, byte[] VMTime, byte[] VXTime, byte[] VETime)
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor();
 
-            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId).TrimEnd().Trim(new []{'\u0000'});
-            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId).TrimEnd().Trim(new []{'\u0000'});
-            if (VCTime[0] == '0' || VCTime[0] == 0x00)
+            decodedVD.SystemIdentifier = Encoding.ASCII.GetString(VDSysId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.VolumeIdentifier = Encoding.ASCII.GetString(VDVolId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.VolumeSetIdentifier = Encoding.ASCII.GetString(VDVolSetId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.PublisherIdentifier = Encoding.ASCII.GetString(VDPubId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.DataPreparerIdentifier = Encoding.ASCII.GetString(VDDataPrepId).TrimEnd().Trim(new[] { '\u0000' });
+            decodedVD.ApplicationIdentifier = Encoding.ASCII.GetString(VDAppId).TrimEnd().Trim(new[] { '\u0000' });
+            if(VCTime[0] == '0' || VCTime[0] == 0x00)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
-				decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
+                decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
 
-            if (VMTime[0] == '0' || VMTime[0] == 0x00)
+            if(VMTime[0] == '0' || VMTime[0] == 0x00)
             {
                 decodedVD.HasModificationTime = false;
             }
             else
             {
                 decodedVD.HasModificationTime = true;
-				decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
+                decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
             }
 
-            if (VXTime[0] == '0' || VXTime[0] == 0x00)
+            if(VXTime[0] == '0' || VXTime[0] == 0x00)
             {
                 decodedVD.HasExpirationTime = false;
             }
             else
             {
                 decodedVD.HasExpirationTime = true;
-				decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
+                decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
             }
 
-            if (VETime[0] == '0' || VETime[0] == 0x00)
+            if(VETime[0] == '0' || VETime[0] == 0x00)
             {
                 decodedVD.HasEffectiveTime = false;
             }
             else
             {
                 decodedVD.HasEffectiveTime = true;
-				decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
+                decodedVD.EffectiveTime = DateHandlers.ISO9660ToDateTime(VETime);
             }
 
             return decodedVD;

@@ -70,18 +70,18 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if ((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
             byte[] mdb_sector;
             UInt16 drSigWord;
 
-            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
                 mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if (drSigWord == HFS_MAGIC)
+                if(drSigWord == HFS_MAGIC)
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
 
@@ -90,7 +90,7 @@ namespace DiscImageChef.Plugins
                 mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if (drSigWord == HFS_MAGIC)
+                if(drSigWord == HFS_MAGIC)
                 {
                     DicConsole.DebugWriteLine("HFS plugin", "HFS sector size is 512 bytes, but device's 2048");
 
@@ -104,10 +104,10 @@ namespace DiscImageChef.Plugins
                 mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if (drSigWord == HFS_MAGIC)
+                if(drSigWord == HFS_MAGIC)
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x7C); // Seek to embedded HFS+ signature
-				
+
                     return drSigWord != HFSP_MAGIC;
                 }
             }
@@ -117,9 +117,9 @@ namespace DiscImageChef.Plugins
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             information = "";
-			
+
             StringBuilder sb = new StringBuilder();
-			
+
             HFS_MasterDirectoryBlock MDB = new HFS_MasterDirectoryBlock();
             HFS_BootBlock BB = new HFS_BootBlock();
 
@@ -131,12 +131,12 @@ namespace DiscImageChef.Plugins
 
             bool APMFromHDDOnCD = false;
 
-            if (imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
                 mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if (drSigWord == HFS_MAGIC)
+                if(drSigWord == HFS_MAGIC)
                 {
                     bb_sector = imagePlugin.ReadSector(partitionStart);
                 }
@@ -145,7 +145,7 @@ namespace DiscImageChef.Plugins
                     mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                    if (drSigWord == HFS_MAGIC)
+                    if(drSigWord == HFS_MAGIC)
                     {
                         bb_sector = Read2048SectorAs512(imagePlugin, partitionStart);
                         APMFromHDDOnCD = true;
@@ -159,16 +159,16 @@ namespace DiscImageChef.Plugins
                 mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
-                if (drSigWord == HFS_MAGIC)
+                if(drSigWord == HFS_MAGIC)
                     bb_sector = imagePlugin.ReadSector(partitionStart);
                 else
                     return;
             }
 
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
-            if (MDB.drSigWord != HFS_MAGIC)
+            if(MDB.drSigWord != HFS_MAGIC)
                 return;
-			
+
             MDB.drCrDate = BigEndianBitConverter.ToUInt32(mdb_sector, 0x002);
             MDB.drLsMod = BigEndianBitConverter.ToUInt32(mdb_sector, 0x006);
             MDB.drAtrb = BigEndianBitConverter.ToUInt16(mdb_sector, 0x00A);
@@ -184,7 +184,7 @@ namespace DiscImageChef.Plugins
             pString = new byte[28];
             Array.Copy(mdb_sector, 0x024, pString, 0, 28);
             MDB.drVN = StringHandlers.PascalToString(pString);
-			
+
             MDB.drVolBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x040);
             MDB.drVSeqNum = BigEndianBitConverter.ToUInt16(mdb_sector, 0x044);
             MDB.drWrCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x046);
@@ -193,7 +193,7 @@ namespace DiscImageChef.Plugins
             MDB.drNmRtDirs = BigEndianBitConverter.ToUInt16(mdb_sector, 0x052);
             MDB.drFilCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x054);
             MDB.drDirCnt = BigEndianBitConverter.ToUInt32(mdb_sector, 0x058);
-			
+
             MDB.drFndrInfo0 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x05C);
             MDB.drFndrInfo1 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x060);
             MDB.drFndrInfo2 = BigEndianBitConverter.ToUInt32(mdb_sector, 0x064);
@@ -211,18 +211,18 @@ namespace DiscImageChef.Plugins
             MDB.drEmbedSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07C);
             MDB.xdrStABNt = BigEndianBitConverter.ToUInt16(mdb_sector, 0x07E);
             MDB.xdrNumABlks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x080);
-			
+
             MDB.drXTFlSize = BigEndianBitConverter.ToUInt32(mdb_sector, 0x082);
             MDB.drCTFlSize = BigEndianBitConverter.ToUInt32(mdb_sector, 0x092);
-			
+
             BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
-			
-            if (BB.signature == HFSBB_MAGIC)
+
+            if(BB.signature == HFSBB_MAGIC)
             {
                 BB.branch = BigEndianBitConverter.ToUInt32(bb_sector, 0x002);
                 BB.boot_flags = bb_sector[0x006];
                 BB.boot_version = bb_sector[0x007];
-				
+
                 BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bb_sector, 0x008);
 
                 pString = new byte[16];
@@ -246,7 +246,7 @@ namespace DiscImageChef.Plugins
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x06A, pString, 0, 16);
                 BB.clipbrd_name = StringHandlers.PascalToString(pString);
-				
+
                 BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
                 BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);
                 BB.heap_128k = BigEndianBitConverter.ToUInt32(bb_sector, 0x07E);
@@ -255,44 +255,44 @@ namespace DiscImageChef.Plugins
             }
             else
                 BB.signature = 0x0000;
-			
+
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();
-            if (APMFromHDDOnCD)
+            if(APMFromHDDOnCD)
                 sb.AppendLine("HFS uses 512 bytes/sector while devices uses 2048 bytes/sector.").AppendLine();
             sb.AppendLine("Master Directory Block:");
             sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(MDB.drCrDate)).AppendLine();
             sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(MDB.drLsMod)).AppendLine();
             sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(MDB.drVolBkUp)).AppendLine();
             sb.AppendFormat("Backup sequence number: {0}", MDB.drVSeqNum).AppendLine();
-			
-            if ((MDB.drAtrb & 0x80) == 0x80)
+
+            if((MDB.drAtrb & 0x80) == 0x80)
                 sb.AppendLine("Volume is locked by hardware.");
-            if ((MDB.drAtrb & 0x100) == 0x100)
+            if((MDB.drAtrb & 0x100) == 0x100)
                 sb.AppendLine("Volume was unmonted.");
             else
                 sb.AppendLine("Volume is mounted.");
-            if ((MDB.drAtrb & 0x200) == 0x200)
+            if((MDB.drAtrb & 0x200) == 0x200)
                 sb.AppendLine("Volume has spared bad blocks.");
-            if ((MDB.drAtrb & 0x400) == 0x400)
+            if((MDB.drAtrb & 0x400) == 0x400)
                 sb.AppendLine("Volume does not need cache.");
-            if ((MDB.drAtrb & 0x800) == 0x800)
+            if((MDB.drAtrb & 0x800) == 0x800)
                 sb.AppendLine("Boot volume is inconsistent.");
-            if ((MDB.drAtrb & 0x1000) == 0x1000)
+            if((MDB.drAtrb & 0x1000) == 0x1000)
                 sb.AppendLine("There are reused CNIDs.");
-            if ((MDB.drAtrb & 0x2000) == 0x2000)
+            if((MDB.drAtrb & 0x2000) == 0x2000)
                 sb.AppendLine("Volume is journaled.");
-            if ((MDB.drAtrb & 0x4000) == 0x4000)
+            if((MDB.drAtrb & 0x4000) == 0x4000)
                 sb.AppendLine("Volume is seriously inconsistent.");
-            if ((MDB.drAtrb & 0x8000) == 0x8000)
+            if((MDB.drAtrb & 0x8000) == 0x8000)
                 sb.AppendLine("Volume is locked by software.");
-			
+
             sb.AppendFormat("{0} files on root directory", MDB.drNmFls).AppendLine();
             sb.AppendFormat("{0} directories on root directory", MDB.drNmRtDirs).AppendLine();
             sb.AppendFormat("{0} files on volume", MDB.drFilCnt).AppendLine();
             sb.AppendFormat("{0} directories on volume", MDB.drDirCnt).AppendLine();
             sb.AppendFormat("Volume write count: {0}", MDB.drWrCnt).AppendLine();
-			
+
             sb.AppendFormat("Volume bitmap starting sector (in 512-bytes): {0}", MDB.drVBMSt).AppendLine();
             sb.AppendFormat("Next allocation block: {0}.", MDB.drAllocPtr).AppendLine();
             sb.AppendFormat("{0} volume allocation blocks.", MDB.drNmAlBlks).AppendLine();
@@ -303,12 +303,12 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("Sector of first allocation block: {0}", MDB.drAlBlSt).AppendLine();
             sb.AppendFormat("Next unused CNID: {0}", MDB.drNxtCNID).AppendLine();
             sb.AppendFormat("{0} unused allocation blocks.", MDB.drFreeBks).AppendLine();
-			
+
             sb.AppendFormat("{0} bytes in the Extents B-Tree", MDB.drXTFlSize).AppendLine();
             sb.AppendFormat("{0} bytes in the Catalog B-Tree", MDB.drCTFlSize).AppendLine();
 
             sb.AppendFormat("Volume name: {0}", MDB.drVN).AppendLine();
-			
+
             sb.AppendLine("Finder info:");
             sb.AppendFormat("CNID of bootable system's directory: {0}", MDB.drFndrInfo0).AppendLine();
             sb.AppendFormat("CNID of first-run application's directory: {0}", MDB.drFndrInfo1).AppendLine();
@@ -316,8 +316,8 @@ namespace DiscImageChef.Plugins
             sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", MDB.drFndrInfo3).AppendLine();
             sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", MDB.drFndrInfo5).AppendLine();
             sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", MDB.drFndrInfo6, MDB.drFndrInfo7).AppendLine();
-			
-            if (MDB.drEmbedSigWord == HFSP_MAGIC)
+
+            if(MDB.drEmbedSigWord == HFSP_MAGIC)
             {
                 sb.AppendLine("Volume wraps a HFS+ volume.");
                 sb.AppendFormat("Starting block of the HFS+ volume: {0}", MDB.xdrStABNt).AppendLine();
@@ -329,25 +329,25 @@ namespace DiscImageChef.Plugins
                 sb.AppendFormat("{0} blocks in volume bitmap cache", MDB.drVBMCSize).AppendLine();
                 sb.AppendFormat("{0} blocks in volume common cache", MDB.drCtlCSize).AppendLine();
             }
-			
-            if (BB.signature == HFSBB_MAGIC)
+
+            if(BB.signature == HFSBB_MAGIC)
             {
                 sb.AppendLine("Volume is bootable.");
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
-                if ((BB.boot_flags & 0x40) == 0x40)
+                if((BB.boot_flags & 0x40) == 0x40)
                     sb.AppendLine("Boot block should be executed.");
-                if ((BB.boot_flags & 0x80) == 0x80)
+                if((BB.boot_flags & 0x80) == 0x80)
                 {
                     sb.AppendLine("Boot block is in new unknown format.");
                 }
                 else
                 {
-                    if (BB.sec_sv_pages > 0)
+                    if(BB.sec_sv_pages > 0)
                         sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if (BB.sec_sv_pages < 0)
+                    else if(BB.sec_sv_pages < 0)
                         sb.AppendLine("Allocate secondary sound and video buffers at boot.");
-					
+
                     sb.AppendFormat("System filename: {0}", BB.system_name).AppendLine();
                     sb.AppendFormat("Finder filename: {0}", BB.finder_name).AppendLine();
                     sb.AppendFormat("Debugger filename: {0}", BB.debug_name).AppendLine();
@@ -364,11 +364,11 @@ namespace DiscImageChef.Plugins
             }
             else
                 sb.AppendLine("Volume is not bootable.");
-			
+
             information = sb.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            if (MDB.drVolBkUp > 0)
+            if(MDB.drVolBkUp > 0)
             {
                 xmlFSType.BackupDate = DateHandlers.MacToDateTime(MDB.drVolBkUp);
                 xmlFSType.BackupDateSpecified = true;
@@ -376,7 +376,7 @@ namespace DiscImageChef.Plugins
             xmlFSType.Bootable = BB.signature == HFSBB_MAGIC;
             xmlFSType.Clusters = MDB.drNmAlBlks;
             xmlFSType.ClusterSize = (int)MDB.drAlBlkSiz;
-            if (MDB.drCrDate > 0)
+            if(MDB.drCrDate > 0)
             {
                 xmlFSType.CreationDate = DateHandlers.MacToDateTime(MDB.drCrDate);
                 xmlFSType.CreationDateSpecified = true;
@@ -386,16 +386,16 @@ namespace DiscImageChef.Plugins
             xmlFSType.FilesSpecified = true;
             xmlFSType.FreeClusters = MDB.drFreeBks;
             xmlFSType.FreeClustersSpecified = true;
-            if (MDB.drLsMod > 0)
+            if(MDB.drLsMod > 0)
             {
                 xmlFSType.ModificationDate = DateHandlers.MacToDateTime(MDB.drLsMod);
                 xmlFSType.ModificationDateSpecified = true;
             }
             xmlFSType.Type = "HFS";
             xmlFSType.VolumeName = MDB.drVN;
-            if (MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
+            if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
                 xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
-			
+
             return;
         }
 

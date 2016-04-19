@@ -51,17 +51,17 @@ namespace DiscImageChef.Devices.Linux
         [DllImport("libc")]
         internal static extern int close(int fd);
 
-        [DllImport("libc", EntryPoint="ioctl", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
         internal static extern int ioctlInt(int fd, LinuxIoctl request, out int value);
 
-        [DllImport("libc", EntryPoint="ioctl", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
         internal static extern int ioctlSg(int fd, LinuxIoctl request, ref sg_io_hdr_t value);
 
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-        internal static extern int readlink(string path, System.IntPtr buf, int bufsize); 
+        internal static extern int readlink(string path, System.IntPtr buf, int bufsize);
 
-        [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint="readlink", SetLastError = true)]
-        internal static extern long readlink64(string path, System.IntPtr buf, long bufsize); 
+        [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint = "readlink", SetLastError = true)]
+        internal static extern long readlink64(string path, System.IntPtr buf, long bufsize);
     }
 }
 

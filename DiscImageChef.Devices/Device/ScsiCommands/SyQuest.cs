@@ -95,14 +95,14 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)((lba & 0xFF00) >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = transferLength;
-            if (inhibitDma)
+            if(inhibitDma)
                 cdb[5] += 0x80;
-            if (readLong)
+            if(readLong)
                 cdb[5] += 0x40;
 
-            if (!inhibitDma && !readLong)
+            if(!inhibitDma && !readLong)
             {
-                if (transferLength == 0)
+                if(transferLength == 0)
                     buffer = new byte[256 * blockSize];
                 else
                     buffer = new byte[transferLength * blockSize];
@@ -115,11 +115,11 @@ namespace DiscImageChef.Devices
             else
                 buffer = new byte[0];
 
-            if (!inhibitDma)
+            if(!inhibitDma)
                 lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             else
                 lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
-            
+
             error = lastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (6) took {0} ms.", duration);
@@ -180,12 +180,12 @@ namespace DiscImageChef.Devices
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
-            if (inhibitDma)
+            if(inhibitDma)
                 cdb[9] += 0x80;
-            if (readLong)
+            if(readLong)
                 cdb[9] += 0x40;
 
-            if (!inhibitDma && !readLong)
+            if(!inhibitDma && !readLong)
             {
                 buffer = new byte[transferLength * blockSize];
             }
@@ -197,7 +197,7 @@ namespace DiscImageChef.Devices
             else
                 buffer = new byte[0];
 
-            if (!inhibitDma)
+            if(!inhibitDma)
                 lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             else
                 lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);

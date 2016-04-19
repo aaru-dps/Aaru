@@ -92,7 +92,7 @@ namespace DiscImageChef.Checksums
             _sha1Provider.TransformFinalBlock(new byte[0], 0, 0);
             StringBuilder sha1Output = new StringBuilder();
 
-            for (int i = 0; i < _sha1Provider.Hash.Length; i++)
+            for(int i = 0; i < _sha1Provider.Hash.Length; i++)
             {
                 sha1Output.Append(_sha1Provider.Hash[i].ToString("x2"));
             }
@@ -121,7 +121,7 @@ namespace DiscImageChef.Checksums
             hash = _sha1Provider.ComputeHash(fileStream);
             StringBuilder sha1Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 sha1Output.Append(hash[i].ToString("x2"));
             }
@@ -140,7 +140,7 @@ namespace DiscImageChef.Checksums
             hash = _sha1Provider.ComputeHash(data, 0, (int)len);
             StringBuilder sha1Output = new StringBuilder();
 
-            for (int i = 0; i < hash.Length; i++)
+            for(int i = 0; i < hash.Length; i++)
             {
                 sha1Output.Append(hash[i].ToString("x2"));
             }

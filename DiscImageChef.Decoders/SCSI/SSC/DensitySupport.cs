@@ -94,22 +94,22 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static DensitySupportHeader? DecodeDensity(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length <= 56)
+            if(response.Length <= 56)
                 return null;
 
             ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
-            if (response.Length != responseLen)
+            if(response.Length != responseLen)
                 return null;
 
             List<DensitySupportDescriptor> descriptors = new List<DensitySupportDescriptor>();
             int offset = 4;
             byte[] tmp;
 
-            while (offset < response.Length)
+            while(offset < response.Length)
             {
                 DensitySupportDescriptor descriptor = new DensitySupportDescriptor();
                 descriptor.primaryCode = response[offset + 0];
@@ -134,7 +134,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                 Array.Copy(response, offset + 32, tmp, 0, 20);
                 descriptor.description = StringHandlers.CToString(tmp).Trim();
 
-                if (descriptor.lenvalid)
+                if(descriptor.lenvalid)
                     offset += descriptor.len + 5;
                 else
                     offset += 52;
@@ -152,23 +152,23 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static string PrettifyDensity(DensitySupportHeader? density)
         {
-            if (density == null)
+            if(density == null)
                 return null;
 
             DensitySupportHeader decoded = density.Value;
             StringBuilder sb = new StringBuilder();
 
-            foreach (DensitySupportDescriptor descriptor in decoded.descriptors)
+            foreach(DensitySupportDescriptor descriptor in decoded.descriptors)
             {
                 sb.AppendFormat("Density \"{0}\" defined by \"{1}\".", descriptor.name, descriptor.organization).AppendLine();
                 sb.AppendFormat("\tPrimary code: {0:X2}h", descriptor.primaryCode).AppendLine();
                 if(descriptor.primaryCode != descriptor.secondaryCode)
                     sb.AppendFormat("\tSecondary code: {0:X2}h", descriptor.secondaryCode).AppendLine();
-                if (descriptor.writable)
+                if(descriptor.writable)
                     sb.AppendLine("\tDrive can write this density");
-                if (descriptor.duplicate)
+                if(descriptor.duplicate)
                     sb.AppendLine("\tThis descriptor is duplicated");
-                if (descriptor.defaultDensity)
+                if(descriptor.defaultDensity)
                     sb.AppendLine("\tThis is the default density on the drive");
                 sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape",
                     descriptor.bpmm, descriptor.tracks, (double)((double)descriptor.width / (double)10)).AppendLine();
@@ -187,28 +187,28 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static MediaTypeSupportHeader? DecodeMediumType(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length <= 60)
+            if(response.Length <= 60)
                 return null;
 
             ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
-            if (response.Length != responseLen)
+            if(response.Length != responseLen)
                 return null;
 
             List<MediaTypeSupportDescriptor> descriptors = new List<MediaTypeSupportDescriptor>();
             int offset = 4;
             byte[] tmp;
 
-            while (offset < response.Length)
+            while(offset < response.Length)
             {
                 MediaTypeSupportDescriptor descriptor = new MediaTypeSupportDescriptor();
                 descriptor.mediumType = response[offset + 0];
                 descriptor.reserved1 = response[offset + 1];
                 descriptor.len = (ushort)((response[offset + 2] << 8) + response[offset + 3]);
-                if (descriptor.len != 52)
+                if(descriptor.len != 52)
                     return null;
                 descriptor.numberOfCodes = response[offset + 4];
                 descriptor.densityCodes = new byte[9];
@@ -242,24 +242,24 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static string PrettifyMediumType(MediaTypeSupportHeader? mediumType)
         {
-            if (mediumType == null)
+            if(mediumType == null)
                 return null;
 
             MediaTypeSupportHeader decoded = mediumType.Value;
             StringBuilder sb = new StringBuilder();
 
-            foreach (MediaTypeSupportDescriptor descriptor in decoded.descriptors)
+            foreach(MediaTypeSupportDescriptor descriptor in decoded.descriptors)
             {
                 sb.AppendFormat("Medium type \"{0}\" defined by \"{1}\".", descriptor.name, descriptor.organization).AppendLine();
                 sb.AppendFormat("\tMedium type code: {0:X2}h", descriptor.mediumType).AppendLine();
-                if (descriptor.numberOfCodes > 0)
+                if(descriptor.numberOfCodes > 0)
                 {
                     sb.AppendFormat("\tMedium supports following density codes:");
-                    for (int i = 0; i < descriptor.numberOfCodes; i++)
+                    for(int i = 0; i < descriptor.numberOfCodes; i++)
                         sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
                     sb.AppendLine();
                 }
-                    
+
                 sb.AppendFormat("\tMedium has a nominal length of {0} m in a {1} mm width tape",
                     descriptor.length, (double)((double)descriptor.width / (double)10)).AppendLine();
                 sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();

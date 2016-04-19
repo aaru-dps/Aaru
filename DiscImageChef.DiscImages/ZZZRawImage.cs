@@ -85,10 +85,10 @@ namespace DiscImageChef.ImagePlugins
             FileInfo fi = new FileInfo(imagePath);
 
             // Check if file is not multiple of 512
-            if ((fi.Length % 512) != 0)
+            if((fi.Length % 512) != 0)
             {
                 // Check known disk sizes with sectors smaller than 512
-                switch (fi.Length)
+                switch(fi.Length)
                 {
                     case 81664:
                     case 116480:
@@ -122,11 +122,11 @@ namespace DiscImageChef.ImagePlugins
 
             FileInfo fi = new FileInfo(imagePath);
             string extension = Path.GetExtension(imagePath).ToLower();
-            if (extension == ".iso" && (fi.Length % 2048) == 0)
+            if(extension == ".iso" && (fi.Length % 2048) == 0)
                 ImageInfo.sectorSize = 2048;
             else
             {
-                switch (fi.Length)
+                switch(fi.Length)
                 {
                     case 242944:
                     case 256256:
@@ -182,7 +182,7 @@ namespace DiscImageChef.ImagePlugins
             differentTrackZeroSize = false;
             rawImagePath = imagePath;
 
-            switch (fi.Length)
+            switch(fi.Length)
             {
                 case 242944:
                     ImageInfo.sectors = 1898;
@@ -263,7 +263,7 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.mediaType = CalculateDiskType();
 
-            switch (ImageInfo.mediaType)
+            switch(ImageInfo.mediaType)
             {
                 case MediaType.CD:
                 case MediaType.DVDPR:
@@ -309,16 +309,16 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
         {
-            if (differentTrackZeroSize)
+            if(differentTrackZeroSize)
             {
                 throw new NotImplementedException("Not yet implemented");
             }
             else
             {
-                if (sectorAddress > ImageInfo.sectors - 1)
+                if(sectorAddress > ImageInfo.sectors - 1)
                     throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
 
-                if (sectorAddress + length > ImageInfo.sectors)
+                if(sectorAddress + length > ImageInfo.sectors)
                     throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
 
                 byte[] buffer = new byte[length * ImageInfo.sectorSize];
@@ -336,8 +336,8 @@ namespace DiscImageChef.ImagePlugins
             }
         }
 
-        public override string   GetImageFormat()
-        { 
+        public override string GetImageFormat()
+        {
             return "Raw disk image (sector by sector copy)";
         }
 
@@ -351,7 +351,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageLastModificationTime;
         }
 
-        public override string   GetImageName()
+        public override string GetImageName()
         {
             return ImageInfo.imageName;
         }
@@ -376,7 +376,7 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
@@ -387,7 +387,7 @@ namespace DiscImageChef.ImagePlugins
             FailingLBAs = new List<UInt64>();
             UnknownLBAs = new List<UInt64>();
 
-            for (UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
@@ -400,7 +400,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Track> GetTracks()
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
@@ -424,9 +424,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Track> GetSessionTracks(Session session)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (session.SessionSequence != 1)
+                if(session.SessionSequence != 1)
                     throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
 
                 Track trk = new Track();
@@ -451,9 +451,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Track> GetSessionTracks(UInt16 session)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (session != 1)
+                if(session != 1)
                     throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
 
                 Track trk = new Track();
@@ -478,7 +478,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Session> GetSessions()
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 Session sess = new Session();
                 sess.EndSector = ImageInfo.sectors - 1;
@@ -496,9 +496,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (track != 1)
+                if(track != 1)
                     throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
 
                 return ReadSector(sectorAddress);
@@ -509,9 +509,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (track != 1)
+                if(track != 1)
                     throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
 
                 return ReadSectors(sectorAddress, length);
@@ -522,9 +522,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (track != 1)
+                if(track != 1)
                     throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
 
                 return ReadSector(sectorAddress);
@@ -535,9 +535,9 @@ namespace DiscImageChef.ImagePlugins
 
         public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
         {
-            if (ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if (track != 1)
+                if(track != 1)
                     throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
 
                 return ReadSectors(sectorAddress, length);
@@ -550,27 +550,27 @@ namespace DiscImageChef.ImagePlugins
 
         MediaType CalculateDiskType()
         {
-            if (ImageInfo.sectorSize == 2048)
+            if(ImageInfo.sectorSize == 2048)
             {
-                if (ImageInfo.sectors <= 360000)
+                if(ImageInfo.sectors <= 360000)
                     return MediaType.CD;
-                if (ImageInfo.sectors <= 2295104)
+                if(ImageInfo.sectors <= 2295104)
                     return MediaType.DVDPR;
-                if (ImageInfo.sectors <= 2298496)
+                if(ImageInfo.sectors <= 2298496)
                     return MediaType.DVDR;
-                if (ImageInfo.sectors <= 4171712)
+                if(ImageInfo.sectors <= 4171712)
                     return MediaType.DVDRDL;
-                if (ImageInfo.sectors <= 4173824)
+                if(ImageInfo.sectors <= 4173824)
                     return MediaType.DVDPRDL;
-                if (ImageInfo.sectors <= 24438784)
+                if(ImageInfo.sectors <= 24438784)
                     return MediaType.BDR;
-                if (ImageInfo.sectors <= 62500864)
+                if(ImageInfo.sectors <= 62500864)
                     return MediaType.BDRXL;
                 return MediaType.Unknown;
             }
             else
             {
-                switch (ImageInfo.imageSize)
+                switch(ImageInfo.imageSize)
                 {
                     case 80384:
                         return MediaType.ECMA_66;
@@ -708,17 +708,17 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override string   GetImageVersion()
+        public override string GetImageVersion()
         {
             return ImageInfo.imageVersion;
         }
 
-        public override string   GetImageApplication()
+        public override string GetImageApplication()
         {
             return ImageInfo.imageApplication;
         }
 
-        public override string   GetImageApplicationVersion()
+        public override string GetImageApplicationVersion()
         {
             return ImageInfo.imageApplicationVersion;
         }
@@ -733,42 +733,42 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageCreator;
         }
 
-        public override string   GetImageComments()
+        public override string GetImageComments()
         {
             return ImageInfo.imageComments;
         }
 
-        public override string   GetMediaManufacturer()
+        public override string GetMediaManufacturer()
         {
             return ImageInfo.mediaManufacturer;
         }
 
-        public override string   GetMediaModel()
+        public override string GetMediaModel()
         {
             return ImageInfo.mediaModel;
         }
 
-        public override string   GetMediaSerialNumber()
+        public override string GetMediaSerialNumber()
         {
             return ImageInfo.mediaSerialNumber;
         }
 
-        public override string   GetMediaBarcode()
+        public override string GetMediaBarcode()
         {
             return ImageInfo.mediaBarcode;
         }
 
-        public override string   GetMediaPartNumber()
+        public override string GetMediaPartNumber()
         {
             return ImageInfo.mediaPartNumber;
         }
 
-        public override int      GetMediaSequence()
+        public override int GetMediaSequence()
         {
             return ImageInfo.mediaSequence;
         }
 
-        public override int      GetLastDiskSequence()
+        public override int GetLastDiskSequence()
         {
             return ImageInfo.lastMediaSequence;
         }

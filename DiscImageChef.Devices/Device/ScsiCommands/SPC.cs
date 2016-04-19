@@ -96,7 +96,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             byte pagesLength = (byte)(buffer[4] + 5);
@@ -171,11 +171,11 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             // This is because INQ was returned instead of EVPD
-            if (buffer[1] != page)
+            if(buffer[1] != page)
                 return true;
 
             byte pagesLength = (byte)(buffer[3] + 4);
@@ -263,7 +263,7 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense;
-            if (DBD)
+            if(DBD)
                 cdb[1] = 0x08;
             cdb[2] |= (byte)pageControl;
             cdb[2] |= (byte)(pageCode & 0x3F);
@@ -274,7 +274,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             byte modeLength = (byte)(buffer[0] + 1);
@@ -344,9 +344,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense10;
-            if (LLBAA)
+            if(LLBAA)
                 cdb[1] |= 0x10;
-            if (DBD)
+            if(DBD)
                 cdb[1] |= 0x08;
             cdb[2] |= (byte)pageControl;
             cdb[2] |= (byte)(pageCode & 0x3F);
@@ -358,7 +358,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
@@ -409,7 +409,7 @@ namespace DiscImageChef.Devices
         /// <param name="prevent"><c>true</c> to prevent medium removal, <c>false</c> to allow it.</param>
         public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration)
         {
-            if (prevent)
+            if(prevent)
                 return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
             else
                 return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
@@ -474,10 +474,10 @@ namespace DiscImageChef.Devices
 
             cdb[0] = (byte)ScsiCommands.ReadCapacity;
 
-            if (PMI)
+            if(PMI)
             {
                 cdb[8] = 0x01;
-                if (RelAddr)
+                if(RelAddr)
                     cdb[1] = 0x01;
 
                 cdb[2] = (byte)((address & 0xFF000000) >> 24);
@@ -527,7 +527,7 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.ServiceActionIn;
             cdb[1] = (byte)ScsiServiceActions.ReadCapacity16;
 
-            if (PMI)
+            if(PMI)
             {
                 cdb[14] = 0x01;
                 byte[] temp = BitConverter.GetBytes(address);
@@ -579,7 +579,7 @@ namespace DiscImageChef.Devices
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
 
-            if (sense)
+            if(sense)
                 return true;
 
             uint strctLength = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);
@@ -704,9 +704,9 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
 
             // Prevent overflows
-            if (buffer.Length > 255)
+            if(buffer.Length > 255)
             {
-                if (platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
+                if(platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
                     lastError = 75;
                 else
                     lastError = 111;
@@ -719,9 +719,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSelect;
-            if (pageFormat)
+            if(pageFormat)
                 cdb[1] += 0x10;
-            if (savePages)
+            if(savePages)
                 cdb[1] += 0x01;
             cdb[4] = (byte)buffer.Length;
 
@@ -746,9 +746,9 @@ namespace DiscImageChef.Devices
             senseBuffer = new byte[32];
 
             // Prevent overflows
-            if (buffer.Length > 65535)
+            if(buffer.Length > 65535)
             {
-                if (platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
+                if(platformID != Interop.PlatformID.Win32NT && platformID != Interop.PlatformID.Win32S && platformID != Interop.PlatformID.Win32Windows && platformID != Interop.PlatformID.WinCE && platformID != Interop.PlatformID.WindowsPhone && platformID != Interop.PlatformID.Xbox)
                     lastError = 75;
                 else
                     lastError = 111;
@@ -761,9 +761,9 @@ namespace DiscImageChef.Devices
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSelect10;
-            if (pageFormat)
+            if(pageFormat)
                 cdb[1] += 0x10;
-            if (savePages)
+            if(savePages)
                 cdb[1] += 0x01;
             cdb[7] = (byte)((buffer.Length & 0xFF00) << 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);

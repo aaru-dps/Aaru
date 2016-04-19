@@ -264,7 +264,7 @@ namespace DiscImageChef.Plugins
                 for(int i = 0; i < fields.fourthPartitions.Length; i++)
                     sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}", PartitionTypeToString(fields.fourthPartitions[i].type), fields.fourthPartitions[i].offset / 2048).AppendLine();
 
-//                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();
+                //                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();
                 if((fields.japanAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Japan age rating is {0}", fields.japanAge).AppendLine();
                 if((fields.usaAge & 0x80) != 0x80)

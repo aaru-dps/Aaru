@@ -52,13 +52,13 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Compare command", "--input1={0}", options.InputFile1);
             DicConsole.DebugWriteLine("Compare command", "--input2={0}", options.InputFile2);
 
-            if (!System.IO.File.Exists(options.InputFile1))
+            if(!System.IO.File.Exists(options.InputFile1))
             {
                 DicConsole.ErrorWriteLine("Input file 1 does not exist.");
                 return;
             }
 
-            if (!System.IO.File.Exists(options.InputFile2))
+            if(!System.IO.File.Exists(options.InputFile2))
             {
                 DicConsole.ErrorWriteLine("Input file 2 does not exist.");
                 return;
@@ -103,7 +103,7 @@ namespace DiscImageChef.Commands
 
             StringBuilder sb = new StringBuilder();
 
-            if (options.Verbose)
+            if(options.Verbose)
             {
                 sb.AppendLine("\tDisc image 1\tDisc image 2");
                 sb.AppendLine("================================");
@@ -126,8 +126,8 @@ namespace DiscImageChef.Commands
             Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 
             image1Info.imageHasPartitions = input1Format.ImageHasPartitions();
-            try{ image1Sessions = input1Format.GetSessions(); } catch{}
-            if (image1Sessions.Count > 0)
+            try { image1Sessions = input1Format.GetSessions(); } catch { }
+            if(image1Sessions.Count > 0)
                 image1Info.imageHasSessions = true;
             image1Info.imageSize = input1Format.GetImageSize();
             image1Info.sectors = input1Format.GetSectors();
@@ -135,35 +135,37 @@ namespace DiscImageChef.Commands
             image1Info.imageCreationTime = input1Format.GetImageCreationTime();
             image1Info.imageLastModificationTime = input1Format.GetImageLastModificationTime();
             image1Info.mediaType = input1Format.GetMediaType();
-            try{ image1Info.imageVersion = input1Format.GetImageVersion(); } catch{ image1Info.imageVersion = null;}
-            try{ image1Info.imageApplication = input1Format.GetImageApplication(); } catch{ image1Info.imageApplication = null;}
-            try{ image1Info.imageApplicationVersion = input1Format.GetImageApplicationVersion(); } catch{ image1Info.imageApplicationVersion = null;}
-            try{ image1Info.imageCreator = input1Format.GetImageCreator(); } catch{ image1Info.imageCreator = null;}
-            try{ image1Info.imageName = input1Format.GetImageName(); } catch{ image1Info.imageName = null;}
-            try{ image1Info.imageComments = input1Format.GetImageComments(); } catch{ image1Info.imageComments = null;}
-            try{ image1Info.mediaManufacturer = input1Format.GetMediaManufacturer(); } catch{ image1Info.mediaManufacturer = null;}
-            try{ image1Info.mediaModel = input1Format.GetMediaModel(); } catch{ image1Info.mediaModel = null;}
-            try{ image1Info.mediaSerialNumber = input1Format.GetMediaSerialNumber(); } catch{ image1Info.mediaSerialNumber = null;}
-            try{ image1Info.mediaBarcode = input1Format.GetMediaBarcode(); } catch{ image1Info.mediaBarcode = null;}
-            try{ image1Info.mediaPartNumber = input1Format.GetMediaPartNumber(); } catch{ image1Info.mediaPartNumber = null;}
-            try{ image1Info.mediaSequence = input1Format.GetMediaSequence(); } catch{ image1Info.mediaSequence = 0;}
-            try{ image1Info.lastMediaSequence = input1Format.GetLastDiskSequence(); } catch{ image1Info.lastMediaSequence = 0;}
-            try{ image1Info.driveManufacturer = input1Format.GetDriveManufacturer(); } catch{ image1Info.driveManufacturer = null;}
-            try{ image1Info.driveModel = input1Format.GetDriveModel(); } catch{ image1Info.driveModel = null;}
-            try{ image1Info.driveSerialNumber = input1Format.GetDriveSerialNumber(); } catch{ image1Info.driveSerialNumber = null;}
-            foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
+            try { image1Info.imageVersion = input1Format.GetImageVersion(); } catch { image1Info.imageVersion = null; }
+            try { image1Info.imageApplication = input1Format.GetImageApplication(); } catch { image1Info.imageApplication = null; }
+            try { image1Info.imageApplicationVersion = input1Format.GetImageApplicationVersion(); } catch { image1Info.imageApplicationVersion = null; }
+            try { image1Info.imageCreator = input1Format.GetImageCreator(); } catch { image1Info.imageCreator = null; }
+            try { image1Info.imageName = input1Format.GetImageName(); } catch { image1Info.imageName = null; }
+            try { image1Info.imageComments = input1Format.GetImageComments(); } catch { image1Info.imageComments = null; }
+            try { image1Info.mediaManufacturer = input1Format.GetMediaManufacturer(); } catch { image1Info.mediaManufacturer = null; }
+            try { image1Info.mediaModel = input1Format.GetMediaModel(); } catch { image1Info.mediaModel = null; }
+            try { image1Info.mediaSerialNumber = input1Format.GetMediaSerialNumber(); } catch { image1Info.mediaSerialNumber = null; }
+            try { image1Info.mediaBarcode = input1Format.GetMediaBarcode(); } catch { image1Info.mediaBarcode = null; }
+            try { image1Info.mediaPartNumber = input1Format.GetMediaPartNumber(); } catch { image1Info.mediaPartNumber = null; }
+            try { image1Info.mediaSequence = input1Format.GetMediaSequence(); } catch { image1Info.mediaSequence = 0; }
+            try { image1Info.lastMediaSequence = input1Format.GetLastDiskSequence(); } catch { image1Info.lastMediaSequence = 0; }
+            try { image1Info.driveManufacturer = input1Format.GetDriveManufacturer(); } catch { image1Info.driveManufacturer = null; }
+            try { image1Info.driveModel = input1Format.GetDriveModel(); } catch { image1Info.driveModel = null; }
+            try { image1Info.driveSerialNumber = input1Format.GetDriveSerialNumber(); } catch { image1Info.driveSerialNumber = null; }
+            foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
-                try{
+                try
+                {
                     byte[] temparray = input1Format.ReadDiskTag(disktag);
                     image1DiskTags.Add(disktag, temparray);
                 }
-                catch{
+                catch
+                {
                 }
             }
 
             image2Info.imageHasPartitions = input2Format.ImageHasPartitions();
-            try{ image2Sessions = input2Format.GetSessions(); } catch{}
-            if (image2Sessions.Count > 0)
+            try { image2Sessions = input2Format.GetSessions(); } catch { }
+            if(image2Sessions.Count > 0)
                 image2Info.imageHasSessions = true;
             image2Info.imageSize = input2Format.GetImageSize();
             image2Info.sectors = input2Format.GetSectors();
@@ -171,33 +173,35 @@ namespace DiscImageChef.Commands
             image2Info.imageCreationTime = input2Format.GetImageCreationTime();
             image2Info.imageLastModificationTime = input2Format.GetImageLastModificationTime();
             image2Info.mediaType = input2Format.GetMediaType();
-            try{ image2Info.imageVersion = input2Format.GetImageVersion(); } catch{ image2Info.imageVersion = null;}
-            try{ image2Info.imageApplication = input2Format.GetImageApplication(); } catch{ image2Info.imageApplication = null;}
-            try{ image2Info.imageApplicationVersion = input2Format.GetImageApplicationVersion(); } catch{ image2Info.imageApplicationVersion = null;}
-            try{ image2Info.imageCreator = input2Format.GetImageCreator(); } catch{ image2Info.imageCreator = null;}
-            try{ image2Info.imageName = input2Format.GetImageName(); } catch{ image2Info.imageName = null;}
-            try{ image2Info.imageComments = input2Format.GetImageComments(); } catch{ image2Info.imageComments = null;}
-            try{ image2Info.mediaManufacturer = input2Format.GetMediaManufacturer(); } catch{ image2Info.mediaManufacturer = null;}
-            try{ image2Info.mediaModel = input2Format.GetMediaModel(); } catch{ image2Info.mediaModel = null;}
-            try{ image2Info.mediaSerialNumber = input2Format.GetMediaSerialNumber(); } catch{ image2Info.mediaSerialNumber = null;}
-            try{ image2Info.mediaBarcode = input2Format.GetMediaBarcode(); } catch{ image2Info.mediaBarcode = null;}
-            try{ image2Info.mediaPartNumber = input2Format.GetMediaPartNumber(); } catch{ image2Info.mediaPartNumber = null;}
-            try{ image2Info.mediaSequence = input2Format.GetMediaSequence(); } catch{ image2Info.mediaSequence = 0;}
-            try{ image2Info.lastMediaSequence = input2Format.GetLastDiskSequence(); } catch{ image2Info.lastMediaSequence = 0;}
-            try{ image2Info.driveManufacturer = input2Format.GetDriveManufacturer(); } catch{ image2Info.driveManufacturer = null;}
-            try{ image2Info.driveModel = input2Format.GetDriveModel(); } catch{ image2Info.driveModel = null;}
-            try{ image2Info.driveSerialNumber = input2Format.GetDriveSerialNumber(); } catch{ image2Info.driveSerialNumber = null;}
-            foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
+            try { image2Info.imageVersion = input2Format.GetImageVersion(); } catch { image2Info.imageVersion = null; }
+            try { image2Info.imageApplication = input2Format.GetImageApplication(); } catch { image2Info.imageApplication = null; }
+            try { image2Info.imageApplicationVersion = input2Format.GetImageApplicationVersion(); } catch { image2Info.imageApplicationVersion = null; }
+            try { image2Info.imageCreator = input2Format.GetImageCreator(); } catch { image2Info.imageCreator = null; }
+            try { image2Info.imageName = input2Format.GetImageName(); } catch { image2Info.imageName = null; }
+            try { image2Info.imageComments = input2Format.GetImageComments(); } catch { image2Info.imageComments = null; }
+            try { image2Info.mediaManufacturer = input2Format.GetMediaManufacturer(); } catch { image2Info.mediaManufacturer = null; }
+            try { image2Info.mediaModel = input2Format.GetMediaModel(); } catch { image2Info.mediaModel = null; }
+            try { image2Info.mediaSerialNumber = input2Format.GetMediaSerialNumber(); } catch { image2Info.mediaSerialNumber = null; }
+            try { image2Info.mediaBarcode = input2Format.GetMediaBarcode(); } catch { image2Info.mediaBarcode = null; }
+            try { image2Info.mediaPartNumber = input2Format.GetMediaPartNumber(); } catch { image2Info.mediaPartNumber = null; }
+            try { image2Info.mediaSequence = input2Format.GetMediaSequence(); } catch { image2Info.mediaSequence = 0; }
+            try { image2Info.lastMediaSequence = input2Format.GetLastDiskSequence(); } catch { image2Info.lastMediaSequence = 0; }
+            try { image2Info.driveManufacturer = input2Format.GetDriveManufacturer(); } catch { image2Info.driveManufacturer = null; }
+            try { image2Info.driveModel = input2Format.GetDriveModel(); } catch { image2Info.driveModel = null; }
+            try { image2Info.driveSerialNumber = input2Format.GetDriveSerialNumber(); } catch { image2Info.driveSerialNumber = null; }
+            foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
-                try{
+                try
+                {
                     byte[] temparray = input2Format.ReadDiskTag(disktag);
                     image2DiskTags.Add(disktag, temparray);
                 }
-                catch{
+                catch
+                {
                 }
             }
 
-            if (options.Verbose)
+            if(options.Verbose)
             {
                 sb.AppendFormat("Has partitions?\t{0}\t{1}", image1Info.imageHasPartitions, image2Info.imageHasPartitions).AppendLine();
                 sb.AppendFormat("Has sessions?\t{0}\t{1}", image1Info.imageHasSessions, image2Info.imageHasSessions).AppendLine();
@@ -223,7 +227,7 @@ namespace DiscImageChef.Commands
                 sb.AppendFormat("Drive manufacturer\t{0}\t{1}", image1Info.driveManufacturer, image2Info.driveManufacturer).AppendLine();
                 sb.AppendFormat("Drive model\t{0}\t{1}", image1Info.driveModel, image2Info.driveModel).AppendLine();
                 sb.AppendFormat("Drive serial number\t{0}\t{1}", image1Info.driveSerialNumber, image2Info.driveSerialNumber).AppendLine();
-                foreach (MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
+                foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
                 {
                     sb.AppendFormat("Has {0}?\t{1}\t{2}", disktag, image1DiskTags.ContainsKey(disktag), image2DiskTags.ContainsKey(disktag)).AppendLine();
                 }
@@ -231,164 +235,164 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Comparing disk image characteristics");
 
-            if (image1Info.imageHasPartitions != image2Info.imageHasPartitions)
+            if(image1Info.imageHasPartitions != image2Info.imageHasPartitions)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image partitioned status differ");
             }
-            if (image1Info.imageHasSessions != image2Info.imageHasSessions)
+            if(image1Info.imageHasSessions != image2Info.imageHasSessions)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image session status differ");
             }
-            if (image1Info.imageSize != image2Info.imageSize)
+            if(image1Info.imageSize != image2Info.imageSize)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image size differ");
             }
-            if (image1Info.sectors != image2Info.sectors)
+            if(image1Info.sectors != image2Info.sectors)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image sectors differ");
             }
-            if (image1Info.sectorSize != image2Info.sectorSize)
+            if(image1Info.sectorSize != image2Info.sectorSize)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image sector size differ");
             }
-            if (image1Info.imageCreationTime != image2Info.imageCreationTime)
+            if(image1Info.imageCreationTime != image2Info.imageCreationTime)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image creation time differ");
             }
-            if (image1Info.imageLastModificationTime != image2Info.imageLastModificationTime)
+            if(image1Info.imageLastModificationTime != image2Info.imageLastModificationTime)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image last modification time differ");
             }
-            if (image1Info.mediaType != image2Info.mediaType)
+            if(image1Info.mediaType != image2Info.mediaType)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk type differ");
             }
-            if (image1Info.imageVersion != image2Info.imageVersion)
+            if(image1Info.imageVersion != image2Info.imageVersion)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image version differ");
             }
-            if (image1Info.imageApplication != image2Info.imageApplication)
+            if(image1Info.imageApplication != image2Info.imageApplication)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image application differ");
             }
-            if (image1Info.imageApplicationVersion != image2Info.imageApplicationVersion)
+            if(image1Info.imageApplicationVersion != image2Info.imageApplicationVersion)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image application version differ");
             }
-            if (image1Info.imageCreator != image2Info.imageCreator)
+            if(image1Info.imageCreator != image2Info.imageCreator)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image creator differ");
             }
-            if (image1Info.imageName != image2Info.imageName)
+            if(image1Info.imageName != image2Info.imageName)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image name differ");
             }
-            if (image1Info.imageComments != image2Info.imageComments)
+            if(image1Info.imageComments != image2Info.imageComments)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image comments differ");
             }
-            if (image1Info.mediaManufacturer != image2Info.mediaManufacturer)
+            if(image1Info.mediaManufacturer != image2Info.mediaManufacturer)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk manufacturer differ");
             }
-            if (image1Info.mediaModel != image2Info.mediaModel)
+            if(image1Info.mediaModel != image2Info.mediaModel)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk model differ");
             }
-            if (image1Info.mediaSerialNumber != image2Info.mediaSerialNumber)
+            if(image1Info.mediaSerialNumber != image2Info.mediaSerialNumber)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk serial number differ");
             }
-            if (image1Info.mediaBarcode != image2Info.mediaBarcode)
+            if(image1Info.mediaBarcode != image2Info.mediaBarcode)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk barcode differ");
             }
-            if (image1Info.mediaPartNumber != image2Info.mediaPartNumber)
+            if(image1Info.mediaPartNumber != image2Info.mediaPartNumber)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk part number differ");
             }
-            if (image1Info.mediaSequence != image2Info.mediaSequence)
+            if(image1Info.mediaSequence != image2Info.mediaSequence)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Disk sequence differ");
             }
-            if (image1Info.lastMediaSequence != image2Info.lastMediaSequence)
+            if(image1Info.lastMediaSequence != image2Info.lastMediaSequence)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Last disk in sequence differ");
             }
-            if (image1Info.driveManufacturer != image2Info.driveManufacturer)
+            if(image1Info.driveManufacturer != image2Info.driveManufacturer)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Drive manufacturer differ");
             }
-            if (image1Info.driveModel != image2Info.driveModel)
+            if(image1Info.driveModel != image2Info.driveModel)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Drive model differ");
             }
-            if (image1Info.driveSerialNumber != image2Info.driveSerialNumber)
+            if(image1Info.driveSerialNumber != image2Info.driveSerialNumber)
             {
                 imagesDiffer = true;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Drive serial number differ");
             }
 
             UInt64 leastSectors;
-            if (image1Info.sectors < image2Info.sectors)
+            if(image1Info.sectors < image2Info.sectors)
             {
                 imagesDiffer = true;
                 leastSectors = image1Info.sectors;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image 2 has more sectors");
             }
-            else if (image1Info.sectors > image2Info.sectors)
+            else if(image1Info.sectors > image2Info.sectors)
             {
                 imagesDiffer = true;
                 leastSectors = image2Info.sectors;
-                if (!options.Verbose)
+                if(!options.Verbose)
                     sb.AppendLine("Image 1 has more sectors");
             }
             else
@@ -396,9 +400,9 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Comparing sectors...");
 
-            for (UInt64 sector = 0; sector < leastSectors; sector++)
+            for(UInt64 sector = 0; sector < leastSectors; sector++)
             {
-                DicConsole.Write("\rComparing sector {0} of {1}...", sector+1, leastSectors);
+                DicConsole.Write("\rComparing sector {0} of {1}...", sector + 1, leastSectors);
                 try
                 {
                     byte[] image1Sector = input1Format.ReadSector(sector);
@@ -417,11 +421,11 @@ namespace DiscImageChef.Commands
                             sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();
                     }
                 }
-                catch{}
+                catch { }
             }
             DicConsole.WriteLine();
 
-            if (imagesDiffer)
+            if(imagesDiffer)
                 sb.AppendLine("Images differ");
             else
                 sb.AppendLine("Images do not differ");
@@ -437,12 +441,12 @@ namespace DiscImageChef.Commands
             sameSize = true;
 
             Int64 leastBytes;
-            if (compareArray1.LongLength < compareArray2.LongLength)
+            if(compareArray1.LongLength < compareArray2.LongLength)
             {
                 sameSize = false;
                 leastBytes = compareArray1.LongLength;
             }
-            else if (compareArray1.LongLength > compareArray2.LongLength)
+            else if(compareArray1.LongLength > compareArray2.LongLength)
             {
                 sameSize = false;
                 leastBytes = compareArray2.LongLength;
@@ -450,9 +454,9 @@ namespace DiscImageChef.Commands
             else
                 leastBytes = compareArray1.LongLength;
 
-            for (Int64 i = 0; i < leastBytes; i++)
+            for(Int64 i = 0; i < leastBytes; i++)
             {
-                if (compareArray1[i] != compareArray2[i])
+                if(compareArray1[i] != compareArray2[i])
                 {
                     different = true;
                     return;

@@ -85,12 +85,12 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if (partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= imagePlugin.GetSectors())
                 return false;
 
             ulong sbSector;
 
-            if (imagePlugin.GetSectorSize() > ADFS_SB_POS)
+            if(imagePlugin.GetSectorSize() > ADFS_SB_POS)
                 sbSector = 0;
             else
                 sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
@@ -109,24 +109,24 @@ namespace DiscImageChef.Plugins
                 return false;
             }
 
-            if (drSb.log2secsize < 8 || drSb.log2secsize > 10)
+            if(drSb.log2secsize < 8 || drSb.log2secsize > 10)
                 return false;
 
-            if (drSb.idlen < (drSb.log2secsize + 3) || drSb.idlen > 19)
+            if(drSb.idlen < (drSb.log2secsize + 3) || drSb.idlen > 19)
                 return false;
 
-            if ((drSb.disc_size_high >> drSb.log2secsize) != 0)
+            if((drSb.disc_size_high >> drSb.log2secsize) != 0)
                 return false;
 
-            if (!ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved))
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved))
                 return false;
 
             ulong bytes = drSb.disc_size_high;
             bytes *= 0x100000000;
             bytes += drSb.disc_size;
 
-            if (bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
-               return false;
+            if(bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
+                return false;
 
             return true;
         }
@@ -138,7 +138,7 @@ namespace DiscImageChef.Plugins
 
             ulong sbSector;
 
-            if (imagePlugin.GetSectorSize() > ADFS_SB_POS)
+            if(imagePlugin.GetSectorSize() > ADFS_SB_POS)
                 sbSector = 0;
             else
                 sbSector = ADFS_SB_POS / imagePlugin.GetSectorSize();
@@ -171,16 +171,16 @@ namespace DiscImageChef.Plugins
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.format_version = {0}", drSb.format_version);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.root_size = {0}", drSb.root_size);
 
-            if (drSb.log2secsize < 8 || drSb.log2secsize > 10)
+            if(drSb.log2secsize < 8 || drSb.log2secsize > 10)
                 return;
 
-            if (drSb.idlen < (drSb.log2secsize + 3) || drSb.idlen > 19)
+            if(drSb.idlen < (drSb.log2secsize + 3) || drSb.idlen > 19)
                 return;
 
-            if ((drSb.disc_size_high >> drSb.log2secsize) != 0)
+            if((drSb.disc_size_high >> drSb.log2secsize) != 0)
                 return;
 
-            if (!ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved))
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved))
                 return;
 
             ulong bytes = drSb.disc_size_high;
@@ -191,7 +191,7 @@ namespace DiscImageChef.Plugins
             zones *= 0x100000000;
             zones += drSb.nzones;
 
-            if (bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
+            if(bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
                 return;
 
             string discname = StringHandlers.CToString(drSb.disc_name);

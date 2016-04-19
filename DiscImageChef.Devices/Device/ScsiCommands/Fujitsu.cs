@@ -64,21 +64,21 @@ namespace DiscImageChef.Devices
                 Array.Copy(tmp, 0, secondHalfBytes, 0, 8);
             }
 
-            if (mode != FujitsuDisplayModes.Half)
+            if(mode != FujitsuDisplayModes.Half)
             {
-                if (!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
+                if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                     !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = true;
                     halfMsg = false;
                 }
-                else if (ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
+                else if(ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                     !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = false;
                     halfMsg = false;
                 }
-                else if (!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
+                else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                     ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 {
                     displayLen = false;
@@ -92,11 +92,11 @@ namespace DiscImageChef.Devices
             }
 
             buffer[0] = (byte)((byte)mode << 5);
-            if (displayLen)
+            if(displayLen)
                 buffer[0] += 0x10;
-            if (flash)
+            if(flash)
                 buffer[0] += 0x08;
-            if (halfMsg)
+            if(halfMsg)
                 buffer[0] += 0x04;
             buffer[0] += 0x01; // Always ASCII
 

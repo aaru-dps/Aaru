@@ -60,10 +60,10 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static BlockLimitsData? Decode(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length != 6)
+            if(response.Length != 6)
                 return null;
 
             BlockLimitsData dec = new BlockLimitsData();
@@ -77,22 +77,22 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static string Prettify(BlockLimitsData? decoded)
         {
-            if (decoded == null)
+            if(decoded == null)
                 return null;
 
             StringBuilder sb = new StringBuilder();
 
-            if (decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
+            if(decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
                 sb.AppendFormat("Device's block size is fixed at {0} bytes", decoded.Value.minBlockLen).AppendLine();
             else
             {
-                if (decoded.Value.maxBlockLen > 0)
+                if(decoded.Value.maxBlockLen > 0)
                     sb.AppendFormat("Device's maximum block size is {0} bytes", decoded.Value.maxBlockLen).AppendLine();
                 else
                     sb.AppendLine("Device does not specify a maximum block size");
                 sb.AppendFormat("Device's minimum block size is {0} bytes", decoded.Value.minBlockLen).AppendLine();
 
-                if (decoded.Value.granularity > 0)
+                if(decoded.Value.granularity > 0)
                     sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes", decoded.Value.granularity, Math.Pow(2, (double)decoded.Value.granularity)).AppendLine();
             }
 

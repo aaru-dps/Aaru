@@ -186,7 +186,7 @@ namespace DiscImageChef.Plugins
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if (partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= imagePlugin.GetSectors())
                 return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -195,7 +195,7 @@ namespace DiscImageChef.Plugins
 
             UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
-            if ((magic & 0x6D754600) != 0x6D754600 &&
+            if((magic & 0x6D754600) != 0x6D754600 &&
                 (magic & 0x444F5300) != 0x444F5300)
                 return false;
 
@@ -206,7 +206,7 @@ namespace DiscImageChef.Plugins
 
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
 
-            if (root_ptr >= imagePlugin.GetSectors())
+            if(root_ptr >= imagePlugin.GetSectors())
                 return false;
 
             sector = imagePlugin.ReadSector(root_ptr);
@@ -214,7 +214,7 @@ namespace DiscImageChef.Plugins
             UInt32 type = BigEndianBitConverter.ToUInt32(sector, 0x00);
             UInt32 hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
-            if ((0x18 + hashTableSize * 4 + 196) > sector.Length)
+            if((0x18 + hashTableSize * 4 + 196) > sector.Length)
                 return false;
 
             UInt32 sec_type = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + hashTableSize * 4 + 196));
@@ -257,13 +257,13 @@ namespace DiscImageChef.Plugins
             rootBlk.checksum = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x14);
             rootBlk.hashTable = new uint[rootBlk.hashTableSize];
 
-            for (int i = 0; i < rootBlk.hashTableSize; i++)
+            for(int i = 0; i < rootBlk.hashTableSize; i++)
                 rootBlk.hashTable[i] = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x18 + i * 4);
 
             rootBlk.bitmapFlag = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 0));
             rootBlk.bitmapPages = new uint[25];
 
-            for (int i = 0; i < 25; i++)
+            for(int i = 0; i < 25; i++)
                 rootBlk.bitmapPages[i] = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 4 + i * 4));
 
             rootBlk.bitmapExtensionBlock = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 104));
@@ -290,7 +290,7 @@ namespace DiscImageChef.Plugins
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Stored root block checksum is 0x{0:X8}", rootBlk.checksum);
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Probably incorrect calculated root block checksum is 0x{0:X8}", AmigaChecksum(RootBlockSector));
 
-            switch (bootBlk.diskType & 0xFF)
+            switch(bootBlk.diskType & 0xFF)
             {
                 case 0:
                     sbInformation.Append("Amiga Original File System");
@@ -326,12 +326,12 @@ namespace DiscImageChef.Plugins
                     break;
             }
 
-            if ((bootBlk.diskType & 0x6D754600) == 0x6D754600)
+            if((bootBlk.diskType & 0x6D754600) == 0x6D754600)
                 sbInformation.Append(", with multi-user patches");
 
             sbInformation.AppendLine();
 
-            if ((bootBlk.diskType & 0xFF) == 6 || (bootBlk.diskType & 0xFF) == 7)
+            if((bootBlk.diskType & 0xFF) == 6 || (bootBlk.diskType & 0xFF) == 7)
             {
                 sbInformation.AppendLine("AFFS v2, following information may be completely incorrect or garbage.");
                 xmlFSType.Type = "Amiga FFS2";
@@ -339,13 +339,13 @@ namespace DiscImageChef.Plugins
 
             sbInformation.AppendFormat("Volume name: {0}", rootBlk.diskName).AppendLine();
 
-            if (rootBlk.bitmapFlag == 0xFFFFFFFF)
+            if(rootBlk.bitmapFlag == 0xFFFFFFFF)
                 sbInformation.AppendLine("Volume bitmap is valid");
 
-            if (rootBlk.bitmapExtensionBlock != 0x00000000 && rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
+            if(rootBlk.bitmapExtensionBlock != 0x00000000 && rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
                 sbInformation.AppendFormat("Bitmap extension at block {0}", rootBlk.bitmapExtensionBlock).AppendLine();
 
-            if ((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
+            if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
             sbInformation.AppendFormat("Volume created on {0}", DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks)).AppendLine();
@@ -368,7 +368,7 @@ namespace DiscImageChef.Plugins
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             UInt32 sum = 0;
 
-            for (int i = 0; i < data.Length; i += 4)
+            for(int i = 0; i < data.Length; i += 4)
                 sum += BigEndianBitConverter.ToUInt32(data, i);
 
             return sum;

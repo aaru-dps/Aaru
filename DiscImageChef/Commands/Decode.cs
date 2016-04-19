@@ -53,7 +53,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Decode command", "--disk-tags={0}", options.DiskTags);
             DicConsole.DebugWriteLine("Decode command", "--sector-tags={0}", options.SectorTags);
 
-            if (!System.IO.File.Exists(options.InputFile))
+            if(!System.IO.File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -61,7 +61,7 @@ namespace DiscImageChef.Commands
 
             ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
 
-            if (inputFormat == null)
+            if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not decoding");
                 return;
@@ -71,20 +71,20 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
             Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
 
-            if (options.DiskTags)
+            if(options.DiskTags)
             {
-                if (inputFormat.ImageInfo.readableMediaTags.Count == 0)
+                if(inputFormat.ImageInfo.readableMediaTags.Count == 0)
                     DicConsole.WriteLine("There are no disk tags in chosen disc image.");
                 else
                 {
-                    foreach (MediaTagType tag in inputFormat.ImageInfo.readableMediaTags)
+                    foreach(MediaTagType tag in inputFormat.ImageInfo.readableMediaTags)
                     {
-                        switch (tag)
+                        switch(tag)
                         {
                             case MediaTagType.SCSI_INQUIRY:
                                 {
                                     byte[] inquiry = inputFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
-                                    if (inquiry == null)
+                                    if(inquiry == null)
                                         DicConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
                                     else
                                     {
@@ -98,7 +98,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.ATA_IDENTIFY:
                                 {
                                     byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
-                                    if (identify == null)
+                                    if(identify == null)
                                         DicConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
                                     else
                                     {
@@ -112,7 +112,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.ATAPI_IDENTIFY:
                                 {
                                     byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
-                                    if (identify == null)
+                                    if(identify == null)
                                         DicConsole.WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
                                     else
                                     {
@@ -126,7 +126,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_ATIP:
                                 {
                                     byte[] atip = inputFormat.ReadDiskTag(MediaTagType.CD_ATIP);
-                                    if (atip == null)
+                                    if(atip == null)
                                         DicConsole.WriteLine("Error reading CD ATIP from disc image");
                                     else
                                     {
@@ -140,7 +140,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_FullTOC:
                                 {
                                     byte[] fulltoc = inputFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
-                                    if (fulltoc == null)
+                                    if(fulltoc == null)
                                         DicConsole.WriteLine("Error reading CD full TOC from disc image");
                                     else
                                     {
@@ -154,7 +154,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_PMA:
                                 {
                                     byte[] pma = inputFormat.ReadDiskTag(MediaTagType.CD_PMA);
-                                    if (pma == null)
+                                    if(pma == null)
                                         DicConsole.WriteLine("Error reading CD PMA from disc image");
                                     else
                                     {
@@ -168,7 +168,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_SessionInfo:
                                 {
                                     byte[] sessioninfo = inputFormat.ReadDiskTag(MediaTagType.CD_SessionInfo);
-                                    if (sessioninfo == null)
+                                    if(sessioninfo == null)
                                         DicConsole.WriteLine("Error reading CD session information from disc image");
                                     else
                                     {
@@ -182,7 +182,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_TEXT:
                                 {
                                     byte[] cdtext = inputFormat.ReadDiskTag(MediaTagType.CD_TEXT);
-                                    if (cdtext == null)
+                                    if(cdtext == null)
                                         DicConsole.WriteLine("Error reading CD-TEXT from disc image");
                                     else
                                     {
@@ -196,7 +196,7 @@ namespace DiscImageChef.Commands
                             case MediaTagType.CD_TOC:
                                 {
                                     byte[] toc = inputFormat.ReadDiskTag(MediaTagType.CD_TOC);
-                                    if (toc == null)
+                                    if(toc == null)
                                         DicConsole.WriteLine("Error reading CD TOC from disc image");
                                     else
                                     {
@@ -215,15 +215,15 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if (options.SectorTags)
+            if(options.SectorTags)
             {
                 UInt64 length;
 
-                if (options.Length.ToLowerInvariant() == "all")
+                if(options.Length.ToLowerInvariant() == "all")
                     length = inputFormat.GetSectors() - 1;
                 else
                 {
-                    if (!UInt64.TryParse(options.Length, out length))
+                    if(!UInt64.TryParse(options.Length, out length))
                     {
                         DicConsole.WriteLine("Value \"{0}\" is not a valid number for length.", options.Length);
                         DicConsole.WriteLine("Not decoding sectors tags");
@@ -231,13 +231,13 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                if (inputFormat.ImageInfo.readableSectorTags.Count == 0)
+                if(inputFormat.ImageInfo.readableSectorTags.Count == 0)
                     DicConsole.WriteLine("There are no sector tags in chosen disc image.");
                 else
                 {
-                    foreach (SectorTagType tag in inputFormat.ImageInfo.readableSectorTags)
+                    foreach(SectorTagType tag in inputFormat.ImageInfo.readableSectorTags)
                     {
-                        switch (tag)
+                        switch(tag)
                         {
                             default:
                                 DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
