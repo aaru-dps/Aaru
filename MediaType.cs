@@ -790,4 +790,3 @@ namespace DiscImageChef.CommonTypes
         #endregion Generic hard disks
     };
 }
-    

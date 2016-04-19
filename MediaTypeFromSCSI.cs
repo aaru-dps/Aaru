@@ -42,28 +42,28 @@ namespace DiscImageChef.CommonTypes
     {
         public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType, byte densityCode, ulong blocks, uint blockSize)
         {
-            switch (scsiPeripheralType)
+            switch(scsiPeripheralType)
             {
                 // Direct access device
                 case 0x00:
                 // Simpilified access device
                 case 0x0E:
                     {
-                        if (mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07)
+                        if(mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07)
                         {
                             goto case 0x07;
                         }
 
-                        if (vendor.ToLowerInvariant() == "syquest")
+                        if(vendor.ToLowerInvariant() == "syquest")
                         {
-                            if (blocks == 173400 && blockSize == 256)
+                            if(blocks == 173400 && blockSize == 256)
                                 return MediaType.SQ400;
-                            if (blockSize == 512)
+                            if(blockSize == 512)
                             {
-                                if (model.ToLowerInvariant().StartsWith("syjet"))
+                                if(model.ToLowerInvariant().StartsWith("syjet"))
                                     return MediaType.SyJet;
-                                
-                                switch (blocks)
+
+                                switch(blocks)
                                 {
                                     case 262144:
                                         return MediaType.EZ135;
@@ -75,13 +75,13 @@ namespace DiscImageChef.CommonTypes
                             return MediaType.Unknown;
                         }
 
-                        if (model.ToLowerInvariant().StartsWith("zip"))
+                        if(model.ToLowerInvariant().StartsWith("zip"))
                         {
-                            if (blockSize == 512)
+                            if(blockSize == 512)
                             {
-                                if (blocks == 196608)
+                                if(blocks == 196608)
                                     return MediaType.ZIP100;
-                                if (blocks == 489532)
+                                if(blocks == 489532)
                                     return MediaType.ZIP250;
                                 return MediaType.ZIP750;
                             }
@@ -89,39 +89,39 @@ namespace DiscImageChef.CommonTypes
                             return MediaType.Unknown;
                         }
 
-                        if (model.ToLowerInvariant().StartsWith("jaz"))
+                        if(model.ToLowerInvariant().StartsWith("jaz"))
                         {
-                            if (blockSize == 512)
+                            if(blockSize == 512)
                             {
-                                if (blocks == 2091050)
+                                if(blocks == 2091050)
                                     return MediaType.Jaz;
-                                if (blocks == 3915600)
+                                if(blocks == 3915600)
                                     return MediaType.Jaz2;
                             }
 
                             return MediaType.Unknown;
                         }
 
-                        if (model.ToLowerInvariant().StartsWith("ls-"))
+                        if(model.ToLowerInvariant().StartsWith("ls-"))
                         {
-                            if (blockSize == 512)
+                            if(blockSize == 512)
                             {
-                                if (blocks == 246528)
+                                if(blocks == 246528)
                                     return MediaType.LS120;
-                                if (blocks == 2880)
+                                if(blocks == 2880)
                                     return MediaType.DOS_35_HD;
-                                if (blocks == 1440)
+                                if(blocks == 1440)
                                     return MediaType.DOS_35_DS_DD_9;
                             }
 
                             return MediaType.Unknown;
                         }
 
-                        if (model.ToLowerInvariant().StartsWith("rdx"))
+                        if(model.ToLowerInvariant().StartsWith("rdx"))
                         {
-                            if (blockSize == 512)
+                            if(blockSize == 512)
                             {
-                                if (blocks == 625134256)
+                                if(blocks == 625134256)
                                     return MediaType.RDX320;
                                 return MediaType.RDX;
                             }
@@ -129,13 +129,13 @@ namespace DiscImageChef.CommonTypes
                             return MediaType.Unknown;
                         }
 
-                        switch (mediumType)
+                        switch(mediumType)
                         {
                             case 0x01:
-                                switch (blockSize)
+                                switch(blockSize)
                                 {
                                     case 128:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 720:
                                                 return MediaType.ATARI_525_SD;
@@ -148,7 +148,7 @@ namespace DiscImageChef.CommonTypes
                                         }
                                         break;
                                     case 256:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 322:
                                                 return MediaType.ECMA_66;
@@ -173,14 +173,14 @@ namespace DiscImageChef.CommonTypes
                                         }
                                         break;
                                     case 319:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 256:
                                                 return MediaType.IBM23FD;
                                         }
                                         break;
                                     case 512:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 320:
                                                 return MediaType.DOS_525_DS_DD_8;
@@ -218,7 +218,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 1024:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 371371:
                                                     return MediaType.ECMA_223;
@@ -241,7 +241,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 2048:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 318988:
                                                 case 320332:
@@ -262,7 +262,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 4096:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 1095840:
                                                     return MediaType.ECMA_322;
@@ -271,7 +271,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 8192:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 1834348:
                                                     return MediaType.UDO;
@@ -285,10 +285,10 @@ namespace DiscImageChef.CommonTypes
                                 }
                                 return MediaType.Unknown;
                             case 0x02:
-                                switch (blockSize)
+                                switch(blockSize)
                                 {
                                     case 128:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 3848:
                                                 return MediaType.IBM43FD_128;
@@ -297,7 +297,7 @@ namespace DiscImageChef.CommonTypes
                                         }
                                         break;
                                     case 256:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 910:
                                                 return MediaType.Apple32DS;
@@ -314,7 +314,7 @@ namespace DiscImageChef.CommonTypes
                                         }
                                         break;
                                     case 512:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 640:
                                                 return MediaType.DOS_525_DS_DD_8;
@@ -371,7 +371,7 @@ namespace DiscImageChef.CommonTypes
                                         }
                                         break;
                                     case 1024:
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 1220:
                                                 return MediaType.IBM53FD_1024;
@@ -403,7 +403,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 2048:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 318988:
                                                 case 320332:
@@ -424,7 +424,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 4096:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 1095840:
                                                     return MediaType.ECMA_322;
@@ -433,7 +433,7 @@ namespace DiscImageChef.CommonTypes
                                         break;
                                     case 8192:
                                         {
-                                            switch (blocks)
+                                            switch(blocks)
                                             {
                                                 case 1834348:
                                                     return MediaType.UDO;
@@ -451,7 +451,7 @@ namespace DiscImageChef.CommonTypes
                             case 0x0A:
                                 return MediaType.ECMA_59;
                             case 0x0B:
-                                switch (blockSize)
+                                switch(blockSize)
                                 {
                                     case 256:
                                         return MediaType.ECMA_69_26;
@@ -466,7 +466,7 @@ namespace DiscImageChef.CommonTypes
                             case 0x12:
                                 return MediaType.ECMA_70;
                             case 0x16:
-                                switch (blockSize)
+                                switch(blockSize)
                                 {
                                     case 256:
                                         return MediaType.ECMA_78;
@@ -475,7 +475,7 @@ namespace DiscImageChef.CommonTypes
                                 }
                                 return MediaType.Unknown;
                             case 0x1A:
-                                switch (blockSize)
+                                switch(blockSize)
                                 {
                                     case 256:
                                         return MediaType.ECMA_99_26;
@@ -493,11 +493,11 @@ namespace DiscImageChef.CommonTypes
                                 return MediaType.ECMA_125;
                         }
 
-                        switch (blockSize)
+                        switch(blockSize)
                         {
                             case 128:
                                 {
-                                    switch (blocks)
+                                    switch(blocks)
                                     {
                                         case 720:
                                             return MediaType.ATARI_525_SD;
@@ -516,7 +516,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 256:
                                 {
-                                    switch (blocks)
+                                    switch(blocks)
                                     {
                                         case 322:
                                             return MediaType.ECMA_66;
@@ -552,7 +552,7 @@ namespace DiscImageChef.CommonTypes
                                 }
                                 break;
                             case 319:
-                                switch (blocks)
+                                switch(blocks)
                                 {
                                     case 256:
                                         return MediaType.IBM23FD;
@@ -560,7 +560,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 512:
                                 {
-                                    switch (blocks)
+                                    switch(blocks)
                                     {
                                         case 320:
                                             return MediaType.DOS_525_SS_DD_8;
@@ -607,7 +607,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 1024:
                                 {
-                                    switch (blocks)
+                                    switch(blocks)
                                     {
                                         case 1220:
                                             return MediaType.IBM53FD_1024;
@@ -626,13 +626,13 @@ namespace DiscImageChef.CommonTypes
 
                         return MediaType.Unknown;
                     }
-            // Sequential access device
+                // Sequential access device
                 case 0x01:
                     {
-                        switch (mediumType)
+                        switch(mediumType)
                         {
                             case 0x00:
-                                switch (densityCode)
+                                switch(densityCode)
                                 {
                                     case 0x04:
                                         return MediaType.QIC11;
@@ -648,81 +648,81 @@ namespace DiscImageChef.CommonTypes
                                         return MediaType.IBM3490E;
                                     case 0x40:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO;
-                                            if (model.ToLowerInvariant().StartsWith("sdz"))
+                                            if(model.ToLowerInvariant().StartsWith("sdz"))
                                                 return MediaType.SAIT1;
                                             break;
                                         }
                                     case 0x41:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO2;
                                             break;
                                         }
                                     case 0x42:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO2;
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T9840A;
                                             break;
                                         }
                                     case 0x43:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T9940A;
                                             break;
                                         }
                                     case 0x44:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO3;
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T9940B;
                                             break;
                                         }
                                     case 0x45:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T9840C;
                                             break;
                                         }
                                     case 0x46:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO4;
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T9840D;
                                             break;
                                         }
                                     case 0x4A:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T10000A;
                                             break;
                                         }
                                     case 0x4B:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T10000B;
                                             break;
                                         }
                                     case 0x4C:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T10000C;
                                             break;
                                         }
                                     case 0x4D:
                                         {
-                                            if (vendor.ToLowerInvariant() == "stk")
+                                            if(vendor.ToLowerInvariant() == "stk")
                                                 return MediaType.T10000D;
                                             break;
                                         }
                                     case 0x58:
                                         {
-                                            if (model.ToLowerInvariant().StartsWith("ult"))
+                                            if(model.ToLowerInvariant().StartsWith("ult"))
                                                 return MediaType.LTO5;
                                             break;
                                         }
@@ -730,23 +730,23 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x01:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x44:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO3WORM;
                                                 break;
                                             }
                                         case 0x46:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO4WORM;
                                                 break;
                                             }
                                         case 0x58:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO5WORM;
                                                 break;
                                             }
@@ -755,13 +755,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x18:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x40:
                                             {
                                                 {
-                                                    if (model.ToLowerInvariant().StartsWith("ult"))
+                                                    if(model.ToLowerInvariant().StartsWith("ult"))
                                                         return MediaType.LTO;
                                                     break;
                                                 }
@@ -771,12 +771,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x28:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x42:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO2;
                                                 break;
                                             }
@@ -785,12 +785,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x33:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x25:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dat"))
+                                                if(model.ToLowerInvariant().StartsWith("dat"))
                                                     return MediaType.DDS3;
                                                 break;
                                             }
@@ -799,12 +799,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x34:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x26:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dat"))
+                                                if(model.ToLowerInvariant().StartsWith("dat"))
                                                     return MediaType.DDS4;
                                                 break;
                                             }
@@ -813,12 +813,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x35:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x47:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dat"))
+                                                if(model.ToLowerInvariant().StartsWith("dat"))
                                                     return MediaType.DAT72;
                                                 break;
                                             }
@@ -827,12 +827,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x38:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x44:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO3;
                                                 break;
                                             }
@@ -841,12 +841,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x3C:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x44:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO3WORM;
                                                 break;
                                             }
@@ -855,12 +855,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x48:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x46:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO4;
                                                 break;
                                             }
@@ -869,12 +869,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x4C:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x46:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO4WORM;
                                                 break;
                                             }
@@ -883,12 +883,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x58:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x58:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO5;
                                                 break;
                                             }
@@ -897,12 +897,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x5C:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x58:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO5WORM;
                                                 break;
                                             }
@@ -911,12 +911,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x68:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x5A:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO6;
                                                 break;
                                             }
@@ -925,12 +925,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x6C:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x5A:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO6WORM;
                                                 break;
                                             }
@@ -939,12 +939,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x78:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x5C:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO7;
                                                 break;
                                             }
@@ -953,12 +953,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x7C:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x5C:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                                if(model.ToLowerInvariant().StartsWith("ult"))
                                                     return MediaType.LTO7WORM;
                                                 break;
                                             }
@@ -967,15 +967,15 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x81:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape15m;
-                                                if (vendor.ToLowerInvariant() == "ibm")
+                                                if(vendor.ToLowerInvariant() == "ibm")
                                                     return MediaType.IBM3592;
-                                                if (model.ToLowerInvariant().StartsWith("vxa"))
+                                                if(model.ToLowerInvariant().StartsWith("vxa"))
                                                     return MediaType.VXA1;
                                                 break;
                                             }
@@ -985,20 +985,20 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape15m;
                                                 break;
                                             }
                                         case 0x29:
                                         case 0x2A:
                                             {
-                                                if (vendor.ToLowerInvariant() == "ibm")
+                                                if(vendor.ToLowerInvariant() == "ibm")
                                                     return MediaType.IBM3592;
                                                 break;
                                             }
                                         case 0x80:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("vxa"))
+                                                if(model.ToLowerInvariant().StartsWith("vxa"))
                                                     return MediaType.VXA1;
                                                 break;
                                             }
@@ -1007,19 +1007,19 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x82:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape28m;
-                                                if (vendor.ToLowerInvariant() == "ibm")
+                                                if(vendor.ToLowerInvariant() == "ibm")
                                                     return MediaType.IBM3592;
                                                 break;
                                             }
                                         case 0x0A:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.CompactTapeI;
                                                 break;
                                             }
@@ -1029,32 +1029,32 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape28m;
                                                 break;
                                             }
                                         case 0x16:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.CompactTapeII;
                                                 break;
                                             }
                                         case 0x29:
                                         case 0x2A:
                                             {
-                                                if (vendor.ToLowerInvariant() == "ibm")
+                                                if(vendor.ToLowerInvariant() == "ibm")
                                                     return MediaType.IBM3592;
                                                 break;
                                             }
                                         case 0x81:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("vxa"))
+                                                if(model.ToLowerInvariant().StartsWith("vxa"))
                                                     return MediaType.VXA2;
                                                 break;
                                             }
                                         case 0x82:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("vxa"))
+                                                if(model.ToLowerInvariant().StartsWith("vxa"))
                                                     return MediaType.VXA3;
                                                 break;
                                             }
@@ -1063,13 +1063,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x83:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape54m;
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.DLTtapeIII;
                                                 break;
                                             }
@@ -1079,7 +1079,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape54m;
                                                 break;
                                             }
@@ -1089,7 +1089,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x80:
                                         case 0x81:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.DLTtapeIII;
                                                 break;
                                             }
@@ -1098,13 +1098,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x84:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape80m;
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.DLTtapeIIIxt;
                                                 break;
                                             }
@@ -1114,7 +1114,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape80m;
                                                 break;
                                             }
@@ -1122,7 +1122,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x80:
                                         case 0x81:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt"))
+                                                if(model.ToLowerInvariant().StartsWith("dlt"))
                                                     return MediaType.DLTtapeIIIxt;
                                                 break;
                                             }
@@ -1131,17 +1131,17 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x85:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape106m;
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.DLTtapeIV;
-                                                if (model.ToLowerInvariant().StartsWith("stt"))
+                                                if(model.ToLowerInvariant().StartsWith("stt"))
                                                     return MediaType.Travan5;
                                                 break;
                                             }
@@ -1151,7 +1151,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape106m;
                                                 break;
                                             }
@@ -1168,7 +1168,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x88:
                                         case 0x89:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.DLTtapeIV;
@@ -1176,7 +1176,7 @@ namespace DiscImageChef.CommonTypes
                                             }
                                         case 0x46:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("stt"))
+                                                if(model.ToLowerInvariant().StartsWith("stt"))
                                                     return MediaType.Travan5;
                                                 break;
                                             }
@@ -1185,14 +1185,14 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x86:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape160mXL;
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.SDLT1;
@@ -1200,7 +1200,7 @@ namespace DiscImageChef.CommonTypes
                                             }
                                         case 0x8C:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape160mXL;
                                                 break;
                                             }
@@ -1208,7 +1208,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x92:
                                         case 0x93:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.SDLT1;
@@ -1219,12 +1219,12 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x87:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x4A:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.SDLT2;
@@ -1235,14 +1235,14 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x90:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x50:
                                         case 0x98:
                                         case 0x99:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("dlt") ||
+                                                if(model.ToLowerInvariant().StartsWith("dlt") ||
                                                     model.ToLowerInvariant().StartsWith("sdlt") ||
                                                     model.ToLowerInvariant().StartsWith("superdlt"))
                                                     return MediaType.VStapeI;
@@ -1253,13 +1253,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0x95:
                                 {
-                                    if (model.ToLowerInvariant().StartsWith("stt"))
+                                    if(model.ToLowerInvariant().StartsWith("stt"))
                                         return MediaType.Travan7;
                                 }
                                 break;
                             case 0xC1:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x14:
@@ -1267,7 +1267,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape22m;
                                                 break;
                                             }
@@ -1276,7 +1276,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xC2:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x14:
@@ -1285,7 +1285,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape40m;
                                                 break;
                                             }
@@ -1294,7 +1294,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xC3:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x14:
@@ -1303,7 +1303,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape76m;
                                                 break;
                                             }
@@ -1312,7 +1312,7 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xC4:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x14:
@@ -1321,7 +1321,7 @@ namespace DiscImageChef.CommonTypes
                                         case 0x8C:
                                         case 0x90:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape112m;
                                                 break;
                                             }
@@ -1330,13 +1330,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD1:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape22mAME;
                                                 break;
                                             }
@@ -1345,13 +1345,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD2:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape170m;
                                                 break;
                                             }
@@ -1360,13 +1360,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD3:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape125m;
                                                 break;
                                             }
@@ -1375,13 +1375,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD4:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape45m;
                                                 break;
                                             }
@@ -1390,13 +1390,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD5:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape225m;
                                                 break;
                                             }
@@ -1405,13 +1405,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD6:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape150m;
                                                 break;
                                             }
@@ -1420,13 +1420,13 @@ namespace DiscImageChef.CommonTypes
                                 break;
                             case 0xD7:
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x00:
                                         case 0x27:
                                         case 0x28:
                                             {
-                                                if (model.ToLowerInvariant().StartsWith("exb"))
+                                                if(model.ToLowerInvariant().StartsWith("exb"))
                                                     return MediaType.Exatape75m;
                                                 break;
                                             }
@@ -1437,18 +1437,18 @@ namespace DiscImageChef.CommonTypes
 
                         return MediaType.Unknown;
                     }
-            // Write-once device
+                // Write-once device
                 case 0x04:
                 // Optical device
                 case 0x07:
                     {
-                        if (mediumType == 0x01 || mediumType == 0x02 || mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07)
+                        if(mediumType == 0x01 || mediumType == 0x02 || mediumType == 0x03 || mediumType == 0x05 || mediumType == 0x07)
                         {
-                            switch (blockSize)
+                            switch(blockSize)
                             {
                                 case 512:
                                     {
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 249850:
                                                 return MediaType.ECMA_154;
@@ -1476,7 +1476,7 @@ namespace DiscImageChef.CommonTypes
                                     }
                                 case 1024:
                                     {
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 371371:
                                                 return MediaType.ECMA_223;
@@ -1500,7 +1500,7 @@ namespace DiscImageChef.CommonTypes
                                     }
                                 case 2048:
                                     {
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 318988:
                                             case 320332:
@@ -1522,7 +1522,7 @@ namespace DiscImageChef.CommonTypes
                                     }
                                 case 4096:
                                     {
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 1095840:
                                                 return MediaType.ECMA_322;
@@ -1532,7 +1532,7 @@ namespace DiscImageChef.CommonTypes
                                     }
                                 case 8192:
                                     {
-                                        switch (blocks)
+                                        switch(blocks)
                                         {
                                             case 1834348:
                                                 return MediaType.UDO;
@@ -1551,10 +1551,10 @@ namespace DiscImageChef.CommonTypes
 
                         return MediaType.UnknownMO;
                     }
-            // MultiMedia Device
+                // MultiMedia Device
                 case 0x05:
                     {
-                        switch (mediumType)
+                        switch(mediumType)
                         {
                             case 0x00:
                                 return MediaType.CD;
@@ -1590,9 +1590,9 @@ namespace DiscImageChef.CommonTypes
                             case 0x28:
                                 return MediaType.CDRW;
                             case 0x80:
-                                if (model.ToLowerInvariant().StartsWith("ult"))
+                                if(model.ToLowerInvariant().StartsWith("ult"))
                                 {
-                                    switch (densityCode)
+                                    switch(densityCode)
                                     {
                                         case 0x42:
                                             return MediaType.LTO2;
@@ -1608,7 +1608,7 @@ namespace DiscImageChef.CommonTypes
                         }
                     }
                     break;
-            // Host managed zoned block device
+                // Host managed zoned block device
                 case 0x14:
                     {
                         return MediaType.Zone_HDD;
