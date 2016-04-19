@@ -1054,10 +1054,10 @@ namespace DiscImageChef.Decoders.DVD
 
         public static PhysicalFormatInformation? Decode(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length < 2052)
+            if(response.Length < 2052)
                 return null;
 
             PhysicalFormatInformation pfi = new PhysicalFormatInformation();
@@ -1084,17 +1084,17 @@ namespace DiscImageChef.Decoders.DVD
             pfi.BCA |= (response[20] & 0x80) == 0x80;
 
             // UMD
-            if (pfi.DiskCategory == DiskCategory.UMD)
+            if(pfi.DiskCategory == DiskCategory.UMD)
             {
                 pfi.MediaAttribute = (ushort)((response[21] << 8) + response[22]);
             }
 
             // DVD-RAM
-            if (pfi.DiskCategory == DiskCategory.DVDRAM)
+            if(pfi.DiskCategory == DiskCategory.DVDRAM)
             {
                 pfi.DiscType = (DVDRAMDiscType)response[36];
 
-                if (pfi.PartVersion == 1)
+                if(pfi.PartVersion == 1)
                 {
                     pfi.Velocity = response[52];
                     pfi.ReadPower = response[53];
@@ -1115,7 +1115,7 @@ namespace DiscImageChef.Decoders.DVD
                     pfi.LastPulseEndGroove = response[68];
                     pfi.BiasPowerDurationGroove = response[69];
                 }
-                else if (pfi.PartVersion == 6)
+                else if(pfi.PartVersion == 6)
                 {
                     pfi.Velocity = response[504];
                     pfi.ReadPower = response[505];
@@ -1187,8 +1187,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R and DVD-RW
-            if ((pfi.DiskCategory == DiskCategory.DVDR &&
-                pfi.PartVersion < 6) || 
+            if((pfi.DiskCategory == DiskCategory.DVDR &&
+                pfi.PartVersion < 6) ||
                 (pfi.DiskCategory == DiskCategory.DVDRW &&
                     pfi.PartVersion < 3))
             {
@@ -1197,7 +1197,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+RW
-            if (pfi.DiskCategory == DiskCategory.DVDPRW)
+            if(pfi.DiskCategory == DiskCategory.DVDPRW)
             {
                 pfi.RecordingVelocity = response[36];
                 pfi.ReadPowerMaxVelocity = response[37];
@@ -1221,7 +1221,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
-            if (pfi.DiskCategory == DiskCategory.DVDPR ||
+            if(pfi.DiskCategory == DiskCategory.DVDPR ||
                 pfi.DiskCategory == DiskCategory.DVDPRW ||
                 pfi.DiskCategory == DiskCategory.DVDPRDL ||
                 pfi.DiskCategory == DiskCategory.DVDPRWDL)
@@ -1240,7 +1240,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+RW
-            if (pfi.DiskCategory == DiskCategory.DVDPRW &&
+            if(pfi.DiskCategory == DiskCategory.DVDPRW &&
                pfi.PartVersion == 2)
             {
                 pfi.TopFirstPulseDuration = response[55];
@@ -1251,7 +1251,7 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R and DVD+R DL
-            if (pfi.DiskCategory == DiskCategory.DVDPR ||
+            if(pfi.DiskCategory == DiskCategory.DVDPR ||
                pfi.DiskCategory == DiskCategory.DVDPRDL)
             {
                 pfi.PrimaryVelocity = response[36];
@@ -1281,13 +1281,13 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD+R DL
-            if (pfi.DiskCategory == DiskCategory.DVDPRDL)
+            if(pfi.DiskCategory == DiskCategory.DVDPRDL)
             {
                 pfi.LayerStructure = (DVDLayerStructure)((response[34] & 0xC0) >> 6);
             }
 
             // DVD+RW DL
-            if (pfi.DiskCategory == DiskCategory.DVDPRWDL)
+            if(pfi.DiskCategory == DiskCategory.DVDPRWDL)
             {
                 pfi.BasicPrimaryVelocity = response[36];
                 pfi.MaxReadPowerPrimaryVelocity = response[37];
@@ -1310,8 +1310,8 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             // DVD-R DL and DVD-RW DL
-            if ((pfi.DiskCategory == DiskCategory.DVDR &&
-                pfi.PartVersion == 6) || 
+            if((pfi.DiskCategory == DiskCategory.DVDR &&
+                pfi.PartVersion == 6) ||
                 (pfi.DiskCategory == DiskCategory.DVDRW &&
                 pfi.PartVersion == 3))
             {
@@ -1340,14 +1340,14 @@ namespace DiscImageChef.Decoders.DVD
 
         public static string Prettify(PhysicalFormatInformation? pfi)
         {
-            if (pfi == null)
+            if(pfi == null)
                 return null;
 
             PhysicalFormatInformation decoded = pfi.Value;
             StringBuilder sb = new StringBuilder();
 
             string sizeString;
-            switch (decoded.DiscSize)
+            switch(decoded.DiscSize)
             {
                 case DVDSize.Eighty:
                     sizeString = "80mm";
@@ -1362,18 +1362,18 @@ namespace DiscImageChef.Decoders.DVD
 
             string categorySentence = "Disc is a {0} {1} version {2}";
 
-            switch (decoded.DiskCategory)
+            switch(decoded.DiskCategory)
             {
                 case DiskCategory.DVDROM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-ROM", decoded.PartVersion).AppendLine();
-                    if (decoded.DiscSize == DVDSize.OneTwenty && decoded.PartVersion == 1)
+                    if(decoded.DiscSize == DVDSize.OneTwenty && decoded.PartVersion == 1)
                         sb.AppendLine("Disc claims conformation to ECMA-267");
-                    if (decoded.DiscSize == DVDSize.Eighty && decoded.PartVersion == 1)
+                    if(decoded.DiscSize == DVDSize.Eighty && decoded.PartVersion == 1)
                         sb.AppendLine("Disc claims conformation to ECMA-268");
                     break;
                 case DiskCategory.DVDRAM:
                     sb.AppendFormat(categorySentence, sizeString, "DVD-RAM", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-272");
@@ -1388,7 +1388,7 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendFormat(categorySentence, sizeString, "DVD-R DL", decoded.PartVersion).AppendLine();
                     else
                         sb.AppendFormat(categorySentence, sizeString, "DVD-R", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-279");
@@ -1406,7 +1406,7 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendFormat(categorySentence, sizeString, "DVD-RW DL", decoded.PartVersion).AppendLine();
                     else
                         sb.AppendFormat(categorySentence, sizeString, "DVD-RW", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 2:
                             sb.AppendLine("Disc claims conformation to ECMA-338");
@@ -1421,7 +1421,7 @@ namespace DiscImageChef.Decoders.DVD
                         sb.AppendFormat(categorySentence, "60mm", "UMD", decoded.PartVersion).AppendLine();
                     else
                         sb.AppendFormat(categorySentence, "invalid size", "UMD", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 0:
                             sb.AppendLine("Disc claims conformation to ECMA-365");
@@ -1430,7 +1430,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
                 case DiskCategory.DVDPRW:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+RW", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-274");
@@ -1445,7 +1445,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
                 case DiskCategory.DVDPR:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+R", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-349");
@@ -1454,7 +1454,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
                 case DiskCategory.DVDPRWDL:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+RW DL", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-374");
@@ -1463,7 +1463,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
                 case DiskCategory.DVDPRDL:
                     sb.AppendFormat(categorySentence, sizeString, "DVD+R DL", decoded.PartVersion).AppendLine();
-                    switch (decoded.PartVersion)
+                    switch(decoded.PartVersion)
                     {
                         case 1:
                             sb.AppendLine("Disc claims conformation to ECMA-364");
@@ -1471,11 +1471,11 @@ namespace DiscImageChef.Decoders.DVD
                     }
                     break;
                 case DiskCategory.Nintendo:
-                    if (decoded.PartVersion == 15)
+                    if(decoded.PartVersion == 15)
                     {
-                        if (decoded.DiscSize == DVDSize.Eighty)
+                        if(decoded.DiscSize == DVDSize.Eighty)
                             sb.AppendLine("Disc is a Nintendo Gamecube Optical Disc (GOD)");
-                        else if (decoded.DiscSize == DVDSize.OneTwenty)
+                        else if(decoded.DiscSize == DVDSize.OneTwenty)
                             sb.AppendLine("Disc is a Nintendo Wii Optical Disc (WOD)");
                         else
                             goto default;
@@ -1500,7 +1500,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
             }
 
-            switch (decoded.MaximumRate)
+            switch(decoded.MaximumRate)
             {
                 case MaximumRateField.TwoMbps:
                     sb.AppendLine("Disc maximum transfer rate is 2,52 Mbit/sec.");
@@ -1526,12 +1526,12 @@ namespace DiscImageChef.Decoders.DVD
             }
 
             sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
-            if (decoded.TrackPath && decoded.Layers == 1)
+            if(decoded.TrackPath && decoded.Layers == 1)
                 sb.AppendLine("Layers are in parallel track path");
-            else if (!decoded.TrackPath && decoded.Layers == 1)
+            else if(!decoded.TrackPath && decoded.Layers == 1)
                 sb.AppendLine("Layers are in opposite track path");
 
-            switch (decoded.LinearDensity)
+            switch(decoded.LinearDensity)
             {
                 case LinearDensityField.TwoSix:
                     sb.AppendLine("Pitch size is 0,267 μm/bit");
@@ -1559,7 +1559,7 @@ namespace DiscImageChef.Decoders.DVD
                     break;
             }
 
-            switch (decoded.TrackDensity)
+            switch(decoded.TrackDensity)
             {
                 case TrackDensityField.Seven:
                     sb.AppendLine("Track size is 0,74 μm");
@@ -1581,13 +1581,13 @@ namespace DiscImageChef.Decoders.DVD
                     break;
             }
 
-            if (decoded.DataAreaStartPSN > 0)
+            if(decoded.DataAreaStartPSN > 0)
             {
-                if (decoded.DataAreaEndPSN > 0)
+                if(decoded.DataAreaEndPSN > 0)
                 {
                     sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
                     sb.AppendFormat("Data area ends at PSN {0:X}h", decoded.DataAreaEndPSN).AppendLine();
-                    if (decoded.Layers == 1 && !decoded.TrackPath)
+                    if(decoded.Layers == 1 && !decoded.TrackPath)
                         sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
                 }
                 else
@@ -1596,15 +1596,15 @@ namespace DiscImageChef.Decoders.DVD
             else
                 sb.AppendLine("Disc is empty");
 
-            if (decoded.BCA)
+            if(decoded.BCA)
                 sb.AppendLine("Disc has a burst cutting area");
 
-            if (decoded.DiskCategory == DiskCategory.UMD)
+            if(decoded.DiskCategory == DiskCategory.UMD)
                 sb.AppendFormat("Media attribute is {0}", decoded.MediaAttribute).AppendLine();
 
-            if (decoded.DiskCategory == DiskCategory.DVDRAM)
+            if(decoded.DiskCategory == DiskCategory.DVDRAM)
             {
-                switch (decoded.DiscType)
+                switch(decoded.DiscType)
                 {
                     case DVDRAMDiscType.Cased:
                         sb.AppendLine("Disc shall be recorded with a case");
@@ -1617,15 +1617,15 @@ namespace DiscImageChef.Decoders.DVD
                         break;
                 }
 
-                if (decoded.PartVersion == 6)
+                if(decoded.PartVersion == 6)
                 {
                     sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturer).AppendLine();
                     sb.AppendFormat("Disc manufacturer supplementary information is {0}", decoded.DiskManufacturerSupplementary).AppendLine();
                 }
             }
 
-            if ((decoded.DiskCategory == DiskCategory.DVDR &&
-                decoded.PartVersion < 6) || 
+            if((decoded.DiskCategory == DiskCategory.DVDR &&
+                decoded.PartVersion < 6) ||
                 (decoded.DiskCategory == DiskCategory.DVDRW &&
                     decoded.PartVersion < 3))
             {
@@ -1633,12 +1633,12 @@ namespace DiscImageChef.Decoders.DVD
                 sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
             }
 
-            if (decoded.DiskCategory == DiskCategory.DVDPR ||
+            if(decoded.DiskCategory == DiskCategory.DVDPR ||
                 decoded.DiskCategory == DiskCategory.DVDPRW ||
                 decoded.DiskCategory == DiskCategory.DVDPRDL ||
                 decoded.DiskCategory == DiskCategory.DVDPRWDL)
             {
-                if (decoded.VCPS)
+                if(decoded.VCPS)
                     sb.AppendLine("Disc contains extended information for VCPS");
                 sb.AppendFormat("Disc application code is {0}", decoded.ApplicationCode).AppendLine();
                 sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturerID).AppendLine();
@@ -1646,18 +1646,18 @@ namespace DiscImageChef.Decoders.DVD
                 sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
             }
 
-            if ((decoded.DiskCategory == DiskCategory.DVDR &&
-                decoded.PartVersion >= 6) || 
+            if((decoded.DiskCategory == DiskCategory.DVDR &&
+                decoded.PartVersion >= 6) ||
                 (decoded.DiskCategory == DiskCategory.DVDRW &&
                     decoded.PartVersion >= 3))
             {
                 sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h", decoded.CurrentRMDExtraBorderPSN).AppendLine();
                 sb.AppendFormat("PFI in extra Border zone starts at PSN {0:X}h", decoded.PFIExtraBorderPSN).AppendLine();
-                if (!decoded.PreRecordedControlDataInv)
+                if(!decoded.PreRecordedControlDataInv)
                     sb.AppendLine("Control Data Zone is pre-recorded");
-                if (decoded.PreRecordedLeadIn)
+                if(decoded.PreRecordedLeadIn)
                     sb.AppendLine("Lead-In is pre-recorded");
-                if (decoded.PreRecordedLeadOut)
+                if(decoded.PreRecordedLeadOut)
                     sb.AppendLine("Lead-Out is pre-recorded");
             }
 

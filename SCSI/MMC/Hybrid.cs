@@ -108,10 +108,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static RecognizedFormatLayers? DecodeFormatLayers(byte[] FormatLayersResponse)
         {
-            if (FormatLayersResponse == null)
+            if(FormatLayersResponse == null)
                 return null;
 
-            if (FormatLayersResponse.Length < 8)
+            if(FormatLayersResponse.Length < 8)
                 return null;
 
             RecognizedFormatLayers decoded = new RecognizedFormatLayers();
@@ -129,7 +129,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             decoded.FormatLayers = new UInt16[(FormatLayersResponse.Length - 6) / 2];
 
-            for (int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
+            for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
             {
                 decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
             }
@@ -139,7 +139,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyFormatLayers(RecognizedFormatLayers? FormatLayersResponse)
         {
-            if (FormatLayersResponse == null)
+            if(FormatLayersResponse == null)
                 return null;
 
             RecognizedFormatLayers response = FormatLayersResponse.Value;
@@ -148,52 +148,52 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             sb.AppendFormat("{0} format layers recognized", response.NumberOfLayers);
 
-            for (int i = 0; i < response.FormatLayers.Length; i++)
+            for(int i = 0; i < response.FormatLayers.Length; i++)
             {
-                switch (response.FormatLayers[i])
+                switch(response.FormatLayers[i])
                 {
                     case (UInt16)FormatLayerTypeCodes.BDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type Blu-ray", i).AppendLine();
-                            if (response.DefaultFormatLayer == i)
+                            if(response.DefaultFormatLayer == i)
                                 sb.AppendLine("This is the default layer.");
-                            if (response.OnlineFormatLayer == i)
+                            if(response.OnlineFormatLayer == i)
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
                     case (UInt16)FormatLayerTypeCodes.CDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
-                            if (response.DefaultFormatLayer == i)
+                            if(response.DefaultFormatLayer == i)
                                 sb.AppendLine("This is the default layer.");
-                            if (response.OnlineFormatLayer == i)
+                            if(response.OnlineFormatLayer == i)
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
                     case (UInt16)FormatLayerTypeCodes.DVDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
-                            if (response.DefaultFormatLayer == i)
+                            if(response.DefaultFormatLayer == i)
                                 sb.AppendLine("This is the default layer.");
-                            if (response.OnlineFormatLayer == i)
+                            if(response.OnlineFormatLayer == i)
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
                     case (UInt16)FormatLayerTypeCodes.HDDVDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
-                            if (response.DefaultFormatLayer == i)
+                            if(response.DefaultFormatLayer == i)
                                 sb.AppendLine("This is the default layer.");
-                            if (response.OnlineFormatLayer == i)
+                            if(response.OnlineFormatLayer == i)
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
                     default:
                         {
                             sb.AppendFormat("Layer {0} is of unknown type 0x{1:X4}", i, response.FormatLayers[i]).AppendLine();
-                            if (response.DefaultFormatLayer == i)
+                            if(response.DefaultFormatLayer == i)
                                 sb.AppendLine("This is the default layer.");
-                            if (response.OnlineFormatLayer == i)
+                            if(response.OnlineFormatLayer == i)
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }

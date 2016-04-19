@@ -43,7 +43,7 @@ namespace DiscImageChef.Decoders.SCSI
     {
         public static string Prettify(string SCSIVendorString)
         {
-            switch (SCSIVendorString)
+            switch(SCSIVendorString)
             {
                 case "0B4C":
                     return "MOOSIK Ltd.";

@@ -223,7 +223,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSVolumeIdentifier? DecodeAACSVolumeIdentifier(byte[] AACSVIResponse)
         {
-            if (AACSVIResponse == null)
+            if(AACSVIResponse == null)
                 return null;
 
             AACSVolumeIdentifier decoded = new AACSVolumeIdentifier();
@@ -242,19 +242,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSVolumeIdentifier(AACSVolumeIdentifier? AACSVIResponse)
         {
-            if (AACSVIResponse == null)
+            if(AACSVIResponse == null)
                 return null;
 
             AACSVolumeIdentifier response = AACSVIResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("AACS Volume Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VolumeIdentifier, 80));
 
@@ -269,7 +269,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSMediaSerialNumber? DecodeAACSMediaSerialNumber(byte[] AACSMSNResponse)
         {
-            if (AACSMSNResponse == null)
+            if(AACSMSNResponse == null)
                 return null;
 
             AACSMediaSerialNumber decoded = new AACSMediaSerialNumber();
@@ -288,19 +288,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSMediaSerialNumber(AACSMediaSerialNumber? AACSMSNResponse)
         {
-            if (AACSMSNResponse == null)
+            if(AACSMSNResponse == null)
                 return null;
 
             AACSMediaSerialNumber response = AACSMSNResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("AACS Media Serial Number in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaSerialNumber, 80));
 
@@ -315,7 +315,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSMediaIdentifier? DecodeAACSMediaIdentifier(byte[] AACSMIResponse)
         {
-            if (AACSMIResponse == null)
+            if(AACSMIResponse == null)
                 return null;
 
             AACSMediaIdentifier decoded = new AACSMediaIdentifier();
@@ -334,19 +334,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSMediaIdentifier(AACSMediaIdentifier? AACSMIResponse)
         {
-            if (AACSMIResponse == null)
+            if(AACSMIResponse == null)
                 return null;
 
             AACSMediaIdentifier response = AACSMIResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("AACS Media Identifier in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaIdentifier, 80));
 
@@ -361,7 +361,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSMediaKeyBlock? DecodeAACSMediaKeyBlock(byte[] AACSMKBResponse)
         {
-            if (AACSMKBResponse == null)
+            if(AACSMKBResponse == null)
                 return null;
 
             AACSMediaKeyBlock decoded = new AACSMediaKeyBlock();
@@ -380,17 +380,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSMediaKeyBlock(AACSMediaKeyBlock? AACSMKBResponse)
         {
-            if (AACSMKBResponse == null)
+            if(AACSMKBResponse == null)
                 return null;
 
             AACSMediaKeyBlock response = AACSMKBResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved != 0)
                 sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("Total number of media key blocks available to transfer {0}", response.TotalPacks).AppendLine();
             sb.AppendFormat("AACS Media Key Blocks in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaKeyBlockPacks, 80));
@@ -406,7 +406,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSDataKeys? DecodeAACSDataKeys(byte[] AACSDKResponse)
         {
-            if (AACSDKResponse == null)
+            if(AACSDKResponse == null)
                 return null;
 
             AACSDataKeys decoded = new AACSDataKeys();
@@ -425,19 +425,19 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSDataKeys(AACSDataKeys? AACSDKResponse)
         {
-            if (AACSDKResponse == null)
+            if(AACSDKResponse == null)
                 return null;
 
             AACSDataKeys response = AACSDKResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
             sb.AppendFormat("AACS Data Keys in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DataKeys, 80));
 
@@ -452,7 +452,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static AACSLBAExtentsResponse? DecodeAACSLBAExtents(byte[] AACSLBAExtsResponse)
         {
-            if (AACSLBAExtsResponse == null)
+            if(AACSLBAExtsResponse == null)
                 return null;
 
             AACSLBAExtentsResponse decoded = new AACSLBAExtentsResponse();
@@ -463,12 +463,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Reserved = AACSLBAExtsResponse[2];
             decoded.MaxLBAExtents = AACSLBAExtsResponse[3];
 
-            if ((AACSLBAExtsResponse.Length - 4) % 16 != 0)
+            if((AACSLBAExtsResponse.Length - 4) % 16 != 0)
                 return decoded;
 
             decoded.Extents = new AACSLBAExtent[(AACSLBAExtsResponse.Length - 4) / 16];
 
-            for (int i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
+            for(int i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
             {
                 decoded.Extents[i].Reserved = new byte[8];
                 Array.Copy(AACSLBAExtsResponse, 0 + i * 16 + 4, decoded.Extents[i].Reserved, 0, 8);
@@ -481,16 +481,16 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyAACSLBAExtents(AACSLBAExtentsResponse? AACSLBAExtsResponse)
         {
-            if (AACSLBAExtsResponse == null)
+            if(AACSLBAExtsResponse == null)
                 return null;
 
             AACSLBAExtentsResponse response = AACSLBAExtsResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            if (response.MaxLBAExtents == 0)
+            if(response.MaxLBAExtents == 0)
             {
-                if (response.DataLength > 2)
+                if(response.DataLength > 2)
                     sb.AppendLine("Drive can store 256 LBA Extents");
                 else
                     sb.AppendLine("Drive cannot store LBA Extents");
@@ -498,7 +498,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             else
                 sb.AppendFormat("Drive can store {0} LBA Extents", response.MaxLBAExtents).AppendLine();
 
-            for (int i = 0; i < response.Extents.Length; i++)
+            for(int i = 0; i < response.Extents.Length; i++)
                 sb.AppendFormat("LBA Extent {0} starts at LBA {1} and goes for {2} sectors", i, response.Extents[i].StartLBA, response.Extents[i].LBACount);
 
             return sb.ToString();

@@ -598,7 +598,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         Exatape75m = 0xD7,
 
-            
+
         #endregion Medium Types found in vendor documents
     }
 

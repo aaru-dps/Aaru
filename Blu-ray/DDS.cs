@@ -68,7 +68,7 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static DiscDefinitionStructure? Decode(byte[] DDSResponse)
         {
-            if (DDSResponse == null)
+            if(DDSResponse == null)
                 return null;
 
             DiscDefinitionStructure decoded = new DiscDefinitionStructure();
@@ -79,7 +79,7 @@ namespace DiscImageChef.Decoders.Bluray
             decoded.Reserved1 = DDSResponse[2];
             decoded.Reserved2 = DDSResponse[3];
             decoded.Signature = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
-            if (decoded.Signature != DDSIdentifier)
+            if(decoded.Signature != DDSIdentifier)
             {
                 DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})", decoded.Signature);
                 return null;
@@ -114,7 +114,7 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(DiscDefinitionStructure? DDSResponse)
         {
-            if (DDSResponse == null)
+            if(DDSResponse == null)
                 return null;
 
             DiscDefinitionStructure response = DDSResponse.Value;
@@ -138,7 +138,7 @@ namespace DiscImageChef.Decoders.Bluray
             sb.AppendFormat("Blu-ray DDS Disc Type Specific Data in hex follows:");
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
@@ -157,7 +157,7 @@ namespace DiscImageChef.Decoders.Bluray
                 sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
             if(response.Reserved9 != 0)
                 sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
-            #endif
+#endif
 
             return sb.ToString();
         }

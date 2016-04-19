@@ -238,16 +238,16 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="sense">Sense bytes.</param>
         public static SenseType GetType(byte[] sense)
         {
-            if (sense == null)
+            if(sense == null)
                 return SenseType.Invalid;
 
-            if (sense.Length < 4)
+            if(sense.Length < 4)
                 return SenseType.Invalid;
 
-            if ((sense[0] & 0x70) != 0x70)
+            if((sense[0] & 0x70) != 0x70)
                 return sense.Length != 4 ? SenseType.Invalid : SenseType.StandardSense;
 
-            switch (sense[0] & 0x0F)
+            switch(sense[0] & 0x0F)
             {
                 case 0:
                     return SenseType.ExtendedSenseFixedCurrent;
@@ -264,7 +264,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static StandardSense? DecodeStandard(byte[] sense)
         {
-            if (GetType(sense) != SenseType.StandardSense)
+            if(GetType(sense) != SenseType.StandardSense)
                 return null;
 
             StandardSense decoded = new StandardSense();
@@ -286,11 +286,11 @@ namespace DiscImageChef.Decoders.SCSI
         public static FixedSense? DecodeFixed(byte[] sense, out string senseDescription)
         {
             senseDescription = null;
-            if((sense[0] & 0x7F) != 0x70 && 
+            if((sense[0] & 0x7F) != 0x70 &&
                 (sense[0] & 0x7F) != 0x71)
                 return null;
 
-            if (sense.Length < 8)
+            if(sense.Length < 8)
                 return null;
 
             FixedSense decoded = new FixedSense();
@@ -307,20 +307,20 @@ namespace DiscImageChef.Decoders.SCSI
             if(sense.Length >= 12)
                 decoded.CommandSpecific = (uint)((sense[8] << 24) + (sense[9] << 16) + (sense[10] << 8) + sense[11]);
 
-            if (sense.Length >= 14)
+            if(sense.Length >= 14)
             {
                 decoded.ASC = sense[12];
                 decoded.ASCQ = sense[13];
                 senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
             }
 
-            if (sense.Length >= 15)
+            if(sense.Length >= 15)
                 decoded.FieldReplaceable = sense[14];
 
             if(sense.Length >= 18)
                 decoded.SenseKeySpecific = (uint)((sense[15] << 16) + (sense[16] << 8) + sense[17]);
 
-            if (sense.Length > 18)
+            if(sense.Length > 18)
             {
                 decoded.AdditionalSense = new byte[sense.Length - 18];
                 Array.Copy(sense, 18, decoded.AdditionalSense, 0, decoded.AdditionalSense.Length);
@@ -339,10 +339,10 @@ namespace DiscImageChef.Decoders.SCSI
         {
             senseDescription = null;
 
-            if (sense == null)
+            if(sense == null)
                 return null;
 
-            if (sense.Length < 8)
+            if(sense.Length < 8)
                 return null;
 
             DescriptorSense decoded = new DescriptorSense();
@@ -355,9 +355,9 @@ namespace DiscImageChef.Decoders.SCSI
             senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
 
             int offset = 8;
-            while (offset < sense.Length)
+            while(offset < sense.Length)
             {
-                if (offset + 2 < sense.Length)
+                if(offset + 2 < sense.Length)
                 {
                     byte descType = sense[offset];
                     int descLen = sense[offset + 1] + 1;
@@ -380,8 +380,8 @@ namespace DiscImageChef.Decoders.SCSI
         public static string PrettifySense(byte[] sense)
         {
             SenseType type = GetType(sense);
-                
-            switch (type)
+
+            switch(type)
             {
                 case SenseType.StandardSense:
                     return PrettifySense(DecodeStandard(sense));
@@ -398,7 +398,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifySense(StandardSense? sense)
         {
-            if (!sense.HasValue)
+            if(!sense.HasValue)
                 return null;
 
             return sense.Value.AddressValid ? String.Format("Error class {0} type {1} happened on block {2}\n",
@@ -409,7 +409,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifySense(FixedSense? sense)
         {
-            if (!sense.HasValue)
+            if(!sense.HasValue)
                 return null;
 
             FixedSense decoded = sense.Value;
@@ -417,37 +417,37 @@ namespace DiscImageChef.Decoders.SCSI
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("SCSI SENSE: {0}", GetSenseKey(decoded.SenseKey)).AppendLine();
-            if (decoded.SegmentNumber > 0)
+            if(decoded.SegmentNumber > 0)
                 sb.AppendFormat("On segment {0}", decoded.SegmentNumber).AppendLine();
-            if (decoded.Filemark)
+            if(decoded.Filemark)
                 sb.AppendLine("Filemark or setmark found");
-            if (decoded.EOM)
+            if(decoded.EOM)
                 sb.AppendLine("End-of-medium/partition found");
-            if (decoded.ILI)
+            if(decoded.ILI)
                 sb.AppendLine("Incorrect length indicator");
-            if (decoded.InformationValid)
+            if(decoded.InformationValid)
                 sb.AppendFormat("On logical block {0}", decoded.Information).AppendLine();
 
-            if (decoded.AdditionalLength < 6)
+            if(decoded.AdditionalLength < 6)
                 return sb.ToString();
 
             sb.AppendLine(GetSenseDescription(decoded.ASC, decoded.ASCQ));
 
-            if (decoded.AdditionalLength < 10)
+            if(decoded.AdditionalLength < 10)
                 return sb.ToString();
 
-            if (decoded.SKSV)
+            if(decoded.SKSV)
             {
-                switch (decoded.SenseKey)
+                switch(decoded.SenseKey)
                 {
                     case SenseKeys.IllegalRequest:
                         {
-                            if ((decoded.SenseKeySpecific & 0x400000) == 0x400000)
+                            if((decoded.SenseKeySpecific & 0x400000) == 0x400000)
                                 sb.AppendLine("Illegal field in CDB");
                             else
                                 sb.AppendLine("Illegal field in data parameters");
 
-                            if ((decoded.SenseKeySpecific & 0x200000) == 0x200000)
+                            if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
                                 sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
                                     (decoded.SenseKeySpecific & 0x70000) >> 16,
                                     decoded.SenseKeySpecific & 0xFFFF).AppendLine();
@@ -473,7 +473,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifySense(DescriptorSense? sense)
         {
-            if (!sense.HasValue)
+            if(!sense.HasValue)
                 return null;
 
             DescriptorSense decoded = sense.Value;
@@ -486,9 +486,9 @@ namespace DiscImageChef.Decoders.SCSI
             if(decoded.Descriptors == null || decoded.Descriptors.Count == 0)
                 return sb.ToString();
 
-            foreach (KeyValuePair<byte, byte[]> kvp in decoded.Descriptors)
+            foreach(KeyValuePair<byte, byte[]> kvp in decoded.Descriptors)
             {
-                switch (kvp.Key)
+                switch(kvp.Key)
                 {
                     case 0x00:
                         sb.AppendLine(PrettifyDescriptor00(kvp.Value));
@@ -506,7 +506,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="descriptor">Descriptor.</param>
         public static UInt64 DecodeDescriptor00(byte[] descriptor)
         {
-            if (descriptor.Length != 12 || descriptor[0] != 0x00)
+            if(descriptor.Length != 12 || descriptor[0] != 0x00)
                 return 0;
 
             byte[] temp = new byte[8];
@@ -530,7 +530,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="descriptor">Descriptor.</param>
         public static UInt64 DecodeDescriptor01(byte[] descriptor)
         {
-            if (descriptor.Length != 12 || descriptor[0] != 0x01)
+            if(descriptor.Length != 12 || descriptor[0] != 0x01)
                 return 0;
 
             byte[] temp = new byte[8];
@@ -554,7 +554,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="descriptor">Descriptor.</param>
         public static byte[] DecodeDescriptor02(byte[] descriptor)
         {
-            if (descriptor.Length != 8 || descriptor[0] != 0x02)
+            if(descriptor.Length != 8 || descriptor[0] != 0x02)
                 return null;
 
             byte[] temp = new byte[3];
@@ -569,7 +569,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="descriptor">Descriptor.</param>
         public static byte DecodeDescriptor03(byte[] descriptor)
         {
-            if (descriptor.Length != 4 || descriptor[0] != 0x03)
+            if(descriptor.Length != 4 || descriptor[0] != 0x03)
                 return 0;
 
             return descriptor[3];
@@ -582,7 +582,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="descriptor">Descriptor.</param>
         public static AnotherProgressIndicationSenseDescriptor? DecodeDescriptor0A(byte[] descriptor)
         {
-            if (descriptor.Length != 8 || descriptor[0] != 0x0A)
+            if(descriptor.Length != 8 || descriptor[0] != 0x0A)
                 return null;
 
             AnotherProgressIndicationSenseDescriptor decoded = new AnotherProgressIndicationSenseDescriptor();
@@ -657,7 +657,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string GetSenseKey(SenseKeys key)
         {
-            switch (key)
+            switch(key)
             {
                 case SenseKeys.AbortedCommand:
                     return "ABORTED COMMAND";
@@ -696,10 +696,10 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string GetSenseDescription(byte ASC, byte ASCQ)
         {
-            switch (ASC)
+            switch(ASC)
             {
                 case 0x00:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NO ADDITIONAL SENSE INFORMATION";
@@ -754,21 +754,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x01:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NO INDEX/SECTOR SIGNAL";
                     }
                     break;
                 case 0x02:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NO SEEK COMPLETE";
                     }
                     break;
                 case 0x03:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "PERIPHERAL DEVICE WRITE FAULT";
@@ -779,7 +779,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x04:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT NOT READY, CAUSE NOT REPORTABLE";
@@ -852,28 +852,28 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x05:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT DOES NOT RESPOND TO SELECTION";
                     }
                     break;
                 case 0x06:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NO REFERENCE POSITION FOUND";
                     }
                     break;
                 case 0x07:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MULTIPLE PERIPHERAL DEVICES SELECTED";
                     }
                     break;
                 case 0x08:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT COMMUNICATION FAILURE";
@@ -888,7 +888,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x09:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "TRACK FLOLLOWING ERROR";
@@ -905,14 +905,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x0A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ERROR LOG OVERFLOW";
                     }
                     break;
                 case 0x0B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "WARNING";
@@ -954,7 +954,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x0C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "WRITE ERROR";
@@ -997,7 +997,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x0D:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ERROR DETECTED BY THIRD PARTY TEMPORARY INITIATOR";
@@ -1014,7 +1014,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x0E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID INFORMATION UNIT";
@@ -1027,7 +1027,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x10:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ID CRC OR ECC ERROR";
@@ -1044,7 +1044,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x11:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "UNRECOVERED READ ERROR";
@@ -1093,21 +1093,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x12:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ADDRESS MARK NOT FOUND FOR ID FIELD";
                     }
                     break;
                 case 0x13:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ADDRESS MARK NOT FOUND FOR DATA FIELD";
                     }
                     break;
                 case 0x14:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RECORDED ENTITY NOT FOUND";
@@ -1128,7 +1128,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x15:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RANDOM POSITIONING ERROR";
@@ -1139,7 +1139,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x16:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DATA SYNCHRONIZATION MARK ERROR";
@@ -1154,7 +1154,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x17:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RECOVERED DATA WITH NO ERROR CORRECTION APPLIED";
@@ -1179,7 +1179,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x18:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RECOVERED DATA WITH ERROR CORRECTION APPLIED";
@@ -1202,7 +1202,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x19:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DEFECT LIST ERROR";
@@ -1215,21 +1215,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x1A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "PARAMETER LIST LENGTH ERROR";
                     }
                     break;
                 case 0x1B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SYNCHRONOUS DATA TRANSFER ERROR";
                     }
                     break;
                 case 0x1C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DEFECT LIST NOT FOUND";
@@ -1240,7 +1240,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x1D:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MISCOMPARE DURING VERIFY OPERATION";
@@ -1249,21 +1249,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x1E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RECOVERED ID WITH ECC CORRECTION";
                     }
                     break;
                 case 0x1F:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "PARTIAL DEFECT LIST TRANSFER";
                     }
                     break;
                 case 0x20:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID COMMAND OPERATION CODE";
@@ -1294,7 +1294,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x21:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL BLOCK ADDRESS OUT OF RANGE";
@@ -1315,14 +1315,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x22:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ILLEGAL FUNCTION";
                     }
                     break;
                 case 0x23:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID TOKEN OPERATION, CAUSE NOT REPORTABLE";
@@ -1349,7 +1349,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x24:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ILLEGAL FIELD IN CDB";
@@ -1372,14 +1372,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x25:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT NOT SUPPORTED";
                     }
                     break;
                 case 0x26:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID FIELD IN PARAMETER LIST";
@@ -1424,7 +1424,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x27:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "WRITE PROTECTED";
@@ -1447,7 +1447,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x28:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NOT READY TO READY CHANGE (MEDIUM MAY HAVE CHANGED)";
@@ -1460,7 +1460,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x29:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "POWER ON, RESET, OR BUS DEVICE RESET OCCURRED";
@@ -1481,7 +1481,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x2A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "PARAMETERS CHANGED";
@@ -1526,14 +1526,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x2B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COPY CANNOT EXECUTE SINCE HOST CANNOT DISCONNECT";
                     }
                     break;
                 case 0x2C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COMMAND SEQUENCE ERROR";
@@ -1572,14 +1572,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x2D:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "OVERWRITE ERROR ON UPDATE IN PLACE";
                     }
                     break;
                 case 0x2E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INSUFFICIENT TIME FOR OPERATION";
@@ -1592,7 +1592,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x2F:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COMMANDS CLEARED BY ANOTHER INITIATOR";
@@ -1605,7 +1605,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x30:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INCOMPATIBLE MEDIUM INSTALLED";
@@ -1644,7 +1644,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x31:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MEDIUM FORMAT CORRUPTED";
@@ -1657,7 +1657,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x32:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "NO DEFECT SPARE LOCATION AVAILABLE";
@@ -1666,21 +1666,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x33:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "TAPE LENGTH ERROR";
                     }
                     break;
                 case 0x34:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ENCLOSURE FAILURE";
                     }
                     break;
                 case 0x35:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ENCLOSURE SERVICES FAILURE";
@@ -1697,21 +1697,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x36:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RIBBON, INK, OR TONER FAILURE";
                     }
                     break;
                 case 0x37:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ROUNDED PARAMETER";
                     }
                     break;
                 case 0x38:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "EVENT STATUS NOTIFICATION";
@@ -1726,14 +1726,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x39:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SAVING PARAMETERS NOT SUPPORTED";
                     }
                     break;
                 case 0x3A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MEDIUM NOT PRESENT";
@@ -1748,7 +1748,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x3B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SEQUENTIAL POSITIONING ERROR";
@@ -1809,14 +1809,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x3D:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID BITS IN IDENTIFY MESSAGE";
                     }
                     break;
                 case 0x3E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT HAS NOT SELF-CONFIGURED YET";
@@ -1831,7 +1831,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x3F:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "TARGET OPERATING CONDITIONS HAVE CHANGED";
@@ -1884,7 +1884,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x40:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RAM FAILURE";
@@ -1892,28 +1892,28 @@ namespace DiscImageChef.Decoders.SCSI
                             return String.Format("DIAGNOSTIC FAILURE ON COMPONENT {0:X2}h", ASCQ);
                     }
                 case 0x41:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DATA PATH FAILURE";
                     }
                     break;
                 case 0x42:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "POWER-ON OR SELF-TEST FAILURE";
                     }
                     break;
                 case 0x43:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MESSAGE ERROR";
                     }
                     break;
                 case 0x44:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INTERNAL TARGET FAILURE";
@@ -1924,21 +1924,21 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x45:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SELECT OR RESELECT FAILURE";
                     }
                     break;
                 case 0x46:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "UNSUCCESSFUL SOFT RESET";
                     }
                     break;
                 case 0x47:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SCSI PARITY ERROR";
@@ -1959,28 +1959,28 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x48:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INITIATOR DETECTED ERROR MESSAGE RECEIVED";
                     }
                     break;
                 case 0x49:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INVALID MESSAGE ERROR";
                     }
                     break;
                 case 0x4A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COMMAND PHASE ERROR";
                     }
                     break;
                 case 0x4B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DATA PHASE ERROR";
@@ -2029,7 +2029,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x4C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT FAILED SELF-CONFIGURATION";
@@ -2038,7 +2038,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case 0x4E:
                     return String.Format("OVERLAPPED COMMANDS ATTEMPTED FOR TASK TAG {0:X2}h", ASCQ);
                 case 0x50:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "WRITE APPEND ERROR";
@@ -2049,7 +2049,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x51:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ERASE FAILURE";
@@ -2058,14 +2058,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x52:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "CARTRIDGE FAULT";
                     }
                     break;
                 case 0x53:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "MEDIA LOAD OR EJECT FAILED";
@@ -2098,14 +2098,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x54:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SCSI TO HOST SYSTEM INTERFACE FAILURE";
                     }
                     break;
                 case 0x55:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SYSTEM RESOURCE FAILURE";
@@ -2144,28 +2144,28 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x57:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "UNABLE TO RECOVER TABLE-OF-CONTENTS";
                     }
                     break;
                 case 0x58:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "GENERATION DOES NOT EXIST";
                     }
                     break;
                 case 0x59:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "UPDATED BLOCK READ";
                     }
                     break;
                 case 0x5A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "OPERATOR REQUEST OR STATE CHANGE INPUT";
@@ -2178,7 +2178,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x5B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOG EXCEPTION";
@@ -2191,7 +2191,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x5C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RPL STATUS CHANGE";
@@ -2362,7 +2362,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x5E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOW POWER CONDITION ON";
@@ -2399,14 +2399,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x60:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LAMP FAILURE";
                     }
                     break;
                 case 0x61:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "VIDEO ACQUISTION ERROR";
@@ -2417,14 +2417,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x62:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SCAN HEAD POSITIONING ERROR";
                     }
                     break;
                 case 0x63:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "END OF USER AREA ENCOUNTERED ON THIS TRACK";
@@ -2433,7 +2433,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x64:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "ILLEGAL MODE FOR THIS TRACK";
@@ -2442,14 +2442,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x65:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "VOLTAGE FAULT";
                     }
                     break;
                 case 0x66:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "AUTOMATIC DOCUMENT FEEDER COVER UP";
@@ -2462,7 +2462,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x67:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "CONFIGURATION FAILURE";
@@ -2491,7 +2491,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x68:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "LOGICAL UNIT NOT CONFIGURED";
@@ -2500,7 +2500,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x69:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DATA LOSS ON LOGICAL UNIT";
@@ -2511,14 +2511,14 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x6A:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "INFORMATIONAL, REFER TO LOG";
                     }
                     break;
                 case 0x6B:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "STATE CHANGE HAS OCCURRED";
@@ -2529,28 +2529,28 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x6C:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "REBUILD FAILURE OCCURRED";
                     }
                     break;
                 case 0x6D:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "RECALCULATE FAILURE OCCURRED";
                     }
                     break;
                 case 0x6E:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COMMAND TO LOGICAL UNIT FAILED";
                     }
                     break;
                 case 0x6F:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "COPY PROTECTION KEY EXCHANGE FAILURE - AUTHENTICATION FAILURE";
@@ -2573,14 +2573,14 @@ namespace DiscImageChef.Decoders.SCSI
                 case 0x70:
                     return String.Format("DECOMPRESSION EXCEPTION SHORT ALGORITHM ID OF {0:X2}h", ASCQ);
                 case 0x71:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "DECOMPRESSIONG EXCEPTION LONG ALGORITHM ID";
                     }
                     break;
                 case 0x72:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SESSION FIXATION ERROR";
@@ -2601,7 +2601,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x73:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "CD CONTROL ERROR";
@@ -2626,7 +2626,7 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     break;
                 case 0x74:
-                    switch (ASCQ)
+                    switch(ASCQ)
                     {
                         case 0x00:
                             return "SECURITY ERROR";

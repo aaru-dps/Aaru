@@ -93,10 +93,10 @@ namespace DiscImageChef.Decoders.DVD
 
         public static SpareAreaInformation? Decode(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length != 16)
+            if(response.Length != 16)
                 return null;
 
             SpareAreaInformation sai = new SpareAreaInformation();
@@ -113,7 +113,7 @@ namespace DiscImageChef.Decoders.DVD
 
         public static string Prettify(SpareAreaInformation? sai)
         {
-            if (sai == null)
+            if(sai == null)
                 return null;
 
             SpareAreaInformation decoded = sai.Value;

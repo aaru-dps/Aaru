@@ -193,7 +193,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDText? Decode(byte[] CDTextResponse)
         {
-            if (CDTextResponse == null)
+            if(CDTextResponse == null)
                 return null;
 
             CDText decoded = new CDText();
@@ -205,16 +205,16 @@ namespace DiscImageChef.Decoders.CD
             decoded.Reserved2 = CDTextResponse[3];
             decoded.DataPacks = new CDTextPack[(decoded.DataLength - 2) / 18];
 
-            if (decoded.DataLength == 2)
+            if(decoded.DataLength == 2)
                 return null;
 
-            if (decoded.DataLength + 2 != CDTextResponse.Length)
+            if(decoded.DataLength + 2 != CDTextResponse.Length)
             {
                 DicConsole.DebugWriteLine("CD-TEXT decoder", "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDTextResponse.Length);
                 return null;
             }
 
-            for (int i = 0; i < ((decoded.DataLength - 2) / 18); i++)
+            for(int i = 0; i < ((decoded.DataLength - 2) / 18); i++)
             {
                 decoded.DataPacks[i].HeaderID1 = CDTextResponse[0 + i * 18 + 4];
                 decoded.DataPacks[i].HeaderID2 = CDTextResponse[1 + i * 18 + 4];
@@ -232,22 +232,22 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDText? CDTextResponse)
         {
-            if (CDTextResponse == null)
+            if(CDTextResponse == null)
                 return null;
 
             CDText response = CDTextResponse.Value;
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
                 sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
-            #endif
+#endif
 
-            foreach (CDTextPack descriptor in response.DataPacks)
+            foreach(CDTextPack descriptor in response.DataPacks)
             {
-                if ((descriptor.HeaderID1 & 0x80) != 0x80)
+                if((descriptor.HeaderID1 & 0x80) != 0x80)
                 {
                     // Ignore NOPs
                     if((descriptor.HeaderID1 & 0x80) != 0)
@@ -255,12 +255,12 @@ namespace DiscImageChef.Decoders.CD
                 }
                 else
                 {
-                    switch (descriptor.HeaderID1)
+                    switch(descriptor.HeaderID1)
                     {
                         case 0x80:
                             {
                                 sb.Append("CD-Text pack contains title for ");
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -269,7 +269,7 @@ namespace DiscImageChef.Decoders.CD
                         case 0x81:
                             {
                                 sb.Append("CD-Text pack contains performer for ");
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -278,7 +278,7 @@ namespace DiscImageChef.Decoders.CD
                         case 0x82:
                             {
                                 sb.Append("CD-Text pack contains songwriter for ");
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -286,7 +286,7 @@ namespace DiscImageChef.Decoders.CD
                             }
                         case 0x83:
                             {
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -295,7 +295,7 @@ namespace DiscImageChef.Decoders.CD
                         case 0x84:
                             {
                                 sb.Append("CD-Text pack contains arranger for ");
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -304,7 +304,7 @@ namespace DiscImageChef.Decoders.CD
                         case 0x85:
                             {
                                 sb.Append("CD-Text pack contains content provider's message for ");
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("album");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -344,7 +344,7 @@ namespace DiscImageChef.Decoders.CD
                             }
                         case 0x8E:
                             {
-                                if (descriptor.HeaderID2 == 0x00)
+                                if(descriptor.HeaderID2 == 0x00)
                                     sb.AppendLine("CD-Text pack contains UPC");
                                 else
                                     sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
@@ -357,7 +357,7 @@ namespace DiscImageChef.Decoders.CD
                             }
                     }
 
-                    switch (descriptor.HeaderID1)
+                    switch(descriptor.HeaderID1)
                     {
                         case 0x80:
                         case 0x81:
@@ -369,7 +369,7 @@ namespace DiscImageChef.Decoders.CD
                         case 0x87:
                         case 0x8E:
                             {
-                                if (descriptor.DBCC)
+                                if(descriptor.DBCC)
                                     sb.AppendLine("Double Byte Character Code is used");
                                 sb.AppendFormat("Block number {0}", descriptor.BlockNumber).AppendLine();
                                 sb.AppendFormat("Character position {0}", descriptor.CharacterPosition).AppendLine();

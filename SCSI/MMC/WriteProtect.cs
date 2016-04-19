@@ -118,7 +118,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static WriteProtectionStatus? DecodeWriteProtectionStatus(byte[] WPSResponse)
         {
-            if (WPSResponse == null)
+            if(WPSResponse == null)
                 return null;
 
             WriteProtectionStatus decoded = new WriteProtectionStatus();
@@ -142,23 +142,23 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string PrettifyWriteProtectionStatus(WriteProtectionStatus? WPSResponse)
         {
-            if (WPSResponse == null)
+            if(WPSResponse == null)
                 return null;
 
             WriteProtectionStatus response = WPSResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            if (response.MSWI)
+            if(response.MSWI)
                 sb.AppendLine("Writing inhibited by media specific reason");
-            if (response.CWP)
+            if(response.CWP)
                 sb.AppendLine("Cartridge sets write protection");
-            if (response.PWP)
+            if(response.PWP)
                 sb.AppendLine("Media surface sets write protection");
-            if (response.SWPP)
+            if(response.SWPP)
                 sb.AppendLine("Software write protection is set until power down");
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
@@ -171,7 +171,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
             if(response.Reserved6 != 0)
                 sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
-            #endif
+#endif
 
             return sb.ToString();
         }

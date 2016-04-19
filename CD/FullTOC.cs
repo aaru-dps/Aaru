@@ -152,7 +152,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
         {
-            if (CDFullTOCResponse == null)
+            if(CDFullTOCResponse == null)
                 return null;
 
             CDFullTOC decoded = new CDFullTOC();
@@ -164,13 +164,13 @@ namespace DiscImageChef.Decoders.CD
             decoded.LastCompleteSession = CDFullTOCResponse[3];
             decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
 
-            if (decoded.DataLength + 2 != CDFullTOCResponse.Length)
+            if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
                 DicConsole.DebugWriteLine("CD full TOC decoder", "Expected CDFullTOC size ({0} bytes) is not received size ({1} bytes), not decoding", decoded.DataLength + 2, CDFullTOCResponse.Length);
                 return null;
             }
 
-            for (int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
+            for(int i = 0; i < ((decoded.DataLength - 2) / 11); i++)
             {
                 decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
                 decoded.TrackDescriptors[i].ADR = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
@@ -193,7 +193,7 @@ namespace DiscImageChef.Decoders.CD
 
         public static string Prettify(CDFullTOC? CDFullTOCResponse)
         {
-            if (CDFullTOCResponse == null)
+            if(CDFullTOCResponse == null)
                 return null;
 
             CDFullTOC response = CDFullTOCResponse.Value;
@@ -204,9 +204,9 @@ namespace DiscImageChef.Decoders.CD
 
             sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
-            foreach (TrackDataDescriptor descriptor in response.TrackDescriptors)
+            foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
             {
-                if ((descriptor.CONTROL & 0x08) == 0x08 ||
+                if((descriptor.CONTROL & 0x08) == 0x08 ||
                     (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
                     descriptor.TNO != 0)
                 {
@@ -233,19 +233,19 @@ namespace DiscImageChef.Decoders.CD
                         lastSession = descriptor.SessionNumber;
                     }
 
-                    switch (descriptor.ADR)
+                    switch(descriptor.ADR)
                     {
                         case 1:
                         case 4:
                             {
-                                switch (descriptor.POINT)
+                                switch(descriptor.POINT)
                                 {
                                     case 0xA0:
                                         {
-                                            if (descriptor.ADR == 4)
+                                            if(descriptor.ADR == 4)
                                             {
                                                 sb.AppendFormat("First video track number: {0}", descriptor.PMIN).AppendLine();
-                                                switch (descriptor.PSEC)
+                                                switch(descriptor.PSEC)
                                                 {
                                                     case 0x10:
                                                         sb.AppendLine("CD-V single in NTSC format with digital stereo sound");
@@ -276,7 +276,7 @@ namespace DiscImageChef.Decoders.CD
                                             else
                                             {
                                                 sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
-                                                switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                                switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                                                 {
                                                     case TOC_CONTROL.TwoChanNoPreEmph:
                                                         sb.Append(StereoNoPre);
@@ -305,12 +305,12 @@ namespace DiscImageChef.Decoders.CD
                                         }
                                     case 0xA1:
                                         {
-                                            if (descriptor.ADR == 4)
+                                            if(descriptor.ADR == 4)
                                                 sb.AppendFormat("Last video track number: {0}", descriptor.PMIN).AppendLine();
                                             else
                                             {
                                                 sb.AppendFormat("Last track number: {0} (", descriptor.PMIN);
-                                                switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                                switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                                                 {
                                                     case TOC_CONTROL.TwoChanNoPreEmph:
                                                         sb.Append(StereoNoPre);
@@ -344,7 +344,7 @@ namespace DiscImageChef.Decoders.CD
                                                 sb.AppendFormat("Lead-out start position: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
                                             //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
 
-                                            switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                            switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                                             {
                                                 case TOC_CONTROL.TwoChanNoPreEmph:
                                                 case TOC_CONTROL.TwoChanPreEmph:
@@ -372,15 +372,15 @@ namespace DiscImageChef.Decoders.CD
                                         }
                                     default:
                                         {
-                                            if (descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
+                                            if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
                                             {
-                                                if (descriptor.ADR == 4)
+                                                if(descriptor.ADR == 4)
                                                     sb.AppendFormat("Video track {3} starts at: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.POINT).AppendLine();
                                                 else
                                                 {
                                                     string type = "Audio";
 
-                                                    if ((TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
+                                                    if((TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrack ||
                                                        (TOC_CONTROL)(descriptor.CONTROL & 0x0D) == TOC_CONTROL.DataTrackIncremental)
                                                         type = "Data";
 
@@ -389,7 +389,7 @@ namespace DiscImageChef.Decoders.CD
                                                     else
                                                         sb.AppendFormat("{4} track {3} starts at: {0:D2}:{1:D2}:{2:D2} (", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.POINT, type);
 
-                                                    switch ((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
+                                                    switch((TOC_CONTROL)(descriptor.CONTROL & 0x0D))
                                                     {
                                                         case TOC_CONTROL.TwoChanNoPreEmph:
                                                             sb.Append(StereoNoPre);
@@ -436,11 +436,11 @@ namespace DiscImageChef.Decoders.CD
                             }
                         case 5:
                             {
-                                switch (descriptor.POINT)
+                                switch(descriptor.POINT)
                                 {
                                     case 0xB0:
                                         {
-                                            if (descriptor.PHOUR > 0)
+                                            if(descriptor.PHOUR > 0)
                                             {
                                                 sb.AppendFormat("Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                                 sb.AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
@@ -474,7 +474,7 @@ namespace DiscImageChef.Decoders.CD
                                     case 0xC0:
                                         {
                                             sb.AppendFormat("Optimum recording power: 0x{0:X2}", descriptor.Min).AppendLine();
-                                            if (descriptor.PHOUR > 0)
+                                            if(descriptor.PHOUR > 0)
                                                 sb.AppendFormat("Start time of the first Lead-in area in the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
                                             else
                                                 sb.AppendFormat("Start time of the first Lead-in area in the disc: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
@@ -494,7 +494,7 @@ namespace DiscImageChef.Decoders.CD
                                         }
                                     case 0xCF:
                                         {
-                                            if (descriptor.PHOUR > 0)
+                                            if(descriptor.PHOUR > 0)
                                             {
                                                 sb.AppendFormat("Start position of outer part lead-in area: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
                                                 sb.AppendFormat("Stop position of inner part lead-out area: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
@@ -508,7 +508,7 @@ namespace DiscImageChef.Decoders.CD
                                         }
                                     default:
                                         {
-                                            if (descriptor.POINT >= 0x01 && descriptor.POINT <= 0x40)
+                                            if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x40)
                                             {
                                                 sb.AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
                                                 sb.AppendFormat("Ending time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();

@@ -62,14 +62,14 @@ namespace DiscImageChef.Decoders.SCSI
         {
             ushort len = (ushort)((response[0] << 8) + response[1]);
 
-            if (len + 2 != response.Length)
+            if(len + 2 != response.Length)
                 return null;
 
             List<Capability> caps = new List<Capability>();
 
             uint offset = 4;
 
-            while (offset < response.Length)
+            while(offset < response.Length)
             {
                 Capability cap = new Capability();
                 cap.FormatCode = response[offset];

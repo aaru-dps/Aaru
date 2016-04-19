@@ -61,10 +61,10 @@ namespace DiscImageChef.Decoders.Bluray
         #region Public methods
         public static CartridgeStatus? Decode(byte[] CSResponse)
         {
-            if (CSResponse == null)
+            if(CSResponse == null)
                 return null;
 
-            if (CSResponse.Length != 8)
+            if(CSResponse.Length != 8)
             {
                 DicConsole.DebugWriteLine("BD Cartridge Status decoder", "Found incorrect Blu-ray Cartridge Status size ({0} bytes)", CSResponse.Length);
                 return null;
@@ -78,9 +78,9 @@ namespace DiscImageChef.Decoders.Bluray
             decoded.Reserved1 = CSResponse[2];
             decoded.Reserved2 = CSResponse[3];
             decoded.Cartridge = Convert.ToBoolean(CSResponse[4] & 0x80);
-            decoded.OUT = Convert.ToBoolean(CSResponse[4]&0x40);
+            decoded.OUT = Convert.ToBoolean(CSResponse[4] & 0x40);
             decoded.Reserved3 = (byte)((CSResponse[4] & 0x38) >> 3);
-            decoded.OUT = Convert.ToBoolean(CSResponse[4]&0x04);
+            decoded.OUT = Convert.ToBoolean(CSResponse[4] & 0x04);
             decoded.Reserved4 = (byte)(CSResponse[4] & 0x03);
             decoded.Reserved5 = CSResponse[5];
             decoded.Reserved6 = CSResponse[6];
@@ -91,14 +91,14 @@ namespace DiscImageChef.Decoders.Bluray
 
         public static string Prettify(CartridgeStatus? CSResponse)
         {
-            if (CSResponse == null)
+            if(CSResponse == null)
                 return null;
 
             CartridgeStatus response = CSResponse.Value;
 
             StringBuilder sb = new StringBuilder();
 
-            #if DEBUG
+#if DEBUG
             if(response.Reserved1 != 0)
                 sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
             if(response.Reserved2 != 0)
@@ -113,26 +113,26 @@ namespace DiscImageChef.Decoders.Bluray
                 sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
             if(response.Reserved7 != 0)
                 sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
-            #endif
+#endif
 
-            if (response.Cartridge)
+            if(response.Cartridge)
             {
                 sb.AppendLine("Media is inserted in a cartridge");
-                if (response.OUT)
+                if(response.OUT)
                     sb.AppendLine("Media has been taken out, or inserted in, the cartridge");
-                if (response.CWP)
+                if(response.CWP)
                     sb.AppendLine("Media is write protected");
             }
             else
             {
                 sb.AppendLine("Media is not in a cartridge");
 
-                #if DEBUG
-                if (response.OUT)
+#if DEBUG
+                if(response.OUT)
                     sb.AppendLine("Media has out bit marked, shouldn't");
-                if (response.CWP)
+                if(response.CWP)
                     sb.AppendLine("Media has write protection bit marked, shouldn't");
-                #endif
+#endif
             }
             return sb.ToString();
         }

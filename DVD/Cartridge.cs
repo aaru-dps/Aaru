@@ -128,10 +128,10 @@ namespace DiscImageChef.Decoders.DVD
 
         public static MediumStatus? Decode(byte[] response)
         {
-            if (response == null)
+            if(response == null)
                 return null;
 
-            if (response.Length != 8)
+            if(response.Length != 8)
                 return null;
 
             MediumStatus status = new MediumStatus();
@@ -155,25 +155,25 @@ namespace DiscImageChef.Decoders.DVD
 
         public static string Prettify(MediumStatus? status)
         {
-            if (status == null)
+            if(status == null)
                 return null;
 
             MediumStatus decoded = status.Value;
             StringBuilder sb = new StringBuilder();
 
-            if (decoded.PWP)
+            if(decoded.PWP)
                 sb.AppendLine("Disc surface is set to write protected status");
 
-            if (decoded.Cartridge)
+            if(decoded.Cartridge)
             {
                 sb.AppendLine("Disc comes in a cartridge");
-                if (decoded.OUT)
+                if(decoded.OUT)
                     sb.AppendLine("Disc has been extracted from the cartridge");
-                if (decoded.CWP)
+                if(decoded.CWP)
                     sb.AppendLine("Cartridge is set to write protected");
             }
 
-            switch (decoded.DiscType)
+            switch(decoded.DiscType)
             {
                 case 0:
                     sb.AppendLine("Disc shall not be written without a cartridge");
@@ -186,9 +186,9 @@ namespace DiscImageChef.Decoders.DVD
                     break;
             }
 
-            if (decoded.MSWI)
+            if(decoded.MSWI)
             {
-                switch (decoded.RAMSWI)
+                switch(decoded.RAMSWI)
                 {
                     case 0:
                         break;

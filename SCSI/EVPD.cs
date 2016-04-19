@@ -49,13 +49,13 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x00.</param>
         public static byte[] DecodePage00(byte[] page)
         {
-            if (page == null)
-                return null;
-            
-            if (page[1] != 0)
+            if(page == null)
                 return null;
 
-            if (page.Length != page[3] + 4)
+            if(page[1] != 0)
+                return null;
+
+            if(page.Length != page[3] + 4)
                 return null;
 
             byte[] decoded = new byte[page.Length - 4];
@@ -72,13 +72,13 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x01-0x7F.</param>
         public static string DecodeASCIIPage(byte[] page)
         {
-            if (page == null)
+            if(page == null)
                 return null;
 
-            if (page[1] == 0 || page[1] > 0x7F)
+            if(page[1] == 0 || page[1] > 0x7F)
                 return null;
 
-            if (page.Length != page[3] + 4)
+            if(page.Length != page[3] + 4)
                 return null;
 
             byte[] ascii = new byte[page[4]];
@@ -95,13 +95,13 @@ namespace DiscImageChef.Decoders.SCSI
         /// <param name="page">Page 0x80.</param>
         public static string DecodePage80(byte[] page)
         {
-            if (page == null)
+            if(page == null)
                 return null;
 
-            if (page[1] != 0x80)
+            if(page[1] != 0x80)
                 return null;
 
-            if (page.Length != page[3] + 4)
+            if(page.Length != page[3] + 4)
                 return null;
 
             byte[] ascii = new byte[page.Length - 4];
