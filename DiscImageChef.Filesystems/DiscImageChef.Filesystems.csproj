@@ -58,6 +58,7 @@
     <Compile Include="SysV.cs" />
     <Compile Include="UNIXBFS.cs" />
     <Compile Include="Acorn.cs" />
+    <Compile Include="Nintendo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

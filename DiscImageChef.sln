@@ -104,7 +104,7 @@ Global
 		$0.TextStylePolicy = $2
 		$2.inheritsSet = VisualStudio
 		$2.inheritsScope = text/plain
-		$2.scope = text/x-csharp
+		$2.scope = text/plain
 		$2.FileWidth = 120
 		$0.CSharpFormattingPolicy = $3
 		$3.SpacingAfterMethodDeclarationName = False

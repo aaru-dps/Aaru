@@ -307,12 +307,6 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            string dscType, dscSubType;
-                            Metadata.MediaType.MediaTypeToString(dskType, out dscType, out dscSubType);
-                            sidecar.OpticalDisc[0].DiscType = dscType;
-                            sidecar.OpticalDisc[0].DiscSubType = dscSubType;
-                            Core.Statistics.AddMedia(dskType, false);
-
                             try
                             {
                                 List<Session> sessions = _imageFormat.GetSessions();
@@ -541,6 +535,15 @@ namespace DiscImageChef.Commands
                                                     _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
                                                     lstFs.Add(_plugin.XmlFSType);
                                                     Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+
+                                                    if (_plugin.XmlFSType.Type == "Opera")
+                                                        dskType = MediaType.ThreeDO;
+                                                    if (_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                                        dskType = MediaType.SuperCDROM2;
+                                                    if (_plugin.XmlFSType.Type == "Nintendo Wii filesystem")
+                                                        dskType = MediaType.WOD;
+                                                    if (_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
+                                                        dskType = MediaType.GOD;
                                                 }
                                             }
                                             catch
@@ -571,6 +574,15 @@ namespace DiscImageChef.Commands
                                                 _plugin.GetInformation(_imageFormat, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector, out foo);
                                                 lstFs.Add(_plugin.XmlFSType);
                                                 Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
+
+                                                if (_plugin.XmlFSType.Type == "Opera")
+                                                    dskType = MediaType.ThreeDO;
+                                                if (_plugin.XmlFSType.Type == "PC Engine filesystem")
+                                                    dskType = MediaType.SuperCDROM2;
+                                                if (_plugin.XmlFSType.Type == "Nintendo Wii filesystem")
+                                                    dskType = MediaType.WOD;
+                                                if (_plugin.XmlFSType.Type == "Nintendo Gamecube filesystem")
+                                                    dskType = MediaType.GOD;
                                             }
                                         }
                                         catch
@@ -588,6 +600,12 @@ namespace DiscImageChef.Commands
 
                             if (trksLst != null)
                                 sidecar.OpticalDisc[0].Track = trksLst.ToArray();
+                            
+                            string dscType, dscSubType;
+                            Metadata.MediaType.MediaTypeToString(dskType, out dscType, out dscSubType);
+                            sidecar.OpticalDisc[0].DiscType = dscType;
+                            sidecar.OpticalDisc[0].DiscSubType = dscSubType;
+                            Core.Statistics.AddMedia(dskType, false);
 
                             break;
                         }
