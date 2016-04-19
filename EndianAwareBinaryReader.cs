@@ -48,13 +48,13 @@ namespace DiscImageChef
         byte[] buffer = new byte[8];
 
         public EndianAwareBinaryReader(Stream input, Encoding encoding, bool isLittleEndian)
-			: base(input, encoding)
+            : base(input, encoding)
         {
             IsLittleEndian = isLittleEndian;
         }
 
         public EndianAwareBinaryReader(Stream input, bool isLittleEndian)
-			: this(input, Encoding.UTF8, isLittleEndian)
+            : this(input, Encoding.UTF8, isLittleEndian)
         {
         }
 
@@ -66,7 +66,7 @@ namespace DiscImageChef
 
         public override double ReadDouble()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadDouble();
             FillMyBuffer(8);
             return BitConverter.ToDouble(buffer.Take(8).Reverse().ToArray(), 0);
@@ -74,34 +74,34 @@ namespace DiscImageChef
 
         public override short ReadInt16()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadInt16();
             FillMyBuffer(2);
             return BitConverter.ToInt16(buffer.Take(2).Reverse().ToArray(), 0);
-			
+
         }
 
         public override int ReadInt32()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadInt32();
             FillMyBuffer(4);
             return BitConverter.ToInt32(buffer.Take(4).Reverse().ToArray(), 0);
-			
+
         }
 
         public override long ReadInt64()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadInt64();
             FillMyBuffer(8);
             return BitConverter.ToInt64(buffer.Take(8).Reverse().ToArray(), 0);
-			
+
         }
 
         public override float ReadSingle()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadSingle();
             FillMyBuffer(4);
             return BitConverter.ToSingle(buffer.Take(4).Reverse().ToArray(), 0);
@@ -109,7 +109,7 @@ namespace DiscImageChef
 
         public override ushort ReadUInt16()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadUInt16();
             FillMyBuffer(2);
             return BitConverter.ToUInt16(buffer.Take(2).Reverse().ToArray(), 0);
@@ -117,7 +117,7 @@ namespace DiscImageChef
 
         public override uint ReadUInt32()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadUInt32();
             FillMyBuffer(4);
             return BitConverter.ToUInt32(buffer.Take(4).Reverse().ToArray(), 0);
@@ -125,7 +125,7 @@ namespace DiscImageChef
 
         public override ulong ReadUInt64()
         {
-            if (IsLittleEndian)
+            if(IsLittleEndian)
                 return base.ReadUInt64();
             FillMyBuffer(8);
             return BitConverter.ToUInt64(buffer.Take(8).Reverse().ToArray(), 0);
@@ -135,10 +135,10 @@ namespace DiscImageChef
         {
             int offset = 0;
             int num2;
-            if (numBytes == 1)
+            if(numBytes == 1)
             {
                 num2 = BaseStream.ReadByte();
-                if (num2 == -1)
+                if(num2 == -1)
                 {
                     throw new EndOfStreamException("Attempted to read past the end of the stream.");
                 }
@@ -149,13 +149,13 @@ namespace DiscImageChef
                 do
                 {
                     num2 = BaseStream.Read(buffer, offset, numBytes - offset);
-                    if (num2 == 0)
+                    if(num2 == 0)
                     {
                         throw new EndOfStreamException("Attempted to read past the end of the stream.");
                     }
                     offset += num2;
                 }
-                while (offset < numBytes);
+                while(offset < numBytes);
             }
         }
     }

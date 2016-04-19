@@ -42,12 +42,12 @@ namespace DiscImageChef
 
         public static void ArrayFill<T>(T[] destinationArray, T[] value)
         {
-            if (destinationArray == null)
+            if(destinationArray == null)
             {
                 throw new ArgumentNullException("destinationArray");
             }
 
-            if (value.Length > destinationArray.Length)
+            if(value.Length > destinationArray.Length)
             {
                 throw new ArgumentException("Length of value array must not be more than length of destination");
             }

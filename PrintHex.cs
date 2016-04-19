@@ -53,16 +53,16 @@ namespace DiscImageChef
 
             int counter = 0;
             int subcounter = 0;
-            for (long i = 0; i < array.LongLength; i++)
+            for(long i = 0; i < array.LongLength; i++)
             {
-                if (counter == 0)
+                if(counter == 0)
                 {
                     sb.AppendLine();
                     sb.AppendFormat("{0:X16}   ", i);
                 }
                 else
                 {
-                    if (subcounter == 3 )
+                    if(subcounter == 3)
                     {
                         sb.Append("  ");
                         subcounter = 0;
@@ -76,7 +76,7 @@ namespace DiscImageChef
 
                 sb.AppendFormat("{0:X2}", array[i]);
 
-                if (counter == width - 1)
+                if(counter == width - 1)
                 {
                     counter = 0;
                     subcounter = 0;

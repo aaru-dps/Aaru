@@ -61,19 +61,19 @@ namespace DiscImageChef
         /// <param name="encoding">Encoding.</param>
         public static string CToString(byte[] CString, Encoding encoding)
         {
-            if (CString == null)
+            if(CString == null)
                 return null;
 
             StringBuilder sb = new StringBuilder();
-			
-            for (int i = 0; i < CString.Length; i++)
+
+            for(int i = 0; i < CString.Length; i++)
             {
-                if (CString[i] == 0)
+                if(CString[i] == 0)
                     break;
 
                 sb.Append(encoding.GetString(CString, i, 1));
             }
-			
+
             return sb.ToString();
         }
 
@@ -84,14 +84,14 @@ namespace DiscImageChef
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         public static string PascalToString(byte[] PascalString)
         {
-            if (PascalString == null)
+            if(PascalString == null)
                 return null;
 
             StringBuilder sb = new StringBuilder();
 
             byte length = PascalString[0];
 
-            for (int i = 1; i < length + 1; i++)
+            for(int i = 1; i < length + 1; i++)
             {
                 sb.Append(Encoding.ASCII.GetString(PascalString, i, 1));
             }
@@ -106,17 +106,17 @@ namespace DiscImageChef
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString)
         {
-            if (SpacePaddedString == null)
+            if(SpacePaddedString == null)
                 return null;
-            
+
             int length = 0;
 
-            for (int i = SpacePaddedString.Length; i >= 0; i--)
+            for(int i = SpacePaddedString.Length; i >= 0; i--)
             {
-                if (i == 0)
+                if(i == 0)
                     return "";
 
-                if (SpacePaddedString[i - 1] != 0x20)
+                if(SpacePaddedString[i - 1] != 0x20)
                 {
                     length = i;
                     break;

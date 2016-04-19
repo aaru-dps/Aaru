@@ -43,11 +43,11 @@ namespace DiscImageChef
     {
         public static bool ArrayIsNullOrWhiteSpace(byte[] array)
         {
-            if (array == null)
+            if(array == null)
                 return true;
 
-            foreach (byte b in array)
-                if (b != 0x00 && b != 0x20)
+            foreach(byte b in array)
+                if(b != 0x00 && b != 0x20)
                     return false;
 
             return true;
@@ -55,11 +55,11 @@ namespace DiscImageChef
 
         public static bool ArrayIsNullOrEmpty(byte[] array)
         {
-            if (array == null)
+            if(array == null)
                 return true;
 
-            foreach (byte b in array)
-                if (b != 0x00)
+            foreach(byte b in array)
+                if(b != 0x00)
                     return false;
 
             return true;
