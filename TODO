@@ -68,3 +68,12 @@ Image checksum:
 --- Checksum sector tags
 --- Checksum long sectors
 --- Optimize and multithread
+
+Device handling:
+--- Add support for MMC/SD devices
+--- Add support for NVMe devices
+--- Add support for streaming tape devices
+--- Add mapfile support for resuming dumps
+--- Add support for FreeBSD
+--- Support SCSI mode pages 18h, 1Dh, 20h, 31h, 32h
+--- Support MMC feature codes FF33h

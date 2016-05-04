@@ -36,7 +36,6 @@ Copyright (C) 2011-2014 Claunia.com
 ****************************************************************************/
 //$Id$
 using CommandLine;
-using CommandLine.Text;
 
 namespace DiscImageChef
 {
