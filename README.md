@@ -91,6 +91,7 @@ Supported file systems
 * Amiga Fast File System, with international characters, directory cache and multi-user patches
 * Amiga Fast File System v2, untested
 * Acorn Advanced Disc Filing System
+* B-tree file system (btrfs)
 
 Supported checksums
 ===================
