@@ -25,7 +25,6 @@ Filesystem plugins:
 --- Add support for AMSDOS filesystem
 --- Add support for CP/M filesystem
 --- Add support for CBM filesystem
---- Add support for btrfs
 --- Add support for ZFS
 --- Add support for UDF
 --- Add support for CramFS
