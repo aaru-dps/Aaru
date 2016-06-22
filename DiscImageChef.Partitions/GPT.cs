@@ -324,6 +324,8 @@ namespace DiscImageChef.PartPlugins
                     return "PowerPC PReP boot";
                 case "0311FC50-01CA-4725-AD77-9ADBB20ACE98":
                     return "Acronis Secure Zone";
+                case "7C3457EF-0000-11AA-AA11-00306543ECAC":
+                    return "Apple File System";
                 default:
                     return "";
             }

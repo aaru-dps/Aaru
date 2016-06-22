@@ -92,6 +92,7 @@ Supported file systems
 * Amiga Fast File System v2, untested
 * Acorn Advanced Disc Filing System
 * B-tree file system (btrfs)
+* Apple File System (preliminary detection until on-disk layout is stable)
 
 Supported checksums
 ===================
