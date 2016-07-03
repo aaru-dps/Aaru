@@ -1,9 +1,304 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
-<html lang="en">
-<head><title>Unofficial Amstrad WWW Resource</title>
-<meta name="Keywords" content="amstrad,arnold,amstrad cpc,cpc,gx4000,cpc+,cpcplus,schneider,cpc464,cpc664,cpc6128,cpc464+,cpc6128+,464+,6128+,464plus,6128plus,kcc,kccompact,kc compact"><meta name="Author" content="Kevin Thacker"><meta name="Description" content="The main page of the web site dedicated to the Amstrad CPC464, CPC664, CPC6128, CPC464+, CPC6128+, GX4000 and VEB Mikroelectronic KC Compact"></head>
-<frameset rows="100%">
-<frame title="http://cpctech.cpc-live.com/docs/dsk.html" src="http://cpctech.cpc-live.com/docs/dsk.html" name="mainframe" frameborder="0" noresize="noresize" scrolling="auto">
-<noframes>Sorry, you don"t appear to have frame support.
-Go here instead - <a href="http://cpctech.cpc-live.com/docs/dsk.html">Unofficial Amstrad WWW Resource</a></noframes>
-</frameset>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>Disk image file format</title>
+<link rel="stylesheet" type="text/css" href="../arnold.css">
+<meta name="description" content="A description of the standard .DSK disk image file structure">
+<meta name="uawww-category" content="docs-emulation-file_formats">
+<meta http-equiv="Content-Language" content="en-gb">
+<base href="http://www.cpctech.org.uk" target="_parent" /></head>
+<body>
+<h1>Disk image file format</h1>
+
+<p>This document describes the standard disk image format. It has the file
+extension &quot;.DSK&quot;.
+
+<h2>Disc Information block</h2>
+
+<p>The &quot;Disc Information block&quot; is always at offset 0  in the disk image file. 
+If track data exists, then this will immediatly follow the Disc Information Block and will start at 
+offset &amp;100 in the disc image file.
+
+<p>The &quot;Disc Information block&quot; has the following structure:
+<p><table border="1" >
+<thead>
+<tr>
+<th>offset</th>
+<th>description</th>
+<td>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00-21</td>
+<td>&quot;MV - CPCEMU Disk-File\r\nDisk-Info\r\n&quot;</td>
+<td>34</td>
+</tr>
+<tr>
+<td>22-2f</td>
+<td>name of creator</td>
+<td>14</td>
+</tr>
+<tr>
+<td>30</td>
+<td>number of tracks</td>
+<td>1</td>
+</tr>
+<tr>
+<td>31</td>
+<td>number of sides</td>
+<td>1</td>
+</tr>
+<tr>
+<td>32-33</td>
+<td>size of a track
+	(little endian; low byte followed by high byte)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>34-ff</td>
+<td>not used (0)</td>
+<td>204</td>
+</tr>
+</tbody>
+</table>
+
+<p>Notes:
+<ul>
+<li>Track 0 (or Track 0 side 0 for double sided disks) immediatly follows the Disk Information Block, and is at offset
+&amp;100 in the disk image.
+<li>&quot;MV - CPC&quot; must be present, because it is used to identify the
+	file as a disk image. It is sufficient to check this to identify
+	the file as being a disk image.
+<li>&quot;\r&quot; is the C programming language equivalent of ASCII character 13.
+<li>&quot;\n&quot; is the C programming language equivalent of ASCII character 10.
+<li><b>All</b> tracks must be the same size.
+<li>&quot;size of track&quot; is used to calculate the location of the data for a chosen track.
+<li>&quot;size of track&quot; includes the &amp;100 byte Track Information Block.
+<li><b>All</b> tracks must have a &quot;Track Information Block&quot;
+<li>track lengths are stored in the same order as the tracks in the image
+e.g. In the case of a double sided disk: Track 0 side 0, Track 0 side 1, Track
+	1 side 0 etc...
+<li>The track blocks are stored in increasing order 0..number of tracks, with alternating
+sides interleaved if the disc image describes a double sided disk.
+e.g. if the disk image represents a double sided disk, the order of tracks is:
+track 0 side 0, track 0 side 1, track 1 side 0, track 1 side 1.... track (number of tracks-1) side 0,
+track (number of tracks-1) side 1
+<p>The tracks are <b>always</b> ordered in this way regardless of the disc-format described by the disc
+image.
+<li>A standard disk image can be used to describe a copy-protected disk, but will often result in a file
+which is larger than the same disk described by a extended disk image. For a standard disk image to represent
+a copy-protected disk:
+<ul><li>All track sizes in the standard disk image must be the same. This value therefore would be the size of the largest track, and other tracks would have unused space
+in them.
+<li>All sector sizes within each track must be the same size, but not necessarily the same size as the sectors for another track. If a track contained different sized sectors,
+the size of the largest sector should be used. This would result in some wasted space.
+</ul>
+
+</ul>
+
+<h2>Track Information Block</h2>
+
+<p>Each Track Block comprises a Track Information Block and sector data. 
+The sector data is always at an offset of &amp;100 bytes from the start of the 
+track block. The data for the next track in the disc image immediatly
+follows the data for the current track.
+
+<p>The first Track Block is located at offset &amp;100 in the disk image file.
+The track block starts with the Track Information Block and has this form.
+
+<p><table border="1" >
+<thead>
+<tr>
+<th>offset</th>
+<th>description</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00 - 0c</td>
+<td>&quot;Track-Info\r\n&quot;</td>
+<td>13</td>
+</tr>
+<tr>
+<td>0d - 0f</td>
+<td>unused</td>
+<td>3</td>
+</tr>
+<tr>
+<td>10</td>
+<td>track number</td>
+<td>1</td>
+</tr>
+<tr>
+<td>11</td>
+<td>side number</td>
+<td>1</td>
+</tr>
+<tr>
+<td>12 - 13</td>
+<td>unused</td>
+<td>2</td>
+</tr>
+<tr>
+<td>14</td>
+<td>sector size</td>
+<td>1</td>
+</tr>
+<tr>
+<td>15</td>
+<td>number of sectors</td>
+<td>1</td>
+</tr>
+<tr>
+<td>16</td>
+<td>GAP#3 length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>17</td>
+<td>filler byte</td>
+<td>1</td>
+</tr>
+<tr>
+<td>18 - xx</td>
+<td>Sector Information List</td>
+<td>xx</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:
+<ul>
+<li>&quot;number of sectors&quot; is used to identify the number of valid entries
+in the sector information list.
+<li>&quot;sector size&quot; parameter is used to calculate the location of each sector's data.
+Therefore, The data allocated for each sector must be the same.
+<p>If the track contains different sized sectors, then the data allocated must be the size
+of the biggest sector. The &quot;sector size&quot; parameter is used to calculate
+the location of the sector data.
+<li>Sector data always follows Track Information Block at offset &amp;100 from the start
+of the track information block.
+<li>Sector data is stored in the same order as the sectors in the sector info block.
+</ul>
+
+<h3>Sector info</h3>
+
+
+<table border="1" >
+<thead>
+<tr>
+<th>offset</th>
+<th>description</th>
+<th>bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td>track (equivalent to C parameter in NEC765 commands)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>01</td>
+<td>side (equivalent to H parameter in NEC765 commands)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>02</td>
+<td>sector ID (equivalent to R parameter in NEC765 commands)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>03</td>
+<td>sector size (equivalent to N parameter in NEC765 commands)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>04</td>
+<td>FDC status register 1 (equivalent to NEC765 ST1 status register)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>05</td>
+<td>FDC status register 2 (equivalent to NEC765 ST2 status register)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>06 - 07</td>
+<td>notused (0)</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:
+<ul>
+<li>The following bits are used from NEC765 status register 1:
+<ul>
+<li>b7 EN (End of Cylinder)
+<li>b5 DE (Data Error)
+<li>b2 ND (No Data)
+<li>b0 MA (Missing Address Mark)
+</ul>
+<li>The following bits are used from NEC765 status register 2:
+<ul>
+<li>b5 CM (Control Mark)
+<li>b5 DD (Data Error in Data field)
+<li>b0 MD (Missing address Mark in Data field)
+</ul>
+<li>For 8k Sectors (N=&quot;6&quot;), only 1800h bytes is stored.
+</ul>
+
+<h2>General format</h2>
+
+<h3>Single sided DSK images</h3>
+
+<ul>
+<li>Disc Information Block
+<li>Track 0 data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+<li>Track 1 data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+.
+.
+.
+.
+<li>Track (number_of_tracks-1) data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+</ul>
+
+<h3>Double sided DSK images</h3>
+
+<ul>
+<li>Disc Information Block
+<li>Track 0 side 0 data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+<li>Track 0 side 1 data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+.
+.
+.
+.
+<li>Track (number_of_tracks-1) side 1 data
+<ul>
+<li>Track Information Block
+<li>Sector data
+</ul>
+</ul>
+</body>
+</html>
