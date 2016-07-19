@@ -1871,9 +1871,9 @@ namespace DiscImageChef.Commands
             };
 
             // TODO: Raw reading
-            bool read6 = false, read10 = false, read12 = false, read16 = false, readcd;
-            bool readLong10 = false, readLong16 = false, hldtstReadRaw = false, necReadCDDA = false;
-            bool pioneerReadCDDA = false, plextorReadCDDA = false, plextorReadRaw = false, syqReadLong6 = false, syqReadLong10 = false;
+            bool read6 = false, read10 = false, read12 = false, read16 = false, readcd = false;
+            bool readLong10 = false, readLong16 = false, hldtstReadRaw = false;
+            bool plextorReadRaw = false, syqReadLong6 = false, syqReadLong10 = false;
 
             #region CompactDisc dump
             if(compactDisc)
