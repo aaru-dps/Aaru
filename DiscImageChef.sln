@@ -275,6 +275,6 @@ Global
 		$31.IncludeDirectoryPaths = True
 		$30.inheritsSet = Mono
 		description = The Disc Image Chef.
-		version = 2.2
+		version = 3.0.0
 	EndGlobalSection
 EndGlobal
