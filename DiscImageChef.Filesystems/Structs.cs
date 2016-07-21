@@ -36,110 +36,113 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Runtime.InteropServices;
+using System.Security.Policy;
+
 namespace DiscImageChef.Filesystems
 {
     /// <summary>
     /// File attributes.
     /// </summary>
     [Flags]
-    public enum FileAttributes
+    public enum FileAttributes : ulong
     {
         /// <summary>File is an alias (Mac OS)</summary>
-        Alias,
+        Alias = 0x01,
         /// <summary>Indicates that the file can only be writable appended</summary>
-        AppendOnly,
+        AppendOnly = 0x02,
         /// <summary>File is candidate for archival/backup</summary>
-        Archive,
+        Archive = 0x04,
         /// <summary>File is a block device</summary>
-        BlockDevice,
+        BlockDevice = 0x08,
         /// <summary>File is stored on filesystem block units instead of device sectors</summary>
-        BlockUnits,
+        BlockUnits = 0x10,
         /// <summary>Directory is a bundle or file contains a BNDL resource</summary>
-        Bundle,
+        Bundle = 0x20,
         /// <summary>File is a char device</summary>
-        CharDevice,
+        CharDevice = 0x40,
         /// <summary>File is compressed</summary>
-        Compressed,
+        Compressed = 0x80,
         /// <summary>File is compressed and should not be uncompressed on read</summary>
-        CompressedRaw,
+        CompressedRaw = 0x100,
         /// <summary>File has compression errors</summary>
-        CompressionError,
+        CompressionError = 0x200,
         /// <summary>Compressed file is dirty</summary>
-        CompressionDirty,
+        CompressionDirty = 0x400,
         /// <summary>File is a device</summary>
-        Device,
+        Device = 0x800,
         /// <summary>File is a directory</summary>
-        Directory,
+        Directory = 0x1000,
         /// <summary>File is encrypted</summary>
-        Encrypted,
+        Encrypted = 0x2000,
         /// <summary>File is stored on disk using extents</summary>
-        Extents,
+        Extents = 0x4000,
         /// <summary>File is a FIFO</summary>
-        FIFO,
+        FIFO = 0x8000,
         /// <summary>File is a normal file</summary>
-        File,
+        File = 0x10000,
         /// <summary>File is a Mac OS file containing desktop databases that has already been added to the desktop database</summary>
-        HasBeenInited,
+        HasBeenInited = 0x20000,
         /// <summary>File contains an icon resource / EA</summary>
-        HasCustomIcon,
+        HasCustomIcon = 0x40000,
         /// <summary>File is a Mac OS extension or control panel lacking INIT resources</summary>
-        HasNoINITs,
+        HasNoINITs = 0x80000,
         /// <summary>File is hidden/invisible</summary>
-        Hidden,
+        Hidden = 0x100000,
         /// <summary>File cannot be written, deleted, modified or linked to</summary>
-        Immutable,
+        Immutable = 0x200000,
         /// <summary>Directory is indexed using hashed trees</summary>
-        IndexedDirectory,
+        IndexedDirectory = 0x400000,
         /// <summary>File contents are stored alongside its inode (or equivalent)</summary>
-        Inline,
+        Inline = 0x800000,
         /// <summary>File contains integrity checks</summary>
-        IntegrityStream,
+        IntegrityStream = 0x1000000,
         /// <summary>File is on desktop</summary>
-        IsOnDesk,
+        IsOnDesk = 0x2000000,
         /// <summary>File changes are written to filesystem journal before being written to file itself</summary>
-        Journaled,
+        Journaled = 0x4000000,
         /// <summary>Access time will not be modified</summary>
-        NoAccessTime,
+        NoAccessTime = 0x8000000,
         /// <summary>File will not be subject to copy-on-write</summary>
-        NoCopyOnWrite,
+        NoCopyOnWrite = 0x10000000,
         /// <summary>File will not be backed up</summary>
-        NoDump,
+        NoDump = 0x20000000,
         /// <summary>File contents should not be scrubed</summary>
-        NoScrub,
+        NoScrub = 0x40000000,
         /// <summary>File contents should not be indexed</summary>
-        NotIndexed,
+        NotIndexed = 0x80000000,
         /// <summary>File is offline</summary>
-        Offline,
+        Offline = 0x100000000,
         /// <summary>File is password protected, but contents are not encrypted on disk</summary>
-        Password,
+        Password = 0x200000000,
         /// <summary>File is read-only</summary>
-        ReadOnly,
+        ReadOnly = 0x400000000,
         /// <summary>File is a reparse point</summary>
-        ReparsePoint,
+        ReparsePoint = 0x800000000,
         /// <summary>When file is removed its content will be overwritten with zeroes</summary>
-        Secured,
+        Secured = 0x1000000000,
         /// <summary>File contents are sparse</summary>
-        Sparse,
+        Sparse = 0x2000000000,
         /// <summary>File is a shadow (OS/2)</summary>
-        Shadow,
+        Shadow = 0x4000000000,
         /// <summary>File is shared</summary>
-        Shared,
+        Shared = 0x8000000000,
         /// <summary>File is a stationery</summary>
-        Stationery,
+        Stationery = 0x10000000000,
         /// <summary>File is a symbolic link</summary>
-        Symlink,
+        Symlink = 0x20000000000,
         /// <summary>File writes are synchronously written to disk</summary>
-        Sync,
+        Sync = 0x40000000000,
         /// <summary>File belongs to the operating system</summary>
-        System,
+        System = 0x80000000000,
         /// <summary>If file end is a partial block its contend will be merged with other files</summary>
-        TailMerged,
+        TailMerged = 0x100000000000,
         /// <summary>File is temporary</summary>
-        Temporary,
+        Temporary = 0x200000000000,
         /// <summary>Subdirectories inside of this directory are not related and should be allocated elsewhere</summary>
-        TopDirectory,
+        TopDirectory = 0x400000000000,
         /// <summary>If file is deleted, contents should be stored, for a possible future undeletion</summary>
-        Undeletable
+        Undeletable = 0x800000000000
     }
 
     /// <summary>
@@ -178,8 +181,6 @@ namespace DiscImageChef.Filesystems
         /// <summary>File last modification date</summary>
         public DateTime LastWriteTime { get { return mtimeUtc.ToLocalTime(); } set { mtimeUtc = value.ToUniversalTime(); } }
 
-        /// <summary>Path of device that contains this file</summary>
-        public string DevicePath;
         /// <summary>inode number for this file</summary>
         public ulong Inode;
         /// <summary>POSIX permissions/mode for this file</summary>
@@ -202,6 +203,11 @@ namespace DiscImageChef.Filesystems
 
     public class FileSystemInfo
     {
+        public FileSystemInfo()
+        {
+            Id = new FileSystemId();
+        }
+
         /// <summary>Filesystem type</summary>
         public string Type;
         /// <summary>ID of plugin for this file</summary>
@@ -217,7 +223,25 @@ namespace DiscImageChef.Filesystems
         /// <summary>Maximum length of filenames on this filesystem</summary>
         public ushort FilenameLength;
         /// <summary>Filesystem ID</summary>
-        public Guid Id;
+        public FileSystemId Id;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct FileSystemId
+    {
+        [FieldOffset(0)]
+        public bool IsInt;
+        [FieldOffset(1)]
+        public bool IsLong;
+        [FieldOffset(2)]
+        public bool IsGuid;
+
+        [FieldOffset(3)]
+        public UInt32 Serial32;
+        [FieldOffset(3)]
+        public UInt64 Serial64;
+        [FieldOffset(3)]
+        public Guid uuid;
     }
 
     /// <summary>
@@ -241,6 +265,10 @@ namespace DiscImageChef.Filesystems
         IsDirectory = -21,
         /// <summary>Name is too long</summary>
         NameTooLong = -36,
+        /// <summary>There is no data available</summary>
+        NoData = 61,
+        /// <summary>There is no such attribute</summary>
+        NoSuchExtendedAttribute = NoData,
         /// <summary>No such device</summary>
         NoSuchDevice = -19,
         /// <summary>No such file or directory</summary>
@@ -267,6 +295,10 @@ namespace DiscImageChef.Filesystems
         EISDIR = IsDirectory,
         /// <summary>Name is too long</summary>
         ENAMETOOLONG = NameTooLong,
+        /// <summary>There is no such attribute</summary>
+        ENOATTR = NoSuchExtendedAttribute,
+        /// <summary>There is no data available</summary>
+        ENODATA = NoData,
         /// <summary>No such device</summary>
         ENODEV = NoSuchDevice,
         /// <summary>No such file or directory</summary>
