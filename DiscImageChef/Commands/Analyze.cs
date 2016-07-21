@@ -37,7 +37,7 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Plugins;
+using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Console;
@@ -64,7 +64,7 @@ namespace DiscImageChef.Commands
             plugins.RegisterAllPlugins();
 
             List<string> id_plugins;
-            Plugin _plugin;
+            Filesystem _plugin;
             string information;
             bool checkraw = false;
             ImagePlugin _imageFormat;
@@ -239,7 +239,7 @@ namespace DiscImageChef.Commands
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
-            foreach(Plugin _plugin in plugins.PluginsList.Values)
+            foreach(Filesystem _plugin in plugins.PluginsList.Values)
             {
                 if(_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
                     id_plugins.Add(_plugin.Name.ToLower());

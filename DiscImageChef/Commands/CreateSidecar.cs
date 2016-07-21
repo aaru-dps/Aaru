@@ -38,7 +38,7 @@
 using System;
 using Schemas;
 using System.Collections.Generic;
-using DiscImageChef.Plugins;
+using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
 using DiscImageChef.Checksums;
@@ -525,7 +525,7 @@ namespace DiscImageChef.Commands
 
                                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                                        foreach(Plugin _plugin in plugins.PluginsList.Values)
+                                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                         {
                                             try
                                             {
@@ -564,7 +564,7 @@ namespace DiscImageChef.Commands
 
                                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                                    foreach(Plugin _plugin in plugins.PluginsList.Values)
+                                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                     {
                                         try
                                         {
@@ -730,7 +730,7 @@ namespace DiscImageChef.Commands
 
                                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                                    foreach(Plugin _plugin in plugins.PluginsList.Values)
+                                    foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                     {
                                         try
                                         {
@@ -760,7 +760,7 @@ namespace DiscImageChef.Commands
 
                                 List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                                foreach(Plugin _plugin in plugins.PluginsList.Values)
+                                foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                 {
                                     try
                                     {

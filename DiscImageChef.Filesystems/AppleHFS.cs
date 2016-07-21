@@ -45,9 +45,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class AppleHFS : Plugin
+    class AppleHFS : Filesystem
     {
         /// <summary>
         /// "BD", HFS magic

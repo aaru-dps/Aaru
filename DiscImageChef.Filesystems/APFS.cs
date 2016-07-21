@@ -40,9 +40,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class APFS : Plugin
+    class APFS : Filesystem
     {
         const uint ApfsContainerMagic = 0x4253584E; // "NXSB"
         const uint ApfsVolumeMagic = 0x42535041; // "APSB"

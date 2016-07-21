@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class OperaFS : Plugin
+    class OperaFS : Filesystem
     {
         public OperaFS()
         {

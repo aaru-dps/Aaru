@@ -46,9 +46,9 @@ using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class LisaFS : Plugin
+    class LisaFS : Filesystem
     {
         const byte LisaFSv1 = 0x0E;
         const byte LisaFSv2 = 0x0F;

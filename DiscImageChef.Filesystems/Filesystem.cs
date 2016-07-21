@@ -37,13 +37,14 @@ Copyright (C) 2011-2014 Claunia.com
 //$Id$
 
 using System;
+using System.Collections.Generic;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
     /// <summary>
     /// Abstract class to implement filesystem plugins.
     /// </summary>
-	public abstract class Plugin
+	public abstract class Filesystem
     {
         /// <summary>Plugin name.</summary>
         public string Name;
@@ -63,7 +64,17 @@ namespace DiscImageChef.Plugins
             }
         }
 
-        protected Plugin()
+        protected Filesystem()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a filesystem instance prepared for reading contents
+        /// </summary>
+        /// <param name="imagePlugin">Image plugin.</param>
+        /// <param name="partitionStart">Partition start.</param>
+        /// <param name="partitionEnd">Partition end.</param>
+        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
         }
 

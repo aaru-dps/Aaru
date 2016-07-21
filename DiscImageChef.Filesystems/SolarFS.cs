@@ -44,9 +44,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class SolarFS : Plugin
+    class SolarFS : Filesystem
     {
         public SolarFS()
         {

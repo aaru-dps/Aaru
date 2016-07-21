@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from Inside Windows NT
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class NTFS : Plugin
+    class NTFS : Filesystem
     {
         public NTFS()
         {

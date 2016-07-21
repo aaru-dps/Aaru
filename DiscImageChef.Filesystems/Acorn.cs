@@ -40,9 +40,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class AcornADFS : Plugin
+    class AcornADFS : Filesystem
     {
         const ulong ADFS_SB_POS = 0xC00;
 

@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from the Linux kernel
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class SysVfs : Plugin
+    class SysVfs : Filesystem
     {
         const UInt32 XENIX_MAGIC = 0x002B5544;
         const UInt32 XENIX_CIGAM = 0x44552B00;

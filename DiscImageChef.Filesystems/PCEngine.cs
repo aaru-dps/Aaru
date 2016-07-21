@@ -40,9 +40,9 @@ using System;
 using System.Text;
 using DiscImageChef;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class PCEnginePlugin : Plugin
+    class PCEnginePlugin : Filesystem
     {
         public PCEnginePlugin()
         {

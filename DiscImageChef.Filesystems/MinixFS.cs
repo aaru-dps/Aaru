@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from the Linux kernel
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class MinixFS : Plugin
+    class MinixFS : Filesystem
     {
         const UInt16 MINIX_MAGIC = 0x137F;
         // Minix v1, 14 char filenames

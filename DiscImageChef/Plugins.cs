@@ -41,20 +41,20 @@ using System.Collections.Generic;
 using System.Reflection;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.Plugins;
+using DiscImageChef.Filesystems;
 using DiscImageChef.Console;
 
 namespace DiscImageChef
 {
     public class PluginBase
     {
-        public Dictionary<string, Plugin> PluginsList;
+        public Dictionary<string, Filesystem> PluginsList;
         public Dictionary<string, PartPlugin> PartPluginsList;
         public Dictionary<string, ImagePlugin> ImagePluginsList;
 
         public PluginBase()
         {
-            PluginsList = new Dictionary<string, Plugin>();
+            PluginsList = new Dictionary<string, Filesystem>();
             PartPluginsList = new Dictionary<string, PartPlugin>();
             ImagePluginsList = new Dictionary<string, ImagePlugin>();
         }
@@ -99,15 +99,15 @@ namespace DiscImageChef
                 }
             }
 
-            assembly = Assembly.GetAssembly(typeof(Plugin));
+            assembly = Assembly.GetAssembly(typeof(Filesystem));
 
             foreach (Type type in assembly.GetTypes())
             {
                 try
                 {
-                    if (type.IsSubclassOf(typeof(Plugin)))
+                    if (type.IsSubclassOf(typeof(Filesystem)))
                     {
-                        Plugin plugin = (Plugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        Filesystem plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }
@@ -126,7 +126,7 @@ namespace DiscImageChef
             }
         }
 
-        void RegisterPlugin(Plugin plugin)
+        void RegisterPlugin(Filesystem plugin)
         {
             if (!PluginsList.ContainsKey(plugin.Name.ToLower()))
             {

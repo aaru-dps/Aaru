@@ -40,9 +40,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class BTRFS : Plugin
+    class BTRFS : Filesystem
     {
         /// <summary>
         /// BTRFS magic "_BHRfS_M"

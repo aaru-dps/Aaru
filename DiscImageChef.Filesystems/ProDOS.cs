@@ -44,9 +44,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    public class ProDOSPlugin : Plugin
+    public class ProDOSPlugin : Filesystem
     {
         const byte EmptyStorageType = 0x00;
         /// <summary>

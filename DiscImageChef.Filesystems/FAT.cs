@@ -45,9 +45,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class FAT : Plugin
+    class FAT : Filesystem
     {
         public FAT()
         {

@@ -51,7 +51,7 @@
     <Compile Include="ODS.cs" />
     <Compile Include="Opera.cs" />
     <Compile Include="PCEngine.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Filesystem.cs" />
     <Compile Include="ProDOS.cs" />
     <Compile Include="SolarFS.cs" />
     <Compile Include="Symbian.cs" />
@@ -61,6 +61,7 @@
     <Compile Include="Nintendo.cs" />
     <Compile Include="BTRFS.cs" />
     <Compile Include="APFS.cs" />
+    <Compile Include="Structs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

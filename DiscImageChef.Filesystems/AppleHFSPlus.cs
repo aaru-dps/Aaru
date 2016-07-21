@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class AppleHFSPlus : Plugin
+    class AppleHFSPlus : Filesystem
     {
         /// <summary>
         /// "BD", HFS magic

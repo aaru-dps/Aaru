@@ -44,7 +44,7 @@ using Schemas;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.Plugins;
+using DiscImageChef.Filesystems;
 
 namespace DiscImageChef.Commands
 {
@@ -783,7 +783,7 @@ namespace DiscImageChef.Commands
 
                             List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                            foreach(Plugin _plugin in plugins.PluginsList.Values)
+                            foreach(Filesystem _plugin in plugins.PluginsList.Values)
                             {
                                 try
                                 {
@@ -814,7 +814,7 @@ namespace DiscImageChef.Commands
 
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                        foreach(Plugin _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
@@ -2976,7 +2976,7 @@ namespace DiscImageChef.Commands
 
                             List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                            foreach(Plugin _plugin in plugins.PluginsList.Values)
+                            foreach(Filesystem _plugin in plugins.PluginsList.Values)
                             {
                                 try
                                 {
@@ -3016,7 +3016,7 @@ namespace DiscImageChef.Commands
 
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
-                        foreach(Plugin _plugin in plugins.PluginsList.Values)
+                        foreach(Filesystem _plugin in plugins.PluginsList.Values)
                         {
                             try
                             {

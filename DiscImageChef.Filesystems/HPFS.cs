@@ -42,9 +42,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from an old unnamed document
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class HPFS : Plugin
+    class HPFS : Filesystem
     {
         public HPFS()
         {

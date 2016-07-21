@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from the Linux kernel
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class extFS : Plugin
+    class extFS : Filesystem
     {
         public extFS()
         {

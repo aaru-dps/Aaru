@@ -44,9 +44,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class BFS : Plugin
+    class BFS : Filesystem
     {
         const UInt32 BFS_MAGIC = 0x1BADFACE;
 

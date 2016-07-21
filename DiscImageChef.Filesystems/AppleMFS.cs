@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from Inside Macintosh
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class AppleMFS : Plugin
+    class AppleMFS : Filesystem
     {
         const UInt16 MFS_MAGIC = 0xD2D7;
         // "LK"

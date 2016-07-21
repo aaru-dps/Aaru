@@ -48,9 +48,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class ISO9660Plugin : Plugin
+    class ISO9660Plugin : Filesystem
     {
         //static bool alreadyLaunched;
 

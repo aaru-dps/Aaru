@@ -39,7 +39,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.Plugins;
+using DiscImageChef.Filesystems;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
@@ -65,7 +65,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Supported filesystems:");
             if(FormatsOptions.Verbose)
                 DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-            foreach(KeyValuePair<string, Plugin> kvp in plugins.PluginsList)
+            foreach(KeyValuePair<string, Filesystem> kvp in plugins.PluginsList)
             {
                 if(FormatsOptions.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.PluginUUID, kvp.Value.Name);

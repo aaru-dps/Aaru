@@ -43,9 +43,9 @@ using DiscImageChef.PartPlugins;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class AmigaDOSPlugin : Plugin
+    class AmigaDOSPlugin : Filesystem
     {
         public AmigaDOSPlugin()
         {

@@ -44,9 +44,9 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using System.Runtime.Remoting.Messaging;
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class NintendoPlugin : Plugin
+    class NintendoPlugin : Filesystem
     {
         public NintendoPlugin()
         {

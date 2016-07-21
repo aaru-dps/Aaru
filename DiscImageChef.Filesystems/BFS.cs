@@ -41,9 +41,9 @@ using System.Text;
 using DiscImageChef;
 
 // Information from Practical Filesystem Design, ISBN 1-55860-497-9
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    class BeFS : Plugin
+    class BeFS : Filesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const UInt32 BEFS_MAGIC1 = 0x42465331;

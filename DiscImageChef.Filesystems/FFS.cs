@@ -44,9 +44,9 @@ using DiscImageChef;
 using DiscImageChef.Console;
 
 
-namespace DiscImageChef.Plugins
+namespace DiscImageChef.Filesystems
 {
-    public class FFSPlugin : Plugin
+    public class FFSPlugin : Filesystem
     {
         public FFSPlugin()
         {
