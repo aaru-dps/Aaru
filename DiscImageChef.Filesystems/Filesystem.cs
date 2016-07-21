@@ -102,6 +102,11 @@ namespace DiscImageChef.Filesystems
         public abstract Errno Mount();
 
         /// <summary>
+        /// Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories from the filesystem.
+        /// </summary>
+        public abstract Errno Mount(bool debug);
+
+        /// <summary>
         /// Frees all internal structures created by <see cref="Mount"/> 
         /// </summary>
         public abstract Errno Unmount();

@@ -150,6 +150,11 @@ namespace DiscImageChef.Filesystems
             return Errno.NotImplemented;
         }
 
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
+
         public override Errno Unmount()
         {
             return Errno.NotImplemented;
