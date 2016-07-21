@@ -39,6 +39,7 @@ Copyright (C) 2011-2014 Claunia.com
 using System;
 using System.Text;
 using DiscImageChef;
+using System.Collections.Generic;
 
 // TODO: Implement detecting DOS bootable disks
 // TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
@@ -482,6 +483,61 @@ namespace DiscImageChef.Filesystems
             public string volume_label;
             /// <summary>0x52, Filesystem type, 8 bytes, space-padded, must be "FAT32   "</summary>
             public string fs_type;
+        }
+
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
+
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
         }
     }
 }

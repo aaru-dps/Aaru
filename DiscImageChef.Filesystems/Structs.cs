@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
     /// <summary>
     /// Information about a file entry
     /// </summary>
-    public struct FileEntryInfo
+    public class FileEntryInfo
     {
         DateTime crtimeUtc;
         DateTime atimeUtc;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Filesystems
         public long Blocks;
     }
 
-    public struct FileSystemInfo
+    public class FileSystemInfo
     {
         /// <summary>Filesystem type</summary>
         public string Type;
@@ -218,5 +218,66 @@ namespace DiscImageChef.Filesystems
         public ushort FilenameLength;
         /// <summary>Filesystem ID</summary>
         public Guid Id;
+    }
+
+    /// <summary>
+    /// Errors
+    /// </summary>
+    public enum Errno
+    {
+        /// <summary>No error happened</summary>
+        NoError = 0,
+        /// <summary>Access denied</summary>
+        AccessDenied = -13,
+        /// <summary>Busy, cannot complete</summary>
+        Busy = -16,
+        /// <summary>File is too large</summary>
+        FileTooLarge = -27,
+        /// <summary>Invalid argument</summary>
+        InvalidArgument = -22,
+        /// <summary>I/O error</summary>
+        InOutError = -5,
+        /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
+        IsDirectory = -21,
+        /// <summary>Name is too long</summary>
+        NameTooLong = -36,
+        /// <summary>No such device</summary>
+        NoSuchDevice = -19,
+        /// <summary>No such file or directory</summary>
+        NoSuchFile = -2,
+        /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
+        NotDirectory = -20,
+        /// <summary>Not implemented</summary>
+        NotImplemented = -38,
+        /// <summary>Not supported</summary>
+        NotSupported = -252,
+        /// <summary>Link is severed</summary>
+        SeveredLink = -67,
+        /// <summary>Access denied</summary>
+        EACCES = AccessDenied,
+        /// <summary>Busy, cannot complete</summary>
+        EBUSY = Busy,
+        /// <summary>File is too large</summary>
+        EFBIG = FileTooLarge,
+        /// <summary>Invalid argument</summary>
+        EINVAL = InvalidArgument,
+        /// <summary>I/O error</summary>
+        EIO = InOutError,
+        /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
+        EISDIR = IsDirectory,
+        /// <summary>Name is too long</summary>
+        ENAMETOOLONG = NameTooLong,
+        /// <summary>No such device</summary>
+        ENODEV = NoSuchDevice,
+        /// <summary>No such file or directory</summary>
+        ENOENT = NoSuchFile,
+        /// <summary>Link is severed</summary>
+        ENOLINK = SeveredLink,
+        /// <summary>Not implemented</summary>
+        ENOSYS = NotImplemented,
+        /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
+        ENOTDIR = NotDirectory,
+        /// <summary>Not supported</summary>
+        ENOTSUP = NotSupported
     }
 }
