@@ -62,6 +62,14 @@
     <Compile Include="APFS.cs" />
     <Compile Include="Structs.cs" />
     <Compile Include="LisaFS\LisaFS.cs" />
+    <Compile Include="LisaFS\Consts.cs" />
+    <Compile Include="LisaFS\Structs.cs" />
+    <Compile Include="LisaFS\Info.cs" />
+    <Compile Include="LisaFS\Super.cs" />
+    <Compile Include="LisaFS\Xattr.cs" />
+    <Compile Include="LisaFS\Dir.cs" />
+    <Compile Include="LisaFS\File.cs" />
+    <Compile Include="LisaFS\Extent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -103,6 +111,7 @@
         <Policies>
           <TextStylePolicy FileWidth="120" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
           <CSharpFormattingPolicy IndentSwitchSection="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceAfterMethodCallName="False" SpaceAfterControlFlowStatementKeyword="False" SpaceBeforeOpenSquareBracket="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
         </Policies>
       </Properties>
     </MonoDevelop>
