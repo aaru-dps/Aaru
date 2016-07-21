@@ -44,7 +44,8 @@ namespace DiscImageChef.Filesystems.LisaFS
     {
         public override Errno ReadLink(string path, ref string dest)
         {
-            return Errno.NotImplemented;
+            // LisaFS does not support symbolic links (afaik)
+            return Errno.NotSupported;
         }
 
         public override Errno ReadDir(string path, ref List<string> contents)
