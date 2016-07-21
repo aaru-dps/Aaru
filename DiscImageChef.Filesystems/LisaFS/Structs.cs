@@ -206,13 +206,17 @@ namespace DiscImageChef.Filesystems.LisaFS
         struct Lisa_Tag
         {
             /// <summary>0x00 Unknown</summary>
-            public UInt32 unknown1;
-            /// <summary>0x04 File ID</summary>
-            public UInt16 fileID;
-            /// <summary>0x06 Unknown</summary>
-            public UInt16 unknown2;
-            /// <summary>0x08 Unknown</summary>
-            public UInt32 unknown3;
+            public UInt16 unknown;
+            /// <summary>0x02 File type</summary>
+            public UInt16 fileType;
+            /// <summary>0x04 File ID. Negative numbers are extents for the file with same absolute value number</summary>
+            public Int16 fileID;
+            /// <summary>0x06 Relative block</summary>
+            public UInt16 relBlock;
+            /// <summary>0x08 Next block for this file. 0x8000 bit seems always set, 0x07FF means this is last block</summary>
+            public UInt16 nextBlock;
+            /// <summary>0x0A Previous block for this file. 0x07FF means this is first block.</summary>
+            public UInt16 prevBlock;
         }
     }
 }
