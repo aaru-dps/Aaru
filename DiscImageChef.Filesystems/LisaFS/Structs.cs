@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
-        struct Lisa_MDDF
+        struct MDDF
         {
             /// <summary>0x00, Filesystem version</summary>
             public UInt16 fsversion;
@@ -203,12 +203,14 @@ namespace DiscImageChef.Filesystems.LisaFS
             public byte scavenge_flag;
         }
 
-        struct Lisa_Tag
+        struct Tag
         {
             /// <summary>0x00 Unknown</summary>
             public UInt16 unknown;
             /// <summary>0x02 File type</summary>
-            public UInt16 fileType;
+            public byte fileType;
+            /// <summary>Seems to be always zero</summary>
+            public byte zero;
             /// <summary>0x04 File ID. Negative numbers are extents for the file with same absolute value number</summary>
             public Int16 fileID;
             /// <summary>0x06 Relative block</summary>
@@ -217,6 +219,90 @@ namespace DiscImageChef.Filesystems.LisaFS
             public UInt16 nextBlock;
             /// <summary>0x0A Previous block for this file. 0x07FF means this is first block.</summary>
             public UInt16 prevBlock;
+        }
+
+        struct CatalogEntry
+        {
+            /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
+            public byte marker;
+            /// <summary>0x01, seems to be always zero</summary>
+            public ushort zero;
+            /// <summary>0x03, filename, 32-bytes, null-padded</summary>
+            public byte[] filename;
+            /// <summary>0x23, seems to be always zero</summary>
+            public byte padding;
+            /// <summary>
+            /// At 0x24
+            /// 0x03 here for entries 64 bytes long
+            /// 0x08 here for entries 78 bytes long
+            /// 0x7C here for entries 50 bytes long
+            /// This is incomplete, may fail, mostly works...
+            /// </summary>
+            public byte fileType;
+            /// <summary>0x25, lot of values found here, unknown</summary>
+            public byte unknown;
+            /// <summary>0x26, file ID, must be positive and bigger than 4</summary>
+            public Int16 fileID;
+            /// <summary>0x28, creation date</summary>
+            public UInt32 dtc;
+            /// <summary>0x2C, last modification date</summary>
+            public UInt32 dtm;
+            /// <summary>0x30, file length in bytes, including wasted block space</summary>
+            public Int32 wasted;
+            /// <summary>0x34, file length in bytes</summary>
+            public Int32 length;
+            /// <summary>0x38, unknown</summary>
+            public byte[] tail;
+        }
+
+        struct Extent
+        {
+            public Int32 start;
+            public Int16 length;
+        }
+
+        struct ExtentFile
+        {
+            /// <summary>0x00, filename length</summary>
+            public byte filenameLen;
+            /// <summary>0x01, filename</summary>
+            public byte[] filename;
+            /// <summary>0x20, unknown timestamp</summary>
+            public UInt32 timestamp;
+            /// <summary>0x24, 3 bytes, unknown</summary>
+            public byte[] unknown1;
+            /// <summary>0x27, 3 bytes, machine serial number</summary>
+            public byte[] serial;
+            /// <summary>0x2A, 4 bytes, unknown</summary>
+            public uint unknown2;
+            /// <summary>0x2E, creation time</summary>
+            public UInt32 dtc;
+            /// <summary>0x32, last access time</summary>
+            public UInt32 dta;
+            /// <summary>0x36, modification time</summary>
+            public UInt32 dtm;
+            /// <summary>0x3A, backup time</summary>
+            public UInt32 dtb;
+            /// <summary>0x3E, scavenge time</summary>
+            public UInt32 dts;
+            /// <summary>0x42, unknown, 32 bytes</summary>
+            public byte[] unknown3;
+            /// <summary>0x62, flags?, 0x08 set if password is valid</summary>
+            public byte flags;
+            /// <summary>0x63, 8 bytes, scrambled password</summary>
+            public byte[] password;
+            /// <summary>0x6B, 21 bytes, unknown</summary>
+            public byte[] unknown4;
+            /// <summary>0x80, file length in blocks</summary>
+            public Int32 length;
+            /// <summary>0x84, unknown</summary>
+            public Int32 unknown5;
+            /// <summary>0x88, extents, can contain up to 41 extents, dunno LisaOS maximum (never seen more than 3)</summary>
+            public Extent[] extents;
+            /// <summary>0x17E, unknown, empty, padding?</summary>
+            public short unknown6;
+            /// <summary>0x180, 128 bytes</summary>
+            public byte[] LisaInfo;
         }
     }
 }

@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     if(fileid == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
-                        Lisa_MDDF mddf = new Lisa_MDDF();
+                        MDDF mddf = new MDDF();
 
                         mddf.mddf_block = BigEndianBitConverter.ToUInt32(sector, 0x6C);
                         mddf.volsize_minus_one = BigEndianBitConverter.ToUInt32(sector, 0x70);
@@ -156,7 +156,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     if(fileid == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
-                        Lisa_MDDF mddf = new Lisa_MDDF();
+                        MDDF mddf = new MDDF();
                         byte[] pString = new byte[33];
                         UInt32 lisa_time;
 
