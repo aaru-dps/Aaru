@@ -45,7 +45,6 @@
     <Compile Include="FFS.cs" />
     <Compile Include="HPFS.cs" />
     <Compile Include="ISO9660.cs" />
-    <Compile Include="LisaFS.cs" />
     <Compile Include="MinixFS.cs" />
     <Compile Include="NTFS.cs" />
     <Compile Include="ODS.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="BTRFS.cs" />
     <Compile Include="APFS.cs" />
     <Compile Include="Structs.cs" />
+    <Compile Include="LisaFS\LisaFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -93,6 +93,9 @@
       <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
       <Name>DiscImageChef.Metadata</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LisaFS\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
