@@ -322,5 +322,15 @@ namespace DiscImageChef
     public class StatsOptions
     {
     }
+
+    [Verb("ls", HelpText = "Lists files in disc image.")]
+    public class LsOptions : CommonOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+
+        [Option('l', "long", Default = false, HelpText = "Uses long format.")]
+        public bool Long { get; set; }
+    }
 }
 

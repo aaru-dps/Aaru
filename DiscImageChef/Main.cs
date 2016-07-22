@@ -57,7 +57,7 @@ namespace DiscImageChef
 
             Parser.Default.ParseArguments<AnalyzeOptions, CompareOptions, ChecksumOptions, EntropyOptions, VerifyOptions, PrintHexOptions,
                   DecodeOptions, DeviceInfoOptions, MediaInfoOptions, MediaScanOptions, FormatsOptions, BenchmarkOptions, CreateSidecarOptions,
-                    DumpMediaOptions, DeviceReportOptions, ConfigureOptions, StatsOptions>(args)
+                  DumpMediaOptions, DeviceReportOptions, ConfigureOptions, StatsOptions, LsOptions>(args)
                   .WithParsed<AnalyzeOptions>(opts =>
                   {
                       if(opts.Debug)
@@ -205,6 +205,17 @@ namespace DiscImageChef
                 PrintCopyright();
                 Commands.DeviceReport.doDeviceReport(opts);
             })
+
+            .WithParsed<LsOptions>(opts =>
+            {
+                if(opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if(opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                PrintCopyright();
+                Commands.Ls.doLs(opts);
+            })
+
 
                   .WithParsed<ConfigureOptions>(opts => { PrintCopyright(); Commands.Configure.doConfigure(); })
                   .WithParsed<StatsOptions>(opts => { PrintCopyright(); Commands.Statistics.showStats(); })
