@@ -53,6 +53,8 @@ namespace DiscImageChef.Filesystems.LisaFS
         const UInt16 FILEID_BITMAP = 0x0002;
         const UInt16 FILEID_SRECORD = 0x0003;
         const UInt16 FILEID_DIRECTORY = 0x0004;
+        const Int16 FILEID_BOOT_SIGNED = -21846;
+        const Int16 FILEID_LOADER_SIGNED = -17477;
         // "Catalog file"
         const UInt16 FILEID_ERASED = 0x7FFF;
         const UInt16 FILEID_MAX = FILEID_ERASED;

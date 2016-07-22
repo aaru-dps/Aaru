@@ -37,6 +37,7 @@
 // //$Id$
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -44,12 +45,115 @@ namespace DiscImageChef.Filesystems.LisaFS
     {
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
-            return Errno.NotImplemented;
+            Int16 fileId;
+            Errno error = LookupFileId(path, out fileId);
+            if(error != Errno.NoError)
+                return error;
+
+            return ListXAttr(fileId, ref xattrs);
         }
 
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            return Errno.NotImplemented;
+            Int16 fileId;
+            Errno error = LookupFileId(path, out fileId);
+            if(error != Errno.NoError)
+                return error;
+
+            return GetXattr(fileId, xattr, out buf);
+        }
+
+        Errno ListXAttr(Int16 fileId, ref List<string> xattrs)
+        {
+            xattrs = null;
+
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(fileId < 4)
+            {
+                if(!debug || fileId == 0)
+                    return Errno.InvalidArgument;
+
+                xattrs = new List<string>();
+
+                if(fileId == FILEID_MDDF)
+                    xattrs.Add("com.apple.lisa.password");
+
+                return Errno.NoError;
+            }
+
+            ExtentFile file;
+
+            Errno error = ReadExtentsFile(fileId, out file);
+
+            if(error != Errno.NoError)
+                return error;
+
+            xattrs = new List<string>();
+            if((file.flags & 0x08) == 0x08)
+                xattrs.Add("com.apple.lisa.password");
+            xattrs.Add("com.apple.lisa.serial");
+
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
+                xattrs.Add("com.apple.lisa.label");
+
+            return Errno.NoError;
+        }
+
+        Errno GetXattr(Int16 fileId, string xattr, out byte[] buf)
+        {
+            buf = null;
+
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(fileId < 4)
+            {
+                if(!debug || fileId == 0)
+                    return Errno.InvalidArgument;
+
+                if(fileId == FILEID_MDDF)
+                {
+                    if(xattr == "com.apple.lisa.password")
+                    {
+                        buf = Encoding.ASCII.GetBytes(mddf.password);
+                        return Errno.NoError;
+                    }
+                }
+
+                return Errno.NoSuchExtendedAttribute;
+            }
+
+            ExtentFile file;
+
+            Errno error = ReadExtentsFile(fileId, out file);
+
+            if(error != Errno.NoError)
+                return error;
+
+            if(xattr == "com.apple.lisa.password" && (file.flags & 0x08) == 0x08)
+            {
+                buf = new byte[8];
+                Array.Copy(file.password, 0, buf, 0, 8);
+                return Errno.NoError;
+            }
+
+            if(xattr == "com.apple.lisa.serial")
+            {
+                buf = new byte[3];
+                Array.Copy(file.serial, 0, buf, 0, 3);
+                return Errno.NoError;
+            }
+
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) && xattr == "com.apple.lisa.label")
+            {
+                buf = new byte[128];
+                Array.Copy(file.LisaInfo, 0, buf, 0, 128);
+                return Errno.NoError;
+            }
+
+            return Errno.NoSuchExtendedAttribute;
         }
     }
 }
