@@ -153,8 +153,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                     entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
                     entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
                     entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
-                    entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x30);
-                    entry.length = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
+                    entry.length = BigEndianBitConverter.ToInt32(buf, offset + 0x30);
+                    entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
                     entry.tail = new byte[8];
                     Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
                     catalog.Add(entry);

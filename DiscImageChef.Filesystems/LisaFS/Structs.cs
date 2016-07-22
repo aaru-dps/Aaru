@@ -247,10 +247,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             public UInt32 dtc;
             /// <summary>0x2C, last modification date</summary>
             public UInt32 dtm;
-            /// <summary>0x30, file length in bytes, including wasted block space</summary>
-            public Int32 wasted;
-            /// <summary>0x34, file length in bytes</summary>
+            /// <summary>0x30, file length in bytes</summary>
             public Int32 length;
+            /// <summary>0x34, file length in bytes, including wasted block space</summary>
+            public Int32 wasted;
             /// <summary>0x38, unknown</summary>
             public byte[] tail;
         }
