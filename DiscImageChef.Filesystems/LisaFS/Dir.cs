@@ -93,86 +93,109 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(catalogCache.TryGetValue(fileId, out catalog))
                 return Errno.NoError;
 
-            int count = 0;
+            byte[] firstCatalogBlock = null;
 
-            // Catalogs don't have extents files so we need to traverse all disk searching pieces (tend to be non fragmented and non expandable)
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
-                byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
+                byte[] tag = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
                 UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                UInt16 pos = BigEndianBitConverter.ToUInt16(tag, 0x06);
 
-                if(id == fileId)
-                    count++;
+                if(id == fileId && pos == 0)
+                {
+                    firstCatalogBlock = device.ReadSectors(i, 4);
+                    break;
+                }
 
-                // Extents file found, it's not a catalog
                 if(id == -fileId)
                     return Errno.NotDirectory;
             }
 
-            if(count == 0)
+            if(firstCatalogBlock == null)
                 return Errno.NoSuchFile;
 
-            byte[] buf = new byte[count * device.GetSectorSize()];
+            ulong prevCatalogPointer;
+            prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
 
-            // This can be enhanced to follow linked tags. However on some disks a linked tag cuts a file, better not let it do with a catalog
-            for(ulong i = 0; i < device.GetSectors(); i++)
+            while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
+                byte[] tag = device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block, SectorTagType.AppleSectorTag);
                 UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
 
-                if(id == fileId)
-                {
-                    UInt16 pos = BigEndianBitConverter.ToUInt16(tag, 0x06);
-                    byte[] sector = device.ReadSector(i);
-                    Array.Copy(sector, 0, buf, sector.Length * pos, sector.Length);
-                }
+                if(id != fileId)
+                    return Errno.InvalidArgument;
+
+                firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block, 4);
+                prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
             }
 
-            int offset = 0;
+            ulong nextCatalogPointer;
+            nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
+
+            List<byte[]> catalogBlocks = new List<byte[]>();
+            catalogBlocks.Add(firstCatalogBlock);
+
+            while(nextCatalogPointer != 0xFFFFFFFF)
+            {
+                byte[] tag = device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block, SectorTagType.AppleSectorTag);
+                UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
+
+                if(id != fileId)
+                    return Errno.InvalidArgument;
+
+                byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block, 4);
+                nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
+                catalogBlocks.Add(nextCatalogBlock);
+            }
 
             catalog = new List<CatalogEntry>();
 
-            while((offset + 64) <= buf.Length)
+            foreach(byte[] buf in catalogBlocks)
             {
-                if(buf[offset + 0x24] == 0x08)
-                    offset += 78;
-                else if(buf[offset + 0x24] == 0x7C)
-                    offset += 50;
-                else if(buf[offset + 0x24] == 0xFF)
-                    break;
-                else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
+                int offset = 0;
+
+                while((offset + 64) <= buf.Length)
                 {
-                    CatalogEntry entry = new CatalogEntry();
-                    entry.marker = buf[offset];
-                    entry.zero = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
-                    entry.filename = new byte[E_NAME];
-                    Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                    entry.terminator = buf[offset + 0x23];
-                    entry.fileType = buf[offset + 0x24];
-                    entry.unknown = buf[offset + 0x25];
-                    entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
-                    entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
-                    entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
-                    entry.length = BigEndianBitConverter.ToInt32(buf, offset + 0x30);
-                    entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
-                    entry.tail = new byte[8];
-                    Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
-
-                    // This is as Pascal Workshop does, if there is no extents file it simply ignores it.
-                    ExtentFile ext;
-                    if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
+                    if(buf[offset + 0x24] == 0x08)
+                        offset += 78;
+                    else if(buf[offset + 0x24] == 0x7C)
+                        offset += 50;
+                    else if(buf[offset + 0x24] == 0xFF)
+                        break;
+                    else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                     {
-                        if(!fileSizeCache.ContainsKey(entry.fileID))
-                        {
-                            catalog.Add(entry);
-                            fileSizeCache.Add(entry.fileID, entry.length);
-                        }
-                    }
+                        CatalogEntry entry = new CatalogEntry();
+                        entry.marker = buf[offset];
+                        entry.zero = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
+                        entry.filename = new byte[E_NAME];
+                        Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
+                        entry.terminator = buf[offset + 0x23];
+                        entry.fileType = buf[offset + 0x24];
+                        entry.unknown = buf[offset + 0x25];
+                        entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
+                        entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
+                        entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
+                        entry.length = BigEndianBitConverter.ToInt32(buf, offset + 0x30);
+                        entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
+                        entry.tail = new byte[8];
+                        Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
-                    offset += 64;
+                        // This is as Pascal Workshop does, if there is no extents file it simply ignores it.
+                        ExtentFile ext;
+                        if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
+                        {
+                            if(!fileSizeCache.ContainsKey(entry.fileID))
+                            {
+                                catalog.Add(entry);
+                                fileSizeCache.Add(entry.fileID, entry.length);
+                            }
+                        }
+
+                        offset += 64;
+                    }
+                    else
+                        break;
                 }
-                else
-                    break;
             }
 
             catalogCache.Add(fileId, catalog);
