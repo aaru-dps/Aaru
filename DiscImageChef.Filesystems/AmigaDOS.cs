@@ -53,6 +53,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
         }
 
+        public AmigaDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Amiga DOS filesystem";
+            PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        }
+
         /// <summary>
         /// Boot block, first 2 sectors
         /// </summary>

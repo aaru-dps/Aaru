@@ -56,6 +56,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         }
 
+        public FAT(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Microsoft File Allocation Table";
+            PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

@@ -56,6 +56,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
         }
 
+        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "B-tree file system";
+            PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SuperBlock
         {

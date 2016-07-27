@@ -69,6 +69,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
         }
 
+        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Apple Hierarchical File System";
+            PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

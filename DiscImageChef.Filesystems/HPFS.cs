@@ -53,6 +53,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
         }
 
+        public HPFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "OS/2 High Performance File System";
+            PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

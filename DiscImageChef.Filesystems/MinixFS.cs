@@ -74,6 +74,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
         }
 
+        public MinixFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Minix Filesystem";
+            PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

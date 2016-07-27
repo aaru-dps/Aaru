@@ -55,6 +55,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
         }
 
+        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "BSD Fast File System (aka UNIX File System, UFS)";
+            PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

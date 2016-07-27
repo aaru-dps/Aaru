@@ -93,6 +93,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
         }
 
+        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Apple ProDOS filesystem";
+            PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if(imagePlugin.GetSectors() < 3)

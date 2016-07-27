@@ -62,6 +62,12 @@ namespace DiscImageChef.Filesystems
             //alreadyLaunched = false;
         }
 
+        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "ISO9660 Filesystem";
+            PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+        }
+
         struct DecodedVolumeDescriptor
         {
             public string SystemIdentifier;

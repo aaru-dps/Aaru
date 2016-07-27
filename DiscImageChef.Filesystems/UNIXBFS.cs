@@ -57,6 +57,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
         }
 
+        public BFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "UNIX Boot filesystem";
+            PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

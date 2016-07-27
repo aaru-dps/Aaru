@@ -53,6 +53,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
         }
 
+        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Acorn Advanced Disc Filing System";
+            PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         struct DiscRecord
         {

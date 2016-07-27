@@ -59,6 +59,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
         }
 
+        public ODS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Files-11 On-Disk Structure";
+            PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

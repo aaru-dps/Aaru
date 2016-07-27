@@ -55,6 +55,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
         }
 
+        public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Nintendo optical filesystems";
+            PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if(partitionStart != 0)

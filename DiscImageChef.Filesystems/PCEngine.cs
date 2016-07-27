@@ -51,6 +51,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
         }
 
+        public PCEnginePlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "PC Engine CD Plugin";
+            PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

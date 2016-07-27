@@ -67,6 +67,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
         }
 
+        public SysVfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "UNIX System V filesystem";
+            PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

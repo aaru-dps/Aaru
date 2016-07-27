@@ -353,7 +353,7 @@ namespace DiscImageChef.Commands
                                             DicConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
                                     }
                                     else
-                                        DicConsole.ErrorWriteLine("Cannot write file {1}, output exists", entry);
+                                        DicConsole.ErrorWriteLine("Cannot write file {0}, output exists", entry);
                                 }
                                 else
                                     DicConsole.ErrorWriteLine("Error reading file {0}", entry);

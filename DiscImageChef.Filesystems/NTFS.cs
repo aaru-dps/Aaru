@@ -52,6 +52,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
         }
 
+        public NTFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "New Technology File System (NTFS)";
+            PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

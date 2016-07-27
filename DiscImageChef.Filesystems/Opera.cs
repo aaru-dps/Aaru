@@ -51,6 +51,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
         }
 
+        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Opera Filesystem Plugin";
+            PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

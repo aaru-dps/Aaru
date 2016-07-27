@@ -52,6 +52,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         }
 
+        public extFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Linux extended Filesystem";
+            PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

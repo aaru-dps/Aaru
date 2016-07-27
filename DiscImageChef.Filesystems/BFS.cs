@@ -64,6 +64,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
         }
 
+        public BeFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Be Filesystem";
+            PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             if((2 + partitionStart) >= imagePlugin.GetSectors())

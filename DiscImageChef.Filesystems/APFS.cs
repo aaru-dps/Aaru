@@ -54,6 +54,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
         }
 
+        public APFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Apple File System";
+            PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ApfsContainerSuperBlock
         {

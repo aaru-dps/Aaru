@@ -56,6 +56,12 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         }
 
+        public AppleMFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "Apple Macintosh File System";
+            PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        }
+
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             UInt16 drSigWord;
