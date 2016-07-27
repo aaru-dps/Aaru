@@ -147,7 +147,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     entry.zero = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
                     entry.filename = new byte[E_NAME];
                     Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                    entry.padding = buf[offset + 0x23];
+                    entry.terminator = buf[offset + 0x23];
                     entry.fileType = buf[offset + 0x24];
                     entry.unknown = buf[offset + 0x25];
                     entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);

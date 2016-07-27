@@ -41,6 +41,7 @@ using DiscImageChef.ImagePlugins;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using System.IO;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -143,16 +144,44 @@ namespace DiscImageChef.Filesystems.LisaFS
                 return error;
 
             attributes = new FileAttributes();
-            // TODO: Subcatalogs
-            attributes = FileAttributes.File;
-            attributes |= FileAttributes.Extents;
-            if((extFile.flags & 0x08) == 0x08)
+
+            switch(extFile.ftype)
+            {
+                case FileType.Spool:
+                    attributes |= FileAttributes.CharDevice;
+                    break;
+                case FileType.UserCat:
+                case FileType.RootCat:
+                    attributes |= FileAttributes.Directory;
+                    break;
+                case FileType.Pipe:
+                    attributes |= FileAttributes.Pipe;
+                    break;
+                case FileType.Undefined:
+                    break;
+                default:
+                    attributes |= FileAttributes.File;
+                    // Subcatalogs use extents?
+                    attributes |= FileAttributes.Extents;
+                    break;
+            }
+
+            if(extFile.protect > 0)
+                attributes |= FileAttributes.Immutable;
+            if(extFile.locked > 0)
+                attributes |= FileAttributes.ReadOnly;
+            if(extFile.password_valid > 0)
                 attributes |= FileAttributes.Password;
 
             return Errno.NoError;
         }
 
         Errno ReadSystemFile(Int16 fileId, out byte[] buf)
+        {
+            return ReadSystemFile(fileId, out buf, false);
+        }
+
+        Errno ReadSystemFile(Int16 fileId, out byte[] buf, bool tags)
         {
             buf = null;
             if(!mounted || !debug)
@@ -164,7 +193,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     return Errno.InvalidArgument;
             }
 
-            if(systemFileCache.TryGetValue(fileId, out buf))
+            if(systemFileCache.TryGetValue(fileId, out buf) && !tags)
                return Errno.NoError;
 
             int count = 0;
@@ -182,7 +211,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(count == 0)
                 return Errno.NoSuchFile;
 
-            buf = new byte[count * device.GetSectorSize()];
+            if(!tags)
+                buf = new byte[count * device.GetSectorSize()];
+            else
+                buf = new byte[count * 12];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
@@ -193,12 +225,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(id == fileId)
                 {
                     UInt16 pos = BigEndianBitConverter.ToUInt16(tag, 0x06);
-                    byte[] sector = device.ReadSector(i);
+                    byte[] sector;
+
+                    if(!tags)
+                        sector = device.ReadSector(i);
+                    else
+                        sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                    
                     Array.Copy(sector, 0, buf, sector.Length * pos, sector.Length);
                 }
             }
 
-            systemFileCache.Add(fileId, buf);
+            if(!tags)
+                systemFileCache.Add(fileId, buf);
+            
             return Errno.NoError;
         }
 
@@ -233,7 +273,6 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                         stat.CreationTime = DateHandlers.LisaToDateTime(file.dtc);
                         stat.AccessTime = DateHandlers.LisaToDateTime(file.dta);
-                        stat.StatusChangeTime = DateHandlers.LisaToDateTime(file.timestamp);
                         stat.BackupTime = DateHandlers.LisaToDateTime(file.dtb);
                         stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
@@ -294,7 +333,6 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             stat.CreationTime = DateHandlers.LisaToDateTime(file.dtc);
             stat.AccessTime = DateHandlers.LisaToDateTime(file.dta);
-            stat.StatusChangeTime = DateHandlers.LisaToDateTime(file.timestamp);
             stat.BackupTime = DateHandlers.LisaToDateTime(file.dtb);
             stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
@@ -317,14 +355,21 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         Errno ReadFile(Int16 fileId, out byte[] buf)
         {
+            return ReadFile(fileId, out buf, false);
+        }
+
+        Errno ReadFile(Int16 fileId, out byte[] buf, bool tags)
+        {
             buf = null;
             if(!mounted)
                 return Errno.AccessDenied;
 
+            tags &= debug;
+
             if(fileId <= 4)
                 return Errno.InvalidArgument;
 
-            if(fileCache.TryGetValue(fileId, out buf))
+            if(!tags && fileCache.TryGetValue(fileId, out buf))
                 return Errno.NoError;
 
             Errno error;
@@ -334,27 +379,44 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(error != Errno.NoError)
                 return error;
 
-            byte[] temp = new byte[file.length * (int)device.GetSectors()];
+            int sectorSize;
+            if(tags)
+                sectorSize = 12;
+            else
+                sectorSize = (int)device.GetSectorSize();
+
+            byte[] temp = new byte[file.length * sectorSize];
 
             int offset = 0;
             for(int i = 0; i < file.extents.Length; i++)
             {
-                byte[] sector = device.ReadSectors((ulong)(file.extents[i].start + mddf.mddf_block), (uint)file.extents[i].length);
+                byte[] sector;
+
+                if(!tags)
+                    sector = device.ReadSectors((ulong)(file.extents[i].start + mddf.mddf_block), (uint)file.extents[i].length);
+                else
+                    sector = device.ReadSectorsTag((ulong)(file.extents[i].start + mddf.mddf_block), (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
 
                 Array.Copy(sector, 0, temp, offset, sector.Length);
                 offset += sector.Length;
             }
 
-            int realSize;
-            if(fileSizeCache.TryGetValue(fileId, out realSize))
+            if(!tags)
             {
-                buf = new byte[realSize];
-                Array.Copy(temp, 0, buf, 0, realSize);
+                int realSize;
+                if(fileSizeCache.TryGetValue(fileId, out realSize))
+                {
+                    buf = new byte[realSize];
+                    Array.Copy(temp, 0, buf, 0, realSize);
+                }
+                else
+                    buf = temp;
+
+                fileCache.Add(fileId, buf);
             }
             else
                 buf = temp;
 
-            fileCache.Add(fileId, buf);
             return Errno.NoError;
         }
 

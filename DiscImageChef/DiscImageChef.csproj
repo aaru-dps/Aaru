@@ -67,6 +67,7 @@
     <Compile Include="Core\IBGLog.cs" />
     <Compile Include="Core\MHDDLog.cs" />
     <Compile Include="Commands\Ls.cs" />
+    <Compile Include="Commands\ExtractFiles.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

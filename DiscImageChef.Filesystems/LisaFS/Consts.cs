@@ -44,20 +44,40 @@ namespace DiscImageChef.Filesystems.LisaFS
         const byte LisaFSv1 = 0x0E;
         const byte LisaFSv2 = 0x0F;
         const byte LisaFSv3 = 0x11;
+        /// <summary>Maximum string size in LisaFS</summary>
         const uint E_NAME = 32;
-        // Maximum string size in LisaFS
         const UInt16 FILEID_FREE = 0x0000;
         const UInt16 FILEID_BOOT = 0xAAAA;
         const UInt16 FILEID_LOADER = 0xBBBB;
         const UInt16 FILEID_MDDF = 0x0001;
         const UInt16 FILEID_BITMAP = 0x0002;
         const UInt16 FILEID_SRECORD = 0x0003;
+        /// <summary>"Catalog file"</summary>
         const UInt16 FILEID_DIRECTORY = 0x0004;
         const Int16 FILEID_BOOT_SIGNED = -21846;
         const Int16 FILEID_LOADER_SIGNED = -17477;
-        // "Catalog file"
         const UInt16 FILEID_ERASED = 0x7FFF;
         const UInt16 FILEID_MAX = FILEID_ERASED;
+
+        enum FileType : byte
+        {
+            Undefined = 0,
+            MDDFile = 1,
+            RootCat = 2,
+            FreeList = 3,
+            BadBlocks = 4,
+            SysData = 5,
+            Spool = 6,
+            Exec = 7,
+            UserCat = 8,
+            Pipe = 9,
+            BootFile = 10,
+            SwapData = 11,
+            SwapCode = 12,
+            RamAP = 13,
+            UserFile = 14,
+            KilledObject = 15
+        }
     }
 }
 

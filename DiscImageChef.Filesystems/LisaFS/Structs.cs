@@ -229,8 +229,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             public ushort zero;
             /// <summary>0x03, filename, 32-bytes, null-padded</summary>
             public byte[] filename;
-            /// <summary>0x23, seems to be always zero</summary>
-            public byte padding;
+            /// <summary>0x23, null-termination</summary>
+            public byte terminator;
             /// <summary>
             /// At 0x24
             /// 0x03 here for entries 64 bytes long
@@ -267,14 +267,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             public byte filenameLen;
             /// <summary>0x01, filename</summary>
             public byte[] filename;
-            /// <summary>0x20, unknown timestamp</summary>
-            public UInt32 timestamp;
-            /// <summary>0x24, 3 bytes, unknown</summary>
-            public byte[] unknown1;
-            /// <summary>0x27, 3 bytes, machine serial number</summary>
-            public byte[] serial;
-            /// <summary>0x2A, 4 bytes, unknown</summary>
-            public uint unknown2;
+            /// <summary>0x20, unknown</summary>
+            public ushort unknown1;
+            /// <summary>0x22, 8 bytes</summary>
+            public UInt64 file_uid;
+            /// <summary>0x2A, unknown</summary>
+            public byte unknown2;
+            /// <summary>0x2B, entry type? gets modified</summary>
+            public byte etype;
+            /// <summary>0x2C, file type</summary>
+            public FileType ftype;
+            /// <summary>0x2D, unknown</summary>
+            public byte unknown3;
             /// <summary>0x2E, creation time</summary>
             public UInt32 dtc;
             /// <summary>0x32, last access time</summary>
@@ -285,22 +289,52 @@ namespace DiscImageChef.Filesystems.LisaFS
             public UInt32 dtb;
             /// <summary>0x3E, scavenge time</summary>
             public UInt32 dts;
-            /// <summary>0x42, unknown, 32 bytes</summary>
-            public byte[] unknown3;
-            /// <summary>0x62, flags?, 0x08 set if password is valid</summary>
-            public byte flags;
+            /// <summary>0x42, machine serial number</summary>
+            public UInt32 serial;
+            /// <summary>0x46, unknown</summary>
+            public byte unknown4;
+            /// <summary>0x47, locked file</summary>
+            public byte locked;
+            /// <summary>0x48, protected file</summary>
+            public byte protect;
+            /// <summary>0x49, master file</summary>
+            public byte master;
+            /// <summary>0x4A, scavenged file</summary>
+            public byte scavenged;
+            /// <summary>0x4B, file closed by os</summary>
+            public byte closed;
+            /// <summary>0x4C, file left open</summary>
+            public byte open;
+            /// <summary>0x4D, 11 bytes, unknown</summary>
+            public byte[] unknown5;
+            /// <summary>0x58, Release number</summary>
+            public UInt16 release;
+            /// <summary>0x5A, Build number</summary>
+            public UInt16 build;
+            /// <summary>0x5C, Compatibility level</summary>
+            public UInt16 compatibility;
+            /// <summary>0x5E, Revision level</summary>
+            public UInt16 revision;
+            /// <summary>0x60, unknown</summary>
+            public ushort unknown6;
+            /// <summary>0x62, 0x08 set if password is valid</summary>
+            public byte password_valid;
             /// <summary>0x63, 8 bytes, scrambled password</summary>
             public byte[] password;
-            /// <summary>0x6B, 21 bytes, unknown</summary>
-            public byte[] unknown4;
+            /// <summary>0x6B, 3 bytes, unknown</summary>
+            public byte[] unknown7;
+            /// <summary>0x6E, filesystem overhead</summary>
+            public ushort overhead;
+            /// <summary>0x70, 16 bytes, unknown</summary>
+            public byte[] unknown8;
             /// <summary>0x80, file length in blocks</summary>
             public Int32 length;
             /// <summary>0x84, unknown</summary>
-            public Int32 unknown5;
+            public Int32 unknown9;
             /// <summary>0x88, extents, can contain up to 41 extents, dunno LisaOS maximum (never seen more than 3)</summary>
             public Extent[] extents;
             /// <summary>0x17E, unknown, empty, padding?</summary>
-            public short unknown6;
+            public short unknown10;
             /// <summary>0x180, 128 bytes</summary>
             public byte[] LisaInfo;
         }

@@ -332,5 +332,19 @@ namespace DiscImageChef
         [Option('l', "long", Default = false, HelpText = "Uses long format.")]
         public bool Long { get; set; }
     }
+
+    [Verb("extract-files", HelpText = "Extracts all files in disc image.")]
+    public class ExtractFilesOptions : CommonOptions
+    {
+        [Option('i', "input", Required = true, HelpText = "Disc image.")]
+        public string InputFile { get; set; }
+
+        [Option('o', "output", Required = true, HelpText = "Directory where extracted files will be created. Will abort if it exists.")]
+        public string OutputDir { get; set; }
+
+        [Option('x', "xattrs", Default = false, HelpText = "Extract extended attributes if present.")]
+        public bool Xattrs { get; set; }
+    }
+
 }
 
