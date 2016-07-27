@@ -286,6 +286,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                         xmlFSType.VolumeName = mddf.volname;
                         xmlFSType.VolumeSerial = String.Format("{0:X16}", mddf.volid);
 
+                        if(debug)
+                        {
+                            printedExtents = new List<short>();
+                        }
+
                         return Errno.NoError;
                     }
                 }

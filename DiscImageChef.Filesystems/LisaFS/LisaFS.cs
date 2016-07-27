@@ -59,6 +59,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         Dictionary<Int16, byte[]> fileCache;
         Dictionary<Int16, List<CatalogEntry>> catalogCache;
         Dictionary<Int16, Int32> fileSizeCache;
+        List<Int16> printedExtents;
         #endregion Caches
 
         public LisaFS()
