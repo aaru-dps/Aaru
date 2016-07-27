@@ -412,11 +412,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                 int realSize;
                 if(fileSizeCache.TryGetValue(fileId, out realSize))
                 {
-                    buf = new byte[realSize];
-                    Array.Copy(temp, 0, buf, 0, realSize);
+                    if(realSize > temp.Length)
+                        DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 }
-                else
-                    buf = temp;
+                buf = temp;
 
                 fileCache.Add(fileId, buf);
             }

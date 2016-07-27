@@ -206,6 +206,12 @@ namespace DiscImageChef.Filesystems.LisaFS
                         Errno error;
 
                         mounted = true;
+                        this.debug = debug;
+
+                        if(debug)
+                        {
+                            printedExtents = new List<short>();
+                        }
 
                         List<CatalogEntry> tempCat;
                         error = ReadCatalog((short)FILEID_DIRECTORY, out tempCat);
@@ -216,8 +222,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                             mounted = false;
                             return error;
                         }
-
-                        this.debug = debug;
 
                         if(debug)
                         {
@@ -285,11 +289,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                         xmlFSType.Type = "LisaFS";
                         xmlFSType.VolumeName = mddf.volname;
                         xmlFSType.VolumeSerial = String.Format("{0:X16}", mddf.volid);
-
-                        if(debug)
-                        {
-                            printedExtents = new List<short>();
-                        }
 
                         return Errno.NoError;
                     }
