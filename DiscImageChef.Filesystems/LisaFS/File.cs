@@ -59,8 +59,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(offset < 0 || size < 0)
-                return Errno.EINVAL;
+            if(size == 0)
+            {
+                buf = new byte[0];
+                return Errno.NoError;
+            }
+
+            if(offset < 0)
+                return Errno.InvalidArgument;
             
             Int16 fileId;
             bool isDir;
