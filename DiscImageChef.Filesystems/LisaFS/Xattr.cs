@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
+using System.CodeDom.Compiler;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -79,7 +80,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                 xattrs = new List<string>();
 
                 if(fileId == FILEID_MDDF)
-                    xattrs.Add("com.apple.lisa.password");
+                {
+                    byte[] buf = Encoding.ASCII.GetBytes(mddf.password);
+                    if(buf.Length > 0)
+                        xattrs.Add("com.apple.lisa.password");
+                }
             }
             else
             {
