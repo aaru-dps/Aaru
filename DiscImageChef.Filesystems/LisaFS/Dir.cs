@@ -157,12 +157,17 @@ namespace DiscImageChef.Filesystems.LisaFS
                     entry.wasted = BigEndianBitConverter.ToInt32(buf, offset + 0x34);
                     entry.tail = new byte[8];
                     Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
-                    catalog.Add(entry);
 
-                    if(fileSizeCache.ContainsKey(entry.fileID))
-                        fileSizeCache.Remove(entry.fileID);
-
-                    fileSizeCache.Add(entry.fileID, entry.length);
+                    // This is as Pascal Workshop does, if there is no extents file it simply ignores it.
+                    ExtentFile ext;
+                    if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
+                    {
+                        if(!fileSizeCache.ContainsKey(entry.fileID))
+                        {
+                            catalog.Add(entry);
+                            fileSizeCache.Add(entry.fileID, entry.length);
+                        }
+                    }
 
                     offset += 64;
                 }
