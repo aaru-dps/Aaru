@@ -892,6 +892,24 @@ namespace DiscImageChef.Metadata
                     return dmns;
                 #endregion CD/DVD/BD
 
+                #region Apple Hard Disks
+                    // TODO: Find Apple Widget size
+                case CommonTypes.MediaType.AppleProfile:
+                    dmns.Height = 223.8;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 438.9;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 111.5;
+                    return dmns;
+                case CommonTypes.MediaType.AppleHD20:
+                    dmns.Height = 246.4;
+                    dmns.HeightSpecified = true;
+                    dmns.Width = 266.7;
+                    dmns.WidthSpecified = true;
+                    dmns.Thickness = 78.7;
+                    return dmns;
+                #endregion Apple Hard Disks
+
                 default:
                     return null;
             }

@@ -778,6 +778,12 @@ namespace DiscImageChef.CommonTypes
         PD650_WORM,
         #endregion Miscellaneous
 
+        #region Apple Hard Disks
+        AppleProfile,
+        AppleWidget,
+        AppleHD20,
+        #endregion Apple Hard Disks
+
         #region Generic hard disks
         Microdrive,
         RDX,

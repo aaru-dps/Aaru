@@ -664,6 +664,18 @@ namespace DiscImageChef.Metadata
                     DiscType = "Iomega ZIP";
                     DiscSubType = "Iomega ZIP750";
                     break;
+                case CommonTypes.MediaType.AppleProfile:
+                    DiscType = "HDD";
+                    DiscSubType = "Apple Profile";
+                    break;
+                case CommonTypes.MediaType.AppleWidget:
+                    DiscType = "HDD";
+                    DiscSubType = "Apple Widget";
+                    break;
+                case CommonTypes.MediaType.AppleHD20:
+                    DiscType = "HDD";
+                    DiscSubType = "Apple HD20";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

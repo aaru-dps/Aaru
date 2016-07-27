@@ -90,6 +90,8 @@ namespace DiscImageChef.ImagePlugins
         const byte kSonyFormat1680K = 0x04;
         /// <summary>Defined by Sigma Seven's BLU</summary>
         const byte kSigmaFormatTwiggy = 0x54;
+        /// <summary>Defined by LisaEm</summary>
+        const byte kNotStandardFormat = 0x5D;
         // There should be a value for Apple HD20 hard disks, unknown...
         // fmyByte byte
         // Based on GCR nibble
@@ -110,6 +112,8 @@ namespace DiscImageChef.ImagePlugins
         const byte kSonyFmtByteProDos = 0x24;
         /// <summary>Unformatted sectors</summary>
         const byte kInvalidFmtByte = 0x96;
+        /// <summary>Defined by LisaEm</summary>
+        const byte kFmtNotStandard = 0x93;
 
         #endregion
 
@@ -202,7 +206,8 @@ namespace DiscImageChef.ImagePlugins
                 return false;
 
             if(tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
-                tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy)
+                tmp_header.format != kSonyFormat1440K && tmp_header.format != kSonyFormat1680K && tmp_header.format != kSigmaFormatTwiggy && 
+               tmp_header.format != kNotStandardFormat)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmp_header.format);
 
@@ -210,7 +215,8 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(tmp_header.fmtByte != kSonyFmtByte400K && tmp_header.fmtByte != kSonyFmtByte800K && tmp_header.fmtByte != kSonyFmtByte800KIncorrect &&
-                tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy)
+               tmp_header.fmtByte != kSonyFmtByteProDos && tmp_header.fmtByte != kInvalidFmtByte && tmp_header.fmtByte != kSigmaFmtByteTwiggy &&
+               tmp_header.fmtByte != kFmtNotStandard)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmp_header.fmtByte);
 
@@ -275,7 +281,7 @@ namespace DiscImageChef.ImagePlugins
                 return false;
 
             if(header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
-                header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy)
+                header.format != kSonyFormat1440K && header.format != kSonyFormat1680K && header.format != kSigmaFormatTwiggy && header.format != kNotStandardFormat)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.format);
 
@@ -283,7 +289,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(header.fmtByte != kSonyFmtByte400K && header.fmtByte != kSonyFmtByte800K && header.fmtByte != kSonyFmtByte800KIncorrect &&
-                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy)
+                header.fmtByte != kSonyFmtByteProDos && header.fmtByte != kInvalidFmtByte && header.fmtByte != kSigmaFmtByteTwiggy && header.fmtByte != kFmtNotStandard)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.fmtByte);
 
@@ -307,10 +313,12 @@ namespace DiscImageChef.ImagePlugins
 
             if(header.tagSize != 0)
             {
-                if(header.tagSize / 12 != ImageInfo.sectors)
-                {
-                    DicConsole.DebugWriteLine("DC42 plugin", "header.tagSize / 12 != sectors");
+                bptag = (uint)(header.tagSize / ImageInfo.sectors);
+                DicConsole.DebugWriteLine("DC42 plugin", "bptag = {0} bytes", bptag);
 
+                if(bptag != 12 && bptag != 20 && bptag != 24)
+                {
+                    DicConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
                     return false;
                 }
 
@@ -341,6 +349,26 @@ namespace DiscImageChef.ImagePlugins
                     break;
                 case kSigmaFormatTwiggy:
                     ImageInfo.mediaType = MediaType.AppleFileWare;
+                    break;
+                case kNotStandardFormat:
+                    switch(ImageInfo.sectors)
+                    {
+                        case 9728:
+                            ImageInfo.mediaType = MediaType.AppleProfile;
+                            break;
+                        case 19456:
+                            ImageInfo.mediaType = MediaType.AppleProfile;
+                            break;
+                        case 38912:
+                            ImageInfo.mediaType = MediaType.AppleWidget;
+                            break;
+                        case 39040:
+                            ImageInfo.mediaType = MediaType.AppleHD20;
+                            break;
+                        default:
+                            ImageInfo.mediaType = MediaType.Unknown;
+                            break;
+                    }
                     break;
                 default:
                     ImageInfo.mediaType = MediaType.Unknown;
