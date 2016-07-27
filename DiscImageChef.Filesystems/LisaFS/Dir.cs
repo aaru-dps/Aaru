@@ -97,17 +97,16 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
-                byte[] tag = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
-                UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
-                UInt16 pos = BigEndianBitConverter.ToUInt16(tag, 0x06);
+                Tag catTag;
+                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
 
-                if(id == fileId && pos == 0)
+                if(catTag.fileID == fileId && catTag.relBlock == 0)
                 {
                     firstCatalogBlock = device.ReadSectors(i, 4);
                     break;
                 }
 
-                if(id == -fileId)
+                if(catTag.fileID == -fileId)
                     return Errno.NotDirectory;
             }
 
@@ -119,13 +118,13 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                byte[] tag = device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block, SectorTagType.AppleSectorTag);
-                UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                Tag prevTag;
+                DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out prevTag);
 
-                if(id != fileId)
+                if(prevTag.fileID != fileId)
                     return Errno.InvalidArgument;
 
-                firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block, 4);
+                firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
             }
 
@@ -137,13 +136,13 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
-                byte[] tag = device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block, SectorTagType.AppleSectorTag);
-                UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                Tag nextTag;
+                DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out nextTag);
 
-                if(id != fileId)
+                if(nextTag.fileID != fileId)
                     return Errno.InvalidArgument;
 
-                byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block, 4);
+                byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
                 catalogBlocks.Add(nextCatalogBlock);
             }

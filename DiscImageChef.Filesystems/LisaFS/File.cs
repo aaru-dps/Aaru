@@ -204,13 +204,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int count = 0;
 
+            Tag sysTag;
+
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                Int16 id = BigEndianBitConverter.ToInt16(tag, 0x04);
+                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(id == fileId)
+                if(sysTag.fileID == fileId)
                     count++;
             }
 
@@ -220,25 +221,27 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!tags)
                 buf = new byte[count * device.GetSectorSize()];
             else
-                buf = new byte[count * 12];
+                buf = new byte[count * devTagSize];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                UInt16 id = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(id == fileId)
+                if(sysTag.fileID == fileId)
                 {
-                    UInt16 pos = BigEndianBitConverter.ToUInt16(tag, 0x06);
                     byte[] sector;
 
                     if(!tags)
                         sector = device.ReadSector(i);
                     else
                         sector = device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
-                    
-                    Array.Copy(sector, 0, buf, sector.Length * pos, sector.Length);
+
+                    // Relative block for $Loader starts at $Boot block
+                    if(sysTag.fileID == FILEID_LOADER_SIGNED)
+                        sysTag.relBlock--;
+
+                    Array.Copy(sector, 0, buf, sector.Length * sysTag.relBlock, sector.Length);
                 }
             }
 
@@ -387,7 +390,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int sectorSize;
             if(tags)
-                sectorSize = 12;
+                sectorSize = devTagSize;
             else
                 sectorSize = (int)device.GetSectorSize();
 
@@ -399,9 +402,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                 byte[] sector;
 
                 if(!tags)
-                    sector = device.ReadSectors((ulong)(file.extents[i].start + mddf.mddf_block), (uint)file.extents[i].length);
+                    sector = device.ReadSectors(((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix), (uint)file.extents[i].length);
                 else
-                    sector = device.ReadSectorsTag((ulong)(file.extents[i].start + mddf.mddf_block), (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
+                    sector = device.ReadSectorsTag(((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix), (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
 
                 Array.Copy(sector, 0, temp, offset, sector.Length);
                 offset += sector.Length;

@@ -205,20 +205,37 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         struct Tag
         {
-            /// <summary>0x00 Unknown</summary>
+            /// <summary>0x00 version</summary>
+            public UInt16 version;
+            /// <summary>0x02 unknown</summary>
             public UInt16 unknown;
-            /// <summary>0x02 File type</summary>
-            public byte fileType;
-            /// <summary>Seems to be always zero</summary>
-            public byte zero;
             /// <summary>0x04 File ID. Negative numbers are extents for the file with same absolute value number</summary>
             public Int16 fileID;
-            /// <summary>0x06 Relative block</summary>
+            /// <summary>Only in 20 bytes tag at 0x06, mask 0x8000 if valid tag</summary>
+            public UInt16 usedBytes;
+            /// <summary>Only in 20 bytes tag at 0x08, 3 bytes</summary>
+            public UInt32 absoluteBlock;
+            /// <summary>Only in 20 bytes tag at 0x0B, checksum byte</summary>
+            public byte checksum;
+            /// <summary>0x06 in 12 bytes tag, 0x0C in 20 bytes tag, relative block</summary>
             public UInt16 relBlock;
-            /// <summary>0x08 Next block for this file. 0x8000 bit seems always set, 0x07FF means this is last block</summary>
-            public UInt16 nextBlock;
-            /// <summary>0x0A Previous block for this file. 0x07FF means this is first block.</summary>
-            public UInt16 prevBlock;
+            /// <summary>
+            /// Next block for this file.
+            /// In 12 bytes tag at 0x08, 2 bytes, 0x8000 bit seems always set, 0x07FF means this is last block.
+            /// In 20 bytes tag at 0x0E, 3 bytes, 0xFFFFFF means this is last block.
+            /// </summary>
+            public UInt32 nextBlock;
+            /// <summary>
+            /// Previous block for this file.
+            /// In 12 bytes tag at 0x0A, 2 bytes, 0x07FF means this is first block.
+            /// In 20 bytes tag at 0x11, 3 bytes, 0xFFFFFF means this is first block.
+            /// </summary>
+            public UInt32 prevBlock;
+
+            /// <summary>On-memory value for easy first block search.</summary>
+            public bool isFirst;
+            /// <summary>On-memory value for easy last block search.</summary>
+            public bool isLast;
         }
 
         struct CatalogEntry

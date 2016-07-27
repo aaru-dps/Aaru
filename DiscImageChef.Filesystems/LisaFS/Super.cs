@@ -71,16 +71,24 @@ namespace DiscImageChef.Filesystems.LisaFS
                     return Errno.InOutError;
                 }
 
+                // MDDF cannot be at end of device, of course
+                volumePrefix = device.ImageInfo.sectors;
+
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
-                for(int i = 0; i < 100; i++)
+                for(ulong i = 0; i < 100; i++)
                 {
-                    byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                    Tag searchTag;
+                    DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, fileid);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(fileid == FILEID_MDDF)
+                    if(volumePrefix == device.ImageInfo.sectors && searchTag.fileID == FILEID_LOADER_SIGNED)
+                        volumePrefix = i - 1;
+
+                    if(searchTag.fileID == FILEID_MDDF)
                     {
+                        devTagSize = device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
+
                         byte[] sector = device.ReadSector((ulong)i);
                         mddf = new MDDF();
                         byte[] pString = new byte[33];
@@ -167,10 +175,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.vol_sequence = BigEndianBitConverter.ToUInt16(sector, 0x136);
                         mddf.vol_left_mounted = sector[0x138];
 
-                        if(mddf.mddf_block != i ||
+                        if(mddf.mddf_block != i - volumePrefix ||
                             mddf.vol_size > device.GetSectors() ||
                             mddf.vol_size - 1 != mddf.volsize_minus_one ||
-                            mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one ||
+                            mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - volumePrefix ||
                             mddf.datasize > mddf.blocksize ||
                             mddf.blocksize < device.GetSectorSize() ||
                             mddf.datasize != device.GetSectorSize())

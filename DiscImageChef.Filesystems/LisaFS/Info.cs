@@ -39,6 +39,7 @@ using System;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -61,15 +62,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(imagePlugin.GetSectors() < 800)
                     return false;
 
+                int before_mddf = -1;
+
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(int i = 0; i < 100; i++)
                 {
-                    byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                    Tag searchTag;
+                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, fileid);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(fileid == FILEID_MDDF)
+                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED)
+                        before_mddf = i - 1;
+
+                    if(searchTag.fileID == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
                         MDDF mddf = new MDDF();
@@ -91,7 +97,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", mddf.blocksize);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", mddf.datasize);
 
-                        if(mddf.mddf_block != i)
+                        if(mddf.mddf_block != i - before_mddf)
                             return false;
 
                         if(mddf.vol_size > imagePlugin.GetSectors())
@@ -100,7 +106,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         if(mddf.vol_size - 1 != mddf.volsize_minus_one)
                             return false;
 
-                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
+                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - before_mddf)
                             return false;
 
                         if(mddf.datasize > mddf.blocksize)
@@ -145,15 +151,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(imagePlugin.GetSectors() < 800)
                     return;
 
+                int before_mddf = -1;
+
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(int i = 0; i < 100; i++)
                 {
-                    byte[] tag = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                    UInt16 fileid = BigEndianBitConverter.ToUInt16(tag, 0x04);
+                    Tag searchTag;
+                    DecodeTag(imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag), out searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, fileid);
+                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);
 
-                    if(fileid == FILEID_MDDF)
+                    if(before_mddf == -1 && searchTag.fileID == FILEID_LOADER_SIGNED)
+                        before_mddf = i - 1;
+
+                    if(searchTag.fileID == FILEID_MDDF)
                     {
                         byte[] sector = imagePlugin.ReadSector((ulong)i);
                         MDDF mddf = new MDDF();
@@ -281,7 +292,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown38 = 0x{0:X8} ({0})", mddf.unknown38);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})", mddf.unknown_timestamp, DateHandlers.LisaToDateTime(mddf.unknown_timestamp));
 
-                        if(mddf.mddf_block != i)
+                        if(mddf.mddf_block != i - before_mddf)
                             return;
 
                         if(mddf.vol_size > imagePlugin.GetSectors())
@@ -290,7 +301,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         if(mddf.vol_size - 1 != mddf.volsize_minus_one)
                             return;
 
-                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one)
+                        if(mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - before_mddf)
                             return;
 
                         if(mddf.datasize > mddf.blocksize)
@@ -334,7 +345,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                         sb.AppendFormat("Some timestamp, says {0}", mddf.dtcc).AppendLine();
                         sb.AppendFormat("Volume backed up on {0}", mddf.dtvb).AppendLine();
                         sb.AppendFormat("Volume scavenged on {0}", mddf.dtvs).AppendLine();
-                        sb.AppendFormat("MDDF is in block {0}", mddf.mddf_block).AppendLine();
+                        sb.AppendFormat("MDDF is in block {0}", mddf.mddf_block + before_mddf).AppendLine();
+                        sb.AppendFormat("There are {0} reserved blocks before volume", before_mddf).AppendLine();
                         sb.AppendFormat("{0} blocks minus one", mddf.volsize_minus_one).AppendLine();
                         sb.AppendFormat("{0} blocks minus one minus MDDF offset", mddf.volsize_minus_mddf_minus_one).AppendLine();
                         sb.AppendFormat("{0} blocks in volume", mddf.vol_size).AppendLine();

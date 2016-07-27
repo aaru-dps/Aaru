@@ -52,6 +52,8 @@ namespace DiscImageChef.Filesystems.LisaFS
         readonly ImagePlugin device;
 
         MDDF mddf;
+        ulong volumePrefix;
+        int devTagSize;
 
         #region Caches
         Dictionary<Int16, ExtentFile> extentCache;

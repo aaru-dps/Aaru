@@ -177,6 +177,50 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             return Errno.NoSuchExtendedAttribute;
         }
+
+        Errno DecodeTag(byte[] tag, out Tag decoded)
+        {
+            decoded = new Tag();
+
+            if(tag.Length == 12)
+            {
+                decoded.version = BigEndianBitConverter.ToUInt16(tag, 0x00);
+                decoded.unknown = BigEndianBitConverter.ToUInt16(tag, 0x02);
+                decoded.fileID = BigEndianBitConverter.ToInt16(tag, 0x04);
+                decoded.relBlock = BigEndianBitConverter.ToUInt16(tag, 0x06);
+                decoded.nextBlock = BigEndianBitConverter.ToUInt16(tag, 0x08);
+                decoded.nextBlock &= 0x7FF;
+                decoded.prevBlock = BigEndianBitConverter.ToUInt16(tag, 0x0A);
+                decoded.prevBlock &= 0x7FF;
+
+                if(decoded.nextBlock == 0x7FF)
+                    decoded.isLast = true;
+                if(decoded.prevBlock == 0x7FF)
+                    decoded.isFirst = true;
+            }
+            else
+            {
+                decoded.version = BigEndianBitConverter.ToUInt16(tag, 0x00);
+                decoded.unknown = BigEndianBitConverter.ToUInt16(tag, 0x02);
+                decoded.fileID = BigEndianBitConverter.ToInt16(tag, 0x04);
+                decoded.usedBytes = BigEndianBitConverter.ToUInt16(tag, 0x06);
+                decoded.absoluteBlock = BigEndianBitConverter.ToUInt32(tag, 0x07);
+                decoded.absoluteBlock &= 0xFFFFFF;
+                decoded.checksum = tag[0x0B];
+                decoded.relBlock = BigEndianBitConverter.ToUInt16(tag, 0x0C);
+                decoded.nextBlock = BigEndianBitConverter.ToUInt32(tag, 0x0D);
+                decoded.nextBlock &= 0xFFFFFF;
+                decoded.prevBlock = BigEndianBitConverter.ToUInt32(tag, 0x10);
+                decoded.prevBlock &= 0xFFFFFF;
+
+                if(decoded.nextBlock == 0xFFFFFF)
+                    decoded.isLast = true;
+                if(decoded.prevBlock == 0xFFFFFF)
+                    decoded.isFirst = true;
+            }
+
+            return Errno.NoError;
+        }
     }
 }
 

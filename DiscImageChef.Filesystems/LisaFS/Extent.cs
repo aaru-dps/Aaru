@@ -73,13 +73,13 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
-                byte[] tag = device.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag);
-                Int16 foundid = BigEndianBitConverter.ToInt16(tag, 0x04);
+                Tag extTag;
+                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
 
-                if(foundid == fileId)
+                if(extTag.fileID == fileId)
                     fileFound = true;
 
-                if(foundid == ((short)(-1 * fileId)))
+                if(extTag.fileID == ((short)(-1 * fileId)))
                 {
                     byte[] sector = device.ReadSector((ulong)i);
 
