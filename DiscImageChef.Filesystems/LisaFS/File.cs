@@ -204,6 +204,21 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             int count = 0;
 
+            if(fileId == FILEID_SRECORD)
+            {
+                if(!tags)
+                {
+                    buf = device.ReadSectors(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len);
+                    systemFileCache.Add(fileId, buf);
+                    return Errno.NoError;
+                }
+                else
+                {
+                    buf = device.ReadSectorsTag(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len, SectorTagType.AppleSectorTag);
+                    return Errno.NoError;
+                }
+            }
+
             Tag sysTag;
 
             // Should be enough to check 100 sectors?
@@ -353,7 +368,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             stat.DeviceNo = 0;
             int len;
             if(!fileSizeCache.TryGetValue(fileId, out len))
-                stat.Length = file.length;
+                stat.Length = srecords[fileId].filesize;
             else
                 stat.Length = len;
             stat.BlockSize = mddf.datasize;

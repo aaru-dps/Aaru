@@ -207,8 +207,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.clustersize = BigEndianBitConverter.ToUInt16(sector, 0x8A);
                         mddf.fs_size = BigEndianBitConverter.ToUInt32(sector, 0x8C);
                         mddf.unknown7 = BigEndianBitConverter.ToUInt32(sector, 0x90);
-                        mddf.unknown8 = BigEndianBitConverter.ToUInt32(sector, 0x94);
-                        mddf.unknown9 = BigEndianBitConverter.ToUInt32(sector, 0x98);
+                        mddf.srec_ptr = BigEndianBitConverter.ToUInt32(sector, 0x94);
+                        mddf.unknown9 = BigEndianBitConverter.ToUInt16(sector, 0x98);
+                        mddf.srec_len = BigEndianBitConverter.ToUInt16(sector, 0x9A);
                         mddf.unknown10 = BigEndianBitConverter.ToUInt32(sector, 0x9C);
                         mddf.unknown11 = BigEndianBitConverter.ToUInt32(sector, 0xA0);
                         mddf.unknown12 = BigEndianBitConverter.ToUInt32(sector, 0xA4);
@@ -259,8 +260,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown5 = 0x{0:X8} ({0})", mddf.unknown5);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown6 = 0x{0:X8} ({0})", mddf.unknown6);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown7 = 0x{0:X8} ({0})", mddf.unknown7);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown8 = 0x{0:X8} ({0})", mddf.unknown8);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown9 = 0x{0:X8} ({0})", mddf.unknown9);
+                        DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown9 = 0x{0:X4} ({0})", mddf.unknown9);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown10 = 0x{0:X8} ({0})", mddf.unknown10);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown11 = 0x{0:X8} ({0})", mddf.unknown11);
                         DicConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown12 = 0x{0:X8} ({0})", mddf.unknown12);
@@ -362,6 +362,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         sb.AppendFormat("Boot code: 0x{0:X8}", mddf.boot_code).AppendLine();
                         sb.AppendFormat("Boot environment:  0x{0:X8}", mddf.boot_environ).AppendLine();
                         sb.AppendFormat("Overmount stamp: 0x{0:X16}", mddf.overmount_stamp).AppendLine();
+                        sb.AppendFormat("S-Records start at {0} and spans for {1} blocks", mddf.srec_ptr + mddf.mddf_block + before_mddf, mddf.srec_len).AppendLine();
 
                         if(mddf.vol_left_mounted == 0)
                             sb.AppendLine("Volume is clean");

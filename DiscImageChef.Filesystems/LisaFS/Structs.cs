@@ -94,10 +94,12 @@ namespace DiscImageChef.Filesystems.LisaFS
             public UInt32 fs_size;
             /// <summary>0x90, unknown</summary>
             public UInt32 unknown7;
-            /// <summary>0x94, unknown</summary>
-            public UInt32 unknown8;
+            /// <summary>0x94, Pointer to S-Records</summary>
+            public UInt32 srec_ptr;
             /// <summary>0x98, unknown</summary>
-            public UInt32 unknown9;
+            public UInt16 unknown9;
+            /// <summary>0x9A, S-Records length</summary>
+            public UInt16 srec_len;
             /// <summary>0x9C, unknown</summary>
             public UInt32 unknown10;
             /// <summary>0xA0, unknown</summary>
@@ -354,6 +356,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             public short unknown10;
             /// <summary>0x180, 128 bytes</summary>
             public byte[] LisaInfo;
+        }
+
+        struct SRecord
+        {
+            /// <summary>0x00, block where ExtentsFile for this entry resides</summary>
+            public UInt32 extent_ptr;
+            /// <summary>0x04, unknown</summary>
+            public UInt32 unknown;
+            /// <summary>0x08, filesize in bytes</summary>
+            public UInt32 filesize;
+            /// <summary>0x0C, some kind of flags, meaning unknown</summary>
+            public UInt16 flags;
         }
     }
 }

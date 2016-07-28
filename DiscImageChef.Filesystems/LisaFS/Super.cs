@@ -130,8 +130,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.clustersize = BigEndianBitConverter.ToUInt16(sector, 0x8A);
                         mddf.fs_size = BigEndianBitConverter.ToUInt32(sector, 0x8C);
                         mddf.unknown7 = BigEndianBitConverter.ToUInt32(sector, 0x90);
-                        mddf.unknown8 = BigEndianBitConverter.ToUInt32(sector, 0x94);
-                        mddf.unknown9 = BigEndianBitConverter.ToUInt32(sector, 0x98);
+                        mddf.srec_ptr = BigEndianBitConverter.ToUInt32(sector, 0x94);
+                        mddf.unknown9 = BigEndianBitConverter.ToUInt16(sector, 0x98);
+                        mddf.srec_len = BigEndianBitConverter.ToUInt16(sector, 0x9A);
                         mddf.unknown10 = BigEndianBitConverter.ToUInt32(sector, 0x9C);
                         mddf.unknown11 = BigEndianBitConverter.ToUInt32(sector, 0xA0);
                         mddf.unknown12 = BigEndianBitConverter.ToUInt32(sector, 0xA4);
@@ -219,6 +220,13 @@ namespace DiscImageChef.Filesystems.LisaFS
                         if(debug)
                         {
                             printedExtents = new List<short>();
+                        }
+
+                        error = ReadSRecords();
+                        if(error != Errno.NoError)
+                        {
+                            DicConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
+                            return error;
                         }
 
                         List<CatalogEntry> tempCat;

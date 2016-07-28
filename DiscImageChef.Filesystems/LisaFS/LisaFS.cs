@@ -54,6 +54,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         MDDF mddf;
         ulong volumePrefix;
         int devTagSize;
+        SRecord[] srecords;
 
         #region Caches
         Dictionary<Int16, ExtentFile> extentCache;
