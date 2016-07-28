@@ -1,33 +1,29 @@
-﻿/***************************************************************************
-The Disc Image Chef
-----------------------------------------------------------------------------
- 
-Filename       : ArrayFill.cs
-Version        : 1.0
-Author(s)      : https://github.com/mykohsu
- 
-Component      : Helpers
+﻿// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : ArrayFill.cs
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : Helpers.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Fills an array with a specified value.
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     No license specified by creator.
+//
+//     Published on https://github.com/mykohsu/Extensions/blob/master/ArrayExtensions.cs
+//
+//     Assuming open source.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2011-2016 Natalia Portillo
+// Copyright(C) 2014 mykohsu
+// ****************************************************************************/
 
-Revision       : $Revision$
-Last change by : $Author$
-Date           : $Date$
- 
---[ Description ] ----------------------------------------------------------
- 
-Fills an array with a
- 
---[ License ] --------------------------------------------------------------
- 
-    No license specified by creator.
-
-    Published on https://github.com/mykohsu/Extensions/blob/master/ArrayExtensions.cs
-
-    Assuming open source.
-
-----------------------------------------------------------------------------
-Copyright (C) 2014 mykohsu
-****************************************************************************/
-//$Id$
 using System;
 
 namespace DiscImageChef

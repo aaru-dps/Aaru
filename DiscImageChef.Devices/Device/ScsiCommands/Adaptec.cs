@@ -3,38 +3,34 @@
 // ----------------------------------------------------------------------------
 //
 // Filename       : Adaptec.cs
-// Version        : 1.0
-// Author(s)      : Natalia Portillo
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Adaptec vendor commands
-//
-// Revision       : $Revision$
-// Last change by : $Author$
-// Date           : $Date$
+// Component      : Adaptec vendor commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-// Commands described for Adaptec ACB-4000A and ACB-4070 ST-506 to SCSI controllers
+//     Contains vendor commands for Adaptec ACB-4000A and
+//     ACB-4070 ST-506 to SCSI controllers.
 //
 // --[ License ] --------------------------------------------------------------
 //
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as
-//     published by the Free Software Foundation, either version 3 of the
+//     This library is free software; you can redistribute it and/or modify
+//     it under the terms of the GNU Lesser General Public License as
+//     published by the Free Software Foundation; either version 2.1 of the
 //     License, or (at your option) any later version.
 //
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
+//     This library is distributed in the hope that it will be useful, but
+//     WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//     Lesser General Public License for more details.
 //
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//     You should have received a copy of the GNU Lesser General Public
+//     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright (C) 2011-2015 Claunia.com
+// Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
-// //$Id$
+
 using System;
 using DiscImageChef.Console;
 

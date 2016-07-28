@@ -2,19 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : GetChecksum.cs
-// Version        : 1.0
-// Author(s)      : Natalia Portillo
+// Filename       : Checksum.cs
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
-//
-// Revision       : $Revision$
-// Last change by : $Author$
-// Date           : $Date$
+// Component      : Core methods.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-// Description
+//     Methods to checksum data.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,9 +27,9 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright (C) 2011-2015 Claunia.com
+// Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
-// //$Id$
+
 using System;
 using System.Collections.Generic;
 using DiscImageChef.Checksums;

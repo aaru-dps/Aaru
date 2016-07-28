@@ -139,6 +139,7 @@
               </NamingRule>
             </Rules>
           </NameConventionPolicy>
+          <StandardHeader Text="/***************************************************************************&#xA;The Disc Image Chef&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This program is free software: you can redistribute it and/or modify&#xA;    it under the terms of the GNU General Public License as&#xA;    published by the Free Software Foundation, either version 3 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This program is distributed in the hope that it will be useful,&#xA;    but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#xA;    GNU General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU General Public License&#xA;    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" IncludeInNewFiles="True" />
         </Policies>
       </Properties>
     </MonoDevelop>
@@ -146,12 +147,11 @@
   <ItemGroup>
     <None Include="..\TODO">
       <Link>TODO</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\README.md">
       <Link>README.md</Link>
-    </None>
-    <None Include="..\LICENSE">
-      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\.travis.yml">
       <Link>.travis.yml</Link>
@@ -210,5 +210,18 @@
       <Project>{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}</Project>
       <Name>CommandLine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE">
+      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
