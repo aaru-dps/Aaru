@@ -1,5 +1,10 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* MediaTypeFromSCSI.cs:
+	* DiscImageChef.CommonTypes.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* MediaType.cs:
 	* Partition.cs: Refactor and code cleanup.
 

@@ -1,5 +1,12 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* Dir.cs:
+	* File.cs:
+	* Extent.cs:
+	* Encoding.cs: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* ODS.cs:
 	* FFS.cs:
 	* BFS.cs:

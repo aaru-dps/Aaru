@@ -1,5 +1,10 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* DiskCopy42.cs:
+	* DiscImageChef.DiscImages.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* VHD.cs:
 	* GDI.cs:
 	* Nero.cs:

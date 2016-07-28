@@ -219,7 +219,7 @@ namespace DiscImageChef.Checksums
 
         void fuzzy_engine_step(byte c)
         {
-        ulong h;
+            ulong h;
             uint i;
             /* At each character we update the rolling hash and the normal hashes.
              * When the rolling hash hits a reset value then we emit a normal hash

@@ -169,7 +169,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                     descriptor.bpmm, descriptor.tracks, (double)((double)descriptor.width / (double)10)).AppendLine();
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-        sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
+                sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
                 sb.AppendFormat("\tDensity description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
             }
@@ -261,7 +261,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                     descriptor.length, (double)((double)descriptor.width / (double)10)).AppendLine();
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-        sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
+                sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
             }
 

@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 if(b == 0x00)
                     break;
-                
+
                 uni += LisaRomanTable[b];
             }
 

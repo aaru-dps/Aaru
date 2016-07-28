@@ -89,7 +89,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
                 if(decoded.Value.granularity > 0)
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-            sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes", decoded.Value.granularity, Math.Pow(2, (double)decoded.Value.granularity)).AppendLine();
+                    sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes", decoded.Value.granularity, Math.Pow(2, (double)decoded.Value.granularity)).AppendLine();
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
             }
 

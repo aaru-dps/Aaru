@@ -192,7 +192,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
 
             if(systemFileCache.TryGetValue(fileId, out buf) && !tags)
-               return Errno.NoError;
+                return Errno.NoError;
 
             int count = 0;
 
@@ -254,7 +254,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(!tags)
                 systemFileCache.Add(fileId, buf);
-            
+
             return Errno.NoError;
         }
 

@@ -1,5 +1,10 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* Dimensions.cs:
+	* DiscImageChef.Metadata.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* DeviceReport.cs: Refactor and code cleanup.
 
 2016-02-10  Natalia Portillo  <claunia@claunia.com>

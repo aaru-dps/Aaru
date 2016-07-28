@@ -1,5 +1,10 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* SpamSumContext.cs:
+	* DiscImageChef.Checksums.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* CDChecksums.cs:
 	* ReedSolomon.cs:
 	* CRC16Context.cs:

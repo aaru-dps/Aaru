@@ -166,7 +166,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     file.unknown9 = BigEndianBitConverter.ToInt32(sector, 0x84);
                     extentsOffset = 0x88;
                 }
-                
+
                 for(int j = 0; j < 41; j++)
                 {
                     if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)

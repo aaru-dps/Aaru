@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             ReadCatalog(fileId, out catalog);
 
             foreach(CatalogEntry entry in catalog)
-                contents.Add(GetString(entry.filename).Replace('/',':'));
+                contents.Add(GetString(entry.filename).Replace('/', ':'));
 
             if(debug && fileId == FILEID_DIRECTORY)
             {

@@ -1,5 +1,9 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Interop.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* DetectOS.cs: Refactor and code cleanup.
 
 2015-10-19  Natalia Portillo  <claunia@claunia.com>

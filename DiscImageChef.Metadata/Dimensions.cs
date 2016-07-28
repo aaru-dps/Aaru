@@ -888,7 +888,7 @@ namespace DiscImageChef.Metadata
                 #endregion CD/DVD/BD
 
                 #region Apple Hard Disks
-                    // TODO: Find Apple Widget size
+                // TODO: Find Apple Widget size
                 case CommonTypes.MediaType.AppleProfile:
                     dmns.Height = 223.8;
                     dmns.HeightSpecified = true;

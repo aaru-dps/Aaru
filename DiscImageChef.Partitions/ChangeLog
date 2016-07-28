@@ -1,5 +1,9 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Partitions.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* GPT.cs:
 	* MBR.cs:
 	* RDB.cs:

@@ -1,5 +1,9 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Settings.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Settings.cs: Refactor and code cleanup.
 
 2016-02-03  Natalia Portillo  <claunia@claunia.com>
