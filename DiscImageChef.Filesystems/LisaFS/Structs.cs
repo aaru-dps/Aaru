@@ -369,6 +369,24 @@ namespace DiscImageChef.Filesystems.LisaFS
             /// <summary>0x0C, some kind of flags, meaning unknown</summary>
             public UInt16 flags;
         }
+
+        struct CatalogEntryV2
+        {
+            /// <summary>0x00, filename, 32-bytes, null-padded</summary>
+            public byte filenameLen;
+            /// <summary>0x01, filename, 31-bytes</summary>
+            public byte[] filename;
+            /// <summary>0x21, unknown</summary>
+            public byte unknown1;
+            /// <summary>0x22, unknown</summary>
+            public byte fileType;
+            /// <summary>0x23, unknown</summary>
+            public byte unknown2;
+            /// <summary>0x24, unknown</summary>
+            public Int16 fileID;
+            /// <summary>0x26, 16 bytes, unknown</summary>
+            public byte[] unknown3;
+        }
     }
 }
 

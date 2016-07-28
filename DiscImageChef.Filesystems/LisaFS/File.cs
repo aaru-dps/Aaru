@@ -390,7 +390,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             tags &= debug;
 
-            if(fileId <= 4)
+            if(fileId < 4 || (fileId == 4 && mddf.fsversion != LisaFSv2))
                 return Errno.InvalidArgument;
 
             if(!tags && fileCache.TryGetValue(fileId, out buf))

@@ -93,6 +93,68 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(catalogCache.TryGetValue(fileId, out catalog))
                 return Errno.NoError;
 
+            Errno error;
+
+            if(mddf.fsversion == LisaFSv2)
+            {
+                if(fileId != FILEID_DIRECTORY)
+                {
+                    ExtentFile ext;
+                    error = ReadExtentsFile(fileId, out ext);
+                    if(error == Errno.NoError)
+                        return Errno.NotDirectory;
+                }
+
+                byte[] buf;
+                error = ReadFile(4, out buf);
+
+                int offset = 0;
+                List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
+
+                while(offset + 54 < buf.Length)
+                {
+                    CatalogEntryV2 entV2 = new CatalogEntryV2();
+                    entV2.filenameLen = buf[offset];
+                    entV2.filename = new byte[E_NAME];
+                    Array.Copy(buf, offset + 0x01, entV2.filename, 0, E_NAME);
+                    entV2.unknown1 = buf[offset + 0x21];
+                    entV2.fileType = buf[offset + 0x22];
+                    entV2.unknown2 = buf[offset + 0x23];
+                    entV2.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x24);
+                    entV2.unknown3 = new byte[16];
+                    Array.Copy(buf, offset + 0x26, entV2.unknown3, 0, 16);
+
+                    offset += 54;
+
+                    if(entV2.filenameLen != 0 && entV2.filenameLen <= E_NAME && entV2.fileType != 0 && entV2.fileID > 0)
+                        catalogV2.Add(entV2);
+                }
+
+                catalog = new List<CatalogEntry>();
+
+                foreach(CatalogEntryV2 entV2 in catalogV2)
+                {
+                    ExtentFile ext;
+                    error = ReadExtentsFile(entV2.fileID, out ext);
+                    if(error == Errno.NoError)
+                    {
+                        CatalogEntry entV3 = new CatalogEntry();
+                        entV3.fileID = entV2.fileID;
+                        entV3.filename = new byte[32];
+                        Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
+                        entV3.fileType = entV2.fileType;
+                        entV3.length = (int)srecords[entV2.fileID].filesize;
+                        entV3.dtc = ext.dtc;
+                        entV3.dtm = ext.dtm;
+
+                        catalog.Add(entV3);
+                    }
+                }
+
+                catalogCache.Add(fileId, catalog);
+                return Errno.NoError;
+            }
+
             byte[] firstCatalogBlock = null;
 
             for(ulong i = 0; i < device.GetSectors(); i++)

@@ -188,22 +188,20 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return Errno.InvalidArgument;
                         }
 
-                        if(mddf.fsversion != LisaFSv3)
+                        switch(mddf.fsversion)
                         {
-                            string version = mddf.fsversion.ToString();
-
-                            switch(mddf.fsversion)
-                            {
-                                case LisaFSv1:
-                                    version = "v1";
-                                    break;
-                                case LisaFSv2:
-                                    version = "v2";
-                                    break;
-                            }
-
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Cannot mount LisaFS version {0}", version);
-                            return Errno.NotSupported;
+                            case LisaFSv1:
+                                DicConsole.ErrorWriteLine("Cannot mount LisaFS v1");
+                                return Errno.NotSupported;
+                            case LisaFSv2:
+                                DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+                                break;
+                            case LisaFSv3:
+                                DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+                                break;
+                            default:
+                                DicConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", mddf.fsversion.ToString());
+                                return Errno.NotSupported;
                         }
 
                         extentCache = new Dictionary<short, ExtentFile>();

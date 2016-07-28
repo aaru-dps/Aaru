@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted)
                 return Errno.AccessDenied;
 
-            if(fileId < 5)
+            if(fileId < 4 || (fileId == 4 && mddf.fsversion != LisaFSv2))
                 return Errno.InvalidArgument;
 
             if(extentCache.TryGetValue(fileId, out file))
