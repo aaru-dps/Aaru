@@ -58,7 +58,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -82,7 +82,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -106,7 +106,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -130,7 +130,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -154,7 +154,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -178,7 +178,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data Length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -187,7 +187,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// <summary>
             /// Byte 3
             /// Number of LBA extents the drive can store.
-            /// if(MaxLBAExtents == 0 && DataLength > 2), 256 extents can be stored
+            /// if(MaxLBAExtents == 0 &amp;&amp; DataLength > 2), 256 extents can be stored
             /// </summary>
             public byte MaxLBAExtents;
             /// <summary>
@@ -208,12 +208,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 8 to 11
             /// Start LBA of extent
             /// </summary>
-            public UInt32 StartLBA;
+            public uint StartLBA;
             /// <summary>
             /// Bytes 12 to 15
             /// Extent length
             /// </summary>
-            public UInt32 LBACount;
+            public uint LBACount;
         }
 
         public static AACSVolumeIdentifier? DecodeAACSVolumeIdentifier(byte[] AACSVIResponse)

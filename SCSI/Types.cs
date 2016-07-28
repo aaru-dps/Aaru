@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Decoders.SCSI
 {
     public enum MediumTypes : byte
@@ -827,7 +825,7 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         Mammoth = 0x27,
         /// <summary>
-        /// IBM 3490 & 3490E
+        /// IBM 3490 &amp; 3490E
         /// </summary>
         IBM3490E = 0x28,
         /// <summary>

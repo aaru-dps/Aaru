@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
@@ -58,7 +56,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -98,7 +96,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 8 to 11
             /// L0 Data Area Capacity
             /// </summary>
-            public UInt32 Capacity;
+            public uint Capacity;
         }
 
         public struct MiddleZoneStartAddress
@@ -107,7 +105,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length = 10
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -147,7 +145,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 8 to 11
             /// Start LBA of Shifted Middle Area on L0
             /// </summary>
-            public UInt32 ShiftedMiddleAreaStartAddress;
+            public uint ShiftedMiddleAreaStartAddress;
         }
 
         public struct JumpIntervalSize
@@ -156,7 +154,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length = 10
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -191,7 +189,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 8 to 11
             /// Jump Interval size for the Regular Interval Layer Jump
             /// </summary>
-            public UInt32 Size;
+            public uint Size;
         }
 
         public struct ManualLayerJumpAddress
@@ -200,7 +198,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length = 10
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -235,7 +233,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 8 to 11
             /// LBA for the manual layer jump
             /// </summary>
-            public UInt32 LBA;
+            public uint LBA;
         }
     }
 }

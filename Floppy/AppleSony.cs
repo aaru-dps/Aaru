@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -89,7 +88,7 @@ namespace DiscImageChef.Decoders.Floppy
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public byte[] prologue;
             /// <summary>
-            /// Encoded (decodedTrack & 0x3F)
+            /// Encoded (decodedTrack &amp; 0x3F)
             /// </summary>
             public byte track;
             /// <summary>

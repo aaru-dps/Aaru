@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -64,11 +63,11 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Format ID, unknown meaning
             /// </summary>
-            public UInt16 format;
+            public ushort format;
             /// <summary>
             /// Filled with 0x0F
             /// </summary>
-            public UInt16 fill;
+            public ushort fill;
         }
 
         /// <summary>
@@ -92,7 +91,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Filled with 0x0F
             /// </summary>
-            public UInt16 fill;
+            public ushort fill;
         }
     }
 }

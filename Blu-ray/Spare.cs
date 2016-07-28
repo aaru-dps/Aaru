@@ -115,7 +115,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 0 to 1
             /// Always 14
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -130,17 +130,17 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 4 to 7
             /// Reserved
             /// </summary>
-            public UInt32 Reserved3;
+            public uint Reserved3;
             /// <summary>
             /// Bytes 8 to 11
             /// Free spare blocks
             /// </summary>
-            public UInt32 FreeSpareBlocks;
+            public uint FreeSpareBlocks;
             /// <summary>
             /// Bytes 12 to 15
             /// Allocated spare blocks
             /// </summary>
-            public UInt32 AllocatedSpareBlocks;
+            public uint AllocatedSpareBlocks;
         }
         #endregion Public structures
     }

@@ -33,7 +33,6 @@
 using System;
 using DiscImageChef.Console;
 using System.Text;
-using System.Collections.Generic;
 
 namespace DiscImageChef.Decoders.CD
 {
@@ -127,7 +126,7 @@ namespace DiscImageChef.Decoders.CD
             /// <summary>
             /// Total size of returned CD-Text information minus this field
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Reserved
             /// </summary>
@@ -183,7 +182,7 @@ namespace DiscImageChef.Decoders.CD
             /// Bytes 16 to 17
             /// CRC16
             /// </summary>
-            public UInt16 CRC;
+            public ushort CRC;
         }
 
         public static CDText? Decode(byte[] CDTextResponse)

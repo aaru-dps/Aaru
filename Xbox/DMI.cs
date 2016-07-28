@@ -83,13 +83,13 @@ namespace DiscImageChef.Decoders.Xbox
             /// Bytes 4 to 7
             /// 0x02 in XGD2 and XGD3
             /// </summary>
-            public UInt32 Version;
+            public uint Version;
 
             /// <summary>
             /// Bytes 20 to 27
             /// DMI timestamp
             /// </summary>
-            public Int64 Timestamp;
+            public long Timestamp;
 
             /// <summary>
             /// Bytes 36 to 51

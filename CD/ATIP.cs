@@ -59,7 +59,7 @@ namespace DiscImageChef.Decoders.CD
             /// Bytes 1 to 0
             /// Total size of returned session information minus this field
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved

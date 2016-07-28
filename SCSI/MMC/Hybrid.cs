@@ -58,7 +58,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data Length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -98,7 +98,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 6 to end
             /// Recognized format layers
             /// </summary>
-            public UInt16[] FormatLayers;
+            public ushort[] FormatLayers;
         }
 
         public static RecognizedFormatLayers? DecodeFormatLayers(byte[] FormatLayersResponse)
@@ -122,7 +122,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             decoded.Reserved4 = (byte)((FormatLayersResponse[5] & 0x0C) >> 2);
             decoded.OnlineFormatLayer = (byte)(FormatLayersResponse[5] & 0x03);
 
-            decoded.FormatLayers = new UInt16[(FormatLayersResponse.Length - 6) / 2];
+            decoded.FormatLayers = new ushort[(FormatLayersResponse.Length - 6) / 2];
 
             for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
             {
@@ -147,7 +147,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             {
                 switch(response.FormatLayers[i])
                 {
-                    case (UInt16)FormatLayerTypeCodes.BDLayer:
+                    case (ushort)FormatLayerTypeCodes.BDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type Blu-ray", i).AppendLine();
                             if(response.DefaultFormatLayer == i)
@@ -156,7 +156,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
-                    case (UInt16)FormatLayerTypeCodes.CDLayer:
+                    case (ushort)FormatLayerTypeCodes.CDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
                             if(response.DefaultFormatLayer == i)
@@ -165,7 +165,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
-                    case (UInt16)FormatLayerTypeCodes.DVDLayer:
+                    case (ushort)FormatLayerTypeCodes.DVDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
                             if(response.DefaultFormatLayer == i)
@@ -174,7 +174,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                                 sb.AppendLine("This is the layer actually in use.");
                             break;
                         }
-                    case (UInt16)FormatLayerTypeCodes.HDDVDLayer:
+                    case (ushort)FormatLayerTypeCodes.HDDVDLayer:
                         {
                             sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
                             if(response.DefaultFormatLayer == i)

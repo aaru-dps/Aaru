@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
@@ -58,7 +56,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -83,37 +81,37 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 6 to 7
             /// Random number
             /// </summary>
-            public UInt16 RandomNumber;
+            public ushort RandomNumber;
             /// <summary>
             /// Byte 8 to 11
             /// Year
             /// </summary>
-            public UInt32 Year;
+            public uint Year;
             /// <summary>
             /// Byte 12 to 13
             /// Month
             /// </summary>
-            public UInt16 Month;
+            public ushort Month;
             /// <summary>
             /// Byte 14 to 15
             /// Day
             /// </summary>
-            public UInt16 Day;
+            public ushort Day;
             /// <summary>
             /// Byte 16 to 17
             /// Hour
             /// </summary>
-            public UInt16 Hour;
+            public ushort Hour;
             /// <summary>
             /// Byte 18 to 19
             /// Minute
             /// </summary>
-            public UInt16 Minute;
+            public ushort Minute;
             /// <summary>
             /// Byte 20 to 21
             /// Second
             /// </summary>
-            public UInt16 Second;
+            public ushort Second;
         }
     }
 }

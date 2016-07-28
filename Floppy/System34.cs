@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -162,9 +161,9 @@ namespace DiscImageChef.Decoders.Floppy
             /// </summary>
             public IBMSectorSizeCode sectorSize;
             /// <summary>
-            /// CRC16 from <see cref="AddressMark.aone"/> to end of <see cref="sectorSize"/> 
+            /// CRC16 from <see cref="aone"/> to end of <see cref="sectorSize"/> 
             /// </summary>
-            public UInt16 crc;
+            public ushort crc;
         }
 
         /// <summary>
@@ -193,7 +192,7 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// CRC16 from <see cref="aone"/> to end of <see cref="data"/> 
             /// </summary>
-            public UInt16 crc;
+            public ushort crc;
         }
     }
 }

@@ -448,7 +448,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(response.VersionDescriptors != null)
             {
-                foreach(UInt16 VersionDescriptor in response.VersionDescriptors)
+                foreach(ushort VersionDescriptor in response.VersionDescriptors)
                 {
                     switch(VersionDescriptor)
                     {
@@ -2140,7 +2140,7 @@ namespace DiscImageChef.Decoders.SCSI
             /// Array of version descriptors
             /// Bytes 58 to 73
             /// </summary>
-            public UInt16[] VersionDescriptors;
+            public ushort[] VersionDescriptors;
             /// <summary>
             /// Reserved
             /// Bytes 74 to 95

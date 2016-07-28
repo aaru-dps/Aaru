@@ -57,7 +57,7 @@ namespace DiscImageChef.Decoders.Bluray
         /// <summary>
         /// Disc Definition Structure Identifier "DS"
         /// </summary>
-        const UInt16 DDSIdentifier = 0x4453;
+        const ushort DDSIdentifier = 0x4453;
         #endregion Private constants
 
         #region Public methods
@@ -170,7 +170,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 0 to 1
             /// Data Length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -185,7 +185,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 4 to 5
             /// "DS"
             /// </summary>
-            public UInt16 Signature;
+            public ushort Signature;
             /// <summary>
             /// Byte 6
             /// DDS format
@@ -200,57 +200,57 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 8 to 11
             /// DDS update count
             /// </summary>
-            public UInt32 UpdateCount;
+            public uint UpdateCount;
             /// <summary>
             /// Bytes 12 to 19
             /// Reserved
             /// </summary>
-            public UInt64 Reserved4;
+            public ulong Reserved4;
             /// <summary>
             /// Bytes 20 to 23
             /// First PSN of Drive Area
             /// </summary>
-            public UInt32 DriveAreaPSN;
+            public uint DriveAreaPSN;
             /// <summary>
             /// Bytes 24 to 27
             /// Reserved
             /// </summary>
-            public UInt32 Reserved5;
+            public uint Reserved5;
             /// <summary>
             /// Bytes 28 to 31
             /// First PSN of Defect List
             /// </summary>
-            public UInt32 DefectListPSN;
+            public uint DefectListPSN;
             /// <summary>
             /// Bytes 32 to 35
             /// Reserved
             /// </summary>
-            public UInt32 Reserved6;
+            public uint Reserved6;
             /// <summary>
             /// Bytes 36 to 39
             /// PSN of LSN 0 of user data area
             /// </summary>
-            public UInt32 PSNofLSNZero;
+            public uint PSNofLSNZero;
             /// <summary>
             /// Bytes 40 to 43
             /// Last LSN of user data area
             /// </summary>
-            public UInt32 LastUserAreaLSN;
+            public uint LastUserAreaLSN;
             /// <summary>
             /// Bytes 44 to 47
             /// ISA0 size
             /// </summary>
-            public UInt32 ISA0;
+            public uint ISA0;
             /// <summary>
             /// Bytes 48 to 51
             /// OSA size
             /// </summary>
-            public UInt32 OSA;
+            public uint OSA;
             /// <summary>
             /// Bytes 52 to 55
             /// ISA1 size
             /// </summary>
-            public UInt32 ISA1;
+            public uint ISA1;
             /// <summary>
             /// Byte 56
             /// Spare Area full flags
@@ -275,12 +275,12 @@ namespace DiscImageChef.Decoders.Bluray
             /// Byte 60 to 63
             /// Disc type specific field
             /// </summary>
-            public UInt32 DiscTypeSpecificField2;
+            public uint DiscTypeSpecificField2;
             /// <summary>
             /// Byte 64 to 67
             /// Reserved
             /// </summary>
-            public UInt32 Reserved9;
+            public uint Reserved9;
             /// <summary>
             /// Bytes 68 to 99
             /// Status bits of INFO1/2 and PAC1/2 on L0 and L1

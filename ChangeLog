@@ -1,3 +1,62 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* PMA.cs:
+	* TOC.cs:
+	* PFI.cs:
+	* DMI.cs:
+	* ATIP.cs:
+	* DDS.cs:
+	* PRI.cs:
+	* RMD.cs:
+	* BCA.cs:
+	* UDI.cs:
+	* ADIP.cs:
+	* AACS.cs:
+	* DMI.cs:
+	* Enums.cs:
+	* CPRM.cs:
+	* Spare.cs:
+	* EVPD.cs:
+	* Enums.cs:
+	* ISO.cs:
+	* Errors.cs:
+	* Enums.cs:
+	* Modes.cs:
+	* Sense.cs:
+	* Types.cs:
+	* DI.cs:
+	* Session.cs:
+	* FullTOC.cs:
+	* Layers.cs:
+	* BCA.cs:
+	* DDS.cs:
+	* CSS&CPRM.cs:
+	* Inquiry.cs:
+	* Identify.cs:
+	* Enums.cs:
+	* Amiga.cs:
+	* Apple2.cs:
+	* CPRM.cs:
+	* AACS.cs:
+	* Spare.cs:
+	* Cartridge.cs:
+	* Enums.cs:
+	* System34.cs:
+	* Hybrid.cs:
+	* AppleSony.cs:
+	* Commodore.cs:
+	* CDTextOnLeadIn.cs:
+	* Cartridge.cs:
+	* System3740.cs:
+	* Features.cs:
+	* VendorString.cs:
+	* Perpendicular.cs:
+	* BlockLimits.cs:
+	* WriteProtect.cs:
+	* DensitySupport.cs:
+	* DiscInformation.cs:
+	* DiscStructureCapabilities.cs: Refactor and code cleanup.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* SCSI/Sense.cs:

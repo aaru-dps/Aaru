@@ -145,7 +145,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 0 to 1
             /// Always 6
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved

@@ -58,7 +58,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// 32 + OPCTablesNumber*8
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2, bits 7 to 5
             /// 000b
@@ -88,17 +88,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Byte 9 (MSB) and byte 4 (LSB)
             /// Number of sessions
             /// </summary>
-            public UInt16 Sessions;
+            public ushort Sessions;
             /// <summary>
             /// Byte 10 (MSB) and byte 5 (LSB)
             /// Number of first track in last session
             /// </summary>
-            public UInt16 FirstTrackLastSession;
+            public ushort FirstTrackLastSession;
             /// <summary>
             /// Byte 11 (MSB) and byte 6 (LSB)
             /// Number of last track in last session
             /// </summary>
-            public UInt16 LastTrackLastSession;
+            public ushort LastTrackLastSession;
             /// <summary>
             /// Byte 7, bit 7
             /// If set, DiscIdentification is valid
@@ -143,22 +143,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 12 to 15
             /// Disc identification number from PMA
             /// </summary>
-            public UInt32 DiscIdentification;
+            public uint DiscIdentification;
             /// <summary>
             /// Bytes 16 to 19
             /// Last Session Lead-in Start Address (MSF for CD, LBA for others)
             /// </summary>
-            public UInt32 LastSessionLeadInStartLBA;
+            public uint LastSessionLeadInStartLBA;
             /// <summary>
             /// Bytes 20 to 23
             /// Last Possible Lead-out Start Address (MSF for CD, LBA for others)
             /// </summary>
-            public UInt32 LastPossibleLeadOutStartLBA;
+            public uint LastPossibleLeadOutStartLBA;
             /// <summary>
             /// Bytes 24 to 31
             /// Disc barcode
             /// </summary>
-            public UInt64 DiscBarcode;
+            public ulong DiscBarcode;
             /// <summary>
             /// Byte 32
             /// Disc application code
@@ -182,7 +182,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// kilobytes/sec this OPC table applies to
             /// </summary>
-            public UInt16 Speed;
+            public ushort Speed;
             /// <summary>
             /// Bytes 2 to 7
             /// OPC values
@@ -196,7 +196,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// 10
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2, bits 7 to 5
             /// 001b
@@ -216,22 +216,22 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 4 to 5
             /// Maximum possible number of the tracks on the disc
             /// </summary>
-            public UInt16 MaxTracks;
+            public ushort MaxTracks;
             /// <summary>
             /// Bytes 6 to 7
             /// Number of the assigned tracks on the disc
             /// </summary>
-            public UInt16 AssignedTracks;
+            public ushort AssignedTracks;
             /// <summary>
             /// Bytes 8 to 9
             /// Maximum possible number of appendable tracks on the disc
             /// </summary>
-            public UInt16 MaxAppendableTracks;
+            public ushort MaxAppendableTracks;
             /// <summary>
             /// Bytes 10 to 11
             /// Current number of appendable tracks on the disc
             /// </summary>
-            public UInt16 AppendableTracks;
+            public ushort AppendableTracks;
         }
 
         public struct POWResourcesInformation
@@ -240,7 +240,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// 14
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2, bits 7 to 5
             /// 010b
@@ -260,17 +260,17 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 4 to 7
             /// Remaining POW replacements
             /// </summary>
-            public UInt32 RemainingPOWReplacements;
+            public uint RemainingPOWReplacements;
             /// <summary>
             /// Bytes 8 to 11
             /// Remaining POW reallocation map entries
             /// </summary>
-            public UInt32 RemainingPOWReallocation;
+            public uint RemainingPOWReallocation;
             /// <summary>
             /// Bytes 12 to 15
             /// Number of remaining POW updates
             /// </summary>
-            public UInt32 RemainingPOWUpdates;
+            public uint RemainingPOWUpdates;
         }
 
         public static StandardDiscInformation? Decode000b(byte[] response)
