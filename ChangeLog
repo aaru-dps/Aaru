@@ -1,5 +1,9 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Helpers.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Swapping.cs:
 	* PrintHex.cs:
 	* ArrayFill.cs:
