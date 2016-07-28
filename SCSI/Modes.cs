@@ -1810,7 +1810,7 @@ namespace DiscImageChef.Decoders.SCSI
 
                         break;
                     }
-                #endregion Multimedia device mode header
+                    #endregion Multimedia device mode header
             }
 
             return sb.ToString();
@@ -2380,7 +2380,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.FirstBurstSize > 0)
                 sb.AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command", page.FirstBurstSize * 512).AppendLine();
 
-        if(page.DIMM)
+            if(page.DIMM)
                 sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");
             if(page.EMDP)
                 sb.AppendLine("\tTarget is allowed to re-order the data transfer");

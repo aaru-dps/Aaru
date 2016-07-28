@@ -1,5 +1,12 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* Modes.cs:
+	* BlockLimits.cs:
+	* DensitySupport.cs:
+	* DiscImageChef.Decoders.csproj: Code re-styling.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* PMA.cs:
 	* TOC.cs:
 	* PFI.cs:
