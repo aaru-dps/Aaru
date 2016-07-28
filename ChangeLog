@@ -1,3 +1,8 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs:
+	* Partition.cs: Refactor and code cleanup.
+
 2016-02-04  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs:

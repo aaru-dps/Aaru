@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.CommonTypes
 {
     // Media (disk, cartridge, tape, cassette, etc) types
