@@ -4,43 +4,31 @@
     <ItemType>PackagingProject</ItemType>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8996EF59-09B9-4920-A3DE-2F8EA2EBBCFF}</ProjectGuid>
+    <ProjectGuid>{E6A65405-997F-4D37-869B-8B97304C5DD6}</ProjectGuid>
     <Packages>
       <Packages>
-        <Package name="Mono Makefile fuentes">
-          <Builder targetFile="FileSystemIDandChk-.tar.gz" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
+        <Package name="MSBuild Sources">
+          <Builder targetFile="pkg\DiscImageChef.tar.bz2" format="MonoDevelop.Projects.MSBuild.MSBuildFileFormatVS12" ctype="SourcesZipPackageBuilder">
             <ChildEntries>
-              <SolutionItemReference path="FileSystemIDandChk\FileSystemIDandChk.csproj" />
+              <SolutionItemReference path="DiscImageChef\DiscImageChef.csproj" />
+              <SolutionItemReference path="DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
+              <SolutionItemReference path="DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
+              <SolutionItemReference path="DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj" />
+              <SolutionItemReference path="DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+              <SolutionItemReference path="DiscImageChef.Partitions\DiscImageChef.Partitions.csproj" />
+              <SolutionItemReference path="DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj" />
+              <SolutionItemReference path="DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+              <SolutionItemReference path="DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
+              <SolutionItemReference path="DiscImageChef.Interop\DiscImageChef.Interop.csproj" />
+              <SolutionItemReference path="DiscImageChef.Console\DiscImageChef.Console.csproj" />
+              <SolutionItemReference path="DiscImageChef.Metadata\DiscImageChef.Metadata.csproj" />
+              <SolutionItemReference path="DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
+              <SolutionItemReference path="commandline\src\CommandLine\CommandLine.csproj" />
             </ChildEntries>
-            <RootEntry path="FileSystemIDandChk.sln" id=":root:" />
-          </Builder>
-        </Package>
-        <Package name="Linux binarios">
-          <Builder targetFile="FileSystemIDandChk-linux.tar.gz" platform="Linux" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
-            <ChildEntries>
-              <SolutionItemReference path="FileSystemIDandChk\FileSystemIDandChk.csproj" />
-            </ChildEntries>
-            <RootEntry path="FileSystemIDandChk.sln" id=":root:" />
-          </Builder>
-        </Package>
-        <Package name="Microsoft Windows binarios">
-          <Builder targetFile="FileSystemIDandChk-windows.tar.gz" platform="Windows" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
-            <ChildEntries>
-              <SolutionItemReference path="FileSystemIDandChk\FileSystemIDandChk.csproj" />
-            </ChildEntries>
-            <RootEntry path="FileSystemIDandChk.sln" id=":root:" />
-          </Builder>
-        </Package>
-        <Package name="Tarball">
-          <Builder TargetDirectory="FileSystemIDandChk" DefaultConfiguration="Debug|x86" ctype="TarballDeployTarget">
-            <ChildEntries>
-              <SolutionItemReference path="FileSystemIDandChk\FileSystemIDandChk.csproj" />
-            </ChildEntries>
-            <RootEntry path="FileSystemIDandChk.sln" id=":root:" />
+            <RootEntry path="DiscImageChef.sln" id=":root:" />
           </Builder>
         </Package>
       </Packages>
     </Packages>
-    <ReleaseVersion>3.0.0</ReleaseVersion>
   </PropertyGroup>
 </Project>
