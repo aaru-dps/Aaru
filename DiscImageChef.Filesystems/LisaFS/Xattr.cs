@@ -99,7 +99,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                 xattrs = new List<string>();
                 if(file.password_valid > 0)
                     xattrs.Add("com.apple.lisa.password");
-                xattrs.Add("com.apple.lisa.serial");
+
+                if(file.serial > 0)
+                    xattrs.Add("com.apple.lisa.serial");
 
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
                     xattrs.Add("com.apple.lisa.label");
@@ -114,11 +116,6 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         Errno GetXattr(Int16 fileId, string xattr, out byte[] buf)
-        {
-            return GetXattr(fileId, xattr, out buf, false);
-        }
-
-        Errno GetXattr(Int16 fileId, string xattr, out byte[] buf, bool tags)
         {
             buf = null;
 
@@ -159,7 +156,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 return Errno.NoError;
             }
 
-            if(xattr == "com.apple.lisa.serial")
+            if(xattr == "com.apple.lisa.serial" && file.serial > 0)
             {
                 buf = Encoding.ASCII.GetBytes(file.serial.ToString());
                 return Errno.NoError;

@@ -326,6 +326,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             fileCache = null;
             catalogCache = null;
             fileSizeCache = null;
+            printedExtents = null;
+            mddf = new MDDF();
+            volumePrefix = 0;
+            devTagSize = 0;
+            srecords = null;
 
             return Errno.NoError;
         }
