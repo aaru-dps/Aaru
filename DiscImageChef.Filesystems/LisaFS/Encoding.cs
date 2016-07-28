@@ -113,7 +113,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         static string GetString(byte[] str)
         {
-            string uni = null;
+            string uni = "";
 
             foreach(byte b in str)
             {
@@ -131,7 +131,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(PascalString == null)
                 return null;
 
-            string uni = null;
+            string uni = "";
 
             byte length = PascalString[0];
 

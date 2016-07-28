@@ -1,3 +1,7 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Encoding.cs: Solve null reference.
+
 2016-02-10  Natalia Portillo  <claunia@claunia.com>
 
 	* FFS.cs:
