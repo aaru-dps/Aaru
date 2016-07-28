@@ -1,3 +1,14 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Swapping.cs:
+	* PrintHex.cs:
+	* ArrayFill.cs:
+	* ArrayIsEmpty.cs:
+	* DateHandlers.cs:
+	* StringHandlers.cs:
+	* BigEndianBitConverter.cs:
+	* EndianAwareBinaryReader.cs: Refactor and code cleanup.
+
 2016-01-13  Natalia Portillo  <claunia@claunia.com>
 
 	* ArrayFill.cs:

@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef
 {
     public static class Swapping
@@ -92,12 +90,12 @@ namespace DiscImageChef
             return destination;
         }
 
-        public static UInt32 PDPFromLittleEndian(UInt32 x)
+        public static uint PDPFromLittleEndian(uint x)
         {
             return ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
         }
 
-        public static UInt32 PDPFromBigEndian(UInt32 x)
+        public static uint PDPFromBigEndian(uint x)
         {
             return ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
         }

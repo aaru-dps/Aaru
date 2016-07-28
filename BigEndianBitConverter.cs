@@ -362,7 +362,7 @@ namespace DiscImageChef
         ///</summary>
         public static short ToInt16(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToInt16(value, startIndex) : BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(Int16) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToInt16(value, startIndex) : BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(short) - startIndex);
         }
 
         ///
@@ -393,7 +393,7 @@ namespace DiscImageChef
         ///</summary>
         public static int ToInt32(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToInt32(value, startIndex) : BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(Int32) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToInt32(value, startIndex) : BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(int) - startIndex);
         }
 
         ///
@@ -424,7 +424,7 @@ namespace DiscImageChef
         ///</summary>
         public static long ToInt64(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToInt64(value, startIndex) : BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(Int64) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToInt64(value, startIndex) : BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(long) - startIndex);
         }
 
         ///
@@ -456,7 +456,7 @@ namespace DiscImageChef
         ///</summary>
         public static float ToSingle(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToSingle(value, startIndex) : BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(Single) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToSingle(value, startIndex) : BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(float) - startIndex);
         }
 
         ///
@@ -575,7 +575,7 @@ namespace DiscImageChef
         ///</summary>
         public static ushort ToUInt16(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToUInt16(value, startIndex) : BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(UInt16) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToUInt16(value, startIndex) : BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(ushort) - startIndex);
         }
 
         ///
@@ -606,7 +606,7 @@ namespace DiscImageChef
         ///</summary>
         public static uint ToUInt32(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToUInt32(value, startIndex) : BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(UInt32) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToUInt32(value, startIndex) : BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(uint) - startIndex);
         }
 
         ///
@@ -637,14 +637,14 @@ namespace DiscImageChef
         ///</summary>
         public static ulong ToUInt64(byte[] value, int startIndex)
         {
-            return !IsLittleEndian ? BitConverter.ToUInt64(value, startIndex) : BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(UInt64) - startIndex);
+            return !IsLittleEndian ? BitConverter.ToUInt64(value, startIndex) : BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
         }
 
         public static Guid ToGuid(byte[] value, int startIndex)
         {
-            return new Guid(BigEndianBitConverter.ToUInt32(value, 0 + startIndex),
-                BigEndianBitConverter.ToUInt16(value, 4 + startIndex),
-                BigEndianBitConverter.ToUInt16(value, 6 + startIndex),
+            return new Guid(ToUInt32(value, 0 + startIndex),
+                ToUInt16(value, 4 + startIndex),
+                ToUInt16(value, 6 + startIndex),
                 value[8 + startIndex + 0], value[8 + startIndex + 1],
                 value[8 + startIndex + 2], value[8 + startIndex + 3],
                 value[8 + startIndex + 5], value[8 + startIndex + 5],
