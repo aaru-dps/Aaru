@@ -520,7 +520,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             foreach(CatalogEntry entry in catalog)
             {
-                string filename = StringHandlers.CToString(entry.filename);
+                string filename = GetString(entry.filename);
                 // Should they be case sensitive?
                 if(String.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0)
                 {

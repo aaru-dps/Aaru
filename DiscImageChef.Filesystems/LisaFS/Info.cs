@@ -175,12 +175,12 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
                         mddf.volnum = BigEndianBitConverter.ToUInt16(sector, 0x0A);
                         Array.Copy(sector, 0x0C, pString, 0, 33);
-                        mddf.volname = StringHandlers.PascalToString(pString);
+                        mddf.volname = GetStringFromPascal(pString);
                         mddf.unknown1 = sector[0x2D];
                         Array.Copy(sector, 0x2E, pString, 0, 33);
                         // Prevent garbage
                         if(pString[0] <= 32)
-                            mddf.password = StringHandlers.PascalToString(pString);
+                            mddf.password = GetStringFromPascal(pString);
                         else
                             mddf.password = "";
                         mddf.unknown2 = sector[0x4F];

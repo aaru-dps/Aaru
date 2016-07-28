@@ -196,7 +196,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     if(!printedExtents.Contains(fileId))
                     {
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId, StringHandlers.CToString(file.filename));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId, GetString(file.filename));
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
@@ -226,7 +226,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].revision = {1}", fileId, file.revision);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId, file.password_valid > 0);
-                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId, StringHandlers.CToString(file.password));
+                        DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId, GetString(file.password));
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId, file.unknown7[0],
                                                   file.unknown7[1], file.unknown7[2]);
                         DicConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
