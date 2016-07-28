@@ -32,25 +32,24 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from Practical Filesystem Design, ISBN 1-55860-497-9
 namespace DiscImageChef.Filesystems
 {
+    // Information from Practical Filesystem Design, ISBN 1-55860-497-9
     class BeFS : Filesystem
     {
         // Little endian constants (that is, as read by .NET :p)
-        const UInt32 BEFS_MAGIC1 = 0x42465331;
-        const UInt32 BEFS_MAGIC2 = 0xDD121031;
-        const UInt32 BEFS_MAGIC3 = 0x15B6830E;
-        const UInt32 BEFS_ENDIAN = 0x42494745;
+        const uint BEFS_MAGIC1 = 0x42465331;
+        const uint BEFS_MAGIC2 = 0xDD121031;
+        const uint BEFS_MAGIC3 = 0x15B6830E;
+        const uint BEFS_ENDIAN = 0x42494745;
         // Big endian constants
-        const UInt32 BEFS_CIGAM1 = 0x31534642;
-        const UInt32 BEFS_NAIDNE = 0x45474942;
+        const uint BEFS_CIGAM1 = 0x31534642;
+        const uint BEFS_NAIDNE = 0x45474942;
         // Common constants
-        const UInt32 BEFS_CLEAN = 0x434C454E;
-        const UInt32 BEFS_DIRTY = 0x44495254;
+        const uint BEFS_CLEAN = 0x434C454E;
+        const uint BEFS_DIRTY = 0x44495254;
 
         public BeFS()
         {
@@ -69,8 +68,8 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt32 magic;
-            UInt32 magic_be;
+            uint magic;
+            uint magic_be;
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
@@ -239,53 +238,53 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x000, Volume name, 32 bytes</summary>
             public string name;
             /// <summary>0x020, "BFS1", 0x42465331</summary>
-            public UInt32 magic1;
+            public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>
-            public UInt32 fs_byte_order;
+            public uint fs_byte_order;
             /// <summary>0x028, Bytes per block</summary>
-            public UInt32 block_size;
+            public uint block_size;
             /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
-            public UInt32 block_shift;
+            public uint block_shift;
             /// <summary>0x030, Blocks in volume</summary>
-            public Int64 num_blocks;
+            public long num_blocks;
             /// <summary>0x038, Used blocks in volume</summary>
-            public Int64 used_blocks;
+            public long used_blocks;
             /// <summary>0x040, Bytes per inode</summary>
-            public Int32 inode_size;
+            public int inode_size;
             /// <summary>0x044, 0xDD121031</summary>
-            public UInt32 magic2;
+            public uint magic2;
             /// <summary>0x048, Blocks per allocation group</summary>
-            public Int32 blocks_per_ag;
+            public int blocks_per_ag;
             /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
-            public Int32 ag_shift;
+            public int ag_shift;
             /// <summary>0x050, Allocation groups in volume</summary>
-            public Int32 num_ags;
+            public int num_ags;
             /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>0x058, Allocation group of journal</summary>
-            public Int32 log_blocks_ag;
+            public int log_blocks_ag;
             /// <summary>0x05C, Start block of journal, inside ag</summary>
-            public UInt16 log_blocks_start;
+            public ushort log_blocks_start;
             /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
-            public UInt16 log_blocks_len;
+            public ushort log_blocks_len;
             /// <summary>0x060, Start of journal</summary>
-            public Int64 log_start;
+            public long log_start;
             /// <summary>0x068, End of journal</summary>
-            public Int64 log_end;
+            public long log_end;
             /// <summary>0x070, 0x15B6830E</summary>
-            public UInt32 magic3;
+            public uint magic3;
             /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
-            public Int32 root_dir_ag;
+            public int root_dir_ag;
             /// <summary>0x078, Start in ag of root folder's i-node</summary>
-            public UInt16 root_dir_start;
+            public ushort root_dir_start;
             /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
-            public UInt16 root_dir_len;
+            public ushort root_dir_len;
             /// <summary>0x07C, Allocation group where indices' i-node resides</summary>
-            public Int32 indices_ag;
+            public int indices_ag;
             /// <summary>0x080, Start in ag of indices' i-node</summary>
-            public UInt16 indices_start;
+            public ushort indices_start;
             /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
-            public UInt16 indices_len;
+            public ushort indices_len;
         }
 
         public override Errno Mount()

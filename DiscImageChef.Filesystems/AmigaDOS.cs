@@ -32,8 +32,6 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
-using DiscImageChef.PartPlugins;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 
@@ -61,15 +59,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Offset 0x00, "DOSx" disk type
             /// </summary>
-            public UInt32 diskType;
+            public uint diskType;
             /// <summary>
             /// Offset 0x04, Checksum
             /// </summary>
-            public UInt32 checksum;
+            public uint checksum;
             /// <summary>
             /// Offset 0x08, Pointer to root block, mostly invalid
             /// </summary>
-            public UInt32 root_ptr;
+            public uint root_ptr;
             /// <summary>
             /// Offset 0x0C, Boot code, til completion
             /// </summary>
@@ -81,55 +79,55 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Offset 0x00, block type, value = T_HEADER (2)
             /// </summary>
-            public UInt32 type;
+            public uint type;
             /// <summary>
             /// Offset 0x04, unused
             /// </summary>
-            public UInt32 headerKey;
+            public uint headerKey;
             /// <summary>
             /// Offset 0x08, unused
             /// </summary>
-            public UInt32 highSeq;
+            public uint highSeq;
             /// <summary>
             /// Offset 0x0C, longs used by hash table
             /// </summary>
-            public UInt32 hashTableSize;
+            public uint hashTableSize;
             /// <summary>
             /// Offset 0x10, unused
             /// </summary>
-            public UInt32 firstData;
+            public uint firstData;
             /// <summary>
             /// Offset 0x14, Rootblock checksum
             /// </summary>
-            public UInt32 checksum;
+            public uint checksum;
             /// <summary>
             /// Offset 0x18, Hashtable, size = (block size / 4) - 56 or size = hashTableSize
             /// </summary>
-            public UInt32[] hashTable;
+            public uint[] hashTable;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+0, bitmap flag, 0xFFFFFFFF if valid
             /// </summary>
-            public UInt32 bitmapFlag;
+            public uint bitmapFlag;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+4, bitmap pages, 25 entries
             /// </summary>
-            public UInt32[] bitmapPages;
+            public uint[] bitmapPages;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+104, pointer to bitmap extension block
             /// </summary>
-            public UInt32 bitmapExtensionBlock;
+            public uint bitmapExtensionBlock;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+108, last root alteration days since 1978/01/01
             /// </summary>
-            public UInt32 rDays;
+            public uint rDays;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+112, last root alteration minutes past midnight
             /// </summary>
-            public UInt32 rMins;
+            public uint rMins;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+116, last root alteration ticks (1/50 secs)
             /// </summary>
-            public UInt32 rTicks;
+            public uint rTicks;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+120, disk name, pascal string, 32 bytes
             /// </summary>
@@ -137,51 +135,51 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Offset 0x18+hashTableSize*4+152, unused
             /// </summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+156, unused
             /// </summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+160, last disk alteration days since 1978/01/01
             /// </summary>
-            public UInt32 vDays;
+            public uint vDays;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+164, last disk alteration minutes past midnight
             /// </summary>
-            public UInt32 vMins;
+            public uint vMins;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+168, last disk alteration ticks (1/50 secs)
             /// </summary>
-            public UInt32 vTicks;
+            public uint vTicks;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+172, filesystem creation days since 1978/01/01
             /// </summary>
-            public UInt32 cDays;
+            public uint cDays;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+176, filesystem creation minutes since 1978/01/01
             /// </summary>
-            public UInt32 cMins;
+            public uint cMins;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+180, filesystem creation ticks since 1978/01/01
             /// </summary>
-            public UInt32 cTicks;
+            public uint cTicks;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+184, unused
             /// </summary>
-            public UInt32 nextHash;
+            public uint nextHash;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+188, unused
             /// </summary>
-            public UInt32 parentDir;
+            public uint parentDir;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+192, first directory cache block
             /// </summary>
-            public UInt32 extension;
+            public uint extension;
             /// <summary>
             /// Offset 0x18+hashTableSize*4+196, block secondary type = ST_ROOT (1)
             /// </summary>
-            public UInt32 sec_type;
+            public uint sec_type;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -193,7 +191,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSector(0 + partitionStart);
 
-            UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+            uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
             if((magic & 0x6D754600) != 0x6D754600 &&
                 (magic & 0x444F5300) != 0x444F5300)
@@ -211,13 +209,13 @@ namespace DiscImageChef.Filesystems
 
             sector = imagePlugin.ReadSector(root_ptr);
 
-            UInt32 type = BigEndianBitConverter.ToUInt32(sector, 0x00);
-            UInt32 hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
+            uint type = BigEndianBitConverter.ToUInt32(sector, 0x00);
+            uint hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
             if((0x18 + hashTableSize * 4 + 196) > sector.Length)
                 return false;
 
-            UInt32 sec_type = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + hashTableSize * 4 + 196));
+            uint sec_type = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + hashTableSize * 4 + 196));
 
             return type == 2 && sec_type == 1;
         }
@@ -363,10 +361,10 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
         }
 
-        static UInt32 AmigaChecksum(byte[] data)
+        static uint AmigaChecksum(byte[] data)
         {
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            UInt32 sum = 0;
+            uint sum = 0;
 
             for(int i = 0; i < data.Length; i += 4)
                 sum += BigEndianBitConverter.ToUInt32(data, i);

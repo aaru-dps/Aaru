@@ -32,7 +32,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Windows
 {

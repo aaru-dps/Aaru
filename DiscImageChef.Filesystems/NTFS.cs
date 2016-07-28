@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] eigth_bytes = new byte[8];
             byte fats_no;
-            UInt16 spfat, signature;
+            ushort spfat, signature;
             string oem_name;
 
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.ClusterSize = ntfs_bb.spc * ntfs_bb.bps;
             xmlFSType.Clusters = ntfs_bb.sectors / ntfs_bb.spc;
-            xmlFSType.VolumeSerial = String.Format("{0:X16}", ntfs_bb.serial_no);
+            xmlFSType.VolumeSerial = string.Format("{0:X16}", ntfs_bb.serial_no);
             xmlFSType.Type = "NTFS";
 
             information = sb.ToString();
@@ -180,33 +180,33 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x000, Jump to boot code</summary>
             public byte jmp1;
             /// <summary>0x001, ...;</summary>
-            public UInt16 jmp2;
+            public ushort jmp2;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "</summary>
             public string OEMName;
             /// <summary>0x00B, Bytes per sector</summary>
-            public UInt16 bps;
+            public ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
             public byte spc;
             /// <summary>0x00E, Reserved sectors, seems 0</summary>
-            public UInt16 rsectors;
+            public ushort rsectors;
             /// <summary>0x010, Number of FATs... obviously, 0</summary>
             public byte fats_no;
             /// <summary>0x011, Number of entries on root directory... 0</summary>
-            public UInt16 root_ent;
+            public ushort root_ent;
             /// <summary>0x013, Sectors in volume... 0</summary>
-            public UInt16 sml_sectors;
+            public ushort sml_sectors;
             /// <summary>0x015, Media descriptor</summary>
             public byte media;
             /// <summary>0x016, Sectors per FAT... 0</summary>
-            public UInt16 spfat;
+            public ushort spfat;
             /// <summary>0x018, Sectors per track, required to boot</summary>
-            public UInt16 sptrk;
+            public ushort sptrk;
             /// <summary>0x01A, Heads... required to boot</summary>
-            public UInt16 heads;
+            public ushort heads;
             /// <summary>0x01C, Hidden sectors before BPB</summary>
-            public UInt32 hsectors;
+            public uint hsectors;
             /// <summary>0x020, Sectors in volume if &gt; 65535... 0</summary>
-            public UInt32 big_sectors;
+            public uint big_sectors;
             /// <summary>0x024, Drive number</summary>
             public byte drive_no;
             /// <summary>0x025, 0</summary>
@@ -229,19 +229,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x041, Alignment</summary>
             public byte dummy2;
             /// <summary>0x042, Alignment</summary>
-            public UInt16 dummy3;
+            public ushort dummy3;
             /// <summary>0x044, Clusters per index block</summary>
             public sbyte index_blk_cts;
             /// <summary>0x045, Alignment</summary>
             public byte dummy4;
             /// <summary>0x046, Alignment</summary>
-            public UInt16 dummy5;
+            public ushort dummy5;
             /// <summary>0x048, Volume serial number</summary>
-            public UInt64 serial_no;
+            public ulong serial_no;
             // End of NTFS superblock, followed by 430 bytes of boot code
 
             /// <summary>0x1FE, 0xAA55</summary>
-            public UInt16 signature2;
+            public ushort signature2;
         }
 
         public override Errno Mount()

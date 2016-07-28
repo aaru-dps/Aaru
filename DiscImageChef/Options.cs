@@ -256,10 +256,10 @@ namespace DiscImageChef
     [Verb("benchmark", HelpText = "Benchmarks hashing and entropy calculation.")]
     public class BenchmarkOptions : CommonOptions
     {
-        [Option('b', "block-size", Required = false, Default = (int)512, HelpText = "Block size.")]
+        [Option('b', "block-size", Required = false, Default = 512, HelpText = "Block size.")]
         public int BlockSize { get; set; }
 
-        [Option('s', "buffer-size", Required = false, Default = (int)128, HelpText = "Buffer size in mebibytes.")]
+        [Option('s', "buffer-size", Required = false, Default = 128, HelpText = "Buffer size in mebibytes.")]
         public int BufferSize { get; set; }
     }
 

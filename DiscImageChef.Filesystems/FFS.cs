@@ -32,15 +32,12 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
-
-// Using information from Linux kernel headers
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // Using information from Linux kernel headers
     public class FFSPlugin : Filesystem
     {
         public FFSPlugin()
@@ -60,7 +57,7 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt32 magic;
+            uint magic;
             uint sb_size_in_sectors;
             byte[] ufs_sb_sectors;
 
@@ -122,7 +119,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             StringBuilder sbInformation = new StringBuilder();
 
-            UInt32 magic = 0;
+            uint magic = 0;
             uint sb_size_in_sectors;
             byte[] ufs_sb_sectors;
             ulong sb_offset = partitionStart;
@@ -330,11 +327,11 @@ namespace DiscImageChef.Filesystems
             ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 512 bytes, name mounted on
             ufs_sb.fs_cgrotor_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);             /// <summary>0x02D4 last cg searched
             ufs_sb.fs_cs_ufs1 = new byte[124];
-            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); /// <summary>0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers
+            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); /// <summary>0x02D8, 124 bytes, uints, list of fs_cs info buffers
             ufs_sb.fs_maxcluster_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0354);          /// <summary>0x0354
             ufs_sb.fs_cpc_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);                 /// <summary>0x0358 cyl per cycle in postbl
             ufs_sb.fs_opostbl_ufs1 = new byte[256];
-            Array.Copy(ufs_sb_sectors, 0x035C, ufs_sb.fs_opostbl_ufs1, 0, 256); /// <summary>0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head
+            Array.Copy(ufs_sb_sectors, 0x035C, ufs_sb.fs_opostbl_ufs1, 0, 256); /// <summary>0x035C, 256 bytes, [16][8] matrix of ushorts, old rotation block list head
             #endregion UFS1
             #region UFS2
             strings_b = new byte[468];
@@ -347,7 +344,7 @@ namespace DiscImageChef.Filesystems
             ufs_sb.fs_pad_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D0);                 /// <summary>0x02D0 due to alignment of fs_swuid
             ufs_sb.fs_cgrotor_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D4);             /// <summary>0x02D4 last cg searched
             ufs_sb.fs_ocsp_ufs2 = new byte[112];
-            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_ocsp_ufs2, 0, 112); /// <summary>0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers
+            Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_ocsp_ufs2, 0, 112); /// <summary>0x02D8, 112 bytes, uints, list of fs_cs info buffers
             ufs_sb.fs_contigdirs_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0348);          /// <summary>0x0348 # of contiguously allocated dirs
             ufs_sb.fs_csp_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x034C);                 /// <summary>0x034C cg summary info buffer for fs_cs
             ufs_sb.fs_maxcluster_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0350);          /// <summary>0x0350
@@ -355,7 +352,7 @@ namespace DiscImageChef.Filesystems
             ufs_sb.fs_old_cpc_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0358);             /// <summary>0x0358 cyl per cycle in postbl
             ufs_sb.fs_maxbsize_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x035C);            /// <summary>0x035C maximum blocking factor permitted
             ufs_sb.fs_sparecon64_ufs2 = new byte[136];
-            Array.Copy(ufs_sb_sectors, 0x0360, ufs_sb.fs_sparecon64_ufs2, 0, 136); /// <summary>0x0360, 136 bytes, UInt64s, old rotation block list head
+            Array.Copy(ufs_sb_sectors, 0x0360, ufs_sb.fs_sparecon64_ufs2, 0, 136); /// <summary>0x0360, 136 bytes, ulongs, old rotation block list head
             ufs_sb.fs_sblockloc_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03E8);           /// <summary>0x03E8 byte offset of standard superblock
             //cylinder summary information*/
             ufs_sb.fs_cstotal_ndir_ufs2 = BigEndianBitConverter.ToUInt64(ufs_sb_sectors, 0x03F0);        /// <summary>0x03F0 number of directories
@@ -556,7 +553,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                const UInt32 SunOSEpoch = 0x1A54C580; // We are supposing there cannot be a Sun's fs created before 1/1/1982 00:00:00
+                const uint SunOSEpoch = 0x1A54C580; // We are supposing there cannot be a Sun's fs created before 1/1/1982 00:00:00
 
                 fs_type_43bsd = true; // There is no way of knowing this is the version, but there is of knowing it is not.
 
@@ -623,10 +620,10 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("First data block LBA: {0}", ufs_sb.fs_dblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_cgoffset).AppendLine();
             sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(ufs_sb.fs_time_t)).AppendLine();
-            sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_size, (ulong)ufs_sb.fs_size * (ulong)1024).AppendLine();
+            sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * 1024L).AppendLine();
             xmlFSType.Clusters = ufs_sb.fs_size;
             xmlFSType.ClusterSize = (int)ufs_sb.fs_bsize;
-            sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_dsize, (ulong)ufs_sb.fs_dsize * (ulong)1024).AppendLine();
+            sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * 1024L).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a basic block", ufs_sb.fs_bsize).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a frag block", ufs_sb.fs_fsize).AppendLine();
@@ -659,7 +656,7 @@ namespace DiscImageChef.Filesystems
             if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
             {
                 sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
-                xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2);
+                xmlFSType.VolumeSerial = string.Format("{0:X8}{1:x8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2);
             }
             else if(fs_type_43bsd && ufs_sb.fs_headswitch_43bsd > 0 && ufs_sb.fs_trkseek_43bsd > 0)
             {
@@ -703,7 +700,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Volume name: \"{0}\"", ufs_sb.fs_volname_ufs2).AppendLine();
                 xmlFSType.VolumeName = ufs_sb.fs_volname_ufs2;
                 sbInformation.AppendFormat("Volume ID: 0x{0:X16}", ufs_sb.fs_swuid_ufs2).AppendLine();
-                xmlFSType.VolumeSerial = String.Format("{0:X16}", ufs_sb.fs_swuid_ufs2);
+                xmlFSType.VolumeSerial = string.Format("{0:X16}", ufs_sb.fs_swuid_ufs2);
                 sbInformation.AppendFormat("Last searched cylinder group: {0}", ufs_sb.fs_cgrotor_ufs2).AppendLine();
                 sbInformation.AppendFormat("{0} contiguously allocated directories", ufs_sb.fs_contigdirs_ufs2).AppendLine();
                 sbInformation.AppendFormat("Standard superblock LBA: {0}", ufs_sb.fs_sblockloc_ufs2).AppendLine();
@@ -762,15 +759,15 @@ namespace DiscImageChef.Filesystems
 
         // MAGICs
         // UFS magic
-        const UInt32 UFS_MAGIC = 0x00011954;
+        const uint UFS_MAGIC = 0x00011954;
         // BorderWare UFS
-        const UInt32 UFS_MAGIC_BW = 0x0f242697;
+        const uint UFS_MAGIC_BW = 0x0f242697;
         // UFS2 magic
-        const UInt32 UFS2_MAGIC = 0x19540119;
+        const uint UFS2_MAGIC = 0x19540119;
         // byteswapped
-        const UInt32 UFS_CIGAM = 0x54190100;
+        const uint UFS_CIGAM = 0x54190100;
         // Incomplete newfs
-        const UInt32 UFS_BAD_MAGIC = 0x19960408;
+        const uint UFS_BAD_MAGIC = 0x19960408;
 
         /// <summary>
         /// On-disk superblock is quite a mixture of all the UFS/FFS variants
@@ -784,93 +781,93 @@ namespace DiscImageChef.Filesystems
             #region 42BSD
 
             /// <summary>0x0000 linked list of file systems</summary>
-            public UInt32 fs_link_42bsd;
+            public uint fs_link_42bsd;
 
             #endregion
 
             #region Sun
 
             /// <summary>0x0000 file system state flag</summary>
-            public UInt32 fs_state_sun;
+            public uint fs_state_sun;
 
             #endregion
 
             #region COMMON
 
             /// <summary>0x0004 used for incore super blocks</summary>
-            public UInt32 fs_rlink;
+            public uint fs_rlink;
             /// <summary>0x0008 addr of super-block in filesys</summary>
-            public UInt32 fs_sblkno;
+            public uint fs_sblkno;
             /// <summary>0x000C offset of cyl-block in filesys</summary>
-            public UInt32 fs_cblkno;
+            public uint fs_cblkno;
             /// <summary>0x0010 offset of inode-blocks in filesys</summary>
-            public UInt32 fs_iblkno;
+            public uint fs_iblkno;
             /// <summary>0x0014 offset of first data after cg</summary>
-            public UInt32 fs_dblkno;
+            public uint fs_dblkno;
             /// <summary>0x0018 cylinder group offset in cylinder</summary>
-            public UInt32 fs_cgoffset;
+            public uint fs_cgoffset;
             /// <summary>0x001C used to calc mod fs_ntrak</summary>
-            public UInt32 fs_cgmask;
+            public uint fs_cgmask;
             /// <summary>0x0020 last time written -- time_t</summary>
-            public UInt32 fs_time_t;
+            public uint fs_time_t;
             /// <summary>0x0024 number of blocks in fs</summary>
-            public UInt32 fs_size;
+            public uint fs_size;
             /// <summary>0x0028 number of data blocks in fs</summary>
-            public UInt32 fs_dsize;
+            public uint fs_dsize;
             /// <summary>0x002C number of cylinder groups</summary>
-            public UInt32 fs_ncg;
+            public uint fs_ncg;
             /// <summary>0x0030 size of basic blocks in fs</summary>
-            public UInt32 fs_bsize;
+            public uint fs_bsize;
             /// <summary>0x0034 size of frag blocks in fs</summary>
-            public UInt32 fs_fsize;
+            public uint fs_fsize;
             /// <summary>0x0038 number of frags in a block in fs</summary>
-            public UInt32 fs_frag;
+            public uint fs_frag;
 
             // these are configuration parameters
             /// <summary>0x003C minimum percentage of free blocks</summary>
-            public UInt32 fs_minfree;
+            public uint fs_minfree;
             /// <summary>0x0040 num of ms for optimal next block</summary>
-            public UInt32 fs_rotdelay;
+            public uint fs_rotdelay;
             /// <summary>0x0044 disk revolutions per second</summary>
-            public UInt32 fs_rps;
+            public uint fs_rps;
 
             // these fields can be computed from the others
             /// <summary>0x0048 ``blkoff'' calc of blk offsets</summary>
-            public UInt32 fs_bmask;
+            public uint fs_bmask;
             /// <summary>0x004C ``fragoff'' calc of frag offsets</summary>
-            public UInt32 fs_fmask;
+            public uint fs_fmask;
             /// <summary>0x0050 ``lblkno'' calc of logical blkno</summary>
-            public UInt32 fs_bshift;
+            public uint fs_bshift;
             /// <summary>0x0054 ``numfrags'' calc number of frags</summary>
-            public UInt32 fs_fshift;
+            public uint fs_fshift;
 
             // these are configuration parameters
             /// <summary>0x0058 max number of contiguous blks</summary>
-            public UInt32 fs_maxcontig;
+            public uint fs_maxcontig;
             /// <summary>0x005C max number of blks per cyl group</summary>
-            public UInt32 fs_maxbpg;
+            public uint fs_maxbpg;
 
             // these fields can be computed from the others
             /// <summary>0x0060 block to frag shift</summary>
-            public UInt32 fs_fragshift;
+            public uint fs_fragshift;
             /// <summary>0x0064 fsbtodb and dbtofsb shift constant</summary>
-            public UInt32 fs_fsbtodb;
+            public uint fs_fsbtodb;
             /// <summary>0x0068 actual size of super block</summary>
-            public UInt32 fs_sbsize;
+            public uint fs_sbsize;
             /// <summary>0x006C csum block offset</summary>
-            public UInt32 fs_csmask;
+            public uint fs_csmask;
             /// <summary>0x0070 csum block number</summary>
-            public UInt32 fs_csshift;
+            public uint fs_csshift;
             /// <summary>0x0074 value of NINDIR</summary>
-            public UInt32 fs_nindir;
+            public uint fs_nindir;
             /// <summary>0x0078 value of INOPB</summary>
-            public UInt32 fs_inopb;
+            public uint fs_inopb;
             /// <summary>0x007C value of NSPF</summary>
-            public UInt32 fs_nspf;
+            public uint fs_nspf;
 
             // yet another configuration parameter
             /// <summary>0x0080 optimization preference, see below</summary>
-            public UInt32 fs_optim;
+            public uint fs_optim;
 
             #endregion COMMON
 
@@ -879,23 +876,23 @@ namespace DiscImageChef.Filesystems
 
             // these fields are derived from the hardware
             /// <summary>0x0084 # sectors/track including spares</summary>
-            public UInt32 fs_npsect_sun;
+            public uint fs_npsect_sun;
 
             #endregion Sun
 
             #region Sunx86
 
             /// <summary>0x0084 file system state time stamp</summary>
-            public UInt32 fs_state_t_sun86;
+            public uint fs_state_t_sun86;
 
             #endregion Sunx86
 
             #region COMMON
 
             /// <summary>0x0088 hardware sector interleave</summary>
-            public UInt32 fs_interleave;
+            public uint fs_interleave;
             /// <summary>0x008C sector 0 skew, per track</summary>
-            public UInt32 fs_trackskew;
+            public uint fs_trackskew;
 
             #endregion COMMON
 
@@ -908,18 +905,18 @@ namespace DiscImageChef.Filesystems
             // there could be problems if they are.
 
             /// <summary>0x0090</summary>
-            public UInt32 fs_id_1;
+            public uint fs_id_1;
             /// <summary>0x0094</summary>
-            public UInt32 fs_id_2;
+            public uint fs_id_2;
 
             #endregion COMMON
 
             #region 43BSD
 
             /// <summary>0x0090 head switch time, usec</summary>
-            public UInt32 fs_headswitch_43bsd;
+            public uint fs_headswitch_43bsd;
             /// <summary>0x0094 track-to-track seek, usec</summary>
-            public UInt32 fs_trkseek_43bsd;
+            public uint fs_trkseek_43bsd;
 
             #endregion 43BSD
 
@@ -927,42 +924,42 @@ namespace DiscImageChef.Filesystems
 
             // sizes determined by number of cylinder groups and their sizes
             /// <summary>0x0098 blk addr of cyl grp summary area</summary>
-            public UInt32 fs_csaddr;
+            public uint fs_csaddr;
             /// <summary>0x009C size of cyl grp summary area</summary>
-            public UInt32 fs_cssize;
+            public uint fs_cssize;
             /// <summary>0x00A0 cylinder group size</summary>
-            public UInt32 fs_cgsize;
+            public uint fs_cgsize;
 
             // these fields are derived from the hardware
             /// <summary>0x00A4 tracks per cylinder</summary>
-            public UInt32 fs_ntrak;
+            public uint fs_ntrak;
             /// <summary>0x00A8 sectors per track</summary>
-            public UInt32 fs_nsect;
+            public uint fs_nsect;
             /// <summary>0x00AC sectors per cylinder</summary>
-            public UInt32 fs_spc;
+            public uint fs_spc;
 
             // this comes from the disk driver partitioning
             /// <summary>0x00B0 cylinders in file system</summary>
-            public UInt32 fs_ncyl;
+            public uint fs_ncyl;
 
             // these fields can be computed from the others
             /// <summary>0x00B4 cylinders per group</summary>
-            public UInt32 fs_cpg;
+            public uint fs_cpg;
             /// <summary>0x00B8 inodes per cylinder group</summary>
-            public UInt32 fs_ipg;
+            public uint fs_ipg;
             /// <summary>0x00BC blocks per group * fs_frag</summary>
-            public UInt32 fs_fpg;
+            public uint fs_fpg;
 
             // this data must be re-computed after crashes
             // struct ufs_csum fs_cstotal;  // cylinder summary information
             /// <summary>0x00C0 number of directories</summary>
-            public UInt32 fs_cstotal_ndir;
+            public uint fs_cstotal_ndir;
             /// <summary>0x00C4 number of free blocks</summary>
-            public UInt32 fs_cstotal_nbfree;
+            public uint fs_cstotal_nbfree;
             /// <summary>0x00C8 number of free inodes</summary>
-            public UInt32 fs_cstotal_nifree;
+            public uint fs_cstotal_nifree;
             /// <summary>0x00CC number of free frags</summary>
-            public UInt32 fs_cstotal_nffree;
+            public uint fs_cstotal_nffree;
 
             // these fields are cleared at mount time
             /// <summary>0x00D0 super block modified flag</summary>
@@ -981,14 +978,14 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x00D4, 512 bytes, name mounted on</summary>
             public string fs_fsmnt_ufs1;
             /// <summary>0x02D4 last cg searched</summary>
-            public UInt32 fs_cgrotor_ufs1;
-            /// <summary>0x02D8, 124 bytes, UInt32s, list of fs_cs info buffers</summary>
+            public uint fs_cgrotor_ufs1;
+            /// <summary>0x02D8, 124 bytes, uints, list of fs_cs info buffers</summary>
             public byte[] fs_cs_ufs1;
             /// <summary>0x0354</summary>
-            public UInt32 fs_maxcluster_ufs1;
+            public uint fs_maxcluster_ufs1;
             /// <summary>0x0358 cyl per cycle in postbl</summary>
-            public UInt32 fs_cpc_ufs1;
-            /// <summary>0x035C, 256 bytes, [16][8] matrix of UInt16s, old rotation block list head</summary>
+            public uint fs_cpc_ufs1;
+            /// <summary>0x035C, 256 bytes, [16][8] matrix of ushorts, old rotation block list head</summary>
             public byte[] fs_opostbl_ufs1;
 
             #endregion UFS1
@@ -1000,60 +997,60 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x02A8, 32 bytes, volume name</summary>
             public string fs_volname_ufs2;
             /// <summary>0x02C8 system-wide uid</summary>
-            public UInt64 fs_swuid_ufs2;
+            public ulong fs_swuid_ufs2;
             /// <summary>0x02D0 due to alignment of fs_swuid</summary>
-            public UInt32 fs_pad_ufs2;
+            public uint fs_pad_ufs2;
             /// <summary>0x02D4 last cg searched</summary>
-            public UInt32 fs_cgrotor_ufs2;
-            /// <summary>0x02D8, 112 bytes, UInt32s, list of fs_cs info buffers</summary>
+            public uint fs_cgrotor_ufs2;
+            /// <summary>0x02D8, 112 bytes, uints, list of fs_cs info buffers</summary>
             public byte[] fs_ocsp_ufs2;
             /// <summary>0x0348 # of contiguously allocated dirs</summary>
-            public UInt32 fs_contigdirs_ufs2;
+            public uint fs_contigdirs_ufs2;
             /// <summary>0x034C cg summary info buffer for fs_cs</summary>
-            public UInt32 fs_csp_ufs2;
+            public uint fs_csp_ufs2;
             /// <summary>0x0350</summary>
-            public UInt32 fs_maxcluster_ufs2;
+            public uint fs_maxcluster_ufs2;
             /// <summary>0x0354 used by snapshots to track fs</summary>
-            public UInt32 fs_active_ufs2;
+            public uint fs_active_ufs2;
             /// <summary>0x0358 cyl per cycle in postbl</summary>
-            public UInt32 fs_old_cpc_ufs2;
+            public uint fs_old_cpc_ufs2;
             /// <summary>0x035C maximum blocking factor permitted</summary>
-            public UInt32 fs_maxbsize_ufs2;
-            /// <summary>0x0360, 136 bytes, UInt64s, old rotation block list head</summary>
+            public uint fs_maxbsize_ufs2;
+            /// <summary>0x0360, 136 bytes, ulongs, old rotation block list head</summary>
             public byte[] fs_sparecon64_ufs2;
             /// <summary>0x03E8 byte offset of standard superblock</summary>
-            public UInt64 fs_sblockloc_ufs2;
+            public ulong fs_sblockloc_ufs2;
 
             /// <summary>0x03F0 number of directories</summary>
-            public UInt64 fs_cstotal_ndir_ufs2;
+            public ulong fs_cstotal_ndir_ufs2;
             /// <summary>0x03F8 number of free blocks</summary>
-            public UInt64 fs_cstotal_nbfree_ufs2;
+            public ulong fs_cstotal_nbfree_ufs2;
             /// <summary>0x0400 number of free inodes</summary>
-            public UInt64 fs_cstotal_nifree_ufs2;
+            public ulong fs_cstotal_nifree_ufs2;
             /// <summary>0x0408 number of free frags</summary>
-            public UInt64 fs_cstotal_nffree_ufs2;
+            public ulong fs_cstotal_nffree_ufs2;
             /// <summary>0x0410 number of free clusters</summary>
-            public UInt64 fs_cstotal_numclusters_ufs2;
+            public ulong fs_cstotal_numclusters_ufs2;
             /// <summary>0x0418 future expansion</summary>
-            public UInt64 fs_cstotal_spare0_ufs2;
+            public ulong fs_cstotal_spare0_ufs2;
             /// <summary>0x0420 future expansion</summary>
-            public UInt64 fs_cstotal_spare1_ufs2;
+            public ulong fs_cstotal_spare1_ufs2;
             /// <summary>0x0428 future expansion</summary>
-            public UInt64 fs_cstotal_spare2_ufs2;
+            public ulong fs_cstotal_spare2_ufs2;
             /// <summary>0x0430 last time written</summary>
-            public UInt32 fs_time_sec_ufs2;
+            public uint fs_time_sec_ufs2;
             /// <summary>0x0434 last time written</summary>
-            public UInt32 fs_time_usec_ufs2;
+            public uint fs_time_usec_ufs2;
             /// <summary>0x0438 number of blocks in fs</summary>
-            public UInt64 fs_size_ufs2;
+            public ulong fs_size_ufs2;
             /// <summary>0x0440 number of data blocks in fs</summary>
-            public UInt64 fs_dsize_ufs2;
+            public ulong fs_dsize_ufs2;
             /// <summary>0x0448 blk addr of cyl grp summary area</summary>
-            public UInt64 fs_csaddr_ufs2;
+            public ulong fs_csaddr_ufs2;
             /// <summary>0x0450 blocks in process of being freed</summary>
-            public UInt64 fs_pendingblocks_ufs2;
+            public ulong fs_pendingblocks_ufs2;
             /// <summary>0x0458 inodes in process of being freed</summary>
-            public UInt32 fs_pendinginodes_ufs2;
+            public uint fs_pendinginodes_ufs2;
 
             #endregion UFS2
 
@@ -1062,19 +1059,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x045C, 212 bytes, reserved for future constants</summary>
             public byte[] fs_sparecon_sun;
             /// <summary>0x0530</summary>
-            public UInt32 fs_reclaim_sun;
+            public uint fs_reclaim_sun;
             /// <summary>0x0534</summary>
-            public UInt32 fs_sparecon2_sun;
+            public uint fs_sparecon2_sun;
             /// <summary>0x0538 file system state time stamp</summary>
-            public UInt32 fs_state_t_sun;
+            public uint fs_state_t_sun;
             /// <summary>0x053C ~usb_bmask</summary>
-            public UInt32 fs_qbmask0_sun;
+            public uint fs_qbmask0_sun;
             /// <summary>0x0540 ~usb_bmask</summary>
-            public UInt32 fs_qbmask1_sun;
+            public uint fs_qbmask1_sun;
             /// <summary>0x0544 ~usb_fmask</summary>
-            public UInt32 fs_qfmask0_sun;
+            public uint fs_qfmask0_sun;
             /// <summary>0x0548 ~usb_fmask</summary>
-            public UInt32 fs_qfmask1_sun;
+            public uint fs_qfmask1_sun;
 
             #endregion Sun
 
@@ -1083,19 +1080,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x045C, 212 bytes, reserved for future constants</summary>
             public byte[] fs_sparecon_sun86;
             /// <summary>0x0530</summary>
-            public UInt32 fs_reclaim_sun86;
+            public uint fs_reclaim_sun86;
             /// <summary>0x0534</summary>
-            public UInt32 fs_sparecon2_sun86;
+            public uint fs_sparecon2_sun86;
             /// <summary>0x0538 # sectors/track including spares</summary>
-            public UInt32 fs_npsect_sun86;
+            public uint fs_npsect_sun86;
             /// <summary>0x053C ~usb_bmask</summary>
-            public UInt32 fs_qbmask0_sun86;
+            public uint fs_qbmask0_sun86;
             /// <summary>0x0540 ~usb_bmask</summary>
-            public UInt32 fs_qbmask1_sun86;
+            public uint fs_qbmask1_sun86;
             /// <summary>0x0544 ~usb_fmask</summary>
-            public UInt32 fs_qfmask0_sun86;
+            public uint fs_qfmask0_sun86;
             /// <summary>0x0548 ~usb_fmask</summary>
-            public UInt32 fs_qfmask1_sun86;
+            public uint fs_qfmask1_sun86;
 
             #endregion Sunx86
 
@@ -1104,38 +1101,38 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x045C, 200 bytes</summary>
             public byte[] fs_sparecon_44bsd;
             /// <summary>0x0524 size of cluster summary array</summary>
-            public UInt32 fs_contigsumsize_44bsd;
+            public uint fs_contigsumsize_44bsd;
             /// <summary>0x0528 max length of an internal symlink</summary>
-            public UInt32 fs_maxsymlinklen_44bsd;
+            public uint fs_maxsymlinklen_44bsd;
             /// <summary>0x052C format of on-disk inodes</summary>
-            public UInt32 fs_inodefmt_44bsd;
+            public uint fs_inodefmt_44bsd;
             /// <summary>0x0530 max representable file size</summary>
-            public UInt32 fs_maxfilesize0_44bsd;
+            public uint fs_maxfilesize0_44bsd;
             /// <summary>0x0534 max representable file size</summary>
-            public UInt32 fs_maxfilesize1_44bsd;
+            public uint fs_maxfilesize1_44bsd;
             /// <summary>0x0538 ~usb_bmask</summary>
-            public UInt32 fs_qbmask0_44bsd;
+            public uint fs_qbmask0_44bsd;
             /// <summary>0x053C ~usb_bmask</summary>
-            public UInt32 fs_qbmask1_44bsd;
+            public uint fs_qbmask1_44bsd;
             /// <summary>0x0540 ~usb_fmask</summary>
-            public UInt32 fs_qfmask0_44bsd;
+            public uint fs_qfmask0_44bsd;
             /// <summary>0x0544 ~usb_fmask</summary>
-            public UInt32 fs_qfmask1_44bsd;
+            public uint fs_qfmask1_44bsd;
             /// <summary>0x0548 file system state time stamp</summary>
-            public UInt32 fs_state_t_44bsd;
+            public uint fs_state_t_44bsd;
 
             #endregion 44BSD
 
             /// <summary>0x054C format of positional layout tables</summary>
-            public UInt32 fs_postblformat;
+            public uint fs_postblformat;
             /// <summary>0x0550 number of rotational positions</summary>
-            public UInt32 fs_nrpos;
+            public uint fs_nrpos;
             /// <summary>0x0554 (__s16) rotation block list head</summary>
-            public UInt32 fs_postbloff;
+            public uint fs_postbloff;
             /// <summary>0x0558 (__u8) blocks for each rotation</summary>
-            public UInt32 fs_rotbloff;
+            public uint fs_rotbloff;
             /// <summary>0x055C magic number</summary>
-            public UInt32 fs_magic;
+            public uint fs_magic;
             /// <summary>0x0560 list of blocks for each rotation</summary>
             public byte fs_space;
             // 0x0561

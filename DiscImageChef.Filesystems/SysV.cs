@@ -32,28 +32,27 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from the Linux kernel
 namespace DiscImageChef.Filesystems
 {
+    // Information from the Linux kernel
     class SysVfs : Filesystem
     {
-        const UInt32 XENIX_MAGIC = 0x002B5544;
-        const UInt32 XENIX_CIGAM = 0x44552B00;
-        const UInt32 SYSV_MAGIC = 0xFD187E20;
-        const UInt32 SYSV_CIGAM = 0x207E18FD;
+        const uint XENIX_MAGIC = 0x002B5544;
+        const uint XENIX_CIGAM = 0x44552B00;
+        const uint SYSV_MAGIC = 0xFD187E20;
+        const uint SYSV_CIGAM = 0x207E18FD;
         // Rest have no magic.
         // Per a Linux kernel, Coherent fs has following:
         const string COH_FNAME = "nonamexxxxx ";
         const string COH_FPACK = "nopackxxxxx\n";
         // SCO AFS
-        const UInt16 SCO_NFREE = 0xFFFF;
+        const ushort SCO_NFREE = 0xFFFF;
         // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
-        const UInt16 V7_NICINOD = 100;
-        const UInt16 V7_NICFREE = 50;
-        const UInt32 V7_MAXSIZE = 0x00FFFFFF;
+        const ushort V7_NICINOD = 100;
+        const ushort V7_NICFREE = 50;
+        const uint V7_MAXSIZE = 0x00FFFFFF;
 
         public SysVfs()
         {
@@ -72,15 +71,15 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt32 magic;
+            uint magic;
             string s_fname, s_fpack;
-            UInt16 s_nfree, s_ninode;
-            UInt32 s_fsize;
+            ushort s_nfree, s_ninode;
+            uint s_fsize;
 
             /*for(int j = 0; j<=(br.BaseStream.Length/0x200); j++)
             {
                 br.BaseStream.Seek(offset + j*0x200 + 0x1F8, SeekOrigin.Begin); // System V magic location
-                magic = br.ReadUInt32();
+                magic = br.Readuint();
 
                 if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     Console.WriteLine("0x{0:X8}: 0x{1:X8} FOUND", br.BaseStream.Position-4, magic);
@@ -88,11 +87,11 @@ namespace DiscImageChef.Filesystems
                     Console.WriteLine("0x{0:X8}: 0x{1:X8}", br.BaseStream.Position-4, magic);
             }*/
 
-            /*UInt32 number;
+            /*uint number;
             br.BaseStream.Seek(offset+0x3A00, SeekOrigin.Begin);
             while((br.BaseStream.Position) <= (offset+0x3C00))
             {
-                number = br.ReadUInt32();
+                number = br.Readuint();
 
                 Console.WriteLine("@{0:X8}: 0x{1:X8} ({1})", br.BaseStream.Position-offset-4, number);
             }*/
@@ -104,7 +103,7 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if(imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + (ulong)sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
+            if(imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
                 return false;
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
@@ -142,8 +141,8 @@ namespace DiscImageChef.Filesystems
                     {
                         // Byteswap
                         s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) + ((s_fsize & 0xFF000000) >> 24);
-                        s_nfree = (UInt16)(s_nfree >> 8);
-                        s_ninode = (UInt16)(s_ninode >> 8);
+                        s_nfree = (ushort)(s_nfree >> 8);
+                        s_ninode = (ushort)(s_ninode >> 8);
                     }
 
                     if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
@@ -167,10 +166,10 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
             BigEndianBitConverter.IsLittleEndian = true; // Start in little endian until we know what are we handling here
             int start;
-            UInt32 magic;
+            uint magic;
             string s_fname, s_fpack;
-            UInt16 s_nfree, s_ninode;
-            UInt32 s_fsize;
+            ushort s_nfree, s_ninode;
+            uint s_fsize;
             bool xenix = false;
             bool sysv = false;
             bool sysvr4 = false;
@@ -242,8 +241,8 @@ namespace DiscImageChef.Filesystems
                     {
                         // Byteswap
                         s_fsize = ((s_fsize & 0xFF) << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) + ((s_fsize & 0xFF000000) >> 24);
-                        s_nfree = (UInt16)(s_nfree >> 8);
-                        s_ninode = (UInt16)(s_ninode >> 8);
+                        s_nfree = (ushort)(s_nfree >> 8);
+                        s_ninode = (ushort)(s_ninode >> 8);
                     }
 
                     if((s_fsize & 0xFF000000) == 0x00 && (s_nfree & 0xFF00) == 0x00 && (s_ninode & 0xFF00) == 0x00)
@@ -294,7 +293,7 @@ namespace DiscImageChef.Filesystems
                 xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
                 xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x3FC);
 
-                UInt32 bs = 512;
+                uint bs = 512;
                 sb.AppendLine("XENIX filesystem");
                 xmlFSType.Type = "XENIX fs";
                 switch(xnx_sb.s_type)
@@ -364,7 +363,7 @@ namespace DiscImageChef.Filesystems
             if(sysv)
             {
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
-                UInt16 pad0, pad1, pad2;
+                ushort pad0, pad1, pad2;
                 byte[] sysv_strings = new byte[6];
 
                 pad0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x002); // First padding
@@ -425,7 +424,7 @@ namespace DiscImageChef.Filesystems
                     sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings);
                 }
 
-                UInt32 bs = 512;
+                uint bs = 512;
                 if(sysvr4)
                 {
                     sb.AppendLine("System V Release 4 filesystem");
@@ -617,19 +616,19 @@ namespace DiscImageChef.Filesystems
         struct XenixSuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
-            public UInt16 s_isize;
+            public ushort s_isize;
             /// <summary>0x002, total number of zones of this volume</summary>
-            public UInt32 s_fsize;
+            public uint s_fsize;
             // the start of the free block list:
             /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public UInt16 s_nfree;
+            public ushort s_nfree;
             /// <summary>0x008, 100 entries, first free block list chunk</summary>
-            public UInt32[] s_free;
+            public uint[] s_free;
             // the cache of free inodes:
             /// <summary>0x198, number of inodes in s_inode, &lt;= 100</summary>
-            public UInt16 s_ninode;
+            public ushort s_ninode;
             /// <summary>0x19A, 100 entries, some free inodes</summary>
-            public UInt16[] s_inode;
+            public ushort[] s_inode;
             /// <summary>0x262, free block list manipulation lock</summary>
             public byte s_flock;
             /// <summary>0x263, inode cache manipulation lock</summary>
@@ -639,19 +638,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x265, read-only mounted flag</summary>
             public byte s_ronly;
             /// <summary>0x266, time of last superblock update</summary>
-            public UInt32 s_time;
+            public uint s_time;
             /// <summary>0x26A, total number of free zones</summary>
-            public UInt32 s_tfree;
+            public uint s_tfree;
             /// <summary>0x26E, total number of free inodes</summary>
-            public UInt16 s_tinode;
+            public ushort s_tinode;
             /// <summary>0x270, blocks per cylinder</summary>
-            public UInt16 s_cylblks;
+            public ushort s_cylblks;
             /// <summary>0x272, blocks per gap</summary>
-            public UInt16 s_gapblks;
+            public ushort s_gapblks;
             /// <summary>0x274, device information ??</summary>
-            public UInt16 s_dinfo0;
+            public ushort s_dinfo0;
             /// <summary>0x276, device information ??</summary>
-            public UInt16 s_dinfo1;
+            public ushort s_dinfo1;
             /// <summary>0x278, 6 bytes, volume name</summary>
             public string s_fname;
             /// <summary>0x27E, 6 bytes, pack name</summary>
@@ -661,33 +660,33 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x285, 371 bytes</summary>
             public byte[] s_fill;
             /// <summary>0x3F8, magic</summary>
-            public UInt32 s_magic;
+            public uint s_magic;
             /// <summary>0x3FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
-            public UInt32 s_type;
+            public uint s_type;
         }
 
         struct SystemVRelease4SuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
-            public UInt16 s_isize;
+            public ushort s_isize;
             /// <summary>0x002, padding</summary>
-            public UInt16 s_pad0;
+            public ushort s_pad0;
             /// <summary>0x004, total number of zones of this volume</summary>
-            public UInt32 s_fsize;
+            public uint s_fsize;
             // the start of the free block list:
             /// <summary>0x008, blocks in s_free, &lt;=100</summary>
-            public UInt16 s_nfree;
+            public ushort s_nfree;
             /// <summary>0x00A, padding</summary>
-            public UInt16 s_pad1;
+            public ushort s_pad1;
             /// <summary>0x00C, 50 entries, first free block list chunk</summary>
-            public UInt32[] s_free;
+            public uint[] s_free;
             // the cache of free inodes:
             /// <summary>0x0D4, number of inodes in s_inode, &lt;= 100</summary>
-            public UInt16 s_ninode;
+            public ushort s_ninode;
             /// <summary>0x0D6, padding</summary>
-            public UInt16 s_pad2;
+            public ushort s_pad2;
             /// <summary>0x0D8, 100 entries, some free inodes</summary>
-            public UInt16[] s_inode;
+            public ushort[] s_inode;
             /// <summary>0x1A0, free block list manipulation lock</summary>
             public byte s_flock;
             /// <summary>0x1A1, inode cache manipulation lock</summary>
@@ -697,21 +696,21 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1A3, read-only mounted flag</summary>
             public byte s_ronly;
             /// <summary>0x1A4, time of last superblock update</summary>
-            public UInt32 s_time;
+            public uint s_time;
             /// <summary>0x1A8, blocks per cylinder</summary>
-            public UInt16 s_cylblks;
+            public ushort s_cylblks;
             /// <summary>0x1AA, blocks per gap</summary>
-            public UInt16 s_gapblks;
+            public ushort s_gapblks;
             /// <summary>0x1AC, device information ??</summary>
-            public UInt16 s_dinfo0;
+            public ushort s_dinfo0;
             /// <summary>0x1AE, device information ??</summary>
-            public UInt16 s_dinfo1;
+            public ushort s_dinfo1;
             /// <summary>0x1B0, total number of free zones</summary>
-            public UInt32 s_tfree;
+            public uint s_tfree;
             /// <summary>0x1B4, total number of free inodes</summary>
-            public UInt16 s_tinode;
+            public ushort s_tinode;
             /// <summary>0x1B6, padding</summary>
-            public UInt16 s_pad3;
+            public ushort s_pad3;
             /// <summary>0x1B8, 6 bytes, volume name</summary>
             public string s_fname;
             /// <summary>0x1BE, 6 bytes, pack name</summary>
@@ -719,29 +718,29 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1C4, 48 bytes</summary>
             public byte[] s_fill;
             /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
-            public UInt32 s_state;
+            public uint s_state;
             /// <summary>0x1F8, magic</summary>
-            public UInt32 s_magic;
+            public uint s_magic;
             /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
-            public UInt32 s_type;
+            public uint s_type;
         }
 
         struct SystemVRelease2SuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
-            public UInt16 s_isize;
+            public ushort s_isize;
             /// <summary>0x002, total number of zones of this volume</summary>
-            public UInt32 s_fsize;
+            public uint s_fsize;
             // the start of the free block list:
             /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public UInt16 s_nfree;
+            public ushort s_nfree;
             /// <summary>0x008, 50 entries, first free block list chunk</summary>
-            public UInt32[] s_free;
+            public uint[] s_free;
             // the cache of free inodes:
             /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
-            public UInt16 s_ninode;
+            public ushort s_ninode;
             /// <summary>0x0D2, 100 entries, some free inodes</summary>
-            public UInt16[] s_inode;
+            public ushort[] s_inode;
             /// <summary>0x19A, free block list manipulation lock</summary>
             public byte s_flock;
             /// <summary>0x19B, inode cache manipulation lock</summary>
@@ -751,19 +750,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x19D, read-only mounted flag</summary>
             public byte s_ronly;
             /// <summary>0x19E, time of last superblock update</summary>
-            public UInt32 s_time;
+            public uint s_time;
             /// <summary>0x1A2, blocks per cylinder</summary>
-            public UInt16 s_cylblks;
+            public ushort s_cylblks;
             /// <summary>0x1A4, blocks per gap</summary>
-            public UInt16 s_gapblks;
+            public ushort s_gapblks;
             /// <summary>0x1A6, device information ??</summary>
-            public UInt16 s_dinfo0;
+            public ushort s_dinfo0;
             /// <summary>0x1A8, device information ??</summary>
-            public UInt16 s_dinfo1;
+            public ushort s_dinfo1;
             /// <summary>0x1AA, total number of free zones</summary>
-            public UInt32 s_tfree;
+            public uint s_tfree;
             /// <summary>0x1AE, total number of free inodes</summary>
-            public UInt16 s_tinode;
+            public ushort s_tinode;
             /// <summary>0x1B0, 6 bytes, volume name</summary>
             public string s_fname;
             /// <summary>0x1B6, 6 bytes, pack name</summary>
@@ -771,29 +770,29 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1BC, 56 bytes</summary>
             public byte[] s_fill;
             /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
-            public UInt32 s_state;
+            public uint s_state;
             /// <summary>0x1F8, magic</summary>
-            public UInt32 s_magic;
+            public uint s_magic;
             /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
-            public UInt32 s_type;
+            public uint s_type;
         }
 
         struct UNIX7thEditionSuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
-            public UInt16 s_isize;
+            public ushort s_isize;
             /// <summary>0x002, total number of zones of this volume</summary>
-            public UInt32 s_fsize;
+            public uint s_fsize;
             // the start of the free block list:
             /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public UInt16 s_nfree;
+            public ushort s_nfree;
             /// <summary>0x008, 50 entries, first free block list chunk</summary>
-            public UInt32[] s_free;
+            public uint[] s_free;
             // the cache of free inodes:
             /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
-            public UInt16 s_ninode;
+            public ushort s_ninode;
             /// <summary>0x0D2, 100 entries, some free inodes</summary>
-            public UInt16[] s_inode;
+            public ushort[] s_inode;
             /// <summary>0x19A, free block list manipulation lock</summary>
             public byte s_flock;
             /// <summary>0x19B, inode cache manipulation lock</summary>
@@ -803,15 +802,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x19D, read-only mounted flag</summary>
             public byte s_ronly;
             /// <summary>0x19E, time of last superblock update</summary>
-            public UInt32 s_time;
+            public uint s_time;
             /// <summary>0x1A2, total number of free zones</summary>
-            public UInt32 s_tfree;
+            public uint s_tfree;
             /// <summary>0x1A6, total number of free inodes</summary>
-            public UInt16 s_tinode;
+            public ushort s_tinode;
             /// <summary>0x1A8, interleave factor</summary>
-            public UInt16 s_int_m;
+            public ushort s_int_m;
             /// <summary>0x1AA, interleave factor</summary>
-            public UInt16 s_int_n;
+            public ushort s_int_n;
             /// <summary>0x1AC, 6 bytes, volume name</summary>
             public string s_fname;
             /// <summary>0x1B2, 6 bytes, pack name</summary>
@@ -821,19 +820,19 @@ namespace DiscImageChef.Filesystems
         struct CoherentSuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
-            public UInt16 s_isize;
+            public ushort s_isize;
             /// <summary>0x002, total number of zones of this volume</summary>
-            public UInt32 s_fsize;
+            public uint s_fsize;
             // the start of the free block list:
             /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public UInt16 s_nfree;
+            public ushort s_nfree;
             /// <summary>0x008, 64 entries, first free block list chunk</summary>
-            public UInt32[] s_free;
+            public uint[] s_free;
             // the cache of free inodes:
             /// <summary>0x108, number of inodes in s_inode, &lt;= 100</summary>
-            public UInt16 s_ninode;
+            public ushort s_ninode;
             /// <summary>0x10A, 100 entries, some free inodes</summary>
-            public UInt16[] s_inode;
+            public ushort[] s_inode;
             /// <summary>0x1D2, free block list manipulation lock</summary>
             public byte s_flock;
             /// <summary>0x1D3, inode cache manipulation lock</summary>
@@ -843,21 +842,21 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1D5, read-only mounted flag</summary>
             public byte s_ronly;
             /// <summary>0x1D6, time of last superblock update</summary>
-            public UInt32 s_time;
+            public uint s_time;
             /// <summary>0x1DE, total number of free zones</summary>
-            public UInt32 s_tfree;
+            public uint s_tfree;
             /// <summary>0x1E2, total number of free inodes</summary>
-            public UInt16 s_tinode;
+            public ushort s_tinode;
             /// <summary>0x1E4, interleave factor</summary>
-            public UInt16 s_int_m;
+            public ushort s_int_m;
             /// <summary>0x1E6, interleave factor</summary>
-            public UInt16 s_int_n;
+            public ushort s_int_n;
             /// <summary>0x1E8, 6 bytes, volume name</summary>
             public string s_fname;
             /// <summary>0x1EE, 6 bytes, pack name</summary>
             public string s_fpack;
             /// <summary>0x1F4, zero-filled</summary>
-            public UInt32 s_unique;
+            public uint s_unique;
         }
 
         public override Errno Mount()

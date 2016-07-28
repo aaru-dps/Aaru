@@ -33,23 +33,21 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using DiscImageChef;
-
-// Information about structures learnt from Inside Macintosh
-// Constants from image testing
 using DiscImageChef.Console;
 
 
 namespace DiscImageChef.PartPlugins
 {
+    // Information about structures learnt from Inside Macintosh
+    // Constants from image testing
     class AppleMap : PartPlugin
     {
         // "ER"
-        const UInt16 APM_MAGIC = 0x4552;
+        const ushort APM_MAGIC = 0x4552;
         // "PM"
-        const UInt16 APM_ENTRY = 0x504D;
+        const ushort APM_ENTRY = 0x504D;
         // "TS", old entry magic
-        const UInt16 APM_OLDENT = 0x5453;
+        const ushort APM_OLDENT = 0x5453;
 
         public AppleMap()
         {
@@ -200,9 +198,9 @@ namespace DiscImageChef.PartPlugins
             return true;
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, ulong LBA)
         {
-            UInt64 LBA2k = LBA / 4;
+            ulong LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);
 
             byte[] buffer = imagePlugin.ReadSector(LBA2k);
@@ -249,63 +247,63 @@ namespace DiscImageChef.PartPlugins
         public struct AppleMapBootEntry
         {
             // Signature ("ER")
-            public UInt16 signature;
+            public ushort signature;
             // Byter per sector
-            public UInt16 sector_size;
+            public ushort sector_size;
             // Sectors of the disk
-            public UInt32 sectors;
+            public uint sectors;
             // Reserved
-            public UInt16 reserved1;
+            public ushort reserved1;
             // Reserved
-            public UInt16 reserved2;
+            public ushort reserved2;
             // Reserved
-            public UInt32 reserved3;
+            public uint reserved3;
             // Number of entries of the driver descriptor
-            public UInt16 driver_entries;
+            public ushort driver_entries;
             // First sector of the driver
-            public UInt32 first_driver_blk;
+            public uint first_driver_blk;
             // Size in 512bytes sectors of the driver
-            public UInt16 driver_size;
+            public ushort driver_size;
             // Operating system (MacOS = 1)
-            public UInt16 operating_system;
+            public ushort operating_system;
         }
 
         public struct AppleMapPartitionEntry
         {
             // Signature ("PM" or "TS")
-            public UInt16 signature;
+            public ushort signature;
             // Reserved
-            public UInt16 reserved1;
+            public ushort reserved1;
             // Number of entries on the partition map, each one sector
-            public UInt32 entries;
+            public uint entries;
             // First sector of the partition
-            public UInt32 start;
+            public uint start;
             // Number of sectos of the partition
-            public UInt32 sectors;
+            public uint sectors;
             // Partition name, 32 bytes, null-padded
             public string name;
             // Partition type. 32 bytes, null-padded
             public string type;
             // First sector of the data area
-            public UInt32 first_data_block;
+            public uint first_data_block;
             // Number of sectors of the data area
-            public UInt32 data_sectors;
+            public uint data_sectors;
             // Partition status
-            public UInt32 status;
+            public uint status;
             // First sector of the boot code
-            public UInt32 first_boot_block;
+            public uint first_boot_block;
             // Size in bytes of the boot code
-            public UInt32 boot_size;
+            public uint boot_size;
             // Load address of the boot code
-            public UInt32 load_address;
+            public uint load_address;
             // Reserved
-            public UInt32 reserved2;
+            public uint reserved2;
             // Entry point of the boot code
-            public UInt32 entry_point;
+            public uint entry_point;
             // Reserved
-            public UInt32 reserved3;
+            public uint reserved3;
             // Boot code checksum
-            public UInt32 checksum;
+            public uint checksum;
             // Processor type, 16 bytes, null-padded
             public string processor;
         }

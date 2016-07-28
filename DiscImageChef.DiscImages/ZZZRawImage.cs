@@ -281,27 +281,27 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageHasPartitions;
         }
 
-        public override UInt64 GetImageSize()
+        public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
 
-        public override UInt64 GetSectors()
+        public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
 
-        public override UInt32 GetSectorSize()
+        public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress)
+        public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(differentTrackZeroSize)
             {
@@ -310,10 +310,10 @@ namespace DiscImageChef.ImagePlugins
             else
             {
                 if(sectorAddress > ImageInfo.sectors - 1)
-                    throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+                    throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
                 if(sectorAddress + length > ImageInfo.sectors)
-                    throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+                    throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
                 byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
@@ -355,33 +355,33 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.mediaType;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress)
+        public override bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
-            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
-            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
@@ -421,7 +421,7 @@ namespace DiscImageChef.ImagePlugins
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(session.SessionSequence != 1)
-                    throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
@@ -443,12 +443,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(UInt16 session)
+        public override List<Track> GetSessionTracks(ushort session)
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(session != 1)
-                    throw new ArgumentOutOfRangeException("session", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
@@ -488,12 +488,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -501,12 +501,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
@@ -514,12 +514,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
 
                 return ReadSector(sectorAddress);
             }
@@ -527,12 +527,12 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
             {
                 if(track != 1)
-                    throw new ArgumentOutOfRangeException("track", "Only a single session is supported");
+                    throw new ArgumentOutOfRangeException(nameof(track), "Only a single session is supported");
 
                 return ReadSectors(sectorAddress, length);
             }
@@ -682,22 +682,22 @@ namespace DiscImageChef.ImagePlugins
 
         #region Unsupported features
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress)
+        public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -782,17 +782,17 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override List<CommonTypes.Partition> GetPartitions()
+        public override List<Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

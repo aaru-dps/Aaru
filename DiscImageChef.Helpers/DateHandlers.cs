@@ -49,17 +49,17 @@ namespace DiscImageChef
             return MacEpoch.AddTicks((long)(MacTimeStamp * 10000000));
         }
 
-        public static DateTime LisaToDateTime(UInt32 LisaTimeStamp)
+        public static DateTime LisaToDateTime(uint LisaTimeStamp)
         {
             return LisaEpoch.AddSeconds(LisaTimeStamp);
         }
 
-        public static DateTime UNIXToDateTime(Int32 UNIXTimeStamp)
+        public static DateTime UNIXToDateTime(int UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
-        public static DateTime UNIXUnsignedToDateTime(UInt32 UNIXTimeStamp)
+        public static DateTime UNIXUnsignedToDateTime(uint UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
@@ -75,49 +75,49 @@ namespace DiscImageChef
             fourcharvalue[2] = VDDateTime[2];
             fourcharvalue[3] = VDDateTime[3];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"", StringHandlers.CToString(fourcharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(fourcharvalue), out year))
+            if(!int.TryParse(StringHandlers.CToString(fourcharvalue), out year))
                 year = 0;
             //			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue));
 
             twocharvalue[0] = VDDateTime[4];
             twocharvalue[1] = VDDateTime[5];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out month))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out month))
                 month = 0;
             //			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
             twocharvalue[0] = VDDateTime[6];
             twocharvalue[1] = VDDateTime[7];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out day))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out day))
                 day = 0;
             //			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
             twocharvalue[0] = VDDateTime[8];
             twocharvalue[1] = VDDateTime[9];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hour))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out hour))
                 hour = 0;
             //			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
             twocharvalue[0] = VDDateTime[10];
             twocharvalue[1] = VDDateTime[11];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out minute))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out minute))
                 minute = 0;
             //			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
             twocharvalue[0] = VDDateTime[12];
             twocharvalue[1] = VDDateTime[13];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out second))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out second))
                 second = 0;
             //			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
             twocharvalue[0] = VDDateTime[14];
             twocharvalue[1] = VDDateTime[15];
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!Int32.TryParse(StringHandlers.CToString(twocharvalue), out hundredths))
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out hundredths))
                 hundredths = 0;
             //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
 
@@ -128,13 +128,13 @@ namespace DiscImageChef
         }
 
         // C# works in UTC, VMS on Julian Date, some displacement may occur on disks created outside UTC
-        public static DateTime VMSToDateTime(UInt64 vmsDate)
+        public static DateTime VMSToDateTime(ulong vmsDate)
         {
             double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
             return JulianEpoch.AddMilliseconds(delta);
         }
 
-        public static DateTime AmigaToDateTime(UInt32 days, UInt32 minutes, UInt32 ticks)
+        public static DateTime AmigaToDateTime(uint days, uint minutes, uint ticks)
         {
             DateTime temp = AmigaEpoch.AddDays(days);
             temp = temp.AddMinutes(minutes);

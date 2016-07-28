@@ -32,17 +32,16 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from Inside Macintosh
 namespace DiscImageChef.Filesystems
 {
+    // Information from Inside Macintosh
     class AppleMFS : Filesystem
     {
-        const UInt16 MFS_MAGIC = 0xD2D7;
+        const ushort MFS_MAGIC = 0xD2D7;
         // "LK"
-        const UInt16 MFSBB_MAGIC = 0x4C4B;
+        const ushort MFSBB_MAGIC = 0x4C4B;
 
         public AppleMFS()
         {
@@ -58,7 +57,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            UInt16 drSigWord;
+            ushort drSigWord;
 
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
@@ -227,31 +226,31 @@ namespace DiscImageChef.Filesystems
         struct MFS_MasterDirectoryBlock
         {
             /// <summary>0x000, Signature, 0xD2D7</summary>
-            public UInt16 drSigWord;
+            public ushort drSigWord;
             /// <summary>0x002, Volume creation date</summary>
-            public UInt32 drCrDate;
+            public uint drCrDate;
             /// <summary>0x006, Volume last backup date</summary>
-            public UInt32 drLsBkUp;
+            public uint drLsBkUp;
             /// <summary>0x00A, Volume attributes</summary>
-            public UInt16 drAtrb;
+            public ushort drAtrb;
             /// <summary>0x00C, Volume number of files</summary>
-            public UInt16 drNmFls;
+            public ushort drNmFls;
             /// <summary>0x00E, First directory block</summary>
-            public UInt16 drDirSt;
+            public ushort drDirSt;
             /// <summary>0x010, Length of directory in blocks</summary>
-            public UInt16 drBlLen;
+            public ushort drBlLen;
             /// <summary>0x012, Volume allocation blocks</summary>
-            public UInt16 drNmAlBlks;
+            public ushort drNmAlBlks;
             /// <summary>0x014, Size of allocation blocks</summary>
-            public UInt32 drAlBlkSiz;
+            public uint drAlBlkSiz;
             /// <summary>0x018, Number of bytes to allocate</summary>
-            public UInt32 drClpSiz;
+            public uint drClpSiz;
             /// <summary>0x01C, First allocation block in block map</summary>
-            public UInt16 drAlBlSt;
+            public ushort drAlBlSt;
             /// <summary>0x01E. Next unused file number</summary>
-            public UInt32 drNxtFNum;
+            public uint drNxtFNum;
             /// <summary>0x022, Number of unused allocation blocks</summary>
-            public UInt16 drFreeBks;
+            public ushort drFreeBks;
             /// <summary>0x024, Length of volume name</summary>
             public byte drVNSiz;
             /// <summary>0x025, Characters of volume name</summary>
@@ -264,9 +263,9 @@ namespace DiscImageChef.Filesystems
         struct MFS_BootBlock
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public UInt16 signature;
+            public ushort signature;
             /// <summary>0x002, Branch</summary>
-            public UInt32 branch;
+            public uint branch;
             /// <summary>0x006, Boot block flags</summary>
             public byte boot_flags;
             /// <summary>0x007, Boot block version</summary>
@@ -288,15 +287,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
             public string clipbrd_name;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public UInt16 max_files;
+            public ushort max_files;
             /// <summary>0x07C, Event queue size</summary>
-            public UInt16 queue_size;
+            public ushort queue_size;
             /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public UInt32 heap_128k;
+            public uint heap_128k;
             /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public UInt32 heap_256k;
+            public uint heap_256k;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public UInt32 heap_512k;
+            public uint heap_512k;
         }
 
         public override Errno Mount()

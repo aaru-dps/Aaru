@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices

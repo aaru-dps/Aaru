@@ -1,3 +1,17 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* VHD.cs:
+	* GDI.cs:
+	* Nero.cs:
+	* CDRDAO.cs:
+	* CDRWin.cs:
+	* Apple2MG.cs:
+	* TeleDisk.cs:
+	* ImageInfo.cs:
+	* DiskCopy42.cs:
+	* ImagePlugin.cs:
+	* ZZZRawImage.cs: Refactor and code cleanup.
+
 2016-02-03  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRWin.cs:

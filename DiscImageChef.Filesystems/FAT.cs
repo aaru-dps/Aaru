@@ -32,16 +32,13 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
-
-// TODO: Implement detecting DOS bootable disks
-// TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // TODO: Implement detecting DOS bootable disks
+    // TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
     class FAT : Filesystem
     {
         public FAT()
@@ -64,8 +61,8 @@ namespace DiscImageChef.Filesystems
             byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
             byte fats_no; // Must be 1 or 2. Dunno if it can be 0 in the wild, but it CANNOT BE bigger than 2
             byte[] fat32_signature = new byte[8]; // "FAT32   "
-            UInt32 first_fat_entry; // No matter FAT size we read 4 bytes for checking
-            UInt16 bps, rsectors;
+            uint first_fat_entry; // No matter FAT size we read 4 bytes for checking
+            ushort bps, rsectors;
 
             byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] fat_sector = imagePlugin.ReadSector(1 + partitionStart);
@@ -81,7 +78,7 @@ namespace DiscImageChef.Filesystems
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if(rsectors == 0)
                 rsectors = 1;
-            if(imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+            if(imagePlugin.GetSectors() > (rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
                 bpb_found = false;
@@ -182,10 +179,10 @@ namespace DiscImageChef.Filesystems
 
             byte[] dosString; // Space-padded
             bool isFAT32 = false;
-            UInt32 first_fat_entry;
+            uint first_fat_entry;
             byte media_descriptor, fats_no;
             string fat32_signature;
-            UInt16 bps, rsectors;
+            ushort bps, rsectors;
 
             byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
             byte[] fat_sector = imagePlugin.ReadSector(1 + partitionStart);
@@ -203,7 +200,7 @@ namespace DiscImageChef.Filesystems
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if(rsectors == 0)
                 rsectors = 1;
-            if(imagePlugin.GetSectors() > ((ulong)rsectors + partitionStart))
+            if(imagePlugin.GetSectors() > (rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
                 bpb_found = false;
@@ -326,7 +323,7 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Sector of backup FAT32 parameter block: {0}", FAT32PB.backup_sector).AppendLine();
                     sb.AppendFormat("Drive number: 0x{0:X2}", FAT32PB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", FAT32PB.serial_no).AppendLine();
-                    xmlFSType.VolumeSerial = String.Format("{0:X8}", FAT32PB.serial_no);
+                    xmlFSType.VolumeSerial = string.Format("{0:X8}", FAT32PB.serial_no);
                     if((FAT32PB.nt_flags & 0x01) == 0x01)
                     {
                         sb.AppendLine("Volume should be checked on next mount.");
@@ -344,7 +341,7 @@ namespace DiscImageChef.Filesystems
                 {
                     sb.AppendFormat("Drive number: 0x{0:X2}", EPB.drive_no).AppendLine();
                     sb.AppendFormat("Volume Serial Number: 0x{0:X8}", EPB.serial_no).AppendLine();
-                    xmlFSType.VolumeSerial = String.Format("{0:X8}", EPB.serial_no);
+                    xmlFSType.VolumeSerial = string.Format("{0:X8}", EPB.serial_no);
                     if(EPB.signature == 0x29)
                     {
                         if((EPB.nt_flags & 0x01) == 0x01)
@@ -379,29 +376,29 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x03, OEM Name, 8 bytes, space-padded</summary>
             public string OEMName;
             /// <summary>0x0B, Bytes per sector</summary>
-            public UInt16 bps;
+            public ushort bps;
             /// <summary>0x0D, Sectors per cluster</summary>
             public byte spc;
             /// <summary>0x0E, Reserved sectors between BPB and FAT</summary>
-            public UInt16 rsectors;
+            public ushort rsectors;
             /// <summary>0x10, Number of FATs</summary>
             public byte fats_no;
             /// <summary>0x11, Number of entries on root directory</summary>
-            public UInt16 root_ent;
+            public ushort root_ent;
             /// <summary>0x13, Sectors in volume</summary>
-            public UInt16 sectors;
+            public ushort sectors;
             /// <summary>0x15, Media descriptor</summary>
             public byte media;
             /// <summary>0x16, Sectors per FAT</summary>
-            public UInt16 spfat;
+            public ushort spfat;
             /// <summary>0x18, Sectors per track</summary>
-            public UInt16 sptrk;
+            public ushort sptrk;
             /// <summary>0x1A, Heads</summary>
-            public UInt16 heads;
+            public ushort heads;
             /// <summary>0x1C, Hidden sectors before BPB</summary>
-            public UInt32 hsectors;
+            public uint hsectors;
             /// <summary>0x20, Sectors in volume if > 65535</summary>
-            public UInt32 big_sectors;
+            public uint big_sectors;
         }
 
         /// <summary>
@@ -412,27 +409,27 @@ namespace DiscImageChef.Filesystems
         public struct AtariBootBlock
         {
             /// <summary>0x01C, Atari ST use 16 bit for hidden sectors, probably so did old DOS</summary>
-            public UInt16 hsectors;
+            public ushort hsectors;
             /// <summary>0x01E, indicates if COMMAND.PRG must be executed after OS load</summary>
-            public UInt16 xflag;
+            public ushort xflag;
             /// <summary>0x020, load mode for, or 0 if fname indicates boot file</summary>
-            public UInt16 ldmode;
+            public ushort ldmode;
             /// <summary>0x022, sector from which to boot</summary>
-            public UInt16 bsect;
+            public ushort bsect;
             /// <summary>0x024, how many sectors to boot</summary>
-            public UInt16 bsects_no;
+            public ushort bsects_no;
             /// <summary>0x026, RAM address where boot should be located</summary>
-            public UInt32 ldaddr;
+            public uint ldaddr;
             /// <summary>0x02A, RAM address to copy the FAT and root directory</summary>
-            public UInt32 fatbuf;
+            public uint fatbuf;
             /// <summary>0x02E, 11 bytes, name of boot file</summary>
             public string fname;
             /// <summary>0x039, unused</summary>
-            public UInt16 reserved;
+            public ushort reserved;
             /// <summary>0x03B, 451 bytes boot code</summary>
             public byte[] boot_code;
             /// <summary>0x1FE, the sum of all the BPB+ABB must be 0x1234, so this bigendian value works as adjustment</summary>
-            public UInt16 checksum;
+            public ushort checksum;
         }
 
         /// <summary>DOS Extended Parameter Block</summary>
@@ -445,7 +442,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x26, EPB signature, 0x28 or 0x29<summary>
             public byte signature;
             /// <summary>0x27, Volume serial number<summary>
-            public UInt32 serial_no;
+            public uint serial_no;
             /// <summary>0x2B, Volume label, 11 bytes, space-padded
             /// Present only if signature == 0x29<summary>
             public string volume_label;
@@ -458,17 +455,17 @@ namespace DiscImageChef.Filesystems
         public struct FAT32ParameterBlock
         {
             /// <summary>0x24, Sectors per FAT</summary>
-            public UInt32 spfat;
+            public uint spfat;
             /// <summary>0x28, FAT flags</summary>
-            public UInt16 fat_flags;
+            public ushort fat_flags;
             /// <summary>0x2A, FAT32 version</summary>
-            public UInt16 version;
+            public ushort version;
             /// <summary>0x2C, Cluster of root directory</summary>
-            public UInt32 root_cluster;
+            public uint root_cluster;
             /// <summary>0x30, Sector of FSINFO structure</summary>
-            public UInt16 fsinfo_sector;
+            public ushort fsinfo_sector;
             /// <summary>0x32, Sector of FAT32PB backup</summary>
-            public UInt16 backup_sector;
+            public ushort backup_sector;
             /// <summary>0x34, 12 reserved bytes</summary>
             public byte[] reserved;
             /// <summary>0x40, Drive number</summary>
@@ -478,7 +475,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x42, FAT32PB signature, should be 0x29</summary>
             public byte signature;
             /// <summary>0x43, Volume serial number</summary>
-            public UInt32 serial_no;
+            public uint serial_no;
             /// <summary>0x47, Volume label, 11 bytes, space-padded</summary>
             public string volume_label;
             /// <summary>0x52, Filesystem type, 8 bytes, space-padded, must be "FAT32   "</summary>

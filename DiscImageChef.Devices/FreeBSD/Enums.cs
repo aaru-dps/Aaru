@@ -35,7 +35,7 @@ using System;
 namespace DiscImageChef.Devices.FreeBSD
 {
     [Flags]
-    enum FileFlags : int
+    enum FileFlags
     {
         /// <summary>
         /// O_RDONLY

@@ -72,8 +72,8 @@ namespace DiscImageChef.Devices.FreeBSD
 
     struct cam_pinfo
     {
-        public UInt32 priority;
-        public UInt32 generation;
+        public uint priority;
+        public uint generation;
         public int index;
     }
 
@@ -107,7 +107,7 @@ namespace DiscImageChef.Devices.FreeBSD
 
     struct timeval
     {
-        public Int64 tv_sec;
+        public long tv_sec;
         /// <summary>long</summary>
         public IntPtr tv_usec;
     }
@@ -125,22 +125,22 @@ namespace DiscImageChef.Devices.FreeBSD
         public camq_entry xpt_links;
         public camq_entry sim_links;
         public camq_entry periph_links;
-        public UInt32 retry_count;
+        public uint retry_count;
         public IntPtr cbfcnp;
         public xpt_opcode func_code;
-        public UInt32 status;
+        public uint status;
         public IntPtr path;
         public uint path_id;
         public uint target_id;
-        public UInt64 target_lun;
-        public UInt32 flags;
-        public UInt32 xflags;
+        public ulong target_lun;
+        public uint flags;
+        public uint xflags;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public IntPtr[] periph_priv;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public IntPtr[] sim_priv;
         public ccb_qos_area qos;
-        public UInt32 timeout;
+        public uint timeout;
         public timeval softtimeout;
     }
 
@@ -164,7 +164,7 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Ptr to the data buf/SG list</summary>
         public IntPtr data_ptr;
         /// <summary>Data transfer length</summary>
-        public UInt32 dxfer_len;
+        public uint dxfer_len;
         /// <summary>Autosense storage</summary>
         public scsi_sense_data sense_data;
         /// <summary>Number of bytes to autosense</summary>
@@ -172,25 +172,25 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Number of bytes for the CDB</summary>
         public byte cdb_len;
         /// <summary>Number of SG list entries</summary>
-        public UInt16 sglist_cnt;
+        public short sglist_cnt;
         /// <summary>Returned SCSI status</summary>
         public byte scsi_status;
         /// <summary>Autosense resid length: 2's comp</summary>
         public sbyte sense_resid;
         /// <summary>Transfer residual length: 2's comp</summary>
-        public Int32 resid;
+        public int resid;
         /// <summary>Union for CDB bytes/pointer</summary>
         public IntPtr cdb_io;
         /// <summary>Pointer to the message buffer</summary>
         public IntPtr msg_ptr;
         /// <summary>Number of bytes for the Message</summary>
-        public UInt16 msg_len;
+        public short msg_len;
         /// <summary>What to do for tag queueing. The tag action should be either the define below (to send a non-tagged transaction) or one of the defined scsi tag messages from scsi_message.h.</summary>
         public byte tag_action;
         /// <summary>tag id from initator (target mode)</summary>
-        public UInt32 tag_id;
+        public uint tag_id;
         /// <summary>initiator id of who selected</summary>
-        public UInt32 init_id;
+        public uint init_id;
     }
 
     /// <summary>
@@ -208,15 +208,15 @@ namespace DiscImageChef.Devices.FreeBSD
         /// <summary>Ptr to the data buf/SG list</summary>
         public IntPtr data_ptr;
         /// <summary>Data transfer length</summary>
-        public UInt32 dxfer_len;
+        public uint dxfer_len;
         /// <summary>Transfer residual length: 2's comp</summary>
-        public Int32 resid;
+        public int resid;
         /// <summary>What to do for tag queueing. The tag action should be either the define below (to send a non-tagged transaction) or one of the defined scsi tag messages from scsi_message.h.</summary>
         public byte tag_action;
         /// <summary>tag id from initator (target mode)</summary>
-        public UInt32 tag_id;
+        public uint tag_id;
         /// <summary>initiator id of who selected</summary>
-        public UInt32 init_id;
+        public uint init_id;
     }
 }
 

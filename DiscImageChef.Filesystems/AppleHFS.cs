@@ -33,29 +33,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef;
-
-// Information from Inside Macintosh
-// https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // Information from Inside Macintosh
+    // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
     class AppleHFS : Filesystem
     {
         /// <summary>
         /// "BD", HFS magic
         /// </summary>
-        const UInt16 HFS_MAGIC = 0x4244;
+        const ushort HFS_MAGIC = 0x4244;
         /// <summary>
         /// "H+", HFS+ magic
         /// </summary>
-        const UInt16 HFSP_MAGIC = 0x482B;
+        const ushort HFSP_MAGIC = 0x482B;
         /// <summary>
         /// "LK", HFS bootblock magic
         /// </summary>
-        const UInt16 HFSBB_MAGIC = 0x4C4B;
+        const ushort HFSBB_MAGIC = 0x4C4B;
 
         public AppleHFS()
         {
@@ -75,7 +72,7 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             byte[] mdb_sector;
-            UInt16 drSigWord;
+            ushort drSigWord;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
@@ -128,7 +125,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bb_sector;
             byte[] mdb_sector;
-            UInt16 drSigWord;
+            ushort drSigWord;
 
             bool APMFromHDDOnCD = false;
 
@@ -395,14 +392,14 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "HFS";
             xmlFSType.VolumeName = MDB.drVN;
             if(MDB.drFndrInfo6 != 0 && MDB.drFndrInfo7 != 0)
-                xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
+                xmlFSType.VolumeSerial = string.Format("{0:X8}{1:x8}", MDB.drFndrInfo6, MDB.drFndrInfo7);
 
             return;
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, UInt64 LBA)
+        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, ulong LBA)
         {
-            UInt64 LBA2k = LBA / 4;
+            ulong LBA2k = LBA / 4;
             int Remainder = (int)(LBA % 4);
 
             byte[] buffer = imagePlugin.ReadSector(LBA2k);
@@ -419,86 +416,86 @@ namespace DiscImageChef.Filesystems
         struct HFS_MasterDirectoryBlock // Should be sector 2 in volume
         {
             /// <summary>0x000, Signature, 0x4244</summary>
-            public UInt16 drSigWord;
+            public ushort drSigWord;
             /// <summary>0x002, Volume creation date</summary>
-            public UInt32 drCrDate;
+            public uint drCrDate;
             /// <summary>0x006, Volume last modification date</summary>
-            public UInt32 drLsMod;
+            public uint drLsMod;
             /// <summary>0x00A, Volume attributes</summary>
-            public UInt16 drAtrb;
+            public ushort drAtrb;
             /// <summary>0x00C, Files in root directory</summary>
-            public UInt16 drNmFls;
+            public ushort drNmFls;
             /// <summary>0x00E, Start 512-byte sector of volume bitmap</summary>
-            public UInt16 drVBMSt;
+            public ushort drVBMSt;
             /// <summary>0x010, Allocation block to begin next allocation</summary>
-            public UInt16 drAllocPtr;
+            public ushort drAllocPtr;
             /// <summary>0x012, Allocation blocks</summary>
-            public UInt16 drNmAlBlks;
+            public ushort drNmAlBlks;
             /// <summary>0x014, Bytes per allocation block</summary>
-            public UInt32 drAlBlkSiz;
+            public uint drAlBlkSiz;
             /// <summary>0x018, Bytes to allocate when extending a file</summary>
-            public UInt32 drClpSiz;
+            public uint drClpSiz;
             /// <summary>0x01C, Start 512-byte sector of first allocation block</summary>
-            public UInt16 drAlBlSt;
+            public ushort drAlBlSt;
             /// <summary>0x01E, CNID for next file</summary>
-            public UInt32 drNxtCNID;
+            public uint drNxtCNID;
             /// <summary>0x022, Free allocation blocks</summary>
-            public UInt16 drFreeBks;
+            public ushort drFreeBks;
             /// <summary>0x024, Volume name (28 bytes)</summary>
             public string drVN;
             /// <summary>0x040, Volume last backup time</summary>
-            public UInt32 drVolBkUp;
+            public uint drVolBkUp;
             /// <summary>0x044, Volume backup sequence number</summary>
-            public UInt16 drVSeqNum;
+            public ushort drVSeqNum;
             /// <summary>0x046, Filesystem write count</summary>
-            public UInt32 drWrCnt;
+            public uint drWrCnt;
             /// <summary>0x04A, Bytes to allocate when extending the extents B-Tree</summary>
-            public UInt32 drXTClpSiz;
+            public uint drXTClpSiz;
             /// <summary>0x04E, Bytes to allocate when extending the catalog B-Tree</summary>
-            public UInt32 drCTClpSiz;
+            public uint drCTClpSiz;
             /// <summary>0x052, Number of directories in root directory</summary>
-            public UInt16 drNmRtDirs;
+            public ushort drNmRtDirs;
             /// <summary>0x054, Number of files in the volume</summary>
-            public UInt32 drFilCnt;
+            public uint drFilCnt;
             /// <summary>0x058, Number of directories in the volume</summary>
-            public UInt32 drDirCnt;
+            public uint drDirCnt;
             /// <summary>0x05C, finderInfo[0], CNID for bootable system's directory</summary>
-            public UInt32 drFndrInfo0;
+            public uint drFndrInfo0;
             /// <summary>0x060, finderInfo[1], CNID of the directory containing the boot application</summary>
-            public UInt32 drFndrInfo1;
+            public uint drFndrInfo1;
             /// <summary>0x064, finderInfo[2], CNID of the directory that should be opened on boot</summary>
-            public UInt32 drFndrInfo2;
+            public uint drFndrInfo2;
             /// <summary>0x068, finderInfo[3], CNID for Mac OS 8 or 9 directory</summary>
-            public UInt32 drFndrInfo3;
+            public uint drFndrInfo3;
             /// <summary>0x06C, finderInfo[4], Reserved</summary>
-            public UInt32 drFndrInfo4;
+            public uint drFndrInfo4;
             /// <summary>0x070, finderInfo[5], CNID for Mac OS X directory</summary>
-            public UInt32 drFndrInfo5;
+            public uint drFndrInfo5;
             /// <summary>0x074, finderInfo[6], first part of Mac OS X volume ID</summary>
-            public UInt32 drFndrInfo6;
+            public uint drFndrInfo6;
             /// <summary>0x078, finderInfo[7], second part of Mac OS X volume ID</summary>
-            public UInt32 drFndrInfo7;
+            public uint drFndrInfo7;
             // If wrapping HFS+
             /// <summary>0x07C, Embedded volume signature, "H+" if HFS+ is embedded ignore following two fields if not</summary>
-            public UInt16 drEmbedSigWord;
+            public ushort drEmbedSigWord;
             /// <summary>0x07E, Starting block number of embedded HFS+ volume</summary>
-            public UInt16 xdrStABNt;
+            public ushort xdrStABNt;
             /// <summary>0x080, Allocation blocks used by embedded volume</summary>
-            public UInt16 xdrNumABlks;
+            public ushort xdrNumABlks;
             // If not
             /// <summary>0x07C, Size in blocks of volume cache</summary>
-            public UInt16 drVCSize;
+            public ushort drVCSize;
             /// <summary>0x07E, Size in blocks of volume bitmap cache</summary>
-            public UInt16 drVBMCSize;
+            public ushort drVBMCSize;
             /// <summary>0x080, Size in blocks of volume common cache</summary>
-            public UInt16 drCtlCSize;
+            public ushort drCtlCSize;
             // End of variable variables :D
             /// <summary>0x082, Bytes in the extents B-Tree
             /// 3 HFS extents following, 32 bits each</summary>
-            public UInt32 drXTFlSize;
+            public uint drXTFlSize;
             /// <summary>0x092, Bytes in the catalog B-Tree
             /// 3 HFS extents following, 32 bits each</summary>
-            public UInt32 drCTFlSize;
+            public uint drCTFlSize;
         }
 
         /// <summary>
@@ -507,15 +504,15 @@ namespace DiscImageChef.Filesystems
         struct HFS_BootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public UInt16 signature;
+            public ushort signature;
             /// <summary>0x002, Branch</summary>
-            public UInt32 branch;
+            public uint branch;
             /// <summary>0x006, Boot block flags</summary>
             public byte boot_flags;
             /// <summary>0x007, Boot block version</summary>
             public byte boot_version;
             /// <summary>0x008, Allocate secondary buffers</summary>
-            public Int16 sec_sv_pages;
+            public short sec_sv_pages;
             /// <summary>0x00A, System file name (16 bytes)</summary>
             public string system_name;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
@@ -531,15 +528,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
             public string clipbrd_name;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public UInt16 max_files;
+            public ushort max_files;
             /// <summary>0x07C, Event queue size</summary>
-            public UInt16 queue_size;
+            public ushort queue_size;
             /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public UInt32 heap_128k;
+            public uint heap_128k;
             /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public UInt32 heap_256k;
+            public uint heap_256k;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public UInt32 heap_512k;
+            public uint heap_512k;
         }
 
         public override Errno Mount()

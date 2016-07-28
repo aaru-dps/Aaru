@@ -49,71 +49,71 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x00, magic
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Offset 0x04, disk image creator ID
             /// </summary>
-            public UInt32 creator;
+            public uint creator;
             /// <summary>
             /// Offset 0x08, header size, constant 0x0040
             /// </summary>
-            public UInt16 headerSize;
+            public ushort headerSize;
             /// <summary>
             /// Offset 0x0A, disk image version
             /// </summary>
-            public UInt16 version;
+            public ushort version;
             /// <summary>
             /// Offset 0x0C, disk image format
             /// </summary>
-            public UInt32 imageFormat;
+            public uint imageFormat;
             /// <summary>
             /// Offset 0x10, flags and volume number
             /// </summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>
             /// Offset 0x14, blocks for ProDOS, 0 otherwise
             /// </summary>
-            public UInt32 blocks;
+            public uint blocks;
             /// <summary>
             /// Offset 0x18, offset to data
             /// </summary>
-            public UInt32 dataOffset;
+            public uint dataOffset;
             /// <summary>
             /// Offset 0x1C, data size in bytes
             /// </summary>
-            public UInt32 dataSize;
+            public uint dataSize;
             /// <summary>
             /// Offset 0x20, offset to optional comment
             /// </summary>
-            public UInt32 commentOffset;
+            public uint commentOffset;
             /// <summary>
             /// Offset 0x24, length of optional comment
             /// </summary>
-            public UInt32 commentSize;
+            public uint commentSize;
             /// <summary>
             /// Offset 0x28, offset to creator specific chunk
             /// </summary>
-            public UInt32 creatorSpecificOffset;
+            public uint creatorSpecificOffset;
             /// <summary>
             /// Offset 0x2C, creator specific chunk size
             /// </summary>
-            public UInt32 creatorSpecificSize;
+            public uint creatorSpecificSize;
             /// <summary>
             /// Offset 0x30, reserved, should be zero
             /// </summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>
             /// Offset 0x34, reserved, should be zero
             /// </summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>
             /// Offset 0x38, reserved, should be zero
             /// </summary>
-            public UInt32 reserved3;
+            public uint reserved3;
             /// <summary>
             /// Offset 0x3C, reserved, should be zero
             /// </summary>
-            public UInt32 reserved4;
+            public uint reserved4;
         }
 
         #endregion
@@ -123,39 +123,39 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Magic number, "2IMG"
         /// </summary>
-        public const UInt32 MAGIC = 0x474D4932;
+        public const uint MAGIC = 0x474D4932;
         /// <summary>
         /// Disk image created by ASIMOV2, "!nfc"
         /// </summary>
-        public const UInt32 CreatorAsimov = 0x63666E21;
+        public const uint CreatorAsimov = 0x63666E21;
         /// <summary>
         /// Disk image created by Bernie ][ the Rescue, "B2TR"
         /// </summary>
-        public const UInt32 CreatorBernie = 0x52543242;
+        public const uint CreatorBernie = 0x52543242;
         /// <summary>
         /// Disk image created by Catakig, "CTKG"
         /// </summary>
-        public const UInt32 CreatorCatakig = 0x474B5443;
+        public const uint CreatorCatakig = 0x474B5443;
         /// <summary>
         /// Disk image created by Sheppy's ImageMaker, "ShIm"
         /// </summary>
-        public const UInt32 CreatorSheppy = 0x6D496853;
+        public const uint CreatorSheppy = 0x6D496853;
         /// <summary>
         /// Disk image created by Sweet16, "WOOF"
         /// </summary>
-        public const UInt32 CreatorSweet = 0x464F4F57;
+        public const uint CreatorSweet = 0x464F4F57;
         /// <summary>
         /// Disk image created by XGS, "XGS!"
         /// </summary>
-        public const UInt32 CreatorXGS = 0x21534758;
+        public const uint CreatorXGS = 0x21534758;
 
-        public const UInt32 DOSSectorOrder = 0x00000000;
-        public const UInt32 ProDOSSectorOrder = 0x00000001;
-        public const UInt32 NIBSectorOrder = 0x00000002;
+        public const uint DOSSectorOrder = 0x00000000;
+        public const uint ProDOSSectorOrder = 0x00000001;
+        public const uint NIBSectorOrder = 0x00000002;
 
-        public const UInt32 LockedDisk = 0x80000000;
-        public const UInt32 ValidVolumeNumber = 0x00000100;
-        public const UInt32 VolumeNumberMask = 0x000000FF;
+        public const uint LockedDisk = 0x80000000;
+        public const uint ValidVolumeNumber = 0x00000100;
+        public const uint VolumeNumberMask = 0x000000FF;
 
         #endregion
 
@@ -203,34 +203,34 @@ namespace DiscImageChef.ImagePlugins
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
-            UInt32 magic = BitConverter.ToUInt32(header, 0x00);
+            uint magic = BitConverter.ToUInt32(header, 0x00);
             if(magic != MAGIC)
                 return false;
 
-            UInt32 dataoff = BitConverter.ToUInt32(header, 0x18);
+            uint dataoff = BitConverter.ToUInt32(header, 0x18);
             if(dataoff > stream.Length)
                 return false;
 
-            UInt32 datasize = BitConverter.ToUInt32(header, 0x1C);
+            uint datasize = BitConverter.ToUInt32(header, 0x1C);
             // There seems to be incorrect endian in some images on the wild
             if(datasize == 0x00800C00)
                 datasize = 0x000C8000;
             if(dataoff + datasize > stream.Length)
                 return false;
 
-            UInt32 commentoff = BitConverter.ToUInt32(header, 0x20);
+            uint commentoff = BitConverter.ToUInt32(header, 0x20);
             if(commentoff > stream.Length)
                 return false;
 
-            UInt32 commentsize = BitConverter.ToUInt32(header, 0x24);
+            uint commentsize = BitConverter.ToUInt32(header, 0x24);
             if(commentoff + commentsize > stream.Length)
                 return false;
 
-            UInt32 creatoroff = BitConverter.ToUInt32(header, 0x28);
+            uint creatoroff = BitConverter.ToUInt32(header, 0x28);
             if(creatoroff > stream.Length)
                 return false;
 
-            UInt32 creatorsize = BitConverter.ToUInt32(header, 0x2C);
+            uint creatorsize = BitConverter.ToUInt32(header, 0x2C);
             return creatoroff + creatorsize <= stream.Length;
         }
 
@@ -331,7 +331,7 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.imageApplication = "XGS";
                     break;
                 default:
-                    ImageInfo.imageApplication = String.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
+                    ImageInfo.imageApplication = string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));
                     break;
             }
 
@@ -454,10 +454,10 @@ namespace DiscImageChef.ImagePlugins
         public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
@@ -579,7 +579,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override List<CommonTypes.Partition> GetPartitions()
+        public override List<Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

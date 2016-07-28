@@ -42,230 +42,230 @@ namespace DiscImageChef.PartPlugins
         /// <summary>
         /// RDB magic number "RDSK"
         /// </summary>
-        const UInt32 RigidDiskBlockMagic = 0x5244534B;
+        const uint RigidDiskBlockMagic = 0x5244534B;
         /// <summary>
         /// Bad block list magic number "BADB"
         /// </summary>
-        const UInt32 BadBlockListMagic = 0x42414442;
+        const uint BadBlockListMagic = 0x42414442;
         /// <summary>
         /// Partition entry magic number "PART"
         /// </summary>
-        const UInt32 PartitionBlockMagic = 0x50415254;
+        const uint PartitionBlockMagic = 0x50415254;
         /// <summary>
         /// Filesystem header magic number "FSHD"
         /// </summary>
-        const UInt32 FilesystemHeaderMagic = 0x46534844;
+        const uint FilesystemHeaderMagic = 0x46534844;
         /// <summary>
         /// LoadSeg block magic number "LSEG"
         /// </summary>
-        const UInt32 LoadSegMagic = 0x4C534547;
+        const uint LoadSegMagic = 0x4C534547;
 
         /// <summary>
         /// Type ID for Amiga Original File System, "DOS\0"
         /// </summary>
-        const UInt32 TypeIDOFS = 0x444F5300;
+        const uint TypeIDOFS = 0x444F5300;
         /// <summary>
         /// Type ID for Amiga Fast File System, "DOS\1"
         /// </summary>
-        const UInt32 TypeIDFFS = 0x444F5301;
+        const uint TypeIDFFS = 0x444F5301;
         /// <summary>
         /// Type ID for Amiga Original File System with international characters, "DOS\2"
         /// </summary>
-        const UInt32 TypeIDOFSi = 0x444F5302;
+        const uint TypeIDOFSi = 0x444F5302;
         /// <summary>
         /// Type ID for Amiga Fast File System with international characters, "DOS\3"
         /// </summary>
-        const UInt32 TypeIDFFSi = 0x444F5303;
+        const uint TypeIDFFSi = 0x444F5303;
         /// <summary>
         /// Type ID for Amiga Original File System with directory cache, "DOS\4"
         /// </summary>
-        const UInt32 TypeIDOFSc = 0x444F5304;
+        const uint TypeIDOFSc = 0x444F5304;
         /// <summary>
         /// Type ID for Amiga Fast File System with directory cache, "DOS\5"
         /// </summary>
-        const UInt32 TypeIDFFSc = 0x444F5305;
+        const uint TypeIDFFSc = 0x444F5305;
         /// <summary>
         /// Type ID for Amiga Original File System with long filenames, "DOS\6"
         /// </summary>
-        const UInt32 TypeIDOFS2 = 0x444F5306;
+        const uint TypeIDOFS2 = 0x444F5306;
         /// <summary>
         /// Type ID for Amiga Fast File System with long filenames, "DOS\7"
         /// </summary>
-        const UInt32 TypeIDFFS2 = 0x444F5307;
+        const uint TypeIDFFS2 = 0x444F5307;
         /// <summary>
         /// Type ID for Amiga UNIX System V filesystem
         /// </summary>
-        const UInt32 TypeIDAMIXSysV = 0x554E4900;
+        const uint TypeIDAMIXSysV = 0x554E4900;
         /// <summary>
         /// Type ID for Amiga UNIX boot filesystem
         /// </summary>
-        const UInt32 TypeIDAMIXBoot = 0x554E4901;
+        const uint TypeIDAMIXBoot = 0x554E4901;
         /// <summary>
         /// Type ID for Amiga UNIX BSD filesystem
         /// </summary>
-        const UInt32 TypeIDAMIXFFS = 0x554E4902;
+        const uint TypeIDAMIXFFS = 0x554E4902;
         /// <summary>
         /// Type ID for Amiga UNIX Reserved partition (swap)
         /// </summary>
-        const UInt32 TypeIDAMIXReserved = 0x72657376;
+        const uint TypeIDAMIXReserved = 0x72657376;
         /// <summary>
         /// Type ID for ProfessionalFileSystem, "PFS\1"
         /// </summary>
-        const UInt32 TypeIDPFS = 0x50465301;
+        const uint TypeIDPFS = 0x50465301;
         /// <summary>
         /// Type ID for ProfessionalFileSystem, "muAF"
         /// </summary>
-        const UInt32 TypeIDPFSm = 0x6D754146;
+        const uint TypeIDPFSm = 0x6D754146;
         /// <summary>
         /// Type ID for ProfessionalFileSystem, "AFS\1"
         /// </summary>
-        const UInt32 TypeIDAFS = 0x41465301;
+        const uint TypeIDAFS = 0x41465301;
         /// <summary>
         /// Type ID for SmartFileSystem v1, "SFS\0"
         /// </summary>
-        const UInt32 TypeIDSFS = 0x53465300;
+        const uint TypeIDSFS = 0x53465300;
         /// <summary>
         /// Type ID for SmartFileSystem v2, "SFS\2"
         /// </summary>
-        const UInt32 TypeIDSFS2 = 0x53465302;
+        const uint TypeIDSFS2 = 0x53465302;
         /// <summary>
         /// Type ID for JXFS, "JXF\4"
         /// </summary>
-        const UInt32 TypeIDJXFS = 0x4A584604;
+        const uint TypeIDJXFS = 0x4A584604;
         /// <summary>
         /// Type ID for FAT, as set by CrossDOS, "MSD\0"
         /// </summary>
-        const UInt32 TypeIDCrossDOS = 0x4D534400;
+        const uint TypeIDCrossDOS = 0x4D534400;
         /// <summary>
         /// Type ID for HFS, as set by CrossMac, "MAC\0"
         /// </summary>
-        const UInt32 TypeIDCrossMac = 0x4D414300;
+        const uint TypeIDCrossMac = 0x4D414300;
         /// <summary>
         /// Type ID for 4.2UFS, for BFFS, "BFFS"
         /// </summary>
-        const UInt32 TypeIDBFFS = 0x42464653;
+        const uint TypeIDBFFS = 0x42464653;
         /// <summary>
         /// Type ID for Amiga Original File System with multi-user patches, "muF\0"
         /// </summary>
-        const UInt32 TypeIDmuOFS = 0x6D754600;
+        const uint TypeIDmuOFS = 0x6D754600;
         /// <summary>
         /// Type ID for Amiga Fast File System with multi-user patches, "muF\1"
         /// </summary>
-        const UInt32 TypeIDmuFFS = 0x6D754601;
+        const uint TypeIDmuFFS = 0x6D754601;
         /// <summary>
         /// Type ID for Amiga Original File System with international characters and multi-user patches, "muF\2"
         /// </summary>
-        const UInt32 TypeIDmuOFSi = 0x6D754602;
+        const uint TypeIDmuOFSi = 0x6D754602;
         /// <summary>
         /// Type ID for Amiga Fast File System with international characters and multi-user patches, "muF\3"
         /// </summary>
-        const UInt32 TypeIDmuFFSi = 0x6D754603;
+        const uint TypeIDmuFFSi = 0x6D754603;
         /// <summary>
         /// Type ID for Amiga Original File System with directory cache and multi-user patches, "muF\4"
         /// </summary>
-        const UInt32 TypeIDmuOFSc = 0x6D754604;
+        const uint TypeIDmuOFSc = 0x6D754604;
         /// <summary>
         /// Type ID for Amiga Fast File System with directory cache and multi-user patches, "muF\5"
         /// </summary>
-        const UInt32 TypeIDmuFFSc = 0x6D754605;
+        const uint TypeIDmuFFSc = 0x6D754605;
         /// <summary>
         /// Type ID for BSD unused, "BSD\0"
         /// </summary>
-        const UInt32 TypeIDOldBSDUnused = 0x42534400;
+        const uint TypeIDOldBSDUnused = 0x42534400;
         /// <summary>
         /// Type ID for BSD swap, "BSD\1"
         /// </summary>
-        const UInt32 TypeIDOldBSDSwap = 0x42534401;
+        const uint TypeIDOldBSDSwap = 0x42534401;
         /// <summary>
         /// Type ID for BSD 4.2 FFS, "BSD\7"
         /// </summary>
-        const UInt32 TypeIDOldBSD42FFS = 0x42534407;
+        const uint TypeIDOldBSD42FFS = 0x42534407;
         /// <summary>
         /// Type ID for BSD 4.4 LFS, "BSD\9"
         /// </summary>
-        const UInt32 TypeIDOldBSD44LFS = 0x42534409;
+        const uint TypeIDOldBSD44LFS = 0x42534409;
         /// <summary>
         /// Type ID for NetBSD unused root partition, "NBR\0"
         /// </summary>
-        const UInt32 TypeIDNetBSDRootUnused = 0x4E425200;
+        const uint TypeIDNetBSDRootUnused = 0x4E425200;
         /// <summary>
         /// Type ID for NetBSD 4.2 FFS root partition, "NBR\7"
         /// </summary>
-        const UInt32 TypeIDNetBSDRoot42FFS = 0x4E425207;
+        const uint TypeIDNetBSDRoot42FFS = 0x4E425207;
         /// <summary>
         /// Type ID for NetBSD 4.4 LFS root partition, "NBR\9"
         /// </summary>
-        const UInt32 TypeIDNetBSDRoot44LFS = 0x4E425209;
+        const uint TypeIDNetBSDRoot44LFS = 0x4E425209;
         /// <summary>
         /// Type ID for NetBSD unused user partition, "NBR\0"
         /// </summary>
-        const UInt32 TypeIDNetBSDUserUnused = 0x4E425500;
+        const uint TypeIDNetBSDUserUnused = 0x4E425500;
         /// <summary>
         /// Type ID for NetBSD 4.2 FFS user partition, "NBR\7"
         /// </summary>
-        const UInt32 TypeIDNetBSDUser42FFS = 0x4E425507;
+        const uint TypeIDNetBSDUser42FFS = 0x4E425507;
         /// <summary>
         /// Type ID for NetBSD 4.4 LFS user partition, "NBR\9"
         /// </summary>
-        const UInt32 TypeIDNetBSDUser44LFS = 0x4E425509;
+        const uint TypeIDNetBSDUser44LFS = 0x4E425509;
         /// <summary>
         /// Type ID for NetBSD swap partition
         /// </summary>
-        const UInt32 TypeIDNetBSDSwap = 0x4E425300;
+        const uint TypeIDNetBSDSwap = 0x4E425300;
         /// <summary>
         /// Type ID for Linux filesystem partition, "LNX\0"
         /// </summary>
-        const UInt32 TypeIDLinux = 0x4C4E5800;
+        const uint TypeIDLinux = 0x4C4E5800;
         /// <summary>
         /// Type ID for Linux swap partition, "SWP\0"
         /// </summary>
-        const UInt32 TypeIDLinuxSwap = 0x53575000;
+        const uint TypeIDLinuxSwap = 0x53575000;
         /// <summary>
         /// Type ID for RaidFrame partition, "RAID"
         /// </summary>
-        const UInt32 TypeIDRaidFrame = 0x52414944;
+        const uint TypeIDRaidFrame = 0x52414944;
         /// <summary>
         /// Type ID for RaidFrame partition, "RAI\0"
         /// </summary>
-        const UInt32 TypeIDRaidFrame0 = 0x52414900;
+        const uint TypeIDRaidFrame0 = 0x52414900;
 
         /// <summary>
         /// No disks to be configured after this one
         /// </summary>
-        const UInt32 FlagsNoDisks = 0x00000001;
+        const uint FlagsNoDisks = 0x00000001;
         /// <summary>
         /// No LUNs to be configured after this one
         /// </summary>
-        const UInt32 FlagsNoLUNs = 0x00000002;
+        const uint FlagsNoLUNs = 0x00000002;
         /// <summary>
         /// No target IDs to be configured after this one
         /// </summary>
-        const UInt32 FlagsNoTargets = 0x00000004;
+        const uint FlagsNoTargets = 0x00000004;
         /// <summary>
         /// Don't try to perform reselection with this drive
         /// </summary>
-        const UInt32 FlagsNoReselection = 0x00000008;
+        const uint FlagsNoReselection = 0x00000008;
         /// <summary>
         /// Disk identification is valid
         /// </summary>
-        const UInt32 FlagsValidDiskID = 0x00000010;
+        const uint FlagsValidDiskID = 0x00000010;
         /// <summary>
         /// Controller identification is valid
         /// </summary>
-        const UInt32 FlagsValidControllerID = 0x00000020;
+        const uint FlagsValidControllerID = 0x00000020;
         /// <summary>
         ///  Drive supports synchronous SCSI mode
         /// </summary>
-        const UInt32 FlagsSynchSCSI = 0x00000040;
+        const uint FlagsSynchSCSI = 0x00000040;
 
         /// <summary>
         /// Partition is bootable
         /// </summary>
-        const UInt32 FlagsBootable = 0x00000001;
+        const uint FlagsBootable = 0x00000001;
         /// <summary>
         /// Partition should not be mounted automatically
         /// </summary>
-        const UInt32 FlagsNoAutomount = 0x00000002;
+        const uint FlagsNoAutomount = 0x00000002;
 
         public AmigaRigidDiskBlock()
         {
@@ -282,163 +282,163 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// "RDSK"
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Size in longs
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Checksum
             /// </summary>
-            public Int32 checksum;
+            public int checksum;
             /// <summary>
             /// SCSI target ID, 7 for non-SCSI
             /// </summary>
-            public UInt32 targetID;
+            public uint targetID;
             /// <summary>
             /// Block size in bytes
             /// </summary>
-            public UInt32 block_size;
+            public uint block_size;
             /// <summary>
             /// Flags
             /// </summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>
             /// Pointer to first BadBlockList, 0xFFFFFFFF means last block in device
             /// </summary>
-            public UInt32 badblock_ptr;
+            public uint badblock_ptr;
             /// <summary>
             /// Pointer to first PartitionEntry, 0xFFFFFFFF means last block in device
             /// </summary>
-            public UInt32 partition_ptr;
+            public uint partition_ptr;
             /// <summary>
             /// Pointer to first FileSystemHeader, 0xFFFFFFFF means last block in device
             /// </summary>
-            public UInt32 fsheader_ptr;
+            public uint fsheader_ptr;
             /// <summary>
             /// Optional drive specific init code
             /// </summary>
-            public UInt32 driveinitcode;
+            public uint driveinitcode;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved3;
+            public uint reserved3;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved4;
+            public uint reserved4;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved5;
+            public uint reserved5;
             /// <summary>
             /// Reserved, should be 0xFFFFFFFF
             /// </summary>
-            public UInt32 reserved6;
+            public uint reserved6;
             /// <summary>
             /// Cylinders in drive
             /// </summary>
-            public UInt32 cylinders;
+            public uint cylinders;
             /// <summary>
             /// Sectors per track
             /// </summary>
-            public UInt32 spt;
+            public uint spt;
             /// <summary>
             /// Heads in drive
             /// </summary>
-            public UInt32 heads;
+            public uint heads;
             /// <summary>
             /// Drive interleave
             /// </summary>
-            public UInt32 interleave;
+            public uint interleave;
             /// <summary>
             /// Cylinder for parking heads
             /// </summary>
-            public UInt32 parking;
+            public uint parking;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved7;
+            public uint reserved7;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved8;
+            public uint reserved8;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved9;
+            public uint reserved9;
             /// <summary>
             /// Starting cylinder for write precompensation
             /// </summary>
-            public UInt32 writeprecomp;
+            public uint writeprecomp;
             /// <summary>
             /// Starting cylinder for reduced write current
             /// </summary>
-            public UInt32 reducedwrite;
+            public uint reducedwrite;
             /// <summary>
             /// Drive step rate
             /// </summary>
-            public UInt32 steprate;
+            public uint steprate;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved10;
+            public uint reserved10;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved11;
+            public uint reserved11;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved12;
+            public uint reserved12;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved13;
+            public uint reserved13;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved14;
+            public uint reserved14;
             /// <summary>
             /// Low block of RDB reserved blocks
             /// </summary>
-            public UInt32 RDBBlockLow;
+            public uint RDBBlockLow;
             /// <summary>
             /// High block of RDB reserved blocks
             /// </summary>
-            public UInt32 RDBBlockHigh;
+            public uint RDBBlockHigh;
             /// <summary>
             /// Low cylinder for partitionable area
             /// </summary>
-            public UInt32 LowCylinder;
+            public uint LowCylinder;
             /// <summary>
             /// High cylinder for partitionable area
             /// </summary>
-            public UInt32 HighCylinder;
+            public uint HighCylinder;
             /// <summary>
             /// Blocks per cylinder
             /// </summary>
-            public UInt32 CylBlocks;
+            public uint CylBlocks;
             /// <summary>
             /// Seconds for head autoparking
             /// </summary>
-            public UInt32 AutoParkSeconds;
+            public uint AutoParkSeconds;
             /// <summary>
             /// Highest block used by RDB
             /// </summary>
-            public UInt32 HighRDSKBlock;
+            public uint HighRDSKBlock;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved15;
+            public uint reserved15;
             /// <summary>
             /// Disk vendor, 8 bytes
             /// </summary>
@@ -466,43 +466,43 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved16;
+            public uint reserved16;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved17;
+            public uint reserved17;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved18;
+            public uint reserved18;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved19;
+            public uint reserved19;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved20;
+            public uint reserved20;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved21;
+            public uint reserved21;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved22;
+            public uint reserved22;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved23;
+            public uint reserved23;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved24;
+            public uint reserved24;
             /// <summary>
             /// Reserved, should be zero
             /// </summary>
-            public UInt32 reserved25;
+            public uint reserved25;
         }
 
         /// <summary>
@@ -513,11 +513,11 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Bad block pointer
             /// </summary>
-            public UInt32 badBlock;
+            public uint badBlock;
             /// <summary>
             /// Replacement block pointer
             /// </summary>
-            public UInt32 goodBlock;
+            public uint goodBlock;
         }
 
         /// <summary>
@@ -528,27 +528,27 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// "BADB"
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Size in longs
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Checksum
             /// </summary>
-            public Int32 checksum;
+            public int checksum;
             /// <summary>
             /// SCSI target ID, 7 for non-SCSI
             /// </summary>
-            public UInt32 targetID;
+            public uint targetID;
             /// <summary>
             /// Pointer for next BadBlockList
             /// </summary>
-            public UInt32 next_ptr;
+            public uint next_ptr;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved;
+            public uint reserved;
             /// <summary>
             /// Bad block entries, up to block filling, 8 bytes each
             /// </summary>
@@ -563,83 +563,83 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Size in longs, should be 16, minimum 11
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Block size in longs
             /// </summary>
-            public UInt32 block_size;
+            public uint block_size;
             /// <summary>
             /// Unknown, 0
             /// </summary>
-            public UInt32 sec_org;
+            public uint sec_org;
             /// <summary>
             /// Heads in drive
             /// </summary>
-            public UInt32 surfaces;
+            public uint surfaces;
             /// <summary>
             /// Sectors per block
             /// </summary>
-            public UInt32 spb;
+            public uint spb;
             /// <summary>
             /// Blocks per track
             /// </summary>
-            public UInt32 bpt;
+            public uint bpt;
             /// <summary>
             /// DOS reserved blocks at start of partition
             /// </summary>
-            public UInt32 reservedblocks;
+            public uint reservedblocks;
             /// <summary>
             /// DOS reserved blocks at end of partition
             /// </summary>
-            public UInt32 prealloc;
+            public uint prealloc;
             /// <summary>
             /// Interleave
             /// </summary>
-            public UInt32 interleave;
+            public uint interleave;
             /// <summary>
             /// First cylinder of a partition, inclusive
             /// </summary>
-            public UInt32 lowCylinder;
+            public uint lowCylinder;
             /// <summary>
             /// Last cylinder of a partition, inclusive
             /// </summary>
-            public UInt32 highCylinder;
+            public uint highCylinder;
             /// <summary>
             /// Buffers, usually 30
             /// </summary>
-            public UInt32 numBuffer;
+            public uint numBuffer;
             /// <summary>
             /// Type of memory to allocate for buffers
             /// </summary>
-            public UInt32 bufMemType;
+            public uint bufMemType;
             /// <summary>
             /// Maximum transfer, usually 0x7FFFFFFF
             /// </summary>
-            public UInt32 maxTransfer;
+            public uint maxTransfer;
             /// <summary>
             /// Address mask to block out certain memory, usually 0xFFFFFFFE
             /// </summary>
-            public UInt32 Mask;
+            public uint Mask;
             /// <summary>
             /// Boot priority
             /// </summary>
-            public UInt32 bootPriority;
+            public uint bootPriority;
             /// <summary>
             /// Partition type, and filesystem driver identification for AmigaDOS
             /// </summary>
-            public UInt32 dosType;
+            public uint dosType;
             /// <summary>
             /// Default baud rate for SER and AUX handlers
             /// </summary>
-            public UInt32 baud;
+            public uint baud;
             /// <summary>
             /// Flow control values for SER and AUX handlers
             /// </summary>
-            public UInt32 control;
+            public uint control;
             /// <summary>
             /// Since Kickstart 2, how many boot blocks are to be loaded
             /// </summary>
-            public UInt32 bootBlocks;
+            public uint bootBlocks;
         }
 
         struct PartitionEntry
@@ -647,43 +647,43 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// "PART"
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Size in longs
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Checksum
             /// </summary>
-            public Int32 checksum;
+            public int checksum;
             /// <summary>
             /// SCSI target ID, 7 for non-SCSI
             /// </summary>
-            public UInt32 targetID;
+            public uint targetID;
             /// <summary>
             /// Pointer to next PartitionEntry
             /// </summary>
-            public UInt32 next_ptr;
+            public uint next_ptr;
             /// <summary>
             /// Partition flags
             /// </summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>
             /// Preferred flags for OpenDevice()
             /// </summary>
-            public UInt32 devFlags;
+            public uint devFlags;
             /// <summary>
             /// Length of drive name
             /// </summary>
-            public UInt32 driveNameLen;
+            public uint driveNameLen;
             /// <summary>
             /// Drive name, 31 bytes
             /// </summary>
@@ -691,63 +691,63 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved3;
+            public uint reserved3;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved4;
+            public uint reserved4;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved5;
+            public uint reserved5;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved6;
+            public uint reserved6;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved7;
+            public uint reserved7;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved8;
+            public uint reserved8;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved9;
+            public uint reserved9;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved10;
+            public uint reserved10;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved11;
+            public uint reserved11;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved12;
+            public uint reserved12;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved13;
+            public uint reserved13;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved14;
+            public uint reserved14;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved15;
+            public uint reserved15;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved16;
+            public uint reserved16;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved17;
+            public uint reserved17;
             /// <summary>
             /// DOSEnvVec, more information about partition
             /// </summary>
@@ -762,39 +762,39 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Device node type, =0
             /// </summary>
-            public UInt32 type;
+            public uint type;
             /// <summary>
             /// DOS task field, =0
             /// </summary>
-            public UInt32 task;
+            public uint task;
             /// <summary>
             /// Unused, =0
             /// </summary>
-            public UInt32 locked;
+            public uint locked;
             /// <summary>
             /// Filename handler to LoadSegment, =0
             /// </summary>
-            public UInt32 handler;
+            public uint handler;
             /// <summary>
             /// Stack size when starting task, =0
             /// </summary>
-            public UInt32 stackSize;
+            public uint stackSize;
             /// <summary>
             /// Task priority, =0
             /// </summary>
-            public UInt32 priority;
+            public uint priority;
             /// <summary>
             /// Startup message, =0
             /// </summary>
-            public UInt32 startup;
+            public uint startup;
             /// <summary>
             /// Pointer to first LoadSegment block
             /// </summary>
-            public UInt32 seglist_ptr;
+            public uint seglist_ptr;
             /// <summary>
             /// BCPL globabl vector when starting task, =0xFFFFFFFF
             /// </summary>
-            public UInt32 global_vec;
+            public uint global_vec;
         }
 
         /// <summary>
@@ -805,49 +805,49 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// "FSHD"
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Size in longs, 64
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Checksum
             /// </summary>
-            public Int32 checksum;
+            public int checksum;
             /// <summary>
             /// SCSI target ID, 7 for non-SCSI
             /// </summary>
-            public UInt32 targetID;
+            public uint targetID;
             /// <summary>
             /// Pointer to next FileSystemHeader block
             /// </summary>
-            public UInt32 next_ptr;
+            public uint next_ptr;
             /// <summary>
             /// Flags, unknown
             /// </summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>
             /// Reserved
             /// </summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>
             /// Partition type, and filesystem driver identification for AmigaDOS
             /// </summary>
-            public UInt32 dosType;
+            public uint dosType;
             /// <summary>
             /// Filesystem version
             /// Mask 0xFFFF0000, >>16, major version
             /// Mask 0x0000FFFF, minor version
             /// </summary>
-            public UInt32 version;
+            public uint version;
             /// <summary>
             /// Bits for DeviceNode fields that should be substituted into a standard device node
             /// </summary>
-            public UInt32 patchFlags;
+            public uint patchFlags;
             /// <summary>
             /// Device node
             /// </summary>
@@ -862,23 +862,23 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// "LSEG"
             /// </summary>
-            public UInt32 magic;
+            public uint magic;
             /// <summary>
             /// Size in longs
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// Checksum
             /// </summary>
-            public Int32 checksum;
+            public int checksum;
             /// <summary>
             /// SCSI target ID, 7 for non-SCSI
             /// </summary>
-            public UInt32 targetID;
+            public uint targetID;
             /// <summary>
             /// Pointer to next LoadSegment
             /// </summary>
-            public UInt32 next_ptr;
+            public uint next_ptr;
             /// <summary>
             /// Executable code, with relocation hunks, til end of sector
             /// </summary>
@@ -898,7 +898,7 @@ namespace DiscImageChef.PartPlugins
                     return false;
 
                 byte[] tmpSector = imagePlugin.ReadSector(RDBBlock);
-                UInt32 magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
+                uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", RDBBlock, magic);
 
@@ -1061,7 +1061,7 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
-                UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
+                uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != BadBlockListMagic)
                     break;
@@ -1107,7 +1107,7 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
-                UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
+                uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != PartitionBlockMagic)
                     break;
@@ -1227,7 +1227,7 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
-                UInt32 magic = BigEndianBitConverter.ToUInt32(sector, 0);
+                uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != FilesystemHeaderMagic)
                     break;
@@ -1290,7 +1290,7 @@ namespace DiscImageChef.PartPlugins
                     DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block", nextBlock);
 
                     sector = imagePlugin.ReadSector(nextBlock);
-                    UInt32 magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
+                    uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                     if(magicSeg != LoadSegMagic)
                         break;
@@ -1349,7 +1349,7 @@ namespace DiscImageChef.PartPlugins
             return true;
         }
 
-        static string AmigaDOSTypeToDescriptionString(UInt32 AmigaDOSType)
+        static string AmigaDOSTypeToDescriptionString(uint AmigaDOSType)
         {
             switch(AmigaDOSType)
             {
@@ -1439,48 +1439,48 @@ namespace DiscImageChef.PartPlugins
                 default:
                     {
                         if((AmigaDOSType & TypeIDOFS) == TypeIDOFS)
-                            return String.Format("Unknown Amiga DOS filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown Amiga DOS filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDAMIXSysV) == TypeIDAMIXSysV)
-                            return String.Format("Unknown Amiga UNIX filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown Amiga UNIX filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & 0x50465300) == 0x50465300 ||
                            (AmigaDOSType & 0x41465300) == 0x41465300)
-                            return String.Format("Unknown ProfessionalFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown ProfessionalFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDSFS) == TypeIDSFS)
-                            return String.Format("Unknown SmartFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown SmartFileSystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDmuOFS) == TypeIDmuOFS)
-                            return String.Format("Unknown Amiga DOS multi-user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown Amiga DOS multi-user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDOldBSDUnused) == TypeIDOldBSDUnused)
-                            return String.Format("Unknown BSD filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown BSD filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDNetBSDRootUnused) == TypeIDNetBSDRootUnused)
-                            return String.Format("Unknown NetBSD root filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown NetBSD root filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDNetBSDUserUnused) == TypeIDNetBSDUserUnused)
-                            return String.Format("Unknown NetBSD user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown NetBSD user filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDNetBSDSwap) == TypeIDNetBSDSwap)
-                            return String.Format("Unknown NetBSD swap filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown NetBSD swap filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
                         if((AmigaDOSType & TypeIDLinux) == TypeIDLinux ||
                            (AmigaDOSType & TypeIDLinuxSwap) == TypeIDLinuxSwap)
-                            return String.Format("Unknown Linux filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                            return string.Format("Unknown Linux filesystem type {0}", AmigaDOSTypeToString(AmigaDOSType));
 
-                        return String.Format("Unknown partition type {0}", AmigaDOSTypeToString(AmigaDOSType));
+                        return string.Format("Unknown partition type {0}", AmigaDOSTypeToString(AmigaDOSType));
                     }
             }
         }
 
-        static string AmigaDOSTypeToString(UInt32 AmigaDOSType)
+        static string AmigaDOSTypeToString(uint AmigaDOSType)
         {
             return AmigaDOSTypeToString(AmigaDOSType, true);
         }
 
-        static string AmigaDOSTypeToString(UInt32 AmigaDOSType, bool quoted)
+        static string AmigaDOSTypeToString(uint AmigaDOSType, bool quoted)
         {
             byte[] textPart = new byte[3];
             string textPartString;
@@ -1491,7 +1491,7 @@ namespace DiscImageChef.PartPlugins
 
             textPartString = Encoding.ASCII.GetString(textPart);
 
-            return quoted ? String.Format("\"{0}\\{1}\"", textPartString, AmigaDOSType & 0xFF) : String.Format("{0}\\{1}", textPartString, AmigaDOSType & 0xFF);
+            return quoted ? string.Format("\"{0}\\{1}\"", textPartString, AmigaDOSType & 0xFF) : string.Format("{0}\\{1}", textPartString, AmigaDOSType & 0xFF);
         }
     }
 }

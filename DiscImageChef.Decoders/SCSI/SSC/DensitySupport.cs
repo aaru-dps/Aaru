@@ -166,8 +166,10 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                 if(descriptor.defaultDensity)
                     sb.AppendLine("\tThis is the default density on the drive");
                 sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape",
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     descriptor.bpmm, descriptor.tracks, (double)((double)descriptor.width / (double)10)).AppendLine();
-                sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
+        sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
                 sb.AppendFormat("\tDensity description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
             }
@@ -256,8 +258,10 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                 }
 
                 sb.AppendFormat("\tMedium has a nominal length of {0} m in a {1} mm width tape",
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     descriptor.length, (double)((double)descriptor.width / (double)10)).AppendLine();
-                sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
+        sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
                 sb.AppendLine();
             }
 

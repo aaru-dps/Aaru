@@ -49,13 +49,13 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
             public string diskName;
             /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
-            public UInt32 dataSize;
+            public uint dataSize;
             /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
-            public UInt32 tagSize;
+            public uint tagSize;
             /// <summary>0x48, checksum of data bytes</summary>
-            public UInt32 dataChecksum;
+            public uint dataChecksum;
             /// <summary>0x4C, checksum of tag bytes</summary>
-            public UInt32 tagChecksum;
+            public uint tagChecksum;
             /// <summary>0x50, format of disk, see constants</summary>
             public byte format;
             /// <summary>0x51, format of sectors, see constants</summary>
@@ -114,11 +114,11 @@ namespace DiscImageChef.ImagePlugins
         #region Internal variables
 
         /// <summary>Start of data sectors in disk image, should be 0x58</summary>
-        UInt32 dataOffset;
+        uint dataOffset;
         /// <summary>Start of tags in disk image, after data sectors</summary>
-        UInt32 tagOffset;
+        uint tagOffset;
         /// <summary>Bytes per tag, should be 12</summary>
-        UInt32 bptag;
+        uint bptag;
         /// <summary>Header of opened image</summary>
         DC42Header header;
         /// <summary>Disk image file</summary>
@@ -372,33 +372,33 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress)
+        public override bool? VerifySector(ulong sectorAddress)
         {
             return null;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             return null;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
-            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
-            for(UInt64 i = sectorAddress; i < sectorAddress + length; i++)
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
                 UnknownLBAs.Add(i);
 
             return null;
@@ -408,12 +408,12 @@ namespace DiscImageChef.ImagePlugins
         {
             byte[] data = new byte[header.dataSize];
             byte[] tags = new byte[header.tagSize];
-            UInt32 dataChk;
-            UInt32 tagsChk = 0;
+            uint dataChk;
+            uint tagsChk = 0;
 
             DicConsole.DebugWriteLine("DC42 plugin", "Reading data");
             FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
-            datastream.Seek((long)(dataOffset), SeekOrigin.Begin);
+            datastream.Seek((dataOffset), SeekOrigin.Begin);
             datastream.Read(data, 0, (int)header.dataSize);
             datastream.Close();
 
@@ -426,7 +426,7 @@ namespace DiscImageChef.ImagePlugins
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
                 FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
-                tagstream.Seek((long)(tagOffset), SeekOrigin.Begin);
+                tagstream.Seek((tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
                 tagstream.Close();
 
@@ -444,38 +444,38 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageHasPartitions;
         }
 
-        public override UInt64 GetImageSize()
+        public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
 
-        public override UInt64 GetSectors()
+        public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
 
-        public override UInt32 GetSectorSize()
+        public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress)
+        public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
@@ -490,19 +490,19 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.AppleSectorTag)
-                throw new FeatureUnsupportedImageException(String.Format("Tag {0} not supported by image format", tag));
+                throw new FeatureUnsupportedImageException(string.Format("Tag {0} not supported by image format", tag));
 
             if(header.tagSize == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * bptag];
 
@@ -517,18 +517,18 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress)
+        public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             if(sectorAddress > ImageInfo.sectors - 1)
-                throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than available");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] data = ReadSectors(sectorAddress, length);
             byte[] tags = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
@@ -650,7 +650,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.driveSerialNumber;
         }
 
-        public override List<CommonTypes.Partition> GetPartitions()
+        public override List<Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -665,7 +665,7 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override List<Track> GetSessionTracks(UInt16 session)
+        public override List<Track> GetSessionTracks(ushort session)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -675,32 +675,32 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
@@ -709,13 +709,13 @@ namespace DiscImageChef.ImagePlugins
 
         #region Private methods
 
-        private static UInt32 DC42CheckSum(byte[] buffer)
+        private static uint DC42CheckSum(byte[] buffer)
         {
-            UInt32 dc42chk = 0;
+            uint dc42chk = 0;
             if((buffer.Length & 0x01) == 0x01)
                 return 0xFFFFFFFF;
 
-            for(UInt32 i = 0; i < buffer.Length; i += 2)
+            for(uint i = 0; i < buffer.Length; i += 2)
             {
                 dc42chk += (uint)(buffer[i] << 8);
                 dc42chk += buffer[i + 1];

@@ -33,7 +33,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.Console;
 using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
@@ -58,13 +57,13 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ApfsContainerSuperBlock
         {
-            public UInt64 unknown1; // Varies between copies of the superblock
-            public UInt64 unknown2;
-            public UInt64 unknown3; // Varies by 1 between copies of the superblock
-            public UInt64 unknown4;
-            public UInt32 magic;
-            public UInt32 blockSize;
-            public UInt64 containerBlocks;
+            public ulong unknown1; // Varies between copies of the superblock
+            public ulong unknown2;
+            public ulong unknown3; // Varies by 1 between copies of the superblock
+            public ulong unknown4;
+            public uint magic;
+            public uint blockSize;
+            public ulong containerBlocks;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

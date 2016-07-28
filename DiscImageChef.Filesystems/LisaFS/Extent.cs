@@ -50,7 +50,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <returns>Error.</returns>
         /// <param name="fileId">File identifier.</param>
         /// <param name="file">Extents file.</param>
-        Errno ReadExtentsFile(Int16 fileId, out ExtentFile file)
+        Errno ReadExtentsFile(short fileId, out ExtentFile file)
         {
             file = new ExtentFile();
 

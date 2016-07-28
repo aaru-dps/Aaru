@@ -33,17 +33,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef;
-
-// Information from the Linux kernel
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // Information from the Linux kernel
     class BFS : Filesystem
     {
-        const UInt32 BFS_MAGIC = 0x1BADFACE;
+        const uint BFS_MAGIC = 0x1BADFACE;
 
         public BFS()
         {
@@ -62,7 +59,7 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt32 magic;
+            uint magic;
 
             magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partitionStart), 0);
 
@@ -118,19 +115,19 @@ namespace DiscImageChef.Filesystems
         struct BFSSuperBlock
         {
             /// <summary>0x00, 0x1BADFACE</summary>
-            public UInt32 s_magic;
+            public uint s_magic;
             /// <summary>0x04, start in bytes of volume</summary>
-            public UInt32 s_start;
+            public uint s_start;
             /// <summary>0x08, end in bytes of volume</summary>
-            public UInt32 s_end;
+            public uint s_end;
             /// <summary>0x0C, unknown :p</summary>
-            public UInt32 s_from;
+            public uint s_from;
             /// <summary>0x10, unknown :p</summary>
-            public UInt32 s_to;
+            public uint s_to;
             /// <summary>0x14, unknown :p</summary>
-            public Int32 s_bfrom;
+            public int s_bfrom;
             /// <summary>0x18, unknown :p</summary>
-            public Int32 s_bto;
+            public int s_bto;
             /// <summary>0x1C, 6 bytes, filesystem name</summary>
             public string s_fsname;
             /// <summary>0x22, 6 bytes, volume name</summary>

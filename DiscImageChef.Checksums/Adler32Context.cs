@@ -38,8 +38,8 @@ namespace DiscImageChef.Checksums
 {
     public class Adler32Context
     {
-        UInt16 sum1, sum2;
-        const UInt16 AdlerModule = 65521;
+        ushort sum1, sum2;
+        const ushort AdlerModule = 65521;
 
         /// <summary>
         /// Initializes the Adler-32 sums
@@ -78,7 +78,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public byte[] Final()
         {
-            UInt32 finalSum = (uint)((sum2 << 16) | sum1);
+            uint finalSum = (uint)((sum2 << 16) | sum1);
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -87,7 +87,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         public string End()
         {
-            UInt32 finalSum = (uint)((sum2 << 16) | sum1);
+            uint finalSum = (uint)((sum2 << 16) | sum1);
             StringBuilder adlerOutput = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
@@ -117,8 +117,8 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            UInt16 localSum1, localSum2;
-            UInt32 finalSum;
+            ushort localSum1, localSum2;
+            uint finalSum;
 
             localSum1 = 1;
             localSum2 = 0;
@@ -148,8 +148,8 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            UInt16 localSum1, localSum2;
-            UInt32 finalSum;
+            ushort localSum1, localSum2;
+            uint finalSum;
 
             localSum1 = 1;
             localSum2 = 0;

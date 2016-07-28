@@ -47,16 +47,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
-            if(!System.IO.File.Exists(options.DevicePath))
+            if(!File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
+                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {
-                options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
 
             Device dev = new Device(options.DevicePath);
@@ -94,7 +94,7 @@ namespace DiscImageChef.Commands
 
         static void doATADeviceReport(DeviceReportOptions options, Device dev)
         {
-            DiscImageChef.Decoders.ATA.AtaErrorRegistersCHS errorRegs;
+            Decoders.ATA.AtaErrorRegistersCHS errorRegs;
             byte[] buffer;
             double duration;
             uint timeout = 5;
@@ -721,7 +721,9 @@ namespace DiscImageChef.Commands
 
                                     if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                                     {
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                         physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                                     }
                                     else
                                         physicalsectorsize = logicalsectorsize;
@@ -937,7 +939,9 @@ namespace DiscImageChef.Commands
 
                         if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                         {
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                             physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                         }
                         else
                             physicalsectorsize = logicalsectorsize;
@@ -1178,7 +1182,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
 
-                DiscImageChef.Decoders.ATA.AtaErrorRegistersCHS errorRegs;
+                Decoders.ATA.AtaErrorRegistersCHS errorRegs;
                 dev.AtapiIdentify(out buffer, out errorRegs, timeout, out duration);
 
                 if(Decoders.ATA.Identify.Decode(buffer).HasValue)
@@ -1594,7 +1598,7 @@ namespace DiscImageChef.Commands
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry inq = Decoders.SCSI.Inquiry.Decode(buffer).Value;
 
-                List<UInt16> versionDescriptors = new List<UInt16>();
+                List<ushort> versionDescriptors = new List<ushort>();
                 report.SCSI.Inquiry = new scsiInquiryType();
 
                 if(inq.DeviceTypeModifier != 0)
@@ -1642,7 +1646,7 @@ namespace DiscImageChef.Commands
                 }
                 if(inq.VersionDescriptors != null)
                 {
-                    foreach(UInt16 descriptor in inq.VersionDescriptors)
+                    foreach(ushort descriptor in inq.VersionDescriptors)
                     {
                         if(descriptor != 0)
                             versionDescriptors.Add(descriptor);
@@ -1716,12 +1720,12 @@ namespace DiscImageChef.Commands
 
             if(removable)
             {
-                if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     dev.AllowMediumRemoval(out senseBuffer, timeout, out duration);
                     dev.EjectTray(out senseBuffer, timeout, out duration);
                 }
-                else if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                else if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                 {
                     dev.SpcAllowMediumRemoval(out senseBuffer, timeout, out duration);
                     DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
@@ -1772,8 +1776,7 @@ namespace DiscImageChef.Commands
             if(!sense && !dev.Error && !decMode.HasValue)
                 decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, devType);
 
-            if(!sense && !dev.Error)
-                report.SCSI.SupportsModeSense6 = true;
+            report.SCSI.SupportsModeSense6 |= (!sense && !dev.Error);
 
             Decoders.SCSI.Modes.ModePage_2A? cdromMode = null;
 
@@ -1821,7 +1824,7 @@ namespace DiscImageChef.Commands
             List<string> mediaTypes = new List<string>();
 
             #region MultiMediaDevice
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
                 report.SCSI.MultiMediaDevice = new mmcType();
 
@@ -2129,7 +2132,6 @@ namespace DiscImageChef.Commands
                                 case 0x0031:
                                     {
                                         report.SCSI.MultiMediaDevice.Features.CanWriteDDCDR = true;
-                                        ;
                                         Decoders.SCSI.MMC.Feature_0031? ftr0031 = Decoders.SCSI.MMC.Features.Decode_0031(desc.Data);
                                         if(ftr0031.HasValue)
                                             report.SCSI.MultiMediaDevice.Features.CanTestWriteDDCDR = ftr0031.Value.TestWrite;
@@ -2321,13 +2323,15 @@ namespace DiscImageChef.Commands
 
                                             try
                                             {
-                                                report.SCSI.MultiMediaDevice.Features.FirmwareDate = new DateTime(Int32.Parse(syear), Int32.Parse(smonth),
-                                                    Int32.Parse(sday), Int32.Parse(shour), Int32.Parse(sminute),
-                                                    Int32.Parse(ssecond), DateTimeKind.Utc);
+                                                report.SCSI.MultiMediaDevice.Features.FirmwareDate = new DateTime(int.Parse(syear), int.Parse(smonth),
+                                                    int.Parse(sday), int.Parse(shour), int.Parse(sminute),
+                                                    int.Parse(ssecond), DateTimeKind.Utc);
 
                                                 report.SCSI.MultiMediaDevice.Features.FirmwareDateSpecified = true;
                                             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                             catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                             {
                                             }
                                         }
@@ -2627,7 +2631,7 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if(mediaType.StartsWith("CD-") || mediaType == "Audio CD")
+                            if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                             {
                                 mediaTest.CanReadTOCSpecified = true;
                                 mediaTest.CanReadFullTOCSpecified = true;
@@ -2637,7 +2641,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadFullTOC = !dev.ReadRawToc(out buffer, out senseBuffer, 1, timeout, out duration);
                             }
 
-                            if(mediaType.StartsWith("CD-R"))
+                            if(mediaType.StartsWith("CD-R", StringComparison.Ordinal))
                             {
                                 mediaTest.CanReadATIPSpecified = true;
                                 mediaTest.CanReadPMASpecified = true;
@@ -2647,7 +2651,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadPMA = !dev.ReadPma(out buffer, out senseBuffer, timeout, out duration);
                             }
 
-                            if(mediaType.StartsWith("DVD-") || mediaType.StartsWith("HD DVD-"))
+                            if(mediaType.StartsWith("DVD-", StringComparison.Ordinal) || mediaType.StartsWith("HD DVD-", StringComparison.Ordinal))
                             {
                                 mediaTest.CanReadPFISpecified = true;
                                 mediaTest.CanReadDMISpecified = true;
@@ -2689,7 +2693,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadSpareAreaInformation = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDRAM_SpareAreaInformation, 0, timeout, out duration);
                             }
 
-                            if(mediaType.StartsWith("BD-R") && mediaType != "BD-ROM")
+                            if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) && mediaType != "BD-ROM")
                             {
                                 mediaTest.CanReadDDSSpecified = true;
                                 mediaTest.CanReadSpareAreaInformationSpecified = true;
@@ -2716,7 +2720,7 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadRecordablePFI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_PhysicalInformation, 0, timeout, out duration);
                             }
 
-                            if(mediaType.StartsWith("DVD+R"))
+                            if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal))
                             {
                                 mediaTest.CanReadADIPSpecified = true;
                                 mediaTest.CanReadDCBSpecified = true;
@@ -2733,14 +2737,14 @@ namespace DiscImageChef.Commands
                                 mediaTest.CanReadHDCMI = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.HDDVD_CopyrightInformation, 0, timeout, out duration);
                             }
 
-                            if(mediaType.EndsWith(" DL"))
+                            if(mediaType.EndsWith(" DL", StringComparison.Ordinal))
                             {
                                 mediaTest.CanReadLayerCapacitySpecified = true;
                                 DicConsole.WriteLine("Querying DVD Layer Capacity...");
                                 mediaTest.CanReadLayerCapacity = !dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DVDR_LayerCapacity, 0, timeout, out duration);
                             }
 
-                            if(mediaType.StartsWith("BD-R"))
+                            if(mediaType.StartsWith("BD-R", StringComparison.Ordinal))
                             {
                                 mediaTest.CanReadDiscInformationSpecified = true;
                                 mediaTest.CanReadPACSpecified = true;
@@ -2780,7 +2784,7 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
-                            if(mediaType.StartsWith("CD-") || mediaType == "Audio CD")
+                            if(mediaType.StartsWith("CD-", StringComparison.Ordinal) || mediaType == "Audio CD")
                             {
                                 mediaTest.CanReadC2PointersSpecified = true;
                                 mediaTest.CanReadCorrectedSubchannelSpecified = true;
@@ -2976,7 +2980,7 @@ namespace DiscImageChef.Commands
                                 Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
                                 if(decSense.HasValue)
                                 {
-                                    if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                    if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                         decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                     {
                                         mediaTest.SupportsReadLong = true;
@@ -3034,7 +3038,7 @@ namespace DiscImageChef.Commands
                                 }
                                 else if(mediaTest.BlockSize == 2048)
                                 {
-                                    if(mediaType.StartsWith("DVD"))
+                                    if(mediaType.StartsWith("DVD", StringComparison.Ordinal))
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 37856, timeout, out duration);
                                         if(!sense && !dev.Error)
@@ -3133,7 +3137,7 @@ namespace DiscImageChef.Commands
             }
             #endregion MultiMediaDevice
             #region SequentialAccessDevice
-            else if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+            else if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
                 report.SCSI.SequentialDevice = new sscType();
                 DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
@@ -3207,7 +3211,7 @@ namespace DiscImageChef.Commands
                             {
                                 report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
                                 for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                                    report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes[j] = (int)mtsh.Value.descriptors[i].densityCodes[j];
+                                    report.SCSI.SequentialDevice.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
                             }
                         }
                     }
@@ -3366,7 +3370,7 @@ namespace DiscImageChef.Commands
                                     {
                                         seqTest.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
                                         for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                                            seqTest.SupportedMediaTypes[i].DensityCodes[j] = (int)mtsh.Value.descriptors[i].densityCodes[j];
+                                            seqTest.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
                                     }
                                 }
                             }
@@ -3544,7 +3548,7 @@ namespace DiscImageChef.Commands
                                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
                                     if(decSense.HasValue)
                                     {
-                                        if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                        if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                             decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                         {
                                             mediaTest.SupportsReadLong = true;
@@ -3745,7 +3749,7 @@ namespace DiscImageChef.Commands
                         Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuffer);
                         if(decSense.HasValue)
                         {
-                            if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                            if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                 decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                             {
                                 report.SCSI.ReadCapabilities.SupportsReadLong = true;
@@ -3832,7 +3836,7 @@ namespace DiscImageChef.Commands
                             for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < (ushort)report.SCSI.ReadCapabilities.BlockSize * 36; i++)
                             {
                                 DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
-                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, timeout, out duration);
+                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
                                 if(!sense)
                                 {
                                     if(options.Debug)
@@ -3859,7 +3863,7 @@ namespace DiscImageChef.Commands
             xmlSer.Serialize(xmlFs, report);
             xmlFs.Close();
 
-            if(Settings.Settings.Current.SaveReportsGlobally && !String.IsNullOrEmpty(Settings.Settings.ReportsPath))
+            if(Settings.Settings.Current.SaveReportsGlobally && !string.IsNullOrEmpty(Settings.Settings.ReportsPath))
             {
                 xmlFs = new FileStream(Path.Combine(Settings.Settings.ReportsPath, xmlFile), FileMode.Create);
                 xmlSer.Serialize(xmlFs, report);

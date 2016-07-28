@@ -80,19 +80,19 @@ namespace DiscImageChef.ImagePlugins
         /// Gets the size of the image, without headers.
         /// </summary>
         /// <returns>The image size.</returns>
-        public abstract UInt64 GetImageSize();
+        public abstract ulong GetImageSize();
 
         /// <summary>
         /// Gets the number of sectors in the image.
         /// </summary>
         /// <returns>Sectors in image.</returns>
-        public abstract UInt64 GetSectors();
+        public abstract ulong GetSectors();
 
         /// <summary>
         /// Returns the size of the biggest sector, counting user data only.
         /// </summary>
         /// <returns>Biggest sector size (user data only).</returns>
-        public abstract UInt32 GetSectorSize();
+        public abstract uint GetSectorSize();
 
         // Image reading functions
 
@@ -108,7 +108,7 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
-        public abstract byte[] ReadSector(UInt64 sectorAddress);
+        public abstract byte[] ReadSector(ulong sectorAddress);
 
         /// <summary>
         /// Reads a sector's tag.
@@ -116,7 +116,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The sector's tag.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         /// <param name="tag">Tag type.</param>
-        public abstract byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag);
+        public abstract byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag);
 
         /// <summary>
         /// Reads a sector's user data, relative to track.
@@ -124,7 +124,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
-        public abstract byte[] ReadSector(UInt64 sectorAddress, UInt32 track);
+        public abstract byte[] ReadSector(ulong sectorAddress, uint track);
 
         /// <summary>
         /// Reads a sector's tag, relative to track.
@@ -133,7 +133,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
         /// <param name="tag">Tag type.</param>
-        public abstract byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag);
+        public abstract byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag);
 
         /// <summary>
         /// Reads user data from several sectors.
@@ -141,7 +141,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The sectors user data.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        public abstract byte[] ReadSectors(UInt64 sectorAddress, UInt32 length);
+        public abstract byte[] ReadSectors(ulong sectorAddress, uint length);
 
         /// <summary>
         /// Reads tag from several sectors.
@@ -150,7 +150,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="tag">Tag type.</param>
-        public abstract byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag);
+        public abstract byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag);
 
         /// <summary>
         /// Reads user data from several sectors, relative to track.
@@ -159,7 +159,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
-        public abstract byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track);
+        public abstract byte[] ReadSectors(ulong sectorAddress, uint length, uint track);
 
         /// <summary>
         /// Reads tag from several sectors, relative to track.
@@ -169,14 +169,14 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
         /// <param name="tag">Tag type.</param>
-        public abstract byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag);
+        public abstract byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag);
 
         /// <summary>
         /// Reads a complete sector (user data + all tags).
         /// </summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
-        public abstract byte[] ReadSectorLong(UInt64 sectorAddress);
+        public abstract byte[] ReadSectorLong(ulong sectorAddress);
 
         /// <summary>
         /// Reads a complete sector (user data + all tags), relative to track.
@@ -184,7 +184,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
-        public abstract byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track);
+        public abstract byte[] ReadSectorLong(ulong sectorAddress, uint track);
 
         /// <summary>
         /// Reads several complete sector (user data + all tags).
@@ -192,7 +192,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>The complete sectors. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        public abstract byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length);
+        public abstract byte[] ReadSectorsLong(ulong sectorAddress, uint length);
 
         /// <summary>
         /// Reads several complete sector (user data + all tags), relative to track.
@@ -201,7 +201,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
-        public abstract byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track);
+        public abstract byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
 
         // Image information functions
 
@@ -337,7 +337,7 @@ namespace DiscImageChef.ImagePlugins
         /// reads can be relative to them.
         /// </summary>
         /// <returns>The partitions.</returns>
-        public abstract List<CommonTypes.Partition> GetPartitions();
+        public abstract List<Partition> GetPartitions();
 
         /// <summary>
         /// Gets the disc track extents (start, length).
@@ -357,7 +357,7 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <returns>The track exents for that session.</returns>
         /// <param name="session">Session.</param>
-        public abstract List<Track> GetSessionTracks(UInt16 session);
+        public abstract List<Track> GetSessionTracks(ushort session);
 
         /// <summary>
         /// Gets the sessions (optical discs only).
@@ -371,7 +371,7 @@ namespace DiscImageChef.ImagePlugins
         /// </summary>
         /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
-        public abstract bool? VerifySector(UInt64 sectorAddress);
+        public abstract bool? VerifySector(ulong sectorAddress);
 
         /// <summary>
         /// Verifies a sector, relative to track.
@@ -379,7 +379,7 @@ namespace DiscImageChef.ImagePlugins
         /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
-        public abstract bool? VerifySector(UInt64 sectorAddress, UInt32 track);
+        public abstract bool? VerifySector(ulong sectorAddress, uint track);
 
         /// <summary>
         /// Verifies several sectors.
@@ -389,7 +389,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="length">How many sectors to read.</param>
         /// <param name="FailingLBAs">List of incorrect sectors</param>
         /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs);
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs);
 
         /// <summary>
         /// Verifies several sectors, relative to track.
@@ -400,7 +400,7 @@ namespace DiscImageChef.ImagePlugins
         /// <param name="track">Track.</param>
         /// <param name="FailingLBAs">List of incorrect sectors</param>
         /// <param name="UnknownLBAs">List of uncheckable sectors</param>
-        public abstract bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs);
+        public abstract bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs);
 
         /// <summary>
         /// Verifies media image internal checksum.
@@ -446,21 +446,21 @@ namespace DiscImageChef.ImagePlugins
     public struct Track
     {
         /// <summary>Track number, 1-started</summary>
-        public UInt32 TrackSequence;
+        public uint TrackSequence;
         /// <summary>Partition type</summary>
         public TrackType TrackType;
         /// <summary>Track starting sector</summary>
-        public UInt64 TrackStartSector;
+        public ulong TrackStartSector;
         /// <summary>Track ending sector</summary>
-        public UInt64 TrackEndSector;
+        public ulong TrackEndSector;
         /// <summary>Track pre-gap</summary>
-        public UInt64 TrackPregap;
+        public ulong TrackPregap;
         /// <summary>Session this track belongs to</summary>
-        public UInt16 TrackSession;
+        public ushort TrackSession;
         /// <summary>Information that does not find space in this struct</summary>
         public string TrackDescription;
         /// <summary>Indexes, 00 to 99 and sector offset</summary>
-        public Dictionary<int, UInt64> Indexes;
+        public Dictionary<int, ulong> Indexes;
         /// <summary>Which file stores this track</summary>
         public string TrackFile;
         /// <summary>Starting at which byte is this track stored</summary>
@@ -512,15 +512,15 @@ namespace DiscImageChef.ImagePlugins
     public struct Session
     {
         /// <summary>Session number, 1-started</summary>
-        public UInt16 SessionSequence;
+        public ushort SessionSequence;
         /// <summary>First track present on this session</summary>
-        public UInt32 StartTrack;
+        public uint StartTrack;
         /// <summary>Last track present on this session</summary>
-        public UInt32 EndTrack;
+        public uint EndTrack;
         /// <summary>First sector present on this session</summary>
-        public UInt64 StartSector;
+        public ulong StartSector;
         /// <summary>Last sector present on this session</summary>
-        public UInt64 EndSector;
+        public ulong EndSector;
     }
 
     /// <summary>
@@ -722,7 +722,7 @@ namespace DiscImageChef.ImagePlugins
                                                                   System.Runtime.Serialization.StreamingContext context)
         {
             if(info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -758,7 +758,7 @@ namespace DiscImageChef.ImagePlugins
                                                    System.Runtime.Serialization.StreamingContext context)
         {
             if(info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -794,7 +794,7 @@ namespace DiscImageChef.ImagePlugins
                                                   System.Runtime.Serialization.StreamingContext context)
         {
             if(info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -830,7 +830,7 @@ namespace DiscImageChef.ImagePlugins
                                                            System.Runtime.Serialization.StreamingContext context)
         {
             if(info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
         }
     }
 
@@ -866,7 +866,7 @@ namespace DiscImageChef.ImagePlugins
                                              System.Runtime.Serialization.StreamingContext context)
         {
             if(info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
         }
     }
 }

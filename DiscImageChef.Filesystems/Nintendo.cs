@@ -32,12 +32,8 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
-using DiscImageChef.PartPlugins;
 using System.Collections.Generic;
 using DiscImageChef.Console;
-using System.Runtime.Remoting.Messaging;
-using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
@@ -67,8 +63,8 @@ namespace DiscImageChef.Filesystems
 
             byte[] header = imagePlugin.ReadSectors(0, (0x50000 / imagePlugin.GetSectorSize()));
 
-            UInt32 magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
-            UInt32 magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+            uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
+            uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
             if(magicGC == 0xC2339F3D || magicWii == 0x5D1C9EA3)
                 return true;
@@ -89,8 +85,8 @@ namespace DiscImageChef.Filesystems
 
             bool wii = false;
 
-            UInt32 magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
-            UInt32 magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+            uint magicGC = BigEndianBitConverter.ToUInt32(header, 0x1C);
+            uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
             if(magicGC == 0xC2339F3D)
                 wii = false;

@@ -33,14 +33,14 @@ namespace DiscImageChef
         public static void ArrayFill<T>(T[] destinationArray, T value)
         {
             // if called with a single value, wrap the value in an array and call the main function
-            ArrayFill<T>(destinationArray, new T[] { value });
+            ArrayFill(destinationArray, new T[] { value });
         }
 
         public static void ArrayFill<T>(T[] destinationArray, T[] value)
         {
             if(destinationArray == null)
             {
-                throw new ArgumentNullException("destinationArray");
+                throw new ArgumentNullException(nameof(destinationArray));
             }
 
             if(value.Length > destinationArray.Length)

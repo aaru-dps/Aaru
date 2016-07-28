@@ -45,24 +45,24 @@ namespace DiscImageChef.Plugins
 	class SymbianIS : Plugin
 	{
 		// Magics
-		private const UInt32 SymbianMagic  = 0x10000419;
-		private const UInt32 EPOCMagic     = 0x1000006D;
-		private const UInt32 EPOC6Magic    = 0x10003A12;
-		private const UInt32 Symbian9Magic = 0x10201A7A;
+		private const uint SymbianMagic  = 0x10000419;
+		private const uint EPOCMagic     = 0x1000006D;
+		private const uint EPOC6Magic    = 0x10003A12;
+		private const uint Symbian9Magic = 0x10201A7A;
 		
 		// Options
-		private const UInt16 IsUnicode       = 0x0001;
-		private const UInt16 IsDistributable = 0x0002;
-		private const UInt16 NoCompress      = 0x0008;
-		private const UInt16 ShutdownApps    = 0x0010;
+		private const ushort IsUnicode       = 0x0001;
+		private const ushort IsDistributable = 0x0002;
+		private const ushort NoCompress      = 0x0008;
+		private const ushort ShutdownApps    = 0x0010;
 		
 		// Types
-		private const UInt16 SISApp     = 0x0000; // Application
-		private const UInt16 SISSystem  = 0x0001; // System component (library)
-		private const UInt16 SISOption  = 0x0002; // Optional component
-		private const UInt16 SISConfig  = 0x0003; // Configures an application
-		private const UInt16 SISPatch   = 0x0004; // Patch
-		private const UInt16 SISUpgrade = 0x0005; // Upgrade
+		private const ushort SISApp     = 0x0000; // Application
+		private const ushort SISSystem  = 0x0001; // System component (library)
+		private const ushort SISOption  = 0x0002; // Optional component
+		private const ushort SISConfig  = 0x0003; // Configures an application
+		private const ushort SISPatch   = 0x0004; // Patch
+		private const ushort SISUpgrade = 0x0005; // Upgrade
 		
 		private enum LanguageCodes
 		{
@@ -173,14 +173,14 @@ namespace DiscImageChef.Plugins
 		
 		public override bool Identify(FileStream fileStream, long offset)
 		{
-			UInt32 uid1, uid2, uid3;
+			uint uid1, uid2, uid3;
 			BinaryReader br = new BinaryReader(fileStream);
 			
             br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
 
-			uid1 = br.ReadUInt32();
-			uid2 = br.ReadUInt32();
-			uid3 = br.ReadUInt32();
+			uid1 = br.Readuint();
+			uid2 = br.Readuint();
+			uid3 = br.Readuint();
 			
 			if(uid1 == Symbian9Magic)
 				return true;
@@ -200,10 +200,10 @@ namespace DiscImageChef.Plugins
 			information = "";
             StringBuilder description = new StringBuilder();
 			List<string> languages = new List<string>();
-			Dictionary<UInt32, UInt32> capabilities = new Dictionary<UInt32, UInt32>();
+			Dictionary<uint, uint> capabilities = new Dictionary<uint, uint>();
 			int ENpos = 0;
-			UInt32 comp_len;
-			UInt32 comp_name_ptr;
+			uint comp_len;
+			uint comp_name_ptr;
 			byte[] ComponentName_b;
 			string ComponentName = "";
 			
@@ -212,41 +212,41 @@ namespace DiscImageChef.Plugins
 			
             br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
 			
-			sh.uid1 = br.ReadUInt32();
-			sh.uid2 = br.ReadUInt32();
-			sh.uid3 = br.ReadUInt32();
-			sh.uid4 = br.ReadUInt32();
-			sh.crc16 = br.ReadUInt16();
-			sh.languages = br.ReadUInt16();
-			sh.files = br.ReadUInt16();
-			sh.requisites = br.ReadUInt16();
-			sh.inst_lang = br.ReadUInt16();
-			sh.inst_files = br.ReadUInt16();
-			sh.inst_drive = br.ReadUInt16();
-			sh.capabilities = br.ReadUInt16();
-			sh.inst_version = br.ReadUInt32();
-			sh.options = br.ReadUInt16();
-			sh.type = br.ReadUInt16();
-			sh.major = br.ReadUInt16();
-			sh.minor = br.ReadUInt16();
-			sh.variant = br.ReadUInt32();
-			sh.lang_ptr = br.ReadUInt32();
-			sh.files_ptr = br.ReadUInt32();
-			sh.reqs_ptr = br.ReadUInt32();
-			sh.certs_ptr = br.ReadUInt32();
-			sh.comp_ptr = br.ReadUInt32();
-			sh.sig_ptr = br.ReadUInt32();
-			sh.caps_ptr = br.ReadUInt32();
-			sh.instspace = br.ReadUInt32();
-			sh.maxinsspc = br.ReadUInt32();
-			sh.reserved1 = br.ReadUInt64();
-			sh.reserved2 = br.ReadUInt64();
+			sh.uid1 = br.Readuint();
+			sh.uid2 = br.Readuint();
+			sh.uid3 = br.Readuint();
+			sh.uid4 = br.Readuint();
+			sh.crc16 = br.Readushort();
+			sh.languages = br.Readushort();
+			sh.files = br.Readushort();
+			sh.requisites = br.Readushort();
+			sh.inst_lang = br.Readushort();
+			sh.inst_files = br.Readushort();
+			sh.inst_drive = br.Readushort();
+			sh.capabilities = br.Readushort();
+			sh.inst_version = br.Readuint();
+			sh.options = br.Readushort();
+			sh.type = br.Readushort();
+			sh.major = br.Readushort();
+			sh.minor = br.Readushort();
+			sh.variant = br.Readuint();
+			sh.lang_ptr = br.Readuint();
+			sh.files_ptr = br.Readuint();
+			sh.reqs_ptr = br.Readuint();
+			sh.certs_ptr = br.Readuint();
+			sh.comp_ptr = br.Readuint();
+			sh.sig_ptr = br.Readuint();
+			sh.caps_ptr = br.Readuint();
+			sh.instspace = br.Readuint();
+			sh.maxinsspc = br.Readuint();
+			sh.reserved1 = br.Readulong();
+			sh.reserved2 = br.Readulong();
 			
 			// Go to enumerate languages
 			br.BaseStream.Seek(sh.lang_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.languages; i++)
 			{
-				UInt16 language = br.ReadUInt16();
+				ushort language = br.Readushort();
 				if(language == 0x0001)
 					ENpos = i;
 				languages.Add(((LanguageCodes)language).ToString("G"));
@@ -256,8 +256,8 @@ namespace DiscImageChef.Plugins
 			br.BaseStream.Seek(sh.comp_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.languages; i++)
 			{
-				comp_len = br.ReadUInt32();
-				comp_name_ptr = br.ReadUInt32();
+				comp_len = br.Readuint();
+				comp_name_ptr = br.Readuint();
 				if(i == ENpos)
 				{
 					br.BaseStream.Seek(comp_name_ptr + offset, SeekOrigin.Begin);
@@ -272,8 +272,8 @@ namespace DiscImageChef.Plugins
 			br.BaseStream.Seek(sh.caps_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.capabilities; i++)
 			{
-				UInt32 cap_key = br.ReadUInt32();
-				UInt32 cap_value = br.ReadUInt32();
+				uint cap_key = br.Readuint();
+				uint cap_value = br.Readuint();
 				capabilities.Add(cap_key, cap_value);
 			}
 				
@@ -321,7 +321,7 @@ namespace DiscImageChef.Plugins
 				description.AppendFormat("File contains {0} files (pointer: {1})", sh.files, sh.files_ptr).AppendLine();
 				description.AppendFormat("File contains {0} requisites", sh.requisites).AppendLine();
 //				description.AppendLine("Capabilities:");
-//				foreach(KeyValuePair<UInt32, UInt32> kvp in capabilities)
+//				foreach(KeyValuePair<uint, uint> kvp in capabilities)
 //					description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
 			}
 
@@ -330,36 +330,36 @@ namespace DiscImageChef.Plugins
 		
 		private struct SymbianHeader
 		{
-			public UInt32 uid1;	        // Application UID before SymbianOS 9, magic after
-			public UInt32 uid2;	        // EPOC release magic before SOS 9, NULLs after
-			public UInt32 uid3;	        // Application UID after SOS 9, magic before
-			public UInt32 uid4;	        // Checksum of UIDs 1 to 3
-			public UInt16 crc16;        // CRC16 of all header
-			public UInt16 languages;    // Number of languages
-			public UInt16 files;        // Number of files
-			public UInt16 requisites;   // Number of requisites
-			public UInt16 inst_lang;    // Installed language (only residual SIS)
-			public UInt16 inst_files;   // Installed files (only residual SIS)
-			public UInt16 inst_drive;   // Installed drive (only residual SIS), NULL or 0x0021
-			public UInt16 capabilities; // Number of capabilities
-			public UInt32 inst_version; // Version of Symbian Installer required
-			public UInt16 options;      // Option flags
-			public UInt16 type;         // Type
-			public UInt16 major;        // Major version of application
-			public UInt16 minor;        // Minor version of application
-			public UInt32 variant;      // Variant when SIS is a prerequisite for other SISs
-			public UInt32 lang_ptr;     // Pointer to language records
-			public UInt32 files_ptr;    // Pointer to file records
-			public UInt32 reqs_ptr;     // Pointer to requisite records
-			public UInt32 certs_ptr;    // Pointer to certificate records
-			public UInt32 comp_ptr;     // Pointer to component name record
+			public uint uid1;	        // Application UID before SymbianOS 9, magic after
+			public uint uid2;	        // EPOC release magic before SOS 9, NULLs after
+			public uint uid3;	        // Application UID after SOS 9, magic before
+			public uint uid4;	        // Checksum of UIDs 1 to 3
+			public ushort crc16;        // CRC16 of all header
+			public ushort languages;    // Number of languages
+			public ushort files;        // Number of files
+			public ushort requisites;   // Number of requisites
+			public ushort inst_lang;    // Installed language (only residual SIS)
+			public ushort inst_files;   // Installed files (only residual SIS)
+			public ushort inst_drive;   // Installed drive (only residual SIS), NULL or 0x0021
+			public ushort capabilities; // Number of capabilities
+			public uint inst_version; // Version of Symbian Installer required
+			public ushort options;      // Option flags
+			public ushort type;         // Type
+			public ushort major;        // Major version of application
+			public ushort minor;        // Minor version of application
+			public uint variant;      // Variant when SIS is a prerequisite for other SISs
+			public uint lang_ptr;     // Pointer to language records
+			public uint files_ptr;    // Pointer to file records
+			public uint reqs_ptr;     // Pointer to requisite records
+			public uint certs_ptr;    // Pointer to certificate records
+			public uint comp_ptr;     // Pointer to component name record
 			// From EPOC Release 6
-			public UInt32 sig_ptr;      // Pointer to signature record
-			public UInt32 caps_ptr;     // Pointer to capability records
-			public UInt32 instspace;    // Installed space (only residual SIS)
-			public UInt32 maxinsspc;    // Space required
-			public UInt64 reserved1;    // Reserved
-			public UInt64 reserved2;    // Reserved
+			public uint sig_ptr;      // Pointer to signature record
+			public uint caps_ptr;     // Pointer to capability records
+			public uint instspace;    // Installed space (only residual SIS)
+			public uint maxinsspc;    // Space required
+			public ulong reserved1;    // Reserved
+			public ulong reserved2;    // Reserved
 		}
 	}
 }

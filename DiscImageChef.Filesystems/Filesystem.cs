@@ -101,7 +101,7 @@ namespace DiscImageChef.Filesystems
         public abstract Errno Mount(bool debug);
 
         /// <summary>
-        /// Frees all internal structures created by <see cref="Mount"/> 
+        /// Frees all internal structures created by <see cref="Mount()"/> 
         /// </summary>
         public abstract Errno Unmount();
 

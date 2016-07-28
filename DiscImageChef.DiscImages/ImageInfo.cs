@@ -40,9 +40,9 @@ namespace DiscImageChef.ImagePlugins
     {
         public bool imageHasPartitions;
         public bool imageHasSessions;
-        public UInt64 imageSize;
-        public UInt64 sectors;
-        public UInt32 sectorSize;
+        public ulong imageSize;
+        public ulong sectors;
+        public uint sectorSize;
         public List<MediaTagType> readableMediaTags;
         public List<SectorTagType> readableSectorTags;
         public string imageVersion;

@@ -37,8 +37,8 @@ using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Metadata
 {
-    [SerializableAttribute()]
-    [XmlRootAttribute("DicDeviceReport", Namespace = "", IsNullable = false)]
+    [Serializable]
+    [XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
     public class DeviceReport
     {
         public usbType USB;
@@ -48,7 +48,7 @@ namespace DiscImageChef.Metadata
         public scsiType SCSI;
         public bool CompactFlash;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CompactFlashSpecified;
     }
 
@@ -157,165 +157,165 @@ namespace DiscImageChef.Metadata
         public testedMediaType[] RemovableMedias;
 
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool AdditionalPIDSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool APIOSupportedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ATAPIByteCountSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BufferTypeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BufferSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CapabilitiesSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool Capabilities2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool Capabilities3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CFAPowerModeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CommandSetSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CommandSet2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CommandSet3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CommandSet4Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CommandSet5Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CurrentAAMSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CurrentAPMSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DataSetMgmtSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DataSetMgmtSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DeviceFormFactorSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DMAActiveSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DMASupportedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DMATransferTimingModeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnhancedSecurityEraseTimeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnabledCommandSetSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnabledCommandSet2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnabledCommandSet3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnabledCommandSet4Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool EnabledSATAFeaturesSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ExtendedIdentifySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ExtendedUserSectorsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool FreeFallSensitivitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool FirmwareRevisionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool GeneralConfigurationSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool HardwareResetResultSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool InterseekDelaySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MajorVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MasterPasswordRevisionCodeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MaxDownloadMicroMode3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MaxQueueDepthSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MDMAActiveSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MDMASupportedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinDownloadMicroMode3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinMDMACycleTimeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinorVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinPIOCycleTimeNoFlowSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinPIOCycleTimeFlowSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ModelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MultipleMaxSectorsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MultipleSectorNumberSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool NVCacheCapsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool NVCacheSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool NVCacheWriteSpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool NVEstimatedSpinUpSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool PacketBusReleaseSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool PIOTransferTimingModeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool RecommendedAAMSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool RecommendedMDMACycleTimeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool RemovableStatusSetSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SATACapabilitiesSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SATACapabilities2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SATAFeaturesSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SCTCommandTransportSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SectorsPerCardSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SecurityEraseTimeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SecurityStatusSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ServiceBusyClearSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SpecificConfigurationSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool StreamAccessLatencySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool StreamMinReqSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool StreamPerformanceGranularitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool StreamTransferTimeDMASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool StreamTransferTimePIOSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool TransportMajorVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool TransportMinorVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool TrustedComputingSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool UDMAActiveSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool UDMASupportedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool WRVModeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool WRVSectorCountMode3Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool WRVSectorCountMode2Specified;
     }
 
@@ -339,7 +339,7 @@ namespace DiscImageChef.Metadata
         public testedMediaType[] RemovableMedias;
         public sscType SequentialDevice;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ReadCapabilitiesSpecified;
     }
 
@@ -385,31 +385,31 @@ namespace DiscImageChef.Metadata
         public bool WideBus16;
         public bool WideBus32;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ANSIVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ECMAVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DeviceTypeModifierSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ISOVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ProductIdentificationSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ProductRevisionLevelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ResponseDataFormatSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool VendorIdentificationSpecified;
     }
 
-    [SerializableAttribute()]
+    [Serializable]
     public class pageType
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute]
         public byte page;
 
-        [XmlTextAttribute()]
+        [XmlText]
         public byte[] value;
     }
 
@@ -424,11 +424,11 @@ namespace DiscImageChef.Metadata
         public bool DPOandFUA;
         public modePageType[] ModePages;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MediumTypeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BufferedModeSpecified;
     }
 
@@ -438,22 +438,22 @@ namespace DiscImageChef.Metadata
         public ulong Blocks;
         public uint BlockLength;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlocksSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlockLengthSpecified;
     }
 
-    [SerializableAttribute()]
+    [Serializable]
     public class modePageType
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute]
         public byte page;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute]
         public byte subpage;
 
-        [XmlTextAttribute()]
+        [XmlText]
         public byte[] value;
     }
 
@@ -518,21 +518,21 @@ namespace DiscImageChef.Metadata
         public bool WritesDVDRAM;
         public Modes.ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MaximumSpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportedVolumeLevelsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BufferSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CurrentSpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MaximumWriteSpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CurrentWriteSpeedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool RotationControlSelectedSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CurrentWriteSpeedSelectedSpecified;
     }
 
@@ -636,13 +636,13 @@ namespace DiscImageChef.Metadata
         public bool DVDMultiRead;
         public bool EmbeddedChanger;
         public bool ErrorRecoveryPage;
-        [XmlElementAttribute(DataType = "date")]
+        [XmlElement(DataType = "date")]
         public DateTime FirmwareDate;
         public byte LoadingMechanismType;
         public bool Locked;
         public uint LogicalBlockSize;
         public bool MultiRead;
-        public DiscImageChef.Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard;
+        public Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard;
         public bool PreventJumper;
         public bool SupportsAACS;
         public bool SupportsBusEncryption;
@@ -663,29 +663,29 @@ namespace DiscImageChef.Metadata
         public bool SupportsWriteProtectPAC;
         public ushort VolumeLevels;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool PhysicalInterfaceStandardSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool AACSVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool AGIDsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BindingNonceBlocksSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CPRMVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CSSVersionSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ChangerHighestSlotNumberSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LoadingMechanismTypeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LogicalBlockSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlocksPerReadableUnitSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool FirmwareDateSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool VolumeLevelsSpecified;
     }
 
@@ -749,115 +749,115 @@ namespace DiscImageChef.Metadata
         public bool SupportsReadLong16;
         public bool SupportsReadLong;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlocksSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlockSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadAACSSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadADIPSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadATIPSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadBCASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadC2PointersSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadCMISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadCorrectedSubchannelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadCorrectedSubchannelWithC2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadDCBSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadDDSSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadDMISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadDiscInformationSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadFullTOCSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadHDCMISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadLayerCapacitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadLeadInSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadLeadOutSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadMediaIDSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadMediaSerialSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPACSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPFISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPMASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPQSubchannelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPQSubchannelWithC2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadPRISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadRWSubchannelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadRWSubchannelWithC2Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadRecordablePFISpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadSpareAreaInformationSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadTOCSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DensitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LongBlockSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ManufacturerSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MediumTypeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool ModelSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsHLDTSTReadRawDVDSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsNECReadCDDASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsPioneerReadCDDASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsPioneerReadCDDAMSFSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsPlextorReadCDDASpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsPlextorReadRawDVDSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsRead10Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsRead12Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsRead16Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCapacity16Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCapacitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCdSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCdMsfSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCdRawSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadCdMsfRawSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLong16Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLongSpecified;
 
         public chsType CHS;
@@ -871,21 +871,21 @@ namespace DiscImageChef.Metadata
         public ushort UnformattedBPT;
         public ushort UnformattedBPS;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LBASectorsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LBA48SectorsSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool LogicalAlignmentSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool NominalRotationRateSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool PhysicalBlockSizeSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SolidStateDeviceSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool UnformattedBPTSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool UnformattedBPSSpecified;
 
         public bool SupportsReadDmaLba;
@@ -905,35 +905,35 @@ namespace DiscImageChef.Metadata
         public bool SupportsReadLongRetry;
         public bool SupportsSeek;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadDmaLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadDmaRetryLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadRetryLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLongLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLongRetryLbaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsSeekLbaSpecified;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadDmaLba48Specified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLba48Specified;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadDmaSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadDmaRetrySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadRetrySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsReadLongRetrySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool SupportsSeekSpecified;
     }
 
@@ -947,11 +947,11 @@ namespace DiscImageChef.Metadata
         public SupportedMedia[] SupportedMediaTypes;
         public SequentialMedia[] TestedMedia;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool BlockSizeGranularitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MaxBlockLengthSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MinBlockLengthSpecified;
     }
 
@@ -994,11 +994,11 @@ namespace DiscImageChef.Metadata
         public SupportedDensity[] SupportedDensities;
         public SupportedMedia[] SupportedMediaTypes;
 
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool CanReadMediaSerialSpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool DensitySpecified;
-        [XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool MediumTypeSpecified;
     }
 }

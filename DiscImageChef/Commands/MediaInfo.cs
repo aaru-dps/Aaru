@@ -48,16 +48,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Media-Info command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", options.OutputPrefix);
 
-            if(!System.IO.File.Exists(options.DevicePath))
+            if(!File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
+                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {
-                options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
 
             Device dev = new Device(options.DevicePath);
@@ -221,16 +221,15 @@ namespace DiscImageChef.Commands
                     scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                 foreach(Decoders.SCSI.Modes.ModePage modePage in decMode.Value.Pages)
-                    if(modePage.Page == 0x05)
-                        containsFloppyPage = true;
+                    containsFloppyPage |= modePage.Page == 0x05;
             }
 
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
                 sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                 if(!sense)
@@ -247,7 +246,7 @@ namespace DiscImageChef.Commands
                     if(sense && blocks == 0)
                     {
                         // Not all MMC devices support READ CAPACITY, as they have READ TOC
-                        if(dev.SCSIType != DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                        if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                         {
                             DicConsole.ErrorWriteLine("Unable to get media capacity");
                             DicConsole.ErrorWriteLine("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
@@ -270,11 +269,11 @@ namespace DiscImageChef.Commands
                 {
                     blocks++;
                     DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
-                        blocks, blockSize, blocks * (ulong)blockSize);
+                        blocks, blockSize, blocks * blockSize);
                 }
             }
 
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
                 byte[] seqBuf;
                 byte[] medBuf;
@@ -326,7 +325,7 @@ namespace DiscImageChef.Commands
                 */
             }
 
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
                 sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout, out duration);
                 if(sense)
@@ -522,7 +521,7 @@ namespace DiscImageChef.Commands
                                         dskType = MediaType.HDDVDRW;
                                         break;
                                     case Decoders.DVD.DiskCategory.Nintendo:
-                                        if(decPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                        if(decPfi.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
                                             dskType = MediaType.GOD;
                                         else
                                             dskType = MediaType.WOD;
@@ -997,8 +996,7 @@ namespace DiscImageChef.Commands
                                     else
                                         hasAudioTrack = true;
 
-                                    if(track.ADR == 4)
-                                        hasVideoTrack = true;
+                                    hasVideoTrack |= track.ADR == 4;
                                 }
                             }
 
@@ -1055,12 +1053,12 @@ namespace DiscImageChef.Commands
                         if(nintendoPfi != null)
                         {
                             DicConsole.WriteLine("PFI:\n{0}", Decoders.DVD.PFI.Prettify(cmdBuf));
-                            if(nintendoPfi.Value.DiskCategory == DiscImageChef.Decoders.DVD.DiskCategory.Nintendo &&
+                            if(nintendoPfi.Value.DiskCategory == Decoders.DVD.DiskCategory.Nintendo &&
                                nintendoPfi.Value.PartVersion == 15)
                             {
-                                if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                if(nintendoPfi.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
                                     dskType = MediaType.GOD;
-                                else if(nintendoPfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
+                                else if(nintendoPfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
                                     dskType = MediaType.WOD;
                             }
                         }

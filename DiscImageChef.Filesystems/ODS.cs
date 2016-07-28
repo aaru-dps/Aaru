@@ -32,20 +32,19 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from VMS File System Internals by Kirby McCoy
-// ISBN: 1-55558-056-4
-// With some hints from http://www.decuslib.com/DECUS/vmslt97b/gnusoftware/gccaxp/7_1/vms/hm2def.h
-// Expects the home block to be always in sector #1 (does not check deltas)
-// Assumes a sector size of 512 bytes (VMS does on HDDs and optical drives, dunno about M.O.)
-// Book only describes ODS-2. Need to test ODS-1 and ODS-5
-// There is an ODS with signature "DECFILES11A", yet to be seen
-// Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
-// TODO: Implement checksum
 namespace DiscImageChef.Filesystems
 {
+    // Information from VMS File System Internals by Kirby McCoy
+    // ISBN: 1-55558-056-4
+    // With some hints from http://www.decuslib.com/DECUS/vmslt97b/gnusoftware/gccaxp/7_1/vms/hm2def.h
+    // Expects the home block to be always in sector #1 (does not check deltas)
+    // Assumes a sector size of 512 bytes (VMS does on HDDs and optical drives, dunno about M.O.)
+    // Book only describes ODS-2. Need to test ODS-1 and ODS-5
+    // There is an ODS with signature "DECFILES11A", yet to be seen
+    // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
+    // TODO: Implement checksum
     class ODS : Filesystem
     {
         public ODS()
@@ -264,7 +263,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = homeblock.cluster * 512;
             xmlFSType.Clusters = homeblock.cluster;
             xmlFSType.VolumeName = homeblock.volname;
-            xmlFSType.VolumeSerial = String.Format("{0:X8}", homeblock.serialnum);
+            xmlFSType.VolumeSerial = string.Format("{0:X8}", homeblock.serialnum);
             if(homeblock.credate > 0)
             {
                 xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
@@ -282,85 +281,85 @@ namespace DiscImageChef.Filesystems
         struct ODSHomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
-            public UInt32 homelbn;
+            public uint homelbn;
             /// <summary>0x004, LBN of the secondary home block</summary>
-            public UInt32 alhomelbn;
+            public uint alhomelbn;
             /// <summary>0x008, LBN of backup INDEXF.SYS;1</summary>
-            public UInt32 altidxlbn;
+            public uint altidxlbn;
             /// <summary>0x00C, High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)</summary>
-            public UInt16 struclev;
+            public ushort struclev;
             /// <summary>0x00E, Number of blocks each bit of the volume bitmap represents</summary>
-            public UInt16 cluster;
+            public ushort cluster;
             /// <summary>0x010, VBN of THIS home block</summary>
-            public UInt16 homevbn;
+            public ushort homevbn;
             /// <summary>0x012, VBN of the secondary home block</summary>
-            public UInt16 alhomevbn;
+            public ushort alhomevbn;
             /// <summary>0x014, VBN of backup INDEXF.SYS;1</summary>
-            public UInt16 altidxvbn;
+            public ushort altidxvbn;
             /// <summary>0x016, VBN of the bitmap</summary>
-            public UInt16 ibmapvbn;
+            public ushort ibmapvbn;
             /// <summary>0x018, LBN of the bitmap</summary>
-            public UInt32 ibmaplbn;
+            public uint ibmaplbn;
             /// <summary>0x01C, Max files on volume</summary>
-            public UInt32 maxfiles;
+            public uint maxfiles;
             /// <summary>0x020, Bitmap size in sectors</summary>
-            public UInt16 ibmapsize;
+            public ushort ibmapsize;
             /// <summary>0x022, Reserved files, 5 at minimum</summary>
-            public UInt16 resfiles;
+            public ushort resfiles;
             /// <summary>0x024, Device type, ODS-2 defines it as always 0</summary>
-            public UInt16 devtype;
+            public ushort devtype;
             /// <summary>0x026, Relative volume number (number of the volume in a set)</summary>
-            public UInt16 rvn;
+            public ushort rvn;
             /// <summary>0x028, Total number of volumes in the set this volume is</summary>
-            public UInt16 setcount;
+            public ushort setcount;
             /// <summary>0x02A, Flags</summary>
-            public UInt16 volchar;
+            public ushort volchar;
             /// <summary>0x02C, User ID of the volume owner</summary>
-            public UInt32 volowner;
+            public uint volowner;
             /// <summary>0x030, Security mask (??)</summary>
-            public UInt32 sec_mask;
+            public uint sec_mask;
             /// <summary>0x034, Volume permissions (system, owner, group and other)</summary>
-            public UInt16 protect;
+            public ushort protect;
             /// <summary>0x036, Default file protection, unsupported in ODS-2</summary>
-            public UInt16 fileprot;
+            public ushort fileprot;
             /// <summary>0x038, Default file record protection</summary>
-            public UInt16 recprot;
+            public ushort recprot;
             /// <summary>0x03A, Checksum of all preceding entries</summary>
-            public UInt16 checksum1;
+            public ushort checksum1;
             /// <summary>0x03C, Creation date</summary>
-            public UInt64 credate;
+            public ulong credate;
             /// <summary>0x044, Window size (pointers for the window)</summary>
             public byte window;
             /// <summary>0x045, Directories to be stored in cache</summary>
             public byte lru_lim;
             /// <summary>0x046, Default allocation size in blocks</summary>
-            public UInt16 extend;
+            public ushort extend;
             /// <summary>0x048, Minimum file retention period</summary>
-            public UInt64 retainmin;
+            public ulong retainmin;
             /// <summary>0x050, Maximum file retention period</summary>
-            public UInt64 retainmax;
+            public ulong retainmax;
             /// <summary>0x058, Last modification date</summary>
-            public UInt64 revdate;
+            public ulong revdate;
             /// <summary>0x060, Minimum security class, 20 bytes</summary>
             public byte[] min_class;
             /// <summary>0x074, Maximum security class, 20 bytes</summary>
             public byte[] max_class;
             /// <summary>0x088, File lookup table FID</summary>
-            public UInt16 filetab_fid1;
+            public ushort filetab_fid1;
             /// <summary>0x08A, File lookup table FID</summary>
-            public UInt16 filetab_fid2;
+            public ushort filetab_fid2;
             /// <summary>0x08C, File lookup table FID</summary>
-            public UInt16 filetab_fid3;
+            public ushort filetab_fid3;
             /// <summary>0x08E, Lowest structure level on the volume</summary>
-            public UInt16 lowstruclev;
+            public ushort lowstruclev;
             /// <summary>0x090, Highest structure level on the volume</summary>
-            public UInt16 highstruclev;
+            public ushort highstruclev;
             /// <summary>0x092, Volume copy date (??)</summary>
-            public UInt64 copydate;
+            public ulong copydate;
             /// <summary>0x09A, 302 bytes</summary>
             public byte[] reserved1;
             /// <summary>0x1C8, Physical drive serial number</summary>
-            public UInt32 serialnum;
+            public uint serialnum;
             /// <summary>0x1CC, Name of the volume set, 12 bytes</summary>
             public string strucname;
             /// <summary>0x1D8, Volume label, 12 bytes</summary>
@@ -370,9 +369,9 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes</summary>
             public string format;
             /// <summary>0x1FC, Reserved</summary>
-            public UInt16 reserved2;
+            public ushort reserved2;
             /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>
-            public UInt16 checksum2;
+            public ushort checksum2;
         }
 
         public override Errno Mount()

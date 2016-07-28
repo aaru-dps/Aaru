@@ -30,15 +30,10 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Commands
 {
-    public partial class Commands
+    public class Commands
     {
-        public Commands()
-        {
-        }
     }
 }
 

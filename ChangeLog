@@ -1,3 +1,7 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.sln: Refactor and code cleanup.
+
 2016-02-05  Natalia Portillo  <claunia@claunia.com>
 
 	* commandline:

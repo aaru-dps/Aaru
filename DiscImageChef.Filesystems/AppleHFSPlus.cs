@@ -32,26 +32,25 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
 namespace DiscImageChef.Filesystems
 {
+    // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
     class AppleHFSPlus : Filesystem
     {
         /// <summary>
         /// "BD", HFS magic
         /// </summary>
-        const UInt16 HFS_MAGIC = 0x4244;
+        const ushort HFS_MAGIC = 0x4244;
         /// <summary>
         /// "H+", HFS+ magic
         /// </summary>
-        const UInt16 HFSP_MAGIC = 0x482B;
+        const ushort HFSP_MAGIC = 0x482B;
         /// <summary>
         /// "HX", HFSX magic
         /// </summary>
-        const UInt16 HFSX_MAGIC = 0x4858;
+        const ushort HFSX_MAGIC = 0x4858;
 
         public AppleHFSPlus()
         {
@@ -70,10 +69,10 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt16 drSigWord;
-            UInt16 xdrStABNt;
-            UInt16 drAlBlSt;
-            UInt32 drAlBlkSiz;
+            ushort drSigWord;
+            ushort xdrStABNt;
+            ushort drAlBlSt;
+            uint drAlBlkSiz;
 
             byte[] vh_sector;
             ulong hfsp_offset;
@@ -118,10 +117,10 @@ namespace DiscImageChef.Filesystems
         {
             information = "";
 
-            UInt16 drSigWord;
-            UInt16 xdrStABNt;
-            UInt16 drAlBlSt;
-            UInt32 drAlBlkSiz;
+            ushort drSigWord;
+            ushort xdrStABNt;
+            ushort drAlBlSt;
+            uint drAlBlkSiz;
             HFSPlusVolumeHeader HPVH = new HFSPlusVolumeHeader();
 
             ulong hfsp_offset;
@@ -271,8 +270,7 @@ namespace DiscImageChef.Filesystems
                         xmlFSType.BackupDate = DateHandlers.MacToDateTime(HPVH.backupDate);
                         xmlFSType.BackupDateSpecified = true;
                     }
-                    if(HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0)
-                        xmlFSType.Bootable = true;
+                    xmlFSType.Bootable |= (HPVH.drFndrInfo0 != 0 || HPVH.drFndrInfo3 != 0 || HPVH.drFndrInfo5 != 0);
                     xmlFSType.Clusters = HPVH.totalBlocks;
                     xmlFSType.ClusterSize = (int)HPVH.blockSize;
                     if(HPVH.createDate > 0)
@@ -295,7 +293,7 @@ namespace DiscImageChef.Filesystems
                     if(HPVH.signature == 0x4858)
                         xmlFSType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
-                        xmlFSType.VolumeSerial = String.Format("{0:X8}{1:x8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
+                        xmlFSType.VolumeSerial = string.Format("{0:X8}{1:x8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
                 }
                 else
                 {
@@ -315,11 +313,11 @@ namespace DiscImageChef.Filesystems
         struct HFSPlusVolumeHeader
         {
             /// <summary>0x000, "H+" for HFS+, "HX" for HFSX</summary>
-            public UInt16 signature;
+            public ushort signature;
             /// <summary>0x002, 4 for HFS+, 5 for HFSX</summary>
-            public UInt16 version;
+            public ushort version;
             /// <summary>0x004, Volume attributes</summary>
-            public UInt32 attributes;
+            public uint attributes;
             /// <summary>0x008, Implementation that last mounted the volume.
             /// Reserved by Apple:
             /// "8.10" Mac OS 8.1 to 9.2.2
@@ -328,7 +326,7 @@ namespace DiscImageChef.Filesystems
             /// "fsck" /sbin/fsck</summary>
             public string lastMountedVersion;
             /// <summary>0x00C, Allocation block number containing the journal</summary>
-            public UInt32 journalInfoBlock;
+            public uint journalInfoBlock;
             /// <summary>0x010, Date of volume creation</summary>
             public ulong createDate;
             /// <summary>0x018, Date of last volume modification</summary>
@@ -338,238 +336,238 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x028, Date of last consistency check</summary>
             public ulong checkedDate;
             /// <summary>0x030, File on the volume</summary>
-            public UInt32 fileCount;
+            public uint fileCount;
             /// <summary>0x034, Folders on the volume</summary>
-            public UInt32 folderCount;
+            public uint folderCount;
             /// <summary>0x038, Bytes per allocation block</summary>
-            public UInt32 blockSize;
+            public uint blockSize;
             /// <summary>0x03C, Allocation blocks on the volume</summary>
-            public UInt32 totalBlocks;
+            public uint totalBlocks;
             /// <summary>0x040, Free allocation blocks</summary>
-            public UInt32 freeBlocks;
+            public uint freeBlocks;
             /// <summary>0x044, Hint for next allocation block</summary>
-            public UInt32 nextAllocation;
+            public uint nextAllocation;
             /// <summary>0x048, Resource fork clump size</summary>
-            public UInt32 rsrcClumpSize;
+            public uint rsrcClumpSize;
             /// <summary>0x04C, Data fork clump size</summary>
-            public UInt32 dataClumpSize;
+            public uint dataClumpSize;
             /// <summary>0x050, Next unused CNID</summary>
-            public UInt32 nextCatalogID;
+            public uint nextCatalogID;
             /// <summary>0x054, Times that the volume has been mounted writable</summary>
-            public UInt32 writeCount;
+            public uint writeCount;
             /// <summary>0x058, Used text encoding hints</summary>
-            public UInt64 encodingsBitmap;
+            public ulong encodingsBitmap;
             /// <summary>0x060, finderInfo[0], CNID for bootable system's directory</summary>
-            public UInt32 drFndrInfo0;
+            public uint drFndrInfo0;
             /// <summary>0x064, finderInfo[1], CNID of the directory containing the boot application</summary>
-            public UInt32 drFndrInfo1;
+            public uint drFndrInfo1;
             /// <summary>0x068, finderInfo[2], CNID of the directory that should be opened on boot</summary>
-            public UInt32 drFndrInfo2;
+            public uint drFndrInfo2;
             /// <summary>0x06C, finderInfo[3], CNID for Mac OS 8 or 9 directory</summary>
-            public UInt32 drFndrInfo3;
+            public uint drFndrInfo3;
             /// <summary>0x070, finderInfo[4], Reserved</summary>
-            public UInt32 drFndrInfo4;
+            public uint drFndrInfo4;
             /// <summary>0x074, finderInfo[5], CNID for Mac OS X directory</summary>
-            public UInt32 drFndrInfo5;
+            public uint drFndrInfo5;
             /// <summary>0x078, finderInfo[6], first part of Mac OS X volume ID</summary>
-            public UInt32 drFndrInfo6;
+            public uint drFndrInfo6;
             /// <summary>0x07C, finderInfo[7], second part of Mac OS X volume ID</summary>
-            public UInt32 drFndrInfo7;
+            public uint drFndrInfo7;
             // HFSPlusForkData     allocationFile;
             /// <summary>0x080</summary>
-            public UInt64 allocationFile_logicalSize;
+            public ulong allocationFile_logicalSize;
             /// <summary>0x088</summary>
-            public UInt32 allocationFile_clumpSize;
+            public uint allocationFile_clumpSize;
             /// <summary>0x08C</summary>
-            public UInt32 allocationFile_totalBlocks;
+            public uint allocationFile_totalBlocks;
             /// <summary>0x090</summary>
-            public UInt32 allocationFile_extents_startBlock0;
+            public uint allocationFile_extents_startBlock0;
             /// <summary>0x094</summary>
-            public UInt32 allocationFile_extents_blockCount0;
+            public uint allocationFile_extents_blockCount0;
             /// <summary>0x098</summary>
-            public UInt32 allocationFile_extents_startBlock1;
+            public uint allocationFile_extents_startBlock1;
             /// <summary>0x09C</summary>
-            public UInt32 allocationFile_extents_blockCount1;
+            public uint allocationFile_extents_blockCount1;
             /// <summary>0x0A0</summary>
-            public UInt32 allocationFile_extents_startBlock2;
+            public uint allocationFile_extents_startBlock2;
             /// <summary>0x0A4</summary>
-            public UInt32 allocationFile_extents_blockCount2;
+            public uint allocationFile_extents_blockCount2;
             /// <summary>0x0A8</summary>
-            public UInt32 allocationFile_extents_startBlock3;
+            public uint allocationFile_extents_startBlock3;
             /// <summary>0x0AC</summary>
-            public UInt32 allocationFile_extents_blockCount3;
+            public uint allocationFile_extents_blockCount3;
             /// <summary>0x0B0</summary>
-            public UInt32 allocationFile_extents_startBlock4;
+            public uint allocationFile_extents_startBlock4;
             /// <summary>0x0B4</summary>
-            public UInt32 allocationFile_extents_blockCount4;
+            public uint allocationFile_extents_blockCount4;
             /// <summary>0x0B8</summary>
-            public UInt32 allocationFile_extents_startBlock5;
+            public uint allocationFile_extents_startBlock5;
             /// <summary>0x0BC</summary>
-            public UInt32 allocationFile_extents_blockCount5;
+            public uint allocationFile_extents_blockCount5;
             /// <summary>0x0C0</summary>
-            public UInt32 allocationFile_extents_startBlock6;
+            public uint allocationFile_extents_startBlock6;
             /// <summary>0x0C4</summary>
-            public UInt32 allocationFile_extents_blockCount6;
+            public uint allocationFile_extents_blockCount6;
             /// <summary>0x0C8</summary>
-            public UInt32 allocationFile_extents_startBlock7;
+            public uint allocationFile_extents_startBlock7;
             /// <summary>0x0CC</summary>
-            public UInt32 allocationFile_extents_blockCount7;
+            public uint allocationFile_extents_blockCount7;
             // HFSPlusForkData     extentsFile;
             /// <summary>0x0D0</summary>
-            public UInt64 extentsFile_logicalSize;
+            public ulong extentsFile_logicalSize;
             /// <summary>0x0D8</summary>
-            public UInt32 extentsFile_clumpSize;
+            public uint extentsFile_clumpSize;
             /// <summary>0x0DC</summary>
-            public UInt32 extentsFile_totalBlocks;
+            public uint extentsFile_totalBlocks;
             /// <summary>0x0E0</summary>
-            public UInt32 extentsFile_extents_startBlock0;
+            public uint extentsFile_extents_startBlock0;
             /// <summary>0x0E4</summary>
-            public UInt32 extentsFile_extents_blockCount0;
+            public uint extentsFile_extents_blockCount0;
             /// <summary>0x0E8</summary>
-            public UInt32 extentsFile_extents_startBlock1;
+            public uint extentsFile_extents_startBlock1;
             /// <summary>0x0EC</summary>
-            public UInt32 extentsFile_extents_blockCount1;
+            public uint extentsFile_extents_blockCount1;
             /// <summary>0x0F0</summary>
-            public UInt32 extentsFile_extents_startBlock2;
+            public uint extentsFile_extents_startBlock2;
             /// <summary>0x0F4</summary>
-            public UInt32 extentsFile_extents_blockCount2;
+            public uint extentsFile_extents_blockCount2;
             /// <summary>0x0F8</summary>
-            public UInt32 extentsFile_extents_startBlock3;
+            public uint extentsFile_extents_startBlock3;
             /// <summary>0x0FC</summary>
-            public UInt32 extentsFile_extents_blockCount3;
+            public uint extentsFile_extents_blockCount3;
             /// <summary>0x100</summary>
-            public UInt32 extentsFile_extents_startBlock4;
+            public uint extentsFile_extents_startBlock4;
             /// <summary>0x104</summary>
-            public UInt32 extentsFile_extents_blockCount4;
+            public uint extentsFile_extents_blockCount4;
             /// <summary>0x108</summary>
-            public UInt32 extentsFile_extents_startBlock5;
+            public uint extentsFile_extents_startBlock5;
             /// <summary>0x10C</summary>
-            public UInt32 extentsFile_extents_blockCount5;
+            public uint extentsFile_extents_blockCount5;
             /// <summary>0x110</summary>
-            public UInt32 extentsFile_extents_startBlock6;
+            public uint extentsFile_extents_startBlock6;
             /// <summary>0x114</summary>
-            public UInt32 extentsFile_extents_blockCount6;
+            public uint extentsFile_extents_blockCount6;
             /// <summary>0x118</summary>
-            public UInt32 extentsFile_extents_startBlock7;
+            public uint extentsFile_extents_startBlock7;
             /// <summary>0x11C</summary>
-            public UInt32 extentsFile_extents_blockCount7;
+            public uint extentsFile_extents_blockCount7;
             // HFSPlusForkData     catalogFile;
             /// <summary>0x120</summary>
-            public UInt64 catalogFile_logicalSize;
+            public ulong catalogFile_logicalSize;
             /// <summary>0x128</summary>
-            public UInt32 catalogFile_clumpSize;
+            public uint catalogFile_clumpSize;
             /// <summary>0x12C</summary>
-            public UInt32 catalogFile_totalBlocks;
+            public uint catalogFile_totalBlocks;
             /// <summary>0x130</summary>
-            public UInt32 catalogFile_extents_startBlock0;
+            public uint catalogFile_extents_startBlock0;
             /// <summary>0x134</summary>
-            public UInt32 catalogFile_extents_blockCount0;
+            public uint catalogFile_extents_blockCount0;
             /// <summary>0x138</summary>
-            public UInt32 catalogFile_extents_startBlock1;
+            public uint catalogFile_extents_startBlock1;
             /// <summary>0x13C</summary>
-            public UInt32 catalogFile_extents_blockCount1;
+            public uint catalogFile_extents_blockCount1;
             /// <summary>0x140</summary>
-            public UInt32 catalogFile_extents_startBlock2;
+            public uint catalogFile_extents_startBlock2;
             /// <summary>0x144</summary>
-            public UInt32 catalogFile_extents_blockCount2;
+            public uint catalogFile_extents_blockCount2;
             /// <summary>0x148</summary>
-            public UInt32 catalogFile_extents_startBlock3;
+            public uint catalogFile_extents_startBlock3;
             /// <summary>0x14C</summary>
-            public UInt32 catalogFile_extents_blockCount3;
+            public uint catalogFile_extents_blockCount3;
             /// <summary>0x150</summary>
-            public UInt32 catalogFile_extents_startBlock4;
+            public uint catalogFile_extents_startBlock4;
             /// <summary>0x154</summary>
-            public UInt32 catalogFile_extents_blockCount4;
+            public uint catalogFile_extents_blockCount4;
             /// <summary>0x158</summary>
-            public UInt32 catalogFile_extents_startBlock5;
+            public uint catalogFile_extents_startBlock5;
             /// <summary>0x15C</summary>
-            public UInt32 catalogFile_extents_blockCount5;
+            public uint catalogFile_extents_blockCount5;
             /// <summary>0x160</summary>
-            public UInt32 catalogFile_extents_startBlock6;
+            public uint catalogFile_extents_startBlock6;
             /// <summary>0x164</summary>
-            public UInt32 catalogFile_extents_blockCount6;
+            public uint catalogFile_extents_blockCount6;
             /// <summary>0x168</summary>
-            public UInt32 catalogFile_extents_startBlock7;
+            public uint catalogFile_extents_startBlock7;
             /// <summary>0x16C</summary>
-            public UInt32 catalogFile_extents_blockCount7;
+            public uint catalogFile_extents_blockCount7;
             // HFSPlusForkData     attributesFile;
             /// <summary>0x170</summary>
-            public UInt64 attributesFile_logicalSize;
+            public ulong attributesFile_logicalSize;
             /// <summary>0x178</summary>
-            public UInt32 attributesFile_clumpSize;
+            public uint attributesFile_clumpSize;
             /// <summary>0x17C</summary>
-            public UInt32 attributesFile_totalBlocks;
+            public uint attributesFile_totalBlocks;
             /// <summary>0x180</summary>
-            public UInt32 attributesFile_extents_startBlock0;
+            public uint attributesFile_extents_startBlock0;
             /// <summary>0x184</summary>
-            public UInt32 attributesFile_extents_blockCount0;
+            public uint attributesFile_extents_blockCount0;
             /// <summary>0x188</summary>
-            public UInt32 attributesFile_extents_startBlock1;
+            public uint attributesFile_extents_startBlock1;
             /// <summary>0x18C</summary>
-            public UInt32 attributesFile_extents_blockCount1;
+            public uint attributesFile_extents_blockCount1;
             /// <summary>0x190</summary>
-            public UInt32 attributesFile_extents_startBlock2;
+            public uint attributesFile_extents_startBlock2;
             /// <summary>0x194</summary>
-            public UInt32 attributesFile_extents_blockCount2;
+            public uint attributesFile_extents_blockCount2;
             /// <summary>0x198</summary>
-            public UInt32 attributesFile_extents_startBlock3;
+            public uint attributesFile_extents_startBlock3;
             /// <summary>0x19C</summary>
-            public UInt32 attributesFile_extents_blockCount3;
+            public uint attributesFile_extents_blockCount3;
             /// <summary>0x1A0</summary>
-            public UInt32 attributesFile_extents_startBlock4;
+            public uint attributesFile_extents_startBlock4;
             /// <summary>0x1A4</summary>
-            public UInt32 attributesFile_extents_blockCount4;
+            public uint attributesFile_extents_blockCount4;
             /// <summary>0x1A8</summary>
-            public UInt32 attributesFile_extents_startBlock5;
+            public uint attributesFile_extents_startBlock5;
             /// <summary>0x1AC</summary>
-            public UInt32 attributesFile_extents_blockCount5;
+            public uint attributesFile_extents_blockCount5;
             /// <summary>0x1B0</summary>
-            public UInt32 attributesFile_extents_startBlock6;
+            public uint attributesFile_extents_startBlock6;
             /// <summary>0x1B4</summary>
-            public UInt32 attributesFile_extents_blockCount6;
+            public uint attributesFile_extents_blockCount6;
             /// <summary>0x1B8</summary>
-            public UInt32 attributesFile_extents_startBlock7;
+            public uint attributesFile_extents_startBlock7;
             /// <summary>0x1BC</summary>
-            public UInt32 attributesFile_extents_blockCount7;
+            public uint attributesFile_extents_blockCount7;
             // HFSPlusForkData     startupFile;
             /// <summary>0x1C0</summary>
-            public UInt64 startupFile_logicalSize;
+            public ulong startupFile_logicalSize;
             /// <summary>0x1C8</summary>
-            public UInt32 startupFile_clumpSize;
+            public uint startupFile_clumpSize;
             /// <summary>0x1CC</summary>
-            public UInt32 startupFile_totalBlocks;
+            public uint startupFile_totalBlocks;
             /// <summary>0x1D0</summary>
-            public UInt32 startupFile_extents_startBlock0;
+            public uint startupFile_extents_startBlock0;
             /// <summary>0x1D4</summary>
-            public UInt32 startupFile_extents_blockCount0;
+            public uint startupFile_extents_blockCount0;
             /// <summary>0x1D8</summary>
-            public UInt32 startupFile_extents_startBlock1;
+            public uint startupFile_extents_startBlock1;
             /// <summary>0x1E0</summary>
-            public UInt32 startupFile_extents_blockCount1;
+            public uint startupFile_extents_blockCount1;
             /// <summary>0x1E4</summary>
-            public UInt32 startupFile_extents_startBlock2;
+            public uint startupFile_extents_startBlock2;
             /// <summary>0x1E8</summary>
-            public UInt32 startupFile_extents_blockCount2;
+            public uint startupFile_extents_blockCount2;
             /// <summary>0x1EC</summary>
-            public UInt32 startupFile_extents_startBlock3;
+            public uint startupFile_extents_startBlock3;
             /// <summary>0x1F0</summary>
-            public UInt32 startupFile_extents_blockCount3;
+            public uint startupFile_extents_blockCount3;
             /// <summary>0x1F4</summary>
-            public UInt32 startupFile_extents_startBlock4;
+            public uint startupFile_extents_startBlock4;
             /// <summary>0x1F8</summary>
-            public UInt32 startupFile_extents_blockCount4;
+            public uint startupFile_extents_blockCount4;
             /// <summary>0x1FC</summary>
-            public UInt32 startupFile_extents_startBlock5;
+            public uint startupFile_extents_startBlock5;
             /// <summary>0x200</summary>
-            public UInt32 startupFile_extents_blockCount5;
+            public uint startupFile_extents_blockCount5;
             /// <summary>0x204</summary>
-            public UInt32 startupFile_extents_startBlock6;
+            public uint startupFile_extents_startBlock6;
             /// <summary>0x208</summary>
-            public UInt32 startupFile_extents_blockCount6;
+            public uint startupFile_extents_blockCount6;
             /// <summary>0x20C</summary>
-            public UInt32 startupFile_extents_startBlock7;
+            public uint startupFile_extents_startBlock7;
             /// <summary>0x210</summary>
-            public UInt32 startupFile_extents_blockCount7;
+            public uint startupFile_extents_blockCount7;
         }
 
         public override Errno Mount()

@@ -30,12 +30,10 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using DiscImageChef.Checksums;
 using Schemas;
 using System.Threading;
-using System.IO;
 
 namespace DiscImageChef.Core
 {
@@ -188,64 +186,64 @@ namespace DiscImageChef.Core
 
         internal List<ChecksumType> End()
         {
-            List<ChecksumType> Checksums = new List<ChecksumType>();
+            List<ChecksumType> chks = new List<ChecksumType>();
 
             ChecksumType chk = new ChecksumType();
             chk.type = ChecksumTypeType.adler32;
             chk.Value = adler32ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.crc16;
             chk.Value = crc16ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.crc32;
             chk.Value = crc32ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.crc64;
             chk.Value = crc64ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.md5;
             chk.Value = md5ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.ripemd160;
             chk.Value = ripemd160ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.sha1;
             chk.Value = sha1ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.sha256;
             chk.Value = sha256ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.sha384;
             chk.Value = sha384ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.sha512;
             chk.Value = sha512ctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
             chk = new ChecksumType();
             chk.type = ChecksumTypeType.spamsum;
             chk.Value = ssctx.End();
-            Checksums.Add(chk);
+            chks.Add(chk);
 
-            return Checksums;
+            return chks;
         }
 
         internal static List<ChecksumType> GetChecksums(byte[] data)

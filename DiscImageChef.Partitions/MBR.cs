@@ -32,14 +32,13 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef;
 
 // TODO: Support AAP, AST, SpeedStor and Ontrack extensions
 namespace DiscImageChef.PartPlugins
 {
     class MBR : PartPlugin
     {
-        const UInt16 MBRSignature = 0xAA55;
+        const ushort MBRSignature = 0xAA55;
 
         public MBR()
         {
@@ -50,7 +49,7 @@ namespace DiscImageChef.PartPlugins
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
             byte cyl_sect1, cyl_sect2; // For decoding cylinder and sector
-            UInt16 signature;
+            ushort signature;
             ulong counter = 0;
 
             partitions = new List<CommonTypes.Partition>();
@@ -138,11 +137,11 @@ namespace DiscImageChef.PartPlugins
                         case 0xA9:
                         case 0xB7: // BSD disklabels
                             {
-                                UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 0);
+                                uint magic = BitConverter.ToUInt32(disklabel_sector, 0);
 
                                 if(magic == 0x82564557)
                                 {
-                                    UInt16 no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
+                                    ushort no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
 
                                     // TODO: Handle disklabels bigger than 1 sector or search max no_parts
                                     for(int j = 0; j < no_parts; j++)
@@ -156,7 +155,7 @@ namespace DiscImageChef.PartPlugins
                                         part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
                                         bsd_type = disklabel_sector[134 + j * 16 + 8];
 
-                                        part.PartitionType = String.Format("BSD: {0}", bsd_type);
+                                        part.PartitionType = string.Format("BSD: {0}", bsd_type);
                                         part.PartitionName = decodeBSDType(bsd_type);
 
                                         part.PartitionSequence = counter;
@@ -175,7 +174,7 @@ namespace DiscImageChef.PartPlugins
                             }
                         case 0x63: // UNIX disklabel
                             {
-                                UInt32 magic;
+                                uint magic;
                                 byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                 magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
@@ -255,7 +254,7 @@ namespace DiscImageChef.PartPlugins
                                                 part.PartitionStart = vtoc_ent.start * dl.bps;
                                                 part.PartitionLength = vtoc_ent.length * dl.bps;
                                                 part.PartitionSequence = counter;
-                                                part.PartitionType = String.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                part.PartitionType = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                 string info = "";
 
@@ -279,8 +278,8 @@ namespace DiscImageChef.PartPlugins
                         case 0x82:
                         case 0xBF: // Solaris disklabel
                             {
-                                UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
-                                UInt32 version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
+                                uint magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
+                                uint version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
 
                                 if(magic == 0x600DDEEE && version == 1)
                                 {
@@ -362,7 +361,7 @@ namespace DiscImageChef.PartPlugins
 
                     if(valid)
                     {
-                        part.PartitionType = String.Format("0x{0:X2}", entry.type);
+                        part.PartitionType = string.Format("0x{0:X2}", entry.type);
                         part.PartitionName = decodeMBRType(entry.type);
                         part.PartitionSequence = counter;
                         part.PartitionDescription = entry.status == 0x80 ? "Partition is bootable." : "";
@@ -440,11 +439,11 @@ namespace DiscImageChef.PartPlugins
                                     case 0xA9:
                                     case 0xB7: // BSD disklabels
                                         {
-                                            UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 0);
+                                            uint magic = BitConverter.ToUInt32(disklabel_sector, 0);
 
                                             if(magic == 0x82564557)
                                             {
-                                                UInt16 no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
+                                                ushort no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
 
                                                 // TODO: Handle disklabels bigger than 1 sector or search max no_parts
                                                 for(int j = 0; j < no_parts; j++)
@@ -458,7 +457,7 @@ namespace DiscImageChef.PartPlugins
                                                     part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
                                                     bsd_type = disklabel_sector[134 + j * 16 + 8];
 
-                                                    part.PartitionType = String.Format("BSD: {0}", bsd_type);
+                                                    part.PartitionType = string.Format("BSD: {0}", bsd_type);
                                                     part.PartitionName = decodeBSDType(bsd_type);
 
                                                     part.PartitionSequence = counter;
@@ -477,7 +476,7 @@ namespace DiscImageChef.PartPlugins
                                         }
                                     case 0x63: // UNIX disklabel
                                         {
-                                            UInt32 magic;
+                                            uint magic;
                                             byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                             magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
@@ -557,7 +556,7 @@ namespace DiscImageChef.PartPlugins
                                                             part.PartitionStart = vtoc_ent.start * dl.bps;
                                                             part.PartitionLength = vtoc_ent.length * dl.bps;
                                                             part.PartitionSequence = counter;
-                                                            part.PartitionType = String.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                            part.PartitionType = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                             string info = "";
 
@@ -581,8 +580,8 @@ namespace DiscImageChef.PartPlugins
                                     case 0x82:
                                     case 0xBF: // Solaris disklabel
                                         {
-                                            UInt32 magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
-                                            UInt32 version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
+                                            uint magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
+                                            uint version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
 
                                             if(magic == 0x600DDEEE && version == 1)
                                             {
@@ -665,7 +664,7 @@ namespace DiscImageChef.PartPlugins
 
                                 if(ext_valid)
                                 {
-                                    part.PartitionType = String.Format("0x{0:X2}", entry2.type);
+                                    part.PartitionType = string.Format("0x{0:X2}", entry2.type);
                                     part.PartitionName = decodeMBRType(entry2.type);
                                     part.PartitionSequence = counter;
                                     part.PartitionDescription = entry2.status == 0x80 ? "Partition is bootable." : "";
@@ -689,9 +688,11 @@ namespace DiscImageChef.PartPlugins
             return partitions.Count != 0;
         }
 
-        static UInt32 CHStoLBA(ushort cyl, byte head, byte sector)
+        static uint CHStoLBA(ushort cyl, byte head, byte sector)
         {
-            return (((UInt32)cyl * 16) + (UInt32)head) * 63 + (UInt32)sector - 1;
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
+            return (((uint)cyl * 16) + (uint)head) * 63 + (uint)sector - 1;
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
         }
 
         static string decodeBSDType(byte type)
@@ -1056,7 +1057,7 @@ namespace DiscImageChef.PartPlugins
             // Starting head [0,254]
             public byte start_sector;
             // Starting sector [1,63]
-            public UInt16 start_cylinder;
+            public ushort start_cylinder;
             // Starting cylinder [0,1023]
             public byte type;
             // Partition type
@@ -1064,55 +1065,55 @@ namespace DiscImageChef.PartPlugins
             // Ending head [0,254]
             public byte end_sector;
             // Ending sector [1,63]
-            public UInt16 end_cylinder;
+            public ushort end_cylinder;
             // Ending cylinder [0,1023]
-            public UInt32 lba_start;
+            public uint lba_start;
             // Starting absolute sector
-            public UInt32 lba_sectors;
+            public uint lba_sectors;
             // Total sectors
         }
 
-        const UInt32 UNIXDiskLabel_MAGIC = 0xCA5E600D;
-        const UInt32 UNIXVTOC_MAGIC = 0x600DDEEE;
+        const uint UNIXDiskLabel_MAGIC = 0xCA5E600D;
+        const uint UNIXVTOC_MAGIC = 0x600DDEEE;
         // Same as Solaris VTOC
         struct UNIXDiskLabel
         {
-            public UInt32 type;
+            public uint type;
             // Drive type, seems always 0
-            public UInt32 magic;
+            public uint magic;
             // UNIXDiskLabel_MAGIC
-            public UInt32 version;
+            public uint version;
             // Only seen 1
             public string serial;
             // 12 bytes, serial number of the device
-            public UInt32 cyls;
+            public uint cyls;
             // data cylinders per device
-            public UInt32 trks;
+            public uint trks;
             // data tracks per cylinder
-            public UInt32 secs;
+            public uint secs;
             // data sectors per track
-            public UInt32 bps;
+            public uint bps;
             // data bytes per sector
-            public UInt32 start;
+            public uint start;
             // first sector of this partition
             public byte[] unknown1;
             // 48 bytes
-            public UInt32 alt_tbl;
+            public uint alt_tbl;
             // byte offset of alternate table
-            public UInt32 alt_len;
+            public uint alt_len;
             // byte length of alternate table
             // From onward here, is not on old version
-            public UInt32 phys_cyl;
+            public uint phys_cyl;
             // physical cylinders per device
-            public UInt32 phys_trk;
+            public uint phys_trk;
             // physical tracks per cylinder
-            public UInt32 phys_sec;
+            public uint phys_sec;
             // physical sectors per track
-            public UInt32 phys_bytes;
+            public uint phys_bytes;
             // physical bytes per sector
-            public UInt32 unknown2;
+            public uint unknown2;
             //
-            public UInt32 unknown3;
+            public uint unknown3;
             //
             public byte[] pad;
             // 32bytes
@@ -1120,15 +1121,15 @@ namespace DiscImageChef.PartPlugins
 
         struct UNIXVTOC
         {
-            public UInt32 magic;
+            public uint magic;
             // UNIXVTOC_MAGIC
-            public UInt32 version;
+            public uint version;
             // 1
             public string name;
             // 8 bytes
-            public UInt16 slices;
+            public ushort slices;
             // # of slices
-            public UInt16 unknown;
+            public ushort unknown;
             //
             public byte[] reserved;
             // 40 bytes
@@ -1136,61 +1137,61 @@ namespace DiscImageChef.PartPlugins
 
         struct UNIXVTOCEntry
         {
-            public UInt16 tag;
+            public ushort tag;
             // TAG
-            public UInt16 flags;
+            public ushort flags;
             // Flags (see below)
-            public UInt32 start;
+            public uint start;
             // Start sector
-            public UInt32 length;
+            public uint length;
             // Length of slice in sectors
         }
 
-        const UInt16 UNIX_TAG_EMPTY = 0x0000;
+        const ushort UNIX_TAG_EMPTY = 0x0000;
         // empty
-        const UInt16 UNIX_TAG_BOOT = 0x0001;
+        const ushort UNIX_TAG_BOOT = 0x0001;
         // boot
-        const UInt16 UNIX_TAG_ROOT = 0x0002;
+        const ushort UNIX_TAG_ROOT = 0x0002;
         // root
-        const UInt16 UNIX_TAG_SWAP = 0x0003;
+        const ushort UNIX_TAG_SWAP = 0x0003;
         // swap
-        const UInt16 UNIX_TAG_USER = 0x0004;
+        const ushort UNIX_TAG_USER = 0x0004;
         // /usr
-        const UInt16 UNIX_TAG_WHOLE = 0x0005;
+        const ushort UNIX_TAG_WHOLE = 0x0005;
         // whole disk
-        const UInt16 UNIX_TAG_STAND = 0x0006;
+        const ushort UNIX_TAG_STAND = 0x0006;
         // stand partition ??
-        const UInt16 UNIX_TAG_ALT_S = 0x0006;
+        const ushort UNIX_TAG_ALT_S = 0x0006;
         // alternate sector space
-        const UInt16 UNIX_TAG_VAR = 0x0007;
+        const ushort UNIX_TAG_VAR = 0x0007;
         // /var
-        const UInt16 UNIX_TAG_OTHER = 0x0007;
+        const ushort UNIX_TAG_OTHER = 0x0007;
         // non UNIX
-        const UInt16 UNIX_TAG_HOME = 0x0008;
+        const ushort UNIX_TAG_HOME = 0x0008;
         // /home
-        const UInt16 UNIX_TAG_ALT_T = 0x0008;
+        const ushort UNIX_TAG_ALT_T = 0x0008;
         // alternate track space
-        const UInt16 UNIX_TAG_ALT_ST = 0x0009;
+        const ushort UNIX_TAG_ALT_ST = 0x0009;
         // alternate sector track
-        const UInt16 UNIX_TAG_NEW_STAND = 0x0009;
+        const ushort UNIX_TAG_NEW_STAND = 0x0009;
         // stand partition ??
-        const UInt16 UNIX_TAG_CACHE = 0x000A;
+        const ushort UNIX_TAG_CACHE = 0x000A;
         // cache
-        const UInt16 UNIX_TAG_NEW_VAR = 0x000A;
+        const ushort UNIX_TAG_NEW_VAR = 0x000A;
         // /var
-        const UInt16 UNIX_TAG_RESERVED = 0x000B;
+        const ushort UNIX_TAG_RESERVED = 0x000B;
         // reserved
-        const UInt16 UNIX_TAG_NEW_HOME = 0x000B;
+        const ushort UNIX_TAG_NEW_HOME = 0x000B;
         // /home
-        const UInt16 UNIX_TAG_DUMP = 0x000C;
+        const ushort UNIX_TAG_DUMP = 0x000C;
         // dump partition
-        const UInt16 UNIX_TAG_NEW_ALT_ST = 0x000D;
+        const ushort UNIX_TAG_NEW_ALT_ST = 0x000D;
         // alternate sector track
-        const UInt16 UNIX_TAG_VM_PUBLIC = 0x000E;
+        const ushort UNIX_TAG_VM_PUBLIC = 0x000E;
         // volume mgt public partition
-        const UInt16 UNIX_TAG_VM_PRIVATE = 0x000F;
+        const ushort UNIX_TAG_VM_PRIVATE = 0x000F;
         // volume mgt private partition
-        static string decodeUNIXTAG(UInt16 type, bool isNew)
+        static string decodeUNIXTAG(ushort type, bool isNew)
         {
             switch(type)
             {
@@ -1227,7 +1228,7 @@ namespace DiscImageChef.PartPlugins
                 case UNIX_TAG_VM_PRIVATE:
                     return "volume mgt private partition";
                 default:
-                    return String.Format("Unknown TAG: 0x{0:X4}", type);
+                    return string.Format("Unknown TAG: 0x{0:X4}", type);
             }
         }
     }

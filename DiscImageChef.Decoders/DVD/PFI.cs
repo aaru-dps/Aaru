@@ -74,7 +74,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -141,17 +141,17 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 8 to 11
             /// PSN where Data Area starts
             /// </summary>
-            public UInt32 DataAreaStartPSN;
+            public uint DataAreaStartPSN;
             /// <summary>
             /// Bytes 12 to 15
             /// PSN where Data Area ends
             /// </summary>
-            public UInt32 DataAreaEndPSN;
+            public uint DataAreaEndPSN;
             /// <summary>
             /// Bytes 16 to 19
             /// PSN where Data Area ends in Layer 0
             /// </summary>
-            public UInt32 Layer0EndPSN;
+            public uint Layer0EndPSN;
             /// <summary>
             /// Byte 20, bit 7
             /// True if BCA exists. GC/Wii discs do not have this bit set, but there is a BCA, making it unreadable in normal DVD drives
@@ -169,7 +169,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 21 to 22
             /// UMD only, media attribute, application-defined, part of media specific in rest of discs
             /// </summary>
-            public UInt16 MediaAttribute;
+            public ushort MediaAttribute;
             #endregion UMD PFI
 
             #region DVD-RAM PFI
@@ -285,12 +285,12 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 36 to 39
             /// Sector number of the first sector of the current Border Out
             /// </summary>
-            public UInt32 CurrentBorderOutSector;
+            public uint CurrentBorderOutSector;
             /// <summary>
             /// Bytes 40 to 43
             /// Sector number of the first sector of the next Border In
             /// </summary>
-            public UInt32 NextBorderInSector;
+            public uint NextBorderInSector;
             #endregion DVD-R PFI, DVD-RW PFI
 
             #region DVD+RW PFI
@@ -1013,12 +1013,12 @@ namespace DiscImageChef.Decoders.DVD
             /// Byte 36
             /// Start sector number of current RMD in Extra Border Zone
             /// </summary>
-            public UInt32 CurrentRMDExtraBorderPSN;
+            public uint CurrentRMDExtraBorderPSN;
             /// <summary>
             /// Byte 40
             /// Start sector number of Physical Format Information blocks in Extra Border Zone
             /// </summary>
-            public UInt32 PFIExtraBorderPSN;
+            public uint PFIExtraBorderPSN;
             /// <summary>
             /// Byte 44, bit 0
             /// If NOT set, Control Data Zone is pre-recorded
@@ -1351,7 +1351,7 @@ namespace DiscImageChef.Decoders.DVD
                     sizeString = "120mm";
                     break;
                 default:
-                    sizeString = String.Format("unknown size identifier {0}", decoded.DiscSize);
+                    sizeString = string.Format("unknown size identifier {0}", decoded.DiscSize);
                     break;
             }
 

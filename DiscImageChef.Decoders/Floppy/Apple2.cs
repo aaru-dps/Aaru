@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy

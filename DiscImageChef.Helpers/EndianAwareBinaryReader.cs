@@ -39,7 +39,7 @@ namespace DiscImageChef
 {
     public class EndianAwareBinaryReader : BinaryReader
     {
-        byte[] buffer = new byte[8];
+        readonly byte[] buffer = new byte[8];
 
         public EndianAwareBinaryReader(Stream input, Encoding encoding, bool isLittleEndian)
             : base(input, encoding)

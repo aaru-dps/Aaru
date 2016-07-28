@@ -36,7 +36,7 @@ using System;
 namespace DiscImageChef.Devices.Linux
 {
     [Flags]
-    enum FileFlags : int
+    enum FileFlags
     {
         /// <summary>
         /// O_RDONLY
@@ -111,7 +111,7 @@ namespace DiscImageChef.Devices.Linux
     /// <summary>
     /// Direction of SCSI transfer
     /// </summary>
-    enum ScsiIoctlDirection : int
+    enum ScsiIoctlDirection
     {
         /// <summary>
         /// No data transfer happens

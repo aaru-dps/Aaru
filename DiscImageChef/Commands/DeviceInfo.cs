@@ -48,16 +48,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", options.DevicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", options.OutputPrefix);
 
-            if(!System.IO.File.Exists(options.DevicePath))
+            if(!File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
+                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {
-                options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
 
             Device dev = new Device(options.DevicePath);
@@ -119,7 +119,7 @@ namespace DiscImageChef.Commands
 
                         doWriteFile(options.OutputPrefix, "_ata_identify.bin", "ATA IDENTIFY", ataBuf);
 
-                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+                        DicConsole.WriteLine(Identify.Prettify(ataBuf));
 
                         double duration;
                         dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out duration);
@@ -182,7 +182,7 @@ namespace DiscImageChef.Commands
 
                         doWriteFile(options.OutputPrefix, "_atapi_identify.bin", "ATAPI IDENTIFY", ataBuf);
 
-                        DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(ataBuf));
+                        DicConsole.WriteLine(Identify.Prettify(ataBuf));
 
                         // ATAPI devices are also SCSI devices
                         goto case DeviceType.SCSI;
@@ -232,7 +232,7 @@ namespace DiscImageChef.Commands
                                                 sb = new StringBuilder();
                                             sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
 
-                                            doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
                                     else if(page == 0x80)
@@ -243,7 +243,7 @@ namespace DiscImageChef.Commands
                                             scsi80 = true;
                                             scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
 
-                                            doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
                                     else
@@ -255,7 +255,7 @@ namespace DiscImageChef.Commands
                                             sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                             if(!sense)
                                             {
-                                                doWriteFile(options.OutputPrefix, String.Format("_scsi_evpd_{0:X2}h.bin", page), String.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                                doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                             }
                                         }
                                     }
@@ -275,7 +275,7 @@ namespace DiscImageChef.Commands
                         byte[] modeBuf;
                         double duration;
                         Decoders.SCSI.Modes.DecodedMode? decMode = null;
-                        Decoders.SCSI.PeripheralDeviceTypes devType = (DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
+                        Decoders.SCSI.PeripheralDeviceTypes devType = (Decoders.SCSI.PeripheralDeviceTypes)inq.Value.PeripheralDeviceType;
 
                         sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
                         if(sense || dev.Error)
@@ -316,7 +316,7 @@ namespace DiscImageChef.Commands
                                     {
                                         case 0x00:
                                             {
-                                                if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
+                                                if(devType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_00_SFF(page.PageResponse));
                                                 else
                                                 {
@@ -331,7 +331,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 if(page.Subpage == 0)
                                                 {
-                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01_MMC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_01(page.PageResponse));
@@ -390,7 +390,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 if(page.Subpage == 0)
                                                 {
-                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07_MMC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_07(page.PageResponse));
@@ -460,7 +460,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 if(page.Subpage == 0)
                                                 {
-                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                                                    if(devType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10_SSC(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_10(page.PageResponse));
@@ -494,7 +494,7 @@ namespace DiscImageChef.Commands
                                             {
                                                 if(page.Subpage == 0)
                                                 {
-                                                    if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                                                    if(devType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_SFF(page.PageResponse));
                                                     else
                                                         DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C(page.PageResponse));
@@ -537,7 +537,7 @@ namespace DiscImageChef.Commands
                             }
                         }
 
-                        if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                        if(devType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                         {
 
                             byte[] confBuf;
@@ -824,7 +824,7 @@ namespace DiscImageChef.Commands
                                         }
                                     default:
                                         {
-                                            if(dev.Model.StartsWith("CD-R   "))
+                                            if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
                                             {
                                                 plxtSense = dev.PlextorReadEepromCDR(out plxtBuf, out senseBuf, dev.Timeout, out duration);
                                             }
@@ -992,7 +992,7 @@ namespace DiscImageChef.Commands
                             #endregion Plextor
                         }
 
-                        if(devType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+                        if(devType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
                         {
                             byte[] seqBuf;
 

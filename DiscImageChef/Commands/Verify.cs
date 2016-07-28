@@ -114,27 +114,27 @@ namespace DiscImageChef.Commands
 
                 DateTime StartCheck;
                 DateTime EndCheck;
-                List<UInt64> FailingLBAs = new List<UInt64>();
-                List<UInt64> UnknownLBAs = new List<UInt64>();
+                List<ulong> FailingLBAs = new List<ulong>();
+                List<ulong> UnknownLBAs = new List<ulong>();
                 bool? checkStatus = null;
 
                 if(formatHasTracks)
                 {
                     List<Track> inputTracks = inputFormat.GetTracks();
-                    UInt64 currentSectorAll = 0;
+                    ulong currentSectorAll = 0;
 
                     StartCheck = DateTime.UtcNow;
                     foreach(Track currentTrack in inputTracks)
                     {
-                        UInt64 remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
-                        UInt64 currentSector = 0;
+                        ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
+                        ulong currentSector = 0;
 
                         while(remainingSectors > 0)
                         {
                             DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll, inputFormat.GetSectors(), currentTrack.TrackSequence);
 
-                            List<UInt64> tempFailingLBAs;
-                            List<UInt64> tempUnknownLBAs;
+                            List<ulong> tempFailingLBAs;
+                            List<ulong> tempUnknownLBAs;
                             bool? tempStatus;
 
                             if(remainingSectors < 512)
@@ -151,10 +151,10 @@ namespace DiscImageChef.Commands
                             else
                                 checkStatus = null;
 
-                            foreach(UInt64 failLBA in tempFailingLBAs)
+                            foreach(ulong failLBA in tempFailingLBAs)
                                 FailingLBAs.Add(failLBA);
 
-                            foreach(UInt64 unknownLBA in tempUnknownLBAs)
+                            foreach(ulong unknownLBA in tempUnknownLBAs)
                                 UnknownLBAs.Add(unknownLBA);
 
                             if(remainingSectors < 512)
@@ -176,16 +176,16 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    UInt64 remainingSectors = inputFormat.GetSectors();
-                    UInt64 currentSector = 0;
+                    ulong remainingSectors = inputFormat.GetSectors();
+                    ulong currentSector = 0;
 
                     StartCheck = DateTime.UtcNow;
                     while(remainingSectors > 0)
                     {
                         DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.GetSectors());
 
-                        List<UInt64> tempFailingLBAs;
-                        List<UInt64> tempUnknownLBAs;
+                        List<ulong> tempFailingLBAs;
+                        List<ulong> tempUnknownLBAs;
                         bool? tempStatus;
 
                         if(remainingSectors < 512)
@@ -202,10 +202,10 @@ namespace DiscImageChef.Commands
                         else
                             checkStatus = null;
 
-                        foreach(UInt64 failLBA in tempFailingLBAs)
+                        foreach(ulong failLBA in tempFailingLBAs)
                             FailingLBAs.Add(failLBA);
 
-                        foreach(UInt64 unknownLBA in tempUnknownLBAs)
+                        foreach(ulong unknownLBA in tempUnknownLBAs)
                             UnknownLBAs.Add(unknownLBA);
 
                         if(remainingSectors < 512)

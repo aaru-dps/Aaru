@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// BTRFS magic "_BHRfS_M"
         /// </summary>
-        const ulong magic = 0x4D5F53665248425F;
+        const ulong btrfsMagic = 0x4D5F53665248425F;
 
         public BTRFS()
         {
@@ -149,7 +149,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BTRFS Plugin", "partitionStart = {0}", partitionStart);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
 
-            return btrfsSb.magic == magic;
+            return btrfsSb.magic == btrfsMagic;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)

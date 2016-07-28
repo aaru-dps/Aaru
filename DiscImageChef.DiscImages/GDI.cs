@@ -48,7 +48,7 @@ namespace DiscImageChef.ImagePlugins
         struct GDITrack
         {
             /// <summary>Track #</summary>
-            public UInt32 sequence;
+            public uint sequence;
             /// <summary>Track file</summary>
             public string trackfile;
             /// <summary>Track byte offset in file</summary>
@@ -58,9 +58,9 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>Track starting sector</summary>
             public ulong startSector;
             /// <summary>Bytes per sector</summary>
-            public UInt16 bps;
+            public ushort bps;
             /// <summary>Sectors in track</summary>
-            public UInt64 sectors;
+            public ulong sectors;
             /// <summary>Track type</summary>
             public TrackType tracktype;
             /// <summary>Track session</summary>
@@ -87,7 +87,7 @@ namespace DiscImageChef.ImagePlugins
         StreamReader gdiStream;
         FileStream imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
-        Dictionary<UInt32, UInt64> offsetmap;
+        Dictionary<uint, ulong> offsetmap;
         GDIDisc discimage;
         List<Partition> partitions;
         ulong densitySeparationSectors;
@@ -224,7 +224,7 @@ namespace DiscImageChef.ImagePlugins
                         TrackMatch = RegexTrack.Match(_line);
 
                         if(!TrackMatch.Success)
-                            throw new ImageNotSupportedException(String.Format("Unknown line \"{0}\" at line {1}", _line, line));
+                            throw new ImageNotSupportedException(string.Format("Unknown line \"{0}\" at line {1}", _line, line));
 
                         tracksFound++;
 
@@ -379,7 +379,7 @@ namespace DiscImageChef.ImagePlugins
                     Partition partition = new Partition();
 
                     // Index 01
-                    partition.PartitionDescription = String.Format("Track {0}.", discimage.tracks[i].sequence);
+                    partition.PartitionDescription = string.Format("Track {0}.", discimage.tracks[i].sequence);
                     partition.PartitionName = null;
                     partition.PartitionStartSector = discimage.tracks[i].startSector;
                     partition.PartitionLength = discimage.tracks[i].sectors * discimage.tracks[i].bps;
@@ -443,17 +443,17 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.imageHasPartitions;
         }
 
-        public override UInt64 GetImageSize()
+        public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
 
-        public override UInt64 GetSectors()
+        public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
 
-        public override UInt32 GetSectorSize()
+        public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
@@ -463,27 +463,27 @@ namespace DiscImageChef.ImagePlugins
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress)
+        public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -505,10 +505,10 @@ namespace DiscImageChef.ImagePlugins
             if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
                 return ReadSectors((sectorAddress - transitionStart), length, 0);
 
-            throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -530,15 +530,15 @@ namespace DiscImageChef.ImagePlugins
             if(sectorAddress >= transitionStart && sectorAddress < (densitySeparationSectors + transitionStart))
                 return ReadSectorsTag((sectorAddress - transitionStart), length, 0, tag);
 
-            throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
-                    throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                    throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
                 return new byte[length * 2352];
             }
@@ -557,10 +557,10 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(_track.sequence == 0)
-                throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if((sectorAddress + length) > _track.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -642,17 +642,17 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
-                    throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                    throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
                 if(tag == SectorTagType.CDTrackFlags)
                     return new byte[] { 0x00 };
 
-                throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
             }
 
             GDITrack _track = new GDITrack();
@@ -669,10 +669,10 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(_track.sequence == 0)
-                throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length > _track.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -696,13 +696,13 @@ namespace DiscImageChef.ImagePlugins
                         return flags;
                     }
                 default:
-                    throw new ArgumentException("Unsupported tag requested", "tag");
+                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
             switch(_track.tracktype)
             {
                 case TrackType.Audio:
-                    throw new ArgumentException("There are no tags on audio tracks", "tag");
+                    throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case TrackType.CDMode1:
                     {
                         if(_track.bps != 2352)
@@ -726,7 +726,7 @@ namespace DiscImageChef.ImagePlugins
                                 }
                             case SectorTagType.CDSectorSubchannel:
                             case SectorTagType.CDSectorSubHeader:
-                                throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CDSectorECC:
                                 {
                                     sector_offset = 2076;
@@ -756,7 +756,7 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             default:
-                                throw new ArgumentException("Unsupported tag requested", "tag");
+                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
                         break;
                     }
@@ -811,17 +811,17 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress)
+        public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -838,15 +838,15 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException("sectorAddress", "Sector address not found");
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
             {
                 if((sectorAddress + length) > densitySeparationSectors)
-                    throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                    throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
                 return new byte[length * 2352];
             }
@@ -865,10 +865,10 @@ namespace DiscImageChef.ImagePlugins
             }
 
             if(_track.sequence == 0)
-                throw new ArgumentOutOfRangeException("track", "Track does not exist in disc image");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if((sectorAddress + length) > _track.sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -1049,7 +1049,7 @@ namespace DiscImageChef.ImagePlugins
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public override List<Track> GetSessionTracks(UInt16 session)
+        public override List<Track> GetSessionTracks(ushort session)
         {
             List<Track> tracks = new List<Track>();
             bool expectedDensity;
@@ -1105,25 +1105,25 @@ namespace DiscImageChef.ImagePlugins
             return discimage.sessions;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress)
+        public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return Checksums.CDChecksums.CheckCDSector(buffer);
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return Checksums.CDChecksums.CheckCDSector(buffer);
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -1148,13 +1148,13 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {

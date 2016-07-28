@@ -82,18 +82,18 @@ namespace DiscImageChef.Interop
         [DllImport("libc", SetLastError = true, EntryPoint = "sysctlbyname", CharSet = CharSet.Ansi)]
         static extern int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
 
-        public static Interop.PlatformID GetRealPlatformID()
+        public static PlatformID GetRealPlatformID()
         {
             if((int)Environment.OSVersion.Platform < 4 ||
                 (int)Environment.OSVersion.Platform == 5)
             {
-                return (Interop.PlatformID)((int)Environment.OSVersion.Platform);
+                return (PlatformID)((int)Environment.OSVersion.Platform);
             }
 
             utsname unixname;
             int error = uname(out unixname);
             if(error != 0)
-                throw new Exception(String.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
+                throw new Exception(string.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
 
             switch(unixname.sysname)
             {
@@ -116,7 +116,7 @@ namespace DiscImageChef.Interop
                         {
                             Marshal.FreeHGlobal(pLen);
 
-                            throw new Exception(String.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
+                            throw new Exception(string.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
                         }
 
                         int length = Marshal.ReadInt32(pLen);
@@ -127,7 +127,7 @@ namespace DiscImageChef.Interop
                             Marshal.FreeHGlobal(pStr);
                             Marshal.FreeHGlobal(pLen);
 
-                            throw new Exception(String.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
+                            throw new Exception(string.Format("Unhandled exception calling uname: {0}", Marshal.GetLastWin32Error()));
                         }
 
                         string machine = Marshal.PtrToStringAnsi(pStr);

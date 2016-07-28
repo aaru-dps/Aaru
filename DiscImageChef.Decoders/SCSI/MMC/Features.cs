@@ -5316,13 +5316,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             try
             {
-                DateTime fwDate = new DateTime(Int32.Parse(syear), Int32.Parse(smonth),
-                                      Int32.Parse(sday), Int32.Parse(shour), Int32.Parse(sminute),
-                                      Int32.Parse(ssecond), DateTimeKind.Utc);
+                DateTime fwDate = new DateTime(int.Parse(syear), int.Parse(smonth),
+                                      int.Parse(sday), int.Parse(shour), int.Parse(sminute),
+                                      int.Parse(ssecond), DateTimeKind.Utc);
 
                 sb.AppendFormat("Drive firmware is dated {0}", fwDate).AppendLine();
             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
             }
 

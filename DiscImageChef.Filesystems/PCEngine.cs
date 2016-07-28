@@ -32,7 +32,6 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems

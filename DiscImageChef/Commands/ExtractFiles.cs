@@ -40,7 +40,7 @@ using System.IO;
 
 namespace DiscImageChef.Commands
 {
-    public class ExtractFiles
+    public static class ExtractFiles
     {
         public static void doExtractFiles(ExtractFilesOptions options)
         {
@@ -50,7 +50,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}", options.Xattrs);
             DicConsole.DebugWriteLine("Extract-Files command", "--output={0}", options.OutputDir);
 
-            if(!System.IO.File.Exists(options.InputFile))
+            if(!File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -153,13 +153,13 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Filesystem not identified");
                         else if(id_plugins.Count > 1)
                         {
-                            DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                            DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                             foreach(string plugin_name in id_plugins)
                             {
                                 if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                 {
-                                    DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                    DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
                                     Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
 
                                     error = fs.Mount(options.Debug);
@@ -185,7 +185,7 @@ namespace DiscImageChef.Commands
                         else
                         {
                             plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                            DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                            DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
                             Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
@@ -213,14 +213,14 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Filesystem not identified");
                 else if(id_plugins.Count > 1)
                 {
-                    DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                     foreach(string plugin_name in id_plugins)
                     {
                         if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                         {
-                            DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, (ulong)(_imageFormat.GetSectors() - 1) });
+                            DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
+                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -244,8 +244,8 @@ namespace DiscImageChef.Commands
                 else
                 {
                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                    DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, (ulong)(_imageFormat.GetSectors() - 1) });
+                    DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
+                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
                     error = fs.Mount(options.Debug);
                     if(error == Errno.NoError)
                     {
@@ -294,7 +294,7 @@ namespace DiscImageChef.Commands
                                                                                                FileShare.None);
                                                         outputFile.Write(xattrBuf, 0, xattrBuf.Length);
                                                         outputFile.Close();
-                                                        System.IO.FileInfo fi = new System.IO.FileInfo(outputPath);
+                                                        FileInfo fi = new FileInfo(outputPath);
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                                         try { fi.CreationTimeUtc = stat.CreationTimeUtc; } catch { }
                                                         try { fi.LastWriteTimeUtc = stat.LastWriteTimeUtc; } catch { }
@@ -333,7 +333,7 @@ namespace DiscImageChef.Commands
                                                                         FileShare.None);
                                             outputFile.Write(outBuf, 0, outBuf.Length);
                                             outputFile.Close();
-                                            System.IO.FileInfo fi = new System.IO.FileInfo(outputPath);
+                                            FileInfo fi = new FileInfo(outputPath);
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                             try { fi.CreationTimeUtc = stat.CreationTimeUtc; } catch { }
                                             try { fi.LastWriteTimeUtc = stat.LastWriteTimeUtc; } catch { }
@@ -363,7 +363,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
             }
 

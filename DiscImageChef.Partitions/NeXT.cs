@@ -33,22 +33,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef;
 
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.PartPlugins
 {
     class NeXTDisklabel : PartPlugin
     {
-        const UInt32 NEXT_MAGIC1 = 0x4E655854;
+        const uint NEXT_MAGIC1 = 0x4E655854;
         // "NeXT"
-        const UInt32 NEXT_MAGIC2 = 0x646C5632;
+        const uint NEXT_MAGIC2 = 0x646C5632;
         // "dlV2"
-        const UInt32 NEXT_MAGIC3 = 0x646C5633;
+        const uint NEXT_MAGIC3 = 0x646C5633;
         // "dlV3"
-        const UInt16 disktabStart = 0xB4;
+        const ushort disktabStart = 0xB4;
         // 180
-        const UInt16 disktabEntrySize = 0x2C;
+        const ushort disktabEntrySize = 0x2C;
         // 44
         public NeXTDisklabel()
         {
@@ -62,9 +61,9 @@ namespace DiscImageChef.PartPlugins
             bool magic_found;
             byte[] entry_sector;
 
-            UInt32 magic;
-            UInt32 sector_size;
-            UInt16 front_porch;
+            uint magic;
+            uint sector_size;
+            ushort front_porch;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 sector_size = 2048;
@@ -135,7 +134,7 @@ namespace DiscImageChef.PartPlugins
                         part.PartitionType = entry.type;
                         part.PartitionSequence = (ulong)i;
                         part.PartitionName = entry.mount_point;
-                        part.PartitionSectors = (ulong)entry.sectors;
+                        part.PartitionSectors = entry.sectors;
                         part.PartitionStartSector = ((ulong)entry.start + front_porch);
 
                         sb.AppendFormat("{0} bytes per block", entry.block_size).AppendLine();
@@ -167,19 +166,19 @@ namespace DiscImageChef.PartPlugins
 
         struct NeXTEntry
         {
-            public UInt32 start;
+            public uint start;
             // Sector of start, counting from front porch
-            public UInt32 sectors;
+            public uint sectors;
             // Length in sectors
-            public UInt16 block_size;
+            public ushort block_size;
             // Filesystem's block size
-            public UInt16 frag_size;
+            public ushort frag_size;
             // Filesystem's fragment size
             public byte optimization;
             // 's'pace or 't'ime
-            public UInt16 cpg;
+            public ushort cpg;
             // Cylinders per group
-            public UInt16 bpi;
+            public ushort bpi;
             // Bytes per inode
             public byte freemin;
             // % of minimum free space

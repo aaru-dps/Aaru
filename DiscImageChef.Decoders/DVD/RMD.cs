@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Decoders.DVD
 {
     /// <summary>
@@ -58,7 +56,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -82,7 +80,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -112,7 +110,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 6 to 7
             /// Number of remaining RMDs in current RMZ
             /// </summary>
-            public UInt16 CurrentRemainingRMDs;
+            public ushort CurrentRemainingRMDs;
         }
     }
 }

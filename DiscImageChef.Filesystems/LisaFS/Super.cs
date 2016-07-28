@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
-using System.CodeDom.Compiler;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -84,10 +83,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                     {
                         devTagSize = device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
 
-                        byte[] sector = device.ReadSector((ulong)i);
+                        byte[] sector = device.ReadSector(i);
                         mddf = new MDDF();
                         byte[] pString = new byte[33];
-                        UInt32 lisa_time;
+                        uint lisa_time;
 
                         mddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
                         mddf.volid = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -297,7 +296,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         xmlFSType.FreeClustersSpecified = true;
                         xmlFSType.Type = "LisaFS";
                         xmlFSType.VolumeName = mddf.volname;
-                        xmlFSType.VolumeSerial = String.Format("{0:X16}", mddf.volid);
+                        xmlFSType.VolumeSerial = string.Format("{0:X16}", mddf.volid);
 
                         return Errno.NoError;
                     }

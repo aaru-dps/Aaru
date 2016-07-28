@@ -62,7 +62,7 @@ namespace DiscImageChef.Decoders.Bluray
         /// <summary>
         /// Disc Information Unit Identifier "DI"
         /// </summary>
-        const UInt16 DIUIdentifier = 0x4449;
+        const ushort DIUIdentifier = 0x4449;
         #endregion Private constants
 
         #region Public methods
@@ -199,7 +199,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 0 to 1
             /// Always 4098
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -223,7 +223,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Byte 0
             /// "DI"
             /// </summary>
-            public UInt16 Signature;
+            public ushort Signature;
             /// <summary>
             /// Byte 2
             /// Disc information format
@@ -283,7 +283,7 @@ namespace DiscImageChef.Decoders.Bluray
             /// Bytes 109 to 110, BD-R/-RE only
             /// Timestamp
             /// </summary>
-            public UInt16 TimeStamp;
+            public ushort TimeStamp;
             /// <summary>
             /// Byte 111
             /// Product revision number

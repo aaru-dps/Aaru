@@ -55,21 +55,21 @@ namespace DiscImageChef
 
         public void RegisterAllPlugins()
         {
-            Assembly assembly; 
+            Assembly assembly;
 
             assembly = Assembly.GetAssembly(typeof(ImagePlugin));
 
-            foreach (Type type in assembly.GetTypes())
+            foreach(Type type in assembly.GetTypes())
             {
                 try
                 {
-                    if (type.IsSubclassOf(typeof(ImagePlugin)))
+                    if(type.IsSubclassOf(typeof(ImagePlugin)))
                     {
                         ImagePlugin plugin = (ImagePlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterImagePlugin(plugin);
                     }
                 }
-                catch (Exception exception)
+                catch(Exception exception)
                 {
                     DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
@@ -77,17 +77,17 @@ namespace DiscImageChef
 
             assembly = Assembly.GetAssembly(typeof(PartPlugin));
 
-            foreach (Type type in assembly.GetTypes())
+            foreach(Type type in assembly.GetTypes())
             {
                 try
                 {
-                    if (type.IsSubclassOf(typeof(PartPlugin)))
+                    if(type.IsSubclassOf(typeof(PartPlugin)))
                     {
                         PartPlugin plugin = (PartPlugin)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPartPlugin(plugin);
                     }
                 }
-                catch (Exception exception)
+                catch(Exception exception)
                 {
                     DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
@@ -95,17 +95,17 @@ namespace DiscImageChef
 
             assembly = Assembly.GetAssembly(typeof(Filesystem));
 
-            foreach (Type type in assembly.GetTypes())
+            foreach(Type type in assembly.GetTypes())
             {
                 try
                 {
-                    if (type.IsSubclassOf(typeof(Filesystem)))
+                    if(type.IsSubclassOf(typeof(Filesystem)))
                     {
                         Filesystem plugin = (Filesystem)type.GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
                         RegisterPlugin(plugin);
                     }
                 }
-                catch (Exception exception)
+                catch(Exception exception)
                 {
                     DicConsole.ErrorWriteLine("Exception {0}", exception);
                 }
@@ -114,7 +114,7 @@ namespace DiscImageChef
 
         void RegisterImagePlugin(ImagePlugin plugin)
         {
-            if (!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
+            if(!ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
             {
                 ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
             }
@@ -122,7 +122,7 @@ namespace DiscImageChef
 
         void RegisterPlugin(Filesystem plugin)
         {
-            if (!PluginsList.ContainsKey(plugin.Name.ToLower()))
+            if(!PluginsList.ContainsKey(plugin.Name.ToLower()))
             {
                 PluginsList.Add(plugin.Name.ToLower(), plugin);
             }
@@ -130,7 +130,7 @@ namespace DiscImageChef
 
         void RegisterPartPlugin(PartPlugin partplugin)
         {
-            if (!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
+            if(!PartPluginsList.ContainsKey(partplugin.Name.ToLower()))
             {
                 PartPluginsList.Add(partplugin.Name.ToLower(), partplugin);
             }

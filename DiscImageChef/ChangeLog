@@ -1,3 +1,32 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Main.cs:
+	* Plugins.cs:
+	* Options.cs:
+	* Core/IBGLog.cs:
+	* Commands/Ls.cs:
+	* Core/Checksum.cs:
+	* Commands/Decode.cs:
+	* Commands/Verify.cs:
+	* Commands/Compare.cs:
+	* Commands/Analyze.cs:
+	* Commands/Formats.cs:
+	* Commands/Entropy.cs:
+	* DetectImageFormat.cs:
+	* Commands/PrintHex.cs:
+	* DiscImageChef.csproj:
+	* Commands/Commands.cs:
+	* Commands/Benchmark.cs:
+	* Commands/DumpMedia.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/MediaScan.cs:
+	* Commands/DeviceInfo.cs:
+	* Commands/Statistics.cs:
+	* Commands/DeviceReport.cs:
+	* Commands/ExtractFiles.cs:
+	* Commands/CreateSidecar.cs:
+	  Refactor and code cleanup.
+
 2016-04-06  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaScan.cs:

@@ -33,7 +33,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security.Policy;
 
 namespace DiscImageChef.Filesystems
 {
@@ -235,9 +234,9 @@ namespace DiscImageChef.Filesystems
         public bool IsGuid;
 
         [FieldOffset(3)]
-        public UInt32 Serial32;
+        public uint Serial32;
         [FieldOffset(3)]
-        public UInt64 Serial64;
+        public ulong Serial64;
         [FieldOffset(3)]
         public Guid uuid;
     }

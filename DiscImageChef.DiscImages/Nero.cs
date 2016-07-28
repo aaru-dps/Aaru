@@ -33,7 +33,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using DiscImageChef;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
 
@@ -48,12 +47,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "NERO"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Offset of first chunk in file
             /// </summary>
-            public UInt32 FirstChunkOffset;
+            public uint FirstChunkOffset;
         }
 
         struct NeroV2Footer
@@ -61,12 +60,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "NER5"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Offset of first chunk in file
             /// </summary>
-            public UInt64 FirstChunkOffset;
+            public ulong FirstChunkOffset;
         }
 
         struct NeroV2CueEntry
@@ -94,7 +93,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// LBA sector start for this entry
             /// </summary>
-            public Int32 LBAStart;
+            public int LBAStart;
         }
 
         struct NeroV2Cuesheet
@@ -102,12 +101,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "CUEX"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Cuesheet entries
@@ -135,7 +134,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Always zero
             /// </summary>
-            public UInt16 Dummy;
+            public ushort Dummy;
 
             /// <summary>
             /// MSF start sector's minute for this entry
@@ -158,12 +157,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "CUES"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Cuesheet entries
@@ -181,32 +180,32 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Size of sector inside image (in bytes)
             /// </summary>
-            public UInt16 SectorSize;
+            public ushort SectorSize;
 
             /// <summary>
             /// Sector mode in image
             /// </summary>
-            public UInt16 Mode;
+            public ushort Mode;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt16 Unknown;
+            public ushort Unknown;
 
             /// <summary>
             /// Index 0 start
             /// </summary>
-            public UInt32 Index0;
+            public uint Index0;
 
             /// <summary>
             /// Index 1 start
             /// </summary>
-            public UInt32 Index1;
+            public uint Index1;
 
             /// <summary>
             /// End of track + 1
             /// </summary>
-            public UInt32 EndOfTrack;
+            public uint EndOfTrack;
         }
 
         struct NeroV1DAO
@@ -214,17 +213,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "DAOI"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size (big endian)
             /// </summary>
-            public UInt32 ChunkSizeBe;
+            public uint ChunkSizeBe;
 
             /// <summary>
             /// Chunk size (little endian)
             /// </summary>
-            public UInt32 ChunkSizeLe;
+            public uint ChunkSizeLe;
 
             /// <summary>
             /// UPC (14 bytes, null-padded)
@@ -234,7 +233,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// TOC type
             /// </summary>
-            public UInt16 TocType;
+            public ushort TocType;
 
             /// <summary>
             /// First track
@@ -262,32 +261,32 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Size of sector inside image (in bytes)
             /// </summary>
-            public UInt16 SectorSize;
+            public ushort SectorSize;
 
             /// <summary>
             /// Sector mode in image
             /// </summary>
-            public UInt16 Mode;
+            public ushort Mode;
 
             /// <summary>
             /// Seems to be always 0.
             /// </summary>
-            public UInt16 Unknown;
+            public ushort Unknown;
 
             /// <summary>
             /// Index 0 start
             /// </summary>
-            public UInt64 Index0;
+            public ulong Index0;
 
             /// <summary>
             /// Index 1 start
             /// </summary>
-            public UInt64 Index1;
+            public ulong Index1;
 
             /// <summary>
             /// End of track + 1
             /// </summary>
-            public UInt64 EndOfTrack;
+            public ulong EndOfTrack;
         }
 
         struct NeroV2DAO
@@ -295,17 +294,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "DAOX"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size (big endian)
             /// </summary>
-            public UInt32 ChunkSizeBe;
+            public uint ChunkSizeBe;
 
             /// <summary>
             /// Chunk size (little endian)
             /// </summary>
-            public UInt32 ChunkSizeLe;
+            public uint ChunkSizeLe;
 
             /// <summary>
             /// UPC (14 bytes, null-padded)
@@ -315,7 +314,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// TOC type
             /// </summary>
-            public UInt16 TocType;
+            public ushort TocType;
 
             /// <summary>
             /// First track
@@ -363,7 +362,7 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// CRC
             /// </summary>
-            public UInt16 CRC;
+            public ushort CRC;
         }
 
         struct NeroCDText
@@ -371,12 +370,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "CDTX"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// CD-TEXT packs
@@ -389,27 +388,27 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset of track on image
             /// </summary>
-            public UInt32 Offset;
+            public uint Offset;
 
             /// <summary>
             /// Length of track in bytes
             /// </summary>
-            public UInt32 Length;
+            public uint Length;
 
             /// <summary>
             /// Track mode
             /// </summary>
-            public UInt32 Mode;
+            public uint Mode;
 
             /// <summary>
             /// LBA track start (plus 150 lead in sectors)
             /// </summary>
-            public UInt32 StartLBA;
+            public uint StartLBA;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt32 Unknown;
+            public uint Unknown;
         }
 
         struct NeroV1TAO
@@ -417,12 +416,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "ETNF"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// CD-TEXT packs
@@ -435,32 +434,32 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset of track on image
             /// </summary>
-            public UInt64 Offset;
+            public ulong Offset;
 
             /// <summary>
             /// Length of track in bytes
             /// </summary>
-            public UInt64 Length;
+            public ulong Length;
 
             /// <summary>
             /// Track mode
             /// </summary>
-            public UInt32 Mode;
+            public uint Mode;
 
             /// <summary>
             /// LBA track start (plus 150 lead in sectors)
             /// </summary>
-            public UInt32 StartLBA;
+            public uint StartLBA;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt32 Unknown;
+            public uint Unknown;
 
             /// <summary>
             /// Track length in sectors
             /// </summary>
-            public UInt32 Sectors;
+            public uint Sectors;
         }
 
         struct NeroV2TAO
@@ -468,12 +467,12 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "ETN2"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// CD-TEXT packs
@@ -486,17 +485,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "SINF"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Tracks in session
             /// </summary>
-            public UInt32 Tracks;
+            public uint Tracks;
         }
 
         struct NeroMediaType
@@ -504,17 +503,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "MTYP"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Media type
             /// </summary>
-            public UInt32 Type;
+            public uint Type;
         }
 
         struct NeroDiscInformation
@@ -522,17 +521,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "DINF"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt32 Unknown;
+            public uint Unknown;
         }
 
         struct NeroTOCChunk
@@ -540,17 +539,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "TOCT"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt16 Unknown;
+            public ushort Unknown;
         }
 
         struct NeroRELOChunk
@@ -558,17 +557,17 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "RELO"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
 
             /// <summary>
             /// Unknown
             /// </summary>
-            public UInt32 Unknown;
+            public uint Unknown;
         }
 
         struct NeroEndOfChunkChain
@@ -576,28 +575,28 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// "END!"
             /// </summary>
-            public UInt32 ChunkID;
+            public uint ChunkID;
 
             /// <summary>
             /// Chunk size
             /// </summary>
-            public UInt32 ChunkSize;
+            public uint ChunkSize;
         }
 
         // Internal use only
         struct NeroTrack
         {
             public byte[] ISRC;
-            public UInt16 SectorSize;
-            public UInt64 Offset;
-            public UInt64 Length;
-            public UInt64 EndOfTrack;
-            public UInt32 Mode;
-            public UInt64 StartLBA;
-            public UInt64 Sectors;
-            public UInt64 Index0;
-            public UInt64 Index1;
-            public UInt32 Sequence;
+            public ushort SectorSize;
+            public ulong Offset;
+            public ulong Length;
+            public ulong EndOfTrack;
+            public uint Mode;
+            public ulong StartLBA;
+            public ulong Sectors;
+            public ulong Index0;
+            public ulong Index1;
+            public uint Sequence;
         }
 
         #endregion
@@ -605,49 +604,49 @@ namespace DiscImageChef.ImagePlugins
         #region Internal consts
 
         // "NERO"
-        public const UInt32 NeroV1FooterID = 0x4E45524F;
+        public const uint NeroV1FooterID = 0x4E45524F;
 
         // "NER5"
-        public const UInt32 NeroV2FooterID = 0x4E455235;
+        public const uint NeroV2FooterID = 0x4E455235;
 
         // "CUES"
-        public const UInt32 NeroV1CUEID = 0x43554553;
+        public const uint NeroV1CUEID = 0x43554553;
 
         // "CUEX"
-        public const UInt32 NeroV2CUEID = 0x43554558;
+        public const uint NeroV2CUEID = 0x43554558;
 
         // "ETNF"
-        public const UInt32 NeroV1TAOID = 0x45544E46;
+        public const uint NeroV1TAOID = 0x45544E46;
 
         // "ETN2"
-        public const UInt32 NeroV2TAOID = 0x45544E32;
+        public const uint NeroV2TAOID = 0x45544E32;
 
         // "DAOI"
-        public const UInt32 NeroV1DAOID = 0x44414F49;
+        public const uint NeroV1DAOID = 0x44414F49;
 
         // "DAOX"
-        public const UInt32 NeroV2DAOID = 0x44414F58;
+        public const uint NeroV2DAOID = 0x44414F58;
 
         // "CDTX"
-        public const UInt32 NeroCDTextID = 0x43445458;
+        public const uint NeroCDTextID = 0x43445458;
 
         // "SINF"
-        public const UInt32 NeroSessionID = 0x53494E46;
+        public const uint NeroSessionID = 0x53494E46;
 
         // "MTYP"
-        public const UInt32 NeroDiskTypeID = 0x4D545950;
+        public const uint NeroDiskTypeID = 0x4D545950;
 
         // "DINF"
-        public const UInt32 NeroDiscInfoID = 0x44494E46;
+        public const uint NeroDiscInfoID = 0x44494E46;
 
         // "TOCT"
-        public const UInt32 NeroTOCID = 0x544F4354;
+        public const uint NeroTOCID = 0x544F4354;
 
         // "RELO"
-        public const UInt32 NeroReloID = 0x52454C4F;
+        public const uint NeroReloID = 0x52454C4F;
 
         // "END!"
-        public const UInt32 NeroEndID = 0x454E4421;
+        public const uint NeroEndID = 0x454E4421;
 
         public enum DAOMode : ushort
         {
@@ -662,6 +661,7 @@ namespace DiscImageChef.ImagePlugins
             DataM2RawSub = 0x0011
         }
 
+        [Flags]
         public enum NeroMediaTypes : uint
         {
             /// <summary>
@@ -834,7 +834,7 @@ namespace DiscImageChef.ImagePlugins
         FileStream imageStream;
         FileInfo imageInfo;
         bool imageNewFormat;
-        Dictionary<ushort, UInt32> neroSessions;
+        Dictionary<ushort, uint> neroSessions;
         NeroV1Cuesheet neroCuesheetV1;
         NeroV2Cuesheet neroCuesheetV2;
         NeroV1DAO neroDAOV1;
@@ -851,9 +851,9 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<uint, byte[]> TrackISRCs;
         byte[] UPC;
         Dictionary<uint, NeroTrack> neroTracks;
-        Dictionary<UInt32, UInt64> offsetmap;
+        Dictionary<uint, ulong> offsetmap;
         List<Session> imageSessions;
-        List<CommonTypes.Partition> ImagePartitions;
+        List<Partition> ImagePartitions;
 
         #endregion
 
@@ -868,11 +868,11 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
             ImageInfo.readableMediaTags = new List<MediaTagType>();
-            neroSessions = new Dictionary<ushort, UInt32>();
+            neroSessions = new Dictionary<ushort, uint>();
             neroTracks = new Dictionary<uint, NeroTrack>();
             offsetmap = new Dictionary<uint, ulong>();
             imageSessions = new List<Session>();
-            ImagePartitions = new List<CommonTypes.Partition>();
+            ImagePartitions = new List<Partition>();
         }
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
@@ -978,8 +978,8 @@ namespace DiscImageChef.ImagePlugins
                 while(parsing)
                 {
                     byte[] ChunkHeaderBuffer = new byte[8];
-                    UInt32 ChunkID;
-                    UInt32 ChunkLength;
+                    uint ChunkID;
+                    uint ChunkLength;
 
                     imageStream.Read(ChunkHeaderBuffer, 0, 8);
                     ChunkID = BigEndianBitConverter.ToUInt32(ChunkHeaderBuffer, 0);
@@ -1374,7 +1374,7 @@ namespace DiscImageChef.ImagePlugins
                             {
                                 DicConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes", ChunkLength);
 
-                                UInt32 sessionTracks;
+                                uint sessionTracks;
                                 byte[] tmpbuffer = new byte[4];
                                 imageStream.Read(tmpbuffer, 0, 4);
                                 sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
@@ -1608,12 +1608,12 @@ namespace DiscImageChef.ImagePlugins
                         offsetmap.Add(_track.TrackSequence, _track.TrackStartSector);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence, _track.TrackStartSector);
 
-                        CommonTypes.Partition partition;
+                        Partition partition;
 
                         if(_neroTrack.Index0 < _neroTrack.Index1)
                         {
-                            partition = new CommonTypes.Partition();
-                            partition.PartitionDescription = String.Format("Track {0} Index 0", _track.TrackSequence);
+                            partition = new Partition();
+                            partition.PartitionDescription = string.Format("Track {0} Index 0", _track.TrackSequence);
                             partition.PartitionLength = (_neroTrack.Index1 - _neroTrack.Index0);
                             partition.PartitionName = StringHandlers.CToString(_neroTrack.ISRC);
                             partition.PartitionSectors = partition.PartitionLength / _neroTrack.SectorSize;
@@ -1625,8 +1625,8 @@ namespace DiscImageChef.ImagePlugins
                             PartitionSequence++;
                         }
 
-                        partition = new CommonTypes.Partition();
-                        partition.PartitionDescription = String.Format("Track {0} Index 1", _track.TrackSequence);
+                        partition = new Partition();
+                        partition.PartitionDescription = string.Format("Track {0} Index 1", _track.TrackSequence);
                         partition.PartitionLength = (_neroTrack.EndOfTrack - _neroTrack.Index1);
                         partition.PartitionName = StringHandlers.CToString(_neroTrack.ISRC);
                         partition.PartitionSectors = partition.PartitionLength / _neroTrack.SectorSize;
@@ -1658,17 +1658,17 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override UInt64 GetImageSize()
+        public override ulong GetImageSize()
         {
             return ImageInfo.imageSize;
         }
 
-        public override UInt64 GetSectors()
+        public override ulong GetSectors()
         {
             return ImageInfo.sectors;
         }
 
-        public override UInt32 GetSectorSize()
+        public override uint GetSectorSize()
         {
             return ImageInfo.sectorSize;
         }
@@ -1686,27 +1686,27 @@ namespace DiscImageChef.ImagePlugins
             }
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress)
+        public override byte[] ReadSector(ulong sectorAddress)
         {
             return ReadSectors(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
-        public override byte[] ReadSector(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSector(ulong sectorAddress, uint track)
         {
             return ReadSectors(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorTag(UInt64 sectorAddress, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -1723,10 +1723,10 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException("sectorAddress", String.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -1743,18 +1743,18 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException("sectorAddress", String.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
         }
 
-        public override byte[] ReadSectors(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             NeroTrack _track;
 
             if(!neroTracks.TryGetValue(track, out _track))
-                throw new ArgumentOutOfRangeException("track", "Track not found");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -1849,15 +1849,15 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorsTag(UInt64 sectorAddress, UInt32 length, UInt32 track, SectorTagType tag)
+        public override byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             NeroTrack _track;
 
             if(!neroTracks.TryGetValue(track, out _track))
-                throw new ArgumentOutOfRangeException("track", "Track not found");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -1889,14 +1889,14 @@ namespace DiscImageChef.ImagePlugins
                 case SectorTagType.CDTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default:
-                    throw new ArgumentException("Unsupported tag requested", "tag");
+                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
             switch((DAOMode)_track.Mode)
             {
                 case DAOMode.Data:
                 case DAOMode.DataM2F1:
-                    throw new ArgumentException("No tags in image for requested track", "tag");
+                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case DAOMode.DataM2F2:
                     {
                         switch(tag)
@@ -1907,7 +1907,7 @@ namespace DiscImageChef.ImagePlugins
                             case SectorTagType.CDSectorECC:
                             case SectorTagType.CDSectorECC_P:
                             case SectorTagType.CDSectorECC_Q:
-                                throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CDSectorSubHeader:
                                 {
                                     sector_offset = 0;
@@ -1923,12 +1923,12 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             default:
-                                throw new ArgumentException("Unsupported tag requested", "tag");
+                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
                         break;
                     }
                 case DAOMode.Audio:
-                    throw new ArgumentException("There are no tags on audio tracks", "tag");
+                    throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case DAOMode.DataRaw:
                     {
                         switch(tag)
@@ -1949,7 +1949,7 @@ namespace DiscImageChef.ImagePlugins
                                 }
                             case SectorTagType.CDSectorSubchannel:
                             case SectorTagType.CDSectorSubHeader:
-                                throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CDSectorECC:
                                 {
                                     sector_offset = 2076;
@@ -1979,7 +1979,7 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             default:
-                                throw new ArgumentException("Unsupported tag requested", "tag");
+                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
                         break;
                     }
@@ -2012,7 +2012,7 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             case SectorTagType.CDSectorSubHeader:
-                                throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                                throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CDSectorECC:
                                 {
                                     sector_offset = 2076;
@@ -2042,14 +2042,14 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             default:
-                                throw new ArgumentException("Unsupported tag requested", "tag");
+                                throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
                         break;
                     }
                 case DAOMode.AudioSub:
                     {
                         if(tag != SectorTagType.CDSectorSubchannel)
-                            throw new ArgumentException("Unsupported tag requested for this track", "tag");
+                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
 
                         sector_offset = 2352;
                         sector_size = 96;
@@ -2085,17 +2085,17 @@ namespace DiscImageChef.ImagePlugins
             return buffer;
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress)
+        public override byte[] ReadSectorLong(ulong sectorAddress)
         {
             return ReadSectorsLong(sectorAddress, 1);
         }
 
-        public override byte[] ReadSectorLong(UInt64 sectorAddress, UInt32 track)
+        public override byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             return ReadSectorsLong(sectorAddress, 1, track);
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
             {
@@ -2112,18 +2112,18 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            throw new ArgumentOutOfRangeException("sectorAddress", String.Format("Sector address {0} not found", sectorAddress));
+            throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
         }
 
-        public override byte[] ReadSectorsLong(UInt64 sectorAddress, UInt32 length, UInt32 track)
+        public override byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             NeroTrack _track;
 
             if(!neroTracks.TryGetValue(track, out _track))
-                throw new ArgumentOutOfRangeException("track", "Track not found");
+                throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException("length", "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
 
             uint sector_offset;
             uint sector_size;
@@ -2234,7 +2234,7 @@ namespace DiscImageChef.ImagePlugins
             return ImageInfo.mediaType;
         }
 
-        public override List<CommonTypes.Partition> GetPartitions()
+        public override List<Partition> GetPartitions()
         {
             return ImagePartitions;
         }
@@ -2249,7 +2249,7 @@ namespace DiscImageChef.ImagePlugins
             return GetSessionTracks(session.SessionSequence);
         }
 
-        public override List<Track> GetSessionTracks(UInt16 session)
+        public override List<Track> GetSessionTracks(ushort session)
         {
             List<Track> sessionTracks = new List<Track>();
             foreach(Track _track in imageTracks)
@@ -2264,25 +2264,25 @@ namespace DiscImageChef.ImagePlugins
             return imageSessions;
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress)
+        public override bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
             return Checksums.CDChecksums.CheckCDSector(buffer);
         }
 
-        public override bool? VerifySector(UInt64 sectorAddress, UInt32 track)
+        public override bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
             return Checksums.CDChecksums.CheckCDSector(buffer);
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -2307,13 +2307,13 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool? VerifySectors(UInt64 sectorAddress, UInt32 length, UInt32 track, out List<UInt64> FailingLBAs, out List<UInt64> UnknownLBAs)
+        public override bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> FailingLBAs, out List<ulong> UnknownLBAs)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
             int bps = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
-            FailingLBAs = new List<UInt64>();
-            UnknownLBAs = new List<UInt64>();
+            FailingLBAs = new List<ulong>();
+            UnknownLBAs = new List<ulong>();
 
             for(int i = 0; i < length; i++)
             {
@@ -2423,7 +2423,7 @@ namespace DiscImageChef.ImagePlugins
             }
         }
 
-        static UInt16 NeroTrackModeToBytesPerSector(DAOMode mode)
+        static ushort NeroTrackModeToBytesPerSector(DAOMode mode)
         {
             switch(mode)
             {

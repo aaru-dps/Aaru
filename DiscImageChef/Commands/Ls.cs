@@ -39,7 +39,7 @@ using DiscImageChef.PartPlugins;
 
 namespace DiscImageChef.Commands
 {
-    public class Ls
+    public static class Ls
     {
         public static void doLs(LsOptions options)
         {
@@ -142,13 +142,13 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Filesystem not identified");
                         else if(id_plugins.Count > 1)
                         {
-                            DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                            DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                             foreach(string plugin_name in id_plugins)
                             {
                                 if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                 {
-                                    DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                    DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
                                     Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
 
                                     error = fs.Mount(options.Debug);
@@ -174,7 +174,7 @@ namespace DiscImageChef.Commands
                         else
                         {
                             plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                            DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                            DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
                             Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
@@ -202,14 +202,14 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Filesystem not identified");
                 else if(id_plugins.Count > 1)
                 {
-                    DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                     foreach(string plugin_name in id_plugins)
                     {
                         if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                         {
-                            DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, (ulong)(_imageFormat.GetSectors() - 1) });
+                            DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
+                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -233,8 +233,8 @@ namespace DiscImageChef.Commands
                 else
                 {
                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                    DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
-                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, (ulong)(_imageFormat.GetSectors() - 1) });
+                    DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
+                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
                     error = fs.Mount(options.Debug);
                     if(error == Errno.NoError)
                     {
@@ -291,7 +291,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Ls command", ex.StackTrace);
             }
 

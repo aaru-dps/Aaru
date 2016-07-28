@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public override Errno ReadDir(string path, ref List<string> contents)
         {
-            Int16 fileId;
+            short fileId;
             bool isDir;
             Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadCatalog(Int16 fileId, out List<CatalogEntry> catalog)
+        Errno ReadCatalog(short fileId, out List<CatalogEntry> catalog)
         {
             catalog = null;
 

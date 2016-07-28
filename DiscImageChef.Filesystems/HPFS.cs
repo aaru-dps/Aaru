@@ -32,12 +32,11 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from an old unnamed document
 namespace DiscImageChef.Filesystems
 {
+    // Information from an old unnamed document
     class HPFS : Filesystem
     {
         public HPFS()
@@ -57,7 +56,7 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt32 magic1, magic2;
+            uint magic1, magic2;
 
             byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
             magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
@@ -254,7 +253,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = hpfs_bpb.bps * hpfs_bpb.spc;
             xmlFSType.Type = "HPFS";
             xmlFSType.VolumeName = hpfs_bpb.volume_label;
-            xmlFSType.VolumeSerial = String.Format("{0:X8}", hpfs_bpb.serial_no);
+            xmlFSType.VolumeSerial = string.Format("{0:X8}", hpfs_bpb.serial_no);
 
             information = sb.ToString();
         }
@@ -267,33 +266,33 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x000, Jump to boot code</summary>
             public byte jmp1;
             /// <summary>0x001, ...;</summary>
-            public UInt16 jmp2;
+            public ushort jmp2;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded</summary>
             public string OEMName;
             /// <summary>0x00B, Bytes per sector</summary>
-            public UInt16 bps;
+            public ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
             public byte spc;
             /// <summary>0x00E, Reserved sectors between BPB and... does it have sense in HPFS?</summary>
-            public UInt16 rsectors;
+            public ushort rsectors;
             /// <summary>0x010, Number of FATs... seriously?</summary>
             public byte fats_no;
             /// <summary>0x011, Number of entries on root directory... ok</summary>
-            public UInt16 root_ent;
+            public ushort root_ent;
             /// <summary>0x013, Sectors in volume... doubt it</summary>
-            public UInt16 sectors;
+            public ushort sectors;
             /// <summary>0x015, Media descriptor</summary>
             public byte media;
             /// <summary>0x016, Sectors per FAT... again</summary>
-            public UInt16 spfat;
+            public ushort spfat;
             /// <summary>0x018, Sectors per track... you're kidding</summary>
-            public UInt16 sptrk;
+            public ushort sptrk;
             /// <summary>0x01A, Heads... stop!</summary>
-            public UInt16 heads;
+            public ushort heads;
             /// <summary>0x01C, Hidden sectors before BPB</summary>
-            public UInt32 hsectors;
+            public uint hsectors;
             /// <summary>0x024, Sectors in volume if &gt; 65535...</summary>
-            public UInt32 big_sectors;
+            public uint big_sectors;
             /// <summary>0x028, Drive number</summary>
             public byte drive_no;
             /// <summary>0x029, Volume flags?</summary>
@@ -301,7 +300,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x02A, EPB signature, 0x29</summary>
             public byte signature;
             /// <summary>0x02B, Volume serial number</summary>
-            public UInt32 serial_no;
+            public uint serial_no;
             /// <summary>0x02F, Volume label, 11 bytes, space-padded</summary>
             public string volume_label;
             /// <summary>0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")</summary>
@@ -314,51 +313,51 @@ namespace DiscImageChef.Filesystems
         struct HPFS_SuperBlock
         {
             /// <summary>0x000, 0xF995E849</summary>
-            public UInt32 magic1;
+            public uint magic1;
             /// <summary>0x004, 0xFA53E9C5</summary>
-            public UInt32 magic2;
+            public uint magic2;
             /// <summary>0x008, HPFS version</summary>
             public byte version;
             /// <summary>0x009, 2 if &lt;= 4 GiB, 3 if &gt; 4 GiB</summary>
             public byte func_version;
             /// <summary>0x00A, Alignment</summary>
-            public UInt16 dummy;
+            public ushort dummy;
             /// <summary>0x00C, LSN pointer to root fnode</summary>
-            public UInt32 root_fnode;
+            public uint root_fnode;
             /// <summary>0x010, Sectors on volume</summary>
-            public UInt32 sectors;
+            public uint sectors;
             /// <summary>0x014, Bad blocks on volume</summary>
-            public UInt32 badblocks;
+            public uint badblocks;
             /// <summary>0x018, LSN pointer to volume bitmap</summary>
-            public UInt32 bitmap_lsn;
+            public uint bitmap_lsn;
             /// <summary>0x01C, 0</summary>
-            public UInt32 zero1;
+            public uint zero1;
             /// <summary>0x020, LSN pointer to badblock directory</summary>
-            public UInt32 badblock_lsn;
+            public uint badblock_lsn;
             /// <summary>0x024, 0</summary>
-            public UInt32 zero2;
+            public uint zero2;
             /// <summary>0x028, Time of last CHKDSK</summary>
-            public Int32 last_chkdsk;
+            public int last_chkdsk;
             /// <summary>0x02C, Time of last optimization</summary>
-            public Int32 last_optim;
+            public int last_optim;
             /// <summary>0x030, Sectors of dir band</summary>
-            public UInt32 dband_sectors;
+            public uint dband_sectors;
             /// <summary>0x034, Start sector of dir band</summary>
-            public UInt32 dband_start;
+            public uint dband_start;
             /// <summary>0x038, Last sector of dir band</summary>
-            public UInt32 dband_last;
+            public uint dband_last;
             /// <summary>0x03C, LSN of free space bitmap</summary>
-            public UInt32 dband_bitmap;
+            public uint dband_bitmap;
             /// <summary>0x040, Can be used for volume name (32 bytes)</summary>
-            public UInt64 zero3;
+            public ulong zero3;
             /// <summary>0x048, ...</summary>
-            public UInt64 zero4;
+            public ulong zero4;
             /// <summary>0x04C, ...</summary>
-            public UInt64 zero5;
+            public ulong zero5;
             /// <summary>0x050, ...;</summary>
-            public UInt64 zero6;
+            public ulong zero6;
             /// <summary>0x058, LSN pointer to ACLs (only HPFS386)</summary>
-            public UInt32 acl_start;
+            public uint acl_start;
         }
 
         /// <summary>
@@ -367,33 +366,33 @@ namespace DiscImageChef.Filesystems
         struct HPFS_SpareBlock
         {
             /// <summary>0x000, 0xF9911849</summary>
-            public UInt32 magic1;
+            public uint magic1;
             /// <summary>0x004, 0xFA5229C5</summary>
-            public UInt32 magic2;
+            public uint magic2;
             /// <summary>0x008, HPFS flags</summary>
             public byte flags1;
             /// <summary>0x009, HPFS386 flags</summary>
             public byte flags2;
             /// <summary>0x00A, Alignment</summary>
-            public UInt16 dummy;
+            public ushort dummy;
             /// <summary>0x00C, LSN of hotfix directory</summary>
-            public UInt32 hotfix_start;
+            public uint hotfix_start;
             /// <summary>0x010, Used hotfixes</summary>
-            public UInt32 hotfix_used;
+            public uint hotfix_used;
             /// <summary>0x014, Total hotfixes available</summary>
-            public UInt32 hotfix_entries;
+            public uint hotfix_entries;
             /// <summary>0x018, Unused spare dnodes</summary>
-            public UInt32 spare_dnodes_free;
+            public uint spare_dnodes_free;
             /// <summary>0x01C, Length of spare dnodes list</summary>
-            public UInt32 spare_dnodes;
+            public uint spare_dnodes;
             /// <summary>0x020, LSN of codepage directory</summary>
-            public UInt32 codepage_lsn;
+            public uint codepage_lsn;
             /// <summary>0x024, Number of codepages used</summary>
-            public UInt32 codepages;
+            public uint codepages;
             /// <summary>0x028, SuperBlock CRC32 (only HPFS386)</summary>
-            public UInt32 sb_crc32;
+            public uint sb_crc32;
             /// <summary>0x02C, SpareBlock CRC32 (only HPFS386)</summary>
-            public UInt32 sp_crc32;
+            public uint sp_crc32;
         }
 
         public override Errno Mount()

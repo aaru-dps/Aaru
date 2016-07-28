@@ -92,7 +92,7 @@ namespace DiscImageChef.Devices.Linux
             sense |= (io_hdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
             if(io_hdr.duration > 0)
-                duration = (double)io_hdr.duration;
+                duration = io_hdr.duration;
             else
                 duration = (end - start).TotalMilliseconds;
 
@@ -335,7 +335,7 @@ namespace DiscImageChef.Devices.Linux
 
             if(Interop.DetectOS.Is64Bit())
             {
-                long result64 = Extern.readlink64(path, buf, (long)4096);
+                long result64 = Extern.readlink64(path, buf, 4096);
                 if(result64 <= 0)
                     return null;
 

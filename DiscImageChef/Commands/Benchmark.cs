@@ -484,7 +484,9 @@ namespace DiscImageChef.Commands
             double entropy = 0;
             foreach(ulong l in entTable)
             {
+#pragma warning disable IDE0004 // Without this specific cast, it gives incorrect values
                 double frequency = (double)l / (double)bufferSize;
+#pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
                 entropy += -(frequency * Math.Log(frequency, 2));
             }
             end = DateTime.Now;

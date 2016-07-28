@@ -1,3 +1,13 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* GPT.cs:
+	* MBR.cs:
+	* RDB.cs:
+	* Sun.cs:
+	* NeXT.cs:
+	* Atari.cs:
+	* AppleMap.cs: Refactor and code cleanup.
+
 2016-02-10  Natalia Portillo  <claunia@claunia.com>
 
 	* Atari.cs:

@@ -356,7 +356,9 @@ namespace DiscImageChef.Devices
             if(sense)
                 return true;
 
+#pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
             ushort modeLength = (ushort)(((int)buffer[0] << 8) + buffer[1] + 2);
+#pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[modeLength];
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);
@@ -577,7 +579,9 @@ namespace DiscImageChef.Devices
             if(sense)
                 return true;
 
+#pragma warning disable IDE0004 // Cast is necessary or an invalid bitshift happens
             uint strctLength = (uint)(((int)buffer[0] << 24) + ((int)buffer[1] << 16) + ((int)buffer[2] << 8) + buffer[3] + 4);
+#pragma warning restore IDE0004 // Cast is necessary or an invalid bitshift happens
             buffer = new byte[strctLength];
             cdb[6] = (byte)((buffer.Length & 0xFF000000) >> 24);
             cdb[7] = (byte)((buffer.Length & 0xFF0000) >> 16);

@@ -31,7 +31,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 namespace DiscImageChef.Devices.FreeBSD
 {
     public class Command

@@ -33,18 +33,16 @@
 using System;
 using System.Globalization;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
-
-// This is coded following ECMA-119.
-// TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
-// TODO: Apple extensiones, requires XA or advance RR interpretation.
-// TODO: Needs a major rewrite
 using DiscImageChef.Console;
 
 
 namespace DiscImageChef.Filesystems
 {
+    // This is coded following ECMA-119.
+    // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
+    // TODO: Apple extensiones, requires XA or advance RR interpretation.
+    // TODO: Needs a major rewrite
     class ISO9660Plugin : Filesystem
     {
         //static bool alreadyLaunched;
@@ -440,7 +438,9 @@ namespace DiscImageChef.Filesystems
                             {
                                 ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date2), "yyyy.MMM", provider);
                             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch { }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         }
 
                         /*

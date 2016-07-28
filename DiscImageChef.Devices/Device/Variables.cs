@@ -30,9 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using Microsoft.Win32.SafeHandles;
-
 namespace DiscImageChef.Devices
 {
     public partial class Device
@@ -97,7 +94,7 @@ namespace DiscImageChef.Devices
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="DiscImageChef.Devices.Device"/> is in error.
+        /// Gets a value indicating whether this <see cref="Device"/> is in error.
         /// </summary>
         /// <value><c>true</c> if error; otherwise, <c>false</c>.</value>
         public bool Error

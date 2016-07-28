@@ -55,58 +55,58 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x00, File magic number, <see cref="ImageCookie"/> 
             /// </summary>
-            public UInt64 cookie;
+            public ulong cookie;
             /// <summary>
             /// Offset 0x08, Specific feature support
             /// </summary>
-            public UInt32 features;
+            public uint features;
             /// <summary>
             /// Offset 0x0C, File format version
             /// </summary>
-            public UInt32 version;
+            public uint version;
             /// <summary>
             /// Offset 0x10, Offset from beginning of file to next structure
             /// </summary>
-            public UInt64 offset;
+            public ulong offset;
             /// <summary>
             /// Offset 0x18, Creation date seconds since 2000/01/01 00:00:00 UTC
             /// </summary>
-            public UInt32 timestamp;
+            public uint timestamp;
             /// <summary>
             /// Offset 0x1C, Application that created this disk image
             /// </summary>
-            public UInt32 creatorApplication;
+            public uint creatorApplication;
             /// <summary>
             /// Offset 0x20, Version of the application that created this disk image
             /// </summary>
-            public UInt32 creatorVersion;
+            public uint creatorVersion;
             /// <summary>
             /// Offset 0x24, Host operating system of the application that created this disk image
             /// </summary>
-            public UInt32 creatorHostOS;
+            public uint creatorHostOS;
             /// <summary>
             /// Offset 0x28, Original hard disk size, in bytes
             /// </summary>
-            public UInt64 originalSize;
+            public ulong originalSize;
             /// <summary>
             /// Offset 0x30, Current hard disk size, in bytes
             /// </summary>
-            public UInt64 currentSize;
+            public ulong currentSize;
             /// <summary>
             /// Offset 0x38, CHS geometry
             /// Cylinder mask = 0xFFFF0000
             /// Heads mask = 0x0000FF00
             /// Sectors mask = 0x000000FF
             /// </summary>
-            public UInt32 diskGeometry;
+            public uint diskGeometry;
             /// <summary>
             /// Offset 0x3C, Disk image type
             /// </summary>
-            public UInt32 diskType;
+            public uint diskType;
             /// <summary>
             /// Offset 0x40, Checksum for this structure
             /// </summary>
-            public UInt32 checksum;
+            public uint checksum;
             /// <summary>
             /// Offset 0x44, UUID, used to associate parent with differencing disk images
             /// </summary>
@@ -126,23 +126,23 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x00, Describes the platform specific type this entry belongs to
             /// </summary>
-            public UInt32 platformCode;
+            public uint platformCode;
             /// <summary>
             /// Offset 0x04, Describes the number of 512 bytes sectors used by this entry
             /// </summary>
-            public UInt32 platformDataSpace;
+            public uint platformDataSpace;
             /// <summary>
             /// Offset 0x08, Describes this entry's size in bytes
             /// </summary>
-            public UInt32 platformDataLength;
+            public uint platformDataLength;
             /// <summary>
             /// Offset 0x0c, Reserved
             /// </summary>
-            public UInt32 reserved;
+            public uint reserved;
             /// <summary>
             /// Offset 0x10, Offset on disk image this entry resides on
             /// </summary>
-            public UInt64 platformDataOffset;
+            public ulong platformDataOffset;
         }
 
         struct DynamicDiskHeader
@@ -150,33 +150,33 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x00, Header magic, <see cref="DynamicCookie"/> 
             /// </summary>
-            public UInt64 cookie;
+            public ulong cookie;
             /// <summary>
             /// Offset 0x08, Offset to next structure on disk image.
             /// Currently unused, 0xFFFFFFFF
             /// </summary>
-            public UInt64 dataOffset;
+            public ulong dataOffset;
             /// <summary>
             /// Offset 0x10, Offset of the Block Allocation Table (BAT)
             /// </summary>
-            public UInt64 tableOffset;
+            public ulong tableOffset;
             /// <summary>
             /// Offset 0x18, Version of this header
             /// </summary>
-            public UInt32 headerVersion;
+            public uint headerVersion;
             /// <summary>
             /// Offset 0x1C, Maximum entries present in the BAT
             /// </summary>
-            public UInt32 maxTableEntries;
+            public uint maxTableEntries;
             /// <summary>
             /// Offset 0x20, Size of a block in bytes
             /// Should always be a power of two of 512
             /// </summary>
-            public UInt32 blockSize;
+            public uint blockSize;
             /// <summary>
             /// Offset 0x24, Checksum of this header
             /// </summary>
-            public UInt32 checksum;
+            public uint checksum;
             /// <summary>
             /// Offset 0x28, UUID of parent disk image for differencing type
             /// </summary>
@@ -184,11 +184,11 @@ namespace DiscImageChef.ImagePlugins
             /// <summary>
             /// Offset 0x38, Timestamp of parent disk image
             /// </summary>
-            public UInt32 parentTimestamp;
+            public uint parentTimestamp;
             /// <summary>
             /// Offset 0x3C, Reserved
             /// </summary>
-            public UInt32 reserved;
+            public uint reserved;
             /// <summary>
             /// Offset 0x40, 512 bytes UTF-16 of parent disk image filename
             /// </summary>
@@ -207,7 +207,7 @@ namespace DiscImageChef.ImagePlugins
         struct BATSector
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public UInt32[] blockPointer;
+            public uint[] blockPointer;
         }
 
         #endregion
@@ -217,134 +217,134 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// File magic number, "conectix"
         /// </summary>
-        const UInt64 ImageCookie = 0x636F6E6563746978;
+        const ulong ImageCookie = 0x636F6E6563746978;
         /// <summary>
         /// Dynamic disk header magic, "cxsparse"
         /// </summary>
-        const UInt64 DynamicCookie = 0x6378737061727365;
+        const ulong DynamicCookie = 0x6378737061727365;
 
         /// <summary>
         /// Disk image is candidate for deletion on shutdown
         /// </summary>
-        const UInt32 FeaturesTemporary = 0x00000001;
+        const uint FeaturesTemporary = 0x00000001;
         /// <summary>
         /// Unknown, set from Virtual PC for Mac 7 onwards
         /// </summary>
-        const UInt32 FeaturesReserved = 0x00000002;
+        const uint FeaturesReserved = 0x00000002;
         /// <summary>
         /// Unknown
         /// </summary>
-        const UInt32 FeaturesUnknown = 0x00000100;
+        const uint FeaturesUnknown = 0x00000100;
 
         /// <summary>
         /// Only known version
         /// </summary>
-        const UInt32 Version1 = 0x00010000;
+        const uint Version1 = 0x00010000;
 
         /// <summary>
         /// Created by Virtual PC, "vpc "
         /// </summary>
-        const UInt32 CreatorVirtualPC = 0x76706320;
+        const uint CreatorVirtualPC = 0x76706320;
         /// <summary>
         /// Created by Virtual Server, "vs  "
         /// </summary>
-        const UInt32 CreatorVirtualServer = 0x76732020;
+        const uint CreatorVirtualServer = 0x76732020;
         /// <summary>
         /// Created by QEMU, "qemu"
         /// </summary>
-        const UInt32 CreatorQEMU = 0x71656D75;
+        const uint CreatorQEMU = 0x71656D75;
         /// <summary>
         /// Created by VirtualBox, "vbox"
         /// </summary>
-        const UInt32 CreatorVirtualBox = 0x76626F78;
+        const uint CreatorVirtualBox = 0x76626F78;
 
         /// <summary>
         /// Disk image created by Virtual Server 2004
         /// </summary>
-        const UInt32 VersionVirtualServer2004 = 0x00010000;
+        const uint VersionVirtualServer2004 = 0x00010000;
         /// <summary>
         /// Disk image created by Virtual PC 2004
         /// </summary>
-        const UInt32 VersionVirtualPC2004 = 0x00050000;
+        const uint VersionVirtualPC2004 = 0x00050000;
         /// <summary>
         /// Disk image created by Virtual PC 2007
         /// </summary>
-        const UInt32 VersionVirtualPC2007 = 0x00050003;
+        const uint VersionVirtualPC2007 = 0x00050003;
         /// <summary>
         /// Disk image created by Virtual PC for Mac 5, 6 or 7
         /// </summary>
-        const UInt32 VersionVirtualPCMac = 0x00040000;
+        const uint VersionVirtualPCMac = 0x00040000;
 
         /// <summary>
         /// Disk image created in Windows, "Wi2k"
         /// </summary>
-        const UInt32 CreatorWindows = 0x5769326B;
+        const uint CreatorWindows = 0x5769326B;
         /// <summary>
         /// Disk image created in Macintosh, "Mac "
         /// </summary>
-        const UInt32 CreatorMacintosh = 0x4D616320;
+        const uint CreatorMacintosh = 0x4D616320;
         /// <summary>
         /// Seen in Virtual PC for Mac for dynamic and fixed images
         /// </summary>
-        const UInt32 CreatorMacintoshOld = 0x00000000;
+        const uint CreatorMacintoshOld = 0x00000000;
 
         /// <summary>
         /// Disk image type is none, useless?
         /// </summary>
-        const UInt32 typeNone = 0;
+        const uint typeNone = 0;
         /// <summary>
         /// Deprecated disk image type
         /// </summary>
-        const UInt32 typeDeprecated1 = 1;
+        const uint typeDeprecated1 = 1;
         /// <summary>
         /// Fixed disk image type
         /// </summary>
-        const UInt32 typeFixed = 2;
+        const uint typeFixed = 2;
         /// <summary>
         /// Dynamic disk image type
         /// </summary>
-        const UInt32 typeDynamic = 3;
+        const uint typeDynamic = 3;
         /// <summary>
         /// Differencing disk image type
         /// </summary>
-        const UInt32 typeDifferencing = 4;
+        const uint typeDifferencing = 4;
         /// <summary>
         /// Deprecated disk image type
         /// </summary>
-        const UInt32 typeDeprecated2 = 5;
+        const uint typeDeprecated2 = 5;
         /// <summary>
         /// Deprecated disk image type
         /// </summary>
-        const UInt32 typeDeprecated3 = 6;
+        const uint typeDeprecated3 = 6;
 
         /// <summary>
         /// Means platform locator is unused
         /// </summary>
-        const UInt32 platformCodeUnused = 0x00000000;
+        const uint platformCodeUnused = 0x00000000;
         /// <summary>
         /// Stores a relative path string for Windows, unknown locale used, deprecated, "Wi2r"
         /// </summary>
-        const UInt32 platformCodeWindowsRelative = 0x57693272;
+        const uint platformCodeWindowsRelative = 0x57693272;
         /// <summary>
         /// Stores an absolute path string for Windows, unknown locale used, deprecated, "Wi2k"
         /// </summary>
-        const UInt32 platformCodeWindowsAbsolute = 0x5769326B;
+        const uint platformCodeWindowsAbsolute = 0x5769326B;
         /// <summary>
         /// Stores a relative path string for Windows in UTF-16, "W2ru"
         /// </summary>
-        const UInt32 platformCodeWindowsRelativeU = 0x57327275;
+        const uint platformCodeWindowsRelativeU = 0x57327275;
         /// <summary>
         /// Stores an absolute path string for Windows in UTF-16, "W2ku"
         /// </summary>
-        const UInt32 platformCodeWindowsAbsoluteU = 0x57326B75;
+        const uint platformCodeWindowsAbsoluteU = 0x57326B75;
         /// <summary>
         /// Stores a Mac OS alias as a blob, "Mac "
         /// </summary>
-        const UInt32 platformCodeMacintoshAlias = 0x4D616320;
+        const uint platformCodeMacintoshAlias = 0x4D616320;
         /// <summary>
         /// Stores a Mac OS X URI (RFC-2396) absolute path in UTF-8, "MacX"
         /// </summary>
-        const UInt32 platformCodeMacintoshURI = 0x4D616358;
+        const uint platformCodeMacintoshURI = 0x4D616358;
 
         #endregion
 
@@ -355,8 +355,8 @@ namespace DiscImageChef.ImagePlugins
         DateTime thisDateTime;
         DateTime parentDateTime;
         string thisPath;
-        UInt32[] blockAllocationTable;
-        UInt32 bitmapSize;
+        uint[] blockAllocationTable;
+        uint bitmapSize;
         byte[][] locatorEntriesData;
         ImagePlugin parentImage;
 
@@ -393,8 +393,8 @@ namespace DiscImageChef.ImagePlugins
         public override bool IdentifyImage(string imagePath)
         {
             FileStream imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-            UInt64 headerCookie;
-            UInt64 footerCookie;
+            ulong headerCookie;
+            ulong footerCookie;
 
             byte[] headerCookieBytes = new byte[8];
             byte[] footerCookieBytes = new byte[8];
@@ -439,10 +439,10 @@ namespace DiscImageChef.ImagePlugins
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            UInt32 headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
-            UInt32 footerChecksum = BigEndianBitConverter.ToUInt32(footer, 0x40);
-            UInt64 headerCookie = BigEndianBitConverter.ToUInt64(header, 0);
-            UInt64 footerCookie = BigEndianBitConverter.ToUInt64(footer, 0);
+            uint headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
+            uint footerChecksum = BigEndianBitConverter.ToUInt32(footer, 0x40);
+            ulong headerCookie = BigEndianBitConverter.ToUInt64(header, 0);
+            ulong footerCookie = BigEndianBitConverter.ToUInt64(footer, 0);
 
             header[0x40] = 0;
             header[0x41] = 0;
@@ -453,14 +453,14 @@ namespace DiscImageChef.ImagePlugins
             footer[0x42] = 0;
             footer[0x43] = 0;
 
-            UInt32 headerCalculatedChecksum = VHDChecksum(header);
-            UInt32 footerCalculatedChecksum = VHDChecksum(footer);
+            uint headerCalculatedChecksum = VHDChecksum(header);
+            uint footerCalculatedChecksum = VHDChecksum(footer);
 
             DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", headerChecksum, headerCalculatedChecksum);
             DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}", footerChecksum, footerCalculatedChecksum);
 
             byte[] usableHeader;
-            UInt32 usableChecksum;
+            uint usableChecksum;
 
             if(headerCookie == ImageCookie && headerChecksum == headerCalculatedChecksum)
             {
@@ -524,7 +524,7 @@ namespace DiscImageChef.ImagePlugins
             if(thisFooter.version == Version1)
                 ImageInfo.imageVersion = "1.0";
             else
-                throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
 
             switch(thisFooter.creatorApplication)
             {
@@ -538,7 +538,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case CreatorVirtualBox:
                     {
-                        ImageInfo.imageApplicationVersion = String.Format("{0}.{1:D2}", (thisFooter.creatorVersion & 0xFFFF0000) >> 16, (thisFooter.creatorVersion & 0x0000FFFF));
+                        ImageInfo.imageApplicationVersion = string.Format("{0}.{1:D2}", (thisFooter.creatorVersion & 0xFFFF0000) >> 16, (thisFooter.creatorVersion & 0x0000FFFF));
                         switch(thisFooter.creatorHostOS)
                         {
                             case CreatorMacintosh:
@@ -550,7 +550,7 @@ namespace DiscImageChef.ImagePlugins
                                 ImageInfo.imageApplication = "VirtualBox";
                                 break;
                             default:
-                                ImageInfo.imageApplication = String.Format("VirtualBox for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
+                                ImageInfo.imageApplication = string.Format("VirtualBox for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
                                 break;
                         }
                         break;
@@ -564,7 +564,7 @@ namespace DiscImageChef.ImagePlugins
                                 ImageInfo.imageApplicationVersion = "2004";
                                 break;
                             default:
-                                ImageInfo.imageApplicationVersion = String.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
                                 break;
                         }
                         break;
@@ -582,7 +582,7 @@ namespace DiscImageChef.ImagePlugins
                                         ImageInfo.imageApplicationVersion = "5, 6 or 7";
                                         break;
                                     default:
-                                        ImageInfo.imageApplicationVersion = String.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
                                         break;
                                 }
                                 break;
@@ -602,21 +602,21 @@ namespace DiscImageChef.ImagePlugins
                                         ImageInfo.imageApplicationVersion = "2007";
                                         break;
                                     default:
-                                        ImageInfo.imageApplicationVersion = String.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
                                         break;
                                 }
                                 break;
                             default:
-                                ImageInfo.imageApplication = String.Format("Virtual PC for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                                ImageInfo.imageApplicationVersion = String.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                                ImageInfo.imageApplication = string.Format("Virtual PC for unknown OS \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
+                                ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
                                 break;
                         }
                         break;
                     }
                 default:
                     {
-                        ImageInfo.imageApplication = String.Format("Unknown application \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
-                        ImageInfo.imageApplicationVersion = String.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
+                        ImageInfo.imageApplication = string.Format("Unknown application \"{0}\"", Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter.creatorHostOS)));
+                        ImageInfo.imageApplicationVersion = string.Format("Unknown version 0x{0:X8}", thisFooter.creatorVersion);
                         break;
                     }
             }
@@ -637,14 +637,14 @@ namespace DiscImageChef.ImagePlugins
                 byte[] dynamicBytes = new byte[1024];
                 imageStream.Read(dynamicBytes, 0, 1024);
 
-                UInt32 dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
+                uint dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
 
                 dynamicBytes[0x24] = 0;
                 dynamicBytes[0x25] = 0;
                 dynamicBytes[0x26] = 0;
                 dynamicBytes[0x27] = 0;
 
-                UInt32 dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
+                uint dynamicChecksumCalculated = VHDChecksum(dynamicBytes);
 
                 DicConsole.DebugWriteLine("VirtualPC plugin", "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum, dynamicChecksumCalculated);
 
@@ -711,7 +711,7 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
                 if(thisDynamic.headerVersion != Version1)
-                    throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                    throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
 
                 DateTime startTime = DateTime.UtcNow;
 
@@ -730,7 +730,7 @@ namespace DiscImageChef.ImagePlugins
                 */
 
                 // How many sectors uses the BAT
-                UInt32 batSectorCount = (uint)Math.Ceiling(((double)thisDynamic.maxTableEntries * 4) / 512);
+                uint batSectorCount = (uint)Math.Ceiling(((double)thisDynamic.maxTableEntries * 4) / 512);
 
                 byte[] batSectorBytes = new byte[512];
                 BATSector batSector = new BATSector();
@@ -891,7 +891,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 default:
                     {
-                        throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                        throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
                     }
             }
         }
@@ -978,14 +978,14 @@ namespace DiscImageChef.ImagePlugins
                 case typeDifferencing:
                     {
                         // Block number for BAT searching
-                        UInt32 blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                        uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
                         // Sector number inside of block
-                        UInt32 sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+                        uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
 
                         byte[] bitmap = new byte[bitmapSize * 512];
 
                         // Offset of block in file
-                        UInt32 blockOffset = blockAllocationTable[blockNumber] * 512;
+                        uint blockOffset = blockAllocationTable[blockNumber] * 512;
 
                         int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
                         int bitmapBit = (int)(sectorInBlock % 8);
@@ -1021,10 +1021,10 @@ namespace DiscImageChef.ImagePlugins
                             */
 
                             byte[] data = new byte[512];
-                            UInt32 sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                            uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
                             thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
 
-                            thisStream.Seek((long)(sectorOffset * 512), SeekOrigin.Begin);
+                            thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
                             thisStream.Read(data, 0, 512);
 
                             thisStream.Close();
@@ -1070,11 +1070,11 @@ namespace DiscImageChef.ImagePlugins
                         FileStream thisStream;
 
                         // Block number for BAT searching
-                        UInt32 blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
+                        uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
                         // Sector number inside of block
-                        UInt32 sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
+                        uint sectorInBlock = (uint)(sectorAddress % (thisDynamic.blockSize / 512));
                         // How many sectors before reaching end of block
-                        UInt32 remainingInBlock = (thisDynamic.blockSize / 512) - sectorInBlock;
+                        uint remainingInBlock = (thisDynamic.blockSize / 512) - sectorInBlock;
 
                         // Data that can be read in this block
                         byte[] prefix;
@@ -1082,7 +1082,7 @@ namespace DiscImageChef.ImagePlugins
                         byte[] suffix = null;
 
                         // How many sectors to read from this block
-                        UInt32 sectorsToReadHere;
+                        uint sectorsToReadHere;
 
                         // Asked to read more sectors than are remaining in block
                         if(length > remainingInBlock)
@@ -1094,14 +1094,14 @@ namespace DiscImageChef.ImagePlugins
                             sectorsToReadHere = length;
 
                         // Offset of sector in file
-                        UInt32 sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
+                        uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
                         prefix = new byte[sectorsToReadHere * 512];
 
                         // 0xFFFFFFFF means unallocated
                         if(sectorOffset != 0xFFFFFFFF)
                         {
                             thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
-                            thisStream.Seek((long)(sectorOffset * 512), SeekOrigin.Begin);
+                            thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
                             thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
                             thisStream.Close();
                         }
@@ -1140,7 +1140,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 default:
                     {
-                        throw new ImageNotSupportedException(String.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
+                        throw new ImageNotSupportedException(string.Format("(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.", thisFooter.diskType));
                     }
             }
         }
@@ -1149,9 +1149,9 @@ namespace DiscImageChef.ImagePlugins
 
         #region private methods
 
-        static UInt32 VHDChecksum(byte[] data)
+        static uint VHDChecksum(byte[] data)
         {
-            UInt32 checksum = 0;
+            uint checksum = 0;
             foreach(byte b in data)
                 checksum += b;
             return ~checksum;
@@ -1271,7 +1271,7 @@ namespace DiscImageChef.ImagePlugins
             return null;
         }
 
-        public override List<CommonTypes.Partition> GetPartitions()
+        public override List<Partition> GetPartitions()
         {
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

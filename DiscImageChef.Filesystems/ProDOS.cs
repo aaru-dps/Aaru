@@ -32,15 +32,12 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
-
-// Information from Apple ProDOS 8 Technical Reference
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // Information from Apple ProDOS 8 Technical Reference
     public class ProDOSPlugin : Filesystem
     {
         const byte EmptyStorageType = 0x00;
@@ -63,11 +60,11 @@ namespace DiscImageChef.Filesystems
 
         const byte ProDOSVersion1 = 0x00;
 
-        const UInt32 ProDOSYearMask = 0xFE000000;
-        const UInt32 ProDOSMonthMask = 0x1E00000;
-        const UInt32 ProDOSDayMask = 0x1F0000;
-        const UInt32 ProDOSHourMask = 0x1F00;
-        const UInt32 ProDOSMinuteMask = 0x3F;
+        const uint ProDOSYearMask = 0xFE000000;
+        const uint ProDOSMonthMask = 0x1E00000;
+        const uint ProDOSDayMask = 0x1F0000;
+        const uint ProDOSHourMask = 0x1F00;
+        const uint ProDOSMinuteMask = 0x3F;
 
         const byte ProDOSDestroyAttribute = 0x80;
         const byte ProDOSRenameAttribute = 0x40;
@@ -101,7 +98,7 @@ namespace DiscImageChef.Filesystems
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionStart);
 
-            UInt16 prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
+            ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
             if(prePointer != 0)
                 return false;
 
@@ -117,11 +114,11 @@ namespace DiscImageChef.Filesystems
             if(entries_per_block != ProDOSEntriesPerBlock)
                 return false;
 
-            UInt16 bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
+            ushort bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
             if(bit_map_pointer > imagePlugin.GetSectors())
                 return false;
 
-            UInt16 total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
+            ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
             return total_blocks <= imagePlugin.GetSectors();
         }
 
@@ -137,8 +134,8 @@ namespace DiscImageChef.Filesystems
 
             byte[] temporal;
             int year, month, day, hour, minute;
-            UInt16 temp_timestamp_left, temp_timestamp_right;
-            UInt32 temp_timestamp;
+            ushort temp_timestamp_left, temp_timestamp_right;
+            uint temp_timestamp;
 
             rootDirectoryKeyBlock.zero = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00);
             rootDirectoryKeyBlock.next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02);
@@ -325,17 +322,17 @@ namespace DiscImageChef.Filesystems
             /// Block address of block for seedling files.
             /// Offset 0x11, 2 bytes
             /// </summary>
-            public UInt16 key_pointer;
+            public ushort key_pointer;
             /// <summary>
             /// Blocks used by file or directory, including index blocks.
             /// Offset 0x13, 2 bytes
             /// </summary>
-            public UInt16 blocks_used;
+            public ushort blocks_used;
             /// <summary>
             /// Size of file in bytes
             /// Offset 0x15, 3 bytes
             /// </summary>
-            public UInt32 EOF;
+            public uint EOF;
             /// <summary>
             /// File creation datetime
             /// Offset 0x18, 4 bytes
@@ -360,7 +357,7 @@ namespace DiscImageChef.Filesystems
             /// General purpose field to store additional information about file format
             /// Offset 0x1F, 2 bytes
             /// </summary>
-            public UInt16 aux_type;
+            public ushort aux_type;
             /// <summary>
             /// File last modification date time
             /// Offset 0x21, 4 bytes
@@ -370,7 +367,7 @@ namespace DiscImageChef.Filesystems
             /// Block address pointer to key block of the directory containing this entry
             /// Offset 0x25, 2 bytes
             /// </summary>
-            public UInt16 header_pointer;
+            public ushort header_pointer;
         }
 
         struct ProDOSRootDirectoryHeader
@@ -394,7 +391,7 @@ namespace DiscImageChef.Filesystems
             /// Reserved for future expansion
             /// Offset 0x14, 8 bytes
             /// </summary>
-            public UInt64 reserved;
+            public ulong reserved;
             /// <summary>
             /// Creation time of the volume
             /// Offset 0x1C, 4 bytes
@@ -431,18 +428,18 @@ namespace DiscImageChef.Filesystems
             /// Number of active files in this directory
             /// Offset 0x25, 2 bytes
             /// </summary>
-            public UInt16 file_count;
+            public ushort file_count;
             /// <summary>
             /// Block address of the first block of the volume's bitmap,
             /// one for every 4096 blocks or fraction
             /// Offset 0x27, 2 bytes
             /// </summary>
-            public UInt16 bit_map_pointer;
+            public ushort bit_map_pointer;
             /// <summary>
             /// Total number of blocks in the volume
             /// Offset 0x29, 2 bytes
             /// </summary>
-            public UInt16 total_blocks;
+            public ushort total_blocks;
         }
 
         struct ProDOSDirectoryHeader
@@ -466,7 +463,7 @@ namespace DiscImageChef.Filesystems
             /// Reserved for future expansion
             /// Offset 0x14, 8 bytes
             /// </summary>
-            public UInt64 reserved;
+            public ulong reserved;
             /// <summary>
             /// Creation time of the volume
             /// Offset 0x1C, 4 bytes
@@ -503,12 +500,12 @@ namespace DiscImageChef.Filesystems
             /// Number of active files in this directory
             /// Offset 0x25, 2 bytes
             /// </summary>
-            public UInt16 file_count;
+            public ushort file_count;
             /// <summary>
             /// Block address of parent directory block that contains this entry
             /// Offset 0x27, 2 bytes
             /// </summary>
-            public UInt16 parent_pointer;
+            public ushort parent_pointer;
             /// <summary>
             /// Entry number within the block indicated in parent_pointer
             /// Offset 0x29, 1 byte
@@ -528,12 +525,12 @@ namespace DiscImageChef.Filesystems
             /// Always 0
             /// Offset 0x00, 2 bytes
             /// </summary>
-            public UInt16 zero;
+            public ushort zero;
             /// <summary>
             /// Pointer to next directory block, 0 if last
             /// Offset 0x02, 2 bytes
             /// </summary>
-            public UInt16 next_pointer;
+            public ushort next_pointer;
             /// <summary>
             /// Directory header
             /// Offset 0x04, 39 bytes
@@ -552,12 +549,12 @@ namespace DiscImageChef.Filesystems
             /// Always 0
             /// Offset 0x00, 2 bytes
             /// </summary>
-            public UInt16 zero;
+            public ushort zero;
             /// <summary>
             /// Pointer to next directory block, 0 if last
             /// Offset 0x02, 2 bytes
             /// </summary>
-            public UInt16 next_pointer;
+            public ushort next_pointer;
             /// <summary>
             /// Directory header
             /// Offset 0x04, 39 bytes
@@ -576,12 +573,12 @@ namespace DiscImageChef.Filesystems
             /// Pointer to previous directory block
             /// Offset 0x00, 2 bytes
             /// </summary>
-            public UInt16 zero;
+            public ushort zero;
             /// <summary>
             /// Pointer to next directory block, 0 if last
             /// Offset 0x02, 2 bytes
             /// </summary>
-            public UInt16 next_pointer;
+            public ushort next_pointer;
             /// <summary>
             /// Directory entries
             /// Offset 0x2F, 39 bytes each, 13 entries
@@ -594,7 +591,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)
             /// </summary>
-            public UInt16[] block_pointer;
+            public ushort[] block_pointer;
         }
 
         struct ProDOSMasterIndexBlock
@@ -602,7 +599,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             /// Up to 128 pointers to index blocks
             /// </summary>
-            public UInt16[] index_block_pointer;
+            public ushort[] index_block_pointer;
         }
     }
 }

@@ -36,9 +36,7 @@ using System.Collections.Generic;
 using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
-using DiscImageChef.Checksums;
 using System.IO;
-using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.PartPlugins;
 
@@ -53,7 +51,7 @@ namespace DiscImageChef.Commands
             plugins.RegisterAllPlugins();
             ImagePlugin _imageFormat;
 
-            if(!System.IO.File.Exists(options.InputFile))
+            if(!File.Exists(options.InputFile))
             {
                 DicConsole.ErrorWriteLine("Specified file does not exist.");
                 return;
@@ -99,7 +97,7 @@ namespace DiscImageChef.Commands
                 FileInfo fi = new FileInfo(options.InputFile);
                 FileStream fs = new FileStream(options.InputFile, FileMode.Open, FileAccess.Read);
 
-                Core.Checksum imgChkWorker = new DiscImageChef.Core.Checksum();
+                Core.Checksum imgChkWorker = new Core.Checksum();
 
                 byte[] data;
                 long position = 0;
@@ -281,15 +279,15 @@ namespace DiscImageChef.Commands
                                                     dskType = MediaType.DVDRDL;
                                                 if(dskType == MediaType.DVDRW && pfi.Value.PartVersion == 3)
                                                     dskType = MediaType.DVDRWDL;
-                                                if(dskType == MediaType.GOD && pfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
+                                                if(dskType == MediaType.GOD && pfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
                                                     dskType = MediaType.WOD;
 
                                                 sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
                                                 if(dskType == MediaType.UMD)
                                                     sidecar.OpticalDisc[0].Dimensions.Diameter = 60;
-                                                else if(pfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                                else if(pfi.Value.DiscSize == Decoders.DVD.DVDSize.Eighty)
                                                     sidecar.OpticalDisc[0].Dimensions.Diameter = 80;
-                                                else if(pfi.Value.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.OneTwenty)
+                                                else if(pfi.Value.DiscSize == Decoders.DVD.DVDSize.OneTwenty)
                                                     sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
                                             }
                                         }
@@ -326,22 +324,22 @@ namespace DiscImageChef.Commands
                                 Schemas.TrackType xmlTrk = new Schemas.TrackType();
                                 switch(trk.TrackType)
                                 {
-                                    case DiscImageChef.ImagePlugins.TrackType.Audio:
+                                    case ImagePlugins.TrackType.Audio:
                                         xmlTrk.TrackType1 = TrackTypeTrackType.audio;
                                         break;
-                                    case DiscImageChef.ImagePlugins.TrackType.CDMode2Form2:
+                                    case ImagePlugins.TrackType.CDMode2Form2:
                                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f2;
                                         break;
-                                    case DiscImageChef.ImagePlugins.TrackType.CDMode2Formless:
+                                    case ImagePlugins.TrackType.CDMode2Formless:
                                         xmlTrk.TrackType1 = TrackTypeTrackType.mode2;
                                         break;
-                                    case DiscImageChef.ImagePlugins.TrackType.CDMode2Form1:
+                                    case ImagePlugins.TrackType.CDMode2Form1:
                                         xmlTrk.TrackType1 = TrackTypeTrackType.m2f1;
                                         break;
-                                    case DiscImageChef.ImagePlugins.TrackType.CDMode1:
+                                    case ImagePlugins.TrackType.CDMode1:
                                         xmlTrk.TrackType1 = TrackTypeTrackType.mode1;
                                         break;
-                                    case DiscImageChef.ImagePlugins.TrackType.Data:
+                                    case ImagePlugins.TrackType.Data:
                                         switch(sidecar.OpticalDisc[0].DiscType)
                                         {
                                             case "BD":
@@ -397,7 +395,7 @@ namespace DiscImageChef.Commands
 
                                 uint sectorsToRead = 512;
 
-                                Core.Checksum trkChkWorker = new DiscImageChef.Core.Checksum();
+                                Core.Checksum trkChkWorker = new Core.Checksum();
 
                                 ulong sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                                 ulong doneSectors = 0;
@@ -454,7 +452,7 @@ namespace DiscImageChef.Commands
                                     // TODO: Packed subchannel has different size?
                                     xmlTrk.SubChannel.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96;
 
-                                    Core.Checksum subChkWorker = new DiscImageChef.Core.Checksum();
+                                    Core.Checksum subChkWorker = new Core.Checksum();
 
                                     sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                                     doneSectors = 0;
@@ -541,7 +539,9 @@ namespace DiscImageChef.Commands
                                                         dskType = MediaType.GOD;
                                                 }
                                             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                             catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                             {
                                                 //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                             }
@@ -580,7 +580,9 @@ namespace DiscImageChef.Commands
                                                     dskType = MediaType.GOD;
                                             }
                                         }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                         catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                         {
                                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                         }
@@ -737,7 +739,9 @@ namespace DiscImageChef.Commands
                                                 Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                             }
                                         }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                         catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                         {
                                             //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                         }
@@ -767,7 +771,9 @@ namespace DiscImageChef.Commands
                                             Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                         }
                                     }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                     catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                     {
                                         //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                                     }
@@ -843,7 +849,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
 
@@ -869,7 +875,7 @@ namespace DiscImageChef.Commands
                 f = lba + 450150;
             }
 
-            return String.Format("{0}:{1:D2}:{2:D2}", m, s, f);
+            return string.Format("{0}:{1:D2}:{2:D2}", m, s, f);
         }
 
         static string DdcdLbaToMsf(long lba)
@@ -896,7 +902,7 @@ namespace DiscImageChef.Commands
                 f = lba + 450150 * 2;
             }
 
-            return String.Format("{3}:{0:D2}:{1:D2}:{2:D2}", m, s, f, h);
+            return string.Format("{3}:{0:D2}:{1:D2}:{2:D2}", m, s, f, h);
         }
     }
 }

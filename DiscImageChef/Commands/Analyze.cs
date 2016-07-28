@@ -163,13 +163,13 @@ namespace DiscImageChef.Commands
                                     DicConsole.WriteLine("Filesystem not identified");
                                 else if(id_plugins.Count > 1)
                                 {
-                                    DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                                    DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                                     foreach(string plugin_name in id_plugins)
                                     {
                                         if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                         {
-                                            DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                            DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
                                             _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, out information);
                                             DicConsole.Write(information);
                                             Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
@@ -179,7 +179,7 @@ namespace DiscImageChef.Commands
                                 else
                                 {
                                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                                    DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                                    DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
                                     _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, out information);
                                     DicConsole.Write(information);
                                     Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
@@ -196,13 +196,13 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Filesystem not identified");
                     else if(id_plugins.Count > 1)
                     {
-                        DicConsole.WriteLine(String.Format("Identified by {0} plugins", id_plugins.Count));
+                        DicConsole.WriteLine(string.Format("Identified by {0} plugins", id_plugins.Count));
 
                         foreach(string plugin_name in id_plugins)
                         {
                             if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                             {
-                                DicConsole.WriteLine(String.Format("As identified by {0}.", _plugin.Name));
+                                DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
                                 _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out information);
                                 DicConsole.Write(information);
                                 Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
@@ -212,7 +212,7 @@ namespace DiscImageChef.Commands
                     else
                     {
                         plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
-                        DicConsole.WriteLine(String.Format("Identified by {0}.", _plugin.Name));
+                        DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
                         _plugin.GetInformation(_imageFormat, 0, _imageFormat.GetSectors() - 1, out information);
                         DicConsole.Write(information);
                         Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
@@ -221,7 +221,7 @@ namespace DiscImageChef.Commands
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine(String.Format("Error reading file: {0}", ex.Message));
+                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
 

@@ -58,7 +58,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             /// Bytes 0 to 1
             /// Data Length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved

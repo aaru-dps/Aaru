@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Console
 {
     public delegate void WriteLineHandler(string format, params object[] arg);

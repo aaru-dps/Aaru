@@ -120,7 +120,7 @@ namespace DiscImageChef.Devices
                         return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir, out duration, out sense);
                     }
                 default:
-                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
@@ -152,7 +152,7 @@ namespace DiscImageChef.Devices
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
                 default:
-                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
@@ -184,7 +184,7 @@ namespace DiscImageChef.Devices
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
                 default:
-                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
 
@@ -216,7 +216,7 @@ namespace DiscImageChef.Devices
                             transferRegister, ref buffer, timeout, transferBlocks, out duration, out sense);
                     }
                 default:
-                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", ptID));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
     }

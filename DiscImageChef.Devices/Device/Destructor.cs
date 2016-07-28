@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices
@@ -39,7 +38,7 @@ namespace DiscImageChef.Devices
     {
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="DiscImageChef.Devices.Device"/> is reclaimed by garbage collection.
+        /// <see cref="Device"/> is reclaimed by garbage collection.
         /// </summary>
         ~Device()
         {

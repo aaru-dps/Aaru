@@ -63,16 +63,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", options.RetryPasses);
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", options.Persistent);
 
-            if(!System.IO.File.Exists(options.DevicePath))
+            if(!File.Exists(options.DevicePath))
             {
                 DicConsole.ErrorWriteLine("Specified device does not exist.");
                 return;
             }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
-                options.DevicePath[0] != '/' && Char.IsLetter(options.DevicePath[0]))
+                options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {
-                options.DevicePath = "\\\\.\\" + Char.ToUpper(options.DevicePath[0]) + ':';
+                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
             }
 
             mhddLog = null;
@@ -213,7 +213,9 @@ namespace DiscImageChef.Commands
 
                     if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
                     {
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                         physicalsectorsize = blockSize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     }
                     else
                         physicalsectorsize = blockSize;
@@ -394,10 +396,12 @@ namespace DiscImageChef.Commands
                         if((blocks - i) < blocksToRead)
                             blocksToRead = (byte)(blocks - i);
 
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                         if(currentSpeed > maxSpeed && currentSpeed != 0)
                             maxSpeed = currentSpeed;
                         if(currentSpeed < minSpeed && currentSpeed != 0)
                             minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                         DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
@@ -492,13 +496,17 @@ namespace DiscImageChef.Commands
                             writeToDataFile(new byte[blockSize * blocksToRead]);
                         }
 
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                         currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                         GC.Collect();
                     }
                     end = DateTime.Now;
                     DicConsole.WriteLine();
                     mhddLog.Close();
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
 
                     #region Error handling
                     if(unreadableSectors.Count > 0 && !aborted)
@@ -605,10 +613,12 @@ namespace DiscImageChef.Commands
 
                                 double cmdDuration = 0;
 
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                                 if(currentSpeed > maxSpeed && currentSpeed != 0)
                                     maxSpeed = currentSpeed;
                                 if(currentSpeed < minSpeed && currentSpeed != 0)
                                     minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                                 DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", Cy, Hd, Sc, currentSpeed);
 
@@ -691,7 +701,9 @@ namespace DiscImageChef.Commands
                                     writeToDataFile(new byte[blockSize]);
                                 }
 
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 currentSpeed = ((double)blockSize / (double)1048576) / (cmdDuration / (double)1000);
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 GC.Collect();
 
                                 currentBlock++;
@@ -701,7 +713,9 @@ namespace DiscImageChef.Commands
                     end = DateTime.Now;
                     DicConsole.WriteLine();
                     mhddLog.Close();
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                 }
                 dataChk = new Core.Checksum();
                 dataFs.Seek(0, SeekOrigin.Begin);
@@ -790,7 +804,9 @@ namespace DiscImageChef.Commands
                                         Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                     }
                                 }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 {
                                     //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
                                 }
@@ -821,7 +837,9 @@ namespace DiscImageChef.Commands
                                     Core.Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                 }
                             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                             {
                                 //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                             }
@@ -992,12 +1010,12 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
-                dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OpticalDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
+                dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
                 sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
                 if(!sense)
@@ -1013,7 +1031,7 @@ namespace DiscImageChef.Commands
                     if(sense && blocks == 0)
                     {
                         // Not all MMC devices support READ CAPACITY, as they have READ TOC
-                        if(dev.SCSIType != DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                        if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                         {
                             DicConsole.ErrorWriteLine("Unable to get media capacity");
                             DicConsole.ErrorWriteLine("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
@@ -1042,7 +1060,7 @@ namespace DiscImageChef.Commands
                 physicalBlockSize = blockSize;
             }
 
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
                 throw new NotImplementedException();
             }
@@ -1063,7 +1081,7 @@ namespace DiscImageChef.Commands
             CICMMetadataType sidecar = new CICMMetadataType();
 
             #region MultiMediaDevice
-            if(dev.SCSIType == DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
                 sidecar.OpticalDisc = new OpticalDiscType[1];
                 sidecar.OpticalDisc[0] = new OpticalDiscType();
@@ -1338,7 +1356,7 @@ namespace DiscImageChef.Commands
                             Decoders.DVD.PFI.PhysicalFormatInformation? nintendoPfi = Decoders.DVD.PFI.Decode(cmdBuf);
                             if(nintendoPfi != null)
                             {
-                                if(nintendoPfi.Value.DiskCategory == DiscImageChef.Decoders.DVD.DiskCategory.Nintendo &&
+                                if(nintendoPfi.Value.DiskCategory == Decoders.DVD.DiskCategory.Nintendo &&
                                     nintendoPfi.Value.PartVersion == 15)
                                 {
                                     throw new NotImplementedException("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
@@ -1424,7 +1442,7 @@ namespace DiscImageChef.Commands
                                             dskType = MediaType.HDDVDRW;
                                             break;
                                         case Decoders.DVD.DiskCategory.Nintendo:
-                                            if(decPfi.DiscSize == DiscImageChef.Decoders.DVD.DVDSize.Eighty)
+                                            if(decPfi.DiscSize == Decoders.DVD.DVDSize.Eighty)
                                                 dskType = MediaType.GOD;
                                             else
                                                 dskType = MediaType.WOD;
@@ -1473,7 +1491,7 @@ namespace DiscImageChef.Commands
                                 writeToFile(sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
 
                                 Decoders.DVD.CSS_CPRM.LeadInCopyright cpy = Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
-                                if(cpy.CopyrightType != DiscImageChef.Decoders.DVD.CopyrightType.NoProtection)
+                                if(cpy.CopyrightType != Decoders.DVD.CopyrightType.NoProtection)
                                     sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
                             }
                         }
@@ -1732,7 +1750,7 @@ namespace DiscImageChef.Commands
 
                     if(dev.Type == DeviceType.ATAPI)
                     {
-                        DiscImageChef.Decoders.ATA.AtaErrorRegistersCHS errorRegs;
+                        Decoders.ATA.AtaErrorRegistersCHS errorRegs;
                         sense = dev.AtapiIdentify(out cmdBuf, out errorRegs);
                         if(!sense)
                         {
@@ -1769,7 +1787,7 @@ namespace DiscImageChef.Commands
                                     if(!sense)
                                     {
                                         EVPDType evpd = new EVPDType();
-                                        evpd.Image = String.Format("{0}.evpd_{1:X2}h.bin", options.OutputPrefix, page);
+                                        evpd.Image = string.Format("{0}.evpd_{1:X2}h.bin", options.OutputPrefix, page);
                                         evpd.Checksums = Core.Checksum.GetChecksums(cmdBuf).ToArray();
                                         evpd.Size = cmdBuf.Length;
                                         evpd.Checksums = Core.Checksum.GetChecksums(cmdBuf).ToArray();
@@ -1830,8 +1848,7 @@ namespace DiscImageChef.Commands
                                 scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                             foreach(Decoders.SCSI.Modes.ModePage modePage in decMode.Value.Pages)
-                                if(modePage.Page == 0x05)
-                                    containsFloppyPage = true;
+                                containsFloppyPage |= modePage.Page == 0x05;
                         }
                     }
                 }
@@ -1898,7 +1915,7 @@ namespace DiscImageChef.Commands
                 int leadInSectorsGood = 0, leadInSectorsTotal = 0;
 
                 initDataFile(options.OutputPrefix + ".leadin.bin");
-                dataChk = new DiscImageChef.Core.Checksum();
+                dataChk = new Core.Checksum();
 
                 start = DateTime.UtcNow;
 
@@ -1911,10 +1928,12 @@ namespace DiscImageChef.Commands
 
                     double cmdDuration = 0;
 
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed && currentSpeed != 0)
                         maxSpeed = currentSpeed;
                     if(currentSpeed < minSpeed && currentSpeed != 0)
                         minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", (int)leadInBlock, currentSpeed);
 
@@ -1995,10 +2014,12 @@ namespace DiscImageChef.Commands
                     if((blocks - i) < blocksToRead)
                         blocksToRead = (uint)(blocks - i);
 
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed && currentSpeed != 0)
                         maxSpeed = currentSpeed;
                     if(currentSpeed < minSpeed && currentSpeed != 0)
                         minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
@@ -2249,7 +2270,7 @@ namespace DiscImageChef.Commands
                     bool testSense;
                     Decoders.SCSI.FixedSense? decSense;
 
-                    if(dev.SCSIType != DiscImageChef.Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
+                    if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         /*testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 0xFFFF, dev.Timeout, out duration);
                         if (testSense && !dev.Error)
@@ -2276,7 +2297,7 @@ namespace DiscImageChef.Commands
                             decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                             if(decSense.HasValue)
                             {
-                                if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                     decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                 {
                                     rawAble = true;
@@ -2405,7 +2426,7 @@ namespace DiscImageChef.Commands
                                 decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
                                 {
-                                    if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                    if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                         decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                     {
                                         rawAble = true;
@@ -2413,7 +2434,6 @@ namespace DiscImageChef.Commands
                                         {
                                             longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                             syqReadLong10 = !dev.SyQuestReadLong10(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
-                                            ;
                                         }
                                     }
                                     else
@@ -2424,7 +2444,7 @@ namespace DiscImageChef.Commands
                                             decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                                             if(decSense.HasValue)
                                             {
-                                                if(decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
                                                     decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                                                 {
                                                     rawAble = true;
@@ -2432,7 +2452,6 @@ namespace DiscImageChef.Commands
                                                     {
                                                         longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
                                                         syqReadLong6 = !dev.SyQuestReadLong6(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
-                                                        ;
                                                     }
                                                 }
                                             }
@@ -2609,10 +2628,12 @@ namespace DiscImageChef.Commands
                     if((blocks - i) < blocksToRead)
                         blocksToRead = (uint)(blocks - i);
 
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed && currentSpeed != 0)
                         maxSpeed = currentSpeed;
                     if(currentSpeed < minSpeed && currentSpeed != 0)
                         minSpeed = currentSpeed;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
@@ -2919,7 +2940,9 @@ namespace DiscImageChef.Commands
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (chkDuration / (double)1000);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                 }
                 DicConsole.WriteLine();
                 closeDataFile();
@@ -2992,7 +3015,9 @@ namespace DiscImageChef.Commands
                                             dskType = MediaType.GOD;
                                     }
                                 }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 {
                                     //DicConsole.DebugWriteLine("Dump-media command", "Plugin {0} crashed", _plugin.Name);
                                 }
@@ -3032,7 +3057,9 @@ namespace DiscImageChef.Commands
                                         dskType = MediaType.GOD;
                                 }
                             }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                             {
                                 //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                             }
@@ -3180,7 +3207,9 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).", (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1048576) / (totalDuration / 1000));
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
             DicConsole.WriteLine("{0} sectors could not be read.", unreadableSectors.Count);

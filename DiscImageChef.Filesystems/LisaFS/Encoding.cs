@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem

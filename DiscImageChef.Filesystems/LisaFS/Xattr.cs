@@ -34,8 +34,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Configuration;
-using System.CodeDom.Compiler;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -43,7 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     {
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
-            Int16 fileId;
+            short fileId;
             Errno error = LookupFileId(path, out fileId);
             if(error != Errno.NoError)
                 return error;
@@ -53,7 +51,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            Int16 fileId;
+            short fileId;
             Errno error = LookupFileId(path, out fileId);
             if(error != Errno.NoError)
                 return error;
@@ -61,7 +59,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return GetXattr(fileId, xattr, out buf);
         }
 
-        Errno ListXAttr(Int16 fileId, ref List<string> xattrs)
+        Errno ListXAttr(short fileId, ref List<string> xattrs)
         {
             xattrs = null;
 
@@ -111,7 +109,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno GetXattr(Int16 fileId, string xattr, out byte[] buf)
+        Errno GetXattr(short fileId, string xattr, out byte[] buf)
         {
             buf = null;
 

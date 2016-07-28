@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
@@ -76,11 +75,11 @@ namespace DiscImageChef.Decoders.Floppy
             /// <summary>
             /// Checksum from <see cref="amiga"/> to <see cref="label"/> 
             /// </summary>
-            public UInt32 headerChecksum;
+            public uint headerChecksum;
             /// <summary>
             /// Checksum from <see cref="data"/>
             /// </summary>
-            public UInt32 dataChecksum;
+            public uint dataChecksum;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public byte[] data;
         }

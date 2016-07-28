@@ -121,9 +121,10 @@ namespace DiscImageChef.Commands
             Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 
             image1Info.imageHasPartitions = input1Format.ImageHasPartitions();
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             try { image1Sessions = input1Format.GetSessions(); } catch { }
-            if(image1Sessions.Count > 0)
-                image1Info.imageHasSessions = true;
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            image1Info.imageHasSessions |= image1Sessions.Count > 0;
             image1Info.imageSize = input1Format.GetImageSize();
             image1Info.sectors = input1Format.GetSectors();
             image1Info.sectorSize = input1Format.GetSectorSize();
@@ -153,15 +154,18 @@ namespace DiscImageChef.Commands
                     byte[] temparray = input1Format.ReadDiskTag(disktag);
                     image1DiskTags.Add(disktag, temparray);
                 }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 {
                 }
             }
 
             image2Info.imageHasPartitions = input2Format.ImageHasPartitions();
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             try { image2Sessions = input2Format.GetSessions(); } catch { }
-            if(image2Sessions.Count > 0)
-                image2Info.imageHasSessions = true;
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            image2Info.imageHasSessions |= image2Sessions.Count > 0;
             image2Info.imageSize = input2Format.GetImageSize();
             image2Info.sectors = input2Format.GetSectors();
             image2Info.sectorSize = input2Format.GetSectorSize();
@@ -191,7 +195,9 @@ namespace DiscImageChef.Commands
                     byte[] temparray = input2Format.ReadDiskTag(disktag);
                     image2DiskTags.Add(disktag, temparray);
                 }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 {
                 }
             }
@@ -375,7 +381,7 @@ namespace DiscImageChef.Commands
                     sb.AppendLine("Drive serial number differ");
             }
 
-            UInt64 leastSectors;
+            ulong leastSectors;
             if(image1Info.sectors < image2Info.sectors)
             {
                 imagesDiffer = true;
@@ -395,7 +401,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Comparing sectors...");
 
-            for(UInt64 sector = 0; sector < leastSectors; sector++)
+            for(ulong sector = 0; sector < leastSectors; sector++)
             {
                 DicConsole.Write("\rComparing sector {0} of {1}...", sector + 1, leastSectors);
                 try
@@ -416,7 +422,9 @@ namespace DiscImageChef.Commands
                             sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();
                     }
                 }
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch { }
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             DicConsole.WriteLine();
 
@@ -430,12 +438,12 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddCommand("compare");
         }
 
-        private static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)
+        static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)
         {
             different = false;
             sameSize = true;
 
-            Int64 leastBytes;
+            long leastBytes;
             if(compareArray1.LongLength < compareArray2.LongLength)
             {
                 sameSize = false;
@@ -449,7 +457,7 @@ namespace DiscImageChef.Commands
             else
                 leastBytes = compareArray1.LongLength;
 
-            for(Int64 i = 0; i < leastBytes; i++)
+            for(long i = 0; i < leastBytes; i++)
             {
                 if(compareArray1[i] != compareArray2[i])
                 {

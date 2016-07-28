@@ -66,7 +66,6 @@ namespace DiscImageChef.Devices
                             lastError = Marshal.GetLastWin32Error();
                         }
 
-                        //throw new NotImplementedException();
                         break;
                     }
                 case Interop.PlatformID.Linux:
@@ -79,15 +78,14 @@ namespace DiscImageChef.Devices
                             lastError = Marshal.GetLastWin32Error();
                         }
 
-                        //throw new NotImplementedException();
                         break;
                     }
                 default:
-                    throw new InvalidOperationException(String.Format("Platform {0} not yet supported.", platformID));
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", platformID));
             }
 
             if(error)
-                throw new SystemException(String.Format("Error {0} opening device.", lastError));
+                throw new SystemException(string.Format("Error {0} opening device.", lastError));
 
             type = DeviceType.Unknown;
             scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
@@ -101,12 +99,12 @@ namespace DiscImageChef.Devices
             bool scsiSense = ScsiInquiry(out inqBuf, out senseBuf);
 
             if(error)
-                throw new SystemException(String.Format("Error {0} trying device.", lastError));
+                throw new SystemException(string.Format("Error {0} trying device.", lastError));
 
             #region USB
-            if(platformID == DiscImageChef.Interop.PlatformID.Linux)
+            if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd") || devicePath.StartsWith("/dev/sr") || devicePath.StartsWith("/dev/st"))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -178,9 +176,9 @@ namespace DiscImageChef.Devices
             #endregion USB
 
             #region FireWire
-            if(platformID == DiscImageChef.Interop.PlatformID.Linux)
+            if(platformID == Interop.PlatformID.Linux)
             {
-                if(devicePath.StartsWith("/dev/sd") || devicePath.StartsWith("/dev/sr") || devicePath.StartsWith("/dev/st"))
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                 {
                     string devPath = devicePath.Substring(5);
                     if(System.IO.Directory.Exists("/sys/block/" + devPath))
@@ -331,7 +329,7 @@ namespace DiscImageChef.Devices
                 {
                     foreach(char c in serial)
                     {
-                        if(Char.IsControl(c))
+                        if(char.IsControl(c))
                             serial = usbSerialString;
                     }
                 }
@@ -344,13 +342,13 @@ namespace DiscImageChef.Devices
                 if(string.IsNullOrEmpty(model))
                     model = firewireModelName;
                 if(string.IsNullOrEmpty(serial))
-                    serial = String.Format("{0:X16}", firewireGuid);
+                    serial = string.Format("{0:X16}", firewireGuid);
                 else
                 {
                     foreach(char c in serial)
                     {
-                        if(Char.IsControl(c))
-                            serial = String.Format("{0:X16}", firewireGuid);
+                        if(char.IsControl(c))
+                            serial = string.Format("{0:X16}", firewireGuid);
                     }
                 }
             }

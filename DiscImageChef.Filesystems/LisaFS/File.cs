@@ -31,12 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Diagnostics;
 using DiscImageChef.ImagePlugins;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using DiscImageChef.Console;
-using System.IO;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -44,7 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
     {
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
-            Int16 fileId;
+            short fileId;
             Errno error = LookupFileId(path, out fileId);
             if(error != Errno.NoError)
                 return error;
@@ -62,8 +59,8 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(offset < 0)
                 return Errno.InvalidArgument;
-            
-            Int16 fileId;
+
+            short fileId;
             bool isDir;
             Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
@@ -106,7 +103,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
-            Int16 fileId;
+            short fileId;
             Errno error = LookupFileId(path, out fileId);
             if(error != Errno.NoError)
                 return error;
@@ -114,7 +111,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Stat(fileId, out stat);
         }
 
-        Errno GetAttributes(Int16 fileId, ref FileAttributes attributes)
+        Errno GetAttributes(short fileId, ref FileAttributes attributes)
         {
             if(!mounted)
                 return Errno.AccessDenied;
@@ -177,12 +174,12 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadSystemFile(Int16 fileId, out byte[] buf)
+        Errno ReadSystemFile(short fileId, out byte[] buf)
         {
             return ReadSystemFile(fileId, out buf, false);
         }
 
-        Errno ReadSystemFile(Int16 fileId, out byte[] buf, bool tags)
+        Errno ReadSystemFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
             if(!mounted || !debug)
@@ -261,7 +258,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno Stat(Int16 fileId, out FileEntryInfo stat)
+        Errno Stat(short fileId, out FileEntryInfo stat)
         {
             stat = null;
 
@@ -372,12 +369,12 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadFile(Int16 fileId, out byte[] buf)
+        Errno ReadFile(short fileId, out byte[] buf)
         {
             return ReadFile(fileId, out buf, false);
         }
 
-        Errno ReadFile(Int16 fileId, out byte[] buf, bool tags)
+        Errno ReadFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
             if(!mounted)
@@ -438,13 +435,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno LookupFileId(string path, out Int16 fileId)
+        Errno LookupFileId(string path, out short fileId)
         {
             bool temp;
             return LookupFileId(path, out fileId, out temp);
         }
 
-        Errno LookupFileId(string path, out Int16 fileId, out bool isDir)
+        Errno LookupFileId(string path, out short fileId, out bool isDir)
         {
             fileId = 0;
             isDir = false;
@@ -467,37 +464,37 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(debug)
             {
-                if(String.Compare(pathElements[0], "$MDDF", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$MDDF", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_MDDF;
                     return Errno.NoError;
                 }
 
-                if(String.Compare(pathElements[0], "$Boot", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$Boot", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = FILEID_BOOT_SIGNED;
                     return Errno.NoError;
                 }
 
-                if(String.Compare(pathElements[0], "$Loader", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$Loader", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = FILEID_LOADER_SIGNED;
                     return Errno.NoError;
                 }
 
-                if(String.Compare(pathElements[0], "$Bitmap", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$Bitmap", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_BITMAP;
                     return Errno.NoError;
                 }
 
-                if(String.Compare(pathElements[0], "$S-Record", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$S-Record", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_SRECORD;
                     return Errno.NoError;
                 }
 
-                if(String.Compare(pathElements[0], "$", StringComparison.InvariantCulture) == 0)
+                if(string.Compare(pathElements[0], "$", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_DIRECTORY;
                     isDir = true;
@@ -517,7 +514,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             {
                 string filename = GetString(entry.filename);
                 // Should they be case sensitive?
-                if(String.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0)
+                if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     fileId = entry.fileID;
                     isDir |= entry.fileType != 0x03;

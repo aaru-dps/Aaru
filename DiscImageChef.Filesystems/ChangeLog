@@ -1,5 +1,45 @@
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
+	* ODS.cs:
+	* FFS.cs:
+	* BFS.cs:
+	* FAT.cs:
+	* NTFS.cs:
+	* APFS.cs:
+	* HPFS.cs:
+	* SysV.cs:
+	* Opera.cs:
+	* Acorn.cs:
+	* BTRFS.cs:
+	* extFS.cs:
+	* ext2FS.cs:
+	* ProDOS.cs:
+	* MinixFS.cs:
+	* Symbian.cs:
+	* Structs.cs:
+	* SolarFS.cs:
+	* UNIXBFS.cs:
+	* ISO9660.cs:
+	* PCEngine.cs:
+	* Nintendo.cs:
+	* AppleMFS.cs:
+	* AppleHFS.cs:
+	* AmigaDOS.cs:
+	* Dir.cs:
+	* Filesystem.cs:
+	* File.cs:
+	* Info.cs:
+	* Xattr.cs:
+	* Super.cs:
+	* AppleHFSPlus.cs:
+	* LisaFS.cs:
+	* Extent.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* Encoding.cs: Refactor and code cleanup.
+
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Encoding.cs: Solve null reference.
 
 2016-02-10  Natalia Portillo  <claunia@claunia.com>

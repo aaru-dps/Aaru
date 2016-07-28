@@ -32,7 +32,6 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
@@ -154,19 +153,19 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x028, 32 bytes, volume label</summary>
             public string volume_label;
             /// <summary>0x048, Volume ID</summary>
-            public Int32 volume_id;
+            public int volume_id;
             /// <summary>0x04C, Block size in bytes</summary>
-            public Int32 block_size;
+            public int block_size;
             /// <summary>0x050, Blocks in volume</summary>
-            public Int32 block_count;
+            public int block_count;
             /// <summary>0x054, Root directory ID</summary>
-            public Int32 root_dirid;
+            public int root_dirid;
             /// <summary>0x058, Root directory blocks</summary>
-            public Int32 rootdir_blocks;
+            public int rootdir_blocks;
             /// <summary>0x05C, Root directory block size</summary>
-            public Int32 rootdir_bsize;
+            public int rootdir_bsize;
             /// <summary>0x060, Last root directory copy</summary>
-            public Int32 last_root_copy;
+            public int last_root_copy;
         }
 
         public override Errno Mount()

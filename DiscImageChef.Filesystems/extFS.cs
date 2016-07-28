@@ -32,12 +32,11 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from the Linux kernel
 namespace DiscImageChef.Filesystems
 {
+    // Information from the Linux kernel
     class extFS : Filesystem
     {
         public extFS()
@@ -59,7 +58,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
 
-            UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
+            ushort magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
 
             return magic == extFSMagic;
         }
@@ -106,7 +105,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// ext superblock magic
         /// </summary>
-        public const UInt16 extFSMagic = 0x137D;
+        public const ushort extFSMagic = 0x137D;
 
         /// <summary>
         /// ext superblock
@@ -114,35 +113,35 @@ namespace DiscImageChef.Filesystems
         public struct extFSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
-            public UInt32 inodes;
+            public uint inodes;
             /// <summary>0x004, zones on volume</summary>
-            public UInt32 zones;
+            public uint zones;
             /// <summary>0x008, first free block</summary>
-            public UInt32 firstfreeblk;
+            public uint firstfreeblk;
             /// <summary>0x00C, free blocks count</summary>
-            public UInt32 freecountblk;
+            public uint freecountblk;
             /// <summary>0x010, first free inode</summary>
-            public UInt32 firstfreeind;
+            public uint firstfreeind;
             /// <summary>0x014, free inodes count</summary>
-            public UInt32 freecountind;
+            public uint freecountind;
             /// <summary>0x018, first data zone</summary>
-            public UInt32 firstdatazone;
+            public uint firstdatazone;
             /// <summary>0x01C, log zone size</summary>
-            public UInt32 logzonesize;
+            public uint logzonesize;
             /// <summary>0x020, max zone size</summary>
-            public UInt32 maxsize;
+            public uint maxsize;
             /// <summary>0x024, reserved</summary>
-            public UInt32 reserved1;
+            public uint reserved1;
             /// <summary>0x028, reserved</summary>
-            public UInt32 reserved2;
+            public uint reserved2;
             /// <summary>0x02C, reserved</summary>
-            public UInt32 reserved3;
+            public uint reserved3;
             /// <summary>0x030, reserved</summary>
-            public UInt32 reserved4;
+            public uint reserved4;
             /// <summary>0x034, reserved</summary>
-            public UInt32 reserved5;
+            public uint reserved5;
             /// <summary>0x038, 0x137D (little endian)</summary>
-            public UInt16 magic;
+            public ushort magic;
         }
 
         public override Errno Mount()

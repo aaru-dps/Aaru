@@ -127,7 +127,7 @@ namespace DiscImageChef.Filesystems
             bytes *= 0x100000000;
             bytes += drSb.disc_size;
 
-            if(bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
+            if(bytes > (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                 return false;
 
             return true;
@@ -193,7 +193,7 @@ namespace DiscImageChef.Filesystems
             zones *= 0x100000000;
             zones += drSb.nzones;
 
-            if(bytes > (imagePlugin.GetSectors() * (ulong)imagePlugin.GetSectorSize()))
+            if(bytes > (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                 return;
 
             string discname = StringHandlers.CToString(drSb.disc_name);

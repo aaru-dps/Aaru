@@ -38,8 +38,8 @@ namespace DiscImageChef.PartPlugins
 {
     class SunDisklabel : PartPlugin
     {
-        const UInt16 SUN_MAGIC = 0xDABE;
-        const UInt32 VTOC_MAGIC = 0x600DDEEE;
+        const ushort SUN_MAGIC = 0xDABE;
+        const uint VTOC_MAGIC = 0x600DDEEE;
 
         public enum SunTypes : ushort
         {
@@ -188,11 +188,15 @@ namespace DiscImageChef.PartPlugins
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
                     part.PartitionDescription = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags);
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     part.PartitionLength = (ulong)sdl.partitions[i].num_sectors * (ulong)imagePlugin.GetSectorSize();
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     part.PartitionName = "";
                     part.PartitionSectors = sdl.partitions[i].num_sectors;
                     part.PartitionSequence = (ulong)i;
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     part.PartitionStart = (ulong)sdl.partitions[i].start_cylinder * (ulong)sectorsPerCylinder * (ulong)imagePlugin.GetSectorSize();
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     part.PartitionStartSector = sdl.partitions[i].start_cylinder * sectorsPerCylinder;
                     part.PartitionType = SunIdToString((SunTypes)sdl.vtoc.infos[i].id);
 

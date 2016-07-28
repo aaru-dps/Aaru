@@ -32,34 +32,33 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from the Linux kernel
 namespace DiscImageChef.Filesystems
 {
+    // Information from the Linux kernel
     class MinixFS : Filesystem
     {
-        const UInt16 MINIX_MAGIC = 0x137F;
+        const ushort MINIX_MAGIC = 0x137F;
         // Minix v1, 14 char filenames
-        const UInt16 MINIX_MAGIC2 = 0x138F;
+        const ushort MINIX_MAGIC2 = 0x138F;
         // Minix v1, 30 char filenames
-        const UInt16 MINIX2_MAGIC = 0x2468;
+        const ushort MINIX2_MAGIC = 0x2468;
         // Minix v2, 14 char filenames
-        const UInt16 MINIX2_MAGIC2 = 0x2478;
+        const ushort MINIX2_MAGIC2 = 0x2478;
         // Minix v2, 30 char filenames
-        const UInt16 MINIX3_MAGIC = 0x4D5A;
+        const ushort MINIX3_MAGIC = 0x4D5A;
         // Minix v3, 60 char filenames
         // Byteswapped
-        const UInt16 MINIX_CIGAM = 0x7F13;
+        const ushort MINIX_CIGAM = 0x7F13;
         // Minix v1, 14 char filenames
-        const UInt16 MINIX_CIGAM2 = 0x8F13;
+        const ushort MINIX_CIGAM2 = 0x8F13;
         // Minix v1, 30 char filenames
-        const UInt16 MINIX2_CIGAM = 0x6824;
+        const ushort MINIX2_CIGAM = 0x6824;
         // Minix v2, 14 char filenames
-        const UInt16 MINIX2_CIGAM2 = 0x7824;
+        const ushort MINIX2_CIGAM2 = 0x7824;
         // Minix v2, 30 char filenames
-        const UInt16 MINIX3_CIGAM = 0x5A4D;
+        const ushort MINIX3_CIGAM = 0x5A4D;
         // Minix v3, 60 char filenames
 
         public MinixFS()
@@ -79,7 +78,7 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
-            UInt16 magic;
+            ushort magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
@@ -103,7 +102,7 @@ namespace DiscImageChef.Filesystems
             bool minix3 = false;
             int filenamesize;
             string minixVersion;
-            UInt16 magic;
+            ushort magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
             magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
@@ -252,25 +251,25 @@ namespace DiscImageChef.Filesystems
         public struct MinixSuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
-            public UInt16 s_ninodes;
+            public ushort s_ninodes;
             /// <summary>0x02, zones on volume</summary>
-            public UInt16 s_nzones;
+            public ushort s_nzones;
             /// <summary>0x04, blocks on inode map</summary>
-            public UInt16 s_imap_blocks;
+            public ushort s_imap_blocks;
             /// <summary>0x06, blocks on zone map</summary>
-            public UInt16 s_zmap_blocks;
+            public ushort s_zmap_blocks;
             /// <summary>0x08, first data zone</summary>
-            public UInt16 s_firstdatazone;
+            public ushort s_firstdatazone;
             /// <summary>0x0A, log2 of blocks/zone</summary>
-            public UInt16 s_log_zone_size;
+            public ushort s_log_zone_size;
             /// <summary>0x0C, max file size</summary>
-            public UInt32 s_max_size;
+            public uint s_max_size;
             /// <summary>0x10, magic</summary>
-            public UInt16 s_magic;
+            public ushort s_magic;
             /// <summary>0x12, filesystem state</summary>
-            public UInt16 s_state;
+            public ushort s_state;
             /// <summary>0x14, number of zones</summary>
-            public UInt32 s_zones;
+            public uint s_zones;
         }
 
         /// <summary>
@@ -279,29 +278,29 @@ namespace DiscImageChef.Filesystems
         public struct Minix3SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
-            public UInt32 s_ninodes;
+            public uint s_ninodes;
             /// <summary>0x04, padding</summary>
-            public UInt16 s_pad0;
+            public ushort s_pad0;
             /// <summary>0x06, blocks on inode map</summary>
-            public UInt16 s_imap_blocks;
+            public ushort s_imap_blocks;
             /// <summary>0x08, blocks on zone map</summary>
-            public UInt16 s_zmap_blocks;
+            public ushort s_zmap_blocks;
             /// <summary>0x0A, first data zone</summary>
-            public UInt16 s_firstdatazone;
+            public ushort s_firstdatazone;
             /// <summary>0x0C, log2 of blocks/zone</summary>
-            public UInt16 s_log_zone_size;
+            public ushort s_log_zone_size;
             /// <summary>0x0E, padding</summary>
-            public UInt16 s_pad1;
+            public ushort s_pad1;
             /// <summary>0x10, max file size</summary>
-            public UInt32 s_max_size;
+            public uint s_max_size;
             /// <summary>0x14, number of zones</summary>
-            public UInt32 s_zones;
+            public uint s_zones;
             /// <summary>0x18, magic</summary>
-            public UInt16 s_magic;
+            public ushort s_magic;
             /// <summary>0x1A, padding</summary>
-            public UInt16 s_pad2;
+            public ushort s_pad2;
             /// <summary>0x1C, bytes in a block</summary>
-            public UInt16 s_blocksize;
+            public ushort s_blocksize;
             /// <summary>0x1E, on-disk structures version</summary>
             public byte s_disk_version;
         }

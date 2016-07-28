@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef;
 
 namespace DiscImageChef.Decoders.SCSI
 {

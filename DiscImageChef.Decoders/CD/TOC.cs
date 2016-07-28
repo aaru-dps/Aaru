@@ -60,7 +60,7 @@ namespace DiscImageChef.Decoders.CD
             /// <summary>
             /// Total size of returned TOC minus this field
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// First track number in hex
             /// </summary>
@@ -106,7 +106,7 @@ namespace DiscImageChef.Decoders.CD
             /// Bytes 4 to 7
             /// The track start address in LBA or in MSF
             /// </summary>
-            public UInt32 TrackStartAddress;
+            public uint TrackStartAddress;
         }
 
         public static CDTOC? Decode(byte[] CDTOCResponse)

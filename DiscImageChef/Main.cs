@@ -33,7 +33,6 @@
 using System;
 using System.Reflection;
 using DiscImageChef.Console;
-using DiscImageChef.Settings;
 using CommandLine;
 
 namespace DiscImageChef

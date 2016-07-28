@@ -49,13 +49,13 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public class SpamSumContext
     {
-        const UInt32 ROLLING_WINDOW = 7;
-        const UInt32 MIN_BLOCKSIZE = 3;
-        const UInt32 HASH_PRIME = 0x01000193;
-        const UInt32 HASH_INIT = 0x28021967;
-        const UInt32 NUM_BLOCKHASHES = 31;
-        const UInt32 SPAMSUM_LENGTH = 64;
-        const UInt32 FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH + 20);
+        const uint ROLLING_WINDOW = 7;
+        const uint MIN_BLOCKSIZE = 3;
+        const uint HASH_PRIME = 0x01000193;
+        const uint HASH_INIT = 0x28021967;
+        const uint NUM_BLOCKHASHES = 31;
+        const uint SPAMSUM_LENGTH = 64;
+        const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH + 20);
         //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         readonly byte[] b64 =
         {0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
@@ -72,10 +72,10 @@ namespace DiscImageChef.Checksums
         {
             public byte[] window;
             // ROLLING_WINDOW
-            public UInt32 h1;
-            public UInt32 h2;
-            public UInt32 h3;
-            public UInt32 n;
+            public uint h1;
+            public uint h2;
+            public uint h3;
+            public uint n;
         }
 
         /* A blockhash contains a signature state for a specific (implicit) blocksize.
@@ -85,21 +85,21 @@ namespace DiscImageChef.Checksums
          * output hash to stay compatible with ssdeep output. */
         struct blockhash_context
         {
-            public UInt32 h;
-            public UInt32 halfh;
+            public uint h;
+            public uint halfh;
             public byte[] digest;
             // SPAMSUM_LENGTH
             public byte halfdigest;
-            public UInt32 dlen;
+            public uint dlen;
         }
 
         struct fuzzy_state
         {
-            public UInt32 bhstart;
-            public UInt32 bhend;
+            public uint bhstart;
+            public uint bhend;
             public blockhash_context[] bh;
             //NUM_BLOCKHASHES
-            public UInt64 total_size;
+            public ulong total_size;
             public roll_state roll;
         }
 
@@ -145,10 +145,10 @@ namespace DiscImageChef.Checksums
         void roll_hash(byte c)
         {
             self.roll.h2 -= self.roll.h1;
-            self.roll.h2 += ROLLING_WINDOW * (UInt32)c;
+            self.roll.h2 += ROLLING_WINDOW * c;
 
-            self.roll.h1 += (UInt32)c;
-            self.roll.h1 -= (UInt32)self.roll.window[self.roll.n % ROLLING_WINDOW];
+            self.roll.h1 += c;
+            self.roll.h1 -= self.roll.window[self.roll.n % ROLLING_WINDOW];
 
             self.roll.window[self.roll.n % ROLLING_WINDOW] = c;
             self.roll.n++;
@@ -160,18 +160,18 @@ namespace DiscImageChef.Checksums
             self.roll.h3 ^= c;
         }
 
-        UInt32 roll_sum()
+        uint roll_sum()
         {
             return self.roll.h1 + self.roll.h2 + self.roll.h3;
         }
 
         /* A simple non-rolling hash, based on the FNV hash. */
-        static UInt32 sum_hash(byte c, UInt32 h)
+        static uint sum_hash(byte c, uint h)
         {
             return (h * HASH_PRIME) ^ c;
         }
 
-        static UInt32 SSDEEP_BS(UInt32 index)
+        static uint SSDEEP_BS(uint index)
         {
             return (MIN_BLOCKSIZE << (int)index);
         }
@@ -204,7 +204,7 @@ namespace DiscImageChef.Checksums
             if(self.bhend - self.bhstart < 2)
                 /* Need at least two working hashes. */
                 return;
-            if((UInt64)SSDEEP_BS(self.bhstart) * SPAMSUM_LENGTH >=
+            if((ulong)SSDEEP_BS(self.bhstart) * SPAMSUM_LENGTH >=
                 self.total_size)
                 /* Initial blocksize estimate would select this or a smaller
                  * blocksize. */
@@ -219,8 +219,8 @@ namespace DiscImageChef.Checksums
 
         void fuzzy_engine_step(byte c)
         {
-            UInt64 h;
-            UInt32 i;
+        ulong h;
+            uint i;
             /* At each character we update the rolling hash and the normal hashes.
              * When the rolling hash hits a reset value then we emit a normal hash
              * as a element of the signature and reset the normal hash. */
@@ -295,22 +295,22 @@ namespace DiscImageChef.Checksums
         }
 
         // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
-        UInt32 fuzzy_digest(out byte[] result)
+        uint fuzzy_digest(out byte[] result)
         {
             StringBuilder sb = new StringBuilder();
-            UInt32 bi = self.bhstart;
-            UInt32 h = roll_sum();
+            uint bi = self.bhstart;
+            uint h = roll_sum();
             int i, result_off;
             int remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
             result = new byte[FUZZY_MAX_RESULT];
             /* Verify that our elimination was not overeager. */
-            if(!(bi == 0 || (UInt64)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.total_size))
+            if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < self.total_size))
                 throw new Exception("Assertion failed");
 
             result_off = 0;
 
             /* Initial blocksize guess. */
-            while((UInt64)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.total_size)
+            while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.total_size)
             {
                 ++bi;
                 if(bi >= NUM_BLOCKHASHES)

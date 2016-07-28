@@ -32,13 +32,13 @@
 
 using System;
 
-// All information by Natalia Portillo
-// Variable names from Lisa API
 using System.Collections.Generic;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
+    // All information by Natalia Portillo
+    // Variable names from Lisa API
     partial class LisaFS : Filesystem
     {
         bool mounted;
@@ -51,12 +51,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         SRecord[] srecords;
 
         #region Caches
-        Dictionary<Int16, ExtentFile> extentCache;
-        Dictionary<Int16, byte[]> systemFileCache;
-        Dictionary<Int16, byte[]> fileCache;
-        Dictionary<Int16, List<CatalogEntry>> catalogCache;
-        Dictionary<Int16, Int32> fileSizeCache;
-        List<Int16> printedExtents;
+        Dictionary<short, ExtentFile> extentCache;
+        Dictionary<short, byte[]> systemFileCache;
+        Dictionary<short, byte[]> fileCache;
+        Dictionary<short, List<CatalogEntry>> catalogCache;
+        Dictionary<short, int> fileSizeCache;
+        List<short> printedExtents;
         #endregion Caches
 
         public LisaFS()
@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
         }
 
-        public LisaFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public LisaFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             device = imagePlugin;
             Name = "Apple Lisa File System";

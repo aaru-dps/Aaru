@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
 
@@ -212,13 +211,13 @@ namespace DiscImageChef.Commands
 
             if(options.SectorTags)
             {
-                UInt64 length;
+                ulong length;
 
                 if(options.Length.ToLowerInvariant() == "all")
                     length = inputFormat.GetSectors() - 1;
                 else
                 {
-                    if(!UInt64.TryParse(options.Length, out length))
+                    if(!ulong.TryParse(options.Length, out length))
                     {
                         DicConsole.WriteLine("Value \"{0}\" is not a valid number for length.", options.Length);
                         DicConsole.WriteLine("Not decoding sectors tags");

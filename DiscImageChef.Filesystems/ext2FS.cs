@@ -32,12 +32,11 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 
-// Information from the Linux kernel
 namespace DiscImageChef.Filesystems
 {
+    // Information from the Linux kernel
     class ext2FS : Filesystem
     {
         public ext2FS()
@@ -59,7 +58,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
-            UInt16 magic = BitConverter.ToUInt16(sb_sector, 0x038);
+            ushort magic = BitConverter.ToUInt16(sb_sector, 0x038);
 
             if(magic == ext2FSMagic || magic == ext2OldFSMagic)
                 return true;
@@ -309,7 +308,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] temp_lo, temp_hi;
             byte[] temp_bytes = new byte[8];
-            UInt64 blocks, reserved, free;
+            ulong blocks, reserved, free;
 
             if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
             {
@@ -624,9 +623,9 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Same magic for ext2, ext3 and ext4
         /// </summary>
-        public const UInt16 ext2FSMagic = 0xEF53;
+        public const ushort ext2FSMagic = 0xEF53;
 
-        public const UInt16 ext2OldFSMagic = 0xEF51;
+        public const ushort ext2OldFSMagic = 0xEF51;
 
         /// <summary>
         /// ext2/3/4 superblock
@@ -634,73 +633,73 @@ namespace DiscImageChef.Filesystems
         public struct ext2FSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
-            public UInt32 inodes;
+            public uint inodes;
             /// <summary>0x004, blocks on volume</summary>
-            public UInt32 blocks;
+            public uint blocks;
             /// <summary>0x008, reserved blocks</summary>
-            public UInt32 reserved_blocks;
+            public uint reserved_blocks;
             /// <summary>0x00C, free blocks count</summary>
-            public UInt32 free_blocks;
+            public uint free_blocks;
             /// <summary>0x010, free inodes count</summary>
-            public UInt32 free_inodes;
+            public uint free_inodes;
             /// <summary>0x014, first data block</summary>
-            public UInt32 first_block;
+            public uint first_block;
             /// <summary>0x018, block size</summary>
-            public UInt32 block_size;
+            public uint block_size;
             /// <summary>0x01C, fragment size</summary>
             public Int32 frag_size;
             /// <summary>0x020, blocks per group</summary>
-            public UInt32 blocks_per_grp;
+            public uint blocks_per_grp;
             /// <summary>0x024, fragments per group</summary>
-            public UInt32 flags_per_grp;
+            public uint flags_per_grp;
             /// <summary>0x028, inodes per group</summary>
-            public UInt32 inodes_per_grp;
+            public uint inodes_per_grp;
             /// <summary>0x02C, last mount time</summary>
-            public UInt32 mount_t;
+            public uint mount_t;
             /// <summary>0x030, last write time</summary>
-            public UInt32 write_t;
+            public uint write_t;
             /// <summary>0x034, mounts count</summary>
-            public UInt16 mount_c;
+            public ushort mount_c;
             /// <summary>0x036, max mounts</summary>
             public Int16 max_mount_c;
             /// <summary>0x038, (little endian)</summary>
-            public UInt16 magic;
+            public ushort magic;
             /// <summary>0x03A, filesystem state</summary>
-            public UInt16 state;
+            public ushort state;
             /// <summary>0x03C, behaviour on errors</summary>
-            public UInt16 err_behaviour;
+            public ushort err_behaviour;
             /// <summary>0x03E, From 0.5b onward</summary>
-            public UInt16 minor_revision;
+            public ushort minor_revision;
             /// <summary>0x040, last check time</summary>
-            public UInt32 check_t;
+            public uint check_t;
             /// <summary>0x044, max time between checks</summary>
-            public UInt32 check_inv;
+            public uint check_inv;
 
             // From 0.5a onward
             /// <summary>0x048, Creation OS</summary>
-            public UInt32 creator_os;
+            public uint creator_os;
             /// <summary>0x04C, Revison level</summary>
-            public UInt32 revision;
+            public uint revision;
             /// <summary>0x050, Default UID for reserved blocks</summary>
-            public UInt16 default_uid;
+            public ushort default_uid;
             /// <summary>0x052, Default GID for reserved blocks</summary>
-            public UInt16 default_gid;
+            public ushort default_gid;
 
             // From 0.5b onward
             /// <summary>0x054, First unreserved inode</summary>
-            public UInt32 first_inode;
+            public uint first_inode;
             /// <summary>0x058, inode size</summary>
-            public UInt16 inode_size;
+            public ushort inode_size;
             /// <summary>0x05A, Block group number of THIS superblock</summary>
-            public UInt16 block_group_no;
+            public ushort block_group_no;
             /// <summary>0x05C, Compatible features set</summary>
-            public UInt32 ftr_compat;
+            public uint ftr_compat;
             /// <summary>0x060, Incompatible features set</summary>
-            public UInt32 ftr_incompat;
+            public uint ftr_incompat;
 
             // Found on Linux 2.0.40
             /// <summary>0x064, Read-only compatible features set</summary>
-            public UInt32 ftr_ro_compat;
+            public uint ftr_ro_compat;
 
             // Found on Linux 2.1.132
             /// <summary>0x068, 16 bytes, UUID</summary>
@@ -710,108 +709,108 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x088, 64 bytes, where last mounted</summary>
             public string last_mount_dir;
             /// <summary>0x0C8, Usage bitmap algorithm, for compression</summary>
-            public UInt32 algo_usage_bmp;
+            public uint algo_usage_bmp;
             /// <summary>0x0CC, Block to try to preallocate</summary>
             public byte prealloc_blks;
             /// <summary>0x0CD, Blocks to try to preallocate for directories</summary>
             public byte prealloc_dir_blks;
             /// <summary>0x0CE, Per-group desc for online growth</summary>
-            public UInt16 rsrvd_gdt_blocks;
+            public ushort rsrvd_gdt_blocks;
 
             // Found on Linux 2.4
             // ext3
             /// <summary>0x0D0, 16 bytes, UUID of journal superblock</summary>
             public Guid journal_uuid;
             /// <summary>0x0E0, inode no. of journal file</summary>
-            public UInt32 journal_inode;
+            public uint journal_inode;
             /// <summary>0x0E4, device no. of journal file</summary>
-            public UInt32 journal_dev;
+            public uint journal_dev;
             /// <summary>0x0E8, Start of list of inodes to delete</summary>
-            public UInt32 last_orphan;
+            public uint last_orphan;
             /// <summary>0x0EC, First byte of 128bit HTREE hash seed</summary>
-            public UInt32 hash_seed_1;
+            public uint hash_seed_1;
             /// <summary>0x0F0, Second byte of 128bit HTREE hash seed</summary>
-            public UInt32 hash_seed_2;
+            public uint hash_seed_2;
             /// <summary>0x0F4, Third byte of 128bit HTREE hash seed</summary>
-            public UInt32 hash_seed_3;
+            public uint hash_seed_3;
             /// <summary>0x0F8, Fourth byte of 128bit HTREE hash seed</summary>
-            public UInt32 hash_seed_4;
+            public uint hash_seed_4;
             /// <summary>0x0FC, Hash version</summary>
             public byte hash_version;
             /// <summary>0x0FD, Journal backup type</summary>
             public byte jnl_backup_type;
             /// <summary>0x0FE, Size of group descriptor</summary>
-            public UInt16 desc_grp_size;
+            public ushort desc_grp_size;
             /// <summary>0x100, Default mount options</summary>
-            public UInt32 default_mnt_opts;
+            public uint default_mnt_opts;
             /// <summary>0x104, First metablock block group</summary>
-            public UInt32 first_meta_bg;
+            public uint first_meta_bg;
 
             // Introduced with ext4, some can be ext3
             /// <summary>0x108, Filesystem creation time</summary>
-            public UInt32 mkfs_t;
+            public uint mkfs_t;
             // Follows 17 uint32 (68 bytes) of journal inode backup
             // Following 3 fields are valid if EXT4_FEATURE_COMPAT_64BIT is set
             /// <summary>0x14C, High 32bits of blocks no.</summary>
-            public UInt32 blocks_hi;
+            public uint blocks_hi;
             /// <summary>0x150, High 32bits of reserved blocks no.</summary>
-            public UInt32 reserved_blocks_hi;
+            public uint reserved_blocks_hi;
             /// <summary>0x154, High 32bits of free blocks no.</summary>
-            public UInt32 free_blocks_hi;
+            public uint free_blocks_hi;
             /// <summary>0x158, inodes minimal size in bytes</summary>
-            public UInt16 min_inode_size;
+            public ushort min_inode_size;
             /// <summary>0x15A, Bytes reserved by new inodes</summary>
-            public UInt16 rsv_inode_size;
+            public ushort rsv_inode_size;
             /// <summary>0x15C, Flags</summary>
-            public UInt32 flags;
+            public uint flags;
             /// <summary>0x160, RAID stride</summary>
-            public UInt16 raid_stride;
+            public ushort raid_stride;
             /// <summary>0x162, Waiting seconds in MMP check</summary>
-            public UInt16 mmp_interval;
+            public ushort mmp_interval;
             /// <summary>0x164, Block for multi-mount protection</summary>
-            public UInt64 mmp_block;
+            public ulong mmp_block;
             /// <summary>0x16C, Blocks on all data disks (N*stride)</summary>
-            public UInt32 raid_stripe_width;
+            public uint raid_stripe_width;
             /// <summary>0x170, FLEX_BG group size</summary>
             public byte flex_bg_grp_size;
             /// <summary>0x171 Padding</summary>
             public byte padding;
             /// <summary>0x172 Padding</summary>
-            public UInt16 padding2;
+            public ushort padding2;
 
             // Following are introduced with ext4
             /// <summary>0x174, Kibibytes written in volume lifetime</summary>
-            public UInt64 kbytes_written;
+            public ulong kbytes_written;
             /// <summary>0x17C, Active snapshot inode number</summary>
-            public UInt32 snapshot_inum;
+            public uint snapshot_inum;
             /// <summary>0x180, Active snapshot sequential ID</summary>
-            public UInt32 snapshot_id;
+            public uint snapshot_id;
             /// <summary>0x184, Reserved blocks for active snapshot's future use</summary>
-            public UInt64 snapshot_blocks;
+            public ulong snapshot_blocks;
             /// <summary>0x18C, inode number of the on-disk start of the snapshot list</summary>
-            public UInt32 snapshot_list;
+            public uint snapshot_list;
 
             // Optional ext4 error-handling features
             /// <summary>0x190, total registered filesystem errors</summary>
-            public UInt32 error_count;
+            public uint error_count;
             /// <summary>0x194, time on first error</summary>
-            public UInt32 first_error_t;
+            public uint first_error_t;
             /// <summary>0x198, inode involved in first error</summary>
-            public UInt32 first_error_inode;
+            public uint first_error_inode;
             /// <summary>0x19C, block involved of first error</summary>
-            public UInt64 first_error_block;
+            public ulong first_error_block;
             /// <summary>0x1A0, 32 bytes, function where the error happened</summary>
             public string first_error_func;
             /// <summary>0x1B0, line number where error happened</summary>
-            public UInt32 first_error_line;
+            public uint first_error_line;
             /// <summary>0x1B4, time of most recent error</summary>
-            public UInt32 last_error_t;
+            public uint last_error_t;
             /// <summary>0x1B8, inode involved in last error</summary>
-            public UInt32 last_error_inode;
+            public uint last_error_inode;
             /// <summary>0x1BC, line number where error happened</summary>
-            public UInt32 last_error_line;
+            public uint last_error_line;
             /// <summary>0x1C0, block involved of last error</summary>
-            public UInt64 last_error_block;
+            public ulong last_error_block;
             /// <summary>0x1C8, 32 bytes, function where the error happened</summary>
             public string last_error_func;
             // End of optional error-handling features
@@ -822,112 +821,112 @@ namespace DiscImageChef.Filesystems
 
         // ext? filesystem states
         /// <summary>Cleanly-unmounted volume</summary>
-        public const UInt16 EXT2_VALID_FS = 0x0001;
+        public const ushort EXT2_VALID_FS = 0x0001;
         /// <summary>Dirty volume</summary>
-        public const UInt16 EXT2_ERROR_FS = 0x0002;
+        public const ushort EXT2_ERROR_FS = 0x0002;
         /// <summary>Recovering orphan files</summary>
-        public const UInt16 EXT3_ORPHAN_FS = 0x0004;
+        public const ushort EXT3_ORPHAN_FS = 0x0004;
 
         // ext? default mount flags
         /// <summary>Enable debugging messages</summary>
-        public const UInt32 EXT2_DEFM_DEBUG = 0x000001;
+        public const uint EXT2_DEFM_DEBUG = 0x000001;
         /// <summary>Emulates BSD behaviour on new file creation</summary>
-        public const UInt32 EXT2_DEFM_BSDGROUPS = 0x000002;
+        public const uint EXT2_DEFM_BSDGROUPS = 0x000002;
         /// <summary>Enable user xattrs</summary>
-        public const UInt32 EXT2_DEFM_XATTR_USER = 0x000004;
+        public const uint EXT2_DEFM_XATTR_USER = 0x000004;
         /// <summary>Enable POSIX ACLs</summary>
-        public const UInt32 EXT2_DEFM_ACL = 0x000008;
+        public const uint EXT2_DEFM_ACL = 0x000008;
         /// <summary>Use 16bit UIDs</summary>
-        public const UInt32 EXT2_DEFM_UID16 = 0x000010;
+        public const uint EXT2_DEFM_UID16 = 0x000010;
         /// <summary>Journal data mode</summary>
-        public const UInt32 EXT3_DEFM_JMODE_DATA = 0x000040;
+        public const uint EXT3_DEFM_JMODE_DATA = 0x000040;
         /// <summary>Journal ordered mode</summary>
-        public const UInt32 EXT3_DEFM_JMODE_ORDERED = 0x000080;
+        public const uint EXT3_DEFM_JMODE_ORDERED = 0x000080;
         /// <summary>Journal writeback mode</summary>
-        public const UInt32 EXT3_DEFM_JMODE_WBACK = 0x000100;
+        public const uint EXT3_DEFM_JMODE_WBACK = 0x000100;
 
         // Behaviour on errors
         /// <summary>Continue execution</summary>
-        public const UInt16 EXT2_ERRORS_CONTINUE = 1;
+        public const ushort EXT2_ERRORS_CONTINUE = 1;
         /// <summary>Remount fs read-only</summary>
-        public const UInt16 EXT2_ERRORS_RO = 2;
+        public const ushort EXT2_ERRORS_RO = 2;
         /// <summary>Panic</summary>
-        public const UInt16 EXT2_ERRORS_PANIC = 3;
+        public const ushort EXT2_ERRORS_PANIC = 3;
 
         // OS codes
-        public const UInt32 EXT2_OS_LINUX = 0;
-        public const UInt32 EXT2_OS_HURD = 1;
-        public const UInt32 EXT2_OS_MASIX = 2;
-        public const UInt32 EXT2_OS_FREEBSD = 3;
-        public const UInt32 EXT2_OS_LITES = 4;
+        public const uint EXT2_OS_LINUX = 0;
+        public const uint EXT2_OS_HURD = 1;
+        public const uint EXT2_OS_MASIX = 2;
+        public const uint EXT2_OS_FREEBSD = 3;
+        public const uint EXT2_OS_LITES = 4;
 
         // Revision levels
         /// <summary>The good old (original) format</summary>
-        public const UInt32 EXT2_GOOD_OLD_REV = 0;
+        public const uint EXT2_GOOD_OLD_REV = 0;
         /// <summary>V2 format w/ dynamic inode sizes</summary>
-        public const UInt32 EXT2_DYNAMIC_REV = 1;
+        public const uint EXT2_DYNAMIC_REV = 1;
 
         // Compatible features
         /// <summary>Pre-allocate directories</summary>
-        public const UInt32 EXT2_FEATURE_COMPAT_DIR_PREALLOC = 0x00000001;
+        public const uint EXT2_FEATURE_COMPAT_DIR_PREALLOC = 0x00000001;
         /// <summary>imagic inodes ?</summary>
-        public const UInt32 EXT2_FEATURE_COMPAT_IMAGIC_INODES = 0x00000002;
+        public const uint EXT2_FEATURE_COMPAT_IMAGIC_INODES = 0x00000002;
         /// <summary>Has journal (it's ext3)</summary>
-        public const UInt32 EXT3_FEATURE_COMPAT_HAS_JOURNAL = 0x00000004;
+        public const uint EXT3_FEATURE_COMPAT_HAS_JOURNAL = 0x00000004;
         /// <summary>EA blocks</summary>
-        public const UInt32 EXT2_FEATURE_COMPAT_EXT_ATTR = 0x00000008;
+        public const uint EXT2_FEATURE_COMPAT_EXT_ATTR = 0x00000008;
         /// <summary>Online filesystem resize reservations</summary>
-        public const UInt32 EXT2_FEATURE_COMPAT_RESIZE_INO = 0x00000010;
+        public const uint EXT2_FEATURE_COMPAT_RESIZE_INO = 0x00000010;
         /// <summary>Can use hashed indexes on directories</summary>
-        public const UInt32 EXT2_FEATURE_COMPAT_DIR_INDEX = 0x00000020;
+        public const uint EXT2_FEATURE_COMPAT_DIR_INDEX = 0x00000020;
 
         // Read-only compatible features
         /// <summary>Reduced number of superblocks</summary>
-        public const UInt32 EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER = 0x00000001;
+        public const uint EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER = 0x00000001;
         /// <summary>Can have files bigger than 2GiB</summary>
-        public const UInt32 EXT2_FEATURE_RO_COMPAT_LARGE_FILE = 0x00000002;
+        public const uint EXT2_FEATURE_RO_COMPAT_LARGE_FILE = 0x00000002;
         /// <summary>Use B-Tree for directories</summary>
-        public const UInt32 EXT2_FEATURE_RO_COMPAT_BTREE_DIR = 0x00000004;
+        public const uint EXT2_FEATURE_RO_COMPAT_BTREE_DIR = 0x00000004;
         /// <summary>Can have files bigger than 2TiB *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_RO_COMPAT_HUGE_FILE = 0x00000008;
+        public const uint EXT4_FEATURE_RO_COMPAT_HUGE_FILE = 0x00000008;
         /// <summary>Group descriptor checksums and sparse inode table *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_RO_COMPAT_GDT_CSUM = 0x00000010;
+        public const uint EXT4_FEATURE_RO_COMPAT_GDT_CSUM = 0x00000010;
         /// <summary>More than 32000 directory entries *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_RO_COMPAT_DIR_NLINK = 0x00000020;
+        public const uint EXT4_FEATURE_RO_COMPAT_DIR_NLINK = 0x00000020;
         /// <summary>Nanosecond timestamps and creation time *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE = 0x00000040;
+        public const uint EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE = 0x00000040;
 
         // Incompatible features
         /// <summary>Uses compression</summary>
-        public const UInt32 EXT2_FEATURE_INCOMPAT_COMPRESSION = 0x00000001;
+        public const uint EXT2_FEATURE_INCOMPAT_COMPRESSION = 0x00000001;
         /// <summary>Filetype in directory entries</summary>
-        public const UInt32 EXT2_FEATURE_INCOMPAT_FILETYPE = 0x00000002;
+        public const uint EXT2_FEATURE_INCOMPAT_FILETYPE = 0x00000002;
         /// <summary>Journal needs recovery *ext3*</summary>
-        public const UInt32 EXT3_FEATURE_INCOMPAT_RECOVER = 0x00000004;
+        public const uint EXT3_FEATURE_INCOMPAT_RECOVER = 0x00000004;
         /// <summary>Has journal on another device *ext3*</summary>
-        public const UInt32 EXT3_FEATURE_INCOMPAT_JOURNAL_DEV = 0x00000008;
+        public const uint EXT3_FEATURE_INCOMPAT_JOURNAL_DEV = 0x00000008;
         /// <summary>Reduced block group backups</summary>
-        public const UInt32 EXT2_FEATURE_INCOMPAT_META_BG = 0x00000010;
+        public const uint EXT2_FEATURE_INCOMPAT_META_BG = 0x00000010;
         /// <summary>Volume use extents *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_EXTENTS = 0x00000040;
+        public const uint EXT4_FEATURE_INCOMPAT_EXTENTS = 0x00000040;
         /// <summary>Supports volumes bigger than 2^32 blocks *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_64BIT = 0x00000080;
+        public const uint EXT4_FEATURE_INCOMPAT_64BIT = 0x00000080;
         /// <summary>Multi-mount protection *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_MMP = 0x00000100;
+        public const uint EXT4_FEATURE_INCOMPAT_MMP = 0x00000100;
         /// <summary>Flexible block group metadata location *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_FLEX_BG = 0x00000200;
+        public const uint EXT4_FEATURE_INCOMPAT_FLEX_BG = 0x00000200;
         /// <summary>EA in inode *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_EA_INODE = 0x00000400;
+        public const uint EXT4_FEATURE_INCOMPAT_EA_INODE = 0x00000400;
         /// <summary>Data can reside in directory entry *ext4*</summary>
-        public const UInt32 EXT4_FEATURE_INCOMPAT_DIRDATA = 0x00001000;
+        public const uint EXT4_FEATURE_INCOMPAT_DIRDATA = 0x00001000;
 
         // Miscellaneous filesystem flags
         /// <summary>Signed dirhash in use</summary>
-        public const UInt32 EXT2_FLAGS_SIGNED_HASH = 0x00000001;
+        public const uint EXT2_FLAGS_SIGNED_HASH = 0x00000001;
         /// <summary>Unsigned dirhash in use</summary>
-        public const UInt32 EXT2_FLAGS_UNSIGNED_HASH = 0x00000002;
+        public const uint EXT2_FLAGS_UNSIGNED_HASH = 0x00000002;
         /// <summary>Testing development code</summary>
-        public const UInt32 EXT2_FLAGS_TEST_FILESYS = 0x00000004;
+        public const uint EXT2_FLAGS_TEST_FILESYS = 0x00000004;
 
         public override Errno Mount()
         {

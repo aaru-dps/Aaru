@@ -33,28 +33,24 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef;
-
-// Information learnt from XNU source and testing against real disks
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.PartPlugins
 {
     class AtariPartitions : PartPlugin
     {
-        const UInt32 TypeGEMDOS = 0x0047454D;
-        const UInt32 TypeBigGEMDOS = 0x0042474D;
-        const UInt32 TypeExtended = 0x0058474D;
-        const UInt32 TypeLinux = 0x004C4E58;
-        const UInt32 TypeSwap = 0x00535750;
-        const UInt32 TypeRAW = 0x00524157;
-        const UInt32 TypeNetBSD = 0x004E4244;
-        const UInt32 TypeNetBSDSwap = 0x004E4253;
-        const UInt32 TypeSysV = 0x00554E58;
-        const UInt32 TypeMac = 0x004D4143;
-        const UInt32 TypeMinix = 0x004D4958;
-        const UInt32 TypeMinix2 = 0x004D4E58;
+        const uint TypeGEMDOS = 0x0047454D;
+        const uint TypeBigGEMDOS = 0x0042474D;
+        const uint TypeExtended = 0x0058474D;
+        const uint TypeLinux = 0x004C4E58;
+        const uint TypeSwap = 0x00535750;
+        const uint TypeRAW = 0x00524157;
+        const uint TypeNetBSD = 0x004E4244;
+        const uint TypeNetBSDSwap = 0x004E4253;
+        const uint TypeSysV = 0x00554E58;
+        const uint TypeMac = 0x004D4143;
+        const uint TypeMinix = 0x004D4958;
+        const uint TypeMinix2 = 0x004D4E58;
 
         public AtariPartitions()
         {
@@ -134,7 +130,7 @@ namespace DiscImageChef.PartPlugins
             ulong partitionSequence = 0;
             for(int i = 0; i < 4; i++)
             {
-                UInt32 type = table.entries[i].type & 0x00FFFFFF;
+                uint type = table.entries[i].type & 0x00FFFFFF;
 
                 if(type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
                     type == TypeSwap || type == TypeRAW || type == TypeNetBSD ||
@@ -224,7 +220,7 @@ namespace DiscImageChef.PartPlugins
 
                     for(int j = 0; j < 4; j++)
                     {
-                        UInt32 extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
+                        uint extendedType = extendedTable.entries[j].type & 0x00FFFFFF;
 
                         if(extendedType == TypeGEMDOS || extendedType == TypeBigGEMDOS || extendedType == TypeLinux ||
                             extendedType == TypeSwap || extendedType == TypeRAW || extendedType == TypeNetBSD ||
@@ -305,7 +301,7 @@ namespace DiscImageChef.PartPlugins
             {
                 for(int i = 0; i < 8; i++)
                 {
-                    UInt32 type = table.icdEntries[i].type & 0x00FFFFFF;
+                    uint type = table.icdEntries[i].type & 0x00FFFFFF;
 
                     if(type == TypeGEMDOS || type == TypeBigGEMDOS || type == TypeLinux ||
                         type == TypeSwap || type == TypeRAW || type == TypeNetBSD ||
@@ -393,15 +389,15 @@ namespace DiscImageChef.PartPlugins
             /// Flag bit 0 = active
             /// Flag bit 7 = bootable
             /// </summary>
-            public UInt32 type;
+            public uint type;
             /// <summary>
             /// Starting sector
             /// </summary>
-            public UInt32 start;
+            public uint start;
             /// <summary>
             /// Length in sectors
             /// </summary>
-            public UInt32 length;
+            public uint length;
         }
 
         struct AtariTable
@@ -421,7 +417,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Disk size in sectors
             /// </summary>
-            public UInt32 size;
+            public uint size;
             /// <summary>
             /// 4 partition entries
             /// </summary>
@@ -429,15 +425,15 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Starting sector of bad block list
             /// </summary>
-            public UInt32 badStart;
+            public uint badStart;
             /// <summary>
             /// Length in sectors of bad block list
             /// </summary>
-            public UInt32 badLength;
+            public uint badLength;
             /// <summary>
             /// Checksum for bootable disks
             /// </summary>
-            public UInt16 checksum;
+            public ushort checksum;
         }
     }
 }

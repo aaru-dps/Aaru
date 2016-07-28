@@ -32,15 +32,12 @@
 
 using System;
 using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
-
-// Based on FAT's BPB, cannot find a FAT or directory
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
+    // Based on FAT's BPB, cannot find a FAT or directory
     class SolarFS : Filesystem
     {
         public SolarFS()
@@ -166,29 +163,29 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x03, 8 bytes, "SOLAR_OS"</summary>
             public string OEMName;
             /// <summary>0x0B, Bytes per sector</summary>
-            public UInt16 bps;
+            public ushort bps;
             /// <summary>0x0D, unknown, 0x01</summary>
             public byte unk1;
             /// <summary>0x0E, unknown, 0x0201</summary>
-            public UInt16 unk2;
+            public ushort unk2;
             /// <summary>0x10, Number of entries on root directory ? (no root directory found)</summary>
-            public UInt16 root_ent;
+            public ushort root_ent;
             /// <summary>0x12, Sectors in volume</summary>
-            public UInt16 sectors;
+            public ushort sectors;
             /// <summary>0x14, Media descriptor</summary>
             public byte media;
             /// <summary>0x15, Sectors per FAT ? (no FAT found)</summary>
-            public UInt16 spfat;
+            public ushort spfat;
             /// <summary>0x17, Sectors per track</summary>
-            public UInt16 sptrk;
+            public ushort sptrk;
             /// <summary>0x19, Heads</summary>
-            public UInt16 heads;
+            public ushort heads;
             /// <summary>0x1B, unknown, 10 bytes, zero-filled</summary>
             public byte[] unk3;
             /// <summary>0x25, 0x29</summary>
             public byte signature;
             /// <summary>0x26, unknown, zero-filled</summary>
-            public UInt32 unk4;
+            public uint unk4;
             /// <summary>0x2A, 11 bytes, volume name, space-padded</summary>
             public string vol_name;
             /// <summary>0x35, 8 bytes, "SOL_FS  "</summary>

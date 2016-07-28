@@ -105,14 +105,18 @@ namespace DiscImageChef.Commands
                         double entropy = 0;
                         foreach(ulong l in entTable)
                         {
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                             double frequency = (double)l / (double)trackSize;
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                             entropy += -(frequency * Math.Log(frequency, 2));
                         }
 
                         DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", currentTrack.TrackSequence, entropy);
 
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                         if(options.DuplicatedSectors)
                             DicConsole.WriteLine("Track {0} has {1} unique sectors ({1:P3})", currentTrack.TrackSequence, uniqueSectorsPerTrack.Count, (double)uniqueSectorsPerTrack.Count / (double)sectors);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
 
                         DicConsole.WriteLine();
                     }
@@ -162,7 +166,9 @@ namespace DiscImageChef.Commands
                 double entropy = 0;
                 foreach(ulong l in entTable)
                 {
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     double frequency = (double)l / (double)diskSize;
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                     entropy += -(frequency * Math.Log(frequency, 2));
                 }
 
@@ -171,7 +177,9 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy);
 
                 if(options.DuplicatedSectors)
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                     DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", uniqueSectors.Count, (double)uniqueSectors.Count / (double)sectors);
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
 
                 Core.Statistics.AddCommand("entropy");
             }

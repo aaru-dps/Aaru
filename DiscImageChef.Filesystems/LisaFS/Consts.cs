@@ -30,8 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
@@ -41,18 +39,18 @@ namespace DiscImageChef.Filesystems.LisaFS
         const byte LisaFSv3 = 0x11;
         /// <summary>Maximum string size in LisaFS</summary>
         const uint E_NAME = 32;
-        const UInt16 FILEID_FREE = 0x0000;
-        const UInt16 FILEID_BOOT = 0xAAAA;
-        const UInt16 FILEID_LOADER = 0xBBBB;
-        const UInt16 FILEID_MDDF = 0x0001;
-        const UInt16 FILEID_BITMAP = 0x0002;
-        const UInt16 FILEID_SRECORD = 0x0003;
+        const ushort FILEID_FREE = 0x0000;
+        const ushort FILEID_BOOT = 0xAAAA;
+        const ushort FILEID_LOADER = 0xBBBB;
+        const ushort FILEID_MDDF = 0x0001;
+        const ushort FILEID_BITMAP = 0x0002;
+        const ushort FILEID_SRECORD = 0x0003;
         /// <summary>"Catalog file"</summary>
-        const UInt16 FILEID_DIRECTORY = 0x0004;
-        const Int16 FILEID_BOOT_SIGNED = -21846;
-        const Int16 FILEID_LOADER_SIGNED = -17477;
-        const UInt16 FILEID_ERASED = 0x7FFF;
-        const UInt16 FILEID_MAX = FILEID_ERASED;
+        const ushort FILEID_DIRECTORY = 0x0004;
+        const short FILEID_BOOT_SIGNED = -21846;
+        const short FILEID_LOADER_SIGNED = -17477;
+        const ushort FILEID_ERASED = 0x7FFF;
+        const ushort FILEID_MAX = FILEID_ERASED;
 
         enum FileType : byte
         {

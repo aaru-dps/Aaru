@@ -30,7 +30,6 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Text;
 
 namespace DiscImageChef.Decoders.DVD
@@ -58,7 +57,7 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 0 to 1
             /// Data length
             /// </summary>
-            public UInt16 DataLength;
+            public ushort DataLength;
             /// <summary>
             /// Byte 2
             /// Reserved
@@ -73,17 +72,17 @@ namespace DiscImageChef.Decoders.DVD
             /// Bytes 4 to 7
             /// Data length
             /// </summary>
-            public UInt32 UnusedPrimaryBlocks;
+            public uint UnusedPrimaryBlocks;
             /// <summary>
             /// Bytes 8 to 11
             /// Data length
             /// </summary>
-            public UInt32 UnusedSupplementaryBlocks;
+            public uint UnusedSupplementaryBlocks;
             /// <summary>
             /// Bytes 12 to 15
             /// Data length
             /// </summary>
-            public UInt32 AllocatedSupplementaryBlocks;
+            public uint AllocatedSupplementaryBlocks;
         }
 
         public static SpareAreaInformation? Decode(byte[] response)

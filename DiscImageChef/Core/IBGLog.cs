@@ -284,7 +284,7 @@ namespace DiscImageChef.Core
                 ibgHeader.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
 
                 StreamWriter sr = new StreamWriter(ibgFs);
-                sr.Write(ibgHeader.ToString());
+                sr.Write(ibgHeader);
                 sr.Close();
                 ibgFs.Close();
             }
