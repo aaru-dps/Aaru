@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted)
                 return Errno.AccessDenied;
 
-            if(fileId < 4 || (fileId == 4 && mddf.fsversion != LisaFSv2))
+            if(fileId < 4 || (fileId == 4 && (mddf.fsversion != LisaFSv2 && mddf.fsversion != LisaFSv1)))
                 return Errno.InvalidArgument;
 
             if(extentCache.TryGetValue(fileId, out file))
@@ -105,7 +105,12 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(extTag.fileID == ((short)(-1 * fileId)))
             {
-                byte[] sector = device.ReadSector(ptr);
+                byte[] sector;
+
+                if(mddf.fsversion == LisaFSv1)
+                    sector = device.ReadSectors(ptr, 2);
+                else
+                    sector = device.ReadSector(ptr);
 
                 if(sector[0] >= 32 || sector[0] == 0)
                     return Errno.InvalidArgument;
@@ -147,17 +152,29 @@ namespace DiscImageChef.Filesystems.LisaFS
                 file.overhead = BigEndianBitConverter.ToUInt16(sector, 0x6E);
                 file.unknown8 = new byte[16];
                 Array.Copy(sector, 0x70, file.unknown8, 0, 16);
-                file.length = BigEndianBitConverter.ToInt32(sector, 0x80);
-                file.unknown9 = BigEndianBitConverter.ToInt32(sector, 0x84);
                 file.unknown10 = BigEndianBitConverter.ToInt16(sector, 0x17E);
                 file.LisaInfo = new byte[128];
                 Array.Copy(sector, 0x180, file.LisaInfo, 0, 128);
 
                 int extentsCount = 0;
+                int extentsOffset;
 
+                if(mddf.fsversion == LisaFSv1)
+                {
+                    file.length = BigEndianBitConverter.ToInt32(sector, 0x200);
+                    file.unknown9 = BigEndianBitConverter.ToInt32(sector, 0x204);
+                    extentsOffset = 0x208;
+                }
+                else
+                {
+                    file.length = BigEndianBitConverter.ToInt32(sector, 0x80);
+                    file.unknown9 = BigEndianBitConverter.ToInt32(sector, 0x84);
+                    extentsOffset = 0x88;
+                }
+                
                 for(int j = 0; j < 41; j++)
                 {
-                    if(BigEndianBitConverter.ToInt16(sector, 0x88 + j * 6 + 4) == 0)
+                    if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)
                         break;
 
                     extentsCount++;
@@ -168,8 +185,8 @@ namespace DiscImageChef.Filesystems.LisaFS
                 for(int j = 0; j < extentsCount; j++)
                 {
                     file.extents[j] = new Extent();
-                    file.extents[j].start = BigEndianBitConverter.ToInt32(sector, 0x88 + j * 6);
-                    file.extents[j].length = BigEndianBitConverter.ToInt16(sector, 0x88 + j * 6 + 4);
+                    file.extents[j].start = BigEndianBitConverter.ToInt32(sector, extentsOffset + j * 6);
+                    file.extents[j].length = BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4);
                 }
 
                 extentCache.Add(fileId, file);

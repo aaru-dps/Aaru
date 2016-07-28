@@ -191,13 +191,13 @@ namespace DiscImageChef.Filesystems.LisaFS
                         switch(mddf.fsversion)
                         {
                             case LisaFSv1:
-                                DicConsole.ErrorWriteLine("Cannot mount LisaFS v1");
-                                return Errno.NotSupported;
+                                DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
+                                break;
                             case LisaFSv2:
                                 DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
                                 break;
                             case LisaFSv3:
-                                DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+                                DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
                                 break;
                             default:
                                 DicConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", mddf.fsversion.ToString());

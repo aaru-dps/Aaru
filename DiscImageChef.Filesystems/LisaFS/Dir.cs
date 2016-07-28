@@ -95,7 +95,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             Errno error;
 
-            if(mddf.fsversion == LisaFSv2)
+            if(mddf.fsversion == LisaFSv2 || mddf.fsversion == LisaFSv1)
             {
                 if(fileId != FILEID_DIRECTORY)
                 {

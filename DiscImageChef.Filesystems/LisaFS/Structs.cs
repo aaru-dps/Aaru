@@ -346,11 +346,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             public ushort overhead;
             /// <summary>0x70, 16 bytes, unknown</summary>
             public byte[] unknown8;
-            /// <summary>0x80, file length in blocks</summary>
+            /// <summary>0x80, 0x200 in v1, file length in blocks</summary>
             public Int32 length;
-            /// <summary>0x84, unknown</summary>
+            /// <summary>0x84, 0x204 in v1, unknown</summary>
             public Int32 unknown9;
-            /// <summary>0x88, extents, can contain up to 41 extents, dunno LisaOS maximum (never seen more than 3)</summary>
+            /// <summary>0x88, 0x208 in v1, extents, can contain up to 41 extents (85 in v1), dunno LisaOS maximum (never seen more than 3)</summary>
             public Extent[] extents;
             /// <summary>0x17E, unknown, empty, padding?</summary>
             public short unknown10;
