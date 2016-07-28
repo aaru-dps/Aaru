@@ -40,8 +40,8 @@ namespace DiscImageChef.Checksums
     {
         static byte[] ECC_F_Table;
         static byte[] ECC_B_Table;
-        const UInt32 CDCRC32Poly = 0xD8018001;
-        const UInt32 CDCRC32Seed = 0x00000000;
+        const uint CDCRC32Poly = 0xD8018001;
+        const uint CDCRC32Seed = 0x00000000;
 
         public static bool? CheckCDSector(byte[] buffer)
         {
@@ -84,9 +84,9 @@ namespace DiscImageChef.Checksums
             ECC_F_Table = new byte[256];
             ECC_B_Table = new byte[256];
 
-            for(UInt32 i = 0; i < 256; i++)
+            for(uint i = 0; i < 256; i++)
             {
-                UInt32 j = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+                uint j = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
                 ECC_F_Table[i] = (byte)j;
                 ECC_B_Table[i ^ j] = (byte)i;
             }
@@ -95,21 +95,21 @@ namespace DiscImageChef.Checksums
         static bool CheckECC(
             byte[] address,
             byte[] data,
-            UInt32 major_count,
-            UInt32 minor_count,
-            UInt32 major_mult,
-            UInt32 minor_inc,
+            uint major_count,
+            uint minor_count,
+            uint major_mult,
+            uint minor_inc,
             byte[] ecc
         )
         {
-            UInt32 size = major_count * minor_count;
-            UInt32 major;
+            uint size = major_count * minor_count;
+            uint major;
             for(major = 0; major < major_count; major++)
             {
-                UInt32 index = (major >> 1) * major_mult + (major & 1);
+                uint index = (major >> 1) * major_mult + (major & 1);
                 byte ecc_a = 0;
                 byte ecc_b = 0;
-                UInt32 minor;
+                uint minor;
                 for(minor = 0; minor < minor_count; minor++)
                 {
                     byte temp;
@@ -215,11 +215,11 @@ namespace DiscImageChef.Checksums
                         return false;
 
                     byte[] SectorForCheck = new byte[0x810];
-                    UInt32 StoredEDC = BitConverter.ToUInt32(channel, 0x810);
+                    uint StoredEDC = BitConverter.ToUInt32(channel, 0x810);
                     byte[] CalculatedEDCBytes;
                     Array.Copy(channel, 0, SectorForCheck, 0, 0x810);
                     CRC32Context.Data(SectorForCheck, 0x810, out CalculatedEDCBytes, CDCRC32Poly, CDCRC32Seed);
-                    UInt32 CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
+                    uint CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
 
                     if(CalculatedEDC != StoredEDC)
                     {
@@ -241,11 +241,11 @@ namespace DiscImageChef.Checksums
                         }
 
                         byte[] SectorForCheck = new byte[0x91C];
-                        UInt32 StoredEDC = BitConverter.ToUInt32(channel, 0x92C);
+                        uint StoredEDC = BitConverter.ToUInt32(channel, 0x92C);
                         byte[] CalculatedEDCBytes;
                         Array.Copy(channel, 0x10, SectorForCheck, 0, 0x91C);
                         CRC32Context.Data(SectorForCheck, 0x91C, out CalculatedEDCBytes, CDCRC32Poly, CDCRC32Seed);
-                        UInt32 CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
+                        uint CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
 
                         if(CalculatedEDC != StoredEDC && StoredEDC != 0x00000000)
                         {
@@ -287,11 +287,11 @@ namespace DiscImageChef.Checksums
                             return false;
 
                         byte[] SectorForCheck = new byte[0x808];
-                        UInt32 StoredEDC = BitConverter.ToUInt32(channel, 0x818);
+                        uint StoredEDC = BitConverter.ToUInt32(channel, 0x818);
                         byte[] CalculatedEDCBytes;
                         Array.Copy(channel, 0x10, SectorForCheck, 0, 0x808);
                         CRC32Context.Data(SectorForCheck, 0x808, out CalculatedEDCBytes, CDCRC32Poly, CDCRC32Seed);
-                        UInt32 CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
+                        uint CalculatedEDC = BitConverter.ToUInt32(CalculatedEDCBytes, 0);
 
                         if(CalculatedEDC != StoredEDC)
                         {
@@ -464,10 +464,10 @@ namespace DiscImageChef.Checksums
 
             BigEndianBitConverter.IsLittleEndian = true;
 
-            UInt16 QSubChannelCRC = BigEndianBitConverter.ToUInt16(QSubChannel, 10);
+            ushort QSubChannelCRC = BigEndianBitConverter.ToUInt16(QSubChannel, 10);
             byte[] QSubChannelForCRC = new byte[10];
             Array.Copy(QSubChannel, 0, QSubChannelForCRC, 0, 10);
-            UInt16 CalculatedQCRC = CalculateCCITT_CRC16(QSubChannelForCRC);
+            ushort CalculatedQCRC = CalculateCCITT_CRC16(QSubChannelForCRC);
 
             if(QSubChannelCRC != CalculatedQCRC)
             {
@@ -477,10 +477,10 @@ namespace DiscImageChef.Checksums
 
             if((CDTextPack1[0] & 0x80) == 0x80)
             {
-                UInt16 CDTextPack1CRC = BigEndianBitConverter.ToUInt16(CDTextPack1, 16);
+                ushort CDTextPack1CRC = BigEndianBitConverter.ToUInt16(CDTextPack1, 16);
                 byte[] CDTextPack1ForCRC = new byte[16];
                 Array.Copy(CDTextPack1, 0, CDTextPack1ForCRC, 0, 16);
-                UInt16 CalculatedCDTP1CRC = CalculateCCITT_CRC16(CDTextPack1ForCRC);
+                ushort CalculatedCDTP1CRC = CalculateCCITT_CRC16(CDTextPack1ForCRC);
 
                 if(CDTextPack1CRC != CalculatedCDTP1CRC && CDTextPack1CRC != 0)
                 {
@@ -491,10 +491,10 @@ namespace DiscImageChef.Checksums
 
             if((CDTextPack2[0] & 0x80) == 0x80)
             {
-                UInt16 CDTextPack2CRC = BigEndianBitConverter.ToUInt16(CDTextPack2, 16);
+                ushort CDTextPack2CRC = BigEndianBitConverter.ToUInt16(CDTextPack2, 16);
                 byte[] CDTextPack2ForCRC = new byte[16];
                 Array.Copy(CDTextPack2, 0, CDTextPack2ForCRC, 0, 16);
-                UInt16 CalculatedCDTP2CRC = CalculateCCITT_CRC16(CDTextPack2ForCRC);
+                ushort CalculatedCDTP2CRC = CalculateCCITT_CRC16(CDTextPack2ForCRC);
                 DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}", CDTextPack2CRC, CalculatedCDTP2CRC);
 
                 if(CDTextPack2CRC != CalculatedCDTP2CRC && CDTextPack2CRC != 0)
@@ -506,10 +506,10 @@ namespace DiscImageChef.Checksums
 
             if((CDTextPack3[0] & 0x80) == 0x80)
             {
-                UInt16 CDTextPack3CRC = BigEndianBitConverter.ToUInt16(CDTextPack3, 16);
+                ushort CDTextPack3CRC = BigEndianBitConverter.ToUInt16(CDTextPack3, 16);
                 byte[] CDTextPack3ForCRC = new byte[16];
                 Array.Copy(CDTextPack3, 0, CDTextPack3ForCRC, 0, 16);
-                UInt16 CalculatedCDTP3CRC = CalculateCCITT_CRC16(CDTextPack3ForCRC);
+                ushort CalculatedCDTP3CRC = CalculateCCITT_CRC16(CDTextPack3ForCRC);
                 DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}", CDTextPack3CRC, CalculatedCDTP3CRC);
 
                 if(CDTextPack3CRC != CalculatedCDTP3CRC && CDTextPack3CRC != 0)
@@ -521,10 +521,10 @@ namespace DiscImageChef.Checksums
 
             if((CDTextPack4[0] & 0x80) == 0x80)
             {
-                UInt16 CDTextPack4CRC = BigEndianBitConverter.ToUInt16(CDTextPack4, 16);
+                ushort CDTextPack4CRC = BigEndianBitConverter.ToUInt16(CDTextPack4, 16);
                 byte[] CDTextPack4ForCRC = new byte[16];
                 Array.Copy(CDTextPack4, 0, CDTextPack4ForCRC, 0, 16);
-                UInt16 CalculatedCDTP4CRC = CalculateCCITT_CRC16(CDTextPack4ForCRC);
+                ushort CalculatedCDTP4CRC = CalculateCCITT_CRC16(CDTextPack4ForCRC);
                 DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", CDTextPack4CRC, CalculatedCDTP4CRC);
 
                 if(CDTextPack4CRC != CalculatedCDTP4CRC && CDTextPack4CRC != 0)
@@ -570,12 +570,12 @@ namespace DiscImageChef.Checksums
             0xfd2e,  0xed0f,  0xdd6c,  0xcd4d,  0xbdaa,  0xad8b,  0x9de8,  0x8dc9,
             0x7c26,  0x6c07,  0x5c64,  0x4c45,  0x3ca2,  0x2c83,  0x1ce0,  0x0cc1,
             0xef1f,  0xff3e,  0xcf5d,  0xdf7c,  0xaf9b,  0xbfba,  0x8fd9,  0x9ff8,
-            0x6e17,  0x7e36,  0x4e55,  0x5e74,  0x2e93,  0x3eb2,  0x0ed1,  0x1ef0,
+            0x6e17,  0x7e36,  0x4e55,  0x5e74,  0x2e93,  0x3eb2,  0x0ed1,  0x1ef0
         };
 
         static ushort CalculateCCITT_CRC16(byte[] buffer)
         {
-            UInt16 CRC16 = 0;
+            ushort CRC16 = 0;
             for(int i = 0; i < buffer.Length; i++)
             {
                 CRC16 = (ushort)(CCITT_CRC16Table[(CRC16 >> 8) ^ buffer[i]] ^ (CRC16 << 8));

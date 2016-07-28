@@ -41,11 +41,11 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public class CRC64Context
     {
-        const UInt64 crc64Poly = 0xC96C5795D7870F42;
-        const UInt64 crc64Seed = 0xFFFFFFFFFFFFFFFF;
+        const ulong crc64Poly = 0xC96C5795D7870F42;
+        const ulong crc64Seed = 0xFFFFFFFFFFFFFFFF;
 
-        UInt64[] table;
-        UInt64 hashInt;
+        ulong[] table;
+        ulong hashInt;
 
         /// <summary>
         /// Initializes the CRC64 table and seed
@@ -54,10 +54,10 @@ namespace DiscImageChef.Checksums
         {
             hashInt = crc64Seed;
 
-            table = new UInt64[256];
+            table = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt64 entry = (UInt64)i;
+                ulong entry = (ulong)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc64Poly;
@@ -133,15 +133,15 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            UInt64[] localTable;
-            UInt64 localhashInt;
+            ulong[] localTable;
+            ulong localhashInt;
 
             localhashInt = crc64Seed;
 
-            localTable = new UInt64[256];
+            localTable = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt64 entry = (UInt64)i;
+                ulong entry = (ulong)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc64Poly;
@@ -151,7 +151,7 @@ namespace DiscImageChef.Checksums
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ localhashInt & (ulong)0xff];
+                localhashInt = (localhashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ localhashInt & 0xffL];
 
             BigEndianBitConverter.IsLittleEndian = BigEndianBitConverter.IsLittleEndian;
             hash = BitConverter.GetBytes(localhashInt);
@@ -185,17 +185,17 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         /// <param name="polynomial">CRC polynomial</param>
         /// <param name="seed">CRC seed</param>
-        public static string Data(byte[] data, uint len, out byte[] hash, UInt64 polynomial, UInt64 seed)
+        public static string Data(byte[] data, uint len, out byte[] hash, ulong polynomial, ulong seed)
         {
-            UInt64[] localTable;
-            UInt64 localhashInt;
+            ulong[] localTable;
+            ulong localhashInt;
 
             localhashInt = seed;
 
-            localTable = new UInt64[256];
+            localTable = new ulong[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt64 entry = (UInt64)i;
+                ulong entry = (ulong)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;

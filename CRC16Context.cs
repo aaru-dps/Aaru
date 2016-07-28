@@ -41,11 +41,11 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public class CRC16Context
     {
-        const UInt16 crc16Poly = 0xA001;
-        const UInt16 crc16Seed = 0x0000;
+        const ushort crc16Poly = 0xA001;
+        const ushort crc16Seed = 0x0000;
 
-        UInt16[] table;
-        UInt16 hashInt;
+        ushort[] table;
+        ushort hashInt;
 
         /// <summary>
         /// Initializes the CRC16 table and seed
@@ -54,10 +54,10 @@ namespace DiscImageChef.Checksums
         {
             hashInt = crc16Seed;
 
-            table = new UInt16[256];
+            table = new ushort[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt16 entry = (UInt16)i;
+                ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ crc16Poly);
@@ -133,15 +133,15 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            UInt16[] localTable;
-            UInt16 localhashInt;
+            ushort[] localTable;
+            ushort localhashInt;
 
             localhashInt = crc16Seed;
 
-            localTable = new UInt16[256];
+            localTable = new ushort[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt16 entry = (UInt16)i;
+                ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ crc16Poly);
@@ -185,17 +185,17 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         /// <param name="polynomial">CRC polynomial</param>
         /// <param name="seed">CRC seed</param>
-        public static string Data(byte[] data, uint len, out byte[] hash, UInt16 polynomial, UInt16 seed)
+        public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed)
         {
-            UInt16[] localTable;
-            UInt16 localhashInt;
+            ushort[] localTable;
+            ushort localhashInt;
 
             localhashInt = seed;
 
-            localTable = new UInt16[256];
+            localTable = new ushort[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt16 entry = (UInt16)i;
+                ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (ushort)((entry >> 1) ^ polynomial);

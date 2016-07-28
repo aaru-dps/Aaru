@@ -41,11 +41,11 @@ namespace DiscImageChef.Checksums
     /// </summary>
     public class CRC32Context
     {
-        const UInt32 crc32Poly = 0xEDB88320;
-        const UInt32 crc32Seed = 0xFFFFFFFF;
+        const uint crc32Poly = 0xEDB88320;
+        const uint crc32Seed = 0xFFFFFFFF;
 
-        UInt32[] table;
-        UInt32 hashInt;
+        uint[] table;
+        uint hashInt;
 
         /// <summary>
         /// Initializes the CRC32 table and seed
@@ -54,10 +54,10 @@ namespace DiscImageChef.Checksums
         {
             hashInt = crc32Seed;
 
-            table = new UInt32[256];
+            table = new uint[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt32 entry = (UInt32)i;
+                uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc32Poly;
@@ -133,15 +133,15 @@ namespace DiscImageChef.Checksums
         public static string File(string filename, out byte[] hash)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            UInt32[] localTable;
-            UInt32 localhashInt;
+            uint[] localTable;
+            uint localhashInt;
 
             localhashInt = crc32Seed;
 
-            localTable = new UInt32[256];
+            localTable = new uint[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt32 entry = (UInt32)i;
+                uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ crc32Poly;
@@ -185,17 +185,17 @@ namespace DiscImageChef.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         /// <param name="polynomial">CRC polynomial</param>
         /// <param name="seed">CRC seed</param>
-        public static string Data(byte[] data, uint len, out byte[] hash, UInt32 polynomial, UInt32 seed)
+        public static string Data(byte[] data, uint len, out byte[] hash, uint polynomial, uint seed)
         {
-            UInt32[] localTable;
-            UInt32 localhashInt;
+            uint[] localTable;
+            uint localhashInt;
 
             localhashInt = seed;
 
-            localTable = new UInt32[256];
+            localTable = new uint[256];
             for(int i = 0; i < 256; i++)
             {
-                UInt32 entry = (UInt32)i;
+                uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;

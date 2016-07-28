@@ -139,7 +139,7 @@ namespace DiscImageChef.Checksums
                     Pp = new[] { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1 };
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("m", "m must be between 2 and 16 inclusive");
+                    throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive");
             }
 
             MM = m;

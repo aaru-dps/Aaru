@@ -1,3 +1,13 @@
+2016-07-28  Natalia Portillo  <claunia@claunia.com>
+
+	* CDChecksums.cs:
+	* ReedSolomon.cs:
+	* CRC16Context.cs:
+	* CRC32Context.cs:
+	* CRC64Context.cs:
+	* Adler32Context.cs:
+	* SpamSumContext.cs: Refactor and code cleanup.
+
 2015-11-30  Natalia Portillo  <claunia@claunia.com>
 
 	* FletcherContext.cs:
