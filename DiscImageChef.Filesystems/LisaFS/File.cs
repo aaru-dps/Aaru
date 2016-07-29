@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     case (short)FILEID_MDDF:
                     case (short)FILEID_BITMAP:
                     case (short)FILEID_SRECORD:
-                    case (short)FILEID_DIRECTORY:
+                    case (short)FILEID_ROOTCATALOG:
                         error = ReadSystemFile(fileId, out tmp);
                         break;
                     default:
@@ -453,7 +453,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(pathElements.Length == 0)
             {
-                fileId = (short)FILEID_DIRECTORY;
+                fileId = (short)FILEID_ROOTCATALOG;
                 isDir = true;
                 return Errno.NoError;
             }
@@ -496,7 +496,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 if(string.Compare(pathElements[0], "$", StringComparison.InvariantCulture) == 0)
                 {
-                    fileId = (short)FILEID_DIRECTORY;
+                    fileId = (short)FILEID_ROOTCATALOG;
                     isDir = true;
                     return Errno.NoError;
                 }
@@ -504,7 +504,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             List<CatalogEntry> catalog;
 
-            Errno error = ReadCatalog((short)FILEID_DIRECTORY, out catalog);
+            Errno error = ReadCatalog((short)FILEID_ROOTCATALOG, out catalog);
             if(error != Errno.NoError)
                 return error;
 

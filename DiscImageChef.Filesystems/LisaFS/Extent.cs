@@ -63,21 +63,24 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(extentCache.TryGetValue(fileId, out file))
                 return Errno.NoError;
 
+            // A file ID that cannot be stored in the S-Records File
             if(fileId >= srecords.Length)
                 return Errno.InvalidArgument;
 
             ulong ptr = srecords[fileId].extent_ptr;
 
+            // An invalid pointer denotes file does not exist
             if(ptr == 0xFFFFFFFF || ptr == 0x00000000)
                 return Errno.NoSuchFile;
 
+            // Pointers are relative to MDDF
             ptr += mddf.mddf_block + volumePrefix;
 
             Tag extTag;
 
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.
-            // This code just allow to ignore that corruption
+            // This code just allow to ignore that corruption by searching the Extents File using sector tags
             if(ptr >= device.ImageInfo.sectors)
             {
                 bool found = false;
@@ -96,6 +99,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     return Errno.InvalidArgument;
             }
 
+            // Checks that the sector tag indicates its the Extents File we are searching for
             DecodeTag(device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
 
             if(extTag.fileID == ((short)(-1 * fileId)))
@@ -249,13 +253,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoSuchFile;
         }
 
+        /// <summary>
+        /// Reads all the S-Records and caches it
+        /// </summary>
         Errno ReadSRecords()
         {
             if(!mounted)
                 return Errno.AccessDenied;
 
+            // Searches the S-Records place using MDDF pointers
             byte[] sectors = device.ReadSectors(mddf.srec_ptr + mddf.mddf_block + volumePrefix, mddf.srec_len);
 
+            // Each entry takes 14 bytes
             srecords = new SRecord[sectors.Length / 14];
 
             for(int s = 0; s < srecords.Length; s++)

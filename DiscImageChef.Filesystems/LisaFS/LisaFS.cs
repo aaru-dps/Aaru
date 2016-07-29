@@ -51,11 +51,17 @@ namespace DiscImageChef.Filesystems.LisaFS
         SRecord[] srecords;
 
         #region Caches
+        /// <summary>Caches Extents Files</summary>
         Dictionary<short, ExtentFile> extentCache;
+        /// <summary>Caches system files</summary>
         Dictionary<short, byte[]> systemFileCache;
+        /// <summary>Caches user files files</summary>
         Dictionary<short, byte[]> fileCache;
+        /// <summary>Caches catalogs</summary>
         Dictionary<short, List<CatalogEntry>> catalogCache;
+        /// <summary>Caches file size</summary>
         Dictionary<short, int> fileSizeCache;
+        /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
         List<short> printedExtents;
         #endregion Caches
 

@@ -38,12 +38,22 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
+        /// <summary>
+        /// Solves a symbolic link.
+        /// </summary>
+        /// <param name="path">Link path.</param>
+        /// <param name="dest">Link destination.</param>
         public override Errno ReadLink(string path, ref string dest)
         {
             // LisaFS does not support symbolic links (afaik)
             return Errno.NotSupported;
         }
 
+        /// <summary>
+        /// Lists contents from a directory.
+        /// </summary>
+        /// <param name="path">Directory path.</param>
+        /// <param name="contents">Directory contents.</param>
         public override Errno ReadDir(string path, ref List<string> contents)
         {
             short fileId;
@@ -58,10 +68,14 @@ namespace DiscImageChef.Filesystems.LisaFS
             List<CatalogEntry> catalog;
             ReadCatalog(fileId, out catalog);
 
+            // Do same trick as Mac OS X, replace filesystem '/' with ':'
+            // Maybe as ':' is the path separator in Lisa OS I should do that
             foreach(CatalogEntry entry in catalog)
                 contents.Add(GetString(entry.filename).Replace('/', ':'));
 
-            if(debug && fileId == FILEID_DIRECTORY)
+            // On debug add system files as readable files
+            // Syntax similar to NTFS
+            if(debug && fileId == FILEID_ROOTCATALOG)
             {
                 contents.Add("$MDDF");
                 contents.Add("$Boot");
@@ -75,6 +89,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
+        /// <summary>
+        /// Lists contents from a catalog.
+        /// </summary>
+        /// <param name="fileId">Catalog id.</param>
+        /// <param name="catalog">Catalog contents.</param>
         Errno ReadCatalog(short fileId, out List<CatalogEntry> catalog)
         {
             catalog = null;
@@ -90,11 +109,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             Errno error;
 
+            // Do differently for V1 and V2
             if(mddf.fsversion == LisaFSv2 || mddf.fsversion == LisaFSv1)
             {
-                if(fileId != FILEID_DIRECTORY)
+                // V1 and V2 can only contain the root catalog
+                if(fileId != FILEID_ROOTCATALOG)
                 {
                     ExtentFile ext;
+                    // Check if it's a file to return correct error
                     error = ReadExtentsFile(fileId, out ext);
                     if(error == Errno.NoError)
                         return Errno.NotDirectory;
@@ -106,6 +128,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 int offset = 0;
                 List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
 
+                // For each entry on the catalog
                 while(offset + 54 < buf.Length)
                 {
                     CatalogEntryV2 entV2 = new CatalogEntryV2();
@@ -121,12 +144,14 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     offset += 54;
 
+                    // Check that the entry is correct, not empty or garbage
                     if(entV2.filenameLen != 0 && entV2.filenameLen <= E_NAME && entV2.fileType != 0 && entV2.fileID > 0)
                         catalogV2.Add(entV2);
                 }
 
                 catalog = new List<CatalogEntry>();
 
+                // Convert entries to V3 format
                 foreach(CatalogEntryV2 entV2 in catalogV2)
                 {
                     ExtentFile ext;
@@ -152,6 +177,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             byte[] firstCatalogBlock = null;
 
+            // Search for the first sector describing the catalog
+            // While root catalog is not stored in S-Records, probably rest are? (unchecked)
+            // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
                 Tag catTag;
@@ -163,16 +191,19 @@ namespace DiscImageChef.Filesystems.LisaFS
                     break;
                 }
 
+                // Found Extents File for a catalog, not allowable in V3, at least for root catalog
                 if(catTag.fileID == -fileId)
                     return Errno.NotDirectory;
             }
 
+            // Catalog not found
             if(firstCatalogBlock == null)
                 return Errno.NoSuchFile;
 
             ulong prevCatalogPointer;
             prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
 
+            // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
                 Tag prevTag;
@@ -191,6 +222,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             List<byte[]> catalogBlocks = new List<byte[]>();
             catalogBlocks.Add(firstCatalogBlock);
 
+            // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
                 Tag nextTag;
@@ -206,18 +238,24 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             catalog = new List<CatalogEntry>();
 
+            // Foreach catalog block
             foreach(byte[] buf in catalogBlocks)
             {
                 int offset = 0;
 
+                // Traverse all entries
                 while((offset + 64) <= buf.Length)
                 {
+                    // Catalog block header
                     if(buf[offset + 0x24] == 0x08)
                         offset += 78;
+                    // Maybe just garbage? Found in more than 1 disk
                     else if(buf[offset + 0x24] == 0x7C)
                         offset += 50;
+                    // Apparently reserved to indicate end of catalog?
                     else if(buf[offset + 0x24] == 0xFF)
                         break;
+                    // Normal entry
                     else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                     {
                         CatalogEntry entry = new CatalogEntry();

@@ -39,15 +39,24 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
+        /// <summary>
+        /// Mounts an Apple Lisa filesystem
+        /// </summary>
         public override Errno Mount()
         {
             return Mount(false);
         }
 
+        /// <summary>
+        /// Mounts an Apple Lisa filesystem
+        /// </summary>
         public override Errno Mount(bool debug)
         {
             try
             {
+                // Lisa OS is unable to work on disks without tags.
+                // This code is designed like that.
+                // However with some effort the code may be modified to ignore them.
                 if(device.ImageInfo.readableSectorTags == null ||
                    !device.ImageInfo.readableSectorTags.Contains(SectorTagType.AppleSectorTag))
                 {
@@ -170,6 +179,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         mddf.vol_sequence = BigEndianBitConverter.ToUInt16(sector, 0x136);
                         mddf.vol_left_mounted = sector[0x138];
 
+                        // Check that the MDDF is correct
                         if(mddf.mddf_block != i - volumePrefix ||
                             mddf.vol_size > device.GetSectors() ||
                             mddf.vol_size - 1 != mddf.volsize_minus_one ||
@@ -182,6 +192,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return Errno.InvalidArgument;
                         }
 
+                        // Check MDDF version
                         switch(mddf.fsversion)
                         {
                             case LisaFSv1:
@@ -198,6 +209,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                                 return Errno.NotSupported;
                         }
 
+                        // Initialize caches
                         extentCache = new Dictionary<short, ExtentFile>();
                         systemFileCache = new Dictionary<short, byte[]>();
                         fileCache = new Dictionary<short, byte[]>();
@@ -214,6 +226,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             printedExtents = new List<short>();
                         }
 
+                        // Read the S-Records file
                         error = ReadSRecords();
                         if(error != Errno.NoError)
                         {
@@ -221,8 +234,9 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
+                        // Read the root catalog
                         List<CatalogEntry> tempCat;
-                        error = ReadCatalog((short)FILEID_DIRECTORY, out tempCat);
+                        error = ReadCatalog((short)FILEID_ROOTCATALOG, out tempCat);
 
                         if(error != Errno.NoError)
                         {
@@ -231,6 +245,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
+                        // If debug, cache system files
                         if(debug)
                         {
                             byte[] temp;
@@ -276,6 +291,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                             }
                         }
 
+                        // Create XML metadata for mounted filesystem
                         xmlFSType = new Schemas.FileSystemType();
                         if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                         {
@@ -312,6 +328,9 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
         }
 
+        /// <summary>
+        /// Umounts this Lisa filesystem
+        /// </summary>
         public override Errno Unmount()
         {
             mounted = false;
@@ -329,6 +348,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
+        /// <summary>
+        /// Gets information about the mounted volume.
+        /// </summary>
+        /// <param name="stat">Information about the mounted volume.</param>
         public override Errno StatFs(ref FileSystemInfo stat)
         {
             if(!mounted)

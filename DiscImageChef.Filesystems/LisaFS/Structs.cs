@@ -35,6 +35,13 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
+        /// <summary>
+        /// The MDDF is the most import block on a Lisa FS volume.
+        /// It describes the volume and its contents.
+        /// On initialization the memory where it resides is not emptied
+        /// so it tends to contain a lot of garbage. This has difficulted
+        /// its reverse engineering.
+        /// </summary>
         struct MDDF
         {
             /// <summary>0x00, Filesystem version</summary>
@@ -200,6 +207,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             public byte scavenge_flag;
         }
 
+        /// <summary>
+        /// The sector tag. Before the sector is encoded to GCR the tag is attached to the data.
+        /// Its size and format varies depending on device.
+        /// Lisa OS relies on tags for scavenging a floppy, but ignores most of them for normal usage,
+        /// except on hard disks where the checksum byte is absolutely enforced (a sector with an invalid
+        /// one gives an OS error).
+        /// </summary>
         struct Tag
         {
             /// <summary>0x00 version</summary>
@@ -235,11 +249,17 @@ namespace DiscImageChef.Filesystems.LisaFS
             public bool isLast;
         }
 
+        /// <summary>
+        /// An entry in the catalog from V3.
+        /// The first entry is bigger than the rest, may be a header, I have not needed any of its values so I just ignored it.
+        /// Each catalog is divided in 4-sector blocks, and if it needs more than a block there are previous and next block
+        /// pointers, effectively making the V3 catalog a double-linked list. Garbage is not zeroed.
+        /// </summary>
         struct CatalogEntry
         {
             /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
             public byte marker;
-            /// <summary>0x01, seems to be always zero</summary>
+            /// <summary>0x01, must be zero otherwise LisaOS gives an error</summary>
             public ushort zero;
             /// <summary>0x03, filename, 32-bytes, null-padded</summary>
             public byte[] filename;
@@ -249,7 +269,6 @@ namespace DiscImageChef.Filesystems.LisaFS
             /// At 0x24
             /// 0x03 here for entries 64 bytes long
             /// 0x08 here for entries 78 bytes long
-            /// 0x7C here for entries 50 bytes long
             /// This is incomplete, may fail, mostly works...
             /// </summary>
             public byte fileType;
@@ -269,12 +288,23 @@ namespace DiscImageChef.Filesystems.LisaFS
             public byte[] tail;
         }
 
+        /// <summary>
+        /// An extent indicating a start and a run of sectors.
+        /// </summary>
         struct Extent
         {
             public int start;
             public short length;
         }
 
+        /// <summary>
+        /// The Extents File. There is one Extents File per each file stored on disk.
+        /// The file ID present on the sectors tags for the Extents File is the negated
+        /// value of the file ID it represents. e.g. file = 5 (0x0005) extents = -5 (0xFFFB)
+        /// It spans a single sector on V2 and V3 but 2 sectors on V1.
+        /// It contains all information about a file, and is indexed in the S-Records file.
+        /// It also contains the label. Garbage is zeroed.
+        /// </summary>
         struct ExtentFile
         {
             /// <summary>0x00, filename length</summary>
@@ -349,10 +379,26 @@ namespace DiscImageChef.Filesystems.LisaFS
             public Extent[] extents;
             /// <summary>0x17E, unknown, empty, padding?</summary>
             public short unknown10;
-            /// <summary>0x180, 128 bytes</summary>
+            /// <summary>
+            /// At 0x180, this is the label.
+            /// While 1982 pre-release documentation says the label can be up to 448 bytes, v1 onward only have space for a 128 bytes one.
+            /// Any application can write whatever they want in the label, however, Lisa Office uses it to store its own information, something
+            /// that will effectively overwrite any information a user application wrote there.
+            /// The information written here by Lisa Office is like the information Finder writes in the FinderInfo structures, plus
+            /// the non-unique name that is shown on the GUI. For this reason I called it LisaInfo.
+            /// I have not tried to reverse engineer it.
+            /// </summary>
             public byte[] LisaInfo;
         }
 
+        /// <summary>
+        /// The S-Records File is a hashtable of S-Records, where the hash is the file ID they belong to.
+        /// The S-Records File cannot be fragmented or grown, and it can easily become full before the 32766 file IDs are exhausted.
+        /// Each S-Record entry contains a block pointer to the Extents File that correspond to that file ID as well as the real file size,
+        /// the only important information about a file that's not inside the Extents File.
+        /// It also contains a low value (less than 0x200) variable field of unknown meaning and another one that seems to be flags,
+        /// with values like 0, 1, 3 and 5.
+        /// </summary>
         struct SRecord
         {
             /// <summary>0x00, block where ExtentsFile for this entry resides</summary>
@@ -365,6 +411,16 @@ namespace DiscImageChef.Filesystems.LisaFS
             public ushort flags;
         }
 
+
+        /// <summary>
+        /// The catalog entry for the V1 and V2 volume formats.
+        /// It merely contains the file name, type and ID, plus a few (mostly empty) unknown fields.
+        /// Contrary to V3, it has no header and instead of being a double-linked list it is fragmented using an Extents File.
+        /// The Extents File position for the root catalog is then stored in the S-Records File.
+        /// Its entries are not filed sequentially denoting some kind of in-memory structure while at the same time
+        /// forcing LisaOS to read the whole catalog. That or I missed the pointers.
+        /// Empty entries just contain a 0-len filename. Garbage is not zeroed.
+        /// </summary>
         struct CatalogEntryV2
         {
             /// <summary>0x00, filename, 32-bytes, null-padded</summary>

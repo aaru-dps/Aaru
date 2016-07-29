@@ -105,11 +105,21 @@ namespace DiscImageChef.Filesystems.LisaFS
             '\u0000','\u0000','\u0000','\u0000','\u0000','\u0000','\u0000','\u0000'
         };
 
+        /// <summary>
+        /// Converts a LisaRoman character to an Unicode character
+        /// </summary>
+        /// <returns>Unicode character.</returns>
+        /// <param name="character">LisaRoman character.</param>
         static char GetChar(byte character)
         {
             return LisaRomanTable[character];
         }
 
+        /// <summary>
+        /// Converts a LisaRoman string, null-terminated or null-paded, to a C# string
+        /// </summary>
+        /// <returns>The C# string.</returns>
+        /// <param name="str">LisaRoman string.</param>
         static string GetString(byte[] str)
         {
             string uni = "";
@@ -125,6 +135,11 @@ namespace DiscImageChef.Filesystems.LisaFS
             return uni;
         }
 
+        /// <summary>
+        /// Converts a LisaRoman string, in Pascal length-prefixed format, to a C# string
+        /// </summary>
+        /// <returns>The C# string.</returns>
+        /// <param name="PascalString">The LisaRoman string in Pascal format.</param>
         static string GetStringFromPascal(byte[] PascalString)
         {
             if(PascalString == null)

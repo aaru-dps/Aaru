@@ -133,7 +133,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Reads an extended attribute, alternate data stream or fork from the given file.
         /// </summary>
-        /// <returns>The extended attribute, alternate data stream or fork name.</returns>
+        /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
         /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
         /// <param name="buf">Buffer.</param>

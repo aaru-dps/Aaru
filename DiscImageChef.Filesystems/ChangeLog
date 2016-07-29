@@ -1,3 +1,16 @@
+2016-07-29  Natalia Portillo  <claunia@claunia.com>
+
+	* Filesystem.cs:
+	* Dir.cs:
+	* File.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* LisaFS.cs:
+	* Consts.cs:
+	* Extent.cs:
+	* Structs.cs:
+	* Encoding.cs: Added comments.
+
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
 	* Dir.cs:

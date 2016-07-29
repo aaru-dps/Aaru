@@ -39,6 +39,12 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
+        /// <summary>
+        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="path">Path.</param>
+        /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
             short fileId;
@@ -49,6 +55,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             return ListXAttr(fileId, ref xattrs);
         }
 
+        /// <summary>
+        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="path">File path.</param>
+        /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
+        /// <param name="buf">Buffer.</param>
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             short fileId;
@@ -59,6 +72,12 @@ namespace DiscImageChef.Filesystems.LisaFS
             return GetXattr(fileId, xattr, out buf);
         }
 
+        /// <summary>
+        /// Lists special Apple Lisa filesystem features as extended attributes
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="fileId">File identifier.</param>
+        /// <param name="xattrs">Extended attributes.</param>
         Errno ListXAttr(short fileId, ref List<string> xattrs)
         {
             xattrs = null;
@@ -66,6 +85,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted)
                 return Errno.AccessDenied;
 
+            // System files
             if(fileId < 4)
             {
                 if(!debug || fileId == 0)
@@ -73,34 +93,41 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 xattrs = new List<string>();
 
+                // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
                 {
                     byte[] buf = Encoding.ASCII.GetBytes(mddf.password);
+
+                    // If the MDDF contains a password, show it
                     if(buf.Length > 0)
                         xattrs.Add("com.apple.lisa.password");
                 }
             }
             else
             {
-
+                // Search for the file
                 ExtentFile file;
-
                 Errno error = ReadExtentsFile(fileId, out file);
 
                 if(error != Errno.NoError)
                     return error;
 
                 xattrs = new List<string>();
+
+                // Password field is never emptied, check if valid
                 if(file.password_valid > 0)
                     xattrs.Add("com.apple.lisa.password");
 
+                // Check for a valid copy-protection serial number
                 if(file.serial > 0)
                     xattrs.Add("com.apple.lisa.serial");
 
+                // Check if the label contains something or is empty
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
                     xattrs.Add("com.apple.lisa.label");
             }
 
+            // On debug mode allow sector tags to be accessed as an xattr
             if(debug)
                 xattrs.Add("com.apple.lisa.tags");
 
@@ -109,6 +136,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
+        /// <summary>
+        /// Lists special Apple Lisa filesystem features as extended attributes
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="fileId">File identifier.</param>
+        /// <param name="xattr">Extended attribute name.</param>
+        /// <param name="buf">Buffer where the extended attribute will be stored.</param>
         Errno GetXattr(short fileId, string xattr, out byte[] buf)
         {
             buf = null;
@@ -116,11 +150,13 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted)
                 return Errno.AccessDenied;
 
+            // System files
             if(fileId < 4)
             {
                 if(!debug || fileId == 0)
                     return Errno.InvalidArgument;
 
+                // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
                 {
                     if(xattr == "com.apple.lisa.password")
@@ -130,14 +166,15 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
                 }
 
+                // But on debug mode even system files contain tags
                 if(debug && xattr == "com.apple.lisa.tags")
                     return ReadSystemFile(fileId, out buf, true);
 
                 return Errno.NoSuchExtendedAttribute;
             }
 
+            // Search for the file
             ExtentFile file;
-
             Errno error = ReadExtentsFile(fileId, out file);
 
             if(error != Errno.NoError)
@@ -169,6 +206,12 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoSuchExtendedAttribute;
         }
 
+        /// <summary>
+        /// Decodes a sector tag. Not tested with 24-byte tags.
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="tag">Sector tag.</param>
+        /// <param name="decoded">Decoded sector tag.</param>
         Errno DecodeTag(byte[] tag, out Tag decoded)
         {
             decoded = new Tag();
@@ -214,4 +257,3 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
     }
 }
-
