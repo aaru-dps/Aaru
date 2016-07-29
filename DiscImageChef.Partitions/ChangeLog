@@ -1,3 +1,7 @@
+2016-07-29  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Partitions.csproj: Bump to version 3.1.0.
+
 2016-07-28  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Partitions.csproj: Code re-styling.

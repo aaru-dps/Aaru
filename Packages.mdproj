@@ -30,5 +30,6 @@
         </Package>
       </Packages>
     </Packages>
+    <ReleaseVersion>3.1.0</ReleaseVersion>
   </PropertyGroup>
 </Project>

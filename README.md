@@ -1,4 +1,4 @@
-﻿DiscImageChef v3.0.0.0
+﻿DiscImageChef v3.1.0.0
 ======================
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
@@ -26,6 +26,7 @@ Features
 * Can compare two disk images, even different formats, for different sectors and/or metadata
 * Can verify sectors or disk images if supported by the underlying format
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
+* Can list and extract contents from filesystems that support that
 
 Supported disk image formats
 ============================
@@ -57,8 +58,12 @@ Supported partitioning schemes
 * Sun disklabel
 * EFI GUID Partition Table (GPT)
 
-Supported file systems
-======================
+Supported file systems for read-only operations
+===============================================
+* Apple Lisa file system
+
+Supported file systems for identification and information only
+==============================================================
 * Apple Hierarchical File System (HFS)
 * Apple Hierarchical File System+ (HFS+)
 * Apple ProDOS / SOS file system
@@ -74,7 +79,6 @@ Supported file systems
 * BSD Unix File System 2 (UFS2)
 * Microsoft/IBM High Performance File System (HPFS)
 * ISO9660
-* Lisa Office System file system
 * Minix v2 file system
 * Minix v3 file system
 * Microsoft New Technology File System (NTFS)

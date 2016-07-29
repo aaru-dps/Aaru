@@ -47,9 +47,6 @@ Partitioning scheme plugins:
 --- Add support for SGI partitions
 --- Add support for Ultrix partitions
 
-Other things:
---- Surprise!
-
 Teledisk plugin:
 --- Add support for "advanced compression"
 --- Handle variable sectors per track situation. Teledisk seems to be able to read garbage from previous formattings.
