@@ -1,5 +1,9 @@
 2016-07-29  Natalia Portillo  <claunia@claunia.com>
 
+	* Packages.mdproj: Added new package types.
+
+2016-07-29  Natalia Portillo  <claunia@claunia.com>
+
 	* Packages.mdproj:
 	* DiscImageChef.sln: Bump to version 3.1.0.
 

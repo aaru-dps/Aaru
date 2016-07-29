@@ -28,6 +28,69 @@
             <RootEntry path="DiscImageChef.sln" id=":root:" />
           </Builder>
         </Package>
+        <Package name="Tarball">
+          <Builder TargetDirectory="pkg" DefaultConfiguration="Release|x86" ctype="TarballDeployTarget">
+            <ChildEntries>
+              <SolutionItemReference path="DiscImageChef\DiscImageChef.csproj" />
+              <SolutionItemReference path="DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
+              <SolutionItemReference path="DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
+              <SolutionItemReference path="DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj" />
+              <SolutionItemReference path="DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+              <SolutionItemReference path="DiscImageChef.Partitions\DiscImageChef.Partitions.csproj" />
+              <SolutionItemReference path="DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj" />
+              <SolutionItemReference path="DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+              <SolutionItemReference path="DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
+              <SolutionItemReference path="DiscImageChef.Interop\DiscImageChef.Interop.csproj" />
+              <SolutionItemReference path="DiscImageChef.Console\DiscImageChef.Console.csproj" />
+              <SolutionItemReference path="DiscImageChef.Metadata\DiscImageChef.Metadata.csproj" />
+              <SolutionItemReference path="DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
+              <SolutionItemReference path="commandline\src\CommandLine\CommandLine.csproj" />
+            </ChildEntries>
+            <RootEntry path="DiscImageChef.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Linux Binaries">
+          <Builder targetFile="pkg\DiscImageChef.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="DiscImageChef\DiscImageChef.csproj" />
+              <SolutionItemReference path="DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
+              <SolutionItemReference path="DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
+              <SolutionItemReference path="DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj" />
+              <SolutionItemReference path="DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+              <SolutionItemReference path="DiscImageChef.Partitions\DiscImageChef.Partitions.csproj" />
+              <SolutionItemReference path="DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj" />
+              <SolutionItemReference path="DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+              <SolutionItemReference path="DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
+              <SolutionItemReference path="DiscImageChef.Interop\DiscImageChef.Interop.csproj" />
+              <SolutionItemReference path="DiscImageChef.Console\DiscImageChef.Console.csproj" />
+              <SolutionItemReference path="DiscImageChef.Metadata\DiscImageChef.Metadata.csproj" />
+              <SolutionItemReference path="DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
+              <SolutionItemReference path="commandline\src\CommandLine\CommandLine.csproj" />
+            </ChildEntries>
+            <RootEntry path="DiscImageChef.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Microsoft Windows Binaries">
+          <Builder targetFile="pkg\DiscImageChef.zip" platform="Windows" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="DiscImageChef\DiscImageChef.csproj" />
+              <SolutionItemReference path="DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
+              <SolutionItemReference path="DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
+              <SolutionItemReference path="DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj" />
+              <SolutionItemReference path="DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+              <SolutionItemReference path="DiscImageChef.Partitions\DiscImageChef.Partitions.csproj" />
+              <SolutionItemReference path="DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj" />
+              <SolutionItemReference path="DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+              <SolutionItemReference path="DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
+              <SolutionItemReference path="DiscImageChef.Interop\DiscImageChef.Interop.csproj" />
+              <SolutionItemReference path="DiscImageChef.Console\DiscImageChef.Console.csproj" />
+              <SolutionItemReference path="DiscImageChef.Metadata\DiscImageChef.Metadata.csproj" />
+              <SolutionItemReference path="DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
+              <SolutionItemReference path="commandline\src\CommandLine\CommandLine.csproj" />
+            </ChildEntries>
+            <RootEntry path="DiscImageChef.sln" id=":root:" />
+          </Builder>
+        </Package>
       </Packages>
     </Packages>
     <ReleaseVersion>3.1.0</ReleaseVersion>
