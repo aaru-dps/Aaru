@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Apple LisaRoman to Unicode converters.
+//     Apple MacRoman to Unicode converters.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Apple Lisa filesystem structures.
+//     Apple Macintosh File System structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

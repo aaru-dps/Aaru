@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Constructors and common variables for the Apple Lisa filesystem plugin.
+//     Constructors and common variables for the Apple Macintosh File System plugin.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Handles mounting and umounting the Apple Lisa filesystem.
+//     Handles mounting and umounting the Apple Macintosh File System.
 //
 // --[ License ] --------------------------------------------------------------
 //

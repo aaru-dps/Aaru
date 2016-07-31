@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Apple Lisa filesystem constants.
+//     Apple Macintosh File System constants.
 //
 // --[ License ] --------------------------------------------------------------
 //

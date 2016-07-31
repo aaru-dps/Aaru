@@ -1,6 +1,16 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Dir.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* AppleMFS.cs:
+	* Encoding.cs: Corrected file headers.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Dir.cs:
 	* Info.cs:
 	* File.cs:
 	* Xattr.cs:

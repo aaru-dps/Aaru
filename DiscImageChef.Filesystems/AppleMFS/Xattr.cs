@@ -9,8 +9,8 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Methods to handle Apple Lisa extended attributes (label, tags, serial,
-//     etc).
+//     Methods to handle Apple Macintosh File System extended attributes
+//     (Finder Info, Resource Fork, etc.)
 //
 // --[ License ] --------------------------------------------------------------
 //

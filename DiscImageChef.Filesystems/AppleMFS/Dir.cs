@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Methods to handle Apple Lisa filesystem catalogs (aka directories).
+//     Methods to handle the Apple Macintosh File System directory.
 //
 // --[ License ] --------------------------------------------------------------
 //
