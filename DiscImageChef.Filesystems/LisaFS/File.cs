@@ -32,7 +32,6 @@
 
 using System;
 using DiscImageChef.ImagePlugins;
-using System.Collections.Generic;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems.LisaFS

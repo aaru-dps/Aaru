@@ -1,5 +1,9 @@
 2016-07-31  Natalia Portillo  <claunia@claunia.com>
 
+	* File.cs: Code cleanup
+
+2016-07-31  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs:
 	* File.cs:
 	* Super.cs:
