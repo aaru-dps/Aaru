@@ -37,7 +37,6 @@
     <Compile Include="AmigaDOS.cs" />
     <Compile Include="AppleHFS.cs" />
     <Compile Include="AppleHFSPlus.cs" />
-    <Compile Include="AppleMFS.cs" />
     <Compile Include="BFS.cs" />
     <Compile Include="ext2FS.cs" />
     <Compile Include="extFS.cs" />
@@ -78,6 +77,15 @@
     <Compile Include="UCSDPascal\Structs.cs" />
     <Compile Include="UCSDPascal\Super.cs" />
     <Compile Include="UCSDPascal\Dir.cs" />
+    <Compile Include="AppleMFS\AppleMFS.cs" />
+    <Compile Include="AppleMFS\Consts.cs" />
+    <Compile Include="AppleMFS\Dir.cs" />
+    <Compile Include="AppleMFS\Encoding.cs" />
+    <Compile Include="AppleMFS\File.cs" />
+    <Compile Include="AppleMFS\Info.cs" />
+    <Compile Include="AppleMFS\Structs.cs" />
+    <Compile Include="AppleMFS\Super.cs" />
+    <Compile Include="AppleMFS\Xattr.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -113,6 +121,7 @@
   <ItemGroup>
     <Folder Include="LisaFS\" />
     <Folder Include="UCSDPascal\" />
+    <Folder Include="AppleMFS\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">

@@ -1,5 +1,19 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Dir.cs:
+	* Info.cs:
+	* File.cs:
+	* Xattr.cs:
+	* Super.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* Encoding.cs:
+	* AppleMFS.cs:
+	* DiscImageChef.Filesystems.csproj: Separated Apple MFS plugin
+	in different files.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* SysV.cs: Detect older version of the XENIX superblock (found
 	in Lisa XENIX).
 
