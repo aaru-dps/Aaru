@@ -48,11 +48,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {
             short fileId;
-            Errno error = LookupFileId(path, out fileId);
+            bool isDir;
+            Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
                 return error;
 
-            return ListXAttr(fileId, ref xattrs);
+            return isDir ? Errno.InvalidArgument : ListXAttr(fileId, ref xattrs);
         }
 
         /// <summary>
@@ -65,11 +66,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             short fileId;
-            Errno error = LookupFileId(path, out fileId);
+            bool isDir;
+            Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
                 return error;
 
-            return GetXattr(fileId, xattr, out buf);
+            return isDir ? Errno.InvalidArgument : GetXattr(fileId, xattr, out buf);
         }
 
         /// <summary>

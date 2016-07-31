@@ -259,14 +259,15 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
             public byte marker;
-            /// <summary>0x01, must be zero otherwise LisaOS gives an error</summary>
-            public ushort zero;
+            /// <summary>0x01, parent directory ID for this file, 0 for root directory</summary>
+            public ushort parentID;
             /// <summary>0x03, filename, 32-bytes, null-padded</summary>
             public byte[] filename;
             /// <summary>0x23, null-termination</summary>
             public byte terminator;
             /// <summary>
             /// At 0x24
+            /// 0x01 here for subdirectories, entries 48 bytes long
             /// 0x03 here for entries 64 bytes long
             /// 0x08 here for entries 78 bytes long
             /// This is incomplete, may fail, mostly works...

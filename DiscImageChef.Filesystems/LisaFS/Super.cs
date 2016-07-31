@@ -213,7 +213,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         extentCache = new Dictionary<short, ExtentFile>();
                         systemFileCache = new Dictionary<short, byte[]>();
                         fileCache = new Dictionary<short, byte[]>();
-                        catalogCache = new Dictionary<short, List<CatalogEntry>>();
+                        //catalogCache = new Dictionary<short, List<CatalogEntry>>();
                         fileSizeCache = new Dictionary<short, int>();
 
                         Errno error;
@@ -234,13 +234,15 @@ namespace DiscImageChef.Filesystems.LisaFS
                             return error;
                         }
 
-                        // Read the root catalog
-                        List<CatalogEntry> tempCat;
-                        error = ReadCatalog((short)FILEID_ROOTCATALOG, out tempCat);
+                        directoryDTCCache = new Dictionary<short, DateTime>();
+                        directoryDTCCache.Add(DIRID_ROOT, mddf.dtcc);
+
+                        // Read the Catalog File
+                        error = ReadCatalog();
 
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Cannot read root catalog, error {0}", error.ToString());
+                            DicConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}", error.ToString());
                             mounted = false;
                             return error;
                         }

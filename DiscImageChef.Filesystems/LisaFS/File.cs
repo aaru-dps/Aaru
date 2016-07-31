@@ -42,11 +42,18 @@ namespace DiscImageChef.Filesystems.LisaFS
         public override Errno GetAttributes(string path, ref FileAttributes attributes)
         {
             short fileId;
-            Errno error = LookupFileId(path, out fileId);
+            bool isDir;
+            Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
                 return error;
 
-            return GetAttributes(fileId, ref attributes);
+            if(!isDir)
+                return GetAttributes(fileId, ref attributes);
+
+            attributes = new FileAttributes();
+            attributes = FileAttributes.Directory;
+
+            return Errno.NoError;
         }
 
         public override Errno Read(string path, long offset, long size, ref byte[] buf)
@@ -76,7 +83,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     case (short)FILEID_MDDF:
                     case (short)FILEID_BITMAP:
                     case (short)FILEID_SRECORD:
-                    case (short)FILEID_ROOTCATALOG:
+                    case (short)FILEID_CATALOG:
                         error = ReadSystemFile(fileId, out tmp);
                         break;
                     default:
@@ -104,11 +111,12 @@ namespace DiscImageChef.Filesystems.LisaFS
         public override Errno Stat(string path, ref FileEntryInfo stat)
         {
             short fileId;
-            Errno error = LookupFileId(path, out fileId);
+            bool isDir;
+            Errno error = LookupFileId(path, out fileId, out isDir);
             if(error != Errno.NoError)
                 return error;
 
-            return Stat(fileId, out stat);
+            return isDir ? StatDir(fileId, out stat) : Stat(fileId, out stat);
         }
 
         Errno GetAttributes(short fileId, ref FileAttributes attributes)
@@ -116,23 +124,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!mounted)
                 return Errno.AccessDenied;
 
-            if(fileId <= 4)
+            if(fileId < 4)
             {
-                if(!debug || fileId == 0)
+                if(!debug)
                     return Errno.NoSuchFile;
-                else
-                {
-                    attributes = new FileAttributes();
-                    attributes = FileAttributes.System;
-                    attributes |= FileAttributes.Hidden;
 
-                    if(fileId == 4)
-                        attributes |= FileAttributes.Directory;
-                    else
-                        attributes |= FileAttributes.File;
+                attributes = new FileAttributes();
+                attributes = FileAttributes.System;
+                attributes |= FileAttributes.Hidden;
 
-                    return Errno.NoError;
-                }
+                attributes |= FileAttributes.File;
+
+                return Errno.NoError;
             }
 
             ExtentFile extFile;
@@ -159,7 +162,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                     break;
                 default:
                     attributes |= FileAttributes.File;
-                    // Subcatalogs use extents?
                     attributes |= FileAttributes.Extents;
                     break;
             }
@@ -435,12 +437,6 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno LookupFileId(string path, out short fileId)
-        {
-            bool temp;
-            return LookupFileId(path, out fileId, out temp);
-        }
-
         Errno LookupFileId(string path, out short fileId, out bool isDir)
         {
             fileId = 0;
@@ -453,16 +449,16 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             if(pathElements.Length == 0)
             {
-                fileId = (short)FILEID_ROOTCATALOG;
+                fileId = DIRID_ROOT;
                 isDir = true;
                 return Errno.NoError;
             }
 
-            // TODO: Subcatalogs
-            if(pathElements.Length > 1)
-                return Errno.NotImplemented;
+            // Only V3 supports subdirectories
+            if(pathElements.Length > 1 && mddf.fsversion != LisaFSv3)
+                return Errno.NotSupported;
 
-            if(debug)
+            if(debug && pathElements.Length == 1)
             {
                 if(string.Compare(pathElements[0], "$MDDF", StringComparison.InvariantCulture) == 0)
                 {
@@ -496,29 +492,35 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 if(string.Compare(pathElements[0], "$", StringComparison.InvariantCulture) == 0)
                 {
-                    fileId = (short)FILEID_ROOTCATALOG;
+                    fileId = DIRID_ROOT;
                     isDir = true;
                     return Errno.NoError;
                 }
             }
 
-            List<CatalogEntry> catalog;
-
-            Errno error = ReadCatalog((short)FILEID_ROOTCATALOG, out catalog);
-            if(error != Errno.NoError)
-                return error;
-
-            string wantedFilename = pathElements[0].Replace(':', '/');
-
-            foreach(CatalogEntry entry in catalog)
+            for(int lvl = 0; lvl < pathElements.Length; lvl++)
             {
-                string filename = GetString(entry.filename);
-                // Should they be case sensitive?
-                if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0)
+                string wantedFilename = pathElements[0].Replace(':', '/');
+
+                foreach(CatalogEntry entry in catalogCache)
                 {
-                    fileId = entry.fileID;
-                    isDir |= entry.fileType != 0x03;
-                    return Errno.NoError;
+                    string filename = GetString(entry.filename);
+
+                    // LisaOS is case insensitive
+                    if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) == 0
+                       && entry.parentID == fileId)
+                    {
+                        fileId = entry.fileID;
+                        isDir = entry.fileType == 0x01;
+
+                        // Not last path element, and it's not a directory
+                        if(lvl != pathElements.Length - 1 && !isDir)
+                            return Errno.NotDirectory;
+
+                        // Arrived last path element
+                        if(lvl == pathElements.Length - 1)
+                            return Errno.NoError;
+                    }
                 }
             }
 

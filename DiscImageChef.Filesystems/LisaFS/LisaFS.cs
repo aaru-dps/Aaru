@@ -58,11 +58,13 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// <summary>Caches user files files</summary>
         Dictionary<short, byte[]> fileCache;
         /// <summary>Caches catalogs</summary>
-        Dictionary<short, List<CatalogEntry>> catalogCache;
+        List<CatalogEntry> catalogCache;
         /// <summary>Caches file size</summary>
         Dictionary<short, int> fileSizeCache;
         /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
         List<short> printedExtents;
+        /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
+        Dictionary<short, DateTime> directoryDTCCache;
         #endregion Caches
 
         public LisaFS()

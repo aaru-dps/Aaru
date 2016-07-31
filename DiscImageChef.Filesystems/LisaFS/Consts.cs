@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         const ushort FILEID_SRECORD = 0x0003;
         /// <summary>The root catalog</summary>
-        const ushort FILEID_ROOTCATALOG = 0x0004;
+        const ushort FILEID_CATALOG = 0x0004;
         const short FILEID_BOOT_SIGNED = -21846;
         const short FILEID_LOADER_SIGNED = -17477;
         /// <summary>
@@ -88,6 +88,9 @@ namespace DiscImageChef.Filesystems.LisaFS
         /// </summary>
         const ushort FILEID_ERASED = 0x7FFF;
         const ushort FILEID_MAX = FILEID_ERASED;
+
+        /// <summary>Root directory ID</summary>
+        const short DIRID_ROOT = 0;
 
         enum FileType : byte
         {

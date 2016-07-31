@@ -65,17 +65,16 @@ namespace DiscImageChef.Filesystems.LisaFS
             if(!isDir)
                 return Errno.NotDirectory;
 
-            List<CatalogEntry> catalog;
-            ReadCatalog(fileId, out catalog);
+            /*List<CatalogEntry> catalog;
+            error = ReadCatalog(fileId, out catalog);
+            if(error != Errno.NoError)
+                return error;*/
 
-            // Do same trick as Mac OS X, replace filesystem '/' with ':'
-            // Maybe as ':' is the path separator in Lisa OS I should do that
-            foreach(CatalogEntry entry in catalog)
-                contents.Add(GetString(entry.filename).Replace('/', ':'));
+            ReadDir(fileId, ref contents);
 
             // On debug add system files as readable files
             // Syntax similar to NTFS
-            if(debug && fileId == FILEID_ROOTCATALOG)
+            if(debug && fileId == DIRID_ROOT)
             {
                 contents.Add("$MDDF");
                 contents.Add("$Boot");
@@ -89,41 +88,37 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        /// <summary>
-        /// Lists contents from a catalog.
-        /// </summary>
-        /// <param name="fileId">Catalog id.</param>
-        /// <param name="catalog">Catalog contents.</param>
-        Errno ReadCatalog(short fileId, out List<CatalogEntry> catalog)
+        Errno ReadDir(short dirId, ref List<string> contents)
         {
-            catalog = null;
+            contents = new List<string>();
+            foreach(CatalogEntry entry in catalogCache)
+            {
+                if(entry.parentID == dirId)
+                    // Do same trick as Mac OS X, replace filesystem '/' with ':'
+                    // Maybe as '-' is the path separator in Lisa OS I should do that
+                    contents.Add(GetString(entry.filename).Replace('/', ':'));
+            }
 
+            return Errno.NoError;
+        }
+
+        /// <summary>
+        /// Reads, interprets and caches the Catalog File
+        /// </summary>
+        Errno ReadCatalog()
+        {
             if(!mounted)
                 return Errno.AccessDenied;
 
-            if(fileId < 4)
-                return Errno.InvalidArgument;
-
-            if(catalogCache.TryGetValue(fileId, out catalog))
-                return Errno.NoError;
+            catalogCache = new List<CatalogEntry>();
 
             Errno error;
 
             // Do differently for V1 and V2
             if(mddf.fsversion == LisaFSv2 || mddf.fsversion == LisaFSv1)
             {
-                // V1 and V2 can only contain the root catalog
-                if(fileId != FILEID_ROOTCATALOG)
-                {
-                    ExtentFile ext;
-                    // Check if it's a file to return correct error
-                    error = ReadExtentsFile(fileId, out ext);
-                    if(error == Errno.NoError)
-                        return Errno.NotDirectory;
-                }
-
                 byte[] buf;
-                error = ReadFile(4, out buf);
+                error = ReadFile((short)FILEID_CATALOG, out buf);
 
                 int offset = 0;
                 List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
@@ -149,8 +144,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                         catalogV2.Add(entV2);
                 }
 
-                catalog = new List<CatalogEntry>();
-
                 // Convert entries to V3 format
                 foreach(CatalogEntryV2 entV2 in catalogV2)
                 {
@@ -167,11 +160,10 @@ namespace DiscImageChef.Filesystems.LisaFS
                         entV3.dtc = ext.dtc;
                         entV3.dtm = ext.dtm;
 
-                        catalog.Add(entV3);
+                        catalogCache.Add(entV3);
                     }
                 }
 
-                catalogCache.Add(fileId, catalog);
                 return Errno.NoError;
             }
 
@@ -185,15 +177,11 @@ namespace DiscImageChef.Filesystems.LisaFS
                 Tag catTag;
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
 
-                if(catTag.fileID == fileId && catTag.relBlock == 0)
+                if(catTag.fileID == FILEID_CATALOG && catTag.relBlock == 0)
                 {
                     firstCatalogBlock = device.ReadSectors(i, 4);
                     break;
                 }
-
-                // Found Extents File for a catalog, not allowable in V3, at least for root catalog
-                if(catTag.fileID == -fileId)
-                    return Errno.NotDirectory;
             }
 
             // Catalog not found
@@ -209,7 +197,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 Tag prevTag;
                 DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out prevTag);
 
-                if(prevTag.fileID != fileId)
+                if(prevTag.fileID != FILEID_CATALOG)
                     return Errno.InvalidArgument;
 
                 firstCatalogBlock = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
@@ -228,15 +216,13 @@ namespace DiscImageChef.Filesystems.LisaFS
                 Tag nextTag;
                 DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out nextTag);
 
-                if(nextTag.fileID != fileId)
+                if(nextTag.fileID != FILEID_CATALOG)
                     return Errno.InvalidArgument;
 
                 byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
                 catalogBlocks.Add(nextCatalogBlock);
             }
-
-            catalog = new List<CatalogEntry>();
 
             // Foreach catalog block
             foreach(byte[] buf in catalogBlocks)
@@ -260,7 +246,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     {
                         CatalogEntry entry = new CatalogEntry();
                         entry.marker = buf[offset];
-                        entry.zero = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
+                        entry.parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
                         entry.filename = new byte[E_NAME];
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
                         entry.terminator = buf[offset + 0x23];
@@ -274,27 +260,75 @@ namespace DiscImageChef.Filesystems.LisaFS
                         entry.tail = new byte[8];
                         Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
-                        // This is as Pascal Workshop does, if there is no extents file it simply ignores it.
                         ExtentFile ext;
                         if(ReadExtentsFile(entry.fileID, out ext) == Errno.NoError)
                         {
                             if(!fileSizeCache.ContainsKey(entry.fileID))
                             {
-                                catalog.Add(entry);
+                                catalogCache.Add(entry);
                                 fileSizeCache.Add(entry.fileID, entry.length);
                             }
                         }
 
                         offset += 64;
                     }
+                    // Subdirectory entry
+                    else if(buf[offset + 0x24] == 0x01 && buf[offset] == 0x24)
+                    {
+                        CatalogEntry entry = new CatalogEntry();
+                        entry.marker = buf[offset];
+                        entry.parentID = BigEndianBitConverter.ToUInt16(buf, offset + 0x01);
+                        entry.filename = new byte[E_NAME];
+                        Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
+                        entry.terminator = buf[offset + 0x23];
+                        entry.fileType = buf[offset + 0x24];
+                        entry.unknown = buf[offset + 0x25];
+                        entry.fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26);
+                        entry.dtc = BigEndianBitConverter.ToUInt32(buf, offset + 0x28);
+                        entry.dtm = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C);
+                        entry.length = 0;
+                        entry.wasted = 0;
+                        entry.tail = null;
+
+                        if(!directoryDTCCache.ContainsKey(entry.fileID))
+                            directoryDTCCache.Add(entry.fileID, DateHandlers.LisaToDateTime(entry.dtc));
+
+                        catalogCache.Add(entry);
+
+                        offset += 48;
+                    }
                     else
                         break;
                 }
             }
 
-            catalogCache.Add(fileId, catalog);
+            return Errno.NoError;
+        }
+
+        Errno StatDir(short dirId, out FileEntryInfo stat)
+        {
+            stat = null;
+
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            stat = new FileEntryInfo();
+            stat.Attributes = new FileAttributes();
+            DateTime tmp = new DateTime();
+
+            directoryDTCCache.TryGetValue(dirId, out tmp);
+            stat.CreationTime = tmp;
+            stat.Inode = FILEID_CATALOG;
+            stat.Mode = 0x16D;
+            stat.Links = 0;
+            stat.UID = 0;
+            stat.GID = 0;
+            stat.DeviceNo = 0;
+            stat.Length = 0;
+            stat.BlockSize = mddf.datasize;
+            stat.Blocks = 0;
+
             return Errno.NoError;
         }
     }
 }
-
