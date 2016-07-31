@@ -1,5 +1,12 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Info.cs:
+	* Encoding.cs: Added MacRoman to Unicode.
+
+	* Encoding.cs: Corrected Unicode mapping.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs:
 	* Super.cs:
 	* Xattr.cs:

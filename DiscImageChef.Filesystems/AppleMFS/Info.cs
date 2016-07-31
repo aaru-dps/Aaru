@@ -99,19 +99,19 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bb_sector, 0x008);
 
                 Array.Copy(mdb_sector, 0x00A, pString, 0, 16);
-                BB.system_name = StringHandlers.PascalToString(pString);
+                BB.system_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x01A, pString, 0, 16);
-                BB.finder_name = StringHandlers.PascalToString(pString);
+                BB.finder_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x02A, pString, 0, 16);
-                BB.debug_name = StringHandlers.PascalToString(pString);
+                BB.debug_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x03A, pString, 0, 16);
-                BB.disasm_name = StringHandlers.PascalToString(pString);
+                BB.disasm_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x04A, pString, 0, 16);
-                BB.stupscr_name = StringHandlers.PascalToString(pString);
+                BB.stupscr_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x05A, pString, 0, 16);
-                BB.bootup_name = StringHandlers.PascalToString(pString);
+                BB.bootup_name = GetStringFromPascal(pString);
                 Array.Copy(mdb_sector, 0x06A, pString, 0, 16);
-                BB.clipbrd_name = StringHandlers.PascalToString(pString);
+                BB.clipbrd_name = GetStringFromPascal(pString);
 
                 BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
                 BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);
