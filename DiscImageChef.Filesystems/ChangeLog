@@ -1,3 +1,8 @@
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
+	* SysV.cs: Detect older version of the XENIX superblock (found
+	in Lisa XENIX).
+
 2016-07-31  Natalia Portillo  <claunia@claunia.com>
 
 	* File.cs:

@@ -121,6 +121,11 @@ namespace DiscImageChef.Filesystems
                 if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     return true;
 
+                magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // Old XENIX magic location
+
+                if(magic == XENIX_MAGIC || magic == XENIX_CIGAM)
+                    return true;
+
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
                 s_fname = StringHandlers.CToString(coherent_string);
@@ -175,6 +180,7 @@ namespace DiscImageChef.Filesystems
             bool sysvr4 = false;
             bool sys7th = false;
             bool coherent = false;
+            bool xenixOld = false;
             byte[] sb_sector;
             byte sb_size_in_sectors;
 
@@ -199,6 +205,21 @@ namespace DiscImageChef.Filesystems
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     xenix = true;
+                    break;
+                }
+
+                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F0); // Old XENIX magic location
+
+                if(magic == XENIX_MAGIC)
+                {
+                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
+                    xenixOld = true;
+                    break;
+                }
+                if(magic == XENIX_CIGAM)
+                {
+                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
+                    xenixOld = true;
                     break;
                 }
 
@@ -259,39 +280,67 @@ namespace DiscImageChef.Filesystems
                     }
                 }
             }
-            if(!sys7th && !sysv && !coherent && !xenix)
+            if(!sys7th && !sysv && !coherent && !xenix && !xenixOld)
                 return;
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if(xenix)
+            if(xenix || xenixOld)
             {
                 byte[] xenix_strings = new byte[6];
                 XenixSuperBlock xnx_sb = new XenixSuperBlock();
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
 
-                xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
-                xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
-                xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
-                xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x198);
-                xnx_sb.s_flock = sb_sector[0x262];
-                xnx_sb.s_ilock = sb_sector[0x263];
-                xnx_sb.s_fmod = sb_sector[0x264];
-                xnx_sb.s_ronly = sb_sector[0x265];
-                xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x266);
-                xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x26A);
-                xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x26E);
-                xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x270);
-                xnx_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x272);
-                xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x274);
-                xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x276);
-                Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
-                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
-                Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
-                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
-                xnx_sb.s_clean = sb_sector[0x284];
-                xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
-                xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x3FC);
+                if(xenixOld)
+                {
+                    xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                    xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
+                    xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                    xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x12C);
+                    xnx_sb.s_flock = sb_sector[0x19A];
+                    xnx_sb.s_ilock = sb_sector[0x19B];
+                    xnx_sb.s_fmod = sb_sector[0x19C];
+                    xnx_sb.s_ronly = sb_sector[0x19D];
+                    xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E);
+                    xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A2);
+                    xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6);
+                    xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
+                    xnx_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
+                    xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
+                    xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
+                    Array.Copy(sb_sector, 0x1B0, xenix_strings, 0, 6);
+                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
+                    Array.Copy(sb_sector, 0x1B6, xenix_strings, 0, 6);
+                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_clean = sb_sector[0x1BC];
+                    xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F0);
+                    xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4);
+                }
+                else
+                {
+                    xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
+                    xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
+                    xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
+                    xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x198);
+                    xnx_sb.s_flock = sb_sector[0x262];
+                    xnx_sb.s_ilock = sb_sector[0x263];
+                    xnx_sb.s_fmod = sb_sector[0x264];
+                    xnx_sb.s_ronly = sb_sector[0x265];
+                    xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x266);
+                    xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x26A);
+                    xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x26E);
+                    xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x270);
+                    xnx_sb.s_gapblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x272);
+                    xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x274);
+                    xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x276);
+                    Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
+                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
+                    Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
+                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_clean = sb_sector[0x284];
+                    xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
+                    xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x3FC);
+                }
 
                 uint bs = 512;
                 sb.AppendLine("XENIX filesystem");
@@ -613,6 +662,7 @@ namespace DiscImageChef.Filesystems
             BigEndianBitConverter.IsLittleEndian = false; // Return to default (bigendian)
         }
 
+        // Old XENIX use different offsets
         struct XenixSuperBlock
         {
             /// <summary>0x000, index of first data zone</summary>
