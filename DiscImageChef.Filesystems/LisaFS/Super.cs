@@ -368,7 +368,18 @@ namespace DiscImageChef.Filesystems.LisaFS
             stat.Id.Serial64 = mddf.volid;
             stat.Id.IsLong = true;
             stat.PluginId = PluginUUID;
-            stat.Type = "LisaFS v3";
+            switch(mddf.fsversion)
+            {
+                case LisaFSv1:
+                    stat.Type = "LisaFS v1";
+                    break;
+                case LisaFSv2:
+                    stat.Type = "LisaFS v2";
+                    break;
+                case LisaFSv3:
+                    stat.Type = "LisaFS v3";
+                    break;
+            }
 
             return Errno.NoError;
         }
