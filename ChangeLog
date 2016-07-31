@@ -1,3 +1,8 @@
+2016-07-31  Natalia Portillo  <claunia@claunia.com>
+
+	* DateHandlers.cs: Added support for U.C.S.D. Pascal
+	filesystem, closes #31
+
 2016-07-29  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Helpers.csproj: Bump to version 3.1.0.
