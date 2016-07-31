@@ -1,5 +1,10 @@
 2016-07-31  Natalia Portillo  <claunia@claunia.com>
 
+	* File.cs:
+	* Super.cs: Corrected file size calculation.
+
+2016-07-31  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs:
 	* File.cs:
 	* Info.cs:

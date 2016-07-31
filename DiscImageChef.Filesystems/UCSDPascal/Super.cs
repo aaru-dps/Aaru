@@ -126,9 +126,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             stat.PluginId = PluginUUID;
             stat.Type = "UCSD Pascal";
 
-            stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock + 1);
+            stat.FreeBlocks = mountedVolEntry.blocks - (mountedVolEntry.lastBlock - mountedVolEntry.firstBlock);
             foreach(PascalFileEntry entry in fileEntries)
-                stat.FreeBlocks -= (entry.lastBlock - entry.firstBlock + 1);
+                stat.FreeBlocks -= (entry.lastBlock - entry.firstBlock);
 
             return Errno.NotImplemented;
         }

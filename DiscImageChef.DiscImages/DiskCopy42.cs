@@ -124,6 +124,10 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Disk image file</summary>
         string dc42ImagePath;
 
+        byte[] twiggyCache;
+        byte[] twiggyCacheTags;
+        bool twiggy;
+
         #endregion
 
         public DiskCopy42()
@@ -369,6 +373,58 @@ namespace DiscImageChef.ImagePlugins
                     break;
             }
 
+            if(ImageInfo.mediaType == MediaType.AppleFileWare)
+            {
+                DicConsole.DebugWriteLine("DC42 plugin", "Twiggy detected, reversing second half of disk", bptag);
+                byte[] data = new byte[header.dataSize];
+                byte[] tags = new byte[header.tagSize];
+
+                twiggyCache = new byte[header.dataSize];
+                twiggyCacheTags = new byte[header.tagSize];
+                twiggy = true;
+
+                FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                datastream.Seek((dataOffset), SeekOrigin.Begin);
+                datastream.Read(data, 0, (int)header.dataSize);
+                datastream.Close();
+
+                FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                tagstream.Seek((tagOffset), SeekOrigin.Begin);
+                tagstream.Read(tags, 0, (int)header.tagSize);
+                tagstream.Close();
+
+                Array.Copy(data, 0, twiggyCache, 0, header.dataSize / 2);
+                Array.Copy(tags, 0, twiggyCacheTags, 0, header.tagSize / 2);
+
+                int copiedSectors = 0;
+                int sectorsToCopy = 0;
+
+                for(int i = 0; i < 46; i++)
+                {
+                    if(i >= 0 && i <= 3)
+                        sectorsToCopy = 22;
+                    if(i >= 4 && i <= 10)
+                        sectorsToCopy = 21;
+                    if(i >= 11 && i <= 16)
+                        sectorsToCopy = 20;
+                    if(i >= 17 && i <= 22)
+                        sectorsToCopy = 19;
+                    if(i >= 23 && i <= 28)
+                        sectorsToCopy = 18;
+                    if(i >= 29 && i <= 34)
+                        sectorsToCopy = 17;
+                    if(i >= 35 && i <= 41)
+                        sectorsToCopy = 16;
+                    if(i >= 42 && i <= 45)
+                        sectorsToCopy = 15;
+
+                    Array.Copy(data, header.dataSize / 2 + copiedSectors * 512, twiggyCache, twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                    Array.Copy(tags, header.tagSize / 2 + copiedSectors * bptag, twiggyCacheTags, twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag, sectorsToCopy * bptag);
+
+                    copiedSectors += sectorsToCopy;
+                }
+            }
+
             return true;
         }
 
@@ -479,13 +535,17 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
-            FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
-
-            stream.Seek((long)(dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
-
-            stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
-
-            stream.Close();
+            if(twiggy)
+            {
+                Array.Copy(twiggyCache, (int)sectorAddress * ImageInfo.sectorSize, buffer, 0, length * ImageInfo.sectorSize);
+            }
+            else
+            {
+                FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                stream.Seek((long)(dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+                stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
+                stream.Close();
+            }
 
             return buffer;
         }
@@ -506,13 +566,17 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[length * bptag];
 
-            FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
-
-            stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
-
-            stream.Read(buffer, 0, (int)(length * bptag));
-
-            stream.Close();
+            if(twiggy)
+            {
+                Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
+            }
+            else
+            {
+                FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
+                stream.Read(buffer, 0, (int)(length * bptag));
+                stream.Close();
+            }
 
             return buffer;
         }

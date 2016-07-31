@@ -95,18 +95,15 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 if(error != Errno.NoError)
                     return error;
 
-                byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock + 1));
-                file = new byte[(entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes];
+                byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock));
+                file = new byte[(entry.lastBlock - entry.firstBlock - 1) * device.GetSectorSize() + entry.lastBytes];
                 Array.Copy(tmp, 0, file, 0, file.Length);
             }
 
-            if(offset >= file.Length || size == 0 || offset + size == file.Length)
-            {
-                buf = new byte[0];
-                return Errno.NoError;
-            }
+            if(offset >= file.Length)
+                return Errno.EINVAL;
 
-            if(offset + size > file.Length)
+            if(size + offset >= file.Length)
                 size = file.Length - offset;
 
             buf = new byte[size];
@@ -128,6 +125,37 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             if(pathElements.Length != 1)
                 return Errno.NotSupported;
 
+            if(debug)
+            {
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ||
+                   string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
+                {
+                    stat = new FileEntryInfo();
+                    stat.Attributes = new FileAttributes();
+                    stat.Attributes = FileAttributes.System;
+                    stat.BlockSize = device.GetSectorSize();
+                    stat.DeviceNo = 0;
+                    stat.GID = 0;
+                    stat.Inode = 0;
+                    stat.Links = 1;
+                    stat.Mode = 0x124;
+                    stat.UID = 0;
+
+                    if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                    {
+                        stat.Blocks = catalogBlocks.Length / stat.BlockSize;
+                        stat.Length = catalogBlocks.Length;
+                    }
+                    else
+                    {
+                        stat.Blocks = bootBlocks.Length / stat.BlockSize;
+                        stat.Length = bootBlocks.Length;
+                    }
+
+                    return Errno.NoError;
+                }
+            }
+
             PascalFileEntry entry;
             Errno error = GetFileEntry(path, out entry);
 
@@ -137,7 +165,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             stat = new FileEntryInfo();
             stat.Attributes = new FileAttributes();
             stat.Attributes = FileAttributes.File;
-            stat.Blocks = entry.lastBlock - entry.firstBlock + 1;
+            stat.Blocks = entry.lastBlock - entry.firstBlock;
             stat.BlockSize = device.GetSectorSize();
             stat.DeviceNo = 0;
             stat.GID = 0;
