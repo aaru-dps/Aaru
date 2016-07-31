@@ -5,11 +5,11 @@
 // Filename       : Dir.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : U.C.S.D. Pascal filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Methods to handle show the U.C.S.D. Pascal catalog as a directory.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,35 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+using System.Collections.Generic;
+
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
-    public class Dir
+    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    public partial class PascalPlugin : Filesystem
     {
-        public Dir()
+        public override Errno ReadDir(string path, ref List<string> contents)
         {
+            if(!mounted)
+                return Errno.AccessDenied;
+            
+            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+                return Errno.NotSupported;
+
+            contents = new List<string>();
+            foreach(PascalFileEntry ent in fileEntries)
+                contents.Add(StringHandlers.PascalToString(ent.filename));
+
+            if(debug)
+            {
+                contents.Add("$");
+                contents.Add("$Boot");
+            }
+
+            contents.Sort();
+            return Errno.NoError;
         }
     }
 }

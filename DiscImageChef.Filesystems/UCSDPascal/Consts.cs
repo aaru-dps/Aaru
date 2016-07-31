@@ -5,11 +5,11 @@
 // Filename       : Consts.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : U.C.S.D. Pascal filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     U.C.S.D. Pascal filesystem constants.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,32 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
-using System;
+
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
-    public class Consts
+    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    public partial class PascalPlugin : Filesystem
     {
-        public Consts()
+        enum PascalFileKind : short
         {
+            /// <summary>Disk volume entry</summary>
+            Volume = 0,
+            /// <summary>File containing bad blocks</summary>
+            Bad,
+            /// <summary>Code file, machine executable</summary>
+            Code,
+            /// <summary>Text file, human readable</summary>
+            Text,
+            /// <summary>Information file for debugger</summary>
+            Info,
+            /// <summary>Data file</summary>
+            Data,
+            /// <summary>Graphics vectors</summary>
+            Graf,
+            /// <summary>Graphics screen image</summary>
+            Foto,
+            /// <summary>Security, not used</summary>
+            Secure
         }
     }
 }

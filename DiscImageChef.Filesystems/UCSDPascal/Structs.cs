@@ -5,11 +5,11 @@
 // Filename       : Structs.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : U.C.S.D. Pascal filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     U.C.S.D. Pascal filesystem structures.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,48 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
-using System;
+
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
-    public class Structs
+    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    public partial class PascalPlugin : Filesystem
     {
-        public Structs()
+        struct PascalVolumeEntry
         {
+            /// <summary>0x00, first block of volume entry</summary>
+            public short firstBlock;
+            /// <summary>0x02, last block of volume entry</summary>
+            public short lastBlock;
+            /// <summary>0x04, entry type</summary>
+            public PascalFileKind entryType;
+            /// <summary>0x06, volume name</summary>
+            public byte[] volumeName;
+            /// <summary>0x0E, block in volume</summary>
+            public short blocks;
+            /// <summary>0x10, files in volume</summary>
+            public short files;
+            /// <summary>0x12, dummy</summary>
+            public short dummy;
+            /// <summary>0x14, last booted</summary>
+            public short lastBoot;
+            /// <summary>0x16, tail to make record same size as <see cref="PascalFileEntry"/></summary>
+            public int tail;
+        }
+
+        struct PascalFileEntry
+        {
+            /// <summary>0x00, first block of file</summary>
+            public short firstBlock;
+            /// <summary>0x02, last block of file</summary>
+            public short lastBlock;
+            /// <summary>0x04, entry type</summary>
+            public PascalFileKind entryType;
+            /// <summary>0x06, file name</summary>
+            public byte[] filename;
+            /// <summary>0x16, bytes used in last block</summary>
+            public short lastBytes;
+            /// <summary>0x18, modification time</summary>
+            public short mtime;
         }
     }
 }

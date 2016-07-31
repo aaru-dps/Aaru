@@ -1,5 +1,17 @@
 2016-07-31  Natalia Portillo  <claunia@claunia.com>
 
+	* Dir.cs:
+	* File.cs:
+	* Info.cs:
+	* Super.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* UCSDPascal.cs:
+	* DiscImageChef.Filesystems.csproj: Added support for U.C.S.D.
+	Pascal filesystem, closes #31
+
+2016-07-31  Natalia Portillo  <claunia@claunia.com>
+
 	* Super.cs: Reports correct filesystem version on Statfs();
 
 2016-07-31  Natalia Portillo  <claunia@claunia.com>

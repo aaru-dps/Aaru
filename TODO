@@ -21,7 +21,6 @@ Filesystem plugins:
 --- Add support for SFS filesystem
 --- Add support for PFS3 filesystem
 --- Add support for Apple DOS filesystems
---- Add support for UCSD/Pascal filesystem
 --- Add support for AMSDOS filesystem
 --- Add support for CP/M filesystem
 --- Add support for CBM filesystem

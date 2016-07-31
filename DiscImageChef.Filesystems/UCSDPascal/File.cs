@@ -5,11 +5,11 @@
 // Filename       : File.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : U.C.S.D. Pascal filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Methods to handle files.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,142 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
-    public class File
+    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    public partial class PascalPlugin : Filesystem
     {
-        public File()
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            return Errno.NotImplemented;
+        }
+
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            PascalFileEntry entry;
+            Errno error = GetFileEntry(path, out entry);
+
+            if(error == Errno.NoError)
+            {
+                attributes = new FileAttributes();
+                attributes = FileAttributes.File;
+            }
+
+            return error;
+        }
+
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            byte[] file;
+            Errno error;
+
+            if(debug &&
+               (string.Compare(path, "$", StringComparison.InvariantCulture) == 0
+                || string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+            {
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                    file = catalogBlocks;
+                else
+                    file = bootBlocks;
+            }
+            else
+            {
+                PascalFileEntry entry;
+                error = GetFileEntry(path, out entry);
+
+                if(error != Errno.NoError)
+                    return error;
+
+                byte[] tmp = device.ReadSectors((ulong)entry.firstBlock, (uint)(entry.lastBlock - entry.firstBlock + 1));
+                file = new byte[(entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes];
+                Array.Copy(tmp, 0, file, 0, file.Length);
+            }
+
+            if(offset >= file.Length || size == 0 || offset + size == file.Length)
+            {
+                buf = new byte[0];
+                return Errno.NoError;
+            }
+
+            if(offset + size > file.Length)
+                size = file.Length - offset;
+
+            buf = new byte[size];
+
+            Array.Copy(file, offset, buf, 0, size);
+
+            return Errno.NoError;
+        }
+
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            PascalFileEntry entry;
+            Errno error = GetFileEntry(path, out entry);
+
+            if(error != Errno.NoError)
+                return error;
+
+            stat = new FileEntryInfo();
+            stat.Attributes = new FileAttributes();
+            stat.Attributes = FileAttributes.File;
+            stat.Blocks = entry.lastBlock - entry.firstBlock + 1;
+            stat.BlockSize = device.GetSectorSize();
+            stat.DeviceNo = 0;
+            stat.GID = 0;
+            stat.Inode = 0;
+            stat.LastWriteTimeUtc = DateHandlers.UCSDPascalToDateTime(entry.mtime);
+            stat.Length = (entry.lastBlock - entry.firstBlock) * device.GetSectorSize() + entry.lastBytes;
+            stat.Links = 1;
+            stat.Mode = 0x124;
+            stat.UID = 0;
+
+            return Errno.NoError;
+        }
+
+        Errno GetFileEntry(string path, out PascalFileEntry entry)
+        {
+            entry = new PascalFileEntry();
+
+            foreach(PascalFileEntry ent in fileEntries)
+            {
+                if(string.Compare(path, StringHandlers.PascalToString(ent.filename), StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    entry = ent;
+                    return Errno.NoError;
+                }
+            }
+
+            return Errno.NoSuchFile;
         }
     }
 }

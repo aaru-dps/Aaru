@@ -71,6 +71,13 @@
     <Compile Include="LisaFS\File.cs" />
     <Compile Include="LisaFS\Extent.cs" />
     <Compile Include="LisaFS\Encoding.cs" />
+    <Compile Include="UCSDPascal\UCSDPascal.cs" />
+    <Compile Include="UCSDPascal\Consts.cs" />
+    <Compile Include="UCSDPascal\File.cs" />
+    <Compile Include="UCSDPascal\Info.cs" />
+    <Compile Include="UCSDPascal\Structs.cs" />
+    <Compile Include="UCSDPascal\Super.cs" />
+    <Compile Include="UCSDPascal\Dir.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -105,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LisaFS\" />
+    <Folder Include="UCSDPascal\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">

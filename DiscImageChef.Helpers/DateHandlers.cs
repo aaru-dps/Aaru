@@ -140,6 +140,16 @@ namespace DiscImageChef
             temp = temp.AddMinutes(minutes);
             return temp.AddMilliseconds(ticks * 20);
         }
+
+        public static DateTime UCSDPascalToDateTime(short dateRecord)
+        {
+            int year = ((dateRecord & 0xFE00) >> 9) + 1900;
+            int day = (dateRecord & 0x01F0) >> 4;
+            int month = (dateRecord & 0x000F);
+
+            DicConsole.DebugWriteLine("UCSDPascalToDateTime handler", "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month, day);
+            return new DateTime(year, month, day);
+        }
     }
 }
 
