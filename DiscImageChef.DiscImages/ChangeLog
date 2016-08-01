@@ -1,5 +1,10 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* AssemblyInfo.cs:
+	* DiscImageChef.DiscImages.csproj: Bump to version 3.2.0
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* DiskCopy42.cs: Lisa Twiggies and Macintosh Twiggies use a
 	different track order. Detect a Macintosh File System to know
 	which re-ordering to use.

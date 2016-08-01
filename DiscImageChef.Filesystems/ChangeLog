@@ -1,5 +1,10 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* AssemblyInfo.cs:
+	* DiscImageChef.Filesystems.csproj: Bump to version 3.2.0
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs: Remove spurious debug leftover.
 	"Entries are always an integral number of words" solved.
 
