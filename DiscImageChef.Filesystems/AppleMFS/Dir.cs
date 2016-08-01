@@ -95,7 +95,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
                 lowerFilename = GetStringFromPascal(entry.flNam).ToLowerInvariant().Replace('/', ':');
 
-
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&
                    entry.flFlNum > 0)
@@ -104,7 +103,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     idToFilename.Add(entry.flFlNum, GetStringFromPascal(entry.flNam).Replace('/', ':'));
                     filenameToId.Add(lowerFilename, entry.flFlNum);
 
-                    System.Console.WriteLine("{0}", offset);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flTyp = {0}", entry.flTyp);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlNum = {0}", entry.flFlNum);
@@ -120,6 +118,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 }
 
                 offset += (50 + entry.flNam.Length);
+
+                // "Entries are always an integral number of words"
+                if((offset % 2) != 0)
+                    offset++;
+
+                // TODO: "Entries don't cross logical block boundaries"
             }
 
             return true;

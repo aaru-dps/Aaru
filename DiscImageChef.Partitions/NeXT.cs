@@ -58,7 +58,7 @@ namespace DiscImageChef.PartPlugins
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
             byte[] cString;
-            bool magic_found;
+            bool magic_found = false;
             byte[] entry_sector;
 
             uint magic;
@@ -77,7 +77,7 @@ namespace DiscImageChef.PartPlugins
 
             if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
                 magic_found = true;
-            else
+            else if(imagePlugin.ImageInfo.sectors > 15)
             {
                 entry_sector = imagePlugin.ReadSector(15); // Starts on sector 15 on MBR machines
                 magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
@@ -88,7 +88,7 @@ namespace DiscImageChef.PartPlugins
                 {
                     if(sector_size == 2048)
                         entry_sector = imagePlugin.ReadSector(4); // Starts on sector 4 on RISC CDs
-                    else
+                    else if(imagePlugin.ImageInfo.sectors > 16)
                         entry_sector = imagePlugin.ReadSector(16); // Starts on sector 16 on RISC disks
                     magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
 

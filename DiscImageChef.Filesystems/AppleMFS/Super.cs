@@ -84,9 +84,16 @@ namespace DiscImageChef.Filesystems.AppleMFS
             blockMap = new uint[volMDB.drNmAlBlks + 2 + 1];
             for(int i = 2; i < volMDB.drNmAlBlks + 2; i+=8)
             {
-                uint tmp1 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset);
-                uint tmp2 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset + 4);
-                uint tmp3 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset + 8);
+                uint tmp1 = 0;
+                uint tmp2 = 0;
+                uint tmp3 = 0;
+
+                if(offset + 4 <= blockMapBytes.Length)
+                    tmp1 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset);
+                if(offset + 4 + 4 <= blockMapBytes.Length)
+                    tmp2 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset + 4);
+                if(offset + 8 + 4 <= blockMapBytes.Length)
+                    tmp3 = BigEndianBitConverter.ToUInt32(blockMapBytes, offset + 8);
 
                 if(i < blockMap.Length)
                     blockMap[i] = (tmp1 & 0xFFF00000) >> 20;

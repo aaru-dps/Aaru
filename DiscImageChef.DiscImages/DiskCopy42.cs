@@ -375,7 +375,6 @@ namespace DiscImageChef.ImagePlugins
 
             if(ImageInfo.mediaType == MediaType.AppleFileWare)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Twiggy detected, reversing second half of disk", bptag);
                 byte[] data = new byte[header.dataSize];
                 byte[] tags = new byte[header.tagSize];
 
@@ -393,35 +392,51 @@ namespace DiscImageChef.ImagePlugins
                 tagstream.Read(tags, 0, (int)header.tagSize);
                 tagstream.Close();
 
-                Array.Copy(data, 0, twiggyCache, 0, header.dataSize / 2);
-                Array.Copy(tags, 0, twiggyCacheTags, 0, header.tagSize / 2);
+                ushort MFS_Magic = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x400));
+                ushort MFS_AllBlocks = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x412));
 
-                int copiedSectors = 0;
-                int sectorsToCopy = 0;
-
-                for(int i = 0; i < 46; i++)
+                // Detect a Macintosh Twiggy
+                if(MFS_Magic == 0xD2D7 && MFS_AllBlocks == 422)
                 {
-                    if(i >= 0 && i <= 3)
-                        sectorsToCopy = 22;
-                    if(i >= 4 && i <= 10)
-                        sectorsToCopy = 21;
-                    if(i >= 11 && i <= 16)
-                        sectorsToCopy = 20;
-                    if(i >= 17 && i <= 22)
-                        sectorsToCopy = 19;
-                    if(i >= 23 && i <= 28)
-                        sectorsToCopy = 18;
-                    if(i >= 29 && i <= 34)
-                        sectorsToCopy = 17;
-                    if(i >= 35 && i <= 41)
-                        sectorsToCopy = 16;
-                    if(i >= 42 && i <= 45)
-                        sectorsToCopy = 15;
+                    DicConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
+                    Array.Copy(data, (header.dataSize / 2), twiggyCache, 0, header.dataSize / 2);
+                    Array.Copy(tags, (header.tagSize / 2), twiggyCacheTags, 0, header.tagSize / 2);
+                    Array.Copy(data, 0, twiggyCache, header.dataSize / 2, header.dataSize / 2);
+                    Array.Copy(tags, 0, twiggyCacheTags, header.tagSize / 2, header.tagSize / 2);
+                }
+                else
+                {
+                    DicConsole.DebugWriteLine("DC42 plugin", "Lisa Twiggy detected, reversing second half of disk");
+                    Array.Copy(data, 0, twiggyCache, 0, header.dataSize / 2);
+                    Array.Copy(tags, 0, twiggyCacheTags, 0, header.tagSize / 2);
 
-                    Array.Copy(data, header.dataSize / 2 + copiedSectors * 512, twiggyCache, twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
-                    Array.Copy(tags, header.tagSize / 2 + copiedSectors * bptag, twiggyCacheTags, twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag, sectorsToCopy * bptag);
+                    int copiedSectors = 0;
+                    int sectorsToCopy = 0;
 
-                    copiedSectors += sectorsToCopy;
+                    for(int i = 0; i < 46; i++)
+                    {
+                        if(i >= 0 && i <= 3)
+                            sectorsToCopy = 22;
+                        if(i >= 4 && i <= 10)
+                            sectorsToCopy = 21;
+                        if(i >= 11 && i <= 16)
+                            sectorsToCopy = 20;
+                        if(i >= 17 && i <= 22)
+                            sectorsToCopy = 19;
+                        if(i >= 23 && i <= 28)
+                            sectorsToCopy = 18;
+                        if(i >= 29 && i <= 34)
+                            sectorsToCopy = 17;
+                        if(i >= 35 && i <= 41)
+                            sectorsToCopy = 16;
+                        if(i >= 42 && i <= 45)
+                            sectorsToCopy = 15;
+
+                        Array.Copy(data, header.dataSize / 2 + copiedSectors * 512, twiggyCache, twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                        Array.Copy(tags, header.tagSize / 2 + copiedSectors * bptag, twiggyCacheTags, twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag, sectorsToCopy * bptag);
+
+                        copiedSectors += sectorsToCopy;
+                    }
                 }
             }
 

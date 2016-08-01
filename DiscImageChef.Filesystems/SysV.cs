@@ -109,6 +109,9 @@ namespace DiscImageChef.Filesystems
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
             for(int i = 0; i <= 16; i++)
             {
+                if(i + sb_size_in_sectors >= (int)imagePlugin.ImageInfo.sectors)
+                    break;
+                
                 byte[] sb_sector = imagePlugin.ReadSectors((ulong)i + partitionStart, sb_size_in_sectors);
 
                 magic = BitConverter.ToUInt32(sb_sector, 0x3F8); // XENIX magic location

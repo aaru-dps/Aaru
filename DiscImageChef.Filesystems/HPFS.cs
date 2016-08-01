@@ -56,6 +56,9 @@ namespace DiscImageChef.Filesystems
             if((2 + partitionStart) >= imagePlugin.GetSectors())
                 return false;
 
+            if(imagePlugin.ImageInfo.sectors <= 16)
+                return false;
+
             uint magic1, magic2;
 
             byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16

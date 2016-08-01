@@ -1,3 +1,9 @@
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
+	* DiskCopy42.cs: Lisa Twiggies and Macintosh Twiggies use a
+	different track order. Detect a Macintosh File System to know
+	which re-ordering to use.
+
 2016-07-31  Natalia Portillo  <claunia@claunia.com>
 
 	* DiskCopy42.cs: Swap tracks in second half of twiggy images.

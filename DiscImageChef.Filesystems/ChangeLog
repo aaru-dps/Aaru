@@ -1,5 +1,16 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Dir.cs: Remove spurious debug leftover.
+	"Entries are always an integral number of words" solved.
+
+	* Super.cs: When filling volume block map, check we are not
+	going out of bounds.
+
+	* HPFS.cs:
+	* SysV.cs: Do not try to read past device.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs:
 	* File.cs:
 	* Info.cs:

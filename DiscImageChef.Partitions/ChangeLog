@@ -1,3 +1,7 @@
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
+	* NeXT.cs: Do not try to read past device.
+
 2016-07-29  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Partitions.csproj: Bump to version 3.1.0.
