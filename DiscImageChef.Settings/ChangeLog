@@ -1,5 +1,10 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* AssemblyInfo.cs:
+	* DiscImageChef.Settings.csproj: Bumped to version 3.2.1.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Settings.csproj: Bump to version 3.2.0
 
 2016-07-29  Natalia Portillo  <claunia@claunia.com>
