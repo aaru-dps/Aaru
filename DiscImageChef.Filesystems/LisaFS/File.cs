@@ -499,7 +499,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 
             for(int lvl = 0; lvl < pathElements.Length; lvl++)
             {
-                string wantedFilename = pathElements[0].Replace(':', '/');
+                string wantedFilename = pathElements[0].Replace('-', '/');
 
                 foreach(CatalogEntry entry in catalogCache)
                 {

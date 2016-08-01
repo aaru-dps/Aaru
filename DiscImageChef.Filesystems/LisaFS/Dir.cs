@@ -94,9 +94,9 @@ namespace DiscImageChef.Filesystems.LisaFS
             foreach(CatalogEntry entry in catalogCache)
             {
                 if(entry.parentID == dirId)
-                    // Do same trick as Mac OS X, replace filesystem '/' with ':'
-                    // Maybe as '-' is the path separator in Lisa OS I should do that
-                    contents.Add(GetString(entry.filename).Replace('/', ':'));
+                    // Do same trick as Mac OS X, replace filesystem '/' with '-',
+                    // as '-' is the path separator in Lisa OS
+                    contents.Add(GetString(entry.filename).Replace('/', '-'));
             }
 
             return Errno.NoError;
