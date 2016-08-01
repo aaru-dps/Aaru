@@ -1,5 +1,9 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* File.cs: Correct block size arithmetic.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Consts.cs:
 	* Structs.cs: Added missing consts and structures.
 

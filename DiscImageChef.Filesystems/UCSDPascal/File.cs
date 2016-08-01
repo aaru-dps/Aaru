@@ -143,12 +143,12 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = catalogBlocks.Length / stat.BlockSize;
+                        stat.Blocks = (catalogBlocks.Length / stat.BlockSize) + (catalogBlocks.Length % stat.BlockSize);
                         stat.Length = catalogBlocks.Length;
                     }
                     else
                     {
-                        stat.Blocks = bootBlocks.Length / stat.BlockSize;
+                        stat.Blocks = (bootBlocks.Length / stat.BlockSize) + (catalogBlocks.Length % stat.BlockSize);
                         stat.Length = bootBlocks.Length;
                     }
 
