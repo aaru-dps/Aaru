@@ -52,9 +52,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             public ushort drAtrb;
             /// <summary>0x00C, Volume number of files</summary>
             public ushort drNmFls;
-            /// <summary>0x00E, First directory block</summary>
+            /// <summary>0x00E, First directory sector</summary>
             public ushort drDirSt;
-            /// <summary>0x010, Length of directory in blocks</summary>
+            /// <summary>0x010, Length of directory in sectors</summary>
             public ushort drBlLen;
             /// <summary>0x012, Volume allocation blocks</summary>
             public ushort drNmAlBlks;

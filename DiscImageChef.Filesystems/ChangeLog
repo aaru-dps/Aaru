@@ -1,5 +1,17 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Dir.cs:
+	* File.cs:
+	* Info.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* AppleMFS.cs: Implemented missing methods, for full MFS
+	read-only support.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* File.cs: Correct block size arithmetic.
 
 2016-08-01  Natalia Portillo  <claunia@claunia.com>

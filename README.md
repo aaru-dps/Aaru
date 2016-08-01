@@ -61,6 +61,7 @@ Supported partitioning schemes
 Supported file systems for read-only operations
 ===============================================
 * Apple Lisa file system
+* Apple Macintosh File System (MFS)
 * U.C.S.D Pascal file system
 
 Supported file systems for identification and information only

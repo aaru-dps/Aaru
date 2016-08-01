@@ -41,7 +41,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         const short DIRID_TRASH = -3;
         const short DIRID_DESKTOP = -2;
+        const short DIRID_TEMPLATE = -1;
         const short DIRID_ROOT = 0;
+
+        const int BMAP_FREE = 0;
+        const int BMAP_LAST = 1;
+        const int BMAP_DIR = 0xFFF;
     }
 }
 

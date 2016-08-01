@@ -47,6 +47,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
             drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
 
             return drSigWord == MFS_MAGIC;
@@ -67,6 +69,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
             byte[] bb_sector = imagePlugin.ReadSector(0 + partitionStart);
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
             MDB.drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0x000);
             if(MDB.drSigWord != MFS_MAGIC)
                 return;
@@ -84,9 +88,9 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MDB.drNxtFNum = BigEndianBitConverter.ToUInt32(mdb_sector, 0x01E);
             MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
             MDB.drVNSiz = mdb_sector[0x024];
-            variable_size = new byte[MDB.drVNSiz];
-            Array.Copy(mdb_sector, 0x025, variable_size, 0, MDB.drVNSiz);
-            MDB.drVN = Encoding.ASCII.GetString(variable_size);
+            variable_size = new byte[MDB.drVNSiz+1];
+            Array.Copy(mdb_sector, 0x024, variable_size, 0, MDB.drVNSiz+1);
+            MDB.drVN = GetStringFromPascal(variable_size);
 
             BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
 
@@ -132,12 +136,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if((MDB.drAtrb & 0x8000) == 0x8000)
                 sb.AppendLine("Volume is locked by software.");
             sb.AppendFormat("{0} files on volume", MDB.drNmFls).AppendLine();
-            sb.AppendFormat("First directory block: {0}", MDB.drDirSt).AppendLine();
-            sb.AppendFormat("{0} blocks in directory.", MDB.drBlLen).AppendLine();
-            sb.AppendFormat("{0} volume allocation blocks.", MDB.drNmAlBlks).AppendLine();
-            sb.AppendFormat("Size of allocation blocks: {0}", MDB.drAlBlkSiz).AppendLine();
+            sb.AppendFormat("First directory sector: {0}", MDB.drDirSt).AppendLine();
+            sb.AppendFormat("{0} sectors in directory.", MDB.drBlLen).AppendLine();
+            sb.AppendFormat("{0} volume allocation blocks.", MDB.drNmAlBlks + 1).AppendLine();
+            sb.AppendFormat("Size of allocation blocks: {0} bytes", MDB.drAlBlkSiz).AppendLine();
             sb.AppendFormat("{0} bytes to allocate.", MDB.drClpSiz).AppendLine();
-            sb.AppendFormat("{0} first allocation block.", MDB.drAlBlSt).AppendLine();
+            sb.AppendFormat("First allocation block (#2) starts in sector {0}.", MDB.drAlBlSt).AppendLine();
             sb.AppendFormat("Next unused file number: {0}", MDB.drNxtFNum).AppendLine();
             sb.AppendFormat("{0} unused allocation blocks.", MDB.drFreeBks).AppendLine();
             sb.AppendFormat("Volume name: {0}", MDB.drVN).AppendLine();

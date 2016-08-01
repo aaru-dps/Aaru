@@ -31,22 +31,47 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     partial class AppleMFS : Filesystem
     {
+        bool mounted;
+        bool debug;
+        ImagePlugin device;
+        ulong partitionStart;
+
+        Dictionary<uint, string> idToFilename;
+        Dictionary<uint, MFS_FileEntry> idToEntry;
+        Dictionary<string, uint> filenameToId;
+
+        MFS_MasterDirectoryBlock volMDB;
+        byte[] bootBlocks;
+        byte[] mdbBlocks;
+        byte[] directoryBlocks;
+        byte[] blockMapBytes;
+        uint[] blockMap;
+        int sectorsPerBlock;
+        byte[] bootTags;
+        byte[] mdbTags;
+        byte[] directoryTags;
+        byte[] bitmapTags;
+
         public AppleMFS()
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         }
 
-        public AppleMFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AppleMFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+            device = imagePlugin;
+            this.partitionStart = partitionStart;
         }
     }
 }
