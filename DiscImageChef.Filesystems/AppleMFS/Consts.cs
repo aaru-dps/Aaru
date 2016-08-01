@@ -38,6 +38,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
         const ushort MFS_MAGIC = 0xD2D7;
         // "LK"
         const ushort MFSBB_MAGIC = 0x4C4B;
+
+        const short DIRID_TRASH = -3;
+        const short DIRID_DESKTOP = -2;
+        const short DIRID_ROOT = 0;
     }
 }
 

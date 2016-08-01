@@ -1,5 +1,10 @@
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
+	* Consts.cs:
+	* Structs.cs: Added missing consts and structures.
+
+2016-08-01  Natalia Portillo  <claunia@claunia.com>
+
 	* Info.cs:
 	* Encoding.cs: Added MacRoman to Unicode.
 

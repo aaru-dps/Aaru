@@ -30,6 +30,8 @@
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
@@ -111,6 +113,77 @@ namespace DiscImageChef.Filesystems.AppleMFS
             public uint heap_256k;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
             public uint heap_512k;
+        }
+
+        [Flags]
+        enum MFS_FileFlags : byte
+        {
+            Locked = 0x01,
+            Used = 0x80
+        }
+
+        [Flags]
+        enum MFS_FinderFlags : ushort
+        {
+            kIsOnDesk = 0x0001,
+            kColor = 0x000E,
+            kRequireSwitchLaunch = 0x0020,
+            kIsShared = 0x0040,
+            kHasNoINITs = 0x0080,
+            kHasBeenInited = 0x0100,
+            kHasCustomIcon = 0x0400,
+            kLetter = 0x0200,
+            kChanged = 0x0200,
+            kIsStationery = 0x0800,
+            kNameLocked = 0x1000,
+            kHasBundle = 0x2000,
+            kIsInvisible = 0x4000,
+            kIsAlias = 0x8000
+        }
+
+        struct MFS_Point
+        {
+            public short x;
+            public short y;
+        }
+
+        struct MFS_FinderInfo
+        {
+            public uint fdType;
+            public uint fdCreator;
+            public MFS_FinderFlags fdFlags;
+            public MFS_Point fdLocation;
+            public short fdFldr;
+        }
+
+        struct MFS_FileEntry
+        {
+            /// <summary>0x00, Entry flags</summary>
+            public MFS_FileFlags flFlags;
+            /// <summary>0x01, Version number</summary>
+            public byte flTyp;
+            /// <summary>0x02, FinderInfo</summary>
+            public byte[] flUsrWds;
+            /// <summary>0x12, file ID</summary>
+            public uint flFlNum;
+            /// <summary>0x16, first allocation block of data fork</summary>
+            public ushort flStBlk;
+            /// <summary>0x18, logical end-of-file of data fork</summary>
+            public uint flLgLen;
+            /// <summary>0x1C, physical end-of-file of data fork</summary>
+            public uint flPyLen;
+            /// <summary>0x20, first allocation block of resource fork</summary>
+            public ushort flRStBlk;
+            /// <summary>0x22, logical end-of-file of resource fork</summary>
+            public uint flRLgLen;
+            /// <summary>0x26, physical end-of-file of resource fork</summary>
+            public uint flRPyLen;
+            /// <summary>0x2A, date and time of creation</summary>
+            public uint flCrDat;
+            /// <summary>0x2E, date and time of last modification</summary>
+            public uint flMdDat;
+            /// <summary>0x32, file name prefixed with length</summary>
+            public byte[] flNam;
         }
     }
 }
