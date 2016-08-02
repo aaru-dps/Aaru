@@ -779,6 +779,7 @@ namespace DiscImageChef.CommonTypes
 
         #region Generic hard disks
         Microdrive,
+        PriamDataTower,
         RDX,
         /// <summary>Imation 320Gb RDX</summary>
         RDX320,
