@@ -148,6 +148,10 @@ namespace DiscImageChef.ImagePlugins
         /// Disk image created by XGS, "XGS!"
         /// </summary>
         public const uint CreatorXGS = 0x21534758;
+        /// <summary>
+        /// Disk image created by CiderPress, "CdrP"
+        /// </summary>
+        public const uint CreatorCider = 0x50726443;
 
         public const uint DOSSectorOrder = 0x00000000;
         public const uint ProDOSSectorOrder = 0x00000001;
@@ -329,6 +333,9 @@ namespace DiscImageChef.ImagePlugins
                     break;
                 case CreatorXGS:
                     ImageInfo.imageApplication = "XGS";
+                    break;
+                case CreatorCider:
+                    ImageInfo.imageApplication = "CiderPress";
                     break;
                 default:
                     ImageInfo.imageApplication = string.Format("Unknown creator code \"{0}\"", Encoding.ASCII.GetString(creator));

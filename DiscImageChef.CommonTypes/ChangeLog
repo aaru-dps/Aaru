@@ -1,3 +1,7 @@
+2016-08-02  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs: Added Priam DataTower.
+
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
 	* AssemblyInfo.cs:

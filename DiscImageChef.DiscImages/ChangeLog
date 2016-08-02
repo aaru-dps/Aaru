@@ -1,3 +1,13 @@
+2016-08-02  Natalia Portillo  <claunia@claunia.com>
+
+	* BLU.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for Basic
+	Lisa Utility.
+
+	* Apple2MG.cs: Added CiderPress creator.
+
+	* CDRWin.cs: Changed RegExs so words must be exact.
+
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
 	* AssemblyInfo.cs:

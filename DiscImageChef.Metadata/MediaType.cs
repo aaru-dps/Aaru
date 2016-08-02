@@ -670,6 +670,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "HDD";
                     DiscSubType = "Apple HD20";
                     break;
+                case CommonTypes.MediaType.PriamDataTower:
+                    DiscType = "HDD";
+                    DiscSubType = "Priam DataTower";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

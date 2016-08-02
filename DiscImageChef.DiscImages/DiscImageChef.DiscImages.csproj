@@ -45,6 +45,7 @@
     <Compile Include="ZZZRawImage.cs" />
     <Compile Include="CDRDAO.cs" />
     <Compile Include="GDI.cs" />
+    <Compile Include="BLU.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

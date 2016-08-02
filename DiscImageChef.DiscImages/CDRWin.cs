@@ -255,29 +255,29 @@ namespace DiscImageChef.ImagePlugins
 
         #region Parsing regexs
 
-        const string SessionRegEx = "REM\\s+SESSION\\s+(?<number>\\d+).*$";
-        const string DiskTypeRegEx = "REM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
-        const string LeadOutRegEx = "REM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string SessionRegEx = "\\bREM\\s+SESSION\\s+(?<number>\\d+).*$";
+        const string DiskTypeRegEx = "\\bREM\\s+ORIGINAL MEDIA-TYPE:\\s+(?<mediatype>.+)$";
+        const string LeadOutRegEx = "\\bREM\\s+LEAD-OUT\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
         // Not checked
-        const string LBARegEx = "REM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
-        const string DiskIDRegEx = "DISC_ID\\s+(?<diskid>[\\da-f]{8})$";
-        const string BarCodeRegEx = "UPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
-        const string CommentRegEx = "REM\\s+(?<comment>.+)$";
-        const string CDTextRegEx = "CDTEXTFILE\\s+(?<filename>.+)$";
-        const string MCNRegEx = "CATALOG\\s+(?<catalog>\\d{13})$";
-        const string TitleRegEx = "TITLE\\s+(?<title>.+)$";
-        const string GenreRegEx = "GENRE\\s+(?<genre>.+)$";
-        const string ArrangerRegEx = "ARRANGER\\s+(?<arranger>.+)$";
-        const string ComposerRegEx = "COMPOSER\\s+(?<composer>.+)$";
-        const string PerformerRegEx = "PERFORMER\\s+(?<performer>.+)$";
-        const string SongWriterRegEx = "SONGWRITER\\s+(?<songwriter>.+)$";
-        const string FileRegEx = "FILE\\s+(?<filename>.+)\\s+(?<type>\\S+)$";
-        const string TrackRegEx = "TRACK\\s+(?<number>\\d+)\\s+(?<type>\\S+)$";
-        const string ISRCRegEx = "ISRC\\s+(?<isrc>\\w{12})$";
-        const string IndexRegEx = "INDEX\\s+(?<index>\\d+)\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string PregapRegEx = "PREGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string PostgapRegex = "POSTGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
-        const string FlagsRegEx = "FLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
+        const string LBARegEx = "\\bREM MSF:\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)\\s+=\\s+LBA:\\s+(?<lba>[\\d]+)$";
+        const string DiskIDRegEx = "\\bDISC_ID\\s+(?<diskid>[\\da-f]{8})$";
+        const string BarCodeRegEx = "\\bUPC_EAN\\s+(?<barcode>[\\d]{12,13})$";
+        const string CommentRegEx = "\\bREM\\s+(?<comment>.+)$";
+        const string CDTextRegEx = "\\bCDTEXTFILE\\s+(?<filename>.+)$";
+        const string MCNRegEx = "\\bCATALOG\\s+(?<catalog>\\d{13})$";
+        const string TitleRegEx = "\\bTITLE\\s+(?<title>.+)$";
+        const string GenreRegEx = "\\bGENRE\\s+(?<genre>.+)$";
+        const string ArrangerRegEx = "\\bARRANGER\\s+(?<arranger>.+)$";
+        const string ComposerRegEx = "\\bCOMPOSER\\s+(?<composer>.+)$";
+        const string PerformerRegEx = "\\bPERFORMER\\s+(?<performer>.+)$";
+        const string SongWriterRegEx = "\\bSONGWRITER\\s+(?<songwriter>.+)$";
+        const string FileRegEx = "\\bFILE\\s+(?<filename>.+)\\s+(?<type>\\S+)$";
+        const string TrackRegEx = "\\bTRACK\\s+(?<number>\\d+)\\s+(?<type>\\S+)$";
+        const string ISRCRegEx = "\\bISRC\\s+(?<isrc>\\w{12})$";
+        const string IndexRegEx = "\\bINDEX\\s+(?<index>\\d+)\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string PregapRegEx = "\\bPREGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string PostgapRegex = "\\bPOSTGAP\\s+(?<msf>[\\d]+:[\\d]+:[\\d]+)$";
+        const string FlagsRegEx = "\\bFLAGS\\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\\s*)+$";
 
         #endregion
 
