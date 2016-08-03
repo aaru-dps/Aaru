@@ -124,7 +124,7 @@ namespace DiscImageChef.Filesystems
                 if(magic == SYSV_MAGIC || magic == SYSV_CIGAM)
                     return true;
 
-                magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // Old XENIX magic location
+                magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
 
                 if(magic == XENIX_MAGIC || magic == XENIX_CIGAM)
                     return true;
@@ -183,7 +183,7 @@ namespace DiscImageChef.Filesystems
             bool sysvr4 = false;
             bool sys7th = false;
             bool coherent = false;
-            bool xenixOld = false;
+            bool xenix3 = false;
             byte[] sb_sector;
             byte sb_size_in_sectors;
 
@@ -211,18 +211,18 @@ namespace DiscImageChef.Filesystems
                     break;
                 }
 
-                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F0); // Old XENIX magic location
+                magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
 
                 if(magic == XENIX_MAGIC)
                 {
                     BigEndianBitConverter.IsLittleEndian = true; // Little endian
-                    xenixOld = true;
+                    xenix3 = true;
                     break;
                 }
                 if(magic == XENIX_CIGAM)
                 {
                     BigEndianBitConverter.IsLittleEndian = false; // Big endian
-                    xenixOld = true;
+                    xenix3 = true;
                     break;
                 }
 
@@ -283,28 +283,28 @@ namespace DiscImageChef.Filesystems
                     }
                 }
             }
-            if(!sys7th && !sysv && !coherent && !xenix && !xenixOld)
+            if(!sys7th && !sysv && !coherent && !xenix && !xenix3)
                 return;
 
             xmlFSType = new Schemas.FileSystemType();
 
-            if(xenix || xenixOld)
+            if(xenix || xenix3)
             {
                 byte[] xenix_strings = new byte[6];
                 XenixSuperBlock xnx_sb = new XenixSuperBlock();
                 sb_sector = imagePlugin.ReadSectors((ulong)start + partitionStart, sb_size_in_sectors);
 
-                if(xenixOld)
+                if(xenix3)
                 {
                     xnx_sb.s_isize = BigEndianBitConverter.ToUInt16(sb_sector, 0x000);
                     xnx_sb.s_fsize = BigEndianBitConverter.ToUInt32(sb_sector, 0x002);
                     xnx_sb.s_nfree = BigEndianBitConverter.ToUInt16(sb_sector, 0x006);
-                    xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x12C);
+                    xnx_sb.s_ninode = BigEndianBitConverter.ToUInt16(sb_sector, 0x0D0);
                     xnx_sb.s_flock = sb_sector[0x19A];
                     xnx_sb.s_ilock = sb_sector[0x19B];
                     xnx_sb.s_fmod = sb_sector[0x19C];
                     xnx_sb.s_ronly = sb_sector[0x19D];
-                    xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x19E);
+                    xnx_sb.s_time = BigEndianBitConverter.ToInt32(sb_sector, 0x19E);
                     xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1A2);
                     xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A6);
                     xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
@@ -329,7 +329,7 @@ namespace DiscImageChef.Filesystems
                     xnx_sb.s_ilock = sb_sector[0x263];
                     xnx_sb.s_fmod = sb_sector[0x264];
                     xnx_sb.s_ronly = sb_sector[0x265];
-                    xnx_sb.s_time = BigEndianBitConverter.ToUInt32(sb_sector, 0x266);
+                    xnx_sb.s_time = BigEndianBitConverter.ToInt32(sb_sector, 0x266);
                     xnx_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x26A);
                     xnx_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x26E);
                     xnx_sb.s_cylblks = BigEndianBitConverter.ToUInt16(sb_sector, 0x270);
@@ -394,10 +394,10 @@ namespace DiscImageChef.Filesystems
                     sb.AppendLine("Superblock is being modified");
                 if(xnx_sb.s_ronly > 0)
                     sb.AppendLine("Volume is mounted read-only");
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time)).AppendLine();
+                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UNIXToDateTime(xnx_sb.s_time)).AppendLine();
                 if(xnx_sb.s_time != 0)
                 {
-                    xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(xnx_sb.s_time);
+                    xmlFSType.ModificationDate = DateHandlers.UNIXToDateTime(xnx_sb.s_time);
                     xmlFSType.ModificationDateSpecified = true;
                 }
                 sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
@@ -675,46 +675,46 @@ namespace DiscImageChef.Filesystems
             // the start of the free block list:
             /// <summary>0x006, blocks in s_free, &lt;=100</summary>
             public ushort s_nfree;
-            /// <summary>0x008, 100 entries, first free block list chunk</summary>
+            /// <summary>0x008, 100 entries, 50 entries for Xenix 3, first free block list chunk</summary>
             public uint[] s_free;
             // the cache of free inodes:
-            /// <summary>0x198, number of inodes in s_inode, &lt;= 100</summary>
+            /// <summary>0x198 (0xD0), number of inodes in s_inode, &lt;= 100</summary>
             public ushort s_ninode;
-            /// <summary>0x19A, 100 entries, some free inodes</summary>
+            /// <summary>0x19A (0xD2), 100 entries, some free inodes</summary>
             public ushort[] s_inode;
-            /// <summary>0x262, free block list manipulation lock</summary>
+            /// <summary>0x262 (0x19A), free block list manipulation lock</summary>
             public byte s_flock;
-            /// <summary>0x263, inode cache manipulation lock</summary>
+            /// <summary>0x263 (0x19B), inode cache manipulation lock</summary>
             public byte s_ilock;
-            /// <summary>0x264, superblock modification flag</summary>
+            /// <summary>0x264 (0x19C), superblock modification flag</summary>
             public byte s_fmod;
-            /// <summary>0x265, read-only mounted flag</summary>
+            /// <summary>0x265 (0x19D), read-only mounted flag</summary>
             public byte s_ronly;
-            /// <summary>0x266, time of last superblock update</summary>
-            public uint s_time;
-            /// <summary>0x26A, total number of free zones</summary>
+            /// <summary>0x266 (0x19E), time of last superblock update</summary>
+            public int s_time;
+            /// <summary>0x26A (0x1A2), total number of free zones</summary>
             public uint s_tfree;
-            /// <summary>0x26E, total number of free inodes</summary>
+            /// <summary>0x26E (0x1A6), total number of free inodes</summary>
             public ushort s_tinode;
-            /// <summary>0x270, blocks per cylinder</summary>
+            /// <summary>0x270 (0x1A8), blocks per cylinder</summary>
             public ushort s_cylblks;
-            /// <summary>0x272, blocks per gap</summary>
+            /// <summary>0x272 (0x1AA), blocks per gap</summary>
             public ushort s_gapblks;
-            /// <summary>0x274, device information ??</summary>
+            /// <summary>0x274 (0x1AC), device information ??</summary>
             public ushort s_dinfo0;
-            /// <summary>0x276, device information ??</summary>
+            /// <summary>0x276 (0x1AE), device information ??</summary>
             public ushort s_dinfo1;
-            /// <summary>0x278, 6 bytes, volume name</summary>
+            /// <summary>0x278 (0x1B0), 6 bytes, volume name</summary>
             public string s_fname;
-            /// <summary>0x27E, 6 bytes, pack name</summary>
+            /// <summary>0x27E (0x1B6), 6 bytes, pack name</summary>
             public string s_fpack;
-            /// <summary>0x284, 0x46 if volume is clean</summary>
+            /// <summary>0x284 (0x1BC), 0x46 if volume is clean</summary>
             public byte s_clean;
-            /// <summary>0x285, 371 bytes</summary>
+            /// <summary>0x285 (0x1BD), 371 bytes, 51 bytes for Xenix 3</summary>
             public byte[] s_fill;
-            /// <summary>0x3F8, magic</summary>
+            /// <summary>0x3F8 (0x1F0), magic</summary>
             public uint s_magic;
-            /// <summary>0x3FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
+            /// <summary>0x3FC (0x1F4), filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
             public uint s_type;
         }
 
