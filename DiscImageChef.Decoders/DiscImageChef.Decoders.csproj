@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Decoders</RootNamespace>
     <AssemblyName>DiscImageChef.Decoders</AssemblyName>
-    <ReleaseVersion>3.2.1</ReleaseVersion>
+    <ReleaseVersion>3.2.99.1</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

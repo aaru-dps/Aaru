@@ -1,5 +1,10 @@
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.DiscImages.csproj: Public beta release
+	3.2.99.1.
+
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
 	* CopyQM.cs:
 	* DiscImageChef.DiscImages.csproj: Added support for Sydex
 	CopyQM disk image format.

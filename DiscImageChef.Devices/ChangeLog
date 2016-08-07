@@ -1,3 +1,7 @@
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Devices.csproj: Public beta release 3.2.99.1.
+
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
 	* AssemblyInfo.cs:
