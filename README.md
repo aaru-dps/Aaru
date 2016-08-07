@@ -43,6 +43,7 @@ Supported disk image formats
 * Virtual PC fixed size, dynamic size and differencing (undo) disk images
 * CDRDAO TOC sheets
 * Dreamcast GDI
+* CopyQM
 
 Supported partitioning schemes
 ==============================

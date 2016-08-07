@@ -46,6 +46,7 @@
     <Compile Include="CDRDAO.cs" />
     <Compile Include="GDI.cs" />
     <Compile Include="BLU.cs" />
+    <Compile Include="CopyQM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

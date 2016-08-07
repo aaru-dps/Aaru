@@ -150,6 +150,20 @@ namespace DiscImageChef
             DicConsole.DebugWriteLine("UCSDPascalToDateTime handler", "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month, day);
             return new DateTime(year, month, day);
         }
+
+        public static DateTime DOSToDateTime(ushort date, ushort time)
+        {
+            int year = ((date & 0xFE00) >> 9) + 1980;
+            int month = (date & 0x1E0) >> 5;
+            int day = date & 0x1F;
+            int hour = (time & 0xF800) >> 11;
+            int minute = (time & 0x7E0) >> 5;
+            int second = (time & 0x1F) * 2;
+
+            DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date, year, month, day);
+            DicConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute, second);
+            return new DateTime(year, month, day, hour, minute, second);
+        }
     }
 }
 

@@ -281,9 +281,9 @@ namespace DiscImageChef.CommonTypes
         #endregion IBM/Microsoft PC standard floppy formats
 
         #region Microsoft non standard floppy formats
-        /// <summary>3.5", DS, DD, 80 tracks, 21 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3.5", DS, HD, 80 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF,
-        /// <summary>3.5", DS, DD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3.5", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
         DMF_82,
         #endregion Microsoft non standard floppy formats
 

@@ -1,3 +1,11 @@
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
+	* CopyQM.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for Sydex
+	CopyQM disk image format.
+
+	* DiskCopy42.cs: Misplacement of XML media type setting.
+
 2016-08-02  Natalia Portillo  <claunia@claunia.com>
 
 	* BLU.cs:
