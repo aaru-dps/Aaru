@@ -1,3 +1,7 @@
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
+	* DateHandlers.cs: Added DOS to C# date converter.
+
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
 
 	* AssemblyInfo.cs:
