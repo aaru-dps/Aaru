@@ -1,5 +1,10 @@
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.CommonTypes.csproj: Public beta release
+	3.2.99.1.
+
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
 	* MediaType.cs: Corrected typo.
 
 2016-08-02  Natalia Portillo  <claunia@claunia.com>
