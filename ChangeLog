@@ -1,5 +1,9 @@
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Helpers.csproj: Public beta release 3.2.99.1.
+
+2016-08-07  Natalia Portillo  <claunia@claunia.com>
+
 	* DateHandlers.cs: Added DOS to C# date converter.
 
 2016-08-01  Natalia Portillo  <claunia@claunia.com>
