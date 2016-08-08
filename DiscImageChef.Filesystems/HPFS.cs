@@ -53,7 +53,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= partitionEnd)
                 return false;
 
             if(imagePlugin.ImageInfo.sectors <= 16)

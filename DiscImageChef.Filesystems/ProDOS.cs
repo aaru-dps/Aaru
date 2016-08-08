@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if(imagePlugin.GetSectors() < 3)
+            if(partitionEnd < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
@@ -115,11 +115,11 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             ushort bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
-            if(bit_map_pointer > imagePlugin.GetSectors())
+            if(bit_map_pointer > partitionEnd)
                 return false;
 
             ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
-            return total_blocks <= imagePlugin.GetSectors();
+            return total_blocks <= (partitionEnd - partitionStart);
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)

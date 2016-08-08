@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if(partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= partitionEnd)
                 return false;
 
             byte[] sector = imagePlugin.ReadSector(partitionStart);
@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             information = "";
 
-            if(partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= partitionEnd)
                 return;
 
             byte[] sector = imagePlugin.ReadSector(partitionStart);

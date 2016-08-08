@@ -571,7 +571,7 @@ namespace DiscImageChef.ImagePlugins
 
                         ulong startSectors = 0;
 
-                        if(MatchFile.Groups["start"].Value != "")
+                        if(MatchAudioFile.Groups["start"].Value != "")
                         {
                             string[] startString = MatchAudioFile.Groups["start"].Value.Split(new char[] { ':' });
                             startSectors = ulong.Parse(startString[0]) * 60 * 75 + ulong.Parse(startString[1]) * 75 + ulong.Parse(startString[2]);
@@ -579,7 +579,7 @@ namespace DiscImageChef.ImagePlugins
 
                         currenttrack.trackfile.offset += (startSectors * currenttrack.bps);
 
-                        if(MatchFile.Groups["length"].Value != "")
+                        if(MatchAudioFile.Groups["length"].Value != "")
                         {
                             string[] lengthString = MatchAudioFile.Groups["length"].Value.Split(new char[] { ':' });
                             currenttrack.sectors = ulong.Parse(lengthString[0]) * 60 * 75 + ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);

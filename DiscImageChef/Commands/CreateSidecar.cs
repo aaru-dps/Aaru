@@ -99,6 +99,9 @@ namespace DiscImageChef.Commands
 
                 Core.Checksum imgChkWorker = new Core.Checksum();
 
+                // For fast debugging, skip checksum
+                //goto skipImageChecksum;
+
                 byte[] data;
                 long position = 0;
                 while(position < (fi.Length - 1048576))
@@ -119,6 +122,9 @@ namespace DiscImageChef.Commands
                 DicConsole.Write("\rHashing image file byte {0} of {1}", position, fi.Length);
 
                 imgChkWorker.Update(data);
+
+                // For fast debugging, skip checksum
+                //skipImageChecksum:
 
                 DicConsole.WriteLine();
                 fs.Close();
@@ -365,6 +371,13 @@ namespace DiscImageChef.Commands
                                 xmlTrk.Sequence.TrackNumber = (int)trk.TrackSequence;
                                 xmlTrk.StartSector = (long)trk.TrackStartSector;
                                 xmlTrk.EndSector = (long)trk.TrackEndSector;
+
+                                if(trk.Indexes.ContainsKey(0))
+                                {
+                                    ulong idx0;
+                                    if(trk.Indexes.TryGetValue(0, out idx0))
+                                        xmlTrk.StartSector = (long)idx0;
+                                }
 
                                 if(sidecar.OpticalDisc[0].DiscType == "CD" ||
                                     sidecar.OpticalDisc[0].DiscType == "GD")

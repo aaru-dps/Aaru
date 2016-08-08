@@ -824,6 +824,10 @@ namespace DiscImageChef.ImagePlugins
             /// Any HD DVD
             /// </summary>
             NERO_MTYP_HD_DVD_ANY = NERO_MTYP_HD_DVD | NERO_MTYP_HD_DVD_ROM,
+            /// <summary>
+            /// Any DVD, old
+            /// </summary>
+            NERO_MTYP_DVD_ANY_OLD = NERO_MTYP_DVD_M | NERO_MTYP_DVD_P | NERO_MTYP_DVD_RAM,
         }
 
         #endregion
@@ -1119,6 +1123,8 @@ namespace DiscImageChef.ImagePlugins
                                         ImageInfo.sectorSize = _entry.SectorSize;
 
                                     TrackISRCs.Add(currenttrack, _entry.ISRC);
+                                    if(currenttrack == 1)
+                                        _entry.Index0 = _entry.Index1;
 
                                     NeroTrack _neroTrack = new NeroTrack();
                                     _neroTrack.EndOfTrack = _entry.EndOfTrack;
@@ -1202,6 +1208,9 @@ namespace DiscImageChef.ImagePlugins
                                         ImageInfo.sectorSize = _entry.SectorSize;
 
                                     TrackISRCs.Add(currenttrack, _entry.ISRC);
+
+                                    if(currenttrack == 1)
+                                        _entry.Index0 = _entry.Index1;
 
                                     NeroTrack _neroTrack = new NeroTrack();
                                     _neroTrack.EndOfTrack = _entry.EndOfTrack;
@@ -1507,6 +1516,7 @@ namespace DiscImageChef.ImagePlugins
                 uint currentsessioncurrenttrack = 1;
                 Session currentsessionstruct = new Session();
                 ulong PartitionSequence = 0;
+                ulong partitionStartByte = 0;
                 for(uint i = 1; i <= neroTracks.Count; i++)
                 {
                     NeroTrack _neroTrack;
@@ -1517,19 +1527,21 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}", currentsessioncurrenttrack);
 
                         Track _track = new Track();
+                        if(_neroTrack.Sequence == 1)
+                            _neroTrack.Index0 = _neroTrack.Index1;
+
                         _track.Indexes = new Dictionary<int, ulong>();
                         if(_neroTrack.Index0 < _neroTrack.Index1)
                             _track.Indexes.Add(0, _neroTrack.Index0 / _neroTrack.SectorSize);
                         _track.Indexes.Add(1, _neroTrack.Index1 / _neroTrack.SectorSize);
                         _track.TrackDescription = StringHandlers.CToString(_neroTrack.ISRC);
-                        _track.TrackEndSector = (_neroTrack.EndOfTrack / _neroTrack.SectorSize) - 1;
+                        _track.TrackEndSector = (_neroTrack.Length / _neroTrack.SectorSize) + _neroTrack.StartLBA - 1;
                         _track.TrackPregap = (_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize;
                         _track.TrackSequence = _neroTrack.Sequence;
                         _track.TrackSession = currentsession;
                         _track.TrackStartSector = _neroTrack.StartLBA;
                         _track.TrackType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode);
-                        imageTracks.Add(_track);
-                        _track.TrackFile = _imagePath;
+                        _track.TrackFile = imagePath;
                         _track.TrackFileOffset = _neroTrack.Offset;
                         _track.TrackFileType = "BINARY";
                         _track.TrackSubchannelType = TrackSubchannelType.None;
@@ -1579,6 +1591,8 @@ namespace DiscImageChef.ImagePlugins
                             _track.TrackSubchannelOffset = _neroTrack.Offset;
                         }
 
+                        imageTracks.Add(_track);
+
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}", _track.TrackDescription);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}", _track.TrackEndSector);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", _track.TrackPregap);
@@ -1605,12 +1619,21 @@ namespace DiscImageChef.ImagePlugins
                             imageSessions.Add(currentsessionstruct);
                         }
 
+                        if(i == neroTracks.Count)
+                        {
+                            neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
+                            currentsessioncurrenttrack = 1;
+                            currentsessionstruct.EndTrack = _track.TrackSequence;
+                            currentsessionstruct.EndSector = _track.TrackEndSector;
+                            imageSessions.Add(currentsessionstruct);
+                        }
+
                         offsetmap.Add(_track.TrackSequence, _track.TrackStartSector);
                         DicConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", _track.TrackSequence, _track.TrackStartSector);
 
                         Partition partition;
 
-                        if(_neroTrack.Index0 < _neroTrack.Index1)
+                        /*if(_neroTrack.Index0 < _neroTrack.Index1)
                         {
                             partition = new Partition();
                             partition.PartitionDescription = string.Format("Track {0} Index 0", _track.TrackSequence);
@@ -1623,7 +1646,7 @@ namespace DiscImageChef.ImagePlugins
                             partition.PartitionType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode).ToString();
                             ImagePartitions.Add(partition);
                             PartitionSequence++;
-                        }
+                        }*/
 
                         partition = new Partition();
                         partition.PartitionDescription = string.Format("Track {0} Index 1", _track.TrackSequence);
@@ -1631,16 +1654,63 @@ namespace DiscImageChef.ImagePlugins
                         partition.PartitionName = StringHandlers.CToString(_neroTrack.ISRC);
                         partition.PartitionSectors = partition.PartitionLength / _neroTrack.SectorSize;
                         partition.PartitionSequence = PartitionSequence;
-                        partition.PartitionStart = _neroTrack.Index1;
+                        partition.PartitionStart = partitionStartByte;
                         partition.PartitionStartSector = _neroTrack.StartLBA + ((_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize);
                         partition.PartitionType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode).ToString();
                         ImagePartitions.Add(partition);
                         PartitionSequence++;
+                        partitionStartByte += partition.PartitionLength;
                     }
                 }
 
                 _imagePath = imagePath;
                 imageStream.Close();
+
+                if(ImageInfo.mediaType == MediaType.Unknown || ImageInfo.mediaType == MediaType.CD)
+                {
+                    bool data = false;
+                    bool mode2 = false;
+                    bool firstaudio = false;
+                    bool firstdata = false;
+                    bool audio = false;
+
+                    for(uint i = 0; i < neroTracks.Count; i++)
+                    {
+                        // First track is audio
+                        firstaudio |= i == 0 && ((DAOMode)neroTracks[i].Mode == DAOMode.Audio || (DAOMode)neroTracks[i].Mode == DAOMode.AudioSub);
+
+                        // First track is data
+                        firstdata |= i == 0 && ((DAOMode)neroTracks[i].Mode != DAOMode.Audio && (DAOMode)neroTracks[i].Mode != DAOMode.AudioSub);
+
+                        // Any non first track is data
+                        data |= i != 0 && ((DAOMode)neroTracks[i].Mode != DAOMode.Audio && (DAOMode)neroTracks[i].Mode != DAOMode.AudioSub);
+
+                        // Any non first track is audio
+                        audio |= i != 0 && ((DAOMode)neroTracks[i].Mode == DAOMode.Audio || (DAOMode)neroTracks[i].Mode == DAOMode.AudioSub);
+
+                        switch((DAOMode)neroTracks[i].Mode)
+                        {
+                            case DAOMode.DataM2F1:
+                            case DAOMode.DataM2F2:
+                            case DAOMode.DataM2Raw:
+                            case DAOMode.DataM2RawSub:
+                                mode2 = true;
+                                break;
+                        }
+                    }
+
+                    if(!data && !firstdata)
+                        ImageInfo.mediaType = MediaType.CDDA;
+                    else if(firstaudio && data && imageSessions.Count > 1 && mode2)
+                        ImageInfo.mediaType = MediaType.CDPLUS;
+                    else if((firstdata && audio) || mode2)
+                        ImageInfo.mediaType = MediaType.CDROMXA;
+                    else if(!audio)
+                        ImageInfo.mediaType = MediaType.CDROM;
+                    else
+                        ImageInfo.mediaType = MediaType.CD;
+                }
+
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
@@ -1754,7 +1824,7 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -1793,9 +1863,9 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case DAOMode.DataM2Raw:
                     {
-                        sector_offset = 24;
-                        sector_size = 2324;
-                        sector_skip = 4;
+                        sector_offset = 16;
+                        sector_size = 2336;
+                        sector_skip = 0;
                         break;
                     }
                 // TODO: Supposing Nero suffixes the subchannel to the channel
@@ -1808,9 +1878,9 @@ namespace DiscImageChef.ImagePlugins
                     }
                 case DAOMode.DataM2RawSub:
                     {
-                        sector_offset = 24;
-                        sector_size = 2324;
-                        sector_skip = 4 + 96;
+                        sector_offset = 16;
+                        sector_size = 2336;
+                        sector_skip = 96;
                         break;
                     }
                 case DAOMode.AudioSub:
@@ -1857,7 +1927,7 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -2123,7 +2193,7 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > _track.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than present in track, won't cross tracks");
+                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0}) than present in track ({1}), won't cross tracks", length, _track.Sectors));
 
             uint sector_offset;
             uint sector_size;
@@ -2368,6 +2438,9 @@ namespace DiscImageChef.ImagePlugins
                 case NeroMediaTypes.NERO_MTYP_CDR:
                     return MediaType.CDR;
                 case NeroMediaTypes.NERO_MTYP_DVD_ROM:
+                case NeroMediaTypes.NERO_MTYP_DVD_ANY:
+                case NeroMediaTypes.NERO_MTYP_DVD_ANY_R9:
+                case NeroMediaTypes.NERO_MTYP_DVD_ANY_OLD:
                     return MediaType.DVDROM;
                 case NeroMediaTypes.NERO_MTYP_CDROM:
                     return MediaType.CDROM;
@@ -2451,62 +2524,62 @@ namespace DiscImageChef.ImagePlugins
 
         public override int GetMediaSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.mediaSequence;
         }
 
         public override int GetLastDiskSequence()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.lastMediaSequence;
         }
 
         public override string GetDriveManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.driveManufacturer;
         }
 
         public override string GetDriveModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.driveModel;
         }
 
         public override string GetDriveSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.driveSerialNumber;
         }
 
         public override string GetMediaPartNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.mediaPartNumber;
         }
 
         public override string GetMediaManufacturer()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.mediaManufacturer;
         }
 
         public override string GetMediaModel()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.mediaModel;
         }
 
         public override string GetImageName()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.imageName;
         }
 
         public override string GetImageCreator()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.imageCreator;
         }
 
         public override string GetImageComments()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.imageComments;
         }
 
         public override string GetMediaSerialNumber()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            return ImageInfo.mediaSerialNumber;
         }
 
         #endregion

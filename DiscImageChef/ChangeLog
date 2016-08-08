@@ -1,3 +1,9 @@
+2016-08-08  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/CreateSidecar.cs:
+	  Added points for skipping whole image checksum on debugging.
+	Track starts at index 0.
+
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.csproj:

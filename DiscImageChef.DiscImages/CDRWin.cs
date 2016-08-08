@@ -326,19 +326,22 @@ namespace DiscImageChef.ImagePlugins
                     Regex Rr = new Regex(CommentRegEx);
                     Regex Cr = new Regex(MCNRegEx);
                     Regex Fr = new Regex(FileRegEx);
+                    Regex Tr = new Regex(CDTextRegEx);
 
                     Match Sm;
                     Match Rm;
                     Match Cm;
                     Match Fm;
+                    Match Tm;
 
-                    // First line must be SESSION, REM, CATALOG or FILE.
+                    // First line must be SESSION, REM, CATALOG,  FILE or CDTEXTFILE.
                     Sm = Sr.Match(_line);
                     Rm = Rr.Match(_line);
                     Cm = Cr.Match(_line);
                     Fm = Fr.Match(_line);
+                    Tm = Tr.Match(_line);
 
-                    if(!Sm.Success && !Rm.Success && !Cm.Success && !Fm.Success)
+                    if(!Sm.Success && !Rm.Success && !Cm.Success && !Fm.Success && !Tm.Success)
                         return false;
                     return true;
                 }
@@ -1062,7 +1065,7 @@ namespace DiscImageChef.ImagePlugins
 
                     Partition partition = new Partition();
 
-                    if(discimage.tracks[i].pregap > 0)
+                    /*if(discimage.tracks[i].pregap > 0)
                     {
                         partition.PartitionDescription = string.Format("Track {0} pregap.", discimage.tracks[i].sequence);
                         partition.PartitionName = discimage.tracks[i].title;
@@ -1093,14 +1096,14 @@ namespace DiscImageChef.ImagePlugins
 
                         partitions.Add(partition);
                         partition = new Partition();
-                    }
+                    }*/
 
                     index_zero |= discimage.tracks[i].indexes.TryGetValue(0, out index_zero_offset);
 
                     if(!discimage.tracks[i].indexes.TryGetValue(1, out index_one_offset))
                         throw new ImageNotSupportedException(string.Format("Track {0} lacks index 01", discimage.tracks[i].sequence));
 
-                    if(index_zero && index_one_offset > index_zero_offset)
+                    /*if(index_zero && index_one_offset > index_zero_offset)
                     {
                         partition.PartitionDescription = string.Format("Track {0} index 00.", discimage.tracks[i].sequence);
                         partition.PartitionName = discimage.tracks[i].title;
@@ -1132,7 +1135,7 @@ namespace DiscImageChef.ImagePlugins
 
                         partitions.Add(partition);
                         partition = new Partition();
-                    }
+                    }*/
 
                     // Index 01
                     partition.PartitionDescription = string.Format("Track {0}.", discimage.tracks[i].sequence);

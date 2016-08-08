@@ -184,7 +184,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if(partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= partitionEnd)
                 return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -204,7 +204,7 @@ namespace DiscImageChef.Filesystems
 
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
 
-            if(root_ptr >= imagePlugin.GetSectors())
+            if(root_ptr >= partitionEnd)
                 return false;
 
             sector = imagePlugin.ReadSector(root_ptr);

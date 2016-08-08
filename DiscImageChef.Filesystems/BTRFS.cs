@@ -120,13 +120,13 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if(partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= partitionEnd)
                 return false;
 
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            if((sbSectorOff + sbSectorSize) >= imagePlugin.GetSectors())
+            if((sbSectorOff + sbSectorSize) >= partitionEnd)
                 return false;
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partitionStart, sbSectorSize);

@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= partitionEnd)
                 return false;
 
             uint magic;
@@ -103,7 +103,7 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if(imagePlugin.GetSectors() <= (partitionStart + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
+            if(partitionEnd <= (partitionStart + 4 * (ulong)sb_size_in_sectors + sb_size_in_sectors)) // Device must be bigger than SB location + SB size + offset
                 return false;
 
             // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
@@ -157,7 +157,7 @@ namespace DiscImageChef.Filesystems
                     {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if((s_fsize * 1024) == ((partitionEnd - partitionStart) * imagePlugin.GetSectorSize()) || (s_fsize * 512) == ((partitionEnd - partitionStart) * imagePlugin.GetSectorSize()))
                                 return true;
                         }
                     }
@@ -273,7 +273,7 @@ namespace DiscImageChef.Filesystems
                     {
                         if(s_fsize < V7_MAXSIZE && s_nfree < V7_NICFREE && s_ninode < V7_NICINOD)
                         {
-                            if((s_fsize * 1024) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()) || (s_fsize * 512) == (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
+                            if((s_fsize * 1024) == ((partitionEnd - partitionStart) * imagePlugin.GetSectorSize()) || (s_fsize * 512) == ((partitionEnd - partitionStart) * imagePlugin.GetSectorSize()))
                             {
                                 sys7th = true;
                                 BigEndianBitConverter.IsLittleEndian = true;

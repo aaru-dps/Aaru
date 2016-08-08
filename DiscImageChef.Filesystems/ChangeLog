@@ -1,3 +1,29 @@
+2016-08-08  Natalia Portillo  <claunia@claunia.com>
+
+	* FFS.cs:
+	* BFS.cs:
+	* ODS.cs:
+	* FAT.cs:
+	* APFS.cs:
+	* NTFS.cs:
+	* SysV.cs:
+	* HPFS.cs:
+	* Opera.cs:
+	* Acorn.cs:
+	* extFS.cs:
+	* BTRFS.cs:
+	* ext2FS.cs:
+	* ProDOS.cs:
+	* SolarFS.cs:
+	* UNIXBFS.cs:
+	* ISO9660.cs:
+	* MinixFS.cs:
+	* AmigaDOS.cs:
+	* PCEngine.cs:
+	* AppleHFS.cs:
+	* AppleHFSPlus.cs:
+	* Info.cs: Do not try to read past partition end.
+
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Filesystems.csproj: Public beta release

@@ -55,7 +55,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= partitionEnd)
                 return false;
 
             byte media_descriptor; // Not present on DOS <= 3, present on TOS but != of first FAT entry
@@ -78,7 +78,7 @@ namespace DiscImageChef.Filesystems
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if(rsectors == 0)
                 rsectors = 1;
-            if(imagePlugin.GetSectors() > (rsectors + partitionStart))
+            if(partitionEnd > (rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
                 bpb_found = false;
@@ -200,7 +200,7 @@ namespace DiscImageChef.Filesystems
             rsectors = BitConverter.ToUInt16(bpb_sector, 0x00E); // Sectors between BPB and FAT, including the BPB sector => [BPB,FAT) 
             if(rsectors == 0)
                 rsectors = 1;
-            if(imagePlugin.GetSectors() > (rsectors + partitionStart))
+            if(partitionEnd > (rsectors + partitionStart))
                 fat_sector = imagePlugin.ReadSector(rsectors + partitionStart); // First FAT entry
             else
                 bpb_found = false;

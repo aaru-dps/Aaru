@@ -1,3 +1,25 @@
+2016-08-08  Natalia Portillo  <claunia@claunia.com>
+
+	* CDRDAO.cs: Corrected typo on audio track matching.
+
+	* CDRWin.cs: Corrected detection of images with CD-Text.
+	Do not output partitions for index 0.
+
+
+	* CopyQM.cs: Do not create debug image output.
+
+	* Nero.cs: Added type for any dvd seen on old Nero version.
+	Corrected handling of images where pregap is not indicated
+	(nonetheless, Nero stores them).
+	Corrected handling of track 1 (Lead-In is stored there).
+	Corrected session count in discs with 1 session.
+	Do not add partitions of index 0.
+	Corrected partition start offset of disc start.
+	Guess disc type for old Nero discs.
+	Corrected output of Mode2 sectors stored in RAW mode.
+	Do not throw exceptions on values that should be returned
+	empty or null if not supported by image format.
+
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.DiscImages.csproj: Public beta release

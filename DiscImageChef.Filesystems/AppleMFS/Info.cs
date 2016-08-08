@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             ushort drSigWord;
 
-            if((2 + partitionStart) >= imagePlugin.GetSectors())
+            if((2 + partitionStart) >= partitionEnd)
                 return false;
 
             byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);

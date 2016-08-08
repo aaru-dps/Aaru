@@ -90,7 +90,7 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if(imagePlugin.GetSectors() <= (16 + partitionStart))
+            if(partitionEnd <= (16 + partitionStart))
                 return false;
 
             // Read to Volume Descriptor
@@ -157,7 +157,7 @@ namespace DiscImageChef.Filesystems
                 return;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if(imagePlugin.GetSectors() < 16)
+            if(partitionEnd < 16)
                 return;
 
             ulong counter = 0;
@@ -287,7 +287,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partitionStart, i + partitionStart);
 
             // TODO: Check this
-            if((i + partitionStart) < imagePlugin.GetSectors())
+            if((i + partitionStart) < partitionEnd)
             {
 
                 byte[] path_table = imagePlugin.ReadSector(i + partitionStart);

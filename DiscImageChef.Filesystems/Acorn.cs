@@ -87,7 +87,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
-            if(partitionStart >= imagePlugin.GetSectors())
+            if(partitionStart >= partitionEnd)
                 return false;
 
             ulong sbSector;
