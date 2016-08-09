@@ -1,3 +1,8 @@
+2016-08-09  Natalia Portillo  <claunia@claunia.com>
+
+	* CDRWin.cs: Corrected return of CD+G data, should return all
+	2448 bytes.
+
 2016-08-08  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRDAO.cs: Corrected typo on audio track matching.

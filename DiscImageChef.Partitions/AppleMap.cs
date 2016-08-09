@@ -142,7 +142,11 @@ namespace DiscImageChef.PartPlugins
             for(ulong i = 0; i < apm_entries; i++) // For each partition
             {
                 if(APMFromHDDOnCD)
-                    APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
+                {
+                    return false;
+                    // TODO This needs several retesting
+                    // APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
+                }
                 else
                     APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
 

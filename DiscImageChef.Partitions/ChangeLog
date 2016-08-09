@@ -1,3 +1,9 @@
+2016-08-09  Natalia Portillo  <claunia@claunia.com>
+
+	* AppleMap.cs: Do not continue checking APM on CDs with
+	incorrect sector size. It is buggy and needs a lot of
+	retesting.
+
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Partitions.csproj: Public beta release

@@ -1802,8 +1802,8 @@ namespace DiscImageChef.ImagePlugins
                 case CDRWinTrackTypeCDG:
                     {
                         sector_offset = 0;
-                        sector_size = 2352;
-                        sector_skip = 96;
+                        sector_size = 2448;
+                        sector_skip = 0;
                         break;
                     }
                 default:
