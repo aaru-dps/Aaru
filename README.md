@@ -44,6 +44,7 @@ Supported disk image formats
 * CDRDAO TOC sheets
 * Dreamcast GDI
 * CopyQM
+* Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
 
 Supported partitioning schemes
 ==============================

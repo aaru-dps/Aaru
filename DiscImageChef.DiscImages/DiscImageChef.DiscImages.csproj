@@ -47,6 +47,7 @@
     <Compile Include="GDI.cs" />
     <Compile Include="BLU.cs" />
     <Compile Include="CopyQM.cs" />
+    <Compile Include="Alcohol120.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -65,6 +66,10 @@
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
+      <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
