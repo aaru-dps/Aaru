@@ -1,5 +1,9 @@
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.DiscImages.csproj: Bumped version to 3.2.99.2.
+
+2016-08-09  Natalia Portillo  <claunia@claunia.com>
+
 	* Alcohol120.cs:
 	* DiscImageChef.DiscImages.csproj: Added support for Alcohol
 	120% Media Descriptor Structure disk images (.mds/.mdf).

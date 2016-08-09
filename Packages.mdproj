@@ -93,6 +93,6 @@
         </Package>
       </Packages>
     </Packages>
-    <ReleaseVersion>3.2.99.1</ReleaseVersion>
+    <ReleaseVersion>3.2.99.2</ReleaseVersion>
   </PropertyGroup>
 </Project>

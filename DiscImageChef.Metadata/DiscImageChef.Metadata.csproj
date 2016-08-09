@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Metadata</RootNamespace>
     <AssemblyName>DiscImageChef.Metadata</AssemblyName>
-    <ReleaseVersion>3.2.99.1</ReleaseVersion>
+    <ReleaseVersion>3.2.99.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
