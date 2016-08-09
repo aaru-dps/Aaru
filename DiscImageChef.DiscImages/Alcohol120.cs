@@ -390,7 +390,7 @@ namespace DiscImageChef.ImagePlugins
                     filename = new byte[stream.Length - stream.Position];
                 else
                     filename = new byte[header.dpmOffset - stream.Position];
-                
+
                 stream.Read(filename, 0, filename.Length);
                 if(alcFooter.widechar == 1)
                     alcImage = Encoding.Unicode.GetString(filename);
@@ -402,7 +402,7 @@ namespace DiscImageChef.ImagePlugins
 
             if(alcFooter.filenameOffset == 0 || string.Compare(alcImage, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
                 alcImage = Path.GetFileNameWithoutExtension(imagePath) + ".mdf";
- 
+
             if(header.bcaLength > 0 && header.bcaOffset > 0 && isDvd)
             {
                 bca = new byte[header.bcaLength];
@@ -769,6 +769,22 @@ namespace DiscImageChef.ImagePlugins
                             return (byte[])bca.Clone();
                         }
                         throw new FeatureNotPresentImageException("Image does not contain BCA information.");
+                    }
+                case MediaTagType.DVD_PFI:
+                    {
+                        if(pfi != null)
+                        {
+                            return (byte[])pfi.Clone();
+                        }
+                        throw new FeatureNotPresentImageException("Image does not contain PFI.");
+                    }
+                case MediaTagType.DVD_DMI:
+                    {
+                        if(dmi != null)
+                        {
+                            return (byte[])dmi.Clone();
+                        }
+                        throw new FeatureNotPresentImageException("Image does not contain DMI.");
                     }
                 case MediaTagType.CD_FullTOC:
                     {
