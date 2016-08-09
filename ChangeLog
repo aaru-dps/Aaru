@@ -1,3 +1,7 @@
+2016-08-09  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Decoders.csproj: Bumped version to 3.2.99.2.
+
 2016-08-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Decoders.csproj: Public beta release 3.2.99.1.
