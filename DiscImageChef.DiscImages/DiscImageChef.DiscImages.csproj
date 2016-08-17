@@ -48,6 +48,7 @@
     <Compile Include="BLU.cs" />
     <Compile Include="CopyQM.cs" />
     <Compile Include="Alcohol120.cs" />
+    <Compile Include="BlindWrite4.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -45,6 +45,7 @@ Supported disk image formats
 * Dreamcast GDI
 * CopyQM
 * Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
+* BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
 
 Supported partitioning schemes
 ==============================

@@ -1,5 +1,11 @@
 2016-08-17  Natalia Portillo  <claunia@claunia.com>
 
+	* BlindWrite4.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for
+	BlindWrite 4 disc images.
+
+2016-08-17  Natalia Portillo  <claunia@claunia.com>
+
 	* Alcohol120.cs: Corrected disc type calculation.
 
 	* Nero.cs: Corrected debug output.
