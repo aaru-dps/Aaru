@@ -1,5 +1,4 @@
 ﻿Disc image plugins:
---- Add support for BlindWrite images
 --- Add support for CloneCD images
 --- Add support for DiscJuggler images
 --- Add support for dump(8) images

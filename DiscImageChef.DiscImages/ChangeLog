@@ -1,5 +1,11 @@
 2016-08-18  Natalia Portillo  <claunia@claunia.com>
 
+	* BlindWrite5.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for
+	BlindWrite 5 format, this closes #58.
+
+2016-08-18  Natalia Portillo  <claunia@claunia.com>
+
 	* BLU.cs:
 	* GDI.cs:
 	* VHD.cs:

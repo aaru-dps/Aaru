@@ -46,6 +46,7 @@ Supported disk image formats
 * CopyQM
 * Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
+* BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
 
 Supported partitioning schemes
 ==============================
