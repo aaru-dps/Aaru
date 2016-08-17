@@ -219,6 +219,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
             ADiskCRCHasFailed = false;
             SectorsWhereCRCHasFailed = new List<ulong>();
         }

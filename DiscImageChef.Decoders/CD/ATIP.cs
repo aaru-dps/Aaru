@@ -426,285 +426,7 @@ namespace DiscImageChef.Decoders.CD
                         sb.AppendLine("Disc uses short strategy type dye (Phthalocyanine, etc...)");
                 }
 
-                switch(response.LeadInStartSec)
-                {
-                    case 15:
-                        if(frm == 00)
-                            manufacturer = "TDK Corporation";
-                        if(frm == 10)
-                            manufacturer = "Ritek Co.";
-                        if(frm == 20)
-                            manufacturer = "Mitsubishi Chemical Corporation";
-                        if(frm == 30)
-                            manufacturer = "NAN-YA Plastics Corporation";
-                        break;
-                    case 16:
-                        if(frm == 20)
-                            manufacturer = "Shenzen SG&Gast Digital Optical Discs";
-                        if(frm == 30)
-                            manufacturer = "Grand Advance Technology Ltd.";
-                        break;
-                    case 17:
-                        if(frm == 00)
-                            manufacturer = "Moser Baer India Limited";
-                        break;
-                    case 18:
-                        if(frm == 10)
-                            manufacturer = "Wealth Fair Investment Ltd.";
-                        if(frm == 60)
-                            manufacturer = "Taroko International Co. Ltd.";
-                        break;
-                    case 20:
-                        if(frm == 10)
-                            manufacturer = "CDA Datenträger Albrechts GmbH";
-                        break;
-                    case 21:
-                        if(frm == 10)
-                            manufacturer = "Grupo Condor S.L.";
-                        if(frm == 30)
-                            manufacturer = "Bestdisc Technology Corporation";
-                        if(frm == 40)
-                            manufacturer = "Optical Disc Manufacturing Equipment";
-                        if(frm == 50)
-                            manufacturer = "Sound Sound Multi-Media Development Ltd.";
-                        break;
-                    case 22:
-                        if(frm == 00)
-                            manufacturer = "Woongjin Media Corp.";
-                        if(frm == 10)
-                            manufacturer = "Seantram Technology Inc.";
-                        if(frm == 20)
-                            manufacturer = "Advanced Digital Media";
-                        if(frm == 30)
-                            manufacturer = "EXIMPO";
-                        if(frm == 40)
-                            manufacturer = "CIS Technology Inc.";
-                        if(frm == 50)
-                            manufacturer = "Hong Kong Digital Technology Co., Ltd.";
-                        if(frm == 60)
-                            manufacturer = "Acer Media Technology, Inc.";
-                        break;
-                    case 23:
-                        if(frm == 00)
-                            manufacturer = "Matsushita Electric Industrial Co., Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Doremi Media Co., Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Nacar Media s.r.l.";
-                        if(frm == 30)
-                            manufacturer = "Audio Distributors Co., Ltd.";
-                        if(frm == 40)
-                            manufacturer = "Victor Company of Japan, Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Optrom Inc.";
-                        if(frm == 60)
-                            manufacturer = "Customer Pressing Oosterhout";
-                        break;
-                    case 24:
-                        if(frm == 00)
-                            manufacturer = "Taiyo Yuden Company Ltd.";
-                        if(frm == 10)
-                            manufacturer = "SONY Corporation";
-                        if(frm == 20)
-                            manufacturer = "Computer Support Italy s.r.l.";
-                        if(frm == 30)
-                            manufacturer = "Unitech Japan Inc.";
-                        if(frm == 40)
-                            manufacturer = "kdg mediatech AG";
-                        if(frm == 50)
-                            manufacturer = "Guann Yinn Co., Ltd.";
-                        if(frm == 60)
-                            manufacturer = "Harmonic Hall Optical Disc Ltd.";
-                        break;
-                    case 25:
-                        if(frm == 00)
-                            manufacturer = "MPO";
-                        if(frm == 20)
-                            manufacturer = "Hitachi Maxell, Ltd.";
-                        if(frm == 30)
-                            manufacturer = "Infodisc Technology Co. Ltd.";
-                        if(frm == 40)
-                            manufacturer = "Vivastar AG";
-                        if(frm == 50)
-                            manufacturer = "AMS Technology Inc.";
-                        if(frm == 60)
-                            manufacturer = "Xcitec Inc.";
-                        break;
-                    case 26:
-                        if(frm == 00)
-                            manufacturer = "Fornet International Pte Ltd.";
-                        if(frm == 10)
-                            manufacturer = "POSTECH Corporation";
-                        if(frm == 20)
-                            manufacturer = "SKC Co., Ltd.";
-                        if(frm == 30)
-                            manufacturer = "Optical Disc Corporation";
-                        if(frm == 40)
-                            manufacturer = "FUJI Photo Film Co., Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Lead Data Inc.";
-                        if(frm == 60)
-                            manufacturer = "CMC Magnetics Corporation";
-                        break;
-                    case 27:
-                        if(frm == 00)
-                            manufacturer = "Digital Storage Technology Co., Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Plasmon Data systems Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Princo Corporation";
-                        if(frm == 30)
-                            manufacturer = "Pioneer Video Corporation";
-                        if(frm == 40)
-                            manufacturer = "Kodak Japan Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Mitsui Chemicals, Inc.";
-                        if(frm == 60)
-                            manufacturer = "Ricoh Company Ltd.";
-                        break;
-                    case 28:
-                        if(frm == 00)
-                            manufacturer = "Opti.Me.S. S.p.A.";
-                        if(frm == 10)
-                            manufacturer = "Gigastore Corporation";
-                        if(frm == 20)
-                            manufacturer = "Multi Media Masters & Machinary SA";
-                        if(frm == 30)
-                            manufacturer = "Auvistar Industry Co., Ltd.";
-                        if(frm == 40)
-                            manufacturer = "King Pro Mediatek Inc.";
-                        if(frm == 50)
-                            manufacturer = "Delphi Technology Inc.";
-                        if(frm == 60)
-                            manufacturer = "Friendly CD-Tek Co.";
-                        break;
-                    case 29:
-                        if(frm == 00)
-                            manufacturer = "Taeil Media Co., Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Vanguard Disc Inc.";
-                        if(frm == 20)
-                            manufacturer = "Unidisc Technology Co., Ltd.";
-                        if(frm == 30)
-                            manufacturer = "Hile Optical Disc Technology Corp.";
-                        if(frm == 40)
-                            manufacturer = "Viva Magnetics Ltd.";
-                        if(frm == 50)
-                            manufacturer = "General Magnetics Ltd.";
-                        break;
-                    case 30:
-                        if(frm == 10)
-                            manufacturer = "CDA Datenträger Albrechts GmbH";
-                        break;
-                    case 31:
-                        if(frm == 00)
-                            manufacturer = "Ritek Co.";
-                        if(frm == 30)
-                            manufacturer = "Grand Advance Technology Ltd.";
-                        break;
-                    case 32:
-                        if(frm == 00)
-                            manufacturer = "TDK Corporation";
-                        if(frm == 10)
-                            manufacturer = "Prodisc Technology Inc.";
-                        break;
-                    case 34:
-                        if(frm == 20)
-                            manufacturer = "Mitsubishi Chemical Corporation";
-                        break;
-                    case 42:
-                        if(frm == 20)
-                            manufacturer = "Advanced Digital Media";
-                        break;
-                    case 45:
-                        if(frm == 00)
-                            manufacturer = "Fornet International Pte Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Unitech Japan Inc.";
-                        if(frm == 20)
-                            manufacturer = "Acer Media Technology, Inc.";
-                        if(frm == 40)
-                            manufacturer = "CIS Technology Inc.";
-                        if(frm == 50)
-                            manufacturer = "Guann Yinn Co., Ltd.";
-                        if(frm == 60)
-                            manufacturer = "Xcitec Inc.";
-                        break;
-                    case 46:
-                        if(frm == 00)
-                            manufacturer = "Taiyo Yuden Company Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Hong Kong Digital Technology Co., Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Multi Media Masters & Machinary SA";
-                        if(frm == 30)
-                            manufacturer = "Computer Support Italy s.r.l.";
-                        if(frm == 40)
-                            manufacturer = "FUJI Photo Film Co., Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Auvistar Industry Co., Ltd.";
-                        if(frm == 60)
-                            manufacturer = "CMC Magnetics Corporation";
-                        break;
-                    case 47:
-                        if(frm == 10)
-                            manufacturer = "Hitachi Maxell, Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Princo Corporation";
-                        if(frm == 40)
-                            manufacturer = "POSTECH Corporation";
-                        if(frm == 50)
-                            manufacturer = "Ritek Co.";
-                        if(frm == 60)
-                            manufacturer = "Prodisc Technology Inc.";
-                        break;
-                    case 48:
-                        if(frm == 00)
-                            manufacturer = "Ricoh Company Ltd.";
-                        if(frm == 10)
-                            manufacturer = "Kodak Japan Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Plasmon Data systems Ltd.";
-                        if(frm == 30)
-                            manufacturer = "Pioneer Video Corporation";
-                        if(frm == 40)
-                            manufacturer = "Digital Storage Technology Co., Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Mitsui Chemicals, Inc.";
-                        if(frm == 60)
-                            manufacturer = "Lead Data Inc.";
-                        break;
-                    case 49:
-                        if(frm == 00)
-                            manufacturer = "TDK Corporation";
-                        if(frm == 10)
-                            manufacturer = "Gigastore Corporation";
-                        if(frm == 20)
-                            manufacturer = "King Pro Mediatek Inc.";
-                        if(frm == 30)
-                            manufacturer = "Opti.Me.S. S.p.A.";
-                        if(frm == 40)
-                            manufacturer = "Victor Company of Japan, Ltd.";
-                        if(frm == 60)
-                            manufacturer = "Matsushita Electric Industrial Co., Ltd.";
-                        break;
-                    case 50:
-                        if(frm == 10)
-                            manufacturer = "Vanguard Disc Inc.";
-                        if(frm == 20)
-                            manufacturer = "Mitsubishi Chemical Corporation";
-                        if(frm == 30)
-                            manufacturer = "CDA Datenträger Albrechts GmbH";
-                        break;
-                    case 51:
-                        if(frm == 10)
-                            manufacturer = "Grand Advance Technology Ltd.";
-                        if(frm == 20)
-                            manufacturer = "Infodisc Technology Co. Ltd.";
-                        if(frm == 50)
-                            manufacturer = "Hile Optical Disc Technology Corp.";
-                        break;
-                }
+                manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
 
                 if(manufacturer != "")
                     sb.AppendFormat("Disc manufactured by: {0}", manufacturer).AppendLine();
@@ -717,6 +439,291 @@ namespace DiscImageChef.Decoders.CD
         {
             CDATIP? decoded = Decode(CDATIPResponse);
             return Prettify(decoded);
+        }
+
+        public static string ManufacturerFromATIP(byte sec, int frm)
+        {
+            switch(sec)
+            {
+                case 15:
+                    if(frm == 00)
+                        return "TDK Corporation";
+                    if(frm == 10)
+                        return "Ritek Co.";
+                    if(frm == 20)
+                        return "Mitsubishi Chemical Corporation";
+                    if(frm == 30)
+                        return "NAN-YA Plastics Corporation";
+                    break;
+                case 16:
+                    if(frm == 20)
+                        return "Shenzen SG&Gast Digital Optical Discs";
+                    if(frm == 30)
+                        return "Grand Advance Technology Ltd.";
+                    break;
+                case 17:
+                    if(frm == 00)
+                        return "Moser Baer India Limited";
+                    break;
+                case 18:
+                    if(frm == 10)
+                        return "Wealth Fair Investment Ltd.";
+                    if(frm == 60)
+                        return "Taroko International Co. Ltd.";
+                    break;
+                case 20:
+                    if(frm == 10)
+                        return "CDA Datenträger Albrechts GmbH";
+                    break;
+                case 21:
+                    if(frm == 10)
+                        return "Grupo Condor S.L.";
+                    if(frm == 30)
+                        return "Bestdisc Technology Corporation";
+                    if(frm == 40)
+                        return "Optical Disc Manufacturing Equipment";
+                    if(frm == 50)
+                        return "Sound Sound Multi-Media Development Ltd.";
+                    break;
+                case 22:
+                    if(frm == 00)
+                        return "Woongjin Media Corp.";
+                    if(frm == 10)
+                        return "Seantram Technology Inc.";
+                    if(frm == 20)
+                        return "Advanced Digital Media";
+                    if(frm == 30)
+                        return "EXIMPO";
+                    if(frm == 40)
+                        return "CIS Technology Inc.";
+                    if(frm == 50)
+                        return "Hong Kong Digital Technology Co., Ltd.";
+                    if(frm == 60)
+                        return "Acer Media Technology, Inc.";
+                    break;
+                case 23:
+                    if(frm == 00)
+                        return "Matsushita Electric Industrial Co., Ltd.";
+                    if(frm == 10)
+                        return "Doremi Media Co., Ltd.";
+                    if(frm == 20)
+                        return "Nacar Media s.r.l.";
+                    if(frm == 30)
+                        return "Audio Distributors Co., Ltd.";
+                    if(frm == 40)
+                        return "Victor Company of Japan, Ltd.";
+                    if(frm == 50)
+                        return "Optrom Inc.";
+                    if(frm == 60)
+                        return "Customer Pressing Oosterhout";
+                    break;
+                case 24:
+                    if(frm == 00)
+                        return "Taiyo Yuden Company Ltd.";
+                    if(frm == 10)
+                        return "SONY Corporation";
+                    if(frm == 20)
+                        return "Computer Support Italy s.r.l.";
+                    if(frm == 30)
+                        return "Unitech Japan Inc.";
+                    if(frm == 40)
+                        return "kdg mediatech AG";
+                    if(frm == 50)
+                        return "Guann Yinn Co., Ltd.";
+                    if(frm == 60)
+                        return "Harmonic Hall Optical Disc Ltd.";
+                    break;
+                case 25:
+                    if(frm == 00)
+                        return "MPO";
+                    if(frm == 20)
+                        return "Hitachi Maxell, Ltd.";
+                    if(frm == 30)
+                        return "Infodisc Technology Co. Ltd.";
+                    if(frm == 40)
+                        return "Vivastar AG";
+                    if(frm == 50)
+                        return "AMS Technology Inc.";
+                    if(frm == 60)
+                        return "Xcitec Inc.";
+                    break;
+                case 26:
+                    if(frm == 00)
+                        return "Fornet International Pte Ltd.";
+                    if(frm == 10)
+                        return "POSTECH Corporation";
+                    if(frm == 20)
+                        return "SKC Co., Ltd.";
+                    if(frm == 30)
+                        return "Optical Disc Corporation";
+                    if(frm == 40)
+                        return "FUJI Photo Film Co., Ltd.";
+                    if(frm == 50)
+                        return "Lead Data Inc.";
+                    if(frm == 60)
+                        return "CMC Magnetics Corporation";
+                    break;
+                case 27:
+                    if(frm == 00)
+                        return "Digital Storage Technology Co., Ltd.";
+                    if(frm == 10)
+                        return "Plasmon Data systems Ltd.";
+                    if(frm == 20)
+                        return "Princo Corporation";
+                    if(frm == 30)
+                        return "Pioneer Video Corporation";
+                    if(frm == 40)
+                        return "Kodak Japan Ltd.";
+                    if(frm == 50)
+                        return "Mitsui Chemicals, Inc.";
+                    if(frm == 60)
+                        return "Ricoh Company Ltd.";
+                    break;
+                case 28:
+                    if(frm == 00)
+                        return "Opti.Me.S. S.p.A.";
+                    if(frm == 10)
+                        return "Gigastore Corporation";
+                    if(frm == 20)
+                        return "Multi Media Masters & Machinary SA";
+                    if(frm == 30)
+                        return "Auvistar Industry Co., Ltd.";
+                    if(frm == 40)
+                        return "King Pro Mediatek Inc.";
+                    if(frm == 50)
+                        return "Delphi Technology Inc.";
+                    if(frm == 60)
+                        return "Friendly CD-Tek Co.";
+                    break;
+                case 29:
+                    if(frm == 00)
+                        return "Taeil Media Co., Ltd.";
+                    if(frm == 10)
+                        return "Vanguard Disc Inc.";
+                    if(frm == 20)
+                        return "Unidisc Technology Co., Ltd.";
+                    if(frm == 30)
+                        return "Hile Optical Disc Technology Corp.";
+                    if(frm == 40)
+                        return "Viva Magnetics Ltd.";
+                    if(frm == 50)
+                        return "General Magnetics Ltd.";
+                    break;
+                case 30:
+                    if(frm == 10)
+                        return "CDA Datenträger Albrechts GmbH";
+                    break;
+                case 31:
+                    if(frm == 00)
+                        return "Ritek Co.";
+                    if(frm == 30)
+                        return "Grand Advance Technology Ltd.";
+                    break;
+                case 32:
+                    if(frm == 00)
+                        return "TDK Corporation";
+                    if(frm == 10)
+                        return "Prodisc Technology Inc.";
+                    break;
+                case 34:
+                    if(frm == 20)
+                        return "Mitsubishi Chemical Corporation";
+                    break;
+                case 42:
+                    if(frm == 20)
+                        return "Advanced Digital Media";
+                    break;
+                case 45:
+                    if(frm == 00)
+                        return "Fornet International Pte Ltd.";
+                    if(frm == 10)
+                        return "Unitech Japan Inc.";
+                    if(frm == 20)
+                        return "Acer Media Technology, Inc.";
+                    if(frm == 40)
+                        return "CIS Technology Inc.";
+                    if(frm == 50)
+                        return "Guann Yinn Co., Ltd.";
+                    if(frm == 60)
+                        return "Xcitec Inc.";
+                    break;
+                case 46:
+                    if(frm == 00)
+                        return "Taiyo Yuden Company Ltd.";
+                    if(frm == 10)
+                        return "Hong Kong Digital Technology Co., Ltd.";
+                    if(frm == 20)
+                        return "Multi Media Masters & Machinary SA";
+                    if(frm == 30)
+                        return "Computer Support Italy s.r.l.";
+                    if(frm == 40)
+                        return "FUJI Photo Film Co., Ltd.";
+                    if(frm == 50)
+                        return "Auvistar Industry Co., Ltd.";
+                    if(frm == 60)
+                        return "CMC Magnetics Corporation";
+                    break;
+                case 47:
+                    if(frm == 10)
+                        return "Hitachi Maxell, Ltd.";
+                    if(frm == 20)
+                        return "Princo Corporation";
+                    if(frm == 40)
+                        return "POSTECH Corporation";
+                    if(frm == 50)
+                        return "Ritek Co.";
+                    if(frm == 60)
+                        return "Prodisc Technology Inc.";
+                    break;
+                case 48:
+                    if(frm == 00)
+                        return "Ricoh Company Ltd.";
+                    if(frm == 10)
+                        return "Kodak Japan Ltd.";
+                    if(frm == 20)
+                        return "Plasmon Data systems Ltd.";
+                    if(frm == 30)
+                        return "Pioneer Video Corporation";
+                    if(frm == 40)
+                        return "Digital Storage Technology Co., Ltd.";
+                    if(frm == 50)
+                        return "Mitsui Chemicals, Inc.";
+                    if(frm == 60)
+                        return "Lead Data Inc.";
+                    break;
+                case 49:
+                    if(frm == 00)
+                        return "TDK Corporation";
+                    if(frm == 10)
+                        return "Gigastore Corporation";
+                    if(frm == 20)
+                        return "King Pro Mediatek Inc.";
+                    if(frm == 30)
+                        return "Opti.Me.S. S.p.A.";
+                    if(frm == 40)
+                        return "Victor Company of Japan, Ltd.";
+                    if(frm == 60)
+                        return "Matsushita Electric Industrial Co., Ltd.";
+                    break;
+                case 50:
+                    if(frm == 10)
+                        return "Vanguard Disc Inc.";
+                    if(frm == 20)
+                        return "Mitsubishi Chemical Corporation";
+                    if(frm == 30)
+                        return "CDA Datenträger Albrechts GmbH";
+                    break;
+                case 51:
+                    if(frm == 10)
+                        return "Grand Advance Technology Ltd.";
+                    if(frm == 20)
+                        return "Infodisc Technology Co. Ltd.";
+                    if(frm == 50)
+                        return "Hile Optical Disc Technology Corp.";
+                    break;
+            }
+
+            return "";
         }
     }
 }

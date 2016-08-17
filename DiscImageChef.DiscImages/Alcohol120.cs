@@ -199,6 +199,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(string imagePath)

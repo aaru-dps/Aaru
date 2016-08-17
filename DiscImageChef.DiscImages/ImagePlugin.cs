@@ -503,7 +503,15 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>
         /// Subchannel is interleaved and comes interleaved with main channel in same file
         /// </summary>
-        RawInterleaved
+        RawInterleaved,
+        /// <summary>
+        /// Only Q subchannel is stored as 16 bytes
+        /// </summary>
+        Q16,
+        /// <summary>
+        /// Only Q subchannel is stored as 16 bytes and comes interleaved with main channel in same file
+        /// </summary>
+        Q16Interleaved
     }
 
     /// <summary>
@@ -653,6 +661,8 @@ namespace DiscImageChef.ImagePlugins
         MMC_POWResourcesInformation,
         /// <summary>SCSI INQUIRY response</summary>
         SCSI_INQUIRY,
+        /// <summary>SCSI MODE PAGE 2Ah</summary>
+        SCSI_MODEPAGE_2A,
         /// <summary>ATA IDENTIFY DEVICE response</summary>
         ATA_IDENTIFY,
         /// <summary>ATA IDENTIFY PACKET DEVICE response</summary>

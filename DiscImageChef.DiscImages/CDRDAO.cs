@@ -232,6 +232,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
         }
 
         #endregion Public methods

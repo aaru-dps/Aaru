@@ -1,3 +1,11 @@
+2016-08-18  Natalia Portillo  <claunia@claunia.com>
+
+	* ATIP.cs: Make ATIP manufacturer resolver a public method.
+
+	* Features.cs: Added HDBurn profiles.
+
+	* Modes.cs: Corrected typo.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Decoders.csproj: Bumped version to 3.2.99.2.

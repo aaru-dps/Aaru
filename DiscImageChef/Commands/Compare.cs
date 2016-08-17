@@ -147,6 +147,7 @@ namespace DiscImageChef.Commands
             try { image1Info.driveManufacturer = input1Format.GetDriveManufacturer(); } catch { image1Info.driveManufacturer = null; }
             try { image1Info.driveModel = input1Format.GetDriveModel(); } catch { image1Info.driveModel = null; }
             try { image1Info.driveSerialNumber = input1Format.GetDriveSerialNumber(); } catch { image1Info.driveSerialNumber = null; }
+            try { image1Info.driveFirmwareRevision = input1Format.ImageInfo.driveFirmwareRevision; } catch { image1Info.driveFirmwareRevision = null; }
             foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try
@@ -188,6 +189,7 @@ namespace DiscImageChef.Commands
             try { image2Info.driveManufacturer = input2Format.GetDriveManufacturer(); } catch { image2Info.driveManufacturer = null; }
             try { image2Info.driveModel = input2Format.GetDriveModel(); } catch { image2Info.driveModel = null; }
             try { image2Info.driveSerialNumber = input2Format.GetDriveSerialNumber(); } catch { image2Info.driveSerialNumber = null; }
+            try { image2Info.driveFirmwareRevision = input2Format.ImageInfo.driveFirmwareRevision; } catch { image2Info.driveFirmwareRevision = null; }
             foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try
@@ -226,6 +228,7 @@ namespace DiscImageChef.Commands
                 sb.AppendFormat("Disk sequence\t{0}\t{1}", image1Info.mediaSequence, image2Info.mediaSequence).AppendLine();
                 sb.AppendFormat("Last disk on sequence\t{0}\t{1}", image1Info.lastMediaSequence, image2Info.lastMediaSequence).AppendLine();
                 sb.AppendFormat("Drive manufacturer\t{0}\t{1}", image1Info.driveManufacturer, image2Info.driveManufacturer).AppendLine();
+                sb.AppendFormat("Drive firmware revision\t{0}\t{1}", image1Info.driveFirmwareRevision, image2Info.driveFirmwareRevision).AppendLine();
                 sb.AppendFormat("Drive model\t{0}\t{1}", image1Info.driveModel, image2Info.driveModel).AppendLine();
                 sb.AppendFormat("Drive serial number\t{0}\t{1}", image1Info.driveSerialNumber, image2Info.driveSerialNumber).AppendLine();
                 foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
@@ -379,6 +382,12 @@ namespace DiscImageChef.Commands
                 imagesDiffer = true;
                 if(!options.Verbose)
                     sb.AppendLine("Drive serial number differ");
+            }
+            if(image1Info.driveFirmwareRevision != image2Info.driveFirmwareRevision)
+            {
+                imagesDiffer = true;
+                if(!options.Verbose)
+                    sb.AppendLine("Drive firmware revision differ");
             }
 
             ulong leastSectors;

@@ -1,3 +1,25 @@
+2016-08-18  Natalia Portillo  <claunia@claunia.com>
+
+	* BLU.cs:
+	* GDI.cs:
+	* VHD.cs:
+	* Nero.cs:
+	* CopyQM.cs:
+	* CDRDAO.cs:
+	* CDRWin.cs:
+	* TeleDisk.cs:
+	* Apple2MG.cs:
+	* ImageInfo.cs:
+	* Alcohol120.cs:
+	* DiskCopy42.cs:
+	* ZZZRawImage.cs: Added field for drive firmware revision.
+
+	* BlindWrite4.cs: Added field for drive firmware revision.
+	Change subchannel informative exception.
+	Change application name and version.
+
+	* ImagePlugin.cs: Added subchannel types for Q only.
+
 2016-08-17  Natalia Portillo  <claunia@claunia.com>
 
 	* BlindWrite4.cs:

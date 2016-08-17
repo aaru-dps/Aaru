@@ -453,6 +453,10 @@ namespace DiscImageChef.Commands
                                         case TrackSubchannelType.RawInterleaved:
                                             xmlTrk.SubChannel.Image.format = "rw_raw";
                                             break;
+                                        case TrackSubchannelType.Q16:
+                                        case TrackSubchannelType.Q16Interleaved:
+                                            xmlTrk.SubChannel.Image.format = "q16";
+                                            break;
                                     }
 
                                     if(trk.TrackFileOffset > 0)
@@ -616,6 +620,24 @@ namespace DiscImageChef.Commands
                             sidecar.OpticalDisc[0].DiscType = dscType;
                             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
                             Core.Statistics.AddMedia(dskType, false);
+
+                            if(!string.IsNullOrEmpty(_imageFormat.ImageInfo.driveManufacturer) ||
+                               !string.IsNullOrEmpty(_imageFormat.ImageInfo.driveModel) ||
+                               !string.IsNullOrEmpty(_imageFormat.ImageInfo.driveFirmwareRevision) ||
+                               !string.IsNullOrEmpty(_imageFormat.ImageInfo.driveSerialNumber))
+                            {
+                                sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents = new ExtentType[0];
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].Start = 0;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].End = (int)_imageFormat.ImageInfo.sectors;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = _imageFormat.ImageInfo.driveManufacturer;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = _imageFormat.ImageInfo.driveModel;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Firmware = _imageFormat.ImageInfo.driveFirmwareRevision;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Serial = _imageFormat.ImageInfo.driveSerialNumber;
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = new SoftwareType();
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Name = _imageFormat.GetImageApplication();
+                                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Version = _imageFormat.GetImageApplicationVersion();
+                            }
 
                             break;
                         }

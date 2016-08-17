@@ -202,6 +202,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
         }
 
         public override bool IdentifyImage(string imagePath)
@@ -785,7 +786,9 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.mediaType = MediaType.CD;
 
-            ImageInfo.imageApplication = "BlindRead 4";
+            ImageInfo.imageApplication = "BlindWrite";
+            ImageInfo.imageApplicationVersion = "4";
+            ImageInfo.imageVersion = "4";
 
             FileInfo fi = new FileInfo(dataFile);
             ImageInfo.imageSize = (ulong)fi.Length;
@@ -1116,7 +1119,7 @@ namespace DiscImageChef.ImagePlugins
                                 break;
                             }
                         case SectorTagType.CDSectorSubchannel:
-                            throw new NotImplementedException("Subchannel interleaving not yet implemented");
+                            throw new NotImplementedException("Packed subchannel not yet supported");
                         default:
                             throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
@@ -1146,7 +1149,7 @@ namespace DiscImageChef.ImagePlugins
                                     break;
                                 }
                             case SectorTagType.CDSectorSubchannel:
-                                throw new NotImplementedException("Subchannel interleaving not yet implemented");
+                                throw new NotImplementedException("Packed subchannel not yet supported");
                             default:
                                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
@@ -1157,7 +1160,7 @@ namespace DiscImageChef.ImagePlugins
                         switch(tag)
                         {
                             case SectorTagType.CDSectorSubchannel:
-                                throw new NotImplementedException("Subchannel interleaving not yet implemented");
+                                throw new NotImplementedException("Packed subchannel not yet supported");
                             default:
                                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }

@@ -124,6 +124,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveManufacturer = null;
             ImageInfo.driveModel = null;
             ImageInfo.driveSerialNumber = null;
+            ImageInfo.driveFirmwareRevision = null;
         }
 
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
