@@ -5143,7 +5143,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.Composite)
-                sb.AppendLine("\tDrive can deliver a compositve audio and video data stream");
+                sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
             if(page.DigitalPort1)
                 sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
             if(page.DigitalPort2)

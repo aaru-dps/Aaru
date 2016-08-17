@@ -428,6 +428,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         /// </summary>
         HDDVDRWDL = 0x005A,
         /// <summary>
+        /// HDBurn CD-ROM
+        /// </summary>
+        HDBURNROM = 0x0080,
+        /// <summary>
+        /// HDBurn CD-R
+        /// </summary>
+        HDBURNR = 0x0081,
+        /// <summary>
+        /// HDBurn CD-RW
+        /// </summary>
+        HDBURNRW = 0x0082,
+        /// <summary>
         /// Drive does not conform to any profiles
         /// </summary>
         Unconforming = 0xFFFF
@@ -4098,6 +4110,15 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                             break;
                         case ProfileNumber.HDDVDRWDL:
                             sb.Append("\tDrive supports HD DVD-RW DL");
+                            break;
+                        case ProfileNumber.HDBURNROM:
+                            sb.Append("\tDrive supports HDBurn CD-ROM");
+                            break;
+                        case ProfileNumber.HDBURNR:
+                            sb.Append("\tDrive supports HDBurn CD-R");
+                            break;
+                        case ProfileNumber.HDBURNRW:
+                            sb.Append("\tDrive supports HDBurn CD-RW");
                             break;
                         case ProfileNumber.Unconforming:
                             sb.Append("\tDrive is not conforming to any profile");
