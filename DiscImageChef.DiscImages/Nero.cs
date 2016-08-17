@@ -903,9 +903,9 @@ namespace DiscImageChef.ImagePlugins
             footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
             DicConsole.DebugWriteLine("Nero plugin", "imageInfo.Length = {0}", imageInfo.Length);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X2} (\"{1}\")", footerV1.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
+            DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}", footerV1.ChunkID);
             DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X2} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
+            DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkID);
             DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
             if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageInfo.Length)
@@ -948,9 +948,9 @@ namespace DiscImageChef.ImagePlugins
                 footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
                 DicConsole.DebugWriteLine("Nero plugin", "imageInfo.Length = {0}", imageInfo.Length);
-                DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X2} (\"{1}\")", footerV1.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
+                DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-                DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X2} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
+                DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
                 if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageInfo.Length)
@@ -989,7 +989,7 @@ namespace DiscImageChef.ImagePlugins
                     ChunkID = BigEndianBitConverter.ToUInt32(ChunkHeaderBuffer, 0);
                     ChunkLength = BigEndianBitConverter.ToUInt32(ChunkHeaderBuffer, 4);
 
-                    DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X2} (\"{1}\")", ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(ChunkID)));
+                    DicConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(ChunkID)));
                     DicConsole.DebugWriteLine("Nero plugin", "ChunkLength = {0}", ChunkLength);
 
                     switch(ChunkID)

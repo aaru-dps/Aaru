@@ -5,11 +5,11 @@
 // Filename       : Alcohol120.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Manages Alcohol 120% disc images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -518,21 +518,20 @@ namespace DiscImageChef.ImagePlugins
                 bool firstaudio = false;
                 bool firstdata = false;
                 bool audio = false;
-                int i = 0;
 
                 foreach(AlcoholTrack _track in alcTracks.Values)
                 {
                     // First track is audio
-                    firstaudio |= i == 0 && _track.mode == AlcoholTrackMode.Audio;
+                    firstaudio |= _track.point == 1 && _track.mode == AlcoholTrackMode.Audio;
 
                     // First track is data
-                    firstdata |= i == 0 && _track.mode != AlcoholTrackMode.Audio;
+                    firstdata |= _track.point == 1 && _track.mode != AlcoholTrackMode.Audio;
 
                     // Any non first track is data
-                    data |= i != 0 && _track.mode != AlcoholTrackMode.Audio;
+                    data |= _track.point != 1 && _track.mode != AlcoholTrackMode.Audio;
 
                     // Any non first track is audio
-                    audio |= i != 0 && _track.mode == AlcoholTrackMode.Audio;
+                    audio |= _track.point != 1 && _track.mode == AlcoholTrackMode.Audio;
 
                     switch(_track.mode)
                     {

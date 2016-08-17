@@ -1,3 +1,9 @@
+2016-08-17  Natalia Portillo  <claunia@claunia.com>
+
+	* Alcohol120.cs: Corrected disc type calculation.
+
+	* Nero.cs: Corrected debug output.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* Alcohol120.cs: Missed code to return PFI and DMI from disc
