@@ -86,6 +86,7 @@
     <Compile Include="AppleMFS\Structs.cs" />
     <Compile Include="AppleMFS\Super.cs" />
     <Compile Include="AppleMFS\Xattr.cs" />
+    <Compile Include="exFAT.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

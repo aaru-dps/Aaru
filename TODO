@@ -33,7 +33,6 @@ Filesystem plugins:
 --- Add support for QNX filesystems
 --- Add support for Squashfs
 --- Add support for X-Box filesystems
---- Add support for exFAT
 --- Add support for FAT+
 --- Add support for ReFS
 --- Add support for ECMA-67

@@ -103,6 +103,7 @@ Supported file systems for identification and information only
 * Acorn Advanced Disc Filing System
 * B-tree file system (btrfs)
 * Apple File System (preliminary detection until on-disk layout is stable)
+* Microsoft Extended File Allocation Table (exFAT)
 
 Supported checksums
 ===================

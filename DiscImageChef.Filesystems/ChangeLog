@@ -1,3 +1,9 @@
+2016-08-18  Natalia Portillo  <claunia@claunia.com>
+
+	* exFAT.cs:
+	* DiscImageChef.Filesystems.csproj: Added support for exFAT,
+	this closes #15.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Filesystems.csproj: Bumped version to
