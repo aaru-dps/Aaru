@@ -1,3 +1,24 @@
+2016-08-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Human68k.cs:
+	* DiscImageChef.Partitions.csproj: Added Human68k partition
+	table.
+
+	* RioKarma.cs: Corrected typo.
+
+	* PC98.cs: Correct handling of partition name, do not directly
+	marshal as it may crash.
+	Prevent false positives checking for sanity and partition
+	type, so this limits it to FreeBSD right now.
+
+	* Acorn.cs: Do not try to read past device.
+
+	* SGI.cs: Corrected big endian marshaling, manually traversing
+	nested structures.
+
+	* Sun.cs: Sun insists all devices must be 512 bytes/sector.
+	Really. Even CDs. But this allows bigger ones.
+
 2016-08-21  Natalia Portillo  <claunia@claunia.com>
 
 	* Acorn.cs: Added support for Acorn FileCore partition, closes

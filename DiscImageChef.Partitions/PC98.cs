@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
@@ -81,15 +82,21 @@ namespace DiscImageChef.PartPlugins
                     part.PartitionSectors = CHStoLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect) - part.PartitionStartSector;
                     part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
                     part.PartitionType = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid);
-                    part.PartitionName = entry.dp_name;
+                    part.PartitionName = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932));
                     part.PartitionSequence = counter;
 
-                    partitions.Add(part);
-                    counter++;
+                    if((entry.dp_sid & 0x7F) == 0x44 &&
+                       (entry.dp_mid & 0x7F) == 0x14 &&
+                        part.PartitionStartSector < imagePlugin.ImageInfo.sectors &&
+                            part.PartitionSectors + part.PartitionStartSector <= imagePlugin.ImageInfo.sectors)
+                    {
+                        partitions.Add(part);
+                        counter++;
+                    }
                 }
             }
 
-            return true;
+            return partitions.Count > 0;
         }
 
         static uint CHStoLBA(ushort cyl, byte head, byte sector)
@@ -123,7 +130,7 @@ namespace DiscImageChef.PartPlugins
             public byte dp_ehd;
             public ushort dp_ecyl;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public string dp_name;
+            public byte[] dp_name;
         }
     }
 }

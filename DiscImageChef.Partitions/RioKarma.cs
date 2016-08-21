@@ -102,7 +102,7 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RioKarmaEntry
         {
-            public uint reserverd;
+            public uint reserved;
             public byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public byte[] reserved2;

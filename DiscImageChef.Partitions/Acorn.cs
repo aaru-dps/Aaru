@@ -86,6 +86,9 @@ namespace DiscImageChef.PartPlugins
             int secCyl = bootBlock.discRecords.spt * heads;
             int mapSector = bootBlock.startCylinder * secCyl;
 
+            if(mapSector >= (int)imagePlugin.GetSectors())
+                return false;
+
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 
             ulong counter = 0;

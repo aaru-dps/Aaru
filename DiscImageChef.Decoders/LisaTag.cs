@@ -181,8 +181,6 @@ namespace DiscImageChef.Decoders
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] tmp = new byte[4];
-
             snTag.version = BigEndianBitConverter.ToUInt16(tag, 0);
             snTag.kind = (byte)((tag[2] & 0xC0) >> 6);
             snTag.reserved = (byte)(tag[2] & 0x3F);

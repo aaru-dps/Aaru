@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Helpers;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
@@ -57,7 +56,11 @@ namespace DiscImageChef.PartPlugins
             if(sector.Length < 512)
                 return false;
 
-            SGILabel disklabel = BigEndianStructure.ByteArrayToStructureBigEndian<SGILabel>(sector);
+            SGILabel disklabel = BigEndianMarshal.ByteArrayToStructureBigEndian<SGILabel>(sector);
+            for(int i = 0; i < disklabel.volume.Length; i++)
+                disklabel.volume[i] = BigEndianMarshal.SwapStructureMembersEndian(disklabel.volume[i]);
+            for(int i = 0; i < disklabel.partitions.Length; i++)
+                disklabel.partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(disklabel.partitions[i]);
 
             if(disklabel.magic != SGI_MAGIC)
                 return false;

@@ -1,3 +1,9 @@
+2016-08-22  Natalia Portillo  <claunia@claunia.com>
+
+	* ZZZRawImage.cs: Detect X68000 SASI hard disks that use 256
+	bytes/sector.
+	Correct size of ECMA-154 magnetoptical.
+
 2016-08-21  Natalia Portillo  <claunia@claunia.com>
 
 	* DIM.cs:

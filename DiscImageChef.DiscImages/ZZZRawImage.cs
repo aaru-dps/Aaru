@@ -275,6 +275,16 @@ namespace DiscImageChef.ImagePlugins
                     break;
             }
 
+            // Sharp X68000 SASI hard disks
+            if(Path.GetExtension(imagePath).ToLowerInvariant() == ".hdf")
+            {
+                if(ImageInfo.imageSize % 256 == 0)
+                {
+                    ImageInfo.sectorSize = 256;
+                    ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
+                }
+            }
+
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.mediaType);
 
             return true;
@@ -664,7 +674,7 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.XDF_35;
                     case 2949120:
                         return MediaType.DOS_35_ED;
-                    case 128000000:
+                    case 127923200:
                         return MediaType.ECMA_154;
                     case 229632000:
                         return MediaType.ECMA_201;

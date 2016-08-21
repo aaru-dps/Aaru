@@ -86,6 +86,9 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<CommonTypes.Partition>();
 
+            if(imagePlugin.GetSectorSize() < 512)
+                return false;
+
             byte[] sunSector = imagePlugin.ReadSector(0);
             byte[] tmpString;
             SunDiskLabel sdl = new SunDiskLabel();
