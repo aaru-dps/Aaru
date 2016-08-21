@@ -118,6 +118,10 @@
       <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
       <Name>DiscImageChef.Metadata</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
+      <Name>DiscImageChef.Decoders</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LisaFS\" />

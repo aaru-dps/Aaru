@@ -33,6 +33,7 @@
 using System;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -76,7 +77,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Pointers are relative to MDDF
             ptr += mddf.mddf_block + volumePrefix;
 
-            Tag extTag;
+            LisaTag.PriamTag extTag;
 
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.

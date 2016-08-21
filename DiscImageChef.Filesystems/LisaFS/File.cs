@@ -33,6 +33,7 @@
 using System;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -212,7 +213,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 }
             }
 
-            Tag sysTag;
+            LisaTag.PriamTag sysTag;
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
@@ -247,9 +248,9 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                     // Relative block for $Loader starts at $Boot block
                     if(sysTag.fileID == FILEID_LOADER_SIGNED)
-                        sysTag.relBlock--;
+                        sysTag.relPage--;
 
-                    Array.Copy(sector, 0, buf, sector.Length * sysTag.relBlock, sector.Length);
+                    Array.Copy(sector, 0, buf, sector.Length * sysTag.relPage, sector.Length);
                 }
             }
 

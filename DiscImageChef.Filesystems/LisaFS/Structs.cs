@@ -208,48 +208,6 @@ namespace DiscImageChef.Filesystems.LisaFS
         }
 
         /// <summary>
-        /// The sector tag. Before the sector is encoded to GCR the tag is attached to the data.
-        /// Its size and format varies depending on device.
-        /// Lisa OS relies on tags for scavenging a floppy, but ignores most of them for normal usage,
-        /// except on hard disks where the checksum byte is absolutely enforced (a sector with an invalid
-        /// one gives an OS error).
-        /// </summary>
-        struct Tag
-        {
-            /// <summary>0x00 version</summary>
-            public ushort version;
-            /// <summary>0x02 unknown</summary>
-            public ushort unknown;
-            /// <summary>0x04 File ID. Negative numbers are extents for the file with same absolute value number</summary>
-            public short fileID;
-            /// <summary>Only in 20 bytes tag at 0x06, mask 0x8000 if valid tag</summary>
-            public ushort usedBytes;
-            /// <summary>Only in 20 bytes tag at 0x08, 3 bytes</summary>
-            public uint absoluteBlock;
-            /// <summary>Only in 20 bytes tag at 0x0B, checksum byte</summary>
-            public byte checksum;
-            /// <summary>0x06 in 12 bytes tag, 0x0C in 20 bytes tag, relative block</summary>
-            public ushort relBlock;
-            /// <summary>
-            /// Next block for this file.
-            /// In 12 bytes tag at 0x08, 2 bytes, 0x8000 bit seems always set, 0x07FF means this is last block.
-            /// In 20 bytes tag at 0x0E, 3 bytes, 0xFFFFFF means this is last block.
-            /// </summary>
-            public uint nextBlock;
-            /// <summary>
-            /// Previous block for this file.
-            /// In 12 bytes tag at 0x0A, 2 bytes, 0x07FF means this is first block.
-            /// In 20 bytes tag at 0x11, 3 bytes, 0xFFFFFF means this is first block.
-            /// </summary>
-            public uint prevBlock;
-
-            /// <summary>On-memory value for easy first block search.</summary>
-            public bool isFirst;
-            /// <summary>On-memory value for easy last block search.</summary>
-            public bool isLast;
-        }
-
-        /// <summary>
         /// An entry in the catalog from V3.
         /// The first entry is bigger than the rest, may be a header, I have not needed any of its values so I just ignored it.
         /// Each catalog is divided in 4-sector blocks, and if it needs more than a block there are previous and next block

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -174,10 +175,10 @@ namespace DiscImageChef.Filesystems.LisaFS
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
             for(ulong i = 0; i < device.GetSectors(); i++)
             {
-                Tag catTag;
+                LisaTag.PriamTag catTag;
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out catTag);
 
-                if(catTag.fileID == FILEID_CATALOG && catTag.relBlock == 0)
+                if(catTag.fileID == FILEID_CATALOG && catTag.relPage == 0)
                 {
                     firstCatalogBlock = device.ReadSectors(i, 4);
                     break;
@@ -194,7 +195,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                Tag prevTag;
+                LisaTag.PriamTag prevTag;
                 DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out prevTag);
 
                 if(prevTag.fileID != FILEID_CATALOG)
@@ -213,7 +214,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
-                Tag nextTag;
+                LisaTag.PriamTag nextTag;
                 DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag), out nextTag);
 
                 if(nextTag.fileID != FILEID_CATALOG)

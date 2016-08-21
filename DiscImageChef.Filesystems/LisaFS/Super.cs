@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
@@ -80,7 +81,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(ulong i = 0; i < 100; i++)
                 {
-                    Tag searchTag;
+                    LisaTag.PriamTag searchTag;
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out searchTag);
 
                     DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.fileID);

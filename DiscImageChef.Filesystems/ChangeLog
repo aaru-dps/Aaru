@@ -1,3 +1,15 @@
+2016-08-21  Natalia Portillo  <claunia@claunia.com>
+
+	* Dir.cs:
+	* File.cs:
+	* Info.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Extent.cs:
+	* Structs.cs:
+	* DiscImageChef.Filesystems.csproj: Separate Lisa tag decoding
+	from Lisa filesystem and added Priam tags.
+
 2016-08-18  Natalia Portillo  <claunia@claunia.com>
 
 	* exFAT.cs:
