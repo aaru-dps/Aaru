@@ -1,3 +1,10 @@
+2016-08-22  Natalia Portillo  <claunia@claunia.com>
+
+	* BigEndianMarshal.cs:
+	* BigEndianStructure.cs:
+	* DiscImageChef.Helpers.csproj: Reworked big endian marshal.
+	Does not traverse nested structures.
+
 2016-08-21  Natalia Portillo  <claunia@claunia.com>
 
 	* BigEndianStructure.cs:
