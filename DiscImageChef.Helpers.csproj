@@ -42,6 +42,7 @@
     <Compile Include="StringHandlers.cs" />
     <Compile Include="Swapping.cs" />
     <Compile Include="ArrayIsEmpty.cs" />
+    <Compile Include="BigEndianStructure.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
