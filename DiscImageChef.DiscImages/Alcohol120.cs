@@ -735,6 +735,8 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
             }
 
+            DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", ImageInfo.mediaType);
+
             return true;
         }
 

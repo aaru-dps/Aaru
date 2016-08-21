@@ -31,9 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -273,6 +274,8 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
                     break;
             }
+
+            DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.mediaType);
 
             return true;
         }

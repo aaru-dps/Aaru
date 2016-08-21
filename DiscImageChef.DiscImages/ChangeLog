@@ -1,3 +1,24 @@
+2016-08-21  Natalia Portillo  <claunia@claunia.com>
+
+	* DIM.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for X68k .DIM
+	format.
+
+	* BLU.cs:
+	* GDI.cs:
+	* Nero.cs:
+	* CopyQM.cs:
+	* CDRDAO.cs:
+	* CDRWin.cs:
+	* TeleDisk.cs:
+	* Apple2MG.cs:
+	* DiskCopy42.cs:
+	* Alcohol120.cs:
+	* BlindWrite5.cs:
+	* BlindWrite4.cs:
+	* ZZZRawImage.cs: In verbose show disk image type and
+	comments.
+
 2016-08-18  Natalia Portillo  <claunia@claunia.com>
 
 	* BlindWrite5.cs:

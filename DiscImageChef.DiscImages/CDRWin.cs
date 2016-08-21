@@ -1282,6 +1282,10 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
+                DicConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", ImageInfo.mediaType);
+                if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", ImageInfo.imageComments);
+
                 return true;
             }
             catch(Exception ex)

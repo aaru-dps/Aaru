@@ -946,6 +946,10 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
+                DicConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", ImageInfo.mediaType);
+                if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                    DicConsole.VerboseWriteLine("CDRDAO comments: {0}", ImageInfo.imageComments);
+
                 return true;
             }
             catch(Exception ex)

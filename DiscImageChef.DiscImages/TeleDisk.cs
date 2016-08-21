@@ -576,6 +576,10 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
+            DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", ImageInfo.mediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.imageComments);
+
             return true;
         }
 

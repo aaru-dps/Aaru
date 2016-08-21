@@ -47,6 +47,7 @@ Supported disk image formats
 * Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
+* X68k DIM disk image files (.DIM)
 
 Supported partitioning schemes
 ==============================

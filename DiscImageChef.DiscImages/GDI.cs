@@ -428,6 +428,8 @@ namespace DiscImageChef.ImagePlugins
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
+                DicConsole.VerboseWriteLine("GDI image describes a disc of type {0}", ImageInfo.mediaType);
+
                 return true;
             }
             catch(Exception ex)

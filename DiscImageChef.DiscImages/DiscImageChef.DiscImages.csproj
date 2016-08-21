@@ -50,6 +50,7 @@
     <Compile Include="Alcohol120.cs" />
     <Compile Include="BlindWrite4.cs" />
     <Compile Include="BlindWrite5.cs" />
+    <Compile Include="DIM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

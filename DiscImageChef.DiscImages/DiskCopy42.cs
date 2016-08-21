@@ -440,6 +440,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+            DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", ImageInfo.mediaType);
 
             return true;
         }

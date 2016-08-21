@@ -837,6 +837,10 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.imageComments = header.comments;
 
+            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", ImageInfo.mediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", ImageInfo.imageComments);
+
             return true;
         }
 

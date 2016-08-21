@@ -404,6 +404,10 @@ namespace DiscImageChef.ImagePlugins
             decodedImage.Close();
             stream.Close();
 
+            DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", ImageInfo.mediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.imageComments);
+
             return true;
         }
 

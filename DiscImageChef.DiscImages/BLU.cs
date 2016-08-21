@@ -215,6 +215,8 @@ namespace DiscImageChef.ImagePlugins
             if(bptag > 0)
                 ImageInfo.readableSectorTags.Add(SectorTagType.AppleSectorTag);
 
+            DicConsole.VerboseWriteLine("BLU image contains a disk of type {0}", ImageInfo.mediaType);
+
             return true;
         }
 

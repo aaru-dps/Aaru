@@ -365,6 +365,10 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
+            DicConsole.VerboseWriteLine("2MG image contains a disk of type {0}", ImageInfo.mediaType);
+            if(!string.IsNullOrEmpty(ImageInfo.imageComments))
+                DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.imageComments);
+
             return true;
         }
 

@@ -1110,6 +1110,8 @@ namespace DiscImageChef.ImagePlugins
             if(fullToc != null)
                 ImageInfo.readableMediaTags.Add(MediaTagType.CD_FullTOC);
 
+            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", ImageInfo.mediaType);
+
             return true;
         }
 

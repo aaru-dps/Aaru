@@ -360,6 +360,10 @@ namespace DiscImageChef.CommonTypes
         NEC_8_SD,
         /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_8_DD,
+        /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
+        NEC_525_SD,
+        /// <summary>8", SS, SD, 77 tracks, 26 spt, 256 bytes/sector, MFM?</summary>
+        NEC_525_DD,
         /// <summary>5,25", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_525_HD,
         /// <summary>3,5", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
@@ -369,10 +373,14 @@ namespace DiscImageChef.CommonTypes
         #endregion NEC standard floppy formats
 
         #region SHARP standard floppy formats
-        /// <summary>5,25", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>5,25", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_525,
-        /// <summary>3,5", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, FM</summary>
+        SHARP_525_9,
+        /// <summary>3,5", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
         SHARP_35,
+        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, FM</summary>
+        SHARP_35_9,
         #endregion SHARP standard floppy formats
 
         #region ECMA floppy standards

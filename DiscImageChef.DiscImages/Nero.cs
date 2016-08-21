@@ -1714,6 +1714,7 @@ namespace DiscImageChef.ImagePlugins
 
 
                 ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
+                DicConsole.VerboseWriteLine("Nero image contains a disc of type {0}", ImageInfo.mediaType);
 
                 return true;
             }
