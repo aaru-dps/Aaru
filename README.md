@@ -70,6 +70,7 @@ Supported partitioning schemes
 * SGI volume headers
 * Rio Karma partitions
 * UNIX VTOC and disklabel
+* Human68k (Sharp X68000) partitions table
 
 Supported file systems for read-only operations
 ===============================================
