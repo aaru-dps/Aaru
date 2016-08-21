@@ -91,6 +91,7 @@
     <Compile Include="SCSI\SSC\DensitySupport.cs" />
     <Compile Include="SCSI\Types.cs" />
     <Compile Include="SCSI\ModesEncoders.cs" />
+    <Compile Include="LisaTag.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
