@@ -1,3 +1,7 @@
+2016-08-21  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs: Added missing NEC and SHARP floppy types.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.CommonTypes.csproj: Bumped version to
