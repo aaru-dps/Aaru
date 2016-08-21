@@ -42,6 +42,14 @@
     <Compile Include="RDB.cs" />
     <Compile Include="Sun.cs" />
     <Compile Include="GPT.cs" />
+    <Compile Include="RioKarma.cs" />
+    <Compile Include="BSD.cs" />
+    <Compile Include="PC98.cs" />
+    <Compile Include="DEC.cs" />
+    <Compile Include="SGI.cs" />
+    <Compile Include="Acorn.cs" />
+    <Compile Include="DragonFlyBSD.cs" />
+    <Compile Include="UNIX.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

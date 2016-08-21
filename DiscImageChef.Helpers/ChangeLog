@@ -1,3 +1,10 @@
+2016-08-21  Natalia Portillo  <claunia@claunia.com>
+
+	* BigEndianStructure.cs:
+	* DiscImageChef.Helpers.csproj: Added code that directly
+	marshals from a big-endian byte array. But untested with
+	nested structures.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Helpers.csproj: Bumped version to 3.2.99.2.

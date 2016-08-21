@@ -137,31 +137,28 @@ namespace DiscImageChef.PartPlugins
                         case 0xA9:
                         case 0xB7: // BSD disklabels
                             {
-                                uint magic = BitConverter.ToUInt32(disklabel_sector, 0);
+                                BSD.DiskLabel bsdDisklabel = BSD.GetDiskLabel(disklabel_sector);
 
-                                if(magic == 0x82564557)
+                                if(bsdDisklabel.d_magic == BSD.DISKMAGIC && bsdDisklabel.d_magic2 == BSD.DISKMAGIC)
                                 {
-                                    ushort no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
-
                                     // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                    for(int j = 0; j < no_parts; j++)
+                                    foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
                                     {
+
                                         CommonTypes.Partition part = new CommonTypes.Partition();
-                                        byte bsd_type;
 
-                                        part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 4);
-                                        part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 0);
-                                        part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
-                                        part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                                        bsd_type = disklabel_sector[134 + j * 16 + 8];
+                                        part.PartitionSectors = bsdPartition.p_size;
+                                        part.PartitionStartSector = bsdPartition.p_offset;
+                                        part.PartitionLength = bsdPartition.p_size * bsdDisklabel.d_secsize;
+                                        part.PartitionStart = bsdPartition.p_offset * bsdDisklabel.d_secsize;
 
-                                        part.PartitionType = string.Format("BSD: {0}", bsd_type);
-                                        part.PartitionName = decodeBSDType(bsd_type);
+                                        part.PartitionType = string.Format("BSD: {0}", bsdPartition.p_fstype);
+                                        part.PartitionName = BSD.fsTypeToString(bsdPartition.p_fstype);
 
                                         part.PartitionSequence = counter;
                                         part.PartitionDescription = "Partition inside a BSD disklabel.";
 
-                                        if(bsd_type != 0)
+                                        if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                         {
                                             partitions.Add(part);
                                             counter++;
@@ -178,15 +175,15 @@ namespace DiscImageChef.PartPlugins
                                 byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                 magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
-                                if(magic == UNIXDiskLabel_MAGIC)
+                                if(magic == UNIX.UNIXDiskLabel_MAGIC)
                                 {
-                                    UNIXDiskLabel dl = new UNIXDiskLabel();
-                                    UNIXVTOC vtoc = new UNIXVTOC(); // old/new
+                                    UNIX.UNIXDiskLabel dl = new UNIX.UNIXDiskLabel();
+                                    UNIX.UNIXVTOC vtoc = new UNIX.UNIXVTOC(); // old/new
                                     bool isNewDL = false;
                                     int vtocoffset = 0;
 
                                     vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                    if(vtoc.magic == UNIXVTOC_MAGIC)
+                                    if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
                                     {
                                         isNewDL = true;
                                         vtocoffset = 72;
@@ -194,7 +191,7 @@ namespace DiscImageChef.PartPlugins
                                     else
                                     {
                                         vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                        if(vtoc.magic != UNIXDiskLabel_MAGIC)
+                                        if(vtoc.magic != UNIX.UNIXDiskLabel_MAGIC)
                                         {
                                             valid = true;
                                             break;
@@ -225,7 +222,7 @@ namespace DiscImageChef.PartPlugins
                                         //dl.pad = br.ReadBytes(48); // 124
                                     }
 
-                                    if(vtoc.magic == UNIXVTOC_MAGIC)
+                                    if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
                                     {
                                         vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
                                         byte[] vtoc_name = new byte[8];
@@ -238,14 +235,14 @@ namespace DiscImageChef.PartPlugins
                                         // TODO: What if number of slices overlaps sector (>23)?
                                         for(int j = 0; j < vtoc.slices; j++)
                                         {
-                                            UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
+                                            UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry();
 
-                                            vtoc_ent.tag = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
+                                            vtoc_ent.tag = (DiscImageChef.PartPlugins.UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
                                             vtoc_ent.flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2); // 162/234 + j*12
                                             vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
                                             vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
 
-                                            if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+                                            if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
                                             {
                                                 CommonTypes.Partition part = new CommonTypes.Partition();
                                                 // TODO: Check if device bps == disklabel bps
@@ -254,7 +251,7 @@ namespace DiscImageChef.PartPlugins
                                                 part.PartitionStart = vtoc_ent.start * dl.bps;
                                                 part.PartitionLength = vtoc_ent.length * dl.bps;
                                                 part.PartitionSequence = counter;
-                                                part.PartitionType = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                part.PartitionType = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                 string info = "";
 
@@ -439,31 +436,28 @@ namespace DiscImageChef.PartPlugins
                                     case 0xA9:
                                     case 0xB7: // BSD disklabels
                                         {
-                                            uint magic = BitConverter.ToUInt32(disklabel_sector, 0);
+                                            BSD.DiskLabel bsdDisklabel = BSD.GetDiskLabel(disklabel_sector);
 
-                                            if(magic == 0x82564557)
+                                            if(bsdDisklabel.d_magic == BSD.DISKMAGIC && bsdDisklabel.d_magic2 == BSD.DISKMAGIC)
                                             {
-                                                ushort no_parts = BitConverter.ToUInt16(disklabel_sector, 126);
-
                                                 // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                                for(int j = 0; j < no_parts; j++)
+                                                foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
                                                 {
+
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
-                                                    byte bsd_type;
 
-                                                    part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 4);
-                                                    part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 134 + j * 16 + 0);
-                                                    part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
-                                                    part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                                                    bsd_type = disklabel_sector[134 + j * 16 + 8];
+                                                    part.PartitionSectors = bsdPartition.p_size;
+                                                    part.PartitionStartSector = bsdPartition.p_offset;
+                                                    part.PartitionLength = bsdPartition.p_size * bsdDisklabel.d_secsize;
+                                                    part.PartitionStart = bsdPartition.p_offset * bsdDisklabel.d_secsize;
 
-                                                    part.PartitionType = string.Format("BSD: {0}", bsd_type);
-                                                    part.PartitionName = decodeBSDType(bsd_type);
+                                                    part.PartitionType = string.Format("BSD: {0}", bsdPartition.p_fstype);
+                                                    part.PartitionName = BSD.fsTypeToString(bsdPartition.p_fstype);
 
                                                     part.PartitionSequence = counter;
                                                     part.PartitionDescription = "Partition inside a BSD disklabel.";
 
-                                                    if(bsd_type != 0)
+                                                    if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                                     {
                                                         partitions.Add(part);
                                                         counter++;
@@ -480,15 +474,15 @@ namespace DiscImageChef.PartPlugins
                                             byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
                                             magic = BitConverter.ToUInt32(unix_dl_sector, 4);
 
-                                            if(magic == UNIXDiskLabel_MAGIC)
+                                            if(magic == UNIX.UNIXDiskLabel_MAGIC)
                                             {
-                                                UNIXDiskLabel dl = new UNIXDiskLabel();
-                                                UNIXVTOC vtoc = new UNIXVTOC(); // old/new
+                                                UNIX.UNIXDiskLabel dl = new UNIX.UNIXDiskLabel();
+                                                UNIX.UNIXVTOC vtoc = new UNIX.UNIXVTOC(); // old/new
                                                 bool isNewDL = false;
                                                 int vtocoffset = 0;
 
                                                 vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                if(vtoc.magic == UNIXVTOC_MAGIC)
+                                                if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
                                                 {
                                                     isNewDL = true;
                                                     vtocoffset = 72;
@@ -496,7 +490,7 @@ namespace DiscImageChef.PartPlugins
                                                 else
                                                 {
                                                     vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                    if(vtoc.magic != UNIXDiskLabel_MAGIC)
+                                                    if(vtoc.magic != UNIX.UNIXDiskLabel_MAGIC)
                                                     {
                                                         valid = true;
                                                         break;
@@ -527,7 +521,7 @@ namespace DiscImageChef.PartPlugins
                                                     //dl.pad = br.ReadBytes(48); // 124
                                                 }
 
-                                                if(vtoc.magic == UNIXVTOC_MAGIC)
+                                                if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
                                                 {
                                                     vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
                                                     byte[] vtoc_name = new byte[8];
@@ -540,14 +534,14 @@ namespace DiscImageChef.PartPlugins
                                                     // TODO: What if number of slices overlaps sector (>23)?
                                                     for(int j = 0; j < vtoc.slices; j++)
                                                     {
-                                                        UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
+                                                        UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry();
 
-                                                        vtoc_ent.tag = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
+                                                        vtoc_ent.tag = (DiscImageChef.PartPlugins.UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
                                                         vtoc_ent.flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2); // 162/234 + j*12
                                                         vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
                                                         vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
 
-                                                        if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG_EMPTY && vtoc_ent.tag != UNIX_TAG_WHOLE)
+                                                        if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
                                                         {
                                                             CommonTypes.Partition part = new CommonTypes.Partition();
                                                             // TODO: Check if device bps == disklabel bps
@@ -556,7 +550,7 @@ namespace DiscImageChef.PartPlugins
                                                             part.PartitionStart = vtoc_ent.start * dl.bps;
                                                             part.PartitionLength = vtoc_ent.length * dl.bps;
                                                             part.PartitionSequence = counter;
-                                                            part.PartitionType = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                            part.PartitionType = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                             string info = "";
 
@@ -693,43 +687,6 @@ namespace DiscImageChef.PartPlugins
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
             return (((uint)cyl * 16) + (uint)head) * 63 + (uint)sector - 1;
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-        }
-
-        static string decodeBSDType(byte type)
-        {
-            switch(type)
-            {
-                case 1:
-                    return "Swap";
-                case 2:
-                    return "UNIX Version 6";
-                case 3:
-                    return "UNIX Version 7";
-                case 4:
-                    return "System V";
-                case 5:
-                    return "4.1BSD";
-                case 6:
-                    return "UNIX Eigth Edition";
-                case 7:
-                    return "4.2BSD";
-                case 8:
-                    return "MS-DOS";
-                case 9:
-                    return "4.4LFS";
-                case 11:
-                    return "HPFS";
-                case 12:
-                    return "ISO9660";
-                case 13:
-                    return "Boot";
-                case 14:
-                    return "Amiga FFS";
-                case 15:
-                    return "Apple HFS";
-                default:
-                    return "Unknown";
-            }
         }
 
         static string decodeMBRType(byte type)
@@ -1073,163 +1030,5 @@ namespace DiscImageChef.PartPlugins
             // Total sectors
         }
 
-        const uint UNIXDiskLabel_MAGIC = 0xCA5E600D;
-        const uint UNIXVTOC_MAGIC = 0x600DDEEE;
-        // Same as Solaris VTOC
-        struct UNIXDiskLabel
-        {
-            public uint type;
-            // Drive type, seems always 0
-            public uint magic;
-            // UNIXDiskLabel_MAGIC
-            public uint version;
-            // Only seen 1
-            public string serial;
-            // 12 bytes, serial number of the device
-            public uint cyls;
-            // data cylinders per device
-            public uint trks;
-            // data tracks per cylinder
-            public uint secs;
-            // data sectors per track
-            public uint bps;
-            // data bytes per sector
-            public uint start;
-            // first sector of this partition
-            public byte[] unknown1;
-            // 48 bytes
-            public uint alt_tbl;
-            // byte offset of alternate table
-            public uint alt_len;
-            // byte length of alternate table
-            // From onward here, is not on old version
-            public uint phys_cyl;
-            // physical cylinders per device
-            public uint phys_trk;
-            // physical tracks per cylinder
-            public uint phys_sec;
-            // physical sectors per track
-            public uint phys_bytes;
-            // physical bytes per sector
-            public uint unknown2;
-            //
-            public uint unknown3;
-            //
-            public byte[] pad;
-            // 32bytes
-        }
-
-        struct UNIXVTOC
-        {
-            public uint magic;
-            // UNIXVTOC_MAGIC
-            public uint version;
-            // 1
-            public string name;
-            // 8 bytes
-            public ushort slices;
-            // # of slices
-            public ushort unknown;
-            //
-            public byte[] reserved;
-            // 40 bytes
-        }
-
-        struct UNIXVTOCEntry
-        {
-            public ushort tag;
-            // TAG
-            public ushort flags;
-            // Flags (see below)
-            public uint start;
-            // Start sector
-            public uint length;
-            // Length of slice in sectors
-        }
-
-        const ushort UNIX_TAG_EMPTY = 0x0000;
-        // empty
-        const ushort UNIX_TAG_BOOT = 0x0001;
-        // boot
-        const ushort UNIX_TAG_ROOT = 0x0002;
-        // root
-        const ushort UNIX_TAG_SWAP = 0x0003;
-        // swap
-        const ushort UNIX_TAG_USER = 0x0004;
-        // /usr
-        const ushort UNIX_TAG_WHOLE = 0x0005;
-        // whole disk
-        const ushort UNIX_TAG_STAND = 0x0006;
-        // stand partition ??
-        const ushort UNIX_TAG_ALT_S = 0x0006;
-        // alternate sector space
-        const ushort UNIX_TAG_VAR = 0x0007;
-        // /var
-        const ushort UNIX_TAG_OTHER = 0x0007;
-        // non UNIX
-        const ushort UNIX_TAG_HOME = 0x0008;
-        // /home
-        const ushort UNIX_TAG_ALT_T = 0x0008;
-        // alternate track space
-        const ushort UNIX_TAG_ALT_ST = 0x0009;
-        // alternate sector track
-        const ushort UNIX_TAG_NEW_STAND = 0x0009;
-        // stand partition ??
-        const ushort UNIX_TAG_CACHE = 0x000A;
-        // cache
-        const ushort UNIX_TAG_NEW_VAR = 0x000A;
-        // /var
-        const ushort UNIX_TAG_RESERVED = 0x000B;
-        // reserved
-        const ushort UNIX_TAG_NEW_HOME = 0x000B;
-        // /home
-        const ushort UNIX_TAG_DUMP = 0x000C;
-        // dump partition
-        const ushort UNIX_TAG_NEW_ALT_ST = 0x000D;
-        // alternate sector track
-        const ushort UNIX_TAG_VM_PUBLIC = 0x000E;
-        // volume mgt public partition
-        const ushort UNIX_TAG_VM_PRIVATE = 0x000F;
-        // volume mgt private partition
-        static string decodeUNIXTAG(ushort type, bool isNew)
-        {
-            switch(type)
-            {
-                case UNIX_TAG_EMPTY:
-                    return "Unused";
-                case UNIX_TAG_BOOT:
-                    return "Boot";
-                case UNIX_TAG_ROOT:
-                    return "/";
-                case UNIX_TAG_SWAP:
-                    return "Swap";
-                case UNIX_TAG_USER:
-                    return "/usr";
-                case UNIX_TAG_WHOLE:
-                    return "Whole disk";
-                case UNIX_TAG_STAND:
-                    return isNew ? "Stand" : "Alternate sector space";
-                case UNIX_TAG_VAR:
-                    return isNew ? "/var" : "non UNIX";
-                case UNIX_TAG_HOME:
-                    return isNew ? "/home" : "Alternate track space";
-                case UNIX_TAG_ALT_ST:
-                    return isNew ? "Alternate sector track" : "Stand";
-                case UNIX_TAG_CACHE:
-                    return isNew ? "Cache" : "/var";
-                case UNIX_TAG_RESERVED:
-                    return isNew ? "Reserved" : "/home";
-                case UNIX_TAG_DUMP:
-                    return "dump";
-                case UNIX_TAG_NEW_ALT_ST:
-                    return "Alternate sector track";
-                case UNIX_TAG_VM_PUBLIC:
-                    return "volume mgt public partition";
-                case UNIX_TAG_VM_PRIVATE:
-                    return "volume mgt private partition";
-                default:
-                    return string.Format("Unknown TAG: 0x{0:X4}", type);
-            }
-        }
     }
 }

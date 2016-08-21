@@ -215,10 +215,14 @@ namespace DiscImageChef.PartPlugins
                     return "FreeBSD Swap";
                 case "516E7CB6-6ECF-11D6-8FF8-00022D09712B":
                     return "FreeBSD UFS";
+                case "516E7CB7-6ECF-11D6-8FF8-00022D09712B":
+                    return "FreeBSD UFS2";
                 case "516E7CB8-6ECF-11D6-8FF8-00022D09712B":
                     return "FreeBSD Vinum";
                 case "516E7CBA-6ECF-11D6-8FF8-00022D09712B":
                     return "FreeBSD ZFS";
+                case "74BA7DD9-A689-11E1-BD04-00E081286ACF":
+                    return "FreeBSD nandfs";
                 case "48465300-0000-11AA-AA11-00306543ECAC":
                     return "Apple HFS";
                 case "55465300-0000-11AA-AA11-00306543ECAC":
@@ -323,6 +327,24 @@ namespace DiscImageChef.PartPlugins
                     return "Acronis Secure Zone";
                 case "7C3457EF-0000-11AA-AA11-00306543ECAC":
                     return "Apple File System";
+                case "9D087404-1CA5-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD Label";
+                case "9D58FDBD-1CA5-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD Swap";
+                case "9D94CE7C-1CA5-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD UFS";
+                case "9DD4478F-1CA5-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD Vinum";
+                case "DBD5211B-1CA5-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD CCD";
+                case "3D48CE54-1D16-11DC-8817-01301BB8A9F5":
+                    return "DragonflyBSD Label";
+                case "BD215AB2-1D16-11DC-8696-01301BB8A9F5":
+                    return "DragonflyBSD Legacy";
+                case "61DC63AC-6E38-11DC-8513-01301BB8A9F5":
+                    return "DragonflyBSD Hammer";
+                case "5CBB9AD1-862D-11DC-A94D-01301BB8A9F5":
+                    return "DragonflyBSD Hammer2";
                 default:
                     return "";
             }

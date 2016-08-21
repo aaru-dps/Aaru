@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
@@ -52,10 +53,20 @@ namespace DiscImageChef.PartPlugins
             SunStand = 0x0006,
             SunVar = 0x0007,
             SunHome = 0x0008,
+            SunAlt = 0x0009,
+            SunCache = 0x000A,
+            VxVmPublic = 0x000E,
+            VxVmPrivate = 0x000F,
             LinuxSwap = 0x0082,
             Linux = 0x0083,
             LVM = 0x008E,
-            LinuxRaid = 0x00FD
+            LinuxRaid = 0x00FD,
+            NetBSD = 0x00FF,
+            FreeBSD_Swap = 0x0901,
+            FreeBSD_UFS = 0x0902,
+            FreeBSD_Vinum = 0x0903,
+            FreeBSD_ZFS = 0x0904,
+            FreeBSD_NANDFS = 0x0905
         }
 
         [Flags]
@@ -255,11 +266,13 @@ namespace DiscImageChef.PartPlugins
             }
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct SunDiskLabel
         {
             /// <summary>
             /// Offset 0x000: Informative string, 128 bytes
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public string info;
             /// <summary>
             /// Offset 0x080: Volume Table Of Contents
@@ -276,6 +289,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x110: Unused, 148 bytes
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 148)]
             public byte[] spare;
             /// <summary>
             /// Offset 0x1A4: Rotational speed
@@ -328,6 +342,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x1BC: Partitions
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public SunPartition[] partitions;
             /// <summary>
             /// Offset 0x1FC: 
@@ -339,6 +354,7 @@ namespace DiscImageChef.PartPlugins
             public ushort csum;
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct SunVTOC
         {
             /// <summary>
@@ -348,6 +364,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x04: Volume name, 8 bytes
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public string volname;
             /// <summary>
             /// Offset 0x0C: Number of partitions
@@ -356,6 +373,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x0E: Partition information, 8 entries
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public SunInfo[] infos;
             /// <summary>
             /// Offset 0x2E: Padding
@@ -364,6 +382,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x30: Information needed by mboot, 3 entries
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public uint[] bootinfo;
             /// <summary>
             /// Offset 0x3C: VTOC magic
@@ -372,13 +391,16 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Offset 0x40: Reserved, 40 bytes
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)]
             public byte[] reserved;
             /// <summary>
             /// Offset 0x68: Partition timestamps, 8 entries
             /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public uint[] timestamp;
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct SunInfo
         {
             /// <summary>
@@ -391,6 +413,7 @@ namespace DiscImageChef.PartPlugins
             public ushort flags;
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct SunPartition
         {
             /// <summary>

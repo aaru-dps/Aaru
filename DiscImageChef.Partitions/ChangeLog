@@ -1,3 +1,53 @@
+2016-08-21  Natalia Portillo  <claunia@claunia.com>
+
+	* Acorn.cs: Added support for Acorn FileCore partition, closes
+	#4.
+
+	* BSD.cs: Moved BSD partitions from inside MBR code to
+	separate code, as they can (and do) appear on other
+	architectures as the only scheme.
+
+	* DEC.cs: Added support for DEC disklabels, closes #11.
+
+	* DragonFlyBSD.cs: Added support for DragonFly BSD 64-bit
+	disklabels.
+
+	* PC98.cs: Added support for NEC PC-9800 partitions.
+
+	* RioKarma.cs: Added support for Rio Karma partitions.
+
+	* SGI.cs: Added support for SGI DVHs, closes #9.
+
+	* UNIX.cs: Moved UNIX partitions from inside MBR code to
+	separate code, as they can (and do) appear on other
+	architectures as the only scheme.
+
+	* DiscImageChef.Partitions.csproj: Added support for Acorn
+	FileCore partition, closes #4.
+	Added support for DEC disklabels, closes #11.
+	Added support for SGI DVHs, closes #9.
+	Moved BSD partitions from inside MBR code to separate code, as
+	they can (and do) appear on other architectures as the only
+	scheme.
+	Added support for DragonFly BSD 64-bit disklabels.
+	Added support for NEC PC-9800 partitions.
+	Added support for Rio Karma partitions.
+	Moved UNIX partitions from inside MBR code to separate code,
+	as they can (and do) appear on other architectures as the only
+	scheme.
+
+	* GPT.cs: Added new partition type UUIDs.
+
+	* MBR.cs: Moved BSD partitions from inside MBR code to
+	separate code, as they can (and do) appear on other
+	architectures as the only scheme.
+	Moved UNIX partitions from inside MBR code to separate code,
+	as they can (and do) appear on other architectures as the only
+	scheme.
+
+	* Sun.cs: Added new partition types.
+	Prepare structures for marshaling.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Partitions.csproj: Bumped version to 3.2.99.2.

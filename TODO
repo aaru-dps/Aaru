@@ -38,10 +38,7 @@ Filesystem plugins:
 --- Add support for ECMA-67
 
 Partitioning scheme plugins:
---- Add support for Acorn partitions
 --- Add support for AIX partitions
---- Add support for SGI partitions
---- Add support for Ultrix partitions
 
 Teledisk plugin:
 --- Add support for "advanced compression"

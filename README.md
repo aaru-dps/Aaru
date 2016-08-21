@@ -61,6 +61,14 @@ Supported partitioning schemes
 * Atari AHDI and ICDPro
 * Sun disklabel
 * EFI GUID Partition Table (GPT)
+* Acorn Linux and RISCiX partitions
+* BSD disklabels
+* DragonFly BSD 64-bit disklabel
+* DEC disklabels
+* NEC PC9800 partitions
+* SGI volume headers
+* Rio Karma partitions
+* UNIX VTOC and disklabel
 
 Supported file systems for read-only operations
 ===============================================
