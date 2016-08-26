@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +88,15 @@
     <Compile Include="AppleMFS\Super.cs" />
     <Compile Include="AppleMFS\Xattr.cs" />
     <Compile Include="exFAT.cs" />
+    <Compile Include="CPM\Info.cs" />
+    <Compile Include="CPM\CPM.cs" />
+    <Compile Include="CPM\Structs.cs" />
+    <Compile Include="CPM\Definitions.cs" />
+    <Compile Include="CPM\Dir.cs" />
+    <Compile Include="CPM\Super.cs" />
+    <Compile Include="CPM\Consts.cs" />
+    <Compile Include="CPM\File.cs" />
+    <Compile Include="CPM\Xattr.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -127,11 +137,13 @@
     <Folder Include="LisaFS\" />
     <Folder Include="UCSDPascal\" />
     <Folder Include="AppleMFS\" />
+    <Folder Include="CPM\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="CPM\cpmdefs.xml" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

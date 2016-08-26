@@ -5,11 +5,13 @@
 // Filename       : Super.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : CP/M filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Handles mounting and umounting the CP/M filesystem.
+//     Caches the whole volume on mounting (shouldn't be a problem, maximum
+//     volume size for CP/M is 8 MiB).
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +31,756 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.Console;
+
 namespace DiscImageChef.Filesystems.CPM
 {
-    public class Super
+    partial class CPM : Filesystem
     {
-        public Super()
+        public override Errno Mount()
         {
+            return Mount(false);
+        }
+
+        public override Errno Mount(bool debug)
+        {
+            // As the identification is so complex, just call Identify() and relay on its findings
+            if(!Identify(device, partStart, partEnd) || !cpmFound || workingDefinition == null || dpb == null)
+                return Errno.InvalidArgument;
+
+            // Build the software interleaving sector mask
+            if(workingDefinition.sides == 1)
+            {
+                sectorMask = new int[workingDefinition.side1.sectorIds.Length];
+                for(int m = 0; m < sectorMask.Length; m++)
+                    sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+            }
+            else
+            {
+                // Head changes after every track
+                if(string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    sectorMask = new int[workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length];
+                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
+                        sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+                    // Skip first track (first side)
+                    for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] = (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) + workingDefinition.side1.sectorIds.Length;
+                }
+                // Head changes after whole side
+                else if(string.Compare(workingDefinition.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
+                        sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+                    // Skip first track (first side) and first track (second side)
+                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
+                        sectorMask[m + workingDefinition.side1.sectorIds.Length] = (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) + workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
+
+                    // TODO: Implement CYLINDERS ordering
+                    DicConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
+                    return Errno.NotImplemented;
+                }
+                // TODO: Implement COLUMBIA ordering
+                else if(string.Compare(workingDefinition.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                    return Errno.NotImplemented;
+                }
+                // TODO: Implement EAGLE ordering
+                else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    DicConsole.DebugWriteLine("CP/M Plugin", "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                    return Errno.NotImplemented;
+                }
+                else
+                {
+                    DicConsole.DebugWriteLine("CP/M Plugin", "Unknown order type \"{0}\", not proceeding with this definition.", workingDefinition.order);
+                    return Errno.NotSupported;
+                }
+            }
+
+            // Deinterleave whole volume
+            Dictionary<ulong, byte[]> deinterleavedSectors = new Dictionary<ulong, byte[]>();
+            if(workingDefinition.sides == 1 || string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                DicConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
+
+                for(int p = 0; p <= (int)(partEnd - partStart); p++)
+                {
+                    byte[] readSector = device.ReadSector((ulong)((int)partStart + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                    if(workingDefinition.complement)
+                    {
+                        for(int b = 0; b < readSector.Length; b++)
+                            readSector[b] = (byte)(~readSector[b] & 0xFF);
+                    }
+                    deinterleavedSectors.Add((ulong)p, readSector);
+                }
+            }
+
+            int blockSize = 128 << dpb.bsh;
+            MemoryStream blockMs = new MemoryStream();
+            ulong blockNo = 0;
+            int sectorsPerBlock = 0;
+            Dictionary<ulong, byte[]> allocationBlocks = new Dictionary<ulong, byte[]>();
+
+            DicConsole.DebugWriteLine("CP/M Plugin", "Creating allocation blocks.");
+
+            // For each volume sector
+            for(ulong a = 0; a < (ulong)deinterleavedSectors.Count; a++)
+            {
+                byte[] sector;
+                deinterleavedSectors.TryGetValue(a, out sector);
+
+                // May it happen? Just in case, CP/M blocks are smaller than physical sectors
+                if(sector.Length > blockSize)
+                {
+                    for(int i = 0; i < (sector.Length / blockSize); i++)
+                    {
+                        byte[] tmp = new byte[blockSize];
+                        Array.Copy(sector, blockSize * i, tmp, 0, blockSize);
+                        allocationBlocks.Add(blockNo++, tmp);
+                    }
+                }
+                // CP/M blocks are larger than physical sectors
+                else if(sector.Length < blockSize)
+                {
+                    blockMs.Write(sector, 0, sector.Length);
+                    sectorsPerBlock++;
+
+                    if(sectorsPerBlock == blockSize / sector.Length)
+                    {
+                        allocationBlocks.Add(blockNo++, blockMs.ToArray());
+                        sectorsPerBlock = 0;
+                        blockMs = new MemoryStream();
+                    }
+                }
+                // CP/M blocks are same size than physical sectors
+                else
+                    allocationBlocks.Add(blockNo++, sector);
+            }
+
+            DicConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
+
+            int dirOff;
+            int dirSectors = ((dpb.drm + 1) * 32) / workingDefinition.bytesPerSector;
+            if(workingDefinition.sofs > 0)
+                dirOff = workingDefinition.sofs;
+            else
+                dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
+
+            // Read the whole directory blocks
+            MemoryStream dirMs = new MemoryStream();
+            for(int d = 0; d < dirSectors; d++)
+            {
+                byte[] sector;
+                deinterleavedSectors.TryGetValue((ulong)(d + dirOff), out sector);
+                dirMs.Write(sector, 0, sector.Length);
+            }
+            byte[] directory = dirMs.ToArray();
+
+            if(directory == null)
+                return Errno.InvalidArgument;
+
+            int dirCnt = 0;
+            string file1 = null;
+            string file2 = null;
+            string file3 = null;
+            Dictionary<string, Dictionary<int, List<ushort>>> fileExtents = new Dictionary<string, Dictionary<int, List<ushort>>>();
+            statCache = new Dictionary<string, FileEntryInfo>();
+            cpmStat = new FileSystemInfo();
+            bool atime = false;
+            dirList = new List<string>();
+            labelCreationDate = null;
+            labelUpdateDate = null;
+            passwordCache = new Dictionary<string, byte[]>();
+
+            DicConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
+
+            // For each directory entry
+            for(int dOff = 0; dOff < directory.Length; dOff += 32)
+            {
+                // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
+                if((directory[dOff] & 0x7F) < 0x10)
+                {
+                    // If there are more than 256 allocation blocks, the allocation block becomes a 16-bit value
+                    if(allocationBlocks.Count > 256)
+                    {
+                        DirectoryEntry16 entry = new DirectoryEntry16();
+                        IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                        Marshal.Copy(directory, dOff, dirPtr, 32);
+                        entry = (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
+                        Marshal.FreeHGlobal(dirPtr);
+
+                        bool hidden = (entry.statusUser & 0x80) == 0x80;
+                        bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
+                        bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+                        //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
+                        int user = (entry.statusUser & 0x0F);
+
+                        bool validEntry = true;
+
+                        for(int i = 0; i < 8; i++)
+                        {
+                            entry.filename[i] &= 0x7F;
+                            validEntry &= entry.filename[i] >= 0x20;
+                        }
+                        for(int i = 0; i < 3; i++)
+                        {
+                            entry.extension[i] &= 0x7F;
+                            validEntry &= entry.extension[i] >= 0x20;
+                        }
+
+                        if(!validEntry)
+                            continue;
+
+                        string filename = Encoding.ASCII.GetString(entry.filename).Trim();
+                        string extension = Encoding.ASCII.GetString(entry.extension).Trim();
+
+                        // If user is != 0, append user to name to have identical filenames
+                        if(user > 0)
+                            filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(!string.IsNullOrEmpty(extension))
+                            filename = filename + "." + extension;
+
+                        int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (dpb.exm + 1);
+                        List<ushort> blocks;
+                        Dictionary<int, List<ushort>> extentBlocks;
+                        FileEntryInfo fInfo;
+
+                        // Do we have a stat for the file already?
+                        if(statCache.TryGetValue(filename, out fInfo))
+                            statCache.Remove(filename);
+                        else
+                        {
+                            fInfo = new FileEntryInfo();
+                            fInfo.Attributes = new FileAttributes();
+                        }
+
+                        // And any extent?
+                        if(fileExtents.TryGetValue(filename, out extentBlocks))
+                            fileExtents.Remove(filename);
+                        else
+                            extentBlocks = new Dictionary<int, List<ushort>>();
+
+                        // Do we already have this extent? Should never happen
+                        if(extentBlocks.TryGetValue(entryNo, out blocks))
+                            extentBlocks.Remove(entryNo);
+                        else
+                            blocks = new List<ushort>();
+
+                        // Attributes
+                        if(hidden)
+                            fInfo.Attributes |= FileAttributes.Hidden;
+                        if(rdOnly)
+                            fInfo.Attributes |= FileAttributes.ReadOnly;
+                        if(system)
+                            fInfo.Attributes |= FileAttributes.System;
+
+                        // Supposedly there is a value in the directory entry telling how many blocks are designated in this entry
+                        // However some implementations tend to do whatever they wish, but none will ever allocate block 0 for a file
+                        // because that's where the directory resides.
+                        // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
+                        // we must ignore it.
+                        foreach(ushort blk in entry.allocations)
+                        {
+                            if(!blocks.Contains(blk) && blk != 0)
+                                blocks.Add(blk);
+                        }
+
+                        // Save the file
+                        fInfo.UID = (ulong)user;
+                        extentBlocks.Add(entryNo, blocks);
+                        fileExtents.Add(filename, extentBlocks);
+                        statCache.Add(filename, fInfo);
+
+                        // Add the file to the directory listing
+                        if(!dirList.Contains(filename))
+                            dirList.Add(filename);
+
+                        // Count entries 3 by 3 for timestamps
+                        switch(dirCnt % 3)
+                        {
+                            case 0:
+                                file1 = filename;
+                                break;
+                            case 1:
+                                file2 = filename;
+                                break;
+                            case 2:
+                                file3 = filename;
+                                break;
+                        }
+                        dirCnt++;
+                    }
+                    else
+                    {
+                        DirectoryEntry entry = new DirectoryEntry();
+                        IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                        Marshal.Copy(directory, dOff, dirPtr, 32);
+                        entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
+                        Marshal.FreeHGlobal(dirPtr);
+
+                        bool hidden = (entry.statusUser & 0x80) == 0x80;
+                        bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
+                        bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+                        //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
+                        int user = (entry.statusUser & 0x0F);
+
+                        bool validEntry = true;
+
+                        for(int i = 0; i < 8; i++)
+                        {
+                            entry.filename[i] &= 0x7F;
+                            validEntry &= entry.filename[i] >= 0x20;
+                        }
+                        for(int i = 0; i < 3; i++)
+                        {
+                            entry.extension[i] &= 0x7F;
+                            validEntry &= entry.extension[i] >= 0x20;
+                        }
+
+                        if(!validEntry)
+                            continue;
+
+                        string filename = Encoding.ASCII.GetString(entry.filename).Trim();
+                        string extension = Encoding.ASCII.GetString(entry.extension).Trim();
+
+                        // If user is != 0, append user to name to have identical filenames
+                        if(user > 0)
+                            filename = string.Format("{0:X1}:{1}", user, filename);
+                        if(!string.IsNullOrEmpty(extension))
+                            filename = filename + "." + extension;
+
+                        int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (dpb.exm + 1);
+                        List<ushort> blocks;
+                        Dictionary<int, List<ushort>> extentBlocks;
+                        FileEntryInfo fInfo;
+
+                        // Do we have a stat for the file already?
+                        if(statCache.TryGetValue(filename, out fInfo))
+                            statCache.Remove(filename);
+                        else
+                        {
+                            fInfo = new FileEntryInfo();
+                            fInfo.Attributes = new FileAttributes();
+                        }
+
+                        // And any extent?
+                        if(fileExtents.TryGetValue(filename, out extentBlocks))
+                            fileExtents.Remove(filename);
+                        else
+                            extentBlocks = new Dictionary<int, List<ushort>>();
+
+                        // Do we already have this extent? Should never happen
+                        if(extentBlocks.TryGetValue(entryNo, out blocks))
+                            extentBlocks.Remove(entryNo);
+                        else
+                            blocks = new List<ushort>();
+
+                        // Attributes
+                        if(hidden)
+                            fInfo.Attributes |= FileAttributes.Hidden;
+                        if(rdOnly)
+                            fInfo.Attributes |= FileAttributes.ReadOnly;
+                        if(system)
+                            fInfo.Attributes |= FileAttributes.System;
+
+                        // Supposedly there is a value in the directory entry telling how many blocks are designated in this entry
+                        // However some implementations tend to do whatever they wish, but none will ever allocate block 0 for a file
+                        // because that's where the directory resides.
+                        // There is also a field telling how many bytes are used in the last block, but its meaning is non-standard so
+                        // we must ignore it.
+                        foreach(ushort blk in entry.allocations)
+                        {
+                            if(!blocks.Contains(blk) && blk != 0)
+                                blocks.Add(blk);
+                        }
+
+                        // Save the file
+                        fInfo.UID = (ulong)user;
+                        extentBlocks.Add(entryNo, blocks);
+                        fileExtents.Add(filename, extentBlocks);
+                        statCache.Add(filename, fInfo);
+
+                        // Add the file to the directory listing
+                        if(!dirList.Contains(filename))
+                            dirList.Add(filename);
+
+                        // Count entries 3 by 3 for timestamps
+                        switch(dirCnt % 3)
+                        {
+                            case 0:
+                                file1 = filename;
+                                break;
+                            case 1:
+                                file2 = filename;
+                                break;
+                            case 2:
+                                file3 = filename;
+                                break;
+                        }
+                        dirCnt++;
+                    }
+                }
+                // A password entry (or a file entry in PDOS, but this does not handle that case)
+                else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
+                {
+                    PasswordEntry entry = new PasswordEntry();
+                    IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                    Marshal.Copy(directory, dOff, dirPtr, 32);
+                    entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
+                    Marshal.FreeHGlobal(dirPtr);
+
+                    int user = (entry.userNumber & 0x0F);
+
+                    for(int i = 0; i < 8; i++)
+                        entry.filename[i] &= 0x7F;
+                    for(int i = 0; i < 3; i++)
+                        entry.extension[i] &= 0x7F;
+
+                    string filename = Encoding.ASCII.GetString(entry.filename).Trim();
+                    string extension = Encoding.ASCII.GetString(entry.extension).Trim();
+
+                    // If user is != 0, append user to name to have identical filenames
+                    if(user > 0)
+                        filename = string.Format("{0:X1}:{1}", user, filename);
+                    if(!string.IsNullOrEmpty(extension))
+                        filename = filename + "." + extension;
+
+                    // Do not repeat passwords
+                    if(passwordCache.ContainsKey(filename))
+                        passwordCache.Remove(filename);
+
+                    // Copy whole password entry
+                    byte[] tmp = new byte[32];
+                    Array.Copy(directory, dOff, tmp, 0, 32);
+                    passwordCache.Add(filename, tmp);
+
+                    // Count entries 3 by 3 for timestamps
+                    switch(dirCnt % 3)
+                    {
+                        case 0:
+                            file1 = filename;
+                            break;
+                        case 1:
+                            file2 = filename;
+                            break;
+                        case 2:
+                            file3 = filename;
+                            break;
+                    }
+                    dirCnt++;
+                }
+                // Volume label and password entry. Volume password is ignored.
+                else if((directory[dOff] & 0x7F) == 0x20)
+                {
+                    LabelEntry entry = new LabelEntry();
+                    IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                    Marshal.Copy(directory, dOff, dirPtr, 32);
+                    entry = (LabelEntry)Marshal.PtrToStructure(dirPtr, typeof(LabelEntry));
+                    Marshal.FreeHGlobal(dirPtr);
+
+                    // The volume label defines if one of the fields in CP/M 3 timestamp is a creation or an access time
+                    atime |= (entry.flags & 0x40) == 0x40;
+
+                    label = Encoding.ASCII.GetString(directory, dOff + 1, 11).Trim();
+                    labelCreationDate = new byte[4];
+                    labelUpdateDate = new byte[4];
+                    Array.Copy(directory, dOff + 24, labelCreationDate, 0, 4);
+                    Array.Copy(directory, dOff + 28, labelUpdateDate, 0, 4);
+
+                    // Count entries 3 by 3 for timestamps
+                    switch(dirCnt % 3)
+                    {
+                        case 0:
+                            file1 = null;
+                            break;
+                        case 1:
+                            file2 = null;
+                            break;
+                        case 2:
+                            file3 = null;
+                            break;
+                    }
+                    dirCnt++;
+                }
+                // Timestamp entry
+                else if((directory[dOff] & 0x7F) == 0x21)
+                {
+                    // These places must be zero on CP/M 3 timestamp
+                    if(directory[dOff + 10] == 0x00 &&
+                       directory[dOff + 20] == 0x00 &&
+                       directory[dOff + 30] == 0x00 &&
+                       directory[dOff + 31] == 0x00)
+                    {
+                        DateEntry entry = new DateEntry();
+                        IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                        Marshal.Copy(directory, dOff, dirPtr, 32);
+                        entry = (DateEntry)Marshal.PtrToStructure(dirPtr, typeof(DateEntry));
+                        Marshal.FreeHGlobal(dirPtr);
+
+                        FileEntryInfo fInfo;
+
+                        // Entry contains timestamps for last 3 entries, whatever the kind they are.
+                        if(!string.IsNullOrEmpty(file1))
+                        {
+                            if(statCache.TryGetValue(file1, out fInfo))
+                                statCache.Remove(file1);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            if(atime)
+                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date1);
+                            else
+                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date1);
+
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date2);
+
+                            statCache.Add(file1, fInfo);
+                        }
+
+                        if(!string.IsNullOrEmpty(file2))
+                        {
+                            if(statCache.TryGetValue(file2, out fInfo))
+                                statCache.Remove(file2);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            if(atime)
+                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date3);
+                            else
+                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date3);
+
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date4);
+
+                            statCache.Add(file2, fInfo);
+                        }
+
+                        if(!string.IsNullOrEmpty(file3))
+                        {
+                            if(statCache.TryGetValue(file3, out fInfo))
+                                statCache.Remove(file3);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            if(atime)
+                                fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.date5);
+                            else
+                                fInfo.CreationTime = DateHandlers.CPMToDateTime(entry.date5);
+
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.date6);
+
+                            statCache.Add(file3, fInfo);
+                        }
+
+                        file1 = null;
+                        file2 = null;
+                        file3 = null;
+                        dirCnt = 0;
+                    }
+                    // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
+                    else if(directory[dOff + 1] == 0x00)
+                    {
+                        TrdPartyDateEntry entry = new TrdPartyDateEntry();
+                        IntPtr dirPtr = Marshal.AllocHGlobal(32);
+                        Marshal.Copy(directory, dOff, dirPtr, 32);
+                        entry = (TrdPartyDateEntry)Marshal.PtrToStructure(dirPtr, typeof(TrdPartyDateEntry));
+                        Marshal.FreeHGlobal(dirPtr);
+
+                        FileEntryInfo fInfo;
+
+                        // Entry contains timestamps for last 3 entries, whatever the kind they are.
+                        if(!string.IsNullOrEmpty(file1))
+                        {
+                            if(statCache.TryGetValue(file1, out fInfo))
+                                statCache.Remove(file1);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            byte[] ctime = new byte[4];
+                            ctime[0] = entry.create1[0];
+                            ctime[1] = entry.create1[1];
+
+                            fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.access1);
+                            fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.modify1);
+
+                            statCache.Add(file1, fInfo);
+                        }
+
+                        if(!string.IsNullOrEmpty(file2))
+                        {
+                            if(statCache.TryGetValue(file2, out fInfo))
+                                statCache.Remove(file2);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            byte[] ctime = new byte[4];
+                            ctime[0] = entry.create2[0];
+                            ctime[1] = entry.create2[1];
+
+                            fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.access2);
+                            fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.modify2);
+
+                            statCache.Add(file2, fInfo);
+                        }
+
+                        if(!string.IsNullOrEmpty(file3))
+                        {
+                            if(statCache.TryGetValue(file1, out fInfo))
+                                statCache.Remove(file3);
+                            else
+                                fInfo = new FileEntryInfo();
+
+                            byte[] ctime = new byte[4];
+                            ctime[0] = entry.create3[0];
+                            ctime[1] = entry.create3[1];
+
+                            fInfo.AccessTime = DateHandlers.CPMToDateTime(entry.access3);
+                            fInfo.CreationTime = DateHandlers.CPMToDateTime(ctime);
+                            fInfo.LastWriteTime = DateHandlers.CPMToDateTime(entry.modify3);
+
+                            statCache.Add(file3, fInfo);
+                        }
+
+                        file1 = null;
+                        file2 = null;
+                        file3 = null;
+                        dirCnt = 0;
+                    }
+                }
+            }
+
+            // Cache all files. As CP/M maximum volume size is 8 Mib
+            // this should not be a problem
+            DicConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
+            long usedBlocks = 0;
+            fileCache = new Dictionary<string, byte[]>();
+            foreach(string filename in dirList)
+            {
+                MemoryStream fileMs = new MemoryStream();
+                FileEntryInfo fInfo = new FileEntryInfo();
+
+                if(statCache.TryGetValue(filename, out fInfo))
+                    statCache.Remove(filename);
+
+                fInfo.Blocks = 0;
+
+                Dictionary<int, List<ushort>> extents;
+                if(fileExtents.TryGetValue(filename, out extents))
+                {
+                    for(int ex = 0; ex < extents.Count; ex++)
+                    {
+                        List<ushort> alBlks;
+
+                        if(extents.TryGetValue(ex, out alBlks))
+                        {
+                            foreach(ushort alBlk in alBlks)
+                            {
+                                byte[] blk = new byte[blockSize];
+                                allocationBlocks.TryGetValue(alBlk, out blk);
+                                fileMs.Write(blk, 0, blk.Length);
+                                fInfo.Blocks++;
+                            }
+                        }
+                    }
+                }
+
+                // If you insist to call CP/M "extent based"
+                fInfo.Attributes |= FileAttributes.Extents;
+                fInfo.BlockSize = blockSize;
+                fInfo.Length = fileMs.Length;
+                cpmStat.Files++;
+                usedBlocks += fInfo.Blocks;
+
+                statCache.Add(filename, fInfo);
+                fileCache.Add(filename, fileMs.ToArray());
+            }
+
+            decodedPasswordCache = new Dictionary<string, byte[]>();
+            // For each stored password, store a decoded version of it
+            if(passwordCache.Count > 0)
+            {
+                foreach(KeyValuePair<string, byte[]> kvp in passwordCache)
+                {
+                    byte[] tmp = new byte[8];
+                    Array.Copy(kvp.Value, 16, tmp, 0, 8);
+                    for(int t = 0; t < 8; t++)
+                        tmp[t] ^= kvp.Value[13];
+
+                    decodedPasswordCache.Add(kvp.Key, tmp);
+                }
+            }
+
+            // Generate statfs.
+            cpmStat.Blocks = dpb.dsm + 1;
+            cpmStat.FilenameLength = 11;
+            cpmStat.Files = (ulong)fileCache.Count;
+            cpmStat.FreeBlocks = cpmStat.Blocks - usedBlocks;
+            cpmStat.PluginId = PluginUUID;
+            cpmStat.Type = "CP/M filesystem";
+
+            // Generate XML info
+            xmlFSType = new Schemas.FileSystemType();
+            xmlFSType.Clusters = cpmStat.Blocks;
+            xmlFSType.ClusterSize = blockSize;
+            if(labelCreationDate != null)
+            {
+                xmlFSType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);
+                xmlFSType.CreationDateSpecified = true;
+            }
+            if(labelUpdateDate != null)
+            {
+                xmlFSType.ModificationDate = DateHandlers.CPMToDateTime(labelUpdateDate);
+                xmlFSType.ModificationDateSpecified = true;
+            }
+            xmlFSType.Files = fileCache.Count;
+            xmlFSType.FilesSpecified = true;
+            xmlFSType.FreeClusters = cpmStat.FreeBlocks;
+            xmlFSType.FreeClustersSpecified = true;
+            xmlFSType.Type = "CP/M filesystem";
+            if(!string.IsNullOrEmpty(label))
+                xmlFSType.VolumeName = label;
+
+            mounted = true;
+            return Errno.NoError;
+        }
+
+        /// <summary>
+        /// Gets information about the mounted volume.
+        /// </summary>
+        /// <param name="stat">Information about the mounted volume.</param>
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            stat = cpmStat;
+
+            return Errno.NoError;
+        }
+
+        public override Errno Unmount()
+        {
+            mounted = false;
+            definitions = null;
+            cpmFound = false;
+            workingDefinition = null;
+            dpb = null; 
+            sectorMask = null;
+            label = null;
+            thirdPartyTimestamps = false;
+            standardTimestamps = false;
+            labelCreationDate = null;
+            labelUpdateDate = null;
+            return Errno.NoError;
         }
     }
 }

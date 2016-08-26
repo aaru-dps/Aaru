@@ -48,6 +48,7 @@ Supported disk image formats
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
 * X68k DIM disk image files (.DIM)
+* CPCEMU Disk file and Extended Disk File
 
 Supported partitioning schemes
 ==============================
@@ -77,6 +78,7 @@ Supported file systems for read-only operations
 * Apple Lisa file system
 * Apple Macintosh File System (MFS)
 * U.C.S.D Pascal file system
+* CP/M file system
 
 Supported file systems for identification and information only
 ==============================================================

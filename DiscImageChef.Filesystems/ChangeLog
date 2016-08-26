@@ -1,5 +1,20 @@
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
+	* CPM.cs:
+	* Dir.cs:
+	* File.cs:
+	* Info.cs:
+	* Xattr.cs:
+	* Super.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* cpmdefs.xml:
+	* Definitions.cs:
+	* DiscImageChef.Filesystems.csproj: Added CP/M filesystem,
+	closes #29.
+
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
 	* Dir.cs: Typo.
 
 2016-08-21  Natalia Portillo  <claunia@claunia.com>

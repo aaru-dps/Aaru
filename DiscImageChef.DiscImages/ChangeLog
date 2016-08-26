@@ -1,5 +1,11 @@
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
+	* CPCDSK.cs:
+	* DiscImageChef.DiscImages.csproj: Added CPCEMU Disk File and
+	Extended Disk File.
+
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
 	* ImagePlugin.cs: Added floppy address mark sector tag.
 
 2016-08-22  Natalia Portillo  <claunia@claunia.com>

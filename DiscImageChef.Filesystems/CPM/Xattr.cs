@@ -5,11 +5,11 @@
 // Filename       : Xattr.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : CP/M filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Methods to handle CP/M extended attributes (password).
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,74 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+using System.Collections.Generic;
+
 namespace DiscImageChef.Filesystems.CPM
 {
-    public class Xattr
+    partial class CPM : Filesystem
     {
-        public Xattr()
+        /// <summary>
+        /// Reads an extended attribute, alternate data stream or fork from the given file.
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="path">File path.</param>
+        /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
+        /// <param name="buf">Buffer.</param>
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                return Errno.NoSuchFile;
+
+            if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
+            {
+                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
+                    return Errno.NoError;
+            }
+
+            if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) == 0)
+            {
+                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
+                    return Errno.NoError;
+            }
+
+            return Errno.NoSuchExtendedAttribute;
+        }
+
+        /// <summary>
+        /// Lists all extended attributes, alternate data streams and forks of the given file.
+        /// </summary>
+        /// <returns>Error number.</returns>
+        /// <param name="path">Path.</param>
+        /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                return Errno.NoSuchFile;
+
+            xattrs = new List<string>();
+            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                xattrs.Add("com.caldera.cpm.password");
+
+            if(decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                xattrs.Add("com.caldera.cpm.password.text");
+
+            return Errno.NoError;
         }
     }
 }

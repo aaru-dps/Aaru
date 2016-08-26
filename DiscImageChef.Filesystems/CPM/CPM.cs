@@ -5,11 +5,11 @@
 // Filename       : CPM.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : CP/M filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Constructors and common variables for the CP/M filesystem plugin.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,13 +29,99 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+using System.Collections.Generic;
+using DiscImageChef.ImagePlugins;
+
 namespace DiscImageChef.Filesystems.CPM
 {
-    public class CPM
+    partial class CPM : Filesystem
     {
+        bool mounted;
+        readonly ImagePlugin device;
+        ulong partStart;
+        ulong partEnd;
+
+        /// <summary>
+        /// Stores all known CP/M disk definitions
+        /// </summary>
+        CpmDefinitions definitions;
+        /// <summary>
+        /// True if <see cref="Identify"/> thinks this is a CP/M filesystem
+        /// </summary>
+        bool cpmFound;
+        /// <summary>
+        /// If <see cref="Identify"/> thinks this is a CP/M filesystem, this is the definition for it
+        /// </summary>
+        CpmDefinition workingDefinition;
+        /// <summary>
+        /// CP/M disc parameter block (on-memory)
+        /// </summary>
+        DiscParameterBlock dpb;
+        /// <summary>
+        /// Sector deinterleaving mask
+        /// </summary>
+        int[] sectorMask;
+        /// <summary>
+        /// The volume label, if the CP/M filesystem contains one
+        /// </summary>
+        string label;
+        /// <summary>
+        /// True if there are timestamps in Z80DOS or DOS+ format
+        /// </summary>
+        bool thirdPartyTimestamps;
+        /// <summary>
+        /// True if there are CP/M 3 timestamps
+        /// </summary>
+        bool standardTimestamps;
+        /// <summary>
+        /// Timestamp in volume label for creation
+        /// </summary>
+        byte[] labelCreationDate;
+        /// <summary>
+        /// Timestamp in volume label for update
+        /// </summary>
+        byte[] labelUpdateDate;
+
+        /// <summary>
+        /// Cached <see cref="FileSystemInfo"/> 
+        /// </summary>
+        FileSystemInfo cpmStat;
+        /// <summary>
+        /// Cached directory listing
+        /// </summary>
+        List<string> dirList;
+        /// <summary>
+        /// Cached file data
+        /// </summary>
+        Dictionary<string, byte[]> fileCache;
+        /// <summary>
+        /// Cached file <see cref="FileEntryInfo"/> 
+        /// </summary>
+        Dictionary<string, FileEntryInfo> statCache;
+        /// <summary>
+        /// Cached file passwords
+        /// </summary>
+        Dictionary<string, byte[]> passwordCache;
+        /// <summary>
+        /// Cached file passwords, decoded
+        /// </summary>
+        Dictionary<string, byte[]> decodedPasswordCache;
+
         public CPM()
         {
+            Name = "CP/M File System";
+            PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        }
+
+        public CPM(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            device = imagePlugin;
+            partStart = partitionStart;
+            partEnd = partitionEnd;
+            Name = "CP/M File System";
+            PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
         }
     }
 }

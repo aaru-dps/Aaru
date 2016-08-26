@@ -4255,10 +4255,10 @@
       <comment>Columbia Commander 964 - DSDD 48 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -4308,10 +4308,10 @@
       <comment>Columbia 1600 - DSDD 96 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>80</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -4535,59 +4535,6 @@
       <al0>128</al0>
       <al1>0</al1>
       <ofs>2</ofs>
-      <sofs>0</sofs>
-      <complement>true</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>Compustar 30, Super IOS - DSDD 48 tpi 5.25" - 512 x 10</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>35</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>10</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>0</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>7</int>
-          <int>9</int>
-          <int>2</int>
-          <int>4</int>
-          <int>6</int>
-          <int>8</int>
-          <int>10</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>1</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>7</int>
-          <int>9</int>
-          <int>2</int>
-          <int>4</int>
-          <int>6</int>
-          <int>8</int>
-          <int>10</int>
-        </sectorIds>
-      </side2>
-      <order>CYLINDERS</order>
-      <label>COM4</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
       <sofs>0</sofs>
       <complement>true</complement>
       <evenOdd>false</evenOdd>
@@ -4923,10 +4870,10 @@
       <comment>Cromemco CDOS - SSSD 48 tpi 5.25" - 128 x 18</comment>
       <encoding>FM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>1</sides>
+      <sectorsPerTrack>18</sectorsPerTrack>
+      <bytesPerSector>128</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -4968,10 +4915,10 @@
       <comment>Cromemco CDOS - DSSD 48 tpi 5.25" - 128 x 18</comment>
       <encoding>FM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>128</sectorsPerTrack>
+      <bytesPerSector>18</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -5037,10 +4984,10 @@
       <comment>Cromemco CDOS - SSDD 48 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>1</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -5074,10 +5021,10 @@
       <comment>Cromemco CDOS - DSDD 48 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -5127,10 +5074,10 @@
       <comment>Cromemco CDOS - DSDD 8" - 512 x 16</comment>
       <encoding>MFM</encoding>
       <bitrate>HIGH</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>77</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>16</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -5192,10 +5139,10 @@
       <comment>Cromemco CP/M - SSDD 48 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>1</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -5229,10 +5176,10 @@
       <comment>Cromemco CP/M - DSDD 48 tpi 5.25" - 512 x 10</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>10</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -13617,13 +13564,13 @@
       <evenOdd>false</evenOdd>
     </CpmDefinition>
     <CpmDefinition>
-      <comment>People's World Computer - SSDD 48 tpi 5.25" - 1024 x 5</comment>
+      <comment>People's World Computer - DSDD 48 tpi 5.25" - 1024 x 5</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>5</sectorsPerTrack>
+      <bytesPerSector>1024</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -14116,98 +14063,6 @@
       <evenOdd>false</evenOdd>
     </CpmDefinition>
     <CpmDefinition>
-      <comment>QDP-500 - DSHD 96 tpi 5.25" - 1024 x 8</comment>
-      <encoding>MFM</encoding>
-      <bitrate>HIGH</bitrate>
-      <cylinders>77</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>8</sectorsPerTrack>
-      <bytesPerSector>1024</bytesPerSector>
-      <skew>0</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>7</int>
-          <int>2</int>
-          <int>4</int>
-          <int>6</int>
-          <int>8</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>1</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>7</int>
-          <int>2</int>
-          <int>4</int>
-          <int>6</int>
-          <int>8</int>
-        </sectorIds>
-      </side2>
-      <order>CYLINDERS</order>
-      <label>QDP1</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>Quay - DSDD 48 tpi 5.25" - 1024 x 5</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>40</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>5</sectorsPerTrack>
-      <bytesPerSector>1024</bytesPerSector>
-      <skew>0</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>2</int>
-          <int>4</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>1</sideId>
-        <sectorIds>
-          <int>1</int>
-          <int>3</int>
-          <int>5</int>
-          <int>2</int>
-          <int>4</int>
-        </sectorIds>
-      </side2>
-      <order>CYLINDERS</order>
-      <label>QUA1</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
       <comment>Research Machines Limited 380Z - 128 x 16</comment>
       <encoding>FM</encoding>
       <bitrate>LOW</bitrate>
@@ -14636,7 +14491,7 @@
       <sides>1</sides>
       <sectorsPerTrack>9</sectorsPerTrack>
       <bytesPerSector>512</bytesPerSector>
-      <skew>0</skew>
+      <skew>2</skew>
       <side1>
         <sideId>0</sideId>
         <sectorIds>
@@ -16875,10 +16730,10 @@
       <comment>TeleVideo 806 TurboDOS - DSDD 48 tpi 5.25" - 1024 x 5</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>5</sectorsPerTrack>
+      <bytesPerSector>1024</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -18624,10 +18479,10 @@
       <comment>Xerox 820, S/W Publishers DD - SSDD 48 tpi 5.25" - 256 x 18</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>40</cylinders>
+      <sides>1</sides>
+      <sectorsPerTrack>18</sectorsPerTrack>
+      <bytesPerSector>256</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
@@ -19849,12 +19704,30 @@
         <sideId>0</sideId>
         <sectorIds>
           <int>0</int>
+          <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side1>
       <side2>
-        <sideId>0</sideId>
+        <sideId>1</sideId>
         <sectorIds>
           <int>0</int>
+          <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side2>
       <order>CYLINDERS</order>
@@ -19867,34 +19740,6 @@
       <al0>192</al0>
       <al1>0</al1>
       <ofs>3</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>CPC-STD 178K Data 40trk 9sct 64dir 1Kpb Side 1</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>40</cylinders>
-      <sides>1</sides>
-      <sectorsPerTrack>9</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>5</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <label>DA1A</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
       <sofs>0</sofs>
       <complement>false</complement>
       <evenOdd>false</evenOdd>
@@ -19935,34 +19780,6 @@
       <evenOdd>false</evenOdd>
     </CpmDefinition>
     <CpmDefinition>
-      <comment>CPC 187K Data 42trk 9sct 64dir 1Kpb Side 1</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>42</cylinders>
-      <sides>1</sides>
-      <sectorsPerTrack>9</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>5</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <label>DA2A</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
       <comment>CPC 187K Data 42trk 9sct 64dir 1Kpb Side 2</comment>
       <encoding>MFM</encoding>
       <bitrate>LOW</bitrate>
@@ -19993,69 +19810,6 @@
       <al0>192</al0>
       <al1>0</al1>
       <ofs>42</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>CPC 253K Data 60trk 9sct 64dir 1Kpb Side 1</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>60</cylinders>
-      <sides>1</sides>
-      <sectorsPerTrack>9</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>5</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <label>DA3A</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>CPC 253K Data 60trk 9sct 64dir 1Kpb Side 2</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>60</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>9</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>5</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side2>
-      <order>EAGLE</order>
-      <label>DA3B</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
       <sofs>0</sofs>
       <complement>false</complement>
       <evenOdd>false</evenOdd>
@@ -20689,6 +20443,14 @@
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side1>
       <label>PC1A</label>
@@ -20717,12 +20479,28 @@
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side1>
       <side2>
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side2>
       <order>EAGLE</order>
@@ -20752,12 +20530,28 @@
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side1>
       <side2>
         <sideId>1</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side2>
       <order>SIDES</order>
@@ -20776,21 +20570,37 @@
     </CpmDefinition>
     <CpmDefinition>
       <comment>PCW 706K Format 80trk 9sct 256dir 2Kpb Two Sides</comment>
-      <cylinders>0</cylinders>
-      <sides>0</sides>
-      <sectorsPerTrack>0</sectorsPerTrack>
-      <bytesPerSector>0</bytesPerSector>
+      <cylinders>80</cylinders>
+      <sides>2</sides>
+      <sectorsPerTrack>9</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
       <skew>0</skew>
       <side1>
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side1>
       <side2>
         <sideId>1</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
         </sectorIds>
       </side2>
       <label>PCW3</label>
@@ -20802,132 +20612,6 @@
       <al0>240</al0>
       <al1>0</al1>
       <ofs>1</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>CPC 398K Data 80trk 10sct 64dir 2Kpb Side 1</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>80</cylinders>
-      <sides>1</sides>
-      <sectorsPerTrack>10</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>2</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <label>DX1A</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>CPC 398K Data 80trk 10sct 64dir 2Kpb Side 2</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>80</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>10</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>2</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side2>
-      <order>EAGLE</order>
-      <label>DX1B</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>MAGIC-DOS 408K Data 82trk 10sct 64dir 2Kpb Side 1</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>82</cylinders>
-      <sides>1</sides>
-      <sectorsPerTrack>10</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>2</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <label>DX2A</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
-      <sofs>0</sofs>
-      <complement>false</complement>
-      <evenOdd>false</evenOdd>
-    </CpmDefinition>
-    <CpmDefinition>
-      <comment>MAGIC-DOS 408K Data 82trk 10sct 64dir 2Kpb Side 2</comment>
-      <encoding>MFM</encoding>
-      <bitrate>LOW</bitrate>
-      <cylinders>82</cylinders>
-      <sides>2</sides>
-      <sectorsPerTrack>10</sectorsPerTrack>
-      <bytesPerSector>512</bytesPerSector>
-      <skew>2</skew>
-      <side1>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side1>
-      <side2>
-        <sideId>0</sideId>
-        <sectorIds>
-          <int>0</int>
-        </sectorIds>
-      </side2>
-      <order>EAGLE</order>
-      <label>DX2B</label>
-      <bsh>0</bsh>
-      <blm>0</blm>
-      <exm>0</exm>
-      <dsm>0</dsm>
-      <drm>0</drm>
-      <al0>0</al0>
-      <al1>0</al1>
-      <ofs>0</ofs>
       <sofs>0</sofs>
       <complement>false</complement>
       <evenOdd>false</evenOdd>
@@ -20945,12 +20629,30 @@
         <sideId>0</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
+		  <int>10</int>
         </sectorIds>
       </side1>
       <side2>
         <sideId>1</sideId>
         <sectorIds>
           <int>1</int>
+          <int>2</int>
+          <int>3</int>
+          <int>4</int>
+          <int>5</int>
+          <int>6</int>
+          <int>7</int>
+          <int>8</int>
+          <int>9</int>
+          <int>10</int>
         </sectorIds>
       </side2>
       <order>SIDES</order>
@@ -21954,6 +21656,42 @@
       <al0>192</al0>
       <al1>0</al1>
       <ofs>1</ofs>
+      <sofs>0</sofs>
+      <complement>false</complement>
+      <evenOdd>false</evenOdd>
+    </CpmDefinition>
+    <CpmDefinition>
+      <comment>Extended CPC 3" 43-track</comment>
+      <encoding>MFM</encoding>
+      <bitrate>LOW</bitrate>
+      <cylinders>43</cylinders>
+      <sides>1</sides>
+      <sectorsPerTrack>9</sectorsPerTrack>
+      <bytesPerSector>512</bytesPerSector>
+      <skew>2</skew>
+      <side1>
+        <sideId>0</sideId>
+        <sectorIds>
+          <int>193</int>
+          <int>194</int>
+          <int>195</int>
+          <int>196</int>
+          <int>197</int>
+          <int>198</int>
+          <int>199</int>
+          <int>200</int>
+          <int>201</int>
+        </sectorIds>
+      </side1>
+      <label>AMS7</label>
+      <bsh>3</bsh>
+      <blm>7</blm>
+      <exm>0</exm>
+      <dsm>193</dsm>
+      <drm>63</drm>
+      <al0>192</al0>
+      <al1>0</al1>
+      <ofs>0</ofs>
       <sofs>0</sofs>
       <complement>false</complement>
       <evenOdd>false</evenOdd>
