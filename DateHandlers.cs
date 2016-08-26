@@ -164,6 +164,19 @@ namespace DiscImageChef
             DicConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute, second);
             return new DateTime(year, month, day, hour, minute, second);
         }
+
+        public static DateTime CPMToDateTime(byte[] timestamp)
+        {
+            ushort days = BitConverter.ToUInt16(timestamp, 0);
+            int hours = timestamp[2];
+            int minutes = timestamp[3];
+
+            DateTime temp = AmigaEpoch.AddDays(days);
+            temp = temp.AddHours(hours);
+            temp = temp.AddMinutes(minutes);
+
+            return temp;
+        }
     }
 }
 
