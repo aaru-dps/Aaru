@@ -50,6 +50,7 @@ Supported disk image formats
 * X68k DIM disk image files (.DIM)
 * CPCEMU Disk file and Extended Disk File
 * QEMU Copy-On-Write version 1 (QCOW)
+* QEMU Enhanced Disk (QED)
 
 Supported partitioning schemes
 ==============================

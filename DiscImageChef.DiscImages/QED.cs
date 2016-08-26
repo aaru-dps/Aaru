@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : QCOW.cs
+// Filename       : QED.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages QEMU Copy-On-Write disk images.
+//     Manages QEMU Enhanced Disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,36 +39,78 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
-    class QCOW : ImagePlugin
+    class QED : ImagePlugin
     {
         #region Internal constants
         /// <summary>
-        /// Magic number: 'Q', 'F', 'I', 0xFB
+        /// Magic number: 'Q', 'E', 'D', 0x00
         /// </summary>
-        const uint QCowMagic = 0x514649FB;
-        const uint QCowVersion = 1;
-        const uint QCowEncryptionNone = 0;
-        const uint QCowEncryptionAES = 1;
-        const ulong QCowCompressed = 0x8000000000000000;
+        const uint QedMagic = 0x00444551;
+
+        /// <summary>
+        /// Mask of unsupported incompatible features
+        /// </summary>
+        const ulong QedFeatureMask = 0xFFFFFFFFFFFFFFF8;
+
+        /// <summary>
+        /// File is differential (has a backing file)
+        /// </summary>
+        const ulong QedFeature_BackingFile = 0x01;
+        /// <summary>
+        /// Image needs a consistency check before writing
+        /// </summary>
+        const ulong QedFeature_NeedsCheck = 0x02;
+        /// <summary>s
+        /// Backing file is a raw disk image
+        /// </summary>
+        const ulong QedFeature_RawBacking = 0x04;
 
         const int MaxCacheSize = 16777216;
         #endregion
 
         #region Internal Structures
         /// <summary>
-        /// QCOW header, big-endian
+        /// QED header, big-endian
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QCowHeader
+        struct QedHeader
         {
             /// <summary>
-            /// <see cref="QCowMagic"/> 
+            /// <see cref="QedMagic"/> 
             /// </summary>
             public uint magic;
             /// <summary>
-            /// Must be 1
+            /// Cluster size in bytes
             /// </summary>
-            public uint version;
+            public uint cluster_size;
+            /// <summary>
+            /// L1 and L2 table size in cluster
+            /// </summary>
+            public uint table_size;
+            /// <summary>
+            /// Header size in clusters
+            /// </summary>
+            public uint header_size;
+            /// <summary>
+            /// Incompatible features
+            /// </summary>
+            public ulong features;
+            /// <summary>
+            /// Compatible features
+            /// </summary>
+            public ulong compat_features;
+            /// <summary>
+            /// Self-resetting features
+            /// </summary>
+            public ulong autoclear_features;
+            /// <summary>
+            /// Offset to L1 table
+            /// </summary>
+            public ulong l1_table_offset;
+            /// <summary>
+            /// Image size
+            /// </summary>
+            public ulong image_size;
             /// <summary>
             /// Offset inside file to string containing backing file
             /// </summary>
@@ -76,63 +119,34 @@ namespace DiscImageChef.ImagePlugins
             /// Size of <see cref="backing_file_offset"/> 
             /// </summary>
             public uint backing_file_size;
-            /// <summary>
-            /// Modification time
-            /// </summary>
-            public uint mtime;
-            /// <summary>
-            /// Size in bytes
-            /// </summary>
-            public ulong size;
-            /// <summary>
-            /// Cluster bits
-            /// </summary>
-            public byte cluster_bits;
-            /// <summary>
-            /// L2 table bits
-            /// </summary>
-            public byte l2_bits;
-            /// <summary>
-            /// Padding
-            /// </summary>
-            public ushort padding;
-            /// <summary>
-            /// Encryption method
-            /// </summary>
-            public uint crypt_method;
-            /// <summary>
-            /// Offset to L1 table
-            /// </summary>
-            public ulong l1_table_offset;
         }
         #endregion
 
-        QCowHeader qHdr;
-        int clusterSize;
-        int clusterSectors;
-        uint l1Size;
-        int l2Size;
+        QedHeader qHdr;
+        uint clusterSectors;
+        uint tableSize;
         ulong[] l1Table;
 
         ulong l1Mask;
         int l1Shift;
         ulong l2Mask;
         ulong sectorMask;
+        int clusterBits;
 
         Dictionary<ulong, byte[]> sectorCache;
         Dictionary<ulong, byte[]> clusterCache;
         Dictionary<ulong, ulong[]> l2TableCache;
 
-        int maxCachedSectors = MaxCacheSize / 512;
-        int maxL2TableCache;
-        int maxClusterCache;
+        uint maxCachedSectors = MaxCacheSize / 512;
+        uint maxL2TableCache;
+        uint maxClusterCache;
 
         FileStream imageStream;
 
-        public QCOW()
+        public QED()
         {
-            Name = "QEMU Copy-On-Write disk image";
-            PluginUUID = new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
+            Name = "QEMU Enhanced Disk image";
+            PluginUUID = new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
             ImageInfo.readableMediaTags = new List<MediaTagType>();
@@ -163,12 +177,16 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512)
                 return false;
+            
+            byte[] qHdr_b = new byte[64];
+            stream.Read(qHdr_b, 0, 64);
+            qHdr = new QedHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(64);
+            Marshal.Copy(qHdr_b, 0, headerPtr, 64);
+            qHdr = (QedHeader)Marshal.PtrToStructure(headerPtr, typeof(QedHeader));
+            Marshal.FreeHGlobal(headerPtr);
 
-            byte[] qHdr_b = new byte[48];
-            stream.Read(qHdr_b, 0, 48);
-            qHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdr_b);
-
-            return qHdr.magic == QCowMagic && qHdr.version == QCowVersion;
+            return qHdr.magic == QedMagic;
         }
 
         public override bool OpenImage(string imagePath)
@@ -179,69 +197,66 @@ namespace DiscImageChef.ImagePlugins
             if(stream.Length < 512)
                 return false;
 
-            byte[] qHdr_b = new byte[48];
-            stream.Read(qHdr_b, 0, 48);
-            qHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdr_b);
+            byte[] qHdr_b = new byte[64];
+            stream.Read(qHdr_b, 0, 64);
+            qHdr = new QedHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(64);
+            Marshal.Copy(qHdr_b, 0, headerPtr, 64);
+            qHdr = (QedHeader)Marshal.PtrToStructure(headerPtr, typeof(QedHeader));
+            Marshal.FreeHGlobal(headerPtr);
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", qHdr.version);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_offset = {0}", qHdr.backing_file_offset);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_size = {0}", qHdr.backing_file_size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.mtime = {0}", qHdr.mtime);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.size = {0}", qHdr.size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.cluster_bits = {0}", qHdr.cluster_bits);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2_bits = {0}", qHdr.l2_bits);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.padding = {0}", qHdr.padding);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.crypt_method = {0}", qHdr.crypt_method);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_table_offset = {0}", qHdr.l1_table_offset);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}", qHdr.cluster_size);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.table_size = {0}", qHdr.table_size);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.header_size = {0}", qHdr.header_size);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.features = {0}", qHdr.features);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.compat_features = {0}", qHdr.compat_features);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.autoclear_features = {0}", qHdr.autoclear_features);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1_table_offset = {0}", qHdr.l1_table_offset);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.image_size = {0}", qHdr.image_size);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_offset = {0}", qHdr.backing_file_offset);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}", qHdr.backing_file_size);
 
-            if(qHdr.size <= 1)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.size), "Image size is too small");
+            if(qHdr.image_size <= 1)
+                throw new ArgumentOutOfRangeException(nameof(qHdr.image_size), "Image size is too small");
 
-            if(qHdr.cluster_bits < 9 || qHdr.cluster_bits > 16)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_bits), "Cluster size must be between 512 bytes and 64 Kbytes");
+            if(!IsPowerOfTwo(qHdr.cluster_size))
+                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be a power of 2");
 
-            if(qHdr.l2_bits < 9 - 3 || qHdr.l2_bits > 16 - 3)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.l2_bits), "L2 size must be between 512 bytes and 64 Kbytes");
+            if(qHdr.cluster_size < 4096 || qHdr.cluster_size > 67108864)
+                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be between 4 Kbytes and 64 Mbytes");
+            
+            if(!IsPowerOfTwo(qHdr.table_size))
+                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be a power of 2");
 
-            if(qHdr.crypt_method > QCowEncryptionAES)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.crypt_method), "Invalid encryption method");
+            if(qHdr.table_size < 1 || qHdr.table_size > 16)
+                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be between 1 and 16 clusters");
 
-            if(qHdr.crypt_method > QCowEncryptionNone)
-                throw new NotImplementedException("AES encrypted images not yet supported");
+            if((qHdr.features & QedFeatureMask) > 0)
+                throw new ArgumentOutOfRangeException(nameof(qHdr.features), string.Format("Image uses unknown incompatible features {0:X}", qHdr.features & QedFeatureMask));
 
-            if(qHdr.backing_file_offset != 0)
+            if((qHdr.features & QedFeature_BackingFile) == QedFeature_BackingFile)
                 throw new NotImplementedException("Differencing images not yet supported");
 
-            int shift = qHdr.cluster_bits + qHdr.l2_bits;
+            clusterSectors = qHdr.cluster_size / 512;
+            tableSize = (qHdr.cluster_size * qHdr.table_size) / 8;
 
-            if(qHdr.size > ulong.MaxValue - (ulong)(1 << shift))
-                throw new ArgumentOutOfRangeException(nameof(qHdr.size), "Image is too large");
-            
-            clusterSize = 1 << qHdr.cluster_bits;
-            clusterSectors = 1 << (qHdr.cluster_bits - 9);
-            l1Size = (uint)((qHdr.size + (ulong)(1 << shift) - 1) >> shift);
-            l2Size = 1 << qHdr.l2_bits;
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", tableSize);
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSize = {0}", clusterSize);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSectors = {0}", clusterSectors);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Size = {0}", l1Size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Size = {0}", l2Size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.sectors = {0}", ImageInfo.sectors);
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            byte[] l1Table_b = new byte[l1Size * 8];
+            byte[] l1Table_b = new byte[tableSize];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            stream.Read(l1Table_b, 0, (int)l1Size * 8);
-            l1Table = new ulong[l1Size];
-            DicConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
+            stream.Read(l1Table_b, 0, (int)tableSize);
+            l1Table = new ulong[tableSize / 8];
+            DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
             for(long i = 0; i < l1Table.LongLength; i++)
-                l1Table[i] = BigEndianBitConverter.ToUInt64(l1Table_b, (int)(i * 8));
+                l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
 
             l1Mask = 0;
             int c = 0;
-            l1Shift = qHdr.l2_bits + qHdr.cluster_bits;
+            clusterBits = ctz32(qHdr.cluster_size);
+            l2Mask = tableSize - 1;
+            l1Shift = clusterBits + ctz32(tableSize);
 
             for(int i = 0; i < 64; i++)
             {
@@ -254,22 +269,19 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            l2Mask = 0;
-            for(int i = 0; i < qHdr.l2_bits; i++)
-                l2Mask = (l2Mask << 1) + 1;
-            l2Mask <<= qHdr.cluster_bits;
 
             sectorMask = 0;
-            for(int i = 0; i < qHdr.cluster_bits; i++)
+            for(int i = 0; i < clusterBits; i++)
                 sectorMask = (sectorMask << 1) + 1;
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Mask = {0:X}", l1Mask);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Shift = {0}", l1Shift);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Mask = {0:X}", l2Mask);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.sectorMask = {0:X}", sectorMask);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}", clusterBits);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}", l1Mask);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1Shift = {0}", l1Shift);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", l2Mask);
+            DicConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
-            maxL2TableCache = MaxCacheSize / (l2Size * 8);
-            maxClusterCache = MaxCacheSize / clusterSize;
+            maxL2TableCache = MaxCacheSize / (tableSize / 8);
+            maxClusterCache = MaxCacheSize / qHdr.cluster_size;
 
             imageStream = stream;
 
@@ -279,16 +291,13 @@ namespace DiscImageChef.ImagePlugins
 
             FileInfo fi = new FileInfo(imagePath);
             ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            if(qHdr.mtime > 0)
-                ImageInfo.imageLastModificationTime = DateHandlers.UNIXUnsignedToDateTime(qHdr.mtime);
-            else
-                ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
-            ImageInfo.sectors = qHdr.size / 512;
+            ImageInfo.sectors = qHdr.image_size / 512;
             ImageInfo.sectorSize = 512;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = qHdr.size;
+            ImageInfo.imageSize = qHdr.image_size;
 
             return true;
         }
@@ -307,7 +316,7 @@ namespace DiscImageChef.ImagePlugins
             ulong byteAddress = sectorAddress * 512;
 
             ulong l1Off = (byteAddress & l1Mask) >> l1Shift;
-                                     
+
             if((long)l1Off >= l1Table.LongLength)
                 throw new ArgumentOutOfRangeException(nameof(l1Off), string.Format("Trying to read past L1 table, position {0} of a max {1}", l1Off, l1Table.LongLength));
 
@@ -319,13 +328,13 @@ namespace DiscImageChef.ImagePlugins
 
             if(!l2TableCache.TryGetValue(l1Off, out l2Table))
             {
-                l2Table = new ulong[l2Size];
+                l2Table = new ulong[tableSize / 8];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
-                byte[] l2Table_b = new byte[l2Size * 8];
-                imageStream.Read(l2Table_b, 0, l2Size * 8);
-                DicConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
+                byte[] l2Table_b = new byte[tableSize];
+                imageStream.Read(l2Table_b, 0, (int)tableSize);
+                DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
                 for(long i = 0; i < l2Table.LongLength; i++)
-                    l2Table[i] = BigEndianBitConverter.ToUInt64(l2Table_b, (int)(i * 8));
+                    l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
 
                 if(l2TableCache.Count >= maxL2TableCache)
                     l2TableCache.Clear();
@@ -333,23 +342,20 @@ namespace DiscImageChef.ImagePlugins
                 l2TableCache.Add(l1Off, l2Table);
             }
 
-            ulong l2Off = (byteAddress & l2Mask) >> qHdr.cluster_bits;
+            ulong l2Off = (byteAddress & l2Mask) >> clusterBits;
 
             ulong offset = l2Table[l2Off];
 
             sector = new byte[512];
 
-            if(offset != 0)
+            if(offset != 0 && offset != 1)
             {
-                if((offset & QCowCompressed) == QCowCompressed)
-                    throw new NotImplementedException("Compressed images not yet supported.");
-
                 byte[] cluster;
                 if(!clusterCache.TryGetValue(offset, out cluster))
                 {
-                    cluster = new byte[clusterSize];
+                    cluster = new byte[qHdr.cluster_size];
                     imageStream.Seek((long)offset, SeekOrigin.Begin);
-                    imageStream.Read(cluster, 0, clusterSize);
+                    imageStream.Read(cluster, 0, (int)qHdr.cluster_size);
 
                     if(clusterCache.Count >= maxClusterCache)
                         clusterCache.Clear();
@@ -409,7 +415,7 @@ namespace DiscImageChef.ImagePlugins
 
         public override string GetImageFormat()
         {
-            return "QEMU Copy-On-Write";
+            return "QEMU Enhanced Disk";
         }
 
         public override string GetImageVersion()
@@ -455,6 +461,49 @@ namespace DiscImageChef.ImagePlugins
         public override MediaType GetMediaType()
         {
             return ImageInfo.mediaType;
+        }
+
+        bool IsPowerOfTwo(uint x)
+        {
+            while(((x & 1) == 0) && x > 1)
+                x >>= 1;
+            return (x == 1);
+        }
+
+        static int ctz32(uint val)
+        {
+            int cnt = 0;
+            if((val & 0xFFFF) == 0)
+            {
+                cnt += 16;
+                val >>= 16;
+            }
+            if((val & 0xFF) == 0)
+            {
+                cnt += 8;
+                val >>= 8;
+            }
+            if((val & 0xF) == 0)
+            {
+                cnt += 4;
+                val >>= 4;
+            }
+            if((val & 0x3) == 0)
+            {
+                cnt += 2;
+                val >>= 2;
+            }
+            if((val & 0x1) == 0)
+            {
+                cnt++;
+                val >>= 1;
+            }
+            if((val & 0x1) == 0)
+            {
+                cnt++;
+            }
+
+            return cnt;
         }
 
         #region Unsupported features

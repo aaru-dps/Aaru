@@ -13,7 +13,6 @@
 --- Add support for VHDX images
 --- Add support for VirtualBox images
 --- Add support for VMWare images
---- Add support foe QEMU QED images
 
 Filesystem plugins:
 --- Add support for SFS filesystem

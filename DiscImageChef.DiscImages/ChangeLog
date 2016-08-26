@@ -1,5 +1,13 @@
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
+	* QED.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for QEMU
+	Enhanced Disk, closes #38
+
+	* QCOW.cs: Corrected header.
+
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
 	* QCOW.cs:
 	* DiscImageChef.DiscImages.csproj: Added support for QEMU
 	Copy-On-Write disk image, closes #43.
