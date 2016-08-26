@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Dir.cs
+// Filename       : Structs.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : U.C.S.D. Pascal filesystem plugin.
+// Component      : Component
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Methods to show the U.C.S.D. Pascal catalog as a directory.
+//     Description
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,35 +29,13 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
-
 using System;
-using System.Collections.Generic;
-
-namespace DiscImageChef.Filesystems.UCSDPascal
+namespace DiscImageChef.Filesystems.CPM
 {
-    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin : Filesystem
+    public class Structs
     {
-        public override Errno ReadDir(string path, ref List<string> contents)
+        public Structs()
         {
-            if(!mounted)
-                return Errno.AccessDenied;
-            
-            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return Errno.NotSupported;
-
-            contents = new List<string>();
-            foreach(PascalFileEntry ent in fileEntries)
-                contents.Add(StringHandlers.PascalToString(ent.filename));
-
-            if(debug)
-            {
-                contents.Add("$");
-                contents.Add("$Boot");
-            }
-
-            contents.Sort();
-            return Errno.NoError;
         }
     }
 }

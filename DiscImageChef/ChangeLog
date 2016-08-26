@@ -1,3 +1,9 @@
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/ExtractFiles.cs:
+	  Corrected behaviour when volume name is missing, null or
+	  empty.
+
 2016-08-18  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Compare.cs:

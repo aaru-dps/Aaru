@@ -259,6 +259,12 @@ namespace DiscImageChef.Commands
                                 string outputPath;
                                 FileStream outputFile;
 
+                                string volumeName;
+                                if(string.IsNullOrEmpty(fs.XmlFSType.VolumeName))
+                                    volumeName = "NO NAME";
+                                else
+                                    volumeName = fs.XmlFSType.VolumeName;
+
                                 error = fs.Stat(entry, ref stat);
                                 if(error == Errno.NoError)
                                 {
@@ -277,13 +283,13 @@ namespace DiscImageChef.Commands
                                                 {
                                                     Directory.CreateDirectory(Path.Combine(options.OutputDir,
                                                                                            fs.XmlFSType.Type,
-                                                                                           fs.XmlFSType.VolumeName,
+                                                                                           volumeName,
                                                                                            ".xattrs",
                                                                                            xattr));
 
                                                     outputPath = Path.Combine(options.OutputDir,
                                                                                     fs.XmlFSType.Type,
-                                                                                    fs.XmlFSType.VolumeName,
+                                                                                    volumeName,
                                                                                     ".xattrs",
                                                                                     xattr,
                                                                                      entry);
@@ -314,11 +320,11 @@ namespace DiscImageChef.Commands
 
                                     Directory.CreateDirectory(Path.Combine(options.OutputDir,
                                                                            fs.XmlFSType.Type,
-                                                                           fs.XmlFSType.VolumeName));
+                                                                           volumeName));
 
                                     outputPath = Path.Combine(options.OutputDir,
                                                                     fs.XmlFSType.Type,
-                                                                    fs.XmlFSType.VolumeName,
+                                                              volumeName,
                                                                      entry);
 
                                     if(!File.Exists(outputPath))

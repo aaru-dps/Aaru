@@ -1,3 +1,7 @@
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
+	* Acorn.cs: Corrected handling of negative values.
+
 2016-08-22  Natalia Portillo  <claunia@claunia.com>
 
 	* Human68k.cs:

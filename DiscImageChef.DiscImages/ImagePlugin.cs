@@ -561,7 +561,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>CD track flags, 1 byte</summary>
         CDTrackFlags,
         /// <summary>DVD sector copyright information</summary>
-        DVD_CMI
+        DVD_CMI,
+        /// <summary>Floppy address mark (contents depend on underlying floppy format)</summary>
+        FloppyAddressMark
     };
 
     /// <summary>
