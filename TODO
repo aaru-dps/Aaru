@@ -9,7 +9,7 @@
 --- Add support for Apple NDIF images
 --- Add support for Apple UDIF images
 --- Add support for XPACK images
---- Add support for QEMU QCOW and QCOW2 images
+--- Add support for QEMU QCOW2 images
 --- Add support for VHDX images
 --- Add support for VirtualBox images
 --- Add support for VMWare images
@@ -64,3 +64,7 @@ Device handling:
 --- Add support for FreeBSD
 --- Support SCSI mode pages 18h, 1Dh, 20h, 31h, 32h
 --- Support MMC feature codes FF33h
+
+QCOW plugin:
+--- Add support for compressed images
+--- Add support for encrypted images

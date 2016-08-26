@@ -192,7 +192,7 @@ namespace DiscImageChef.Filesystems.CPM
                     {
                         // Read the superblock
                         HardDiskSuperBlock hddSb = new HardDiskSuperBlock();
-                        IntPtr hddPtr = Marshal.AllocHGlobal(16);
+                        IntPtr hddPtr = Marshal.AllocHGlobal(Marshal.SizeOf(hddSb));
                         Marshal.Copy(sector, 0, hddPtr, Marshal.SizeOf(hddSb));
                         hddSb = (HardDiskSuperBlock)Marshal.PtrToStructure(hddPtr, typeof(HardDiskSuperBlock));
                         Marshal.FreeHGlobal(hddPtr);

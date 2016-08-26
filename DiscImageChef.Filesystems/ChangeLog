@@ -1,5 +1,10 @@
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
+	* Info.cs: Typo in HDD superblock, not allocating enough
+	memory.
+
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
 	* CPM.cs:
 	* Dir.cs:
 	* File.cs:

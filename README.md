@@ -49,6 +49,7 @@ Supported disk image formats
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
 * X68k DIM disk image files (.DIM)
 * CPCEMU Disk file and Extended Disk File
+* QEMU Copy-On-Write version 1 (QCOW)
 
 Supported partitioning schemes
 ==============================

@@ -1,5 +1,11 @@
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
+	* QCOW.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for QEMU
+	Copy-On-Write disk image, closes #43.
+
+2016-08-26  Natalia Portillo  <claunia@claunia.com>
+
 	* CPCDSK.cs:
 	* DiscImageChef.DiscImages.csproj: Added CPCEMU Disk File and
 	Extended Disk File.
