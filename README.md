@@ -51,6 +51,7 @@ Supported disk image formats
 * CPCEMU Disk file and Extended Disk File
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
+* Parallels Hard Disk Image (HDD) version 2
 
 Supported partitioning schemes
 ==============================

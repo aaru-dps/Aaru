@@ -1,5 +1,13 @@
 2016-08-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Parallels.cs:
+	* DiscImageChef.DiscImages.csproj: Adds support for Parallels
+	Hard Disk Image (HDD) version 2.
+
+	* QCOW2.cs: Removed spurious debug line.
+
+2016-08-27  Natalia Portillo  <claunia@claunia.com>
+
 	* QCOW2.cs:
 	* DiscImageChef.DiscImages.csproj: Add support for QCOW2
 	images, closes #44.
