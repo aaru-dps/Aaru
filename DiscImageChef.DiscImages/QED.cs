@@ -177,7 +177,7 @@ namespace DiscImageChef.ImagePlugins
 
             if(stream.Length < 512)
                 return false;
-            
+
             byte[] qHdr_b = new byte[64];
             stream.Read(qHdr_b, 0, 64);
             qHdr = new QedHeader();
@@ -225,7 +225,7 @@ namespace DiscImageChef.ImagePlugins
 
             if(qHdr.cluster_size < 4096 || qHdr.cluster_size > 67108864)
                 throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be between 4 Kbytes and 64 Mbytes");
-            
+
             if(!IsPowerOfTwo(qHdr.table_size))
                 throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be a power of 2");
 

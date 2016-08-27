@@ -1,3 +1,12 @@
+2016-08-27  Natalia Portillo  <claunia@claunia.com>
+
+	* QCOW2.cs:
+	* DiscImageChef.DiscImages.csproj: Add support for QCOW2
+	images, closes #44.
+
+	* QED.cs:
+	* QCOW.cs: Code cleanup and format.
+
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
 	* QED.cs:

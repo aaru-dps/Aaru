@@ -54,6 +54,7 @@
     <Compile Include="CPCDSK.cs" />
     <Compile Include="QCOW.cs" />
     <Compile Include="QED.cs" />
+    <Compile Include="QCOW2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

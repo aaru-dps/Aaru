@@ -9,7 +9,6 @@
 --- Add support for Apple NDIF images
 --- Add support for Apple UDIF images
 --- Add support for XPACK images
---- Add support for QEMU QCOW2 images
 --- Add support for VHDX images
 --- Add support for VirtualBox images
 --- Add support for VMWare images
