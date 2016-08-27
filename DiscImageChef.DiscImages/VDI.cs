@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Parallels.cs
+// Filename       : VDI.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages Parallels disk images.
+//     Manages VirtualBox disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -34,88 +34,72 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using DiscImageChef.ImagePlugins;
-using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-    public class Parallels : ImagePlugin
+    public class VDI : ImagePlugin
     {
         #region Internal constants
-        readonly byte[] ParallelsMagic = { 0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x74, 0x46, 0x72, 0x65, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65 };
-        readonly byte[] ParallelsExtMagic = { 0x57, 0x69, 0x74, 0x68, 0x6F, 0x75, 0x46, 0x72, 0x65, 0x53, 0x70, 0x61, 0x63, 0x45, 0x78, 0x74 };
+        const uint VDIMagic = 0xBEDA107F;
+        const uint VDIEmpty = 0xFFFFFFFF;
 
-        const uint ParallelsVersion = 2;
-
-        const uint ParallelsInUse = 0x746F6E59;
-        const uint ParallelsClosed = 0x312E3276;
-
-        const uint ParallelsEmpty = 0x00000001;
+        const string OracleVDI = "<<< Oracle VM VirtualBox Disk Image >>>\n";
+        const string QEMUVDI = "<<< QEMU VM Virtual Disk Image >>>\n";
+        const string SunOldVDI = "<<< Sun xVM VirtualBox Disk Image >>>\n";
+        const string SunVDI = "<<< Sun VirtualBox Disk Image >>>\n";
+        const string InnotekVDI = "<<< innotek VirtualBox Disk Image >>>\n";
+        const string InnotekOldVDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
         #endregion
 
         #region Internal Structures
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         /// <summary>
-        /// Parallels disk image header, little-endian
+        /// VDI disk image header, little-endian
         /// </summary>
-        struct ParallelsHeader
+        struct VDIHeader
         {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string creator;
             /// <summary>
-            /// Magic, <see cref="ParallelsMagic"/> or <see cref="ParallelsExtMagic"/> 
+            /// Magic, <see cref="VDIMagic"/>
             /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] magic;
+            public uint magic;
             /// <summary>
             /// Version
             /// </summary>
-            public uint version;
-            /// <summary>
-            /// Disk geometry parameter
-            /// </summary>
-            public uint heads;
-            /// <summary>
-            /// Disk geometry parameter
-            /// </summary>
+            public ushort majorVersion;
+            public ushort minorVersion;
+            public uint headerSize;
+            public uint imageType;
+            public uint imageFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string description;
+            public uint offsetBlocks;
+            public uint offsetData;
             public uint cylinders;
-            /// <summary>
-            /// Cluser size in sectors
-            /// </summary>
-            public uint cluster_size;
-            /// <summary>
-            /// Entries in BAT (clusters in image)
-            /// </summary>
-            public uint bat_entries;
-            /// <summary>
-            /// Disk size in sectors
-            /// </summary>
-            public ulong sectors;
-            /// <summary>
-            /// Set to <see cref="ParallelsInUse"/> if image is opened by any software, <see cref="ParallelsClosed"/> if not, and 0 if old version
-            /// </summary>
-            public uint in_use;
-            /// <summary>
-            /// Offset in sectors to start of data
-            /// </summary>
-            public uint data_off;
-            /// <summary>
-            /// Flags
-            /// </summary>
-            public uint flags;
-            /// <summary>
-            /// Offset in sectors to format extension
-            /// </summary>
-            public ulong ext_off;
+            public uint heads;
+            public uint spt;
+            public uint sectorSize;
+            public uint unused;
+            public ulong size;
+            public uint blockSize;
+            public uint blockExtraData;
+            public uint blocks;
+            public uint allocatedBlocks;
+            public Guid uuid;
+            public Guid snapshotUuid;
+            public Guid linkUuid;
+            public Guid parentUuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 56)]
+            public byte[] garbage;
         }
         #endregion
 
-        bool extended;
-        ParallelsHeader pHdr;
-        uint[] BAT;
-        long dataOffset;
-        uint clusterBytes;
-        bool empty;
+        VDIHeader vHdr;
+        uint[] IBM;
         FileStream imageStream;
 
         Dictionary<ulong, byte[]> sectorCache;
@@ -123,17 +107,17 @@ namespace DiscImageChef.DiscImages
         const uint MaxCacheSize = 16777216;
         uint maxCachedSectors = MaxCacheSize / 512;
 
-        public Parallels()
+        public VDI()
         {
-            Name = "Parallels disk image";
+            Name = "VirtualBox Disk Image";
             PluginUUID = new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
             ImageInfo.readableMediaTags = new List<MediaTagType>();
             ImageInfo.imageHasPartitions = false;
             ImageInfo.imageHasSessions = false;
-            ImageInfo.imageVersion = "2";
-            ImageInfo.imageApplication = "Parallels";
+            ImageInfo.imageVersion = null;
+            ImageInfo.imageApplication = null;
             ImageInfo.imageApplicationVersion = null;
             ImageInfo.imageCreator = null;
             ImageInfo.imageComments = null;
@@ -158,15 +142,15 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
-            stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
-            pHdr = new ParallelsHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdr_b, 0, headerPtr, Marshal.SizeOf(pHdr));
-            pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
+            byte[] vHdr_b = new byte[Marshal.SizeOf(vHdr)];
+            stream.Read(vHdr_b, 0, Marshal.SizeOf(vHdr));
+            vHdr = new VDIHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
+            Marshal.Copy(vHdr_b, 0, headerPtr, Marshal.SizeOf(vHdr));
+            vHdr = (VDIHeader)Marshal.PtrToStructure(headerPtr, typeof(VDIHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            return ParallelsMagic.SequenceEqual(pHdr.magic) || ParallelsExtMagic.SequenceEqual(pHdr.magic);
+            return vHdr.magic == VDIMagic;
         }
 
         public override bool OpenImage(string imagePath)
@@ -177,55 +161,77 @@ namespace DiscImageChef.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] pHdr_b = new byte[Marshal.SizeOf(pHdr)];
-            stream.Read(pHdr_b, 0, Marshal.SizeOf(pHdr));
-            pHdr = new ParallelsHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdr_b, 0, headerPtr, Marshal.SizeOf(pHdr));
-            pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
+            byte[] vHdr_b = new byte[Marshal.SizeOf(vHdr)];
+            stream.Read(vHdr_b, 0, Marshal.SizeOf(vHdr));
+            vHdr = new VDIHeader();
+            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
+            Marshal.Copy(vHdr_b, 0, headerPtr, Marshal.SizeOf(vHdr));
+            vHdr = (VDIHeader)Marshal.PtrToStructure(headerPtr, typeof(VDIHeader));
             Marshal.FreeHGlobal(headerPtr);
 
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", pHdr.version);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}", pHdr.heads);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}", pHdr.cylinders);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", pHdr.cluster_size);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}", pHdr.bat_entries);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}", pHdr.sectors);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}", pHdr.in_use);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}", pHdr.data_off);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", pHdr.flags);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", pHdr.ext_off);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}", vHdr.magic);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", vHdr.majorVersion, vHdr.minorVersion);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}", vHdr.headerSize);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}", vHdr.imageType);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}", vHdr.imageFlags);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", vHdr.description);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}", vHdr.offsetBlocks);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}", vHdr.offsetData);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}", vHdr.cylinders);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}", vHdr.heads);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}", vHdr.spt);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}", vHdr.sectorSize);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}", vHdr.size);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}", vHdr.blockSize);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}", vHdr.blockExtraData);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}", vHdr.blocks);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", vHdr.allocatedBlocks);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}", vHdr.uuid);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}", vHdr.snapshotUuid);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", vHdr.linkUuid);
+            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", vHdr.parentUuid);
 
-            extended = ParallelsExtMagic.SequenceEqual(pHdr.magic);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
-
-            DicConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
-            BAT = new uint[pHdr.bat_entries];
-            byte[] BAT_b = new byte[pHdr.bat_entries * 4];
-            stream.Read(BAT_b, 0, BAT_b.Length);
-            for(int i = 0; i < BAT.Length; i++)
-                BAT[i] = BitConverter.ToUInt32(BAT_b, i * 4);
-
-            clusterBytes = pHdr.cluster_size * 512;
-            if(pHdr.data_off > 0)
-                dataOffset = pHdr.data_off * 512;
-            else
-                dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
+            DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
+            IBM = new uint[vHdr.blocks];
+            byte[] IBM_b = new byte[vHdr.blocks * 4];
+            stream.Read(IBM_b, 0, IBM_b.Length);
+            for(int i = 0; i < IBM.Length; i++)
+                IBM[i] = BitConverter.ToUInt32(IBM_b, i * 4);
 
             sectorCache = new Dictionary<ulong, byte[]>();
-
-            empty = (pHdr.flags & ParallelsEmpty) == ParallelsEmpty;
 
             FileInfo fi = new FileInfo(imagePath);
             ImageInfo.imageCreationTime = fi.CreationTimeUtc;
             ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
-            ImageInfo.sectors = pHdr.sectors;
-            ImageInfo.sectorSize = 512;
+            ImageInfo.sectors = vHdr.size / vHdr.sectorSize;
+            ImageInfo.imageSize = vHdr.size;
+            ImageInfo.sectorSize = vHdr.sectorSize;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
-            ImageInfo.imageSize = pHdr.sectors * 512;
+            ImageInfo.imageComments = vHdr.description;
+            ImageInfo.imageVersion = string.Format("{0}.{1}", vHdr.majorVersion, vHdr.minorVersion);
+
+            switch(vHdr.creator)
+            {
+                case SunVDI:
+                    ImageInfo.imageApplication = "Sun VirtualBox";
+                    break;
+                case SunOldVDI:
+                    ImageInfo.imageApplication = "Sun xVM";
+                    break;
+                case OracleVDI:
+                    ImageInfo.imageApplication = "Oracle VirtualBox";
+                    break;
+                case QEMUVDI:
+                    ImageInfo.imageApplication = "QEMU";
+                    break;
+                case InnotekVDI:
+                case InnotekOldVDI:
+                    ImageInfo.imageApplication = "innotek VirtualBox";
+                    break;
+            }
             imageStream = stream;
 
             return true;
@@ -236,33 +242,27 @@ namespace DiscImageChef.DiscImages
             if(sectorAddress > ImageInfo.sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
-            if(empty)
-                return new byte[512];
-
             byte[] sector;
 
             if(sectorCache.TryGetValue(sectorAddress, out sector))
-               return sector;
+                return sector;
 
-            ulong index = sectorAddress / pHdr.cluster_size;
-            ulong secOff = sectorAddress % pHdr.cluster_size;
+            ulong index = (sectorAddress * vHdr.sectorSize) / vHdr.blockSize;
+            ulong secOff = (sectorAddress * vHdr.sectorSize) % vHdr.blockSize;
 
-            uint batOff = BAT[index];
+            uint ibmOff = IBM[index];
             ulong imageOff;
 
-            if(batOff == 0)
-                return new byte[512];
+            if(ibmOff == VDIEmpty)
+                return new byte[vHdr.sectorSize];
 
-            if(extended)
-                imageOff = batOff * clusterBytes;
-            else
-                imageOff = batOff * 512;
+            imageOff = vHdr.offsetData + (ibmOff * vHdr.blockSize);
 
-            byte[] cluster = new byte[clusterBytes];
+            byte[] cluster = new byte[vHdr.blockSize];
             imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-            imageStream.Read(cluster, 0, (int)clusterBytes);
-            sector = new byte[512];
-            Array.Copy(cluster, (int)(secOff * 512), sector, 0, 512);
+            imageStream.Read(cluster, 0, (int)vHdr.blockSize);
+            sector = new byte[vHdr.sectorSize];
+            Array.Copy(cluster, (int)secOff, sector, 0, vHdr.sectorSize);
 
             if(sectorCache.Count > maxCachedSectors)
                 sectorCache.Clear();
@@ -278,10 +278,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
             if(sectorAddress + length > ImageInfo.sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
-
-            if(empty)
-                return new byte[512 * length];
+                throw new ArgumentOutOfRangeException(nameof(length), string.Format("Requested more sectors ({0} + {1}) than available ({2})", sectorAddress, length, ImageInfo.sectors));
 
             MemoryStream ms = new MemoryStream();
 
@@ -316,7 +313,7 @@ namespace DiscImageChef.DiscImages
 
         public override string GetImageFormat()
         {
-            return "Parallels";
+            return "VDI";
         }
 
         public override string GetImageVersion()
@@ -528,4 +525,3 @@ namespace DiscImageChef.DiscImages
         #endregion
     }
 }
-

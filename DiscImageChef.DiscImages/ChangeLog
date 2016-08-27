@@ -1,5 +1,13 @@
 2016-08-27  Natalia Portillo  <claunia@claunia.com>
 
+	* VDI.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for
+	VirtualBox images, closes #40.
+
+	* Parallels.cs: Corrected debug typo.
+
+2016-08-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Parallels.cs:
 	* DiscImageChef.DiscImages.csproj: Adds support for Parallels
 	Hard Disk Image (HDD) version 2.
