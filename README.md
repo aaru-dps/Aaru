@@ -53,6 +53,7 @@ Supported disk image formats
 * QEMU Enhanced Disk (QED)
 * Parallels Hard Disk Image (HDD) version 2
 * VirtualBox Disk Image (VDI)
+* Microsoft VHDX
 
 Supported partitioning schemes
 ==============================

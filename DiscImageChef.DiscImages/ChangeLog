@@ -1,3 +1,9 @@
+2016-08-29  Natalia Portillo  <claunia@claunia.com>
+
+	* VHDX.cs:
+	* DiscImageChef.DiscImages.csproj: Adds support for VHDX
+	images, closes #42
+
 2016-08-27  Natalia Portillo  <claunia@claunia.com>
 
 	* VDI.cs:
