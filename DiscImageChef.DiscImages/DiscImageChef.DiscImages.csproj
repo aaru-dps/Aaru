@@ -58,6 +58,7 @@
     <Compile Include="Parallels.cs" />
     <Compile Include="VDI.cs" />
     <Compile Include="VHDX.cs" />
+    <Compile Include="VMware.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

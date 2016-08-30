@@ -1,3 +1,9 @@
+2016-08-30  Natalia Portillo  <claunia@claunia.com>
+
+	* VMware.cs:
+	* DiscImageChef.DiscImages.csproj: Added support for VMware
+	disk images, closes #39
+
 2016-08-29  Natalia Portillo  <claunia@claunia.com>
 
 	* VHDX.cs:

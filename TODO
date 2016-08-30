@@ -9,7 +9,6 @@
 --- Add support for Apple NDIF images
 --- Add support for Apple UDIF images
 --- Add support for XPACK images
---- Add support for VMWare images
 
 Filesystem plugins:
 --- Add support for SFS filesystem
@@ -64,3 +63,7 @@ Device handling:
 QCOW plugin:
 --- Add support for compressed images
 --- Add support for encrypted images
+
+VMDK plugin:
+--- Add support for compressed extents
+--- Add support for encrypted extents

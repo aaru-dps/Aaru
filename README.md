@@ -54,6 +54,7 @@ Supported disk image formats
 * Parallels Hard Disk Image (HDD) version 2
 * VirtualBox Disk Image (VDI)
 * Microsoft VHDX
+* VMware VMDK and COWD images
 
 Supported partitioning schemes
 ==============================
