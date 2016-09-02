@@ -102,6 +102,8 @@
     <Compile Include="JFS.cs" />
     <Compile Include="F2FS.cs" />
     <Compile Include="NILFS2.cs" />
+    <Compile Include="Reiser.cs" />
+    <Compile Include="Reiser4.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

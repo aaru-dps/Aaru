@@ -127,6 +127,7 @@ Supported file systems for identification and information only
 * IBM Journaling File System (JFS)
 * Flash-Friendly File System (F2FS)
 * NILFS2
+* Reiser file systems
 
 Supported checksums
 ===================

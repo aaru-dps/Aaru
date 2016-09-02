@@ -1,5 +1,14 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* Reiser.cs:
+	* Reiser4.cs:
+	* DiscImageChef.Filesystems.csproj: Adds support for Reiser
+	filesystems, closes #19.
+
+	* NILFS2.cs: Corrected plugin GUID not being unique.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* NILFS2.cs:
 	* DiscImageChef.Filesystems.csproj: Adds support for NILFS2
 	filesystem.

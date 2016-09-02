@@ -99,13 +99,13 @@ namespace DiscImageChef.Filesystems
         public NILFS2()
         {
             Name = "NILFS2 Plugin";
-            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
         }
 
         public NILFS2(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
             Name = "NILFS2 Plugin";
-            PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+            PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
