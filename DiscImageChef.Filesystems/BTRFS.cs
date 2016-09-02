@@ -212,23 +212,23 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}", btrfsSb.label);
 
             sbInformation.AppendLine("B-tree filesystem");
-            sbInformation.AppendFormat("UUID: {0}", btrfsSb.uuid);
-            sbInformation.AppendFormat("This superblock resides on physical block {0}", btrfsSb.pba);
-            sbInformation.AppendFormat("Root tree starts at LBA {0}", btrfsSb.root_lba);
-            sbInformation.AppendFormat("Chunk tree starts at LBA {0}", btrfsSb.chunk_lba);
-            sbInformation.AppendFormat("Log tree starts at LBA {0}", btrfsSb.log_lba);
-            sbInformation.AppendFormat("Volume has {0} bytes spanned in {1} devices", btrfsSb.total_bytes, btrfsSb.num_devices);
-            sbInformation.AppendFormat("Volume has {0} bytes used", btrfsSb.bytes_used);
-            sbInformation.AppendFormat("{0} bytes/sector", btrfsSb.sectorsize);
-            sbInformation.AppendFormat("{0} bytes/node", btrfsSb.nodesize);
-            sbInformation.AppendFormat("{0} bytes/leaf", btrfsSb.leafsize);
-            sbInformation.AppendFormat("{0} bytes/stripe", btrfsSb.stripesize);
-            sbInformation.AppendFormat("Flags: 0x{0:X}", btrfsSb.flags);
-            sbInformation.AppendFormat("Compatible flags: 0x{0:X}", btrfsSb.compat_flags);
-            sbInformation.AppendFormat("Read-only compatible flags: 0x{0:X}", btrfsSb.compat_ro_flags);
-            sbInformation.AppendFormat("Incompatible flags: 0x{0:X}", btrfsSb.incompat_flags);
-            sbInformation.AppendFormat("Device's UUID: {0}", btrfsSb.dev_item.uuid);
-            sbInformation.AppendFormat("Volume label: {0}", btrfsSb.label);
+            sbInformation.AppendFormat("UUID: {0}", btrfsSb.uuid).AppendLine();
+            sbInformation.AppendFormat("This superblock resides on physical block {0}", btrfsSb.pba).AppendLine();
+            sbInformation.AppendFormat("Root tree starts at LBA {0}", btrfsSb.root_lba).AppendLine();
+            sbInformation.AppendFormat("Chunk tree starts at LBA {0}", btrfsSb.chunk_lba).AppendLine();
+            sbInformation.AppendFormat("Log tree starts at LBA {0}", btrfsSb.log_lba).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} bytes spanned in {1} devices", btrfsSb.total_bytes, btrfsSb.num_devices).AppendLine();
+            sbInformation.AppendFormat("Volume has {0} bytes used", btrfsSb.bytes_used).AppendLine();
+            sbInformation.AppendFormat("{0} bytes/sector", btrfsSb.sectorsize).AppendLine();
+            sbInformation.AppendFormat("{0} bytes/node", btrfsSb.nodesize).AppendLine();
+            sbInformation.AppendFormat("{0} bytes/leaf", btrfsSb.leafsize).AppendLine();
+            sbInformation.AppendFormat("{0} bytes/stripe", btrfsSb.stripesize).AppendLine();
+            sbInformation.AppendFormat("Flags: 0x{0:X}", btrfsSb.flags).AppendLine();
+            sbInformation.AppendFormat("Compatible flags: 0x{0:X}", btrfsSb.compat_flags).AppendLine();
+            sbInformation.AppendFormat("Read-only compatible flags: 0x{0:X}", btrfsSb.compat_ro_flags).AppendLine();
+            sbInformation.AppendFormat("Incompatible flags: 0x{0:X}", btrfsSb.incompat_flags).AppendLine();
+            sbInformation.AppendFormat("Device's UUID: {0}", btrfsSb.dev_item.uuid).AppendLine();
+            sbInformation.AppendFormat("Volume label: {0}", btrfsSb.label).AppendLine();
 
             information = sbInformation.ToString();
 

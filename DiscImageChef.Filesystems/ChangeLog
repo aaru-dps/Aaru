@@ -1,5 +1,9 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* BTRFS.cs: Corrected information missing lines.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* QNX6.cs:
 	* QNX4.cs:
 	* DiscImageChef.Filesystems.csproj: Adds support for QNX6
