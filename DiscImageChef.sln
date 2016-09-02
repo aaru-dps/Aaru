@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Settings", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine", "commandline\src\CommandLine\CommandLine.csproj", "{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Packages", "Packages.mdproj", "{E6A65405-997F-4D37-869B-8B97304C5DD6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claunia.RsrcFork", "Claunia.RsrcFork\Claunia.RsrcFork\Claunia.RsrcFork.csproj", "{CA231ED3-0C78-496C-AAFE-D085F6E9BEC6}"
 EndProject
 Global
@@ -95,8 +93,6 @@ Global
 		{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}.Debug|x86.Build.0 = Debug|Any CPU
 		{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}.Release|x86.ActiveCfg = Release|Any CPU
 		{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}.Release|x86.Build.0 = Release|Any CPU
-		{E6A65405-997F-4D37-869B-8B97304C5DD6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E6A65405-997F-4D37-869B-8B97304C5DD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA231ED3-0C78-496C-AAFE-D085F6E9BEC6}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CA231ED3-0C78-496C-AAFE-D085F6E9BEC6}.Debug|x86.Build.0 = Debug|Any CPU
 		{CA231ED3-0C78-496C-AAFE-D085F6E9BEC6}.Release|x86.ActiveCfg = Release|Any CPU
