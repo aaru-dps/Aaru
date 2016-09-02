@@ -1,5 +1,10 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* XFS.cs:
+	* DiscImageChef.Filesystems.csproj: Adds support for XFS.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* Reiser.cs:
 	* Reiser4.cs:
 	* DiscImageChef.Filesystems.csproj: Adds support for Reiser

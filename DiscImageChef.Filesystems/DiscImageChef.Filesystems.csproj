@@ -104,6 +104,7 @@
     <Compile Include="NILFS2.cs" />
     <Compile Include="Reiser.cs" />
     <Compile Include="Reiser4.cs" />
+    <Compile Include="XFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

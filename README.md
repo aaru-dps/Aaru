@@ -128,6 +128,7 @@ Supported file systems for identification and information only
 * Flash-Friendly File System (F2FS)
 * NILFS2
 * Reiser file systems
+* SGI XFS
 
 Supported checksums
 ===================
