@@ -98,6 +98,7 @@
     <Compile Include="CPM\File.cs" />
     <Compile Include="CPM\Xattr.cs" />
     <Compile Include="QNX4.cs" />
+    <Compile Include="QNX6.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

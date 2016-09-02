@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Identifies the QNX4 filesystem and shows information.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -31,13 +31,9 @@
 // ****************************************************************************/
 
 using System;
-
-using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DiscImageChef.Console;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems
 {

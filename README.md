@@ -123,7 +123,7 @@ Supported file systems for identification and information only
 * B-tree file system (btrfs)
 * Apple File System (preliminary detection until on-disk layout is stable)
 * Microsoft Extended File Allocation Table (exFAT)
-* QNX4 filesystem
+* QNX4 and QNX6 filesystems
 
 Supported checksums
 ===================

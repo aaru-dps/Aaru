@@ -1,5 +1,12 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* QNX6.cs:
+	* QNX4.cs:
+	* DiscImageChef.Filesystems.csproj: Adds support for QNX6
+	filesystem, closes #18.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* QNX4.cs:
 	* DiscImageChef.Filesystems.csproj: Adds support for QNX4
 	filesystem. #18

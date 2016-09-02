@@ -22,7 +22,6 @@ Filesystem plugins:
 --- Add support for NwFS
 --- Add support for JFS
 --- Add support for Reiser filesystems
---- Add support for QNX filesystems
 --- Add support for Squashfs
 --- Add support for X-Box filesystems
 --- Add support for FAT+
