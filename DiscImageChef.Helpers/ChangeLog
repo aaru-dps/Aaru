@@ -1,3 +1,8 @@
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
+	* DateHandlers.cs: Add supports for UNIX timestamps divided in
+	seconds+nanoseconds.
+
 2016-08-26  Natalia Portillo  <claunia@claunia.com>
 
 	* DateHandlers.cs: Added CP/M timestamp converter.

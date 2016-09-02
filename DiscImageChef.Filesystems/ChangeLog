@@ -1,5 +1,11 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* JFS.cs:
+	* DiscImageChef.Filesystems.csproj: Adds support for IBM JFS,
+	closes #20.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* BTRFS.cs: Corrected information missing lines.
 
 2016-09-02  Natalia Portillo  <claunia@claunia.com>

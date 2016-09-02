@@ -64,6 +64,11 @@ namespace DiscImageChef
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        public static DateTime UNIXUnsignedToDateTime(uint seconds, uint nanoseconds)
+        {
+            return UNIXEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
+        }
+
         public static DateTime ISO9660ToDateTime(byte[] VDDateTime)
         {
             int year, month, day, hour, minute, second, hundredths;

@@ -124,6 +124,7 @@ Supported file systems for identification and information only
 * Apple File System (preliminary detection until on-disk layout is stable)
 * Microsoft Extended File Allocation Table (exFAT)
 * QNX4 and QNX6 filesystems
+* IBM Journaling File System (JFS)
 
 Supported checksums
 ===================
