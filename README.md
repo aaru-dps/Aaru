@@ -125,6 +125,7 @@ Supported file systems for identification and information only
 * Microsoft Extended File Allocation Table (exFAT)
 * QNX4 and QNX6 filesystems
 * IBM Journaling File System (JFS)
+* Flash-Friendly File System (F2FS)
 
 Supported checksums
 ===================

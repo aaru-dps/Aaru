@@ -100,6 +100,7 @@
     <Compile Include="QNX4.cs" />
     <Compile Include="QNX6.cs" />
     <Compile Include="JFS.cs" />
+    <Compile Include="F2FS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

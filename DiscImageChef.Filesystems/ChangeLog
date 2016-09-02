@@ -1,5 +1,10 @@
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
+	* F2FS.cs:
+	* DiscImageChef.Filesystems.csproj: Adds support for F2FS.
+
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
 	* JFS.cs:
 	* DiscImageChef.Filesystems.csproj: Adds support for IBM JFS,
 	closes #20.
