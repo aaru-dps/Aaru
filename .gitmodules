@@ -4,3 +4,6 @@
 [submodule "commandline"]
 	path = commandline
 	url = https://github.com/claunia/commandline
+[submodule "Claunia.RsrcFork"]
+	path = Claunia.RsrcFork
+	url = https://github.com/claunia/Claunia.RsrcFork

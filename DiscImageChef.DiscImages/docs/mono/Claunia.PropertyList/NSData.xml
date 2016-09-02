@@ -1,0 +1,260 @@
+<Type Name="NSData" FullName="Claunia.PropertyList.NSData">
+  <TypeSignature Language="C#" Value="public class NSData : Claunia.PropertyList.NSObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NSData extends Claunia.PropertyList.NSObject" />
+  <AssemblyInfo>
+    <AssemblyName>plist-cil</AssemblyName>
+    <AssemblyVersion>1.13.0.0</AssemblyVersion>
+    <AssemblyVersion>1.14.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Claunia.PropertyList.NSObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            NSData objects are wrappers for byte buffers
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSData (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] bytes) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The raw data contained in the NSData object.</param>
+        <summary>
+            Creates the NSData object from the binary representation of it.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSData (System.IO.FileInfo file);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.FileInfo file) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="file" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="file">The file containing the data.</param>
+        <summary>
+            Creates a NSData object from a file. Using the files contents as the contents of this NSData object.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IO.FileNotFoundException">If the file could not be found.</exception>
+        <exception cref="T:System.IO.IOException">If the file could not be read.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NSData (string base64);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string base64) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="base64" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="base64">The Base64 encoded contents of the NSData object.</param>
+        <summary>
+            Creates a NSData object from its textual representation, which is a Base64 encoded amount of bytes.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.FormatException">When the given string is not a proper Base64 formatted string.</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Bytes">
+      <MemberSignature Language="C#" Value="public byte[] Bytes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Bytes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The bytes contained in this NSData object.
+            </summary>
+        <value>The data as bytes</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (Claunia.PropertyList.NSObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(class Claunia.PropertyList.NSObject obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="Claunia.PropertyList.NSObject" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:Claunia.PropertyList.NSObject" /> to compare with the current <see cref="T:Claunia.PropertyList.NSData" />.</param>
+        <summary>
+            Determines whether the specified <see cref="T:Claunia.PropertyList.NSObject" /> is equal to the current <see cref="T:Claunia.PropertyList.NSData" />.
+            </summary>
+        <returns>
+          <c>true</c> if the specified <see cref="T:Claunia.PropertyList.NSObject" /> is equal to the current
+            <see cref="T:Claunia.PropertyList.NSData" />; otherwise, <c>false</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to compare with the current <see cref="T:Claunia.PropertyList.NSData" />.</param>
+        <summary>
+            Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:Claunia.PropertyList.NSData" />.
+            </summary>
+        <returns>
+          <c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current
+            <see cref="T:Claunia.PropertyList.NSData" />; otherwise, <c>false</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBase64EncodedData">
+      <MemberSignature Language="C#" Value="public string GetBase64EncodedData ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetBase64EncodedData() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets the Base64 encoded data contained in this NSData object.
+            </summary>
+        <returns>The Base64 encoded data as a <c>string</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public void GetBytes (System.IO.MemoryStream buf, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void GetBytes(class System.IO.MemoryStream buf, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buf" Type="System.IO.MemoryStream" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buf">The byte buffer which will contain the data</param>
+        <param name="length">The amount of data to copy</param>
+        <summary>
+            Loads the bytes from this NSData object into a byte buffer.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public void GetBytes (System.IO.MemoryStream buf, int rangeStart, int rangeStop);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void GetBytes(class System.IO.MemoryStream buf, int32 rangeStart, int32 rangeStop) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buf" Type="System.IO.MemoryStream" />
+        <Parameter Name="rangeStart" Type="System.Int32" />
+        <Parameter Name="rangeStop" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buf">The byte buffer which will contain the data</param>
+        <param name="rangeStart">The start index.</param>
+        <param name="rangeStop">The stop index.</param>
+        <summary>
+            Loads the bytes from this NSData object into a byte buffer.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Serves as a hash function for a <see cref="T:Claunia.PropertyList.NSData" /> object.
+            </summary>
+        <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
+            hash table.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the amount of data stored in this object.
+            </summary>
+        <value>The number of bytes contained in this object.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

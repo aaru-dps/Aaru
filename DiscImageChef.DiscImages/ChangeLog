@@ -1,3 +1,47 @@
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
+	* UDIF.cs:
+	* packages.config:
+	* README.txt:
+	* LICENSE.txt:
+	* ChangeLog.txt:
+	* index.xml:
+	* index.html:
+	* DiscImageChef.DiscImages.csproj:
+	* ns-Claunia.PropertyList.xml:
+	* UID.xml:
+	* UID.html:
+	* NSSet.xml:
+	* index.html:
+	* NSData.xml:
+	* NSSet.html:
+	* NSDate.xml:
+	* NSArray.xml:
+	* NSData.html:
+	* NSDate.html:
+	* NSObject.xml:
+	* NSNumber.xml:
+	* NSString.xml:
+	* NSArray.html:
+	* NSObject.html:
+	* NSNumber.html:
+	* NSString.html:
+	* NSDictionary.xml:
+	* NSDictionary.html:
+	* PropertyListParser.xml:
+	* PropertyListParser.html:
+	* XmlPropertyListParser.xml:
+	* XmlPropertyListParser.html:
+	* ASCIIPropertyListParser.xml:
+	* BinaryPropertyListParser.xml:
+	* BinaryPropertyListWriter.xml:
+	* ASCIIPropertyListParser.html:
+	* BinaryPropertyListWriter.html:
+	* BinaryPropertyListParser.html:
+	* PropertyListFormatException.xml:
+	* PropertyListFormatException.html: Added support for UDIF
+	images, closes #46.
+
 2016-08-30  Natalia Portillo  <claunia@claunia.com>
 
 	* VMware.cs:

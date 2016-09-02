@@ -1,0 +1,90 @@
+<Type Name="XmlPropertyListParser" FullName="Claunia.PropertyList.XmlPropertyListParser">
+  <TypeSignature Language="C#" Value="public static class XmlPropertyListParser" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit XmlPropertyListParser extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>plist-cil</AssemblyName>
+    <AssemblyVersion>1.13.0.0</AssemblyVersion>
+    <AssemblyVersion>1.14.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Parses XML property lists.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="bytes">The byte array containing the property list's data.</param>
+        <summary>
+            Parses a XML property list from a byte array.
+            </summary>
+        <returns>The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (System.IO.FileInfo f);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(class System.IO.FileInfo f) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="f" Type="System.IO.FileInfo" />
+      </Parameters>
+      <Docs>
+        <param name="f">The XML property list file.</param>
+        <summary>
+            Parses a XML property list file.
+            </summary>
+        <returns>The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static Claunia.PropertyList.NSObject Parse (System.IO.Stream str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Claunia.PropertyList.NSObject Parse(class System.IO.Stream str) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.13.0.0</AssemblyVersion>
+        <AssemblyVersion>1.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Claunia.PropertyList.NSObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="str">The input stream pointing to the property list's data.</param>
+        <summary>
+            Parses a XML property list from an input stream.
+            </summary>
+        <returns>The root object of the property list. This is usually a NSDictionary but can also be a NSArray.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

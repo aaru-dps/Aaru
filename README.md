@@ -55,6 +55,7 @@ Supported disk image formats
 * VirtualBox Disk Image (VDI)
 * Microsoft VHDX
 * VMware VMDK and COWD images
+* Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
 
 Supported partitioning schemes
 ==============================

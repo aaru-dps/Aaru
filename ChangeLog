@@ -1,3 +1,9 @@
+2016-09-02  Natalia Portillo  <claunia@claunia.com>
+
+	* Claunia.RsrcFork:
+	* DiscImageChef.sln: Added support for UDIF images, closes
+	#46.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* Packages.mdproj:

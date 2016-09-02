@@ -7,7 +7,6 @@
 --- Add support for DiscFerret images
 --- Add support for MAME CHDs
 --- Add support for Apple NDIF images
---- Add support for Apple UDIF images
 --- Add support for XPACK images
 
 Filesystem plugins:
@@ -67,3 +66,6 @@ QCOW plugin:
 VMDK plugin:
 --- Add support for compressed extents
 --- Add support for encrypted extents
+
+UDIF plugin:
+--- Add support for compressed chunks
