@@ -59,6 +59,11 @@ namespace DiscImageChef
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
+        public static DateTime UNIXToDateTime(long UNIXTimeStamp)
+        {
+            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
+        }
+
         public static DateTime UNIXUnsignedToDateTime(uint UNIXTimeStamp)
         {
             return UNIXEpoch.AddSeconds(UNIXTimeStamp);
@@ -67,6 +72,11 @@ namespace DiscImageChef
         public static DateTime UNIXUnsignedToDateTime(uint seconds, uint nanoseconds)
         {
             return UNIXEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
+        }
+
+        public static DateTime UNIXUnsignedToDateTime(ulong UNIXTimeStamp)
+        {
+            return UNIXEpoch.AddSeconds(UNIXTimeStamp);
         }
 
         public static DateTime ISO9660ToDateTime(byte[] VDDateTime)

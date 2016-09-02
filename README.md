@@ -126,6 +126,7 @@ Supported file systems for identification and information only
 * QNX4 and QNX6 filesystems
 * IBM Journaling File System (JFS)
 * Flash-Friendly File System (F2FS)
+* NILFS2
 
 Supported checksums
 ===================
