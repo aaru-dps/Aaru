@@ -37,6 +37,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -354,7 +355,7 @@ namespace DiscImageChef.ImagePlugins
         DynamicDiskHeader thisDynamic;
         DateTime thisDateTime;
         DateTime parentDateTime;
-        string thisPath;
+        Filter thisFilter;
         uint[] blockAllocationTable;
         uint bitmapSize;
         byte[][] locatorEntriesData;
@@ -391,9 +392,9 @@ namespace DiscImageChef.ImagePlugins
 
         #region public methods
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream imageStream = imageFilter.GetDataForkStream();
             ulong headerCookie;
             ulong footerCookie;
 
@@ -416,9 +417,9 @@ namespace DiscImageChef.ImagePlugins
             return (headerCookie == ImageCookie || footerCookie == ImageCookie);
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream imageStream = imageFilter.GetDataForkStream();
             byte[] header = new byte[512];
             byte[] footer;
 
@@ -622,15 +623,14 @@ namespace DiscImageChef.ImagePlugins
                     }
             }
 
-            thisPath = imagePath;
+            thisFilter = imageFilter;
             ImageInfo.imageSize = thisFooter.currentSize;
             ImageInfo.sectors = thisFooter.currentSize / 512;
             ImageInfo.sectorSize = 512;
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
             ImageInfo.imageLastModificationTime = thisDateTime;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
             if(thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
             {
@@ -782,7 +782,6 @@ namespace DiscImageChef.ImagePlugins
                 case typeDynamic:
                     {
                         // Nothing to do here, really.
-                        imageStream.Close();
                         return true;
                     }
                 case typeDifferencing:
@@ -820,6 +819,7 @@ namespace DiscImageChef.ImagePlugins
                         int currentLocator = 0;
                         bool locatorFound = false;
                         string parentPath = null;
+                        FiltersList filters = new FiltersList();
 
                         while(!locatorFound && currentLocator < 8)
                         {
@@ -848,8 +848,10 @@ namespace DiscImageChef.ImagePlugins
                             if(parentPath != null)
                             {
                                 DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
+                                Filter parentFilter = filters.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
 
-                                locatorFound |= File.Exists(parentPath);
+                                if(parentFilter != null)
+                                    locatorFound = true;
 
                                 if(!locatorFound)
                                     parentPath = null;
@@ -862,15 +864,19 @@ namespace DiscImageChef.ImagePlugins
                         else
                         {
                             parentImage = new VHD();
+                            Filter parentFilter = filters.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+
+                            if(parentFilter == null)
+                                throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");
                             /*                            PluginBase plugins = new PluginBase();
                                                         plugins.RegisterAllPlugins();
                                                         if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
                                                             throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
 
-                            if(!parentImage.IdentifyImage(parentPath))
+                            if(!parentImage.IdentifyImage(parentFilter))
                                 throw new ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
 
-                            if(!parentImage.OpenImage(parentPath))
+                            if(!parentImage.OpenImage(parentFilter))
                                 throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
 
                             // While specification says that parent and child disk images should contain UUID relationship
@@ -991,12 +997,10 @@ namespace DiscImageChef.ImagePlugins
                         int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
                         int bitmapBit = (int)(sectorInBlock % 8);
 
-                        FileStream thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+                        Stream thisStream = thisFilter.GetDataForkStream();
 
                         thisStream.Seek(blockOffset, SeekOrigin.Begin);
                         thisStream.Read(bitmap, 0, (int)bitmapSize * 512);
-
-                        thisStream.Close();
 
                         byte mask = (byte)(1 << (7 - bitmapBit));
                         bool dirty = false || (bitmap[bitmapByte] & mask) == mask;
@@ -1023,12 +1027,10 @@ namespace DiscImageChef.ImagePlugins
 
                             byte[] data = new byte[512];
                             uint sectorOffset = blockAllocationTable[blockNumber] + bitmapSize + sectorInBlock;
-                            thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+                            thisStream = thisFilter.GetDataForkStream();
 
                             thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
                             thisStream.Read(data, 0, 512);
-
-                            thisStream.Close();
 
                             return data;
                         }
@@ -1051,15 +1053,14 @@ namespace DiscImageChef.ImagePlugins
             {
                 case typeFixed:
                     {
-                        FileStream thisStream;
+                        Stream thisStream;
 
                         byte[] data = new byte[512 * length];
-                        thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+                        thisStream = thisFilter.GetDataForkStream();
 
                         thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
                         thisStream.Read(data, 0, (int)(512 * length));
 
-                        thisStream.Close();
                         return data;
                     }
                 // Contrary to Microsoft's specifications that tell us to check the bitmap
@@ -1068,7 +1069,7 @@ namespace DiscImageChef.ImagePlugins
                 // as long as it is in the block.
                 case typeDynamic:
                     {
-                        FileStream thisStream;
+                        Stream thisStream;
 
                         // Block number for BAT searching
                         uint blockNumber = (uint)Math.Floor((double)(sectorAddress / (thisDynamic.blockSize / 512)));
@@ -1101,10 +1102,9 @@ namespace DiscImageChef.ImagePlugins
                         // 0xFFFFFFFF means unallocated
                         if(sectorOffset != 0xFFFFFFFF)
                         {
-                            thisStream = new FileStream(thisPath, FileMode.Open, FileAccess.Read);
+                            thisStream = thisFilter.GetDataForkStream();
                             thisStream.Seek((sectorOffset * 512), SeekOrigin.Begin);
                             thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
-                            thisStream.Close();
                         }
                         // If it is unallocated, just fill with zeroes
                         else

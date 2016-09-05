@@ -36,6 +36,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -190,9 +191,9 @@ namespace DiscImageChef.ImagePlugins
         }
 
         #region Public methods
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 133)
                 return false;
@@ -208,9 +209,9 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             byte[] hdr = new byte[133];
@@ -301,9 +302,11 @@ namespace DiscImageChef.ImagePlugins
                 decodedImage.Write(filling, 0, filling.Length);
             }
 
+            /*
             FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
             debugStream.Write(decodedImage.ToArray(), 0, (int)decodedImage.Length);
             debugStream.Close();
+            */
 
             int sum = 0;
             for(int i = 0; i < hdr.Length - 1; i++)
@@ -402,7 +405,6 @@ namespace DiscImageChef.ImagePlugins
             decodedDisk = decodedImage.ToArray();
 
             decodedImage.Close();
-            stream.Close();
 
             DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", ImageInfo.mediaType);
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))

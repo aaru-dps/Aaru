@@ -90,6 +90,10 @@
       <Project>{CA231ED3-0C78-496C-AAFE-D085F6E9BEC6}</Project>
       <Name>Claunia.RsrcFork</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+      <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
+      <Name>DiscImageChef.Filters</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">

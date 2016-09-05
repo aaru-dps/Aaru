@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
     public static class ImageFormat
     {
-        public static ImagePlugin Detect(string imagePath)
+        public static ImagePlugin Detect(Filter imageFilter)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace DiscImageChef.ImagePlugins
                     {
                         try
                         {
-                            if(_imageplugin.IdentifyImage(imagePath))
+                            if(_imageplugin.IdentifyImage(imageFilter))
                             {
                                 _imageFormat = _imageplugin;
                                 break;
@@ -76,7 +77,7 @@ namespace DiscImageChef.ImagePlugins
                         {
                             try
                             {
-                                if(_imageplugin.IdentifyImage(imagePath))
+                                if(_imageplugin.IdentifyImage(imageFilter))
                                 {
                                     _imageFormat = _imageplugin;
                                     break;

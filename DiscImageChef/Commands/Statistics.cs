@@ -101,6 +101,16 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
+            if(Core.Statistics.AllStats.Filters != null && Core.Statistics.AllStats.Filters.Count > 0)
+            {
+                DicConsole.WriteLine("Filters statistics");
+                DicConsole.WriteLine("==================");
+                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Filters)
+                    DicConsole.WriteLine("Filter {0} has been found {1} times.", nvs.name, nvs.Value);
+                DicConsole.WriteLine();
+                thereAreStats = true;
+            }
+
             if(Core.Statistics.AllStats.MediaImages != null && Core.Statistics.AllStats.MediaImages.Count > 0)
             {
                 DicConsole.WriteLine("Media image statistics");

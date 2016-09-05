@@ -40,6 +40,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -749,12 +750,22 @@ namespace DiscImageChef.Commands
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
                 ImagePlugin _imageFormat;
-                _imageFormat = ImageFormat.Detect(options.OutputPrefix + ".bin");
+
+                FiltersList filtersList = new FiltersList();
+                Filter inputFilter = filtersList.GetFilter(options.OutputPrefix + ".bin");
+
+                if(inputFilter == null)
+                {
+                    DicConsole.ErrorWriteLine("Cannot open file just created, this should not happen.");
+                    return;
+                }
+
+                _imageFormat = ImageFormat.Detect(inputFilter);
                 PartitionType[] xmlFileSysInfo = null;
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(options.OutputPrefix + ".bin"))
+                    if(!_imageFormat.OpenImage(inputFilter))
                         _imageFormat = null;
                 }
                 catch
@@ -2951,12 +2962,21 @@ namespace DiscImageChef.Commands
                 PluginBase plugins = new PluginBase();
                 plugins.RegisterAllPlugins();
                 ImagePlugin _imageFormat;
-                _imageFormat = ImageFormat.Detect(options.OutputPrefix + ".bin");
+                FiltersList filtersList = new FiltersList();
+                Filter inputFilter = filtersList.GetFilter(options.OutputPrefix + ".bin");
+
+                if(inputFilter == null)
+                {
+                    DicConsole.ErrorWriteLine("Cannot open file just created, this should not happen.");
+                    return;
+                }
+
+                _imageFormat = ImageFormat.Detect(inputFilter);
                 PartitionType[] xmlFileSysInfo = null;
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(options.OutputPrefix + ".bin"))
+                    if(!_imageFormat.OpenImage(inputFilter))
                         _imageFormat = null;
                 }
                 catch

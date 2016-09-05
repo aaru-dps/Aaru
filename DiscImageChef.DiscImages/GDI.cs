@@ -36,6 +36,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -49,6 +50,8 @@ namespace DiscImageChef.ImagePlugins
         {
             /// <summary>Track #</summary>
             public uint sequence;
+            /// <summary>Track filter</summary>
+            public Filter trackfilter;
             /// <summary>Track file</summary>
             public string trackfile;
             /// <summary>Track byte offset in file</summary>
@@ -83,9 +86,8 @@ namespace DiscImageChef.ImagePlugins
 
         #region Internal variables
 
-        string imagePath;
         StreamReader gdiStream;
-        FileStream imageStream;
+        Stream imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
         Dictionary<uint, ulong> offsetmap;
         GDIDisc discimage;
@@ -106,7 +108,6 @@ namespace DiscImageChef.ImagePlugins
         {
             Name = "Dreamcast GDI image";
             PluginUUID = new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
-            imagePath = "";
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
             ImageInfo.readableMediaTags = new List<MediaTagType>();
@@ -128,13 +129,12 @@ namespace DiscImageChef.ImagePlugins
         }
 
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            this.imagePath = imagePath;
-
             try
             {
-                gdiStream = new StreamReader(this.imagePath);
+                imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int line = 0;
                 int tracksFound = 0;
                 int tracks = 0;
@@ -169,30 +169,26 @@ namespace DiscImageChef.ImagePlugins
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", this.imagePath);
+                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
             }
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            if(imagePath == null)
+            if(imageFilter == null)
                 return false;
-            if(imagePath == "")
-                return false;
-
-            this.imagePath = imagePath;
 
             try
             {
-                gdiStream = new StreamReader(imagePath);
+                imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int line = 0;
                 int tracksFound = 0;
                 int tracks = 0;
                 bool highDensity = false;
-                FileInfo trackFileInfo;
 
                 // Initialize all RegExs
                 Regex RegexTrack = new Regex(TrackRegEx);
@@ -209,6 +205,8 @@ namespace DiscImageChef.ImagePlugins
                 offsetmap = new Dictionary<uint, ulong>();
                 GDITrack currentTrack;
                 densitySeparationSectors = 0;
+
+                FiltersList filtersList = new FiltersList();
 
                 while(gdiStream.Peek() >= 0)
                 {
@@ -239,7 +237,8 @@ namespace DiscImageChef.ImagePlugins
                         currentTrack.offset = long.Parse(TrackMatch.Groups["offset"].Value);
                         currentTrack.sequence = uint.Parse(TrackMatch.Groups["track"].Value);
                         currentTrack.startSector = ulong.Parse(TrackMatch.Groups["start"].Value);
-                        currentTrack.trackfile = TrackMatch.Groups["filename"].Value.Replace("\\\"", "\"").Trim(new[] { '"' });
+                        currentTrack.trackfilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), TrackMatch.Groups["filename"].Value.Replace("\\\"", "\"").Trim(new[] { '"' })));
+                        currentTrack.trackfile = currentTrack.trackfilter.GetFilename();
 
                         if((currentTrack.startSector - currentStart) > 0)
                         {
@@ -257,11 +256,10 @@ namespace DiscImageChef.ImagePlugins
                             }
                         }
 
-                        trackFileInfo = new FileInfo(currentTrack.trackfile);
-                        if(((trackFileInfo.Length - currentTrack.offset) % currentTrack.bps) != 0)
+                        if(((currentTrack.trackfilter.GetDataForkLength() - currentTrack.offset) % currentTrack.bps) != 0)
                             throw new ImageNotSupportedException("Track size not a multiple of sector size");
 
-                        currentTrack.sectors = (ulong)((trackFileInfo.Length - currentTrack.offset) / currentTrack.bps);
+                        currentTrack.sectors = (ulong)((currentTrack.trackfilter.GetDataForkLength() - currentTrack.offset) / currentTrack.bps);
                         currentTrack.sectors += currentTrack.pregap;
                         currentStart += currentTrack.sectors;
                         currentTrack.highDensity = highDensity;
@@ -364,7 +362,7 @@ namespace DiscImageChef.ImagePlugins
                         DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
 
                     DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                        discimage.tracks[i].trackfile, discimage.tracks[i].tracktype, discimage.tracks[i].offset);
+                        discimage.tracks[i].trackfilter, discimage.tracks[i].tracktype, discimage.tracks[i].offset);
                 }
 
                 DicConsole.DebugWriteLine("GDI plugin", "Building offset map");
@@ -417,10 +415,8 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                FileInfo fi = new FileInfo(discimage.tracks[0].trackfile);
-
-                ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-                ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+                ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
 
                 ImageInfo.mediaType = discimage.disktype;
 
@@ -434,7 +430,7 @@ namespace DiscImageChef.ImagePlugins
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imagePath);
+                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
                 DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
                 return false;
@@ -623,22 +619,20 @@ namespace DiscImageChef.ImagePlugins
             if(remainingSectors == 0)
                 return buffer;
 
-            imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.trackfilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * remainingSectors));
+            else
             {
-                br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * remainingSectors));
-                else
+                for(ulong i = 0; i < remainingSectors; i++)
                 {
-                    for(ulong i = 0; i < remainingSectors; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
                 }
             }
 
@@ -792,22 +786,20 @@ namespace DiscImageChef.ImagePlugins
             if(remainingSectors == 0)
                 return buffer;
 
-            imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.trackfilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * remainingSectors));
+            else
             {
-                br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * remainingSectors));
-                else
+                for(ulong i = 0; i < remainingSectors; i++)
                 {
-                    for(ulong i = 0; i < remainingSectors; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
                 }
             }
 
@@ -931,22 +923,20 @@ namespace DiscImageChef.ImagePlugins
             if(remainingSectors == 0)
                 return buffer;
 
-            imageStream = new FileStream(_track.trackfile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.trackfilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * remainingSectors));
+            else
             {
-                br.BaseStream.Seek(_track.offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip) + _track.pregap * _track.bps), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * remainingSectors));
-                else
+                for(ulong i = 0; i < remainingSectors; i++)
                 {
-                    for(ulong i = 0; i < remainingSectors; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, (int)(i * sector_size), sector_size);
                 }
             }
 
@@ -1027,6 +1017,7 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackSession = 1;
                 _track.TrackSequence = gdi_track.sequence;
                 _track.TrackType = gdi_track.tracktype;
+                _track.TrackFilter = gdi_track.trackfilter;
                 _track.TrackFile = gdi_track.trackfile;
                 _track.TrackFileOffset = (ulong)gdi_track.offset;
                 _track.TrackFileType = "BINARY";
@@ -1086,6 +1077,7 @@ namespace DiscImageChef.ImagePlugins
                         _track.TrackSession = 1;
                     _track.TrackSequence = gdi_track.sequence;
                     _track.TrackType = gdi_track.tracktype;
+                    _track.TrackFilter = gdi_track.trackfilter;
                     _track.TrackFile = gdi_track.trackfile;
                     _track.TrackFileOffset = (ulong)gdi_track.offset;
                     _track.TrackFileType = "BINARY";

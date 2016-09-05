@@ -35,6 +35,7 @@ using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -44,7 +45,19 @@ namespace DiscImageChef.Commands
         {
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
+            FiltersList filtersList = new FiltersList();
 
+            DicConsole.WriteLine("Supported filters:");
+            if(FormatsOptions.Verbose)
+                DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
+            foreach(KeyValuePair<string, Filter> kvp in filtersList.filtersList)
+            {
+                if(FormatsOptions.Verbose)
+                    DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.UUID, kvp.Value.Name);
+                else
+                    DicConsole.WriteLine(kvp.Value.Name);
+            }
+            DicConsole.WriteLine();
             DicConsole.WriteLine("Supported disc image formats:");
             if(FormatsOptions.Verbose)
                 DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");

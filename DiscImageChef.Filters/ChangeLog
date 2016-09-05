@@ -1,0 +1,11 @@
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
+	* GZip.cs:
+	* Filter.cs:
+	* Filters.cs:
+	* ZZZNoFilter.cs:
+	* OffsetStream.cs:
+	* ForcedSeekStream.cs:
+	* AssemblyInfo.cs:
+	* DiscImageChef.Filters.csproj: Added filters.
+

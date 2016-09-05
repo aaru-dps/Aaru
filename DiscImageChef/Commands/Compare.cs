@@ -35,6 +35,7 @@ using DiscImageChef.ImagePlugins;
 using System.Text;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -47,20 +48,24 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Compare command", "--input1={0}", options.InputFile1);
             DicConsole.DebugWriteLine("Compare command", "--input2={0}", options.InputFile2);
 
-            if(!System.IO.File.Exists(options.InputFile1))
+            FiltersList filtersList = new FiltersList();
+            Filter inputFilter1 = filtersList.GetFilter(options.InputFile1);
+            Filter inputFilter2 = filtersList.GetFilter(options.InputFile2);
+
+            if(inputFilter1 == null)
             {
-                DicConsole.ErrorWriteLine("Input file 1 does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open input file 1");
                 return;
             }
 
-            if(!System.IO.File.Exists(options.InputFile2))
+            if(inputFilter2 == null)
             {
-                DicConsole.ErrorWriteLine("Input file 2 does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open input file 2");
                 return;
             }
 
-            ImagePlugin input1Format = ImageFormat.Detect(options.InputFile1);
-            ImagePlugin input2Format = ImageFormat.Detect(options.InputFile2);
+            ImagePlugin input1Format = ImageFormat.Detect(inputFilter1);
+            ImagePlugin input2Format = ImageFormat.Detect(inputFilter2);
 
             if(input1Format == null)
             {
@@ -88,13 +93,15 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
             }
 
-            input1Format.OpenImage(options.InputFile1);
-            input2Format.OpenImage(options.InputFile2);
+            input1Format.OpenImage(inputFilter1);
+            input2Format.OpenImage(inputFilter2);
 
             Core.Statistics.AddMediaFormat(input1Format.GetImageFormat());
             Core.Statistics.AddMediaFormat(input2Format.GetImageFormat());
             Core.Statistics.AddMedia(input1Format.ImageInfo.mediaType, false);
             Core.Statistics.AddMedia(input2Format.ImageInfo.mediaType, false);
+            Core.Statistics.AddFilter(inputFilter1.Name);
+            Core.Statistics.AddFilter(inputFilter2.Name);
 
             StringBuilder sb = new StringBuilder();
 

@@ -47,6 +47,8 @@ namespace DiscImageChef.Core
         public List<NameValueStats> Partitions;
         [XmlArrayItem("Format")]
         public List<NameValueStats> MediaImages;
+        [XmlArrayItem("Filter", IsNullable = true)]
+        public List<NameValueStats> Filters;
         [XmlArrayItem("Device", IsNullable = true)]
         public List<DeviceStats> Devices;
         [XmlArrayItem("Media")]
@@ -408,6 +410,65 @@ namespace DiscImageChef.Core
                     nw.Value = 1;
                 }
                 CurrentStats.Partitions.Add(nw);
+            }
+        }
+
+        public static void AddFilter(string format)
+        {
+            if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.FilterStats)
+            {
+                if(AllStats.Filters == null)
+                    AllStats.Filters = new List<NameValueStats>();
+                if(CurrentStats.Filters == null)
+                    CurrentStats.Filters = new List<NameValueStats>();
+
+                NameValueStats old = null;
+                foreach(NameValueStats nvs in AllStats.Filters)
+                {
+                    if(nvs.name == format)
+                    {
+                        old = nvs;
+                        break;
+                    }
+                }
+
+                NameValueStats nw = new NameValueStats();
+                if(old != null)
+                {
+                    nw.name = old.name;
+                    nw.Value = old.Value + 1;
+                    AllStats.Filters.Remove(old);
+                }
+                else
+                {
+                    nw.name = format;
+                    nw.Value = 1;
+                }
+                AllStats.Filters.Add(nw);
+
+                old = null;
+                foreach(NameValueStats nvs in CurrentStats.Filters)
+                {
+                    if(nvs.name == format)
+                    {
+                        old = nvs;
+                        break;
+                    }
+                }
+
+                nw = new NameValueStats();
+                if(old != null)
+                {
+                    nw.name = old.name;
+                    nw.Value = old.Value + 1;
+                    CurrentStats.Filters.Remove(old);
+                }
+                else
+                {
+                    nw.name = format;
+                    nw.Value = 1;
+                }
+                CurrentStats.Filters.Add(nw);
             }
         }
 

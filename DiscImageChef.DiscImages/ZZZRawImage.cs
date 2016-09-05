@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -43,7 +44,7 @@ namespace DiscImageChef.ImagePlugins
     {
         #region Internal variables
 
-        string rawImagePath;
+        Filter rawImageFilter;
         bool differentTrackZeroSize;
 
         #endregion
@@ -76,15 +77,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileInfo fi = new FileInfo(imagePath);
-
             // Check if file is not multiple of 512
-            if((fi.Length % 512) != 0)
+            if((imageFilter.GetDataForkLength() % 512) != 0)
             {
                 // Check known disk sizes with sectors smaller than 512
-                switch(fi.Length)
+                switch(imageFilter.GetDataForkLength())
                 {
                     case 81664:
                     case 116480:
@@ -110,19 +109,17 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Close();
 
-            FileInfo fi = new FileInfo(imagePath);
-            string extension = Path.GetExtension(imagePath).ToLower();
-            if(extension == ".iso" && (fi.Length % 2048) == 0)
+            string extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0)
                 ImageInfo.sectorSize = 2048;
             else
             {
-                switch(fi.Length)
+                switch(imageFilter.GetDataForkLength())
                 {
                     case 242944:
                     case 256256:
@@ -171,14 +168,14 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            ImageInfo.imageSize = (ulong)fi.Length;
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageSize = (ulong)imageFilter.GetDataForkLength();
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             differentTrackZeroSize = false;
-            rawImagePath = imagePath;
+            rawImageFilter = imageFilter;
 
-            switch(fi.Length)
+            switch(imageFilter.GetDataForkLength())
             {
                 case 242944:
                     ImageInfo.sectors = 1898;
@@ -276,7 +273,7 @@ namespace DiscImageChef.ImagePlugins
             }
 
             // Sharp X68000 SASI hard disks
-            if(Path.GetExtension(imagePath).ToLowerInvariant() == ".hdf")
+            if(extension == ".hdf")
             {
                 if(ImageInfo.imageSize % 256 == 0)
                 {
@@ -331,13 +328,11 @@ namespace DiscImageChef.ImagePlugins
 
                 byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
-                FileStream stream = new FileStream(rawImagePath, FileMode.Open, FileAccess.Read);
+                Stream stream = rawImageFilter.GetDataForkStream();
 
                 stream.Seek((long)(sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
 
                 stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
-
-                stream.Close();
 
                 return buffer;
 
@@ -413,7 +408,7 @@ namespace DiscImageChef.ImagePlugins
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
                 trk.TrackEndSector = ImageInfo.sectors - 1;
-                trk.TrackFile = rawImagePath;
+                trk.TrackFile = rawImageFilter.GetFilename();
                 trk.TrackFileOffset = 0;
                 trk.TrackFileType = "BINARY";
                 trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;
@@ -440,7 +435,8 @@ namespace DiscImageChef.ImagePlugins
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
                 trk.TrackEndSector = ImageInfo.sectors - 1;
-                trk.TrackFile = rawImagePath;
+                trk.TrackFilter = rawImageFilter;
+                trk.TrackFile = rawImageFilter.GetFilename();
                 trk.TrackFileOffset = 0;
                 trk.TrackFileType = "BINARY";
                 trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;
@@ -467,7 +463,8 @@ namespace DiscImageChef.ImagePlugins
                 Track trk = new Track();
                 trk.TrackBytesPerSector = (int)ImageInfo.sectorSize;
                 trk.TrackEndSector = ImageInfo.sectors - 1;
-                trk.TrackFile = rawImagePath;
+                trk.TrackFilter = rawImageFilter;
+                trk.TrackFile = rawImageFilter.GetFilename();
                 trk.TrackFileOffset = 0;
                 trk.TrackFileType = "BINARY";
                 trk.TrackRawBytesPerSector = (int)ImageInfo.sectorSize;

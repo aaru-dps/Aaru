@@ -36,6 +36,7 @@ using System.IO;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -166,7 +167,7 @@ namespace DiscImageChef.ImagePlugins
         #region Internal variables
 
         A2IMGHeader ImageHeader;
-        string a2mgImagePath;
+        Filter a2mgImageFilter;
 
         #endregion
 
@@ -197,9 +198,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 65)
@@ -239,9 +240,9 @@ namespace DiscImageChef.ImagePlugins
             return creatoroff + creatorsize <= stream.Length;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             ImageHeader = new A2IMGHeader();
@@ -354,14 +355,11 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageComments = Encoding.ASCII.GetString(comments);
             }
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            stream.Close();
-
-            a2mgImagePath = imagePath;
+            a2mgImageFilter = imageFilter;
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
@@ -473,13 +471,11 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
-            FileStream stream = new FileStream(a2mgImagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = a2mgImageFilter.GetDataForkStream();
 
             stream.Seek((long)(ImageHeader.dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
-
-            stream.Close();
 
             return buffer;
         }

@@ -59,6 +59,7 @@ namespace DiscImageChef.Settings
         public bool CommandStats;
         public bool DeviceStats;
         public bool FilesystemStats;
+        public bool FilterStats;
         public bool MediaImageStats;
         public bool MediaScanStats;
         public bool PartitionStats;
@@ -246,6 +247,13 @@ namespace DiscImageChef.Settings
                                         else
                                             Current.Stats.FilesystemStats = false;
 
+                                        if(stats.TryGetValue("FilterStats", out obj2))
+                                        {
+                                            Current.Stats.FilterStats = ((NSNumber)obj2).ToBool();
+                                        }
+                                        else
+                                            Current.Stats.FilterStats = false;
+
                                         if(stats.TryGetValue("MediaImageStats", out obj2))
                                         {
                                             Current.Stats.MediaImageStats = ((NSNumber)obj2).ToBool();
@@ -326,6 +334,7 @@ namespace DiscImageChef.Settings
                                 Current.Stats.CommandStats = Convert.ToBoolean(key.GetValue("CommandStats"));
                                 Current.Stats.DeviceStats = Convert.ToBoolean(key.GetValue("DeviceStats"));
                                 Current.Stats.FilesystemStats = Convert.ToBoolean(key.GetValue("FilesystemStats"));
+                                Current.Stats.FilterStats = Convert.ToBoolean(key.GetValue("FilterStats"));
                                 Current.Stats.MediaImageStats = Convert.ToBoolean(key.GetValue("MediaImageStats"));
                                 Current.Stats.MediaScanStats = Convert.ToBoolean(key.GetValue("MediaScanStats"));
                                 Current.Stats.PartitionStats = Convert.ToBoolean(key.GetValue("PartitionStats"));
@@ -383,6 +392,7 @@ namespace DiscImageChef.Settings
                                 stats.Add("CommandStats", Current.Stats.CommandStats);
                                 stats.Add("DeviceStats", Current.Stats.DeviceStats);
                                 stats.Add("FilesystemStats", Current.Stats.FilesystemStats);
+                                stats.Add("FilterStats", Current.Stats.FilterStats);
                                 stats.Add("MediaImageStats", Current.Stats.MediaImageStats);
                                 stats.Add("MediaScanStats", Current.Stats.MediaScanStats);
                                 stats.Add("PartitionStats", Current.Stats.PartitionStats);
@@ -419,6 +429,7 @@ namespace DiscImageChef.Settings
                                 key.SetValue("CommandStats", Current.Stats.CommandStats);
                                 key.SetValue("DeviceStats", Current.Stats.DeviceStats);
                                 key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
+                                key.SetValue("FilterStats", Current.Stats.FilterStats);
                                 key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
                                 key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
                                 key.SetValue("PartitionStats", Current.Stats.PartitionStats);
@@ -476,6 +487,7 @@ namespace DiscImageChef.Settings
             Current.Stats.FilesystemStats = true;
             Current.Stats.MediaImageStats = true;
             Current.Stats.MediaScanStats = true;
+            Current.Stats.FilterStats = true;
             Current.Stats.MediaStats = true;
             Current.Stats.PartitionStats = true;
             Current.Stats.ShareStats = true;

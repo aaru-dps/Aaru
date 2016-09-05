@@ -35,6 +35,7 @@ using System.IO;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -122,7 +123,7 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>Header of opened image</summary>
         DC42Header header;
         /// <summary>Disk image file</summary>
-        string dc42ImagePath;
+        Filter dc42ImageFilter;
 
         byte[] twiggyCache;
         byte[] twiggyCacheTags;
@@ -157,14 +158,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             byte[] buffer = new byte[0x58];
             byte[] pString = new byte[64];
             stream.Read(buffer, 0, 0x58);
-            stream.Close();
 
             // Incorrect pascal string length, not DC42
             if(buffer[0] > 63)
@@ -199,9 +199,7 @@ namespace DiscImageChef.ImagePlugins
             if(tmp_header.valid != 1 || tmp_header.reserved != 0)
                 return false;
 
-            FileInfo fi = new FileInfo(imagePath);
-
-            if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != fi.Length && tmp_header.format != kSigmaFormatTwiggy)
+            if(tmp_header.dataSize + tmp_header.tagSize + 0x54 != imageFilter.GetDataForkLength() && tmp_header.format != kSigmaFormatTwiggy)
                 return false;
 
             if(tmp_header.format != kSonyFormat400K && tmp_header.format != kSonyFormat800K && tmp_header.format != kSonyFormat720K &&
@@ -232,14 +230,13 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             byte[] buffer = new byte[0x58];
             byte[] pString = new byte[64];
             stream.Read(buffer, 0, 0x58);
-            stream.Close();
 
             // Incorrect pascal string length, not DC42
             if(buffer[0] > 63)
@@ -272,9 +269,7 @@ namespace DiscImageChef.ImagePlugins
             if(header.valid != 1 || header.reserved != 0)
                 return false;
 
-            FileInfo fi = new FileInfo(imagePath);
-
-            if(header.dataSize + header.tagSize + 0x54 != fi.Length && header.format != kSigmaFormatTwiggy)
+            if(header.dataSize + header.tagSize + 0x54 != imageFilter.GetDataForkLength() && header.format != kSigmaFormatTwiggy)
                 return false;
 
             if(header.format != kSonyFormat400K && header.format != kSonyFormat800K && header.format != kSonyFormat720K &&
@@ -304,7 +299,7 @@ namespace DiscImageChef.ImagePlugins
             tagOffset = header.tagSize != 0 ? 0x54 + header.dataSize : 0;
             ImageInfo.sectorSize = 512;
             bptag = (uint)(header.tagSize != 0 ? 12 : 0);
-            dc42ImagePath = imagePath;
+            dc42ImageFilter = imageFilter;
 
             ImageInfo.sectors = header.dataSize / 512;
 
@@ -323,8 +318,8 @@ namespace DiscImageChef.ImagePlugins
             }
 
             ImageInfo.imageSize = ImageInfo.sectors * ImageInfo.sectorSize + ImageInfo.sectors * bptag;
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.imageName = header.diskName;
 
             switch(header.format)
@@ -381,15 +376,13 @@ namespace DiscImageChef.ImagePlugins
                 twiggyCacheTags = new byte[header.tagSize];
                 twiggy = true;
 
-                FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                Stream datastream = imageFilter.GetDataForkStream();
                 datastream.Seek((dataOffset), SeekOrigin.Begin);
                 datastream.Read(data, 0, (int)header.dataSize);
-                datastream.Close();
 
-                FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                Stream tagstream = imageFilter.GetDataForkStream();
                 tagstream.Seek((tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
-                tagstream.Close();
 
                 ushort MFS_Magic = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x400));
                 ushort MFS_AllBlocks = BigEndianBitConverter.ToUInt16(data, (int)((data.Length / 2) + 0x412));
@@ -485,10 +478,9 @@ namespace DiscImageChef.ImagePlugins
             uint tagsChk = 0;
 
             DicConsole.DebugWriteLine("DC42 plugin", "Reading data");
-            FileStream datastream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+            Stream datastream = dc42ImageFilter.GetDataForkStream();
             datastream.Seek((dataOffset), SeekOrigin.Begin);
             datastream.Read(data, 0, (int)header.dataSize);
-            datastream.Close();
 
             DicConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
             dataChk = DC42CheckSum(data);
@@ -498,10 +490,9 @@ namespace DiscImageChef.ImagePlugins
             if(header.tagSize > 0)
             {
                 DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
-                FileStream tagstream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                Stream tagstream = dc42ImageFilter.GetDataForkStream(); 
                 tagstream.Seek((tagOffset), SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.tagSize);
-                tagstream.Close();
 
                 DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
                 tagsChk = DC42CheckSum(tags);
@@ -558,10 +549,9 @@ namespace DiscImageChef.ImagePlugins
             }
             else
             {
-                FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                Stream stream = dc42ImageFilter.GetDataForkStream();
                 stream.Seek((long)(dataOffset + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
                 stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
-                stream.Close();
             }
 
             return buffer;
@@ -589,10 +579,9 @@ namespace DiscImageChef.ImagePlugins
             }
             else
             {
-                FileStream stream = new FileStream(dc42ImagePath, FileMode.Open, FileAccess.Read);
+                Stream stream = dc42ImageFilter.GetDataForkStream();
                 stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
                 stream.Read(buffer, 0, (int)(length * bptag));
-                stream.Close();
             }
 
             return buffer;

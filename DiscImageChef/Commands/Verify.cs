@@ -34,6 +34,7 @@ using System;
 using DiscImageChef.ImagePlugins;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -47,13 +48,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}", options.VerifyDisc);
             DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", options.VerifySectors);
 
-            if(!System.IO.File.Exists(options.InputFile))
+            FiltersList filtersList = new FiltersList();
+            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+
+            if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open specified file.");
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
+            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -61,9 +65,10 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            inputFormat.OpenImage(options.InputFile);
+            inputFormat.OpenImage(inputFilter);
             Core.Statistics.AddMediaFormat(inputFormat.GetImageFormat());
             Core.Statistics.AddMedia(inputFormat.ImageInfo.mediaType, false);
+            Core.Statistics.AddFilter(inputFilter.Name);
 
             bool? correctDisc = null;
             long totalSectors = 0;

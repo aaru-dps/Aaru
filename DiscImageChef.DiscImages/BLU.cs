@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.ImagePlugins
         #region Internal variables
 
         BLUHeader ImageHeader;
-        string bluImagePath;
+        Filter bluImageFilter;
         int bptag;
 
         #endregion Internal variables
@@ -93,9 +94,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 0x200)
@@ -125,9 +126,9 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             ImageHeader = new BLUHeader();
@@ -201,14 +202,11 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.imageApplication = StringHandlers.CToString(hdrTag);
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            stream.Close();
-
-            bluImagePath = imagePath;
+            bluImageFilter = imageFilter;
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
@@ -302,7 +300,7 @@ namespace DiscImageChef.ImagePlugins
             int read = 0x200;
             int skip = bptag;
 
-            FileStream stream = new FileStream(bluImagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
 
             for(int i = 0; i < length; i++)
@@ -314,7 +312,6 @@ namespace DiscImageChef.ImagePlugins
                 stream.Seek(skip, SeekOrigin.Current);
             }
 
-            stream.Close();
             return buffer.ToArray();
         }
 
@@ -337,7 +334,7 @@ namespace DiscImageChef.ImagePlugins
             int read = bptag;
             int skip = 0;
 
-            FileStream stream = new FileStream(bluImagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
 
             for(int i = 0; i < length; i++)
@@ -349,7 +346,6 @@ namespace DiscImageChef.ImagePlugins
                 stream.Seek(skip, SeekOrigin.Current);
             }
 
-            stream.Close();
             return buffer.ToArray();
         }
 
@@ -367,10 +363,9 @@ namespace DiscImageChef.ImagePlugins
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * ImageHeader.bytesPerBlock];
-            FileStream stream = new FileStream(bluImagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * ImageHeader.bytesPerBlock), SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
-            stream.Close();
 
             return buffer;
         }

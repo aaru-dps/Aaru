@@ -835,10 +835,10 @@ namespace DiscImageChef.Filesystems.CPM
                 thirdPartyTimestamps = false;
                 return false;
             }
-            catch(Exception ex)
+            catch
             {
-                throw ex;
-//                return false;
+                //throw ex;
+                return false;
             }
         }
 

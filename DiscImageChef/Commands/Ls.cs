@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 
@@ -47,12 +48,15 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Ls command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Ls command", "--input={0}", options.InputFile);
 
-            if(!System.IO.File.Exists(options.InputFile))
+            FiltersList filtersList = new FiltersList();
+            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+
+            if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open specified file.");
                 return;
             }
-
+ 
             PluginBase plugins = new PluginBase();
             plugins.RegisterAllPlugins();
 
@@ -63,7 +67,7 @@ namespace DiscImageChef.Commands
 
             try
             {
-                _imageFormat = ImageFormat.Detect(options.InputFile);
+                _imageFormat = ImageFormat.Detect(inputFilter);
 
                 if(_imageFormat == null)
                 {
@@ -80,7 +84,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(options.InputFile))
+                    if(!_imageFormat.OpenImage(inputFilter))
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
@@ -94,6 +98,7 @@ namespace DiscImageChef.Commands
 
                     Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                     Core.Statistics.AddMedia(_imageFormat.ImageInfo.mediaType, false);
+                    Core.Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
                 {

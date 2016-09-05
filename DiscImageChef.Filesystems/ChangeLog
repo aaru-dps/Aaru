@@ -1,3 +1,7 @@
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Info.cs: Do not throw identification exceptions.
+
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
 	* XFS.cs:

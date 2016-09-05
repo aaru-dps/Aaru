@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -58,15 +59,15 @@ namespace DiscImageChef.ImagePlugins
         /// Identifies the image.
         /// </summary>
         /// <returns><c>true</c>, if image was identified, <c>false</c> otherwise.</returns>
-        /// <param name="imagePath">Image path.</param>
-        public abstract bool IdentifyImage(string imagePath);
+        /// <param name="imageFilter">Image filter.</param>
+        public abstract bool IdentifyImage(Filter imageFilter);
 
         /// <summary>
         /// Opens the image.
         /// </summary>
         /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
-        /// <param name="imagePath">Image path.</param>
-        public abstract bool OpenImage(string imagePath);
+        /// <param name="imageFilter">Image filter.</param>
+        public abstract bool OpenImage(Filter imageFilter);
 
         /// <summary>
         /// Asks the disk image plugin if the image contains partitions
@@ -461,6 +462,8 @@ namespace DiscImageChef.ImagePlugins
         public string TrackDescription;
         /// <summary>Indexes, 00 to 99 and sector offset</summary>
         public Dictionary<int, ulong> Indexes;
+        /// <summary>Which filter stores this track</summary>
+        public Filter TrackFilter;
         /// <summary>Which file stores this track</summary>
         public string TrackFile;
         /// <summary>Starting at which byte is this track stored</summary>
@@ -471,6 +474,8 @@ namespace DiscImageChef.ImagePlugins
         public int TrackBytesPerSector;
         /// <summary>How many main channel bytes per sector are in the file with this track</summary>
         public int TrackRawBytesPerSector;
+        /// <summary>Which filter stores this track's subchannel</summary>
+        public Filter TrackSubchannelFilter;
         /// <summary>Which file stores this track's subchannel</summary>
         public string TrackSubchannelFile;
         /// <summary>Starting at which byte are this track's subchannel stored</summary>

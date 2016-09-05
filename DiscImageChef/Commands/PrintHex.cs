@@ -32,6 +32,7 @@
 
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -47,13 +48,16 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", options.LongSectors);
             DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", options.WidthBytes);
 
-            if(!System.IO.File.Exists(options.InputFile))
+            FiltersList filtersList = new FiltersList();
+            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+
+            if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open specified file.");
                 return;
             }
 
-            ImagePlugin inputFormat = ImageFormat.Detect(options.InputFile);
+            ImagePlugin inputFormat = ImageFormat.Detect(inputFilter);
 
             if(inputFormat == null)
             {
@@ -61,7 +65,7 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            inputFormat.OpenImage(options.InputFile);
+            inputFormat.OpenImage(inputFilter);
 
             for(ulong i = 0; i < options.Length; i++)
             {

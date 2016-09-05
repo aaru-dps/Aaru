@@ -38,6 +38,7 @@ using DiscImageChef.ImagePlugins;
 using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
@@ -116,7 +117,7 @@ namespace DiscImageChef.DiscImages
         long dataOffset;
         uint clusterBytes;
         bool empty;
-        FileStream imageStream;
+        Stream imageStream;
 
         Dictionary<ulong, byte[]> sectorCache;
 
@@ -150,9 +151,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
@@ -169,9 +170,9 @@ namespace DiscImageChef.DiscImages
             return ParallelsMagic.SequenceEqual(pHdr.magic) || ParallelsExtMagic.SequenceEqual(pHdr.magic);
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
@@ -217,10 +218,9 @@ namespace DiscImageChef.DiscImages
 
             empty = (pHdr.flags & ParallelsEmpty) == ParallelsEmpty;
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.sectors = pHdr.sectors;
             ImageInfo.sectorSize = 512;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;

@@ -39,6 +39,7 @@ using DiscImageChef.Console;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.PartPlugins;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -51,15 +52,18 @@ namespace DiscImageChef.Commands
             plugins.RegisterAllPlugins();
             ImagePlugin _imageFormat;
 
-            if(!File.Exists(options.InputFile))
+            FiltersList filtersList = new FiltersList();
+            Filter inputFilter = filtersList.GetFilter(options.InputFile);
+
+            if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Specified file does not exist.");
+                DicConsole.ErrorWriteLine("Cannot open specified file.");
                 return;
             }
 
             try
             {
-                _imageFormat = ImageFormat.Detect(options.InputFile);
+                _imageFormat = ImageFormat.Detect(inputFilter);
 
                 if(_imageFormat == null)
                 {
@@ -76,7 +80,7 @@ namespace DiscImageChef.Commands
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(options.InputFile))
+                    if(!_imageFormat.OpenImage(inputFilter))
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
@@ -93,6 +97,7 @@ namespace DiscImageChef.Commands
                 }
 
                 Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
+                Core.Statistics.AddFilter(inputFilter.Name);
 
                 FileInfo fi = new FileInfo(options.InputFile);
                 FileStream fs = new FileStream(options.InputFile, FileMode.Open, FileAccess.Read);

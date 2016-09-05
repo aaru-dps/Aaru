@@ -36,6 +36,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -128,7 +129,7 @@ namespace DiscImageChef.ImagePlugins
         int maxL2TableCache;
         int maxClusterCache;
 
-        FileStream imageStream;
+        Stream imageStream;
 
         public QCOW()
         {
@@ -157,9 +158,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
@@ -172,9 +173,9 @@ namespace DiscImageChef.ImagePlugins
             return qHdr.magic == QCowMagic && qHdr.version == QCowVersion;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
@@ -278,13 +279,12 @@ namespace DiscImageChef.ImagePlugins
             l2TableCache = new Dictionary<ulong, ulong[]>();
             clusterCache = new Dictionary<ulong, byte[]>();
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
             if(qHdr.mtime > 0)
                 ImageInfo.imageLastModificationTime = DateHandlers.UNIXUnsignedToDateTime(qHdr.mtime);
             else
-                ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+                ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.sectors = qHdr.size / 512;
             ImageInfo.sectorSize = 512;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;

@@ -112,6 +112,15 @@ namespace DiscImageChef.Commands
                 pressedKey = new ConsoleKeyInfo();
                 while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
                 {
+                    DicConsole.Write("Do you want to gather statistics about found file filters? (Y/N): ");
+                    pressedKey = System.Console.ReadKey();
+                    DicConsole.WriteLine();
+                }
+                Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
+
+                pressedKey = new ConsoleKeyInfo();
+                while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
+                {
                     DicConsole.Write("Do you want to gather statistics about found media image formats? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();

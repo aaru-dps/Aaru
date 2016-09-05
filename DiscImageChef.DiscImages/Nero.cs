@@ -35,6 +35,7 @@ using System.IO;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -834,9 +835,8 @@ namespace DiscImageChef.ImagePlugins
 
         #region Internal variables
 
-        string _imagePath;
-        FileStream imageStream;
-        FileInfo imageInfo;
+        Filter _imageFilter;
+        Stream imageStream;
         bool imageNewFormat;
         Dictionary<ushort, uint> neroSessions;
         NeroV1Cuesheet neroCuesheetV1;
@@ -867,7 +867,6 @@ namespace DiscImageChef.ImagePlugins
         {
             Name = "Nero Burning ROM image";
             PluginUUID = new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
-            _imagePath = "";
             imageNewFormat = false;
             ImageInfo = new ImageInfo();
             ImageInfo.readableSectorTags = new List<SectorTagType>();
@@ -880,10 +879,9 @@ namespace DiscImageChef.ImagePlugins
         }
 
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            imageInfo = new FileInfo(imagePath);
-            imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            imageStream = imageFilter.GetDataForkStream();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] buffer;
@@ -902,33 +900,29 @@ namespace DiscImageChef.ImagePlugins
             footerV2.ChunkID = BigEndianBitConverter.ToUInt32(buffer, 0);
             footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-            DicConsole.DebugWriteLine("Nero plugin", "imageInfo.Length = {0}", imageInfo.Length);
+            DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
             DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}", footerV1.ChunkID);
             DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
             DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkID);
             DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-            if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageInfo.Length)
+            if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
             {
-                imageStream.Close();
                 return true;
             }
-            if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageInfo.Length)
+            if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
             {
-                imageStream.Close();
                 return true;
             }
 
-            imageStream.Close();
             return false;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
             try
             {
-                imageInfo = new FileInfo(imagePath);
-                imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+                imageStream = imageFilter.GetDataForkStream();
                 BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 byte[] buffer;
@@ -947,21 +941,18 @@ namespace DiscImageChef.ImagePlugins
                 footerV2.ChunkID = BigEndianBitConverter.ToUInt32(buffer, 0);
                 footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-                DicConsole.DebugWriteLine("Nero plugin", "imageInfo.Length = {0}", imageInfo.Length);
+                DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-                if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageInfo.Length)
+                if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
                     imageNewFormat = false;
-                else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageInfo.Length)
+                else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
                     imageNewFormat = true;
                 else
-                {
-                    imageStream.Close();
-                    return true;
-                }
+                    return false;
 
                 if(imageNewFormat)
                     imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
@@ -1476,9 +1467,9 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.imageHasPartitions = true;
                 ImageInfo.imageHasSessions = true;
                 ImageInfo.imageCreator = null;
-                ImageInfo.imageCreationTime = imageInfo.CreationTimeUtc;
-                ImageInfo.imageLastModificationTime = imageInfo.LastWriteTimeUtc;
-                ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+                ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+                ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
                 ImageInfo.imageComments = null;
                 ImageInfo.mediaManufacturer = null;
                 ImageInfo.mediaModel = null;
@@ -1542,7 +1533,8 @@ namespace DiscImageChef.ImagePlugins
                         _track.TrackSession = currentsession;
                         _track.TrackStartSector = _neroTrack.StartLBA;
                         _track.TrackType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode);
-                        _track.TrackFile = imagePath;
+                        _track.TrackFile = imageFilter.GetFilename();
+                        _track.TrackFilter = imageFilter;
                         _track.TrackFileOffset = _neroTrack.Offset;
                         _track.TrackFileType = "BINARY";
                         _track.TrackSubchannelType = TrackSubchannelType.None;
@@ -1588,7 +1580,8 @@ namespace DiscImageChef.ImagePlugins
 
                         if(_track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
                         {
-                            _track.TrackSubchannelFile = _imagePath;
+                            _track.TrackSubchannelFilter = imageFilter;
+                            _track.TrackSubchannelFile = imageFilter.GetFilename();
                             _track.TrackSubchannelOffset = _neroTrack.Offset;
                         }
 
@@ -1664,8 +1657,7 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
 
-                _imagePath = imagePath;
-                imageStream.Close();
+                _imageFilter = imageFilter;
 
                 if(ImageInfo.mediaType == MediaType.Unknown || ImageInfo.mediaType == MediaType.CD)
                 {
@@ -1898,26 +1890,23 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_imagePath, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _imageFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
 
-            imageStream.Close();
             return buffer;
         }
 
@@ -2134,26 +2123,23 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_imagePath, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _imageFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
 
-            imageStream.Close();
             return buffer;
         }
 
@@ -2242,7 +2228,7 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_imagePath, FileMode.Open, FileAccess.Read);
+            imageStream = _imageFilter.GetDataForkStream();
             BinaryReader br = new BinaryReader(imageStream);
 
             br.BaseStream.Seek((long)_track.Offset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
@@ -2262,7 +2248,6 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            imageStream.Close();
             return buffer;
         }
 

@@ -1,3 +1,32 @@
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
+	* GDI.cs:
+	* VDI.cs:
+	* VHD.cs:
+	* DIM.cs:
+	* BLU.cs:
+	* QED.cs:
+	* UDIF.cs:
+	* QCOW.cs:
+	* VHDX.cs:
+	* Nero.cs:
+	* QCOW2.cs:
+	* CDRWin.cs:
+	* CopyQM.cs:
+	* CPCDSK.cs:
+	* VMware.cs:
+	* CDRDAO.cs:
+	* TeleDisk.cs:
+	* Apple2MG.cs:
+	* Parallels.cs:
+	* DiskCopy42.cs:
+	* Alcohol120.cs:
+	* ImagePlugin.cs:
+	* BlindWrite5.cs:
+	* BlindWrite4.cs:
+	* ZZZRawImage.cs:
+	* DiscImageChef.DiscImages.csproj: Added filters.
+
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
 	* UDIF.cs:

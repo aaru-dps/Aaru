@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using System.Text;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -162,10 +163,10 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<int, Dictionary<int, AlcoholTrack>> alcToc;
         Dictionary<int, AlcoholTrackExtra> alcTrackExtras;
         AlcoholFooter alcFooter;
-        string alcImage;
+        Filter alcImage;
         byte[] bca;
         List<Session> sessions;
-        FileStream imageStream;
+        Stream imageStream;
         byte[] fullToc;
         bool isDvd;
         byte[] dmi;
@@ -202,9 +203,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 88)
                 return false;
@@ -216,14 +217,13 @@ namespace DiscImageChef.ImagePlugins
             Marshal.Copy(hdr, 0, hdrPtr, 88);
             header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
             Marshal.FreeHGlobal(hdrPtr);
-            stream.Close();
 
             return header.signature == "MEDIA DESCRIPTO";
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 88)
                 return false;
@@ -383,6 +383,8 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown2 = 0x{0:X8}", alcFooter.unknown2);
             }
 
+            string alcFile = "*.mdf";
+
             if(alcFooter.filenameOffset > 0)
             {
                 stream.Seek(alcFooter.filenameOffset, SeekOrigin.Begin);
@@ -394,15 +396,15 @@ namespace DiscImageChef.ImagePlugins
 
                 stream.Read(filename, 0, filename.Length);
                 if(alcFooter.widechar == 1)
-                    alcImage = Encoding.Unicode.GetString(filename);
+                    alcFile = Encoding.Unicode.GetString(filename);
                 else
-                    alcImage = Encoding.Default.GetString(filename);
+                    alcFile = Encoding.Default.GetString(filename);
 
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcImage);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
             }
 
-            if(alcFooter.filenameOffset == 0 || string.Compare(alcImage, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
-                alcImage = Path.GetFileNameWithoutExtension(imagePath) + ".mdf";
+            if(alcFooter.filenameOffset == 0 || string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
+                alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
 
             if(header.bcaLength > 0 && header.bcaOffset > 0 && isDvd)
             {
@@ -558,8 +560,6 @@ namespace DiscImageChef.ImagePlugins
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", ImageInfo.mediaType);
 
-            stream.Close();
-
             sessions = new List<Session>();
             foreach(AlcoholSession alcSes in alcSessions.Values)
             {
@@ -676,12 +676,17 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.imageApplication = "Alcohol 120%";
 
-            DicConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcImage);
+            DicConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
 
-            FileInfo fi = new FileInfo(alcImage);
-            ImageInfo.imageSize = (ulong)fi.Length;
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            FiltersList filtersList = new FiltersList();
+            alcImage = filtersList.GetFilter(alcFile);
+
+            if(alcImage == null)
+                throw new Exception("Cannot open data file");
+
+            ImageInfo.imageSize = (ulong)alcImage.GetDataForkLength();
+            ImageInfo.imageCreationTime = alcImage.GetCreationTime();
+            ImageInfo.imageLastModificationTime = alcImage.GetLastWriteTime();
             ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
             ImageInfo.imageVersion = string.Format("{0}.{1}", header.version[0], header.version[1]);
 
@@ -942,22 +947,20 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(alcImage, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = alcImage.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
 
@@ -1275,22 +1278,20 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(alcImage, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = alcImage.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
 
@@ -1364,12 +1365,10 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(alcImage, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
-            {
-                br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                buffer = br.ReadBytes((int)(sector_size * length));
-            }
+            imageStream = alcImage.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.startOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            buffer = br.ReadBytes((int)(sector_size * length));
 
             return buffer;
         }
@@ -1430,7 +1429,8 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackSession = sessionNo;
                     _track.TrackSequence = track.point;
                     _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                    _track.TrackFile = alcImage;
+                    _track.TrackFilter = alcImage;
+                    _track.TrackFile = alcImage.GetFilename();
                     _track.TrackFileOffset = track.startOffset;
                     _track.TrackFileType = "BINARY";
                     _track.TrackRawBytesPerSector = track.sectorSize;
@@ -1438,7 +1438,8 @@ namespace DiscImageChef.ImagePlugins
                     switch(track.subMode)
                     {
                         case AlcoholSubchannelMode.Interleaved:
-                            _track.TrackSubchannelFile = alcImage;
+                            _track.TrackSubchannelFilter = alcImage;
+                            _track.TrackSubchannelFile = alcImage.GetFilename();
                             _track.TrackSubchannelOffset = track.startOffset;
                             _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
                             _track.TrackRawBytesPerSector += 96;
@@ -1495,7 +1496,8 @@ namespace DiscImageChef.ImagePlugins
                     _track.TrackSession = sessionNo;
                     _track.TrackSequence = track.point;
                     _track.TrackType = AlcoholTrackTypeToTrackType(track.mode);
-                    _track.TrackFile = alcImage;
+                    _track.TrackFilter = alcImage;
+                    _track.TrackFile = alcImage.GetFilename();
                     _track.TrackFileOffset = track.startOffset;
                     _track.TrackFileType = "BINARY";
                     _track.TrackRawBytesPerSector = track.sectorSize;
@@ -1503,7 +1505,8 @@ namespace DiscImageChef.ImagePlugins
                     switch(track.subMode)
                     {
                         case AlcoholSubchannelMode.Interleaved:
-                            _track.TrackSubchannelFile = alcImage;
+                            _track.TrackSubchannelFilter = alcImage;
+                            _track.TrackSubchannelFile = alcImage.GetFilename();
                             _track.TrackSubchannelOffset = track.startOffset;
                             _track.TrackSubchannelType = TrackSubchannelType.RawInterleaved;
                             _track.TrackRawBytesPerSector += 96;

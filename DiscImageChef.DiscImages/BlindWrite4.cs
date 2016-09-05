@@ -39,6 +39,7 @@ using System.Text;
 using DiscImageChef.Console;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -74,6 +75,8 @@ namespace DiscImageChef.ImagePlugins
             public string volumeIdentifier;
             public string systemIdentifier;
             public string comments;
+            public Filter dataFilter;
+            public Filter subchannelFilter;
             public string dataFile;
             public string subchannelFile;
         }
@@ -175,8 +178,8 @@ namespace DiscImageChef.ImagePlugins
         Dictionary<uint, ulong> offsetmap;
         List<Partition> partitions;
         List<Session> sessions;
-        string dataFile, subFile;
-        FileStream imageStream;
+        Filter dataFilter, subFilter;
+        Stream imageStream;
         Dictionary<uint, byte> trackFlags;
         #endregion Internal variables
 
@@ -205,9 +208,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 19)
                 return false;
@@ -215,14 +218,12 @@ namespace DiscImageChef.ImagePlugins
             byte[] signature = new byte[19];
             stream.Read(signature, 0, 19);
 
-            stream.Close();
-
             return BW4_Signature.SequenceEqual(signature);
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 19)
                 return false;
@@ -303,8 +304,10 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.comments = {0}", header.comments);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.trackDescriptors = {0}", header.trackDescriptors);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFileLength = {0}", header.dataFileLength);
+            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFilter = {0}", header.dataFilter);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", header.dataFile);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFileLength = {0}", header.subchannelFileLength);
+            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", header.subchannelFilter);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", header.subchannelFile);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown2 = {0}", header.unknown2);
             DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", header.unknown3);
@@ -536,32 +539,40 @@ namespace DiscImageChef.ImagePlugins
                 bwTracks.Add(track);
             }
 
+            FiltersList filtersList = new FiltersList();
+
             if(!string.IsNullOrEmpty(header.dataFile))
             {
                 while(true)
                 {
-                    dataFile = header.dataFile;
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile));
+                    if(dataFilter != null)
                         break;
 
-                    dataFile = header.dataFile.ToLower(CultureInfo.CurrentCulture);
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile.ToLower(CultureInfo.CurrentCulture)));
+                    if(dataFilter != null)
                         break;
 
-                    dataFile = header.dataFile.ToUpper(CultureInfo.CurrentCulture);
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile.ToUpper(CultureInfo.CurrentCulture)));
+                    if(dataFilter != null)
                         break;
 
-                    dataFile = header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last()));
+                    if(dataFilter != null)
                         break;
 
-                    dataFile = header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture);
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture)));
+                    if(dataFilter != null)
                         break;
 
-                    dataFile = header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture);
-                    if(File.Exists(dataFile))
+                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.dataFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture)));
+                    if(dataFilter != null)
                         break;
 
                     throw new ArgumentException(string.Format("Data file {0} not found", header.dataFile));
@@ -570,35 +581,42 @@ namespace DiscImageChef.ImagePlugins
             else
                 throw new ArgumentException("Unable to find data file");
 
-            if(!string.IsNullOrEmpty(header.dataFile))
+            if(!string.IsNullOrEmpty(header.subchannelFile))
             {
                 do
                 {
-                    subFile = header.subchannelFile;
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile));
+                    if(subFilter != null)
                         break;
 
-                    subFile = header.subchannelFile.ToLower(CultureInfo.CurrentCulture);
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile.ToLower(CultureInfo.CurrentCulture)));
+                    if(subFilter != null)
                         break;
 
-                    subFile = header.subchannelFile.ToUpper(CultureInfo.CurrentCulture);
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile.ToUpper(CultureInfo.CurrentCulture)));
+                    if(subFilter != null)
                         break;
 
-                    subFile = header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last()));
+                    if(subFilter != null)
                         break;
 
-                    subFile = header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture);
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture)));
+                    if(subFilter != null)
                         break;
 
-                    subFile = header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture);
-                    if(File.Exists(subFile))
+                    subFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                    header.subchannelFile.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture)));
+                    if(subFilter != null)
                         break;
 
-                    subFile = null;
+                    subFilter = null;
+                    break;
                 }
                 while(true);
             }
@@ -621,37 +639,42 @@ namespace DiscImageChef.ImagePlugins
                     {
                         do
                         {
-                            track.TrackFile = bwTrack.filename;
-                            if(File.Exists(track.TrackFile))
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename));
+                            if(track.TrackFilter != null)
                                 break;
 
-                            track.TrackFile = bwTrack.filename.ToLower(CultureInfo.CurrentCulture);
-                            if(File.Exists(track.TrackFile))
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename.ToLower(CultureInfo.CurrentCulture)));
+                            if(track.TrackFilter != null)
                                 break;
 
-                            track.TrackFile = bwTrack.filename.ToUpper(CultureInfo.CurrentCulture);
-                            if(File.Exists(track.TrackFile))
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename.ToUpper(CultureInfo.CurrentCulture)));
+                            if(track.TrackFilter != null)
                                 break;
 
-                            track.TrackFile = bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                            if(File.Exists(track.TrackFile))
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last()));
+                            if(track.TrackFilter != null)
                                 break;
 
-                            track.TrackFile = bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture);
-                            if(File.Exists(track.TrackFile))
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture)));
+                            if(track.TrackFilter != null)
                                 break;
 
-                            track.TrackFile = bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture);
-                            if(File.Exists(track.TrackFile))
-                                break;
+                            track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                            bwTrack.filename.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture)));
 
-                            track.TrackFile = dataFile;
+                            track.TrackFilter = dataFilter;
                         }
                         while(true);
                     }
                     else
-                        track.TrackFile = dataFile;
+                        track.TrackFilter = dataFilter;
 
+                    track.TrackFile = dataFilter.GetFilename();
                     track.TrackFileOffset = bwTrack.offset;
                     if(bwTrack.pregap > 0)
                         track.TrackFileOffset += (ulong)(bwTrack.startSector - bwTrack.pregap) * 2352;
@@ -663,9 +686,10 @@ namespace DiscImageChef.ImagePlugins
                     if(track.TrackSession > maxSession)
                         maxSession = track.TrackSession;
                     track.TrackStartSector = (ulong)bwTrack.startSector;
-                    track.TrackSubchannelFile = subFile;
+                    track.TrackSubchannelFilter = subFilter;
+                    track.TrackSubchannelFile = subFilter.GetFilename();
                     track.TrackSubchannelOffset = track.TrackStartSector / 96;
-                    if(!string.IsNullOrEmpty(track.TrackSubchannelFile) && bwTrack.subchannel > 0)
+                    if(subFilter != null && bwTrack.subchannel > 0)
                     {
                         track.TrackSubchannelType = TrackSubchannelType.Packed;
                         if(!ImageInfo.readableSectorTags.Contains(SectorTagType.CDSectorSubchannel))
@@ -790,10 +814,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageApplicationVersion = "4";
             ImageInfo.imageVersion = "4";
 
-            FileInfo fi = new FileInfo(dataFile);
-            ImageInfo.imageSize = (ulong)fi.Length;
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            ImageInfo.imageSize = (ulong)dataFilter.GetDataForkLength();
+            ImageInfo.imageCreationTime = dataFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = dataFilter.GetLastWriteTime();
             ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
             bool data = false;
@@ -1002,25 +1025,22 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_track.TrackFile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.TrackFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
-            imageStream.Close();
 
             return buffer;
         }
@@ -1175,25 +1195,22 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_track.TrackFile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.TrackFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
-            imageStream.Close();
 
             return buffer;
         }
@@ -1271,13 +1288,10 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_track.TrackFile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
-            {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                buffer = br.ReadBytes((int)(sector_size * length));
-            }
-            imageStream.Close();
+            imageStream = _track.TrackFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            buffer = br.ReadBytes((int)(sector_size * length));
 
             return buffer;
         }

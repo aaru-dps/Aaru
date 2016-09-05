@@ -1,3 +1,27 @@
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Ls.cs:
+	* Commands/Verify.cs:
+	* Core/Statistics.cs:
+	* Commands/Decode.cs:
+	* Commands/Entropy.cs:
+	* Commands/Analyze.cs:
+	* Commands/Compare.cs:
+	* Commands/Formats.cs:
+	* Commands/PrintHex.cs:
+	* DetectImageFormat.cs:
+	* DiscImageChef.csproj:
+	* Commands/Checksum.cs:
+	* Commands/DumpMedia.cs:
+	* Commands/Configure.cs:
+	* Commands/Statistics.cs:
+	* Commands/ExtractFiles.cs:
+	* Commands/CreateSidecar.cs:
+	  Added filters.
+
+	* Plugins.cs:
+	  Sorted plugins lists.
+
 2016-08-27  Natalia Portillo  <claunia@claunia.com>
 
 	* DetectImageFormat.cs:

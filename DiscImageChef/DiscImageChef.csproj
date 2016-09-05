@@ -212,6 +212,10 @@
       <Project>{E1BD3C65-49C3-49E7-BABA-C60980CB3F20}</Project>
       <Name>CommandLine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+      <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
+      <Name>DiscImageChef.Filters</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.MIT">

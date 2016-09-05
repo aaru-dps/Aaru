@@ -39,6 +39,7 @@ using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
@@ -155,6 +156,7 @@ namespace DiscImageChef.DiscImages
             public string access;
             public uint sectors;
             public string type;
+            public Filter filter;
             public string filename;
             public uint offset;
         }
@@ -179,7 +181,7 @@ namespace DiscImageChef.DiscImages
 
         ImagePlugin parentImage;
         bool hasParent;
-        string gdPath;
+        Filter gdFilter;
         uint[] gTable;
 
         ulong grainSize;
@@ -211,9 +213,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
 
             byte[] ddfMagic = new byte[0x15];
 
@@ -252,9 +254,9 @@ namespace DiscImageChef.DiscImages
             return DDFMagicBytes.SequenceEqual(ddfMagic);
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
 
             vmEHdr = new VMwareExtentHeader();
             vmCHdr = new VMwareCowHeader();
@@ -289,7 +291,7 @@ namespace DiscImageChef.DiscImages
             if(vmEHdr.magic == VMwareExtentMagic)
             {
                 vmEHdrSet = true;
-                gdPath = imagePath;
+                gdFilter = imageFilter;
 
                 if(vmEHdr.descriptorOffset == 0 || vmEHdr.descriptorSize == 0)
                     throw new Exception("Please open VMDK descriptor.");
@@ -304,7 +306,7 @@ namespace DiscImageChef.DiscImages
             }
             else if(vmCHdr.magic == VMwareCowMagic)
             {
-                gdPath = imagePath;
+                gdFilter = imageFilter;
                 cowD = true;
             }
             else
@@ -316,9 +318,8 @@ namespace DiscImageChef.DiscImages
                 if(!DDFMagicBytes.SequenceEqual(ddfMagic))
                     throw new Exception("Not a descriptor.");
 
-                FileInfo ddfFi = new FileInfo(imagePath);
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] ddfExternal = new byte[ddfFi.Length];
+                byte[] ddfExternal = new byte[imageFilter.GetDataForkLength()];
                 stream.Read(ddfExternal, 0, ddfExternal.Length);
                 ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
             }
@@ -326,10 +327,12 @@ namespace DiscImageChef.DiscImages
             extents = new Dictionary<ulong, VMwareExtent>();
             ulong currentSector = 0;
 
+            FiltersList filtersList = new FiltersList();
+
             if(cowD)
             {
                 int cowCount = 1;
-                string basePath = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath));
+                string basePath = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath());
 
                 while(true)
                 {
@@ -342,7 +345,8 @@ namespace DiscImageChef.DiscImages
                     if(!File.Exists(curPath))
                         break;
 
-                    FileStream extentStream = new FileStream(curPath, FileMode.Open, FileAccess.Read);
+                    Filter extentFilter = filtersList.GetFilter(curPath);
+                    Stream extentStream = extentFilter.GetDataForkStream();
 
                     if(stream.Length > Marshal.SizeOf(vmCHdr))
                     {
@@ -360,12 +364,13 @@ namespace DiscImageChef.DiscImages
 
                         VMwareExtent newExtent = new VMwareExtent();
                         newExtent.access = "RW";
-                        newExtent.filename = curPath;
+                        newExtent.filter = extentFilter;
+                        newExtent.filename = extentFilter.GetFilename();
                         newExtent.offset = 0;
                         newExtent.sectors = extHdrCow.sectors;
                         newExtent.type = "SPARSE";
 
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filename, newExtent.offset);
+                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
 
                         extents.Add(currentSector, newExtent);
                         currentSector += newExtent.sectors;
@@ -434,13 +439,13 @@ namespace DiscImageChef.DiscImages
                         VMwareExtent newExtent = new VMwareExtent();
                         newExtent.access = MatchExtent.Groups["access"].Value;
                         if(!embedded)
-                            newExtent.filename = Path.Combine(Path.GetDirectoryName(imagePath), MatchExtent.Groups["filename"].Value);
+                            newExtent.filter = filtersList.GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()), MatchExtent.Groups["filename"].Value));
                         else
-                            newExtent.filename = imagePath;
+                            newExtent.filter = imageFilter;
                         uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
                         uint.TryParse(MatchExtent.Groups["sectors"].Value, out newExtent.sectors);
                         newExtent.type = MatchExtent.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filename, newExtent.offset);
+                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
 
                         extents.Add(currentSector, newExtent);
                         currentSector += newExtent.sectors;
@@ -486,8 +491,8 @@ namespace DiscImageChef.DiscImages
 
             foreach(VMwareExtent extent in extents.Values)
             {
-                if(!File.Exists(extent.filename))
-                    throw new Exception(string.Format("Extent file {0} not found.", extent.filename));
+                if(extent.filter == null)
+                    throw new Exception(string.Format("Extent file {0} not found.", extent.filter));
 
                 if(extent.access == "NOACCESS")
                     throw new Exception("Cannot access NOACCESS extents ;).");
@@ -497,11 +502,11 @@ namespace DiscImageChef.DiscImages
                    extent.type != "VMFS" &&
                    !cowD)
                 {
-                    FileStream extentStream = new FileStream(extent.filename, FileMode.Open, FileAccess.Read);
+                    Stream extentStream = extent.filter.GetDataForkStream();
                     extentStream.Seek(0, SeekOrigin.Begin);
 
                     if(extentStream.Length < sectorSize)
-                        throw new Exception(string.Format("Extent {0} is too small.", extent.filename));
+                        throw new Exception(string.Format("Extent {0} is too small.", extent.filter));
 
                     VMwareExtentHeader extentHdr = new VMwareExtentHeader();
                     byte[] extentHdr_b = new byte[Marshal.SizeOf(extentHdr)];
@@ -512,7 +517,7 @@ namespace DiscImageChef.DiscImages
                     Marshal.FreeHGlobal(extentHdrPtr);
 
                     if(extentHdr.magic != VMwareExtentMagic)
-                        throw new Exception(string.Format("{0} is not an VMware extent.", extent.filename));
+                        throw new Exception(string.Format("{0} is not an VMware extent.", extent.filter));
 
                     if(extentHdr.capacity != extent.sectors)
                         throw new Exception(string.Format("Extent contains incorrect number of sectors, {0}. {1} were expected", extentHdr.capacity, extent.sectors));
@@ -524,11 +529,10 @@ namespace DiscImageChef.DiscImages
                     if(!vmEHdrSet)
                     {
                         vmEHdr = extentHdr;
-                        gdPath = extent.filename;
+                        gdFilter = extent.filter;
                         vmEHdrSet = true;
                     }
 
-                    extentStream.Close();
                     oneNoFlat = true;
                 }
             }
@@ -609,7 +613,7 @@ namespace DiscImageChef.DiscImages
 
                 DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", ImageInfo.sectors, grains, gdEntries);
 
-                FileStream gdStream = new FileStream(gdPath, FileMode.Open, FileAccess.Read);
+                Stream gdStream = gdFilter.GetDataForkStream();
 
                 gdStream.Seek(gdOffset * sectorSize, SeekOrigin.Begin);
 
@@ -637,27 +641,26 @@ namespace DiscImageChef.DiscImages
 
                 maxCachedGrains = (uint)(MaxCacheSize / (grainSize * sectorSize));
 
-                gdStream.Close();
                 grainCache = new Dictionary<ulong, byte[]>();
             }
 
             if(hasParent)
             {
-                if(!File.Exists(parentName))
+                Filter parentFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
+                if(parentFilter == null)
                     throw new Exception(string.Format("Cannot find parent \"{0}\".", parentName));
 
                 parentImage = new VMware();
 
-                if(!parentImage.OpenImage(parentName))
+                if(!parentImage.OpenImage(parentFilter))
                     throw new Exception(string.Format("Cannot open parent \"{0}\".", parentName));
             }
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.sectorSize = sectorSize;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
@@ -698,7 +701,7 @@ namespace DiscImageChef.DiscImages
             if(!extentFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
-            FileStream dataStream;
+            Stream dataStream;
 
             if(currentExtent.type == "ZERO")
             {
@@ -713,7 +716,7 @@ namespace DiscImageChef.DiscImages
 
             if(currentExtent.type == "FLAT" || currentExtent.type == "VMFS")
             {
-                dataStream = new FileStream(currentExtent.filename, FileMode.Open, FileAccess.Read);
+                dataStream = currentExtent.filter.GetDataForkStream();
                 dataStream.Seek((long)(currentExtent.offset + ((sectorAddress - extentStartSector) * sectorSize)), SeekOrigin.Begin);
                 sector = new byte[sectorSize];
                 dataStream.Read(sector, 0, sector.Length);
@@ -749,7 +752,7 @@ namespace DiscImageChef.DiscImages
             if(!grainCache.TryGetValue(grainOff, out grain))
             {
                 grain = new byte[sectorSize * grainSize];
-                dataStream = new FileStream(currentExtent.filename, FileMode.Open, FileAccess.Read);
+                dataStream = currentExtent.filter.GetDataForkStream();
                 dataStream.Seek((long)(((grainOff - extentStartSector) * sectorSize)), SeekOrigin.Begin);
                 dataStream.Read(grain, 0, grain.Length);
 

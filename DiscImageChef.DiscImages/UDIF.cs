@@ -39,6 +39,7 @@ using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.DiscImages
 {
@@ -146,7 +147,7 @@ namespace DiscImageChef.DiscImages
         const uint sectorSize = 512;
         uint maxCachedSectors = MaxCacheSize / sectorSize;
 
-        FileStream imageStream;
+        Stream imageStream;
 
         public UDIF()
         {
@@ -175,9 +176,9 @@ namespace DiscImageChef.DiscImages
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < 512)
                 return false;
@@ -201,9 +202,9 @@ namespace DiscImageChef.DiscImages
             return footer.signature == UDIF_Signature;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < 512)
                 return false;
@@ -411,10 +412,9 @@ namespace DiscImageChef.DiscImages
             sectorCache = new Dictionary<ulong, byte[]>();
             imageStream = stream;
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.sectorSize = sectorSize;
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             ImageInfo.mediaType = MediaType.GENERIC_HDD;

@@ -40,6 +40,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI.MMC;
 using System.Text;
 using System.Globalization;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -186,6 +187,7 @@ namespace DiscImageChef.ImagePlugins
 
         struct DataFileCharacteristics
         {
+            public Filter fileFilter;
             public string filePath;
             public TrackSubchannelType subchannel;
             public long sectorSize;
@@ -216,7 +218,7 @@ namespace DiscImageChef.ImagePlugins
         byte[] fullToc;
         Dictionary<uint, ulong> offsetmap;
         Dictionary<uint, byte> trackFlags;
-        FileStream imageStream;
+        Stream imageStream;
         #endregion Internal variables
 
         #region Public Methods
@@ -244,9 +246,9 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveFirmwareRevision = null;
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 276)
                 return false;
@@ -258,14 +260,12 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek(-16, SeekOrigin.End);
             stream.Read(footer, 0, 16);
 
-            stream.Close();
-
             return BW5_Signature.SequenceEqual(signature) && BW5_Footer.SequenceEqual(footer);
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
             if(stream.Length < 276)
                 return false;
@@ -590,7 +590,7 @@ namespace DiscImageChef.ImagePlugins
             else
                 DicConsole.ErrorWriteLine("BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.");
 
-            stream.Close();
+            FiltersList filtersList = new FiltersList();
 
             filePaths = new List<DataFileCharacteristics>();
             foreach(BW5_DataFile dataFile in dataFiles)
@@ -598,60 +598,70 @@ namespace DiscImageChef.ImagePlugins
                 DataFileCharacteristics chars = new DataFileCharacteristics();
                 string path = Path.Combine(dataPath, dataFile.filename);
 
-                if(File.Exists(path))
+                if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                 {
+                    chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
                     chars.filePath = path;
                 }
                 else
                 {
                     path = Path.Combine(dataPath, dataFile.filename.ToLower(CultureInfo.CurrentCulture));
-                    if(File.Exists(path))
+                    if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                     {
+                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
                         chars.filePath = path;
                     }
                     else
                     {
                         path = Path.Combine(dataPath, dataFile.filename.ToUpper(CultureInfo.CurrentCulture));
-                        if(File.Exists(path))
+                        if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                         {
+                            chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
                             chars.filePath = path;
                         }
                         else
                         {
                             path = Path.Combine(dataPath.ToLower(CultureInfo.CurrentCulture), dataFile.filename);
-                            if(File.Exists(path))
+                            if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                             {
+                                chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
                                 chars.filePath = path;
                             }
                             else
                             {
                                 path = Path.Combine(dataPath.ToUpper(CultureInfo.CurrentCulture), dataFile.filename);
-                                if(File.Exists(path))
+                                if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                                 {
+                                    chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
                                     chars.filePath = path;
                                 }
                                 else
                                 {
                                     path = Path.Combine(dataPath, dataFile.filename);
-                                    if(File.Exists(path.ToLower(CultureInfo.CurrentCulture)))
+                                    if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path.ToLower(CultureInfo.CurrentCulture))) != null)
                                     {
                                         chars.filePath = path.ToLower(CultureInfo.CurrentCulture);
+                                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path.ToLower(CultureInfo.CurrentCulture)));
                                     }
-                                    else if(File.Exists(path.ToUpper(CultureInfo.CurrentCulture)))
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path.ToUpper(CultureInfo.CurrentCulture))) != null)
                                     {
                                         chars.filePath = path.ToUpper(CultureInfo.CurrentCulture);
+                                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path.ToUpper(CultureInfo.CurrentCulture)));
                                     }
-                                    else if(File.Exists(dataFile.filename.ToLower(CultureInfo.CurrentCulture)))
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename.ToLower(CultureInfo.CurrentCulture))) != null)
                                     {
                                         chars.filePath = dataFile.filename.ToLower(CultureInfo.CurrentCulture);
+                                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename.ToLower(CultureInfo.CurrentCulture)));
                                     }
-                                    else if(File.Exists(dataFile.filename.ToUpper(CultureInfo.CurrentCulture)))
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename.ToUpper(CultureInfo.CurrentCulture))) != null)
                                     {
                                         chars.filePath = dataFile.filename.ToUpper(CultureInfo.CurrentCulture);
+                                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename.ToUpper(CultureInfo.CurrentCulture)));
                                     }
-                                    else if(File.Exists(dataFile.filename))
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename)) != null)
                                     {
                                         chars.filePath = dataFile.filename;
+                                        chars.fileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), dataFile.filename));
                                     }
                                     else
                                     {
@@ -809,7 +819,8 @@ namespace DiscImageChef.ImagePlugins
                         {
                             if(trk.startLba >= chars.startLba && (trk.startLba + trk.sectors) <= (chars.startLba + chars.sectors))
                             {
-                                track.TrackFile = Path.GetFileName(chars.filePath);
+                                track.TrackFilter = chars.fileFilter;
+                                track.TrackFile = chars.fileFilter.GetFilename();
                                 if(trk.startLba >= 0)
                                    track.TrackFileOffset = (ulong)((trk.startLba - chars.startLba) * chars.sectorSize);
                                 else
@@ -817,6 +828,7 @@ namespace DiscImageChef.ImagePlugins
                                 track.TrackFileType = "BINARY";
                                 if(chars.subchannel != TrackSubchannelType.None)
                                 {
+                                    track.TrackSubchannelFilter = track.TrackFilter;
                                     track.TrackSubchannelFile = track.TrackFile;
                                     track.TrackSubchannelType = chars.subchannel;
                                     track.TrackSubchannelOffset = track.TrackFileOffset;
@@ -1026,16 +1038,15 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.driveModel = StringHandlers.CToString(header.product);
             ImageInfo.driveFirmwareRevision = StringHandlers.CToString(header.revision);
             ImageInfo.imageApplication = "BlindWrite";
-            if(string.Compare(Path.GetExtension(imagePath), "B5T", StringComparison.OrdinalIgnoreCase) == 0)
+            if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B5T", StringComparison.OrdinalIgnoreCase) == 0)
                 ImageInfo.imageApplicationVersion = "5";
-            else if(string.Compare(Path.GetExtension(imagePath), "B6T", StringComparison.OrdinalIgnoreCase) == 0)
+            else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B6T", StringComparison.OrdinalIgnoreCase) == 0)
                 ImageInfo.imageApplicationVersion = "6";
             ImageInfo.imageVersion = "5";
 
-            FileInfo fi = new FileInfo(imagePath);
-            ImageInfo.imageSize = (ulong)fi.Length;
-            ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+            ImageInfo.imageSize = (ulong)imageFilter.GetDataForkLength();
+            ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.xmlMediaType = XmlMediaType.OpticalDisc;
 
             if(pma != null)
@@ -1301,8 +1312,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if(string.IsNullOrEmpty(chars.filePath))
-                throw new ArgumentOutOfRangeException(nameof(chars.filePath), "Track does not exist in disc image");
+            if(string.IsNullOrEmpty(chars.filePath) || chars.fileFilter == null)
+                throw new ArgumentOutOfRangeException(nameof(chars.fileFilter), "Track does not exist in disc image");
 
             uint sector_offset;
             uint sector_size;
@@ -1373,26 +1384,23 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(chars.filePath, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
-            {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            imageStream = chars.fileFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
 
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
+            {
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
-            imageStream.Close();
 
             return buffer;
         }
@@ -1429,8 +1437,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if(string.IsNullOrEmpty(chars.filePath))
-                throw new ArgumentOutOfRangeException(nameof(chars.filePath), "Track does not exist in disc image");
+            if(string.IsNullOrEmpty(chars.filePath) || chars.fileFilter == null)
+                throw new ArgumentOutOfRangeException(nameof(chars.fileFilter), "Track does not exist in disc image");
 
             if(_track.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1671,25 +1679,22 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_track.TrackFile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.TrackFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
-            imageStream.Close();
 
             return buffer;
         }
@@ -1756,8 +1761,8 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            if(string.IsNullOrEmpty(chars.filePath))
-                throw new ArgumentOutOfRangeException(nameof(chars.filePath), "Track does not exist in disc image");
+            if(string.IsNullOrEmpty(chars.filePath) || chars.fileFilter == null)
+                throw new ArgumentOutOfRangeException(nameof(chars.fileFilter), "Track does not exist in disc image");
 
             uint sector_offset;
             uint sector_size;
@@ -1804,25 +1809,22 @@ namespace DiscImageChef.ImagePlugins
 
             byte[] buffer = new byte[sector_size * length];
 
-            imageStream = new FileStream(_track.TrackFile, FileMode.Open, FileAccess.Read);
-            using(BinaryReader br = new BinaryReader(imageStream))
+            imageStream = _track.TrackFilter.GetDataForkStream();
+            BinaryReader br = new BinaryReader(imageStream);
+            br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
+            if(sector_offset == 0 && sector_skip == 0)
+                buffer = br.ReadBytes((int)(sector_size * length));
+            else
             {
-                br.BaseStream.Seek((long)_track.TrackFileOffset + (long)(sectorAddress * (sector_offset + sector_size + sector_skip)), SeekOrigin.Begin);
-                if(sector_offset == 0 && sector_skip == 0)
-                    buffer = br.ReadBytes((int)(sector_size * length));
-                else
+                for(int i = 0; i < length; i++)
                 {
-                    for(int i = 0; i < length; i++)
-                    {
-                        byte[] sector;
-                        br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
-                        sector = br.ReadBytes((int)sector_size);
-                        br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
-                        Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
-                    }
+                    byte[] sector;
+                    br.BaseStream.Seek(sector_offset, SeekOrigin.Current);
+                    sector = br.ReadBytes((int)sector_size);
+                    br.BaseStream.Seek(sector_skip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sector_size, sector_size);
                 }
             }
-            imageStream.Close();
 
             return buffer;
         }

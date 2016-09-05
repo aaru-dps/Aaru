@@ -35,6 +35,7 @@ using System.IO;
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -224,14 +225,14 @@ namespace DiscImageChef.ImagePlugins
             SectorsWhereCRCHasFailed = new List<ulong>();
         }
 
-        public override bool IdentifyImage(string imagePath)
+        public override bool IdentifyImage(Filter imageFilter)
         {
             header = new TD0Header();
             byte[] headerBytes = new byte[12];
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
+            stream.Seek(0, SeekOrigin.Begin);
 
             stream.Read(headerBytes, 0, 12);
-            stream.Close();
 
             header.signature = BitConverter.ToUInt16(headerBytes, 0);
 
@@ -284,11 +285,12 @@ namespace DiscImageChef.ImagePlugins
             return true;
         }
 
-        public override bool OpenImage(string imagePath)
+        public override bool OpenImage(Filter imageFilter)
         {
             header = new TD0Header();
             byte[] headerBytes = new byte[12];
-            FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            Stream stream = imageFilter.GetDataForkStream();
+            stream.Seek(0, SeekOrigin.Begin);
 
             stream.Read(headerBytes, 0, 12);
 
@@ -307,7 +309,7 @@ namespace DiscImageChef.ImagePlugins
             header.sides = headerBytes[9];
             header.crc = BitConverter.ToUInt16(headerBytes, 10);
 
-            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imagePath);
+            ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             ImageInfo.imageVersion = string.Format("{0}.{1}", (header.version & 0xF0) >> 4, header.version & 0x0F);
             ImageInfo.imageApplication = ImageInfo.imageVersion;
 
@@ -407,10 +409,9 @@ namespace DiscImageChef.ImagePlugins
                     commentHeader.hour, commentHeader.minute, commentHeader.second, DateTimeKind.Unspecified);
             }
 
-            FileInfo fi = new FileInfo(imagePath);
             if(ImageInfo.imageCreationTime == DateTime.MinValue)
-                ImageInfo.imageCreationTime = fi.CreationTimeUtc;
-            ImageInfo.imageLastModificationTime = fi.LastWriteTimeUtc;
+                ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
+            ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
 
             DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", ImageInfo.imageCreationTime);
             DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", ImageInfo.imageLastModificationTime);
@@ -571,8 +572,6 @@ namespace DiscImageChef.ImagePlugins
 
             ImageInfo.sectors = (ulong)sectorsData.Count;
             ImageInfo.mediaType = DecodeTeleDiskDiskType();
-
-            stream.Close();
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 

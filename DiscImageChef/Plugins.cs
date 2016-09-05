@@ -42,15 +42,15 @@ namespace DiscImageChef
 {
     public class PluginBase
     {
-        public Dictionary<string, Filesystem> PluginsList;
-        public Dictionary<string, PartPlugin> PartPluginsList;
-        public Dictionary<string, ImagePlugin> ImagePluginsList;
+        public SortedDictionary<string, Filesystem> PluginsList;
+        public SortedDictionary<string, PartPlugin> PartPluginsList;
+        public SortedDictionary<string, ImagePlugin> ImagePluginsList;
 
         public PluginBase()
         {
-            PluginsList = new Dictionary<string, Filesystem>();
-            PartPluginsList = new Dictionary<string, PartPlugin>();
-            ImagePluginsList = new Dictionary<string, ImagePlugin>();
+            PluginsList = new SortedDictionary<string, Filesystem>();
+            PartPluginsList = new SortedDictionary<string, PartPlugin>();
+            ImagePluginsList = new SortedDictionary<string, ImagePlugin>();
         }
 
         public void RegisterAllPlugins()
