@@ -1,5 +1,9 @@
 2016-09-05  Natalia Portillo  <claunia@claunia.com>
 
+	* CDRWin.cs: Show correct filename from filter.
+
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
 	* GDI.cs:
 	* VDI.cs:
 	* VHD.cs:

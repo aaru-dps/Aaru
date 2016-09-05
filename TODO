@@ -70,8 +70,6 @@ UDIF plugin:
 Filters:
 --- Add support for BZip2 compressed files
 --- Add support for XZ compressed files
---- Add support for AppleSingle files
---- Add support for AppleDouble files
 --- Add support for MacBinary files
 --- Add support for ZIP archives
 --- Add support for 7Z archives

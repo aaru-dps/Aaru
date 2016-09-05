@@ -1,5 +1,12 @@
 2016-09-05  Natalia Portillo  <claunia@claunia.com>
 
+	* AppleDouble.cs:
+	* AppleSingle.cs:
+	* DiscImageChef.Filters.csproj: Added AppleSingle and
+	AppleDouble filters.
+
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
 	* GZip.cs:
 	* Filter.cs:
 	* Filters.cs:

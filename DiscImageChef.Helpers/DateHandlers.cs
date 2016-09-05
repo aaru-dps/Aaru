@@ -43,6 +43,7 @@ namespace DiscImageChef
         // Day 0 of Julian Date system
         static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
         static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
+        static readonly DateTime AppleDoubleEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
 
         public static DateTime MacToDateTime(ulong MacTimeStamp)
         {
@@ -191,6 +192,11 @@ namespace DiscImageChef
             temp = temp.AddMinutes(minutes);
 
             return temp;
+        }
+
+        public static DateTime AppleDoubleToDateTime(ulong AppleDoubleTimeStamp)
+        {
+            return AppleDoubleEpoch.AddSeconds(AppleDoubleTimeStamp);
         }
     }
 }

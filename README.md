@@ -147,6 +147,8 @@ Supported checksums
 Supported filters
 =================
 * GZip
+* AppleDouble
+* AppleSingle
 
 Changelog
 =========

@@ -39,6 +39,8 @@
     <Compile Include="ZZZNoFilter.cs" />
     <Compile Include="ForcedSeekStream.cs" />
     <Compile Include="GZip.cs" />
+    <Compile Include="AppleSingle.cs" />
+    <Compile Include="AppleDouble.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
