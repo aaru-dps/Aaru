@@ -1,3 +1,7 @@
+2016-09-05  Natalia Portillo  <claunia@claunia.com>
+
+	* DateHandlers.cs: Added AppleSingle and AppleDouble filters.
+
 2016-09-02  Natalia Portillo  <claunia@claunia.com>
 
 	* DateHandlers.cs: Adds support for NILFS2 filesystem.
