@@ -262,6 +262,8 @@ namespace DiscImageChef.DiscImages
 
             bool fakeBlockChunks = false;
 
+            byte[] vers = null;
+
             if(footer.plistLen == 0 && footer.rsrcForkLen != 0)
             {
                 DicConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
@@ -284,6 +286,11 @@ namespace DiscImageChef.DiscImages
 
                 foreach(short blkxId in blkxRez.GetIds())
                     blkxList.Add(blkxRez.GetResource(blkxId));
+
+                Resource versRez = rsrc.GetResource(0x76657273);
+
+                if(versRez != null)
+                    vers = versRez.GetResource(versRez.GetIds()[0]);
             }
             else if(footer.plistLen != 0)
             {
@@ -307,7 +314,7 @@ namespace DiscImageChef.DiscImages
                 NSObject blkxObj;
 
                 if(!rsrc.TryGetValue(BlockKey, out blkxObj))
-                    throw new Exception("Could not retrieve partition array.");
+                    throw new Exception("Could not retrieve block chunks array.");
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
 
@@ -324,6 +331,15 @@ namespace DiscImageChef.DiscImages
 
                     blkxList.Add(((NSData)dataObj).Bytes);
                 }
+
+                NSObject versObj;
+
+                if(rsrc.TryGetValue("vers", out versObj))
+                {
+                    NSObject[] versArray = ((NSArray)versObj).GetArray();
+                    if(versArray.Length >= 1)
+                        vers = ((NSData)versArray[0]).Bytes;
+                }
             }
             else
             {
@@ -339,6 +355,52 @@ namespace DiscImageChef.DiscImages
                 chunks.Add(bChnk.sector, bChnk);
                 fakeBlockChunks = true;
             }
+
+            if(vers != null)
+            {
+                Resources.Version version = new Resources.Version(vers);
+
+                string major;
+                string minor;
+                string release = null;
+                string dev = null;
+                string pre = null;
+
+                major = string.Format("{0}", version.MajorVersion);
+                minor = string.Format(".{0}", version.MinorVersion / 10);
+                if(version.MinorVersion % 10 > 0)
+                    release = string.Format(".{0}", version.MinorVersion % 10);
+                switch(version.DevStage)
+                {
+                    case Resources.Version.DevelopmentStage.Alpha:
+                        dev = "a";
+                        break;
+                    case Resources.Version.DevelopmentStage.Beta:
+                        dev = "b";
+                        break;
+                    case Resources.Version.DevelopmentStage.PreAlpha:
+                        dev = "d";
+                        break;
+                }
+
+                if(dev == null && version.PreReleaseVersion > 0)
+                    dev = "f";
+
+                if(dev != null)
+                    pre = string.Format("{0}", version.PreReleaseVersion);
+
+                ImageInfo.imageApplicationVersion = string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                ImageInfo.imageApplication = version.VersionString;
+                ImageInfo.imageComments = version.VersionMessage;
+
+                if(version.MajorVersion == 3)
+                    ImageInfo.imageApplication = "ShrinkWrap™";
+                else if(version.MajorVersion == 6)
+                    ImageInfo.imageApplication = "DiskCopy";
+            }
+            else
+                ImageInfo.imageApplication = "DiskCopy";
+            DicConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", ImageInfo.imageApplication, ImageInfo.imageApplicationVersion);
 
             if(!fakeBlockChunks)
             {
@@ -420,7 +482,6 @@ namespace DiscImageChef.DiscImages
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
             ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
             ImageInfo.imageVersion = string.Format("{0}", footer.version);
-            ImageInfo.imageApplication = "Apple DiskCopy";
 
             return true;
         }

@@ -56,6 +56,7 @@ Supported disk image formats
 * Microsoft VHDX
 * VMware VMDK and COWD images
 * Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
+* Apple New Disk Image Format (NDIF, requires Resource Fork)
 
 Supported partitioning schemes
 ==============================

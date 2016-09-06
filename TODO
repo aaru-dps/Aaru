@@ -6,7 +6,6 @@
 --- Add support for Kryoflux images
 --- Add support for DiscFerret images
 --- Add support for MAME CHDs
---- Add support for Apple NDIF images
 --- Add support for XPACK images
 
 Filesystem plugins:
@@ -65,6 +64,9 @@ VMDK plugin:
 --- Add support for encrypted extents
 
 UDIF plugin:
+--- Add support for compressed chunks
+
+NDIF plugin:
 --- Add support for compressed chunks
 
 Filters:

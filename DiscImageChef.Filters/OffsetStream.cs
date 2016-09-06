@@ -369,7 +369,7 @@ namespace DiscImageChef.Filters
         {
             get
             {
-                return streamEnd - streamStart;
+                return streamEnd - streamStart + 1;
             }
         }
 
@@ -428,7 +428,7 @@ namespace DiscImageChef.Filters
 
         public override int ReadByte()
         {
-            return baseStream.Position == streamEnd ? -1 : baseStream.ReadByte();
+            return baseStream.Position == streamEnd + 1 ? -1 : baseStream.ReadByte();
         }
 
         public override void WriteByte(byte value)
@@ -446,7 +446,7 @@ namespace DiscImageChef.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(baseStream.Position + count > streamEnd)
+            if(baseStream.Position + count > streamEnd + 1)
                 throw new IOException("Cannot read past stream end.");
 
             return baseStream.Read(buffer, offset, count);

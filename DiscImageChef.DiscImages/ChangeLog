@@ -1,3 +1,13 @@
+2016-09-06  Natalia Portillo  <claunia@claunia.com>
+
+	* NDIF.cs:
+	* DiscImageChef.DiscImages.csproj: Adds support for Apple NDIF
+	images, closes #47
+
+	* UDIF.cs:
+	* DiskCopy42.cs: Try to get and use "vers" resource from the
+	Resource Fork to get ImageApplication and its version.
+
 2016-09-05  Natalia Portillo  <claunia@claunia.com>
 
 	* CDRWin.cs: Show correct filename from filter.

@@ -31,10 +31,12 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using DiscImageChef.Console;
+using System.IO;
+using System.Text.RegularExpressions;
+using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
@@ -431,6 +433,86 @@ namespace DiscImageChef.ImagePlugins
                     }
                 }
             }
+
+            System.Console.WriteLine("{0}", imageFilter);
+            try
+            {
+                if(imageFilter.HasResourceFork())
+                {
+                    ResourceFork rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+                    if(rsrcFork.ContainsKey(0x76657273))
+                    {
+                        Resource versRsrc = rsrcFork.GetResource(0x76657273);
+                        if(versRsrc != null)
+                        {
+                            byte[] vers = versRsrc.GetResource(versRsrc.GetIds()[0]);
+
+                            if(vers != null)
+                            {
+                                Resources.Version version = new Resources.Version(vers);
+
+                                string major;
+                                string minor;
+                                string release = null;
+                                string dev = null;
+                                string pre = null;
+
+                                major = string.Format("{0}", version.MajorVersion);
+                                minor = string.Format(".{0}", version.MinorVersion / 10);
+                                if(version.MinorVersion % 10 > 0)
+                                    release = string.Format(".{0}", version.MinorVersion % 10);
+                                switch(version.DevStage)
+                                {
+                                    case Resources.Version.DevelopmentStage.Alpha:
+                                        dev = "a";
+                                        break;
+                                    case Resources.Version.DevelopmentStage.Beta:
+                                        dev = "b";
+                                        break;
+                                    case Resources.Version.DevelopmentStage.PreAlpha:
+                                        dev = "d";
+                                        break;
+                                }
+
+                                if(dev == null && version.PreReleaseVersion > 0)
+                                    dev = "f";
+
+                                if(dev != null)
+                                    pre = string.Format("{0}", version.PreReleaseVersion);
+
+                                ImageInfo.imageApplicationVersion = string.Format("{0}{1}{2}{3}{4}", major, minor, release, dev, pre);
+                                ImageInfo.imageApplication = version.VersionString;
+                                ImageInfo.imageComments = version.VersionMessage;
+                            }
+                        }
+                    }
+
+                    if(rsrcFork.ContainsKey(0x64437079))
+                    {
+                        Resource dCpyRsrc = rsrcFork.GetResource(0x64437079);
+                        if(dCpyRsrc != null)
+                        {
+                            // TODO: Use MacRoman
+                            string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]));
+                            string dCpyRegEx = "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
+                            Regex dCpyEx = new Regex(dCpyRegEx);
+                            Match dCpyMatch = dCpyEx.Match(dCpy);
+
+                            if(dCpyMatch.Success)
+                            {
+                                ImageInfo.imageApplication = dCpyMatch.Groups["application"].Value;
+                                ImageInfo.imageApplicationVersion = dCpyMatch.Groups["version"].Value;
+
+                                // Until MacRoman is implemented
+                                if(ImageInfo.imageApplication == "ShrinkWrap?")
+                                    ImageInfo.imageApplication = "ShrinkWrap™";
+                            }
+                        }
+                    }
+                }
+            }
+            catch(InvalidCastException) { }
+            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", ImageInfo.imageApplication, ImageInfo.imageApplicationVersion);
 
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", ImageInfo.mediaType);
