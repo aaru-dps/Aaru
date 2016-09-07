@@ -150,6 +150,7 @@ Supported filters
 * GZip
 * AppleDouble
 * AppleSingle
+* MacBinary I, II, III
 
 Changelog
 =========

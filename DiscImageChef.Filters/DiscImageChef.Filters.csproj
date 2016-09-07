@@ -41,6 +41,7 @@
     <Compile Include="GZip.cs" />
     <Compile Include="AppleSingle.cs" />
     <Compile Include="AppleDouble.cs" />
+    <Compile Include="MacBinary.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">

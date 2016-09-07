@@ -1,3 +1,8 @@
+2016-09-07  Natalia Portillo  <claunia@claunia.com>
+
+	* MacBinary.cs:
+	* DiscImageChef.Filters.csproj: Adds support for MacBinary.
+
 2016-09-06  Natalia Portillo  <claunia@claunia.com>
 
 	* OffsetStream.cs: Corrected OffsetStream arithmetic bug.
