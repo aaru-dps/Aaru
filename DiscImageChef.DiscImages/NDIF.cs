@@ -42,12 +42,10 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
-	// TODO: Detect ShrinkWrap encrypted images
 	// TODO: Detect OS X encrypted images
 	// TODO: Check checksum
 	// TODO: Implement segments
 	// TODO: Implement compression
-	// TODO: Get application version from "vers" resource
 	public class NDIF : ImagePlugin
 	{
 		#region Internal constants
@@ -66,11 +64,11 @@ namespace DiscImageChef.DiscImages
 		struct ChunkHeader
 		{
 			/// <summary>
-			/// Type? All OS X generated ones are 12, all DiskCopy 6.3.3 RdWr are 10 but rest are 12
+			/// Version
 			/// </summary>
 			public short version;
 			/// <summary>
-			/// Driver? Changes with driver
+			/// Filesystem ID
 			/// </summary>
 			public short driver;
 			/// <summary>
@@ -83,13 +81,13 @@ namespace DiscImageChef.DiscImages
 			/// </summary>
 			public uint sectors;
 			/// <summary>
-			/// Size of buffer, in sectors, for compression/decompression
+			/// Maximum number of sectors per chunk
 			/// </summary>
-			public uint bufferSize;
+			public uint maxSectorsPerChunk;
 			/// <summary>
 			/// Always 0?
 			/// </summary>
-			public uint zero;
+			public uint zeroOffset;
 			/// <summary>
 			/// CRC28 of whole image
 			/// </summary>
@@ -99,9 +97,17 @@ namespace DiscImageChef.DiscImages
 			/// </summary>
 			public uint segmented;
 			/// <summary>
+			/// Unknown
+			/// </summary>
+			public uint p1;
+			/// <summary>
+			/// Unknown
+			/// </summary>
+			public uint p2;
+			/// <summary>
 			/// Unknown, spare?
 			/// </summary>
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
 			public uint[] unknown;
 			/// <summary>
 			/// Set to 1 by ShrinkWrap if image is encrypted
@@ -166,6 +172,8 @@ namespace DiscImageChef.DiscImages
 		const byte ChunkType_NoCopy = 0;
 		const byte ChunkType_Copy = 2;
 		const byte ChunkType_KenCode = 0x80;
+		const byte ChunkType_RLE = 0x81;
+		const byte ChunkType_LZH = 0x82;
 		const byte ChunkType_ADC = 0x83;
 		/// <summary>
 		/// Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
@@ -276,17 +284,17 @@ namespace DiscImageChef.DiscImages
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}", StringHandlers.PascalToString(header.name));
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.bufferSize = {0}", header.bufferSize);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.zero = {0}", header.zero);
+			DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
+			DicConsole.DebugWriteLine("NDIF plugin", "footer.zeroOffset = {0}", header.zeroOffset);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", header.crc);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", header.segmented);
+			DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", header.p1);
+			DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", header.p2);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", header.unknown[0]);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", header.unknown[1]);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", header.unknown[2]);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", header.unknown[3]);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", header.unknown[4]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[5] = 0x{0:X8}", header.unknown[5]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[6] = 0x{0:X8}", header.unknown[6]);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", header.encrypted);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", header.hash);
 			DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", header.chunks);

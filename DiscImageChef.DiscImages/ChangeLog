@@ -1,3 +1,9 @@
+2016-09-07  Natalia Portillo  <claunia@claunia.com>
+
+	* NDIF.cs:
+	* UDIF.cs: Added new possible compression algorithms and field
+	names from DiskImages.framework.
+
 2016-09-06  Natalia Portillo  <claunia@claunia.com>
 
 	* NDIF.cs:

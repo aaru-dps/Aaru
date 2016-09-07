@@ -52,15 +52,18 @@ namespace DiscImageChef.DiscImages
         // All chunk types with this mask are compressed
         const uint ChunkType_CompressedMask = 0x80000000;
 
-        const uint ChunkType_Zero   = 0x00000000;
-        const uint ChunkType_Copy   = 0x00000001;
-        const uint ChunkType_NoCopy = 0x00000002;
-        const uint ChunkType_ADC    = 0x80000004;
-        const uint ChunkType_Zlib   = 0x80000005;
-        const uint ChunkType_Bzip   = 0x80000006;
-        const uint ChunkType_LZFSE  = 0x80000007;
-        const uint ChunkType_Commnt = 0x7FFFFFFF;
-        const uint ChunkType_End    = 0xFFFFFFFF;
+        const uint ChunkType_Zero    = 0x00000000;
+        const uint ChunkType_Copy    = 0x00000001;
+        const uint ChunkType_NoCopy  = 0x00000002;
+		const uint ChunkType_KenCode = 0x80000001;
+		const uint ChunkType_RLE     = 0x80000002;
+		const uint ChunkType_LZH     = 0x80000003;
+		const uint ChunkType_ADC     = 0x80000004;
+        const uint ChunkType_Zlib    = 0x80000005;
+        const uint ChunkType_Bzip    = 0x80000006;
+        const uint ChunkType_LZFSE   = 0x80000007;
+        const uint ChunkType_Commnt  = 0x7FFFFFFF;
+        const uint ChunkType_End     = 0xFFFFFFFF;
 
         const string ResourceForkKey = "resource-fork";
         const string BlockKey = "blkx";
@@ -518,10 +521,7 @@ namespace DiscImageChef.DiscImages
             if(!chunkFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
 
-            if(currentChunk.type == ChunkType_Zero)
-                throw new ImageNotSupportedException("Dunno how to handle ZERO chunk type, please fill issue and send image.");
-    
-            if(currentChunk.type == ChunkType_NoCopy)
+            if(currentChunk.type == ChunkType_NoCopy || currentChunk.type == ChunkType_Zero)
             {
                 sector = new byte[sectorSize];
 
