@@ -34,14 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using Claunia.PropertyList;
+using System.Text.RegularExpressions;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
-using System.Text.RegularExpressions;
-using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.DiscImages
 {
@@ -49,7 +47,7 @@ namespace DiscImageChef.DiscImages
 	{
 		#region Internal constants
 		// Disk types
-		const byte kMacDisk	= 1;
+		const byte kMacDisk = 1;
 		const byte kLisaDisk = 2;
 		const byte kAppleIIDisk = 3;
 		const byte kMacHiDDisk = 16;
@@ -62,7 +60,7 @@ namespace DiscImageChef.DiscImages
 		// "best"
 		const byte kLZHCompress = 1;
 		// DART <= 1.4
-		const byte kNoCompress= 2;
+		const byte kNoCompress = 2;
 
 		// Valid sizes
 		const short kLisa400KSize = 400;
@@ -178,7 +176,7 @@ namespace DiscImageChef.DiscImages
 				default:
 					return false;
 			}
-			                         
+
 			if(stream.Length > expectedMaxSize)
 				return false;
 
