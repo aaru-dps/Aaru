@@ -69,6 +69,9 @@ UDIF plugin:
 NDIF plugin:
 --- Add support for compressed chunks
 
+DART plugin:
+--- Add support for compressed chunks
+
 Filters:
 --- Add support for BZip2 compressed files
 --- Add support for XZ compressed files

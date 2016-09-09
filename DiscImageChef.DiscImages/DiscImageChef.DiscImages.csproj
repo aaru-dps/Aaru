@@ -64,6 +64,7 @@
     <Compile Include="VMware.cs" />
     <Compile Include="UDIF.cs" />
     <Compile Include="NDIF.cs" />
+    <Compile Include="DART.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

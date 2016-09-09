@@ -434,7 +434,6 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
-            System.Console.WriteLine("{0}", imageFilter);
             try
             {
                 if(imageFilter.HasResourceFork())
