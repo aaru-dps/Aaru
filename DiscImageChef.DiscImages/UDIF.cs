@@ -465,11 +465,24 @@ namespace DiscImageChef.DiscImages
                         if(bChnk.type == ChunkType_Commnt)
                             continue;
 
-                        // TODO: Handle compressed chunks
-                        if((bChnk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
-                            throw new ImageNotSupportedException("Compressed chunks are not yet supported.");
+						// TODO: Handle compressed chunks
+						if((bChnk.type == ChunkType_KenCode))
+							throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+						if((bChnk.type == ChunkType_RLE))
+							throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+						if((bChnk.type == ChunkType_LZH))
+							throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+						if((bChnk.type == ChunkType_ADC))
+							throw new ImageNotSupportedException("Chunks compressed with ADC are not yet supported.");
+						if((bChnk.type == ChunkType_Zlib))
+							throw new ImageNotSupportedException("Chunks compressed with zlib are not yet supported.");
+						if((bChnk.type == ChunkType_Bzip))
+							throw new ImageNotSupportedException("Chunks compressed with bzip2 are not yet supported.");
+						if((bChnk.type == ChunkType_LZFSE))
+							throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
 
-                        if(bChnk.type != ChunkType_Zero && bChnk.type != ChunkType_Copy && bChnk.type != ChunkType_NoCopy)
+						if((bChnk.type > ChunkType_NoCopy && bChnk.type < ChunkType_Commnt) ||
+						   (bChnk.type > ChunkType_LZFSE && bChnk.type < ChunkType_End))
                             throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", bChnk.type));
 
                         if(bChnk.sectors > 0)

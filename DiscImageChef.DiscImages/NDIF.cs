@@ -335,10 +335,20 @@ namespace DiscImageChef.DiscImages
 					bChnk.sector += (uint)ImageInfo.sectors;
 
 					// TODO: Handle compressed chunks
-					if((bChnk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
-						throw new ImageNotSupportedException("Compressed chunks are not yet supported.");
+					if((bChnk.type == ChunkType_KenCode))
+						throw new ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+					if((bChnk.type == ChunkType_RLE))
+						throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
+					if((bChnk.type == ChunkType_LZH))
+						throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+					if((bChnk.type == ChunkType_ADC))
+						throw new ImageNotSupportedException("Chunks compressed with ADC are not yet supported.");
 
-					if(bChnk.type != ChunkType_Copy && bChnk.type != ChunkType_NoCopy)
+					// TODO: Handle compressed chunks
+					if((bChnk.type > ChunkType_Copy && bChnk.type < ChunkType_KenCode) ||
+					   (bChnk.type > ChunkType_ADC && bChnk.type < ChunkType_StuffIt) ||
+					   (bChnk.type > ChunkType_StuffIt && bChnk.type < ChunkType_End) ||
+					   bChnk.type == 1)
 						throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", bChnk.type));
 
 					chunks.Add(bChnk.sector, bChnk);
