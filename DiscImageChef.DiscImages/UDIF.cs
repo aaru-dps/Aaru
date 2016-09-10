@@ -40,6 +40,8 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
+using SharpCompress.Compressor.Deflate;
+using SharpCompress.Compressor.BZip2;
 
 namespace DiscImageChef.DiscImages
 {
@@ -146,9 +148,12 @@ namespace DiscImageChef.DiscImages
         Dictionary<ulong, BlockChunk> chunks;
 
         Dictionary<ulong, byte[]> sectorCache;
+		Dictionary<ulong, byte[]> chunkCache;
         const uint MaxCacheSize = 16777216;
         const uint sectorSize = 512;
         uint maxCachedSectors = MaxCacheSize / sectorSize;
+		uint currentChunkCacheSize;
+		uint buffersize;
 
         Stream imageStream;
 
@@ -356,6 +361,7 @@ namespace DiscImageChef.DiscImages
                 bChnk.type = ChunkType_Copy;
                 ImageInfo.sectors = footer.sectorCount;
                 chunks.Add(bChnk.sector, bChnk);
+				buffersize = 2048 * sectorSize;
                 fakeBlockChunks = true;
             }
 
@@ -411,6 +417,8 @@ namespace DiscImageChef.DiscImages
                 if(blkxList.Count == 0)
                     throw new ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
 
+				buffersize = 0;
+
                 foreach(byte[] blkxBytes in blkxList)
                 {
                     BlockHeader bHdr = new BlockHeader();
@@ -436,6 +444,9 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.checksum = 0x{0:X8}", bHdr.checksum);
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunks = {0}", bHdr.chunks);
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}", ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
+
+					if(bHdr.buffers > buffersize)
+						buffersize = bHdr.buffers * sectorSize;
 
                     for(int i = 0; i < bHdr.chunks; i++)
                     {
@@ -474,10 +485,6 @@ namespace DiscImageChef.DiscImages
 							throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
 						if((bChnk.type == ChunkType_ADC))
 							throw new ImageNotSupportedException("Chunks compressed with ADC are not yet supported.");
-						if((bChnk.type == ChunkType_Zlib))
-							throw new ImageNotSupportedException("Chunks compressed with zlib are not yet supported.");
-						if((bChnk.type == ChunkType_Bzip))
-							throw new ImageNotSupportedException("Chunks compressed with bzip2 are not yet supported.");
 						if((bChnk.type == ChunkType_LZFSE))
 							throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
 
@@ -492,7 +499,9 @@ namespace DiscImageChef.DiscImages
             }
 
             sectorCache = new Dictionary<ulong, byte[]>();
-            imageStream = stream;
+			chunkCache = new Dictionary<ulong, byte[]>();
+			currentChunkCacheSize = 0;
+			imageStream = stream;
 
             ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
             ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
@@ -537,6 +546,51 @@ namespace DiscImageChef.DiscImages
 
             if(!chunkFound)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), string.Format("Sector address {0} not found", sectorAddress));
+
+			if((currentChunk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
+			{
+				byte[] buffer;
+				if(!chunkCache.TryGetValue(chunkStartSector, out buffer))
+				{
+					byte[] cmpBuffer = new byte[currentChunk.length];
+					imageStream.Seek((long)currentChunk.offset, SeekOrigin.Begin);
+					imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+					MemoryStream cmpMs = new MemoryStream(cmpBuffer);
+					Stream decStream;
+
+					if(currentChunk.type == ChunkType_Zlib)
+						decStream = new ZlibStream(cmpMs, SharpCompress.Compressor.CompressionMode.Decompress);
+					else if(currentChunk.type == ChunkType_Bzip)
+						decStream = new BZip2Stream(cmpMs, SharpCompress.Compressor.CompressionMode.Decompress);
+					else
+						throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", currentChunk.type));
+
+					byte[] tmpBuffer = new byte[buffersize];
+					int realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
+					buffer = new byte[realSize];
+					Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+					tmpBuffer = null;
+
+					if(currentChunkCacheSize + realSize > MaxCacheSize)
+					{
+						chunkCache.Clear();
+						currentChunkCacheSize = 0;
+					}
+
+					chunkCache.Add(chunkStartSector, buffer);
+					currentChunkCacheSize += (uint)realSize;
+				}
+
+				sector = new byte[sectorSize];
+				Array.Copy(buffer, relOff, sector, 0, sectorSize);
+
+				if(sectorCache.Count >= maxCachedSectors)
+					sectorCache.Clear();
+
+				sectorCache.Add(sectorAddress, sector);
+
+				return sector;
+			}
 
             if(currentChunk.type == ChunkType_NoCopy || currentChunk.type == ChunkType_Zero)
             {

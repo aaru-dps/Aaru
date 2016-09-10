@@ -34,6 +34,9 @@
     <Reference Include="plist-cil">
       <HintPath>..\packages\plist-cil.1.14\lib\plist-cil.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\packages\SharpCompress.0.12.4\lib\net40\SharpCompress.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
