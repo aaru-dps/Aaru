@@ -405,6 +405,7 @@ namespace DiscImageChef.DiscImages
                 ImageInfo.imageApplication = "DiskCopy";
             DicConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", ImageInfo.imageApplication, ImageInfo.imageApplicationVersion);
 
+			ImageInfo.sectors = 0;
             if(!fakeBlockChunks)
             {
                 if(blkxList.Count == 0)
@@ -452,10 +453,13 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
 
                         if(bChnk.type == ChunkType_End)
-                        {
-                            ImageInfo.sectors = bChnk.sector;
                             break;
-                        }
+
+						ImageInfo.sectors += bChnk.sectors;
+
+						// Chunk offset is relative
+						bChnk.sector += bHdr.sectorStart;
+						bChnk.offset += bHdr.dataOffset;
 
                         // TODO: Handle comments
                         if(bChnk.type == ChunkType_Commnt)

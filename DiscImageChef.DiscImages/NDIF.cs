@@ -85,9 +85,9 @@ namespace DiscImageChef.DiscImages
 			/// </summary>
 			public uint maxSectorsPerChunk;
 			/// <summary>
-			/// Always 0?
+			/// Offset to add to every chunk offset
 			/// </summary>
-			public uint zeroOffset;
+			public uint dataOffset;
 			/// <summary>
 			/// CRC28 of whole image
 			/// </summary>
@@ -135,7 +135,7 @@ namespace DiscImageChef.DiscImages
 			/// </summary>
 			public byte type;
 			/// <summary>
-			/// Offset in image to start of chunk
+			/// Offset in start of chunk
 			/// </summary>
 			public uint offset;
 			/// <summary>
@@ -255,7 +255,7 @@ namespace DiscImageChef.DiscImages
 
 			ResourceFork rsrcFork;
 			Resource rsrc;
-			byte[] bcem;
+			short[] bcems;
 
 			try
 			{
@@ -265,76 +265,84 @@ namespace DiscImageChef.DiscImages
 
 				rsrc = rsrcFork.GetResource(NDIF_Resource);
 
-				if(!rsrc.ContainsId(NDIF_ResourceID))
-					return false;
+				bcems = rsrc.GetIds();
 
-				bcem = rsrc.GetResource(NDIF_ResourceID);
+				if(bcems == null || bcems.Length == 0)
+					return false;
 			}
 			catch(InvalidCastException)
 			{
 				return false;
 			}
 
-			if(bcem.Length < 128)
-				return false;
-
-			header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
-
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", header.version);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}", StringHandlers.PascalToString(header.name));
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.zeroOffset = {0}", header.zeroOffset);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", header.crc);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", header.segmented);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", header.p1);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", header.p2);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", header.unknown[0]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", header.unknown[1]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", header.unknown[2]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", header.unknown[3]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", header.unknown[4]);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", header.encrypted);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", header.hash);
-			DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", header.chunks);
-
-			// Block chunks and headers
-			chunks = new Dictionary<ulong, BlockChunk>();
-
-			BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-			for(int i = 0; i < header.chunks; i++)
+			ImageInfo.sectors = 0;
+			foreach(short id in bcems)
 			{
-				// Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
-				// So let's falsify a block chunk
-				BlockChunk bChnk = new BlockChunk();
-				byte[] sector = new byte[4];
-				Array.Copy(bcem, 128 + 0 + i * 12, sector, 1, 3);
-				bChnk.sector = BigEndianBitConverter.ToUInt32(sector, 0);
-				bChnk.type = bcem[128 + 3 + i * 12];
-				bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
-				bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
+				byte[] bcem = rsrc.GetResource(NDIF_ResourceID);
 
-				DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
-				DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
-				DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
-				DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
+				if(bcem.Length < 128)
+					return false;
 
-				if(bChnk.type == ChunkType_End)
+				header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
+
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", header.version);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}", StringHandlers.PascalToString(header.name));
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", header.dataOffset);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", header.crc);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", header.segmented);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", header.p1);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", header.p2);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", header.unknown[0]);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", header.unknown[1]);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", header.unknown[2]);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", header.unknown[3]);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", header.unknown[4]);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", header.encrypted);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", header.hash);
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", header.chunks);
+
+				// Block chunks and headers
+				chunks = new Dictionary<ulong, BlockChunk>();
+
+				BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
+				ImageInfo.sectors += header.sectors;
+
+				for(int i = 0; i < header.chunks; i++)
 				{
-					ImageInfo.sectors = bChnk.sector;
-					break;
+					// Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
+					// So let's falsify a block chunk
+					BlockChunk bChnk = new BlockChunk();
+					byte[] sector = new byte[4];
+					Array.Copy(bcem, 128 + 0 + i * 12, sector, 1, 3);
+					bChnk.sector = BigEndianBitConverter.ToUInt32(sector, 0);
+					bChnk.type = bcem[128 + 3 + i * 12];
+					bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
+					bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
+
+					DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
+					DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
+					DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
+					DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
+
+					if(bChnk.type == ChunkType_End)
+						break;
+
+					bChnk.offset += header.dataOffset;
+					bChnk.sector += (uint)ImageInfo.sectors;
+
+					// TODO: Handle compressed chunks
+					if((bChnk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
+						throw new ImageNotSupportedException("Compressed chunks are not yet supported.");
+
+					if(bChnk.type != ChunkType_Copy && bChnk.type != ChunkType_NoCopy)
+						throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", bChnk.type));
+
+					chunks.Add(bChnk.sector, bChnk);
 				}
-
-				// TODO: Handle compressed chunks
-				if((bChnk.type & ChunkType_CompressedMask) == ChunkType_CompressedMask)
-					throw new ImageNotSupportedException("Compressed chunks are not yet supported.");
-
-				if(bChnk.type != ChunkType_Copy && bChnk.type != ChunkType_NoCopy)
-					throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", bChnk.type));
-
-				chunks.Add(bChnk.sector, bChnk);
 			}
 
 			if(header.segmented > 0)
