@@ -152,6 +152,7 @@ Supported filters
 * AppleDouble
 * AppleSingle
 * MacBinary I, II, III
+* BZip2
 
 Changelog
 =========
