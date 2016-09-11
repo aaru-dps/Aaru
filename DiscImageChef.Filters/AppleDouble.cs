@@ -244,6 +244,8 @@ namespace DiscImageChef.Filters
             string DAVEAppleDouble;
             // Prepend data fork name with "._"
             string OSXAppleDouble;
+            // Adds ".rsrc" extension
+            string UnArAppleDouble;
 
             string filename = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
@@ -256,6 +258,7 @@ namespace DiscImageChef.Filters
             NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))
@@ -362,6 +365,21 @@ namespace DiscImageChef.Filters
                 }
             }
 
+            // Check AppleDouble created by UnAr (from The Unarchiver)
+            if(File.Exists(UnArAppleDouble))
+            {
+                FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+                if(unarStream != null && unarStream.Length > 26)
+                {
+                    byte[] unar_b = new byte[26];
+                    unarStream.Read(unar_b, 0, 26);
+                    header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
+                    unarStream.Close();
+                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
+                }
+            }
+
             return false;
         }
 
@@ -398,6 +416,8 @@ namespace DiscImageChef.Filters
             string DAVEAppleDouble;
             // Prepend data fork name with "._"
             string OSXAppleDouble;
+            // Adds ".rsrc" extension
+            string UnArAppleDouble;
 
             string filename = Path.GetFileName(path);
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
@@ -410,6 +430,7 @@ namespace DiscImageChef.Filters
             NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
             DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))
@@ -513,6 +534,21 @@ namespace DiscImageChef.Filters
                     osxStream.Close();
                     if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = OSXAppleDouble;
+                }
+            }
+
+            // Check AppleDouble created by UnAr (from The Unarchiver)
+            if(File.Exists(UnArAppleDouble))
+            {
+                FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+                if(unarStream != null && unarStream.Length > 26)
+                {
+                    byte[] unar_b = new byte[26];
+                    unarStream.Read(unar_b, 0, 26);
+                    header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
+                    unarStream.Close();
+                    if(header.magic == AppleDoubleMagic && (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        headerPath = UnArAppleDouble;
                 }
             }
 
