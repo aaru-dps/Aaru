@@ -99,27 +99,33 @@ namespace DiscImageChef.Filesystems
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionStart);
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
+            DicConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
             if(prePointer != 0)
                 return false;
 
             byte storage_type = (byte)((rootDirectoryKeyBlock[0x04] & ProDOSStorageTypeMask) >> 4);
+            DicConsole.DebugWriteLine("ProDOS plugin", "storage_type = {0}", storage_type);
             if(storage_type != RootDirectoryType)
                 return false;
 
             byte entry_length = rootDirectoryKeyBlock[0x23];
+            DicConsole.DebugWriteLine("ProDOS plugin", "entry_length = {0}", entry_length);
             if(entry_length != ProDOSEntryLength)
                 return false;
 
             byte entries_per_block = rootDirectoryKeyBlock[0x24];
+            DicConsole.DebugWriteLine("ProDOS plugin", "entries_per_block = {0}", entries_per_block);
             if(entries_per_block != ProDOSEntriesPerBlock)
                 return false;
 
             ushort bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
+            DicConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bit_map_pointer);
             if(bit_map_pointer > partitionEnd)
                 return false;
 
             ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
-            return total_blocks <= (partitionEnd - partitionStart);
+            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partitionEnd, partitionStart, total_blocks <= (partitionEnd - partitionStart + 1));
+            return total_blocks <= (partitionEnd - partitionStart + 1);
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)

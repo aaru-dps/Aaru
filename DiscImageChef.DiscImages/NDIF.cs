@@ -309,8 +309,6 @@ namespace DiscImageChef.DiscImages
 
 				BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-				ImageInfo.sectors += header.sectors;
-
 				for(int i = 0; i < header.chunks; i++)
 				{
 					// Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
@@ -353,6 +351,8 @@ namespace DiscImageChef.DiscImages
 
 					chunks.Add(bChnk.sector, bChnk);
 				}
+
+				ImageInfo.sectors += header.sectors;
 			}
 
 			if(header.segmented > 0)
