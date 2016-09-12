@@ -153,6 +153,7 @@ Supported filters
 * AppleSingle
 * MacBinary I, II, III
 * BZip2
+* Apple PCExchange (FINDER.DAT & RESOURCE.FRK)
 
 Changelog
 =========

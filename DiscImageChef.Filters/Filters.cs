@@ -67,19 +67,27 @@ namespace DiscImageChef.Filters
 
         public Filter GetFilter(string path)
         {
+            Filter noFilter = null;
+
             foreach(Filter filter in filtersList.Values)
             {
-                if(filter.Identify(path))
+                if(filter.UUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
-                    Filter foundFilter = (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-                    foundFilter.Open(path);
+                    System.Console.WriteLine("Trying filter {0}", filter.Name);
+                    if(filter.Identify(path))
+                    {
+                        Filter foundFilter = (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
+                        foundFilter.Open(path);
 
-                    if(foundFilter.IsOpened())
-                        return foundFilter;
+                        if(foundFilter.IsOpened())
+                            return foundFilter;
+                    }
                 }
+                else
+                    noFilter = filter;
             }
 
-            return null;
+            return noFilter;
         }
 
         public SortedDictionary<string, Filter> GetFiltersList()

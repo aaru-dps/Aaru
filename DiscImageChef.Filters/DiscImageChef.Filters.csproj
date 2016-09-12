@@ -46,6 +46,7 @@
     <Compile Include="AppleDouble.cs" />
     <Compile Include="MacBinary.cs" />
     <Compile Include="BZip2.cs" />
+    <Compile Include="PCExchange.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
