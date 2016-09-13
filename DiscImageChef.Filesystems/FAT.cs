@@ -215,8 +215,17 @@ namespace DiscImageChef.Filesystems
                 // Let's start the fun
                 if(fat32_signature == "FAT32   ")
                 {
-                    sb.AppendLine("Microsoft FAT32"); // Seems easy, check reading
-                    xmlFSType.Type = "FAT32";
+                    // TODO: Check with a real FAT+ to see where the version is set
+                    if(bpb_sector[0x2A] == 1 || (bpb_sector[0x2B] == 1)
+                    {
+                        sb.AppendLine("FAT+"); // Seems easy, check reading
+                        xmlFSType.Type = "FAT+";
+                    }
+                    else
+                    {
+                        sb.AppendLine("Microsoft FAT32"); // Seems easy, check reading
+                        xmlFSType.Type = "FAT32";
+                    }
                     isFAT32 = true;
                 }
                 else if((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16

@@ -21,7 +21,6 @@ Filesystem plugins:
 --- Add support for NwFS
 --- Add support for Squashfs
 --- Add support for X-Box filesystems
---- Add support for FAT+
 --- Add support for ReFS
 --- Add support for ECMA-67
 

@@ -101,7 +101,7 @@ Supported file systems for identification and information only
 * Linux extended file system 4
 * Microsoft 12-bit File Allocation Table (FAT12), including Atari ST extensions
 * Microsoft 16-bit File Allocation Table (FAT16)
-* Microsoft 32-bit File Allocation Table (FAT32)
+* Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
 * BSD Fast File System (FFS) / Unix File System (UFS)
 * BSD Unix File System 2 (UFS2)
 * Microsoft/IBM High Performance File System (HPFS)
