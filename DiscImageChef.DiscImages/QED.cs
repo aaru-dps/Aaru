@@ -245,19 +245,19 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", tableSize);
 
-            byte[] l1Table_b = new byte[tableSize];
+            byte[] l1Table_b = new byte[tableSize * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            stream.Read(l1Table_b, 0, (int)tableSize);
-            l1Table = new ulong[tableSize / 8];
+            stream.Read(l1Table_b, 0, (int)tableSize * 8);
+            l1Table = new ulong[tableSize];
             DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
-            for(long i = 0; i < l1Table.LongLength; i++)
-                l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
+			for(long i = 0; i < l1Table.LongLength; i++)
+				l1Table[i] = BitConverter.ToUInt64(l1Table_b, (int)(i * 8));
 
             l1Mask = 0;
             int c = 0;
             clusterBits = ctz32(qHdr.cluster_size);
-            l2Mask = tableSize - 1;
-            l1Shift = clusterBits + ctz32(tableSize);
+			l2Mask = (tableSize - 1) << clusterBits;
+			l1Shift = clusterBits + ctz32(tableSize);
 
             for(int i = 0; i < 64; i++)
             {
@@ -281,7 +281,7 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", l2Mask);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
-            maxL2TableCache = MaxCacheSize / (tableSize / 8);
+            maxL2TableCache = MaxCacheSize / (tableSize);
             maxClusterCache = MaxCacheSize / qHdr.cluster_size;
 
             imageStream = stream;
@@ -328,13 +328,13 @@ namespace DiscImageChef.ImagePlugins
 
             if(!l2TableCache.TryGetValue(l1Off, out l2Table))
             {
-                l2Table = new ulong[tableSize / 8];
+                l2Table = new ulong[tableSize];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
-                byte[] l2Table_b = new byte[tableSize];
-                imageStream.Read(l2Table_b, 0, (int)tableSize);
+                byte[] l2Table_b = new byte[tableSize * 8];
+                imageStream.Read(l2Table_b, 0, (int)tableSize * 8);
                 DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
-                for(long i = 0; i < l2Table.LongLength; i++)
-                    l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
+				for(long i = 0; i < l2Table.LongLength; i++)
+					l2Table[i] = BitConverter.ToUInt64(l2Table_b, (int)(i * 8));
 
                 if(l2TableCache.Count >= maxL2TableCache)
                     l2TableCache.Clear();
@@ -344,7 +344,7 @@ namespace DiscImageChef.ImagePlugins
 
             ulong l2Off = (byteAddress & l2Mask) >> clusterBits;
 
-            ulong offset = l2Table[l2Off];
+			ulong offset = l2Table[l2Off];
 
             sector = new byte[512];
 

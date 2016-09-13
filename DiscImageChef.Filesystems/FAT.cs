@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
 
                 if((first_fat_entry & 0xFFFFFFF0) == 0xFFFFFFF0) // Seems to be FAT16
                 {
-                    if((first_fat_entry & 0xFF) == media_descriptor)
+                    if((first_fat_entry & 0xFF) == media_descriptor || (first_fat_entry & 0xFF) == 0xF0)
                         return true; // It MUST be FAT16, or... maybe not :S
                 }
                 else if((first_fat_entry & 0x00FFFFF0) == 0x00FFFFF0)

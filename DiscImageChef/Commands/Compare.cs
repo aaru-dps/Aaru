@@ -50,6 +50,7 @@ namespace DiscImageChef.Commands
 
             FiltersList filtersList = new FiltersList();
             Filter inputFilter1 = filtersList.GetFilter(options.InputFile1);
+            filtersList = new FiltersList();
             Filter inputFilter2 = filtersList.GetFilter(options.InputFile2);
 
             if(inputFilter1 == null)

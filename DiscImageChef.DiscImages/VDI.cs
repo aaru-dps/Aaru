@@ -194,11 +194,12 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", vHdr.parentUuid);
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
+			stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
             IBM = new uint[vHdr.blocks];
             byte[] IBM_b = new byte[vHdr.blocks * 4];
             stream.Read(IBM_b, 0, IBM_b.Length);
-            for(int i = 0; i < IBM.Length; i++)
-                IBM[i] = BitConverter.ToUInt32(IBM_b, i * 4);
+			for(int i = 0; i < IBM.Length; i++)
+				IBM[i] = BitConverter.ToUInt32(IBM_b, i * 4);
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
