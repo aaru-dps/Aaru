@@ -133,6 +133,7 @@ Supported file systems for identification and information only
 * SGI XFS
 * Professional File System
 * SmartFileSystem
+* VMware file system (VMFS)
 
 Supported checksums
 ===================
