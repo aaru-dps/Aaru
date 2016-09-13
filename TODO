@@ -9,7 +9,6 @@
 --- Add support for XPACK images
 
 Filesystem plugins:
---- Add support for SFS filesystem
 --- Add support for Apple DOS filesystems
 --- Add support for CBM filesystem
 --- Add support for ZFS

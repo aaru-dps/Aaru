@@ -132,6 +132,7 @@ Supported file systems for identification and information only
 * Reiser file systems
 * SGI XFS
 * Professional File System
+* SmartFileSystem
 
 Supported checksums
 ===================
