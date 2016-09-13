@@ -131,6 +131,7 @@ Supported file systems for identification and information only
 * NILFS2
 * Reiser file systems
 * SGI XFS
+* Professional File System
 
 Supported checksums
 ===================

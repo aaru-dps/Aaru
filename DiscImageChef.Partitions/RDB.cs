@@ -113,6 +113,10 @@ namespace DiscImageChef.PartPlugins
         /// </summary>
         const uint TypeIDPFS = 0x50465301;
         /// <summary>
+        /// Type ID for ProfessionalFileSystem, "PFS\2"
+        /// </summary>
+        const uint TypeIDPFS2 = 0x50465302;
+        /// <summary>
         /// Type ID for ProfessionalFileSystem, "muAF"
         /// </summary>
         const uint TypeIDPFSm = 0x6D754146;
@@ -1379,6 +1383,7 @@ namespace DiscImageChef.PartPlugins
                 case TypeIDAMIXReserved:
                     return "Amiga UNIX Reserved partition (swap)";
                 case TypeIDPFS:
+                case TypeIDPFS2:
                 case TypeIDPFSm:
                 case TypeIDAFS:
                     return "ProfessionalFileSystem";
