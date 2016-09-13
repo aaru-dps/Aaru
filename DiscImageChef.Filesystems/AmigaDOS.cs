@@ -200,9 +200,14 @@ namespace DiscImageChef.Filesystems
             ulong root_ptr = BigEndianBitConverter.ToUInt32(sector, 0x08);
             DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", root_ptr);
 
-            root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart + 1;
+            if(root_ptr == 0)
+            {
+                root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart;
 
-            DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
+            }
+            else
+                root_ptr += partitionStart;
 
             if(root_ptr >= partitionEnd)
                 return false;
@@ -212,8 +217,15 @@ namespace DiscImageChef.Filesystems
             uint type = BigEndianBitConverter.ToUInt32(sector, 0x00);
             uint hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
-            if((0x18 + hashTableSize * 4 + 196) > sector.Length)
-                return false;
+            uint blockSize = 0x18 + hashTableSize * 4 + 196;
+            uint sectorsPerBlock = (uint)(blockSize / sector.Length);
+            if(blockSize % sector.Length > 0)
+                sectorsPerBlock++;
+
+            sector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
+
+            //if((0x18 + hashTableSize * 4 + 196) > sector.Length)
+            //    return false;
 
             uint sec_type = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + hashTableSize * 4 + 196));
 
@@ -225,7 +237,30 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             byte[] BootBlockSectors = imagePlugin.ReadSectors(0 + partitionStart, 2);
-            byte[] RootBlockSector = imagePlugin.ReadSector((partitionEnd - partitionStart) / 2 + partitionStart + 1);
+
+            ulong root_ptr = BigEndianBitConverter.ToUInt32(BootBlockSectors, 0x08);
+            DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", root_ptr);
+
+            if(root_ptr == 0)
+            {
+                root_ptr = (partitionEnd - partitionStart) / 2 + partitionStart;
+
+                DicConsole.DebugWriteLine("AmigaDOS plugin", "Nonetheless, going to block {0} for Rootblock", root_ptr);
+            }
+            else
+                root_ptr += partitionStart;
+
+            byte[] RootBlockSector = imagePlugin.ReadSector(root_ptr);
+
+            uint hashTableSize = BigEndianBitConverter.ToUInt32(RootBlockSector, 0x0C);
+
+            uint blockSize = 0x18 + hashTableSize * 4 + 196;
+            uint sectorsPerBlock = (uint)(blockSize / RootBlockSector.Length);
+            if(blockSize % RootBlockSector.Length > 0)
+                sectorsPerBlock++;
+
+            RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
+
             byte[] diskName = new byte[32];
 
             BootBlock bootBlk = new BootBlock();

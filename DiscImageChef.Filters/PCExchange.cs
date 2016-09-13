@@ -189,7 +189,6 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(byte[] buffer)
         {
-            System.Console.WriteLine("parentFolder");
             return false;
         }
 
@@ -201,10 +200,7 @@ namespace DiscImageChef.Filters
 
         public override bool Identify(string path)
         {
-            System.Console.WriteLine("parentFolder");
             string parentFolder = Path.GetDirectoryName(path);
-
-            System.Console.WriteLine("parentFolder {0}", parentFolder);
 
             if(!File.Exists(Path.Combine(parentFolder, FinderInfo)))
                 return false;
@@ -313,12 +309,6 @@ namespace DiscImageChef.Filters
 
             dataLen = new FileInfo(dataPath).Length;
             rsrcLen = new FileInfo(rsrcPath).Length;
-
-            System.Console.WriteLine("dataPath = {0}", dataPath);
-            System.Console.WriteLine("rsrcPath = {0}", rsrcPath);
-            System.Console.WriteLine("dataLen = {0}", dataLen);
-            System.Console.WriteLine("rsrcLen = {0}", rsrcLen);
-            System.Console.WriteLine("basePath = {0}", basePath);
 
             basePath = path;
             opened = true;

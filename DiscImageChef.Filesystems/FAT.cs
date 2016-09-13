@@ -216,7 +216,7 @@ namespace DiscImageChef.Filesystems
                 if(fat32_signature == "FAT32   ")
                 {
                     // TODO: Check with a real FAT+ to see where the version is set
-                    if(bpb_sector[0x2A] == 1 || (bpb_sector[0x2B] == 1)
+                    if(bpb_sector[0x2A] == 1 || bpb_sector[0x2B] == 1)
                     {
                         sb.AppendLine("FAT+"); // Seems easy, check reading
                         xmlFSType.Type = "FAT+";

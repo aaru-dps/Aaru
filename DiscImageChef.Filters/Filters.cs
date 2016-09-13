@@ -73,7 +73,6 @@ namespace DiscImageChef.Filters
             {
                 if(filter.UUID != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
-                    System.Console.WriteLine("Trying filter {0}", filter.Name);
                     if(filter.Identify(path))
                     {
                         Filter foundFilter = (Filter)filter.GetType().GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
@@ -85,6 +84,14 @@ namespace DiscImageChef.Filters
                 }
                 else
                     noFilter = filter;
+            }
+
+            if(noFilter.Identify(path))
+            {
+                noFilter.Open(path);
+
+                if(noFilter.IsOpened())
+                    return noFilter;
             }
 
             return noFilter;
