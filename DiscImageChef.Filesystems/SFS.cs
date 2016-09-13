@@ -31,26 +31,25 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using DiscImageChef.Console;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-	class SFS : Filesystem
-	{
-		public SFS()
-		{
-			Name = "SmartFileSystem";
-			PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-		}
+    class SFS : Filesystem
+    {
+        public SFS()
+        {
+            Name = "SmartFileSystem";
+            PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        }
 
-		public SFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
-		{
-			Name = "SmartFileSystem";
-			PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
-		}
+        public SFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            Name = "SmartFileSystem";
+            PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        }
 
         [Flags]
         enum SFSFlags : byte
@@ -59,9 +58,9 @@ namespace DiscImageChef.Filesystems
             CaseSensitive = 128
         }
 
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct RootBlock
-		{
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RootBlock
+        {
             public uint blockId;
             public uint blockChecksum;
             public uint blockSelfPointer;
@@ -88,36 +87,36 @@ namespace DiscImageChef.Filesystems
             public uint objectnoderoot;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public uint[] reserved4;
-		}
+        }
 
-		/// <summary>
-		/// Identifier for SFS v1
-		/// </summary>
-		const uint SFS_MAGIC = 0x53465300;
+        /// <summary>
+        /// Identifier for SFS v1
+        /// </summary>
+        const uint SFS_MAGIC = 0x53465300;
 
-		public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
-		{
-			if(partitionStart >= partitionEnd)
-				return false;
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        {
+            if(partitionStart >= partitionEnd)
+                return false;
 
-			BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-			byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partitionStart);
 
-			uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+            uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
             return magic == SFS_MAGIC;
-		}
+        }
 
-		public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
-		{
-			byte[] RootBlockSector = imagePlugin.ReadSector(partitionStart);
-			RootBlock rootBlock = new RootBlock();
-			rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        {
+            byte[] RootBlockSector = imagePlugin.ReadSector(partitionStart);
+            RootBlock rootBlock = new RootBlock();
+            rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
 
-			StringBuilder sbInformation = new StringBuilder();
+            StringBuilder sbInformation = new StringBuilder();
 
-			sbInformation.AppendLine("SmartFileSystem");
+            sbInformation.AppendLine("SmartFileSystem");
 
             sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
             sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte, rootBlock.lastbyte).AppendLine();
@@ -137,69 +136,69 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "SmartFileSystem";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8);
-			xmlFSType.CreationDateSpecified = true;
+            xmlFSType.CreationDateSpecified = true;
             xmlFSType.Clusters = rootBlock.totalblocks;
             xmlFSType.ClusterSize = (int)rootBlock.blocksize;
-		}
+        }
 
-		public override Errno Mount()
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno Mount()
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno Mount(bool debug)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno Mount(bool debug)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno Unmount()
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno Unmount()
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno GetAttributes(string path, ref FileAttributes attributes)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno GetAttributes(string path, ref FileAttributes attributes)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno ListXAttr(string path, ref List<string> xattrs)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno ListXAttr(string path, ref List<string> xattrs)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno GetXattr(string path, string xattr, ref byte[] buf)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno GetXattr(string path, string xattr, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno Read(string path, long offset, long size, ref byte[] buf)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno ReadDir(string path, ref List<string> contents)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno ReadDir(string path, ref List<string> contents)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno StatFs(ref FileSystemInfo stat)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno StatFs(ref FileSystemInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno Stat(string path, ref FileEntryInfo stat)
-		{
-			return Errno.NotImplemented;
-		}
+        public override Errno Stat(string path, ref FileEntryInfo stat)
+        {
+            return Errno.NotImplemented;
+        }
 
-		public override Errno ReadLink(string path, ref string dest)
-		{
-			return Errno.NotImplemented;
-		}
-	}
+        public override Errno ReadLink(string path, ref string dest)
+        {
+            return Errno.NotImplemented;
+        }
+    }
 }

@@ -33,7 +33,6 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using DiscImageChef.Console;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems
@@ -223,7 +222,7 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize).AppendLine();
-            sbInformation.AppendFormat("Volme created on {0}", DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick)).AppendLine();
+            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick)).AppendLine();
             if(rootBlock.extension > 0)
                 sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).AppendLine();
 
@@ -235,6 +234,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Clusters = rootBlock.diskSize / imagePlugin.GetSectorSize();
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
+            xmlFSType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname);
         }
 
         public override Errno Mount()
