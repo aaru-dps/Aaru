@@ -88,6 +88,7 @@ namespace DiscImageChef.Filesystems
         /// Identifier for Squash
         /// </summary>
         const uint Squash_MAGIC = 0x73717368;
+        const uint Squash_CIGAM = 0x68737173;
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {
@@ -98,23 +99,37 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-            return magic == Squash_MAGIC;
+            return magic == Squash_MAGIC || magic == Squash_CIGAM;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
         {
             byte[] sector = imagePlugin.ReadSector(partitionStart);
+            uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             SquashSuperBlock sqSb = new SquashSuperBlock();
-            IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
-            Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
-            sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
-            Marshal.FreeHGlobal(sqSbPtr);
+            bool littleEndian = true;
+
+            if(magic == Squash_MAGIC)
+            {
+                IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
+                Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
+                sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
+                Marshal.FreeHGlobal(sqSbPtr);
+            }
+            else if(magic == Squash_CIGAM)
+            {
+                sqSb = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                littleEndian = false;
+            }
 
             StringBuilder sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Squash file system");
-
+            if(littleEndian)
+                sbInformation.AppendLine("Little-endian");
+            else
+                sbInformation.AppendLine("Big-endian");
             sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
