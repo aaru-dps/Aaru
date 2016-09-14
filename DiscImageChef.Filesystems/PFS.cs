@@ -5,7 +5,7 @@
 // Filename       : PFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Amiga Fast File System plugin.
+// Component      : Professional File System plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //

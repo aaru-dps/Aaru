@@ -5,7 +5,7 @@
 // Filename       : VMfs.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Amiga Fast File System plugin.
+// Component      : VMware file system plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
