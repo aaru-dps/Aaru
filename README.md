@@ -137,6 +137,7 @@ Supported file systems for identification and information only
 * Veritas file system
 * Squash file system
 * Cram file system
+* Commodore 1540/1541/1571/1581 filesystems
 
 Supported checksums
 ===================

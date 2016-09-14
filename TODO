@@ -10,7 +10,6 @@
 
 Filesystem plugins:
 --- Add support for Apple DOS filesystems
---- Add support for CBM filesystem
 --- Add support for ZFS
 --- Add support for UDF
 --- Add support for NwFS
