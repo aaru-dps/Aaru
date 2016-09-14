@@ -109,6 +109,7 @@
     <Compile Include="SFS.cs" />
     <Compile Include="VMfs.cs" />
     <Compile Include="VxFS.cs" />
+    <Compile Include="Squash.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

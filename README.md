@@ -135,6 +135,7 @@ Supported file systems for identification and information only
 * SmartFileSystem
 * VMware file system (VMFS)
 * Veritas file system
+* Squash file system
 
 Supported checksums
 ===================
