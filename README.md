@@ -136,6 +136,7 @@ Supported file systems for identification and information only
 * VMware file system (VMFS)
 * Veritas file system
 * Squash file system
+* Cram file system
 
 Supported checksums
 ===================

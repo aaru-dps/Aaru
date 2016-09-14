@@ -13,7 +13,6 @@ Filesystem plugins:
 --- Add support for CBM filesystem
 --- Add support for ZFS
 --- Add support for UDF
---- Add support for CramFS
 --- Add support for NwFS
 --- Add support for X-Box filesystems
 --- Add support for ReFS

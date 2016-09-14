@@ -110,6 +110,7 @@
     <Compile Include="VMfs.cs" />
     <Compile Include="VxFS.cs" />
     <Compile Include="Squash.cs" />
+    <Compile Include="Cram.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
