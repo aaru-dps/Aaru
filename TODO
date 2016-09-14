@@ -14,7 +14,6 @@ Filesystem plugins:
 --- Add support for ZFS
 --- Add support for UDF
 --- Add support for CramFS
---- Add support for VxFS
 --- Add support for NwFS
 --- Add support for Squashfs
 --- Add support for X-Box filesystems

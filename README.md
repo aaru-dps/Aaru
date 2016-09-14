@@ -134,6 +134,7 @@ Supported file systems for identification and information only
 * Professional File System
 * SmartFileSystem
 * VMware file system (VMFS)
+* Veritas file system
 
 Supported checksums
 ===================
