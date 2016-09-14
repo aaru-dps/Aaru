@@ -503,8 +503,13 @@ namespace DiscImageChef.Metadata
                     DiscSubType = "Atari double-density";
                     break;
                 case CommonTypes.MediaType.CBM_1540:
+                case CommonTypes.MediaType.CBM_1540_Ext:
                     DiscType = "5.25\" floppy";
                     DiscSubType = "Commodore 1540/1541";
+                    break;
+                case CommonTypes.MediaType.CBM_1571:
+                    DiscType = "5.25\" floppy";
+                    DiscSubType = "Commodore 1571";
                     break;
                 case CommonTypes.MediaType.CBM_35_DD:
                     DiscType = "3.5\" floppy";

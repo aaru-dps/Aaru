@@ -353,6 +353,10 @@ namespace DiscImageChef.CommonTypes
         CBM_AMIGA_35_HD,
         /// <summary>5,25", SS, DD, 35 tracks, GCR</summary>
         CBM_1540,
+        /// <summary>5,25", SS, DD, 40 tracks, GCR</summary>
+        CBM_1540_Ext,
+        /// <summary>5,25", DS, DD, 35 tracks, GCR</summary>
+        CBM_1571,
         #endregion Commodore standard floppy formats
 
         #region NEC standard floppy formats

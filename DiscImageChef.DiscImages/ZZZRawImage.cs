@@ -85,6 +85,13 @@ namespace DiscImageChef.ImagePlugins
                 // Check known disk sizes with sectors smaller than 512
                 switch(imageFilter.GetDataForkLength())
                 {
+					#region Commodore
+					case 174848:
+					case 175531:
+					case 197376:
+					case 351062:
+					case 822400:
+					#endregion Commodore
                     case 81664:
                     case 116480:
                     case 242944:
@@ -115,11 +122,13 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek(0, SeekOrigin.Begin);
 
             string extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
-            if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0)
-                ImageInfo.sectorSize = 2048;
-            else
-            {
-                switch(imageFilter.GetDataForkLength())
+			if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0)
+				ImageInfo.sectorSize = 2048;
+			else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200)
+				ImageInfo.sectorSize = 256;
+			else
+			{
+				switch(imageFilter.GetDataForkLength())
                 {
                     case 242944:
                     case 256256:
@@ -145,7 +154,16 @@ namespace DiscImageChef.ImagePlugins
                     case 80384: // T0S0 = 128bps
                     case 325632: // T0S0 = 128bps, T0S1 = 256bps
                     case 653312: // T0S0 = 128bps, T0S1 = 256bps
-                        ImageInfo.sectorSize = 256;
+					#region Commodore
+					case 174848:
+					case 175531:
+					case 196608:
+					case 197376:
+					case 349696:
+					case 351062:
+					case 822400:
+					#endregion Commodore
+						ImageInfo.sectorSize = 256;
                         break;
                     case 81664:
                         ImageInfo.sectorSize = 319;
@@ -249,7 +267,19 @@ namespace DiscImageChef.ImagePlugins
                     ImageInfo.sectorSize = 8192; // Biggest sector size
                     differentTrackZeroSize = true;
                     break;
-                default:
+				case 175531:
+					ImageInfo.sectors = 683;
+					break;
+				case 197375:
+					ImageInfo.sectors = 768;
+					break;
+				case 351062:
+					ImageInfo.sectors = 1366;
+					break;
+				case 822400:
+					ImageInfo.sectors = 3200;
+					break;
+				default:
                     ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
                     break;
             }
@@ -279,6 +309,7 @@ namespace DiscImageChef.ImagePlugins
                 {
                     ImageInfo.sectorSize = 256;
                     ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
+					ImageInfo.mediaType = MediaType.GENERIC_HDD;
                 }
             }
 
@@ -628,6 +659,8 @@ namespace DiscImageChef.ImagePlugins
                     case 737280:
                         return MediaType.DOS_35_DS_DD_9;
                     case 819200:
+						if(ImageInfo.sectorSize == 256)
+							return MediaType.CBM_35_DD;
                         return MediaType.AppleSonyDS;
                     case 839680:
                         return MediaType.FDFORMAT_35_DD;
@@ -683,7 +716,18 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.ECMA_184_512;
                     case 654540800:
                         return MediaType.ECMA_184;
-                    default:
+					#region Commodore
+					case 174848:
+					case 175531:
+						return MediaType.CBM_1540;
+					case 196608:
+					case 197376:
+						return MediaType.CBM_1540_Ext;
+					case 349696:
+					case 351062:
+						return MediaType.CBM_1571;
+					#endregion Commodore
+					default:
                         return MediaType.GENERIC_HDD;
                 }
             }

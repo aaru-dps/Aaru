@@ -63,6 +63,8 @@ namespace DiscImageChef.Metadata
                 case CommonTypes.MediaType.ATARI_525_ED:
                 case CommonTypes.MediaType.ATARI_525_DD:
                 case CommonTypes.MediaType.CBM_1540:
+                case CommonTypes.MediaType.CBM_1540_Ext:
+                case CommonTypes.MediaType.CBM_1571:
                 case CommonTypes.MediaType.ECMA_66:
                 case CommonTypes.MediaType.ECMA_70:
                 case CommonTypes.MediaType.NEC_525_HD:
