@@ -92,6 +92,10 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
+
+            if(partitionStart + vmfsSuperOff > partitionEnd)
+                return false;
+            
             byte[] sector = imagePlugin.ReadSector(partitionStart + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
