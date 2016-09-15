@@ -198,6 +198,32 @@ namespace DiscImageChef
         {
             return AppleDoubleEpoch.AddSeconds(AppleDoubleTimeStamp);
         }
+
+        public static DateTime ECMAToDateTime(ushort typeAndTimeZone, short year, byte month, byte day, byte hour, byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds, byte microseconds)
+        {
+            byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
+            long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
+            if(specification == 0)
+                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
+
+            ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
+            short offset;
+
+            if((preOffset & 0x800) == 0x800)
+            {
+                offset = (short)(preOffset | 0xF000);
+            }
+            else
+                offset = (short)(preOffset & 0x7FF);
+
+            if(offset == -2047)
+                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
+            
+            if(offset < -1440 || offset > 1440)
+                offset = 0;
+
+            return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).DateTime;
+        }
     }
 }
 
