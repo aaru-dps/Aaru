@@ -138,6 +138,7 @@ Supported file systems for identification and information only
 * Squash file system
 * Cram file system
 * Commodore 1540/1541/1571/1581 filesystems
+* Universal Disk Format (UDF)
 
 Supported checksums
 ===================

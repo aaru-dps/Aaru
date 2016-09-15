@@ -112,6 +112,7 @@
     <Compile Include="Squash.cs" />
     <Compile Include="Cram.cs" />
     <Compile Include="CBM.cs" />
+    <Compile Include="UDF.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
