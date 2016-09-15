@@ -118,6 +118,40 @@ namespace DiscImageChef
 
             return length == 0 ? "" : Encoding.ASCII.GetString(SpacePaddedString, 0, length);
         }
+
+        /// <summary>
+        /// Converts an OSTA compressed unicode byte array to a C# string
+        /// </summary>
+        /// <returns>The C# string.</returns>
+        /// <param name="dstring">OSTA compressed unicode byte array.</param>
+        public static string DecompressUnicode(byte[] dstring)
+        {
+            ushort unicode;
+            byte compId = dstring[0];
+            string temp = "";
+
+            if(compId != 8 && compId != 16)
+                return null;
+
+            for(int byteIndex = 1; byteIndex < dstring.Length;)
+            {
+                if(compId == 16)
+                    unicode = (ushort)(dstring[byteIndex++] << 8);
+                else
+                    unicode = 0;
+
+                if(byteIndex < dstring.Length)
+                    unicode |= dstring[byteIndex++];
+
+                if(unicode == 0)
+                    break;
+
+                temp += Encoding.Unicode.GetString(System.BitConverter.GetBytes(unicode));
+            }
+
+            return temp;
+        }
+
     }
 }
 
