@@ -113,6 +113,7 @@
     <Compile Include="Cram.cs" />
     <Compile Include="CBM.cs" />
     <Compile Include="UDF.cs" />
+    <Compile Include="ECMA67.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

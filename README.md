@@ -139,6 +139,7 @@ Supported file systems for identification and information only
 * Cram file system
 * Commodore 1540/1541/1571/1581 filesystems
 * Universal Disk Format (UDF)
+* ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
 
 Supported checksums
 ===================
