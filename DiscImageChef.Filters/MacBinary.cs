@@ -277,7 +277,8 @@ namespace DiscImageChef.Filters
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             return header.magic == MacBinaryMagic || (header.version == 0 && header.filename[0] > 0 && header.filename[0] < 64 &&
-                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0);
+                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 && (
+                                                          header.dataLength > 0 || header.resourceLength > 0));
         }
 
         public override bool Identify(Stream stream)
@@ -291,7 +292,8 @@ namespace DiscImageChef.Filters
             header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             return header.magic == MacBinaryMagic || (header.version == 0 && header.filename[0] > 0 && header.filename[0] < 64 &&
-                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0);
+                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 && (
+                                                          header.dataLength > 0 || header.resourceLength > 0));
         }
 
         public override bool Identify(string path)
@@ -306,7 +308,8 @@ namespace DiscImageChef.Filters
 
             fstream.Close();
             return header.magic == MacBinaryMagic || (header.version == 0 && header.filename[0] > 0 && header.filename[0] < 64 &&
-                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0);
+                                                      header.zero1 == 0 && header.zero2 == 0 && header.reserved == 0 && (
+                                                          header.dataLength > 0 || header.resourceLength > 0));
         }
 
         public override bool IsOpened()

@@ -133,8 +133,17 @@ namespace DiscImageChef.ImagePlugins
         {
             try
             {
-                imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
+				imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+				byte[] testArray = new byte[512];
+				imageFilter.GetDataForkStream().Read(testArray, 0, 512);
+				imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+				// Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
+				foreach(byte b in testArray)
+				{
+					if(b < 0x20 && b != 0x0A && b != 0x0D)
+						return false;
+				}
+				gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int line = 0;
                 int tracksFound = 0;
                 int tracks = 0;
