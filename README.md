@@ -81,6 +81,7 @@ Supported partitioning schemes
 * Rio Karma partitions
 * UNIX VTOC and disklabel
 * Human68k (Sharp X68000) partitions table
+* Xbox 360 hard coded partitions
 
 Supported file systems for read-only operations
 ===============================================
@@ -140,6 +141,7 @@ Supported file systems for identification and information only
 * Commodore 1540/1541/1571/1581 filesystems
 * Universal Disk Format (UDF)
 * ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
+* Xbox filesystems
 
 Supported checksums
 ===================

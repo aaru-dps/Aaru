@@ -12,7 +12,6 @@ Filesystem plugins:
 --- Add support for Apple DOS filesystems
 --- Add support for ZFS
 --- Add support for NwFS
---- Add support for X-Box filesystems
 --- Add support for ReFS
 
 Partitioning scheme plugins:

@@ -51,6 +51,7 @@
     <Compile Include="DragonFlyBSD.cs" />
     <Compile Include="UNIX.cs" />
     <Compile Include="Human68k.cs" />
+    <Compile Include="Xbox.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
