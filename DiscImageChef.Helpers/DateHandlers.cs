@@ -224,6 +224,11 @@ namespace DiscImageChef
 
             return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).DateTime;
         }
+
+        public static DateTime UNIXHrTimeToDateTime(ulong HRTimeStamp)
+        {
+            return UNIXEpoch.AddTicks((long)(HRTimeStamp / 100));
+        }
     }
 }
 
