@@ -142,6 +142,7 @@ Supported file systems for identification and information only
 * Universal Disk Format (UDF)
 * ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
 * Xbox filesystems
+* Zettabyte File System (ZFS)
 
 Supported checksums
 ===================

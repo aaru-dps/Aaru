@@ -115,6 +115,7 @@
     <Compile Include="UDF.cs" />
     <Compile Include="ECMA67.cs" />
     <Compile Include="FATX.cs" />
+    <Compile Include="ZFS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
