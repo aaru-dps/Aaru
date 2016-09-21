@@ -37,6 +37,8 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using SharpCompress.Compressor;
+using SharpCompress.Compressor.Deflate;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -342,21 +344,44 @@ namespace DiscImageChef.ImagePlugins
 
             if(offset != 0)
             {
-                if((offset & QCowCompressed) == QCowCompressed)
-                    throw new NotImplementedException("Compressed images not yet supported.");
-
                 byte[] cluster;
                 if(!clusterCache.TryGetValue(offset, out cluster))
                 {
-                    cluster = new byte[clusterSize];
-                    imageStream.Seek((long)offset, SeekOrigin.Begin);
-                    imageStream.Read(cluster, 0, clusterSize);
+					if((offset & QCowCompressed) == QCowCompressed)
+					{
+						ulong compSizeMask = 0;
+						ulong offMask = 0;
 
-                    if(clusterCache.Count >= maxClusterCache)
-                        clusterCache.Clear();
+						compSizeMask = (ulong)(1 << qHdr.cluster_bits) - 1;
+						compSizeMask <<= 63 - qHdr.cluster_bits;
+						offMask = (~compSizeMask) ^ QCowCompressed;
 
-                    clusterCache.Add(offset, cluster);
-                }
+						ulong realOff = offset & offMask;
+						ulong compSize = (offset & compSizeMask) >> (63 - qHdr.cluster_bits);
+
+						byte[] zCluster = new byte[compSize];
+						imageStream.Seek((long)realOff, SeekOrigin.Begin);
+						imageStream.Read(zCluster, 0, (int)compSize);
+
+						DeflateStream zStream = new DeflateStream(new MemoryStream(zCluster), CompressionMode.Decompress);
+						cluster = new byte[clusterSize];
+						int read = zStream.Read(cluster, 0, clusterSize);
+
+						if(read != clusterSize)
+							throw new IOException(string.Format("Unable to decompress cluster, expected {0} bytes got {1}", clusterSize, read));
+					}
+					else
+					{
+						cluster = new byte[clusterSize];
+						imageStream.Seek((long)offset, SeekOrigin.Begin);
+						imageStream.Read(cluster, 0, clusterSize);
+					}
+
+					if(clusterCache.Count >= maxClusterCache)
+						clusterCache.Clear();
+
+					clusterCache.Add(offset, cluster);
+				}
 
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }

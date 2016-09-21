@@ -37,6 +37,8 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using SharpCompress.Compressor;
+using SharpCompress.Compressor.Deflate;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -281,6 +283,7 @@ namespace DiscImageChef.ImagePlugins
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             stream.Read(l1Table_b, 0, (int)qHdr.l1_size * 8);
             l1Table = new ulong[qHdr.l1_size];
+			// TODO: Optimize this
             DicConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
             for(long i = 0; i < l1Table.LongLength; i++)
                 l1Table[i] = BigEndianBitConverter.ToUInt64(l1Table_b, (int)(i * 8));
@@ -384,21 +387,46 @@ namespace DiscImageChef.ImagePlugins
 
             if((offset & QCowFlagsMask) != 0)
             {
-                if((offset & QCowCompressed) == QCowCompressed)
-                    throw new NotImplementedException("Compressed images not yet supported.");
+				byte[] cluster;
+				if(!clusterCache.TryGetValue(offset, out cluster))
+				{
 
-                byte[] cluster;
-                if(!clusterCache.TryGetValue(offset, out cluster))
-                {
-                    cluster = new byte[clusterSize];
-                    imageStream.Seek((long)(offset & QCowFlagsMask), SeekOrigin.Begin);
-                    imageStream.Read(cluster, 0, clusterSize);
+					if((offset & QCowCompressed) == QCowCompressed)
+					{
+						ulong compSizeMask = 0;
+						ulong offMask = 0;
 
-                    if(clusterCache.Count >= maxClusterCache)
-                        clusterCache.Clear();
+						compSizeMask = (ulong)(1 << (int)(qHdr.cluster_bits - 8)) - 1;
+						byte countbits = (byte)(qHdr.cluster_bits - 8);
+						compSizeMask <<= (62 - countbits);
+						offMask = (~compSizeMask) & QCowFlagsMask;
 
-                    clusterCache.Add(offset, cluster);
-                }
+						ulong realOff = offset & offMask;
+						ulong compSize = (((offset & compSizeMask) >> (62 - countbits)) + 1) * 512;
+
+						byte[] zCluster = new byte[compSize];
+						imageStream.Seek((long)realOff, SeekOrigin.Begin);
+						imageStream.Read(zCluster, 0, (int)compSize);
+
+						DeflateStream zStream = new DeflateStream(new MemoryStream(zCluster), CompressionMode.Decompress);
+						cluster = new byte[clusterSize];
+						int read = zStream.Read(cluster, 0, clusterSize);
+
+						if(read != clusterSize)
+							throw new IOException(string.Format("Unable to decompress cluster, expected {0} bytes got {1}", clusterSize, read));
+					}
+					else
+					{
+						cluster = new byte[clusterSize];
+						imageStream.Seek((long)(offset & QCowFlagsMask), SeekOrigin.Begin);
+						imageStream.Read(cluster, 0, clusterSize);
+					}
+
+					if(clusterCache.Count >= maxClusterCache)
+						clusterCache.Clear();
+
+					clusterCache.Add(offset, cluster);
+				}
 
                 Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
             }

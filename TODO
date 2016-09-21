@@ -43,7 +43,6 @@ Device handling:
 --- Support MMC feature codes FF33h
 
 QCOW plugin:
---- Add support for compressed images
 --- Add support for encrypted images
 
 VMDK plugin:
