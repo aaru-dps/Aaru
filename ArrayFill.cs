@@ -25,6 +25,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Text;
 
 namespace DiscImageChef
 {
@@ -60,6 +61,20 @@ namespace DiscImageChef
             }
 
             Array.Copy(destinationArray, 0, destinationArray, copyLength, destinationArray.Length - copyLength);
+        }
+
+        public static string ByteArrayToHex(byte[] array)
+        {
+            return ByteArrayToHex(array, false);
+        }
+
+        public static string ByteArrayToHex(byte[] array, bool upper)
+        {
+            StringBuilder sb = new StringBuilder();
+            for(long i = 0; i < array.LongLength; i++)
+                sb.AppendFormat("{0:x2}", array[i]);
+
+            return upper ? sb.ToString().ToUpper() : sb.ToString();
         }
     }
 }
