@@ -58,6 +58,7 @@ Supported disk image formats
 * Apple Universal Disk Image Format (UDIF), including obsolete (previous than DiskCopy 6) versions
 * Apple New Disk Image Format (NDIF, requires Resource Fork)
 * Apple Disk Archival/Retrieval Tool (DART)
+* MAME Compressed Hunks of Data (CHD)
 
 Supported partitioning schemes
 ==============================

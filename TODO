@@ -5,7 +5,6 @@
 --- Add support for IMD images
 --- Add support for Kryoflux images
 --- Add support for DiscFerret images
---- Add support for MAME CHDs
 --- Add support for XPACK images
 
 Filesystem plugins:
@@ -59,6 +58,11 @@ NDIF plugin:
 
 DART plugin:
 --- Add support for chunks compressed with RLE or LZH
+
+CHD plugin:
+--- Add support for compressed hunks on CD disc images
+--- Add support for compressed version 5 disk images
+--- Add support for PCMCIA images
 
 Filters:
 --- Add support for XZ compressed files
