@@ -341,6 +341,8 @@ namespace DiscImageChef.DiscImages
 						throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
 					if((bChnk.type == ChunkType_ADC))
 						throw new ImageNotSupportedException("Chunks compressed with ADC are not yet supported.");
+					if((bChnk.type == ChunkType_StuffIt))
+						throw new ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
 
 					// TODO: Handle compressed chunks
 					if((bChnk.type > ChunkType_Copy && bChnk.type < ChunkType_KenCode) ||
