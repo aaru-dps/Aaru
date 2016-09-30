@@ -43,6 +43,7 @@ using DiscImageChef.Filters;
 using SharpCompress.Compressors.Deflate;
 using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors;
+using SharpCompress.Compressors.ADC;
 
 namespace DiscImageChef.DiscImages
 {
@@ -484,8 +485,6 @@ namespace DiscImageChef.DiscImages
 							throw new ImageNotSupportedException("Chunks compressed with RLE are not yet supported.");
 						if((bChnk.type == ChunkType_LZH))
 							throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-						if((bChnk.type == ChunkType_ADC))
-							throw new ImageNotSupportedException("Chunks compressed with ADC are not yet supported.");
 						if((bChnk.type == ChunkType_LZFSE))
 							throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
 
@@ -559,7 +558,9 @@ namespace DiscImageChef.DiscImages
 					MemoryStream cmpMs = new MemoryStream(cmpBuffer);
 					Stream decStream;
 
-					if(currentChunk.type == ChunkType_Zlib)
+					if(currentChunk.type == ChunkType_ADC)
+						decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
+					else if(currentChunk.type == ChunkType_Zlib)
 						decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
 					else if(currentChunk.type == ChunkType_Bzip)
 						decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
