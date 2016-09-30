@@ -50,10 +50,10 @@ VMDK plugin:
 --- Add support for encrypted extents
 
 UDIF plugin:
---- Add support for chunks compressed with ADC, RLE, LZH or KenCode
+--- Add support for chunks compressed with RLE, LZH, KenCode or LZFSE
 
 NDIF plugin:
---- Add support for chunks compressed with ADC, RLE, LZH or KenCode
+--- Add support for chunks compressed with RLE, LZH or KenCode
 
 DART plugin:
 --- Add support for chunks compressed with RLE or LZH
