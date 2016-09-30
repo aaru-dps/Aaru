@@ -1,3 +1,13 @@
+2016-09-30  Natalia Portillo  <claunia@claunia.com>
+
+	* CHD.cs:
+	* QCOW.cs:
+	* UDIF.cs:
+	* QCOW2.cs:
+	* packages.config:
+	* DiscImageChef.DiscImages.csproj: Updated SharpCompress to
+	0.13.0
+
 2016-09-07  Natalia Portillo  <claunia@claunia.com>
 
 	* NDIF.cs:

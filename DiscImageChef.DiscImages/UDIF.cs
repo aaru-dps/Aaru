@@ -40,8 +40,9 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Filters;
-using SharpCompress.Compressor.Deflate;
-using SharpCompress.Compressor.BZip2;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors;
 
 namespace DiscImageChef.DiscImages
 {
@@ -559,9 +560,9 @@ namespace DiscImageChef.DiscImages
 					Stream decStream;
 
 					if(currentChunk.type == ChunkType_Zlib)
-						decStream = new ZlibStream(cmpMs, SharpCompress.Compressor.CompressionMode.Decompress);
+						decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
 					else if(currentChunk.type == ChunkType_Bzip)
-						decStream = new BZip2Stream(cmpMs, SharpCompress.Compressor.CompressionMode.Decompress);
+						decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
 					else
 						throw new ImageNotSupportedException(string.Format("Unsupported chunk type 0x{0:X8} found", currentChunk.type));
 

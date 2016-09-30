@@ -41,8 +41,8 @@ using DiscImageChef.Console;
 using DiscImageChef.Filters;
 using System.Linq;
 using System.Text;
-using SharpCompress.Compressor.Deflate;
-using SharpCompress.Compressor;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors;
 using System.Reflection;
 using System.Reflection.Emit;
 

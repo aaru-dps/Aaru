@@ -37,8 +37,8 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using SharpCompress.Compressor;
-using SharpCompress.Compressor.Deflate;
+using SharpCompress.Compressors;
+using SharpCompress.Compressors.Deflate;
 
 namespace DiscImageChef.ImagePlugins
 {
