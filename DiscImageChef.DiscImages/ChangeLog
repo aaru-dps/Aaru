@@ -1,3 +1,9 @@
+2016-10-07  Natalia Portillo  <claunia@claunia.com>
+
+	* AppleNIB.cs:
+	* DiscImageChef.DiscImages.csproj: Adds support for Apple
+	nibble disk images.
+
 2016-09-30  Natalia Portillo  <claunia@claunia.com>
 
 	* NDIF.cs:

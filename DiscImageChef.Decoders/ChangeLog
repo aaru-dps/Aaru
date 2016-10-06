@@ -1,3 +1,12 @@
+2016-10-07  Natalia Portillo  <claunia@claunia.com>
+
+	* Apple2.cs: Adds support for marshaling a whole disk, tracks
+	and sectors as well as decoding sectors in 5and3 and 6and2
+	GCRs.
+
+	* AppleSony.cs: Adds support for marshaling a whole disk,
+	tracks and sectors as well as decoding GCR sectors.
+
 2016-08-22  Natalia Portillo  <claunia@claunia.com>
 
 	* LisaTag.cs: Removed temporal variable.

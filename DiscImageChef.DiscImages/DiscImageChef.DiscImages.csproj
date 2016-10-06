@@ -69,6 +69,7 @@
     <Compile Include="NDIF.cs" />
     <Compile Include="DART.cs" />
     <Compile Include="CHD.cs" />
+    <Compile Include="AppleNIB.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
