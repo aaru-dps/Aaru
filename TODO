@@ -8,7 +8,6 @@
 --- Add support for XPACK images
 
 Filesystem plugins:
---- Add support for Apple DOS filesystems
 --- Add support for NwFS
 --- Add support for ReFS
 

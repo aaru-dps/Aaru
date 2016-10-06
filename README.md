@@ -18,7 +18,6 @@ Works under any operating system where there is Mono or .NET Framework. Tested w
 
 Features
 ========
-
 * Can read several disk image formats.
 * Can read standard sector by sector copies for optical and magnetic discs with constant bytes per sector.
 * Can read several known sector by sector formats with variable bytes per sector.
@@ -59,6 +58,7 @@ Supported disk image formats
 * Apple New Disk Image Format (NDIF, requires Resource Fork)
 * Apple Disk Archival/Retrieval Tool (DART)
 * MAME Compressed Hunks of Data (CHD)
+* Apple II nibble images (NIB)
 
 Supported partitioning schemes
 ==============================
@@ -90,6 +90,7 @@ Supported file systems for read-only operations
 * Apple Macintosh File System (MFS)
 * U.C.S.D Pascal file system
 * CP/M file system
+* Apple DOS file system
 
 Supported file systems for identification and information only
 ==============================================================
