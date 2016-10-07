@@ -1,3 +1,8 @@
+2016-10-07  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.csproj:
+	  Link new documentation files.
+
 2016-09-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Ls.cs:
