@@ -70,6 +70,7 @@
     <Compile Include="DART.cs" />
     <Compile Include="CHD.cs" />
     <Compile Include="AppleNIB.cs" />
+    <Compile Include="CloneCD.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
