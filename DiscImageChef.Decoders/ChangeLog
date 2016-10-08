@@ -1,3 +1,8 @@
+2016-10-08  Natalia Portillo  <claunia@claunia.com>
+
+	* Sector.cs:
+	* DiscImageChef.Decoders.csproj: Added CD sector descrambling.
+
 2016-10-07  Natalia Portillo  <claunia@claunia.com>
 
 	* Apple2.cs: Adds support for marshaling a whole disk, tracks

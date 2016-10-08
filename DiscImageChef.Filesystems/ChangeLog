@@ -1,3 +1,9 @@
+2016-10-08  Natalia Portillo  <claunia@claunia.com>
+
+	* FAT.cs: Add sanity check for BPB.
+
+	* AppleHFS.cs: Correct calling of Read2048SectorAs512()
+
 2016-10-07  Natalia Portillo  <claunia@claunia.com>
 
 	* Dir.cs:

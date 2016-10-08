@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
 
                     return drSigWord != HFSP_MAGIC;
                 }
-                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
+                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart * 4);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
@@ -140,12 +140,12 @@ namespace DiscImageChef.Filesystems
                 }
                 else
                 {
-                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart);
+                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart * 4);
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                     if(drSigWord == HFS_MAGIC)
                     {
-                        bb_sector = Read2048SectorAs512(imagePlugin, partitionStart);
+                        bb_sector = Read2048SectorAs512(imagePlugin, partitionStart * 4);
                         APMFromHDDOnCD = true;
                     }
                     else

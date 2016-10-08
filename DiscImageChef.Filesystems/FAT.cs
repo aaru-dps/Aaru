@@ -85,6 +85,9 @@ namespace DiscImageChef.Filesystems
 
             if(bpb_found)
             {
+                if(bpb_sector[0x0D] == 0)
+                    return false;
+                
                 first_fat_entry = BitConverter.ToUInt32(fat_sector, 0); // Easier to manage
 
                 DicConsole.DebugWriteLine("FAT plugin", "fats_no = {0}", fats_no);
