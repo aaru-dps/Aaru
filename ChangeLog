@@ -1,3 +1,10 @@
+2016-10-10  Natalia Portillo  <claunia@claunia.com>
+
+	* Modes.cs: Added DDS-2.
+	Corrected casting of density enumeration.
+
+	* Types.cs: Added DDS-2
+
 2016-10-08  Natalia Portillo  <claunia@claunia.com>
 
 	* Sector.cs:
