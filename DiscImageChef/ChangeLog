@@ -1,3 +1,8 @@
+2016-10-10  Natalia Portillo  <claunia@claunia.com>
+
+	* DetectImageFormat.cs:
+	  Add debug output.
+
 2016-10-07  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.csproj:

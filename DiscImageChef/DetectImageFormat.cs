@@ -32,6 +32,7 @@
 
 using System;
 using DiscImageChef.Filters;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -54,6 +55,7 @@ namespace DiscImageChef.ImagePlugins
                     {
                         try
                         {
+                            DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", _imageplugin.Name);
                             if(_imageplugin.IdentifyImage(imageFilter))
                             {
                                 _imageFormat = _imageplugin;
@@ -77,6 +79,7 @@ namespace DiscImageChef.ImagePlugins
                         {
                             try
                             {
+                                DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", _imageplugin.Name);
                                 if(_imageplugin.IdentifyImage(imageFilter))
                                 {
                                     _imageFormat = _imageplugin;

@@ -1,3 +1,7 @@
+2016-10-10  Natalia Portillo  <claunia@claunia.com>
+
+	* CloneCD.cs: Correct subchannel reading.
+
 2016-10-08  Natalia Portillo  <claunia@claunia.com>
 
 	* CloneCD.cs:

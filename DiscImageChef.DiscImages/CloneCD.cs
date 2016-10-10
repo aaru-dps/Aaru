@@ -95,7 +95,7 @@ namespace DiscImageChef.DiscImages
 		public CloneCD()
 		{
 			Name = "CloneCD";
-			PluginUUID = new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784\n");
+			PluginUUID = new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
 			ImageInfo = new ImageInfo();
 			ImageInfo.readableSectorTags = new List<SectorTagType>();
 			ImageInfo.readableMediaTags = new List<MediaTagType>();
@@ -1053,8 +1053,8 @@ namespace DiscImageChef.DiscImages
 					break;
 				case SectorTagType.CDSectorSubchannel:
 					buffer = new byte[96 * length];
-					dataStream.Seek((long)(_track.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
-					dataStream.Read(buffer, 0, buffer.Length);
+					subStream.Seek((long)(_track.TrackSubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
+					subStream.Read(buffer, 0, buffer.Length);
 					break;
 				default:
 					throw new ArgumentException("Unsupported tag requested", nameof(tag));
