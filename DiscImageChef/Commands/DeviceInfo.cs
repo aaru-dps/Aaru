@@ -279,14 +279,10 @@ namespace DiscImageChef.Commands
 
                         sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
                         if(sense || dev.Error)
-                        {
                             sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
-                        }
 
                         if(!sense && !dev.Error)
-                        {
                             decMode = Decoders.SCSI.Modes.DecodeMode10(modeBuf, devType);
-                        }
 
                         if(sense || dev.Error || !decMode.HasValue)
                         {

@@ -1,5 +1,10 @@
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceInfo.cs:
+	  Removed some spurious brackets.
+
+2016-10-10  Natalia Portillo  <claunia@claunia.com>
+
 	* DetectImageFormat.cs:
 	  Add debug output.
 

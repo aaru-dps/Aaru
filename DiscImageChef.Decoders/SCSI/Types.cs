@@ -813,6 +813,10 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         DLT4_85k = 0x1B,
         /// <summary>
+        /// DDS-2
+        /// </summary>
+        DDS2 = 0x24,
+        /// <summary>
         /// DDS-3
         /// </summary>
         DDS3 = 0x25,

@@ -1,3 +1,7 @@
+2016-10-10  Natalia Portillo  <claunia@claunia.com>
+
+	* SPC.cs: Corrected buffer size for MODE SENSE (6)
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Devices.csproj: Bumped version to 3.2.99.2.

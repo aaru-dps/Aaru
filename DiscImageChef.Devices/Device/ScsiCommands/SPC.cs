@@ -254,7 +254,7 @@ namespace DiscImageChef.Devices
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
-            buffer = new byte[4096];
+            buffer = new byte[255];
             bool sense;
 
             cdb[0] = (byte)ScsiCommands.ModeSense;
