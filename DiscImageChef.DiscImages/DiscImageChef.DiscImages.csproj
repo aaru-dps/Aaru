@@ -71,6 +71,7 @@
     <Compile Include="CHD.cs" />
     <Compile Include="AppleNIB.cs" />
     <Compile Include="CloneCD.cs" />
+    <Compile Include="DiscJuggler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

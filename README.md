@@ -59,6 +59,7 @@ Supported disk image formats
 * Apple Disk Archival/Retrieval Tool (DART)
 * MAME Compressed Hunks of Data (CHD)
 * Apple II nibble images (NIB)
+* DiscJuggler images
 
 Supported partitioning schemes
 ==============================
