@@ -1071,9 +1071,474 @@ namespace DiscImageChef.Commands
                 physicalBlockSize = blockSize;
             }
 
+            DateTime start;
+            DateTime end;
+            double totalDuration = 0;
+            double totalChkDuration = 0;
+            double currentSpeed = 0;
+            double maxSpeed = double.MinValue;
+            double minSpeed = double.MaxValue;
+            List<ulong> unreadableSectors = new List<ulong>();
+            Core.Checksum dataChk;
+            CICMMetadataType sidecar = new CICMMetadataType();
+
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
             {
-                throw new NotImplementedException();
+                if(options.Raw)
+                    throw new ArgumentException("Tapes cannot be dumped raw.");
+
+                Decoders.SCSI.FixedSense? fxSense;
+                string strSense;
+                byte[] tapeBuf;
+
+                dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+
+                if(fxSense.HasValue && fxSense.Value.SenseKey != Decoders.SCSI.SenseKeys.NoSense)
+                {
+                    DicConsole.ErrorWriteLine("Drive has status error, please correct. Sense follows...");
+                    DicConsole.ErrorWriteLine("{0}", strSense);
+                    return;
+                }
+
+                // Not in BOM/P
+                if(fxSense.HasValue && fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04)
+                {
+                    DicConsole.Write("Rewinding, please wait...");
+                    // Rewind, let timeout apply
+                    sense = dev.Rewind(out senseBuf, dev.Timeout, out duration);
+
+                    // Still rewinding?
+                    // TODO: Pause?
+                    do
+                    {
+                        DicConsole.Write("\rRewinding, please wait...");
+                        dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                        fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                    }
+                    while(fxSense.HasValue && fxSense.Value.ASC == 0x00 && (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ != 0x04));
+
+                    dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                    fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+
+                    // And yet, did not rewind!
+                    if(fxSense.HasValue && ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04) || fxSense.Value.ASC != 0x00))
+                    {
+                        DicConsole.WriteLine();
+                        DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
+                        DicConsole.ErrorWriteLine("{0}", strSense);
+                        return;
+                    }
+
+                    DicConsole.WriteLine();
+                }
+
+                // Check position
+                sense = dev.ReadPosition(out tapeBuf, out senseBuf, SscPositionForms.Short, dev.Timeout, out duration);
+
+                if(sense)
+                {
+                    // READ POSITION is mandatory starting SCSI-2, so do not cry if the drive does not recognize the command (SCSI-1 or earlier)
+                    // Anyway, <=SCSI-1 tapes do not support partitions
+                    fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                    if(fxSense.HasValue && ((fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00) || fxSense.Value.ASC != 0x20))
+                    {
+                        DicConsole.ErrorWriteLine("Could not get position. Sense follows...");
+                        DicConsole.ErrorWriteLine("{0}", strSense);
+                        return;
+                    }
+                }
+                else
+                {
+                    // Not in partition 0
+                    if(tapeBuf[1] != 0)
+                    {
+                        DicConsole.Write("Drive not in partition 0. Rewinding, please wait...");
+                        // Rewind, let timeout apply
+                        sense = dev.Locate(out senseBuf, false, 0, 0, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.WriteLine();
+                            DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
+                            DicConsole.ErrorWriteLine("{0}", strSense);
+                            return;
+                        }
+
+                        // Still rewinding?
+                        // TODO: Pause?
+                        do
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                            DicConsole.Write("\rRewinding, please wait...");
+                            dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                            fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                        }
+                        while(fxSense.HasValue && fxSense.Value.ASC == 0x00 && (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+
+                        // And yet, did not rewind!
+                        if(fxSense.HasValue && ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04) || fxSense.Value.ASC != 0x00))
+                        {
+                            DicConsole.WriteLine();
+                            DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
+                            DicConsole.ErrorWriteLine("{0}", strSense);
+                            return;
+                        }
+
+                        sense = dev.ReadPosition(out tapeBuf, out senseBuf, SscPositionForms.Short, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                            DicConsole.ErrorWriteLine("Drive could not rewind, please correct. Sense follows...");
+                            DicConsole.ErrorWriteLine("{0}", strSense);
+                            return;
+                        }
+
+                        // Still not in partition 0!!!?
+                        if(tapeBuf[1] != 0)
+                        {
+                            DicConsole.ErrorWriteLine("Drive could not rewind to partition 0 but no error occurred...");
+                            return;
+                        }
+
+                        DicConsole.WriteLine();
+                    }
+                }
+
+                sidecar.BlockMedia = new BlockMediaType[1];
+                sidecar.BlockMedia[0] = new BlockMediaType();
+                sidecar.BlockMedia[0].SCSI = new SCSIType();
+                byte scsiMediumTypeTape = 0;
+                byte scsiDensityCodeTape = 0;
+
+                sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out duration);
+                if(!sense || dev.Error)
+                {
+                    sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                }
+
+                Decoders.SCSI.Modes.DecodedMode? decMode = null;
+
+                if(!sense && !dev.Error)
+                {
+                    if(Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType).HasValue)
+                    {
+                        decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType);
+                        sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType();
+                        sidecar.BlockMedia[0].SCSI.ModeSense10.Image = options.OutputPrefix + ".modesense10.bin";
+                        sidecar.BlockMedia[0].SCSI.ModeSense10.Size = cmdBuf.Length;
+                        sidecar.BlockMedia[0].SCSI.ModeSense10.Checksums = Core.Checksum.GetChecksums(cmdBuf).ToArray();
+                        writeToFile(sidecar.BlockMedia[0].SCSI.ModeSense10.Image, cmdBuf);
+                    }
+                }
+
+                sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                if(sense || dev.Error)
+                    sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out duration);
+                if(sense || dev.Error)
+                    sense = dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
+
+                if(!sense && !dev.Error)
+                {
+                    if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType).HasValue)
+                    {
+                        decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType);
+                        sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType();
+                        sidecar.BlockMedia[0].SCSI.ModeSense.Image = options.OutputPrefix + ".modesense.bin";
+                        sidecar.BlockMedia[0].SCSI.ModeSense.Size = cmdBuf.Length;
+                        sidecar.BlockMedia[0].SCSI.ModeSense.Checksums = Core.Checksum.GetChecksums(cmdBuf).ToArray();
+                        writeToFile(sidecar.BlockMedia[0].SCSI.ModeSense.Image, cmdBuf);
+                    }
+                }
+
+                // TODO: Check partitions page
+                if(decMode.HasValue)
+                {
+                    scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
+                    if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
+                        scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                }
+
+                if(dskType == MediaType.Unknown)
+                    dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize);
+
+                DicConsole.WriteLine("Media identified as {0}", dskType);
+
+                bool endOfMedia = false;
+                ulong currentBlock = 0;
+                ulong currentFile = 0;
+                byte currentPartition = 0;
+                byte totalPartitions = 1; // TODO: Handle partitions.
+                blockSize = 1;
+                ulong currentSize = 0;
+                ulong currentPartitionSize = 0;
+                ulong currentFileSize = 0;
+
+                Core.Checksum partitionChk;
+                Core.Checksum fileChk;
+                List<TapePartitionType> partitions = new List<TapePartitionType>();
+                List<TapeFileType> files = new List<TapeFileType>();
+                TapeFileType currentTapeFile = new TapeFileType();
+                TapePartitionType currentTapePartition = new TapePartitionType();
+
+                DicConsole.WriteLine();
+                initDataFile(options.OutputPrefix + ".bin");
+                dataChk = new Core.Checksum();
+                start = DateTime.UtcNow;
+                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
+                ibgLog = new Core.IBGLog(options.OutputPrefix + ".ibg", 0x0008);
+
+                currentTapeFile = new TapeFileType();
+                currentTapeFile.Image = new ImageType();
+                currentTapeFile.Image.format = "BINARY";
+                currentTapeFile.Image.offset = (long)currentSize;
+                currentTapeFile.Image.offsetSpecified = true;
+                currentTapeFile.Image.Value = options.OutputPrefix + ".bin";
+                currentTapeFile.Sequence = (long)currentFile;
+                currentTapeFile.StartBlock = (long)currentBlock;
+                fileChk = new Core.Checksum();
+                currentTapePartition = new TapePartitionType();
+                currentTapePartition.Image = new ImageType();
+                currentTapePartition.Image.format = "BINARY";
+                currentTapePartition.Image.offset = (long)currentSize;
+                currentTapePartition.Image.offsetSpecified = true;
+                currentTapePartition.Image.Value = options.OutputPrefix + ".bin";
+                currentTapePartition.Sequence = (long)currentPartition;
+                currentTapePartition.StartBlock = (long)currentBlock;
+                partitionChk = new Core.Checksum();
+
+                aborted = false;
+                System.Console.CancelKeyPress += (sender, e) =>
+                {
+                    e.Cancel = aborted = true;
+                };
+
+                while(currentPartition < totalPartitions)
+                {
+                    if(aborted)
+                        break;
+
+                    if(endOfMedia)
+                    {
+                        DicConsole.WriteLine();
+                        DicConsole.WriteLine("Finished partition {0}", currentPartition);
+                        currentTapePartition.File = files.ToArray();
+                        currentTapePartition.Checksums = partitionChk.End().ToArray();
+                        currentTapePartition.EndBlock = (long)(currentBlock - 1);
+                        currentTapePartition.Size = (long)currentPartitionSize;
+                        partitions.Add(currentTapePartition);
+
+                        currentPartition++;
+
+                        if(currentPartition < totalPartitions)
+                        {
+                            currentFile++;
+                            currentTapeFile = new TapeFileType();
+                            currentTapeFile.Image = new ImageType();
+                            currentTapeFile.Image.format = "BINARY";
+                            currentTapeFile.Image.offset = (long)currentSize;
+                            currentTapeFile.Image.offsetSpecified = true;
+                            currentTapeFile.Image.Value = options.OutputPrefix + ".bin";
+                            currentTapeFile.Sequence = (long)currentFile;
+                            currentTapeFile.StartBlock = (long)currentBlock;
+                            currentFileSize = 0;
+                            fileChk = new Core.Checksum();
+                            files = new List<TapeFileType>();
+                            currentTapePartition = new TapePartitionType();
+                            currentTapePartition.Image = new ImageType();
+                            currentTapePartition.Image.format = "BINARY";
+                            currentTapePartition.Image.offset = (long)currentSize;
+                            currentTapePartition.Image.offsetSpecified = true;
+                            currentTapePartition.Image.Value = options.OutputPrefix + ".bin";
+                            currentTapePartition.Sequence = currentPartition;
+                            currentTapePartition.StartBlock = (long)currentBlock;
+                            currentPartitionSize = 0;
+                            partitionChk = new Core.Checksum();
+                            DicConsole.WriteLine("Seeking to partition {0}", currentPartition);
+                            sense = dev.Locate(out senseBuf, false, currentPartition, 0, dev.Timeout, out duration);
+                            totalDuration += duration;
+                        }
+
+                        continue;
+                    }
+                    
+                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                    if(currentSpeed > maxSpeed && currentSpeed != 0)
+                        maxSpeed = currentSpeed;
+                    if(currentSpeed < minSpeed && currentSpeed != 0)
+                        minSpeed = currentSpeed;
+                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+
+                    DicConsole.Write("\rReading block {0} ({1:F3} MiB/sec.)", currentBlock, currentSpeed);
+
+                    sense = dev.Read6(out tapeBuf, out senseBuf, false, blockSize, blockSize, dev.Timeout, out duration);
+                    totalDuration += duration;
+
+                    if(sense)
+                    {
+                        fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                        if(fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ == 0x00 && fxSense.Value.ILI && fxSense.Value.InformationValid)
+                        {
+                            blockSize = (uint)((int)blockSize - BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
+
+                            DicConsole.WriteLine();
+                            DicConsole.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
+
+                            sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
+                            totalDuration += duration;
+
+                            if(sense)
+                            {
+                                fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                                DicConsole.WriteLine();
+                                DicConsole.ErrorWriteLine("Drive could not go back one block. Sense follows...");
+                                DicConsole.ErrorWriteLine("{0}", strSense);
+                                closeDataFile();
+                                return;
+                            }
+
+                            continue;
+                        }
+
+                        if(fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.BlankCheck)
+                        {
+                            if(currentBlock == 0)
+                            {
+                                DicConsole.WriteLine();
+                                DicConsole.ErrorWriteLine("Cannot dump a blank tape...");
+                                closeDataFile();
+                                return;
+                            }
+
+                            // For sure this is an end-of-tape/partition
+                            if(fxSense.Value.ASC == 0x00 && (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05))
+                            {
+                                // TODO: Detect end of partition
+                                endOfMedia = true;
+                                continue;
+                            }
+
+                            DicConsole.WriteLine();
+                            DicConsole.WriteLine("Blank block found, end of tape?");
+                            endOfMedia = true;
+                            continue;
+                        }
+
+                        if((fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.NoSense || fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.RecoveredError) &&
+                           (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05))
+                        {
+                            // TODO: Detect end of partition
+                            endOfMedia = true;
+                            continue;
+                        }
+
+                        if((fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.NoSense || fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.RecoveredError) &&
+                           fxSense.Value.ASCQ == 0x01)
+                        {
+                            currentTapeFile.Checksums = fileChk.End().ToArray();
+                            currentTapeFile.EndBlock = (long)(currentBlock - 1);
+                            currentTapeFile.Size = (long)currentFileSize;
+                            files.Add(currentTapeFile);
+
+                            currentFile++;
+                            currentTapeFile = new TapeFileType();
+                            currentTapeFile.Image = new ImageType();
+                            currentTapeFile.Image.format = "BINARY";
+                            currentTapeFile.Image.offset = (long)currentSize;
+                            currentTapeFile.Image.offsetSpecified = true;
+                            currentTapeFile.Image.Value = options.OutputPrefix + ".bin";
+                            currentTapeFile.Sequence = (long)currentFile;
+                            currentTapeFile.StartBlock = (long)currentBlock;
+                            currentFileSize = 0;
+                            fileChk = new Core.Checksum();
+
+                            DicConsole.WriteLine();
+                            DicConsole.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
+                            continue;
+                        }
+
+                        // TODO: Add error recovering for tapes
+                        fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                        DicConsole.ErrorWriteLine("Drive could not read block. Sense follows...");
+                        DicConsole.ErrorWriteLine("{0}", strSense);
+                        return;
+                    }
+
+                    mhddLog.Write(currentBlock, duration);
+                    ibgLog.Write(currentBlock, currentSpeed * 1024);
+                    writeToDataFile(tapeBuf);
+
+                    DateTime chkStart = DateTime.UtcNow;
+                    dataChk.Update(tapeBuf);
+                    fileChk.Update(tapeBuf);
+                    partitionChk.Update(tapeBuf);
+                    DateTime chkEnd = DateTime.UtcNow;
+                    double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
+                    totalChkDuration += chkDuration;
+
+                    if(currentBlock % 10 == 0)
+                        currentSpeed = ((double)2448 / (double)1048576) / (duration / (double)1000);
+                    currentBlock++;
+                    currentSize += blockSize;
+                    currentFileSize += blockSize;
+                    currentPartitionSize += blockSize;
+                }
+
+                blocks = currentBlock + 1;
+                DicConsole.WriteLine();
+                end = DateTime.UtcNow;
+                mhddLog.Close();
+                ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
+
+                DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).", (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
+#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
+                DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.", (((double)blockSize * (double)(blocks + 1)) / 1048576) / (totalDuration / 1000));
+#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
+                DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
+                DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
+
+                sidecar.BlockMedia[0].Checksums = dataChk.End().ToArray();
+                sidecar.BlockMedia[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(dskType);
+                string xmlDskTyp, xmlDskSubTyp;
+                Metadata.MediaType.MediaTypeToString(dskType, out xmlDskTyp, out xmlDskSubTyp);
+                sidecar.BlockMedia[0].DiskType = xmlDskTyp;
+                sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
+                // TODO: Implement device firmware revision
+                sidecar.BlockMedia[0].Image = new ImageType();
+                sidecar.BlockMedia[0].Image.format = "Raw disk image (sector by sector copy)";
+                sidecar.BlockMedia[0].Image.Value = options.OutputPrefix + ".bin";
+                sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
+                sidecar.BlockMedia[0].Size = (long)(currentSize);
+                sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
+                sidecar.BlockMedia[0].DumpHardwareArray[0] = new DumpHardwareType();
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Extents = new ExtentType[1];
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] = new ExtentType();
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0].Start = 0;
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0].End = (int)(blocks - 1);
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Revision = dev.Revision;
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Serial = dev.Serial;
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Software = new SoftwareType();
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Version = typeof(MainClass).Assembly.GetName().Version.ToString();
+                sidecar.BlockMedia[0].TapeInformation = partitions.ToArray();
+
+                if(!aborted)
+                {
+                    DicConsole.WriteLine("Writing metadata sidecar");
+
+                    FileStream xmlFs = new FileStream(options.OutputPrefix + ".cicm.xml",
+                                           FileMode.Create);
+
+                    System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
+                }
+
+                Core.Statistics.AddMedia(dskType, true);
+
+                return;
             }
 
             if(blocks == 0)
@@ -1088,8 +1553,6 @@ namespace DiscImageChef.Commands
             byte scsiDensityCode = 0;
             bool containsFloppyPage = false;
             ushort currentProfile = 0x0001;
-
-            CICMMetadataType sidecar = new CICMMetadataType();
 
             #region MultiMediaDevice
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
@@ -1843,7 +2306,7 @@ namespace DiscImageChef.Commands
                         {
                             if(Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType).HasValue)
                             {
-                                decMode = Decoders.SCSI.Modes.DecodeMode10(cmdBuf, dev.SCSIType);
+                                decMode = Decoders.SCSI.Modes.DecodeMode6(cmdBuf, dev.SCSIType);
                                 sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType();
                                 sidecar.BlockMedia[0].SCSI.ModeSense.Image = options.OutputPrefix + ".modesense.bin";
                                 sidecar.BlockMedia[0].SCSI.ModeSense.Size = cmdBuf.Length;
@@ -1877,15 +2340,6 @@ namespace DiscImageChef.Commands
             uint blocksToRead = 64;
 
             ulong errored = 0;
-            DateTime start;
-            DateTime end;
-            double totalDuration = 0;
-            double totalChkDuration = 0;
-            double currentSpeed = 0;
-            double maxSpeed = double.MinValue;
-            double minSpeed = double.MaxValue;
-            List<ulong> unreadableSectors = new List<ulong>();
-            Core.Checksum dataChk;
 
             aborted = false;
             System.Console.CancelKeyPress += (sender, e) =>

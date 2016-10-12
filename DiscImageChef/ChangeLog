@@ -1,3 +1,8 @@
+2016-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DumpMedia.cs:
+	  Adds support for SCSI Streaming Devices (see #65).
+
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
