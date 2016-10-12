@@ -1,3 +1,11 @@
+2016-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* SPC.cs: Added REQUEST SENSE command.
+
+	* SSC.cs: Added SPACE command.
+
+	* Enums.cs: Added enumeration for SPACE command codes.
+
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
 
 	* SPC.cs: Corrected buffer size for MODE SENSE (6)

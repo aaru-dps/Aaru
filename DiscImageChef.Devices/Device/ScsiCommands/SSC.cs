@@ -978,6 +978,28 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        public bool Space(out byte[] senseBuffer, SscSpaceCodes code, int count, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            byte[] buffer = new byte[0];
+            bool sense;
+            byte[] count_b = BitConverter.GetBytes(count);
+
+            cdb[0] = (byte)ScsiCommands.Space;
+            cdb[1] = (byte)((byte)code & 0x0F);
+            cdb[2] = count_b[2];
+            cdb[3] = count_b[1];
+            cdb[4] = count_b[0];
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "SPACE took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 

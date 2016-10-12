@@ -774,6 +774,34 @@ namespace DiscImageChef.Devices
 
             return sense;
         }
+
+        public bool RequestSense(out byte[] buffer, uint timeout, out double duration)
+        {
+            return RequestSense(false, out buffer, timeout, out duration);
+        }
+
+        public bool RequestSense(bool descriptor, out byte[] buffer, uint timeout, out double duration)
+        {
+            byte[] senseBuffer = new byte[32];
+            byte[] cdb = new byte[6];
+            buffer = new byte[252];
+            bool sense;
+
+            cdb[0] = (byte)ScsiCommands.RequestSense;
+            if(descriptor)
+                cdb[1] = 0x01;
+            cdb[2] = 0;
+            cdb[3] = 0;
+            cdb[4] = (byte)buffer.Length;
+            cdb[5] = 0;
+
+            lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("SCSI Device", "REQUEST SENSE took {0} ms.", duration);
+
+            return sense;
+        }
     }
 }
 

@@ -679,6 +679,22 @@ namespace DiscImageChef.Metadata
                     DiscType = "HDD";
                     DiscSubType = "Priam DataTower";
                     break;
+                case CommonTypes.MediaType.DDS1:
+                    DiscType = "DDS";
+                    DiscSubType = "DDS";
+                    break;
+                case CommonTypes.MediaType.DDS2:
+                    DiscType = "DDS";
+                    DiscSubType = "DDS-2";
+                    break;
+                case CommonTypes.MediaType.DDS3:
+                    DiscType = "DDS";
+                    DiscSubType = "DDS-3";
+                    break;
+                case CommonTypes.MediaType.DDS4:
+                    DiscType = "DDS";
+                    DiscSubType = "DDS-4";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

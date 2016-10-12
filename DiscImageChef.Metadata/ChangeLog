@@ -1,3 +1,7 @@
+2016-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs: Added support for DDS, DDS-2, DDS-3, DDS-4.
+
 2016-08-09  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.Metadata.csproj: Bumped version to 3.2.99.2.

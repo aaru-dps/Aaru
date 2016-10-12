@@ -3432,5 +3432,28 @@ namespace DiscImageChef.Devices
         /// </summary>
         Half = 7
     }
+
+    // TODO: Check obsoletes
+    public enum SscSpaceCodes : byte
+    {
+        /// <summary>
+        /// Logical blocks
+        /// </summary>
+        LogicalBlock = 0,
+        /// <summary>
+        /// Filemarks
+        /// </summary>
+        Filemark = 1,
+        /// <summary>
+        /// Sequential filemarks
+        /// </summary>
+        SequentialFilemark = 2,
+        /// <summary>
+        /// End-of-data
+        /// </summary>
+        EndOfData = 3,
+        Obsolete1 = 4,
+        Obsolete2 = 5
+    }
 }
 
