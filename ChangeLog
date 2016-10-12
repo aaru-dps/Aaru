@@ -1,3 +1,8 @@
+2016-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaTypeFromSCSI.cs: Added DDS-2, DDS-3, DDS-4 with no
+	medium type code.
+
 2016-08-21  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs: Added missing NEC and SHARP floppy types.
