@@ -31,16 +31,16 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
-using System.IO;
-using DiscImageChef.Devices;
 using System.Collections.Generic;
-using Schemas;
+using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
+using DiscImageChef.Console;
+using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
+using DiscImageChef.PartPlugins;
+using Schemas;
 
 namespace DiscImageChef.Commands
 {
@@ -1360,13 +1360,13 @@ namespace DiscImageChef.Commands
 
                         continue;
                     }
-                    
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed && currentSpeed != 0)
                         maxSpeed = currentSpeed;
                     if(currentSpeed < minSpeed && currentSpeed != 0)
                         minSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rReading block {0} ({1:F3} MiB/sec.)", currentBlock, currentSpeed);
 
@@ -2400,7 +2400,7 @@ namespace DiscImageChef.Commands
                         minSpeed = currentSpeed;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", (int)leadInBlock, currentSpeed);
+                    DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", leadInBlock, currentSpeed);
 
                     sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)leadInBlock, 2448, 1, MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
                         true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout, out cmdDuration);
@@ -2424,7 +2424,9 @@ namespace DiscImageChef.Commands
                         }
                     }
 
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = ((double)2448 / (double)1048576) / (cmdDuration / (double)1000);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
 
                 closeDataFile();
@@ -2523,12 +2525,16 @@ namespace DiscImageChef.Commands
                         ibgLog.Write(i, 0);
                     }
 
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = ((double)2448 * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
                 DicConsole.WriteLine();
                 end = DateTime.UtcNow;
                 mhddLog.Close();
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                 ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
 
                 #region Compact Disc Error handling
                 if(unreadableSectors.Count > 0 && !aborted)
@@ -2676,7 +2682,9 @@ namespace DiscImageChef.Commands
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                     totalChkDuration += chkDuration;
 
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (chkDuration / (double)1000);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
                 DicConsole.WriteLine();
                 closeDataFile();
@@ -3020,9 +3028,13 @@ namespace DiscImageChef.Commands
                         return;
                     }
 
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     if(!read16 && blocks > ((long)0xFFFFFFFF + (long)1))
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                     {
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                         DicConsole.ErrorWriteLine("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)", (long)0xFFFFFFFF + (long)1, blocks);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                         return;
                     }
 
@@ -3181,12 +3193,16 @@ namespace DiscImageChef.Commands
                         ibgLog.Write(i, 0);
                     }
 
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
                 }
                 end = DateTime.UtcNow;
                 DicConsole.WriteLine();
                 mhddLog.Close();
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
                 ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024, (((double)blockSize * (double)(blocks + 1)) / 1024) / (totalDuration / 1000), options.DevicePath);
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
 
                 #region Error handling
                 if(unreadableSectors.Count > 0 && !aborted)
@@ -3260,12 +3276,12 @@ namespace DiscImageChef.Commands
                         }
                         else if(read10)
                         {
-                            sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, (ushort)1, dev.Timeout, out cmdDuration);
+                            sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, 1, dev.Timeout, out cmdDuration);
                             totalDuration += cmdDuration;
                         }
                         else if(read6)
                         {
-                            sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, (byte)1, dev.Timeout, out cmdDuration);
+                            sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1, dev.Timeout, out cmdDuration);
                             totalDuration += cmdDuration;
                         }
 

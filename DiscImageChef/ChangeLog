@@ -1,6 +1,12 @@
 2016-10-12  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DumpMedia.cs:
+	  Code cleaning, using sorting and pragma to not mark
+	  necessary casts that seem unnecessary to the compiler.
+
+2016-10-12  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DumpMedia.cs:
 	  Adds support for SCSI Streaming Devices (see #65).
 
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
