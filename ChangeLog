@@ -1,5 +1,9 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs: Add EVPD page 85h, management network addresses.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs:
 	* Enums.cs: Added EVPD page 81h, implemented operating
 	definition page.
