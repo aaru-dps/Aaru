@@ -247,5 +247,61 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         Both = 0x03
     }
+
+    public enum ProtocolIdentifiers : byte
+    {
+        /// <summary>
+        /// Fibre Channel
+        /// </summary>
+        FibreChannel = 0,
+        /// <summary>
+        /// Parallel SCSI
+        /// </summary>
+        SCSI = 1,
+        /// <summary>
+        /// SSA
+        /// </summary>
+        SSA = 2,
+        /// <summary>
+        /// IEEE-1394
+        /// </summary>
+        Firewire = 3,
+        /// <summary>
+        /// SCSI Remote Direct Memory Access Protocol
+        /// </summary>
+        RDMAP = 4,
+        /// <summary>
+        /// Internet SCSI
+        /// </summary>
+        iSCSI = 5,
+        /// <summary>
+        /// Serial SCSI
+        /// </summary>
+        SAS = 6,
+        /// <summary>
+        /// Automation/Drive Interface Transport Protocol
+        /// </summary>
+        ADT = 7,
+        /// <summary>
+        /// AT Attachment Interface (ATA/ATAPI)
+        /// </summary>
+        ATA = 8,
+        /// <summary>
+        /// USB Attached SCSI
+        /// </summary>
+        UAS = 9,
+        /// <summary>
+        /// SCSI over PCI Express
+        /// </summary>
+        SCSIe = 10,
+        /// <summary>
+        /// PCI Express
+        /// </summary>
+        PCIe = 11,
+        /// <summary>
+        /// No specific protocol
+        /// </summary>
+        NoProtocol = 15
+    }
 }
 

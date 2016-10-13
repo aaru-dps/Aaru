@@ -603,6 +603,12 @@ namespace DiscImageChef.Decoders.SCSI
                                                 case DensityType.DDS2:
                                                     density = "DDS-2";
                                                     break;
+                                                case DensityType.DDS3:
+                                                    density = "DDS-3";
+                                                    break;
+                                                case DensityType.DDS4:
+                                                    density = "DDS-4";
+                                                    break;
                                                 default:
                                                     density = string.Format("unknown density code 0x{0:X2}", (byte)descriptor.Density);
                                                     break;
