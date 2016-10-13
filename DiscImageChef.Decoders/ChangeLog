@@ -1,5 +1,9 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs: Updated page 85h to SPC-5.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs: Add EVPD page 85h, management network addresses.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

@@ -802,7 +802,9 @@ namespace DiscImageChef.Decoders.SCSI
             Diagnostics = 2,
             Status = 3,
             Logging = 4,
-            CodeDownload = 5
+            CodeDownload = 5,
+            CopyService = 6,
+            Administrative = 7
         }
 
         public struct NetworkDescriptor
@@ -952,6 +954,12 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                     case NetworkServiceTypes.Unspecified:
                         sb.AppendFormat("Unspecified address: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.CopyService:
+                        sb.AppendFormat("Address for copy service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.Administrative:
+                        sb.AppendFormat("Address for administrative configuration service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
                         break;
                     default:
                         sb.AppendFormat("Address of unknown type {1}: {0}", StringHandlers.CToString(descriptor.Address), (byte)descriptor.Type).AppendLine();
