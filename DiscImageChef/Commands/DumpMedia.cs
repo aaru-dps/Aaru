@@ -933,6 +933,7 @@ namespace DiscImageChef.Commands
             throw new NotImplementedException("MMC/SD devices not yet supported.");
         }
 
+        // TODO: Get cartridge serial number from Certance vendor EVPD
         static void doSCSIMediaScan(DumpMediaOptions options, Device dev)
         {
             byte[] cmdBuf = null;

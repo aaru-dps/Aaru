@@ -1,5 +1,9 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs: Added Certance vendor EVPD pages.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs:
 	* Inquiry.cs: Added Quantum vendor INQUIRY values and EVPD
 	page C0h.

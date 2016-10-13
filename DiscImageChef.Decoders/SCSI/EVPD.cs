@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Policy;
+using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -1503,6 +1504,458 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0xC0 (Quantum): Firmware Build Information page
+
+        #region EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
+
+        /// <summary>
+        /// Drive component revision level pages
+        /// Page codes 0xC0, 0xC1 (Certance)
+        /// </summary>
+        public struct Page_C0_C1_Certance
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] Component;
+            public byte[] Version;
+            public byte[] Date;
+            public byte[] Variant;
+        }
+
+        public static Page_C0_C1_Certance? DecodePage_C0_C1_Certance(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1)
+                return null;
+
+            if(pageResponse[3] != 92)
+                return null;
+
+            if(pageResponse.Length != 96)
+                return null;
+
+            Page_C0_C1_Certance decoded = new Page_C0_C1_Certance();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.Component = new byte[26];
+            decoded.Version = new byte[19];
+            decoded.Date = new byte[24];
+            decoded.Variant = new byte[23];
+
+            Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
+            Array.Copy(pageResponse, 30, decoded.Version, 0, 19);
+            Array.Copy(pageResponse, 49, decoded.Date, 0, 24);
+            Array.Copy(pageResponse, 73, decoded.Variant, 0, 23);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C0_C1_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_C1_Certance(DecodePage_C0_C1_Certance(pageResponse));
+        }
+
+        // TODO: Decode ATA signature?
+        public static string PrettifyPage_C0_C1_Certance(Page_C0_C1_Certance? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C0_C1_Certance page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Certance Drive Component Revision Levels page:");
+
+            sb.AppendFormat("\tComponent: {0}", StringHandlers.CToString(page.Component)).AppendLine();
+            sb.AppendFormat("\tVersion: {0}", StringHandlers.CToString(page.Version)).AppendLine();
+            sb.AppendFormat("\tDate: {0}", StringHandlers.CToString(page.Date)).AppendLine();
+            sb.AppendFormat("\tVariant: {0}", StringHandlers.CToString(page.Variant)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
+
+        #region EVPD Pages 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance): Drive component serial number pages
+
+        /// <summary>
+        /// Drive component serial number pages
+        /// Page codes 0xC2, 0xC3, 0xC4, 0xC5, 0xC6 (Certance)
+        /// </summary>
+        public struct Page_C2_C3_C4_C5_C6_Certance
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] SerialNumber;
+        }
+
+        public static Page_C2_C3_C4_C5_C6_Certance? DecodePage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC2 && pageResponse[1] != 0xC3 &&
+                pageResponse[1] != 0xC4 && pageResponse[1] != 0xC5 &&
+                pageResponse[1] != 0xC6)
+                return null;
+
+            if(pageResponse[3] != 12)
+                return null;
+
+            if(pageResponse.Length != 16)
+                return null;
+
+            Page_C2_C3_C4_C5_C6_Certance decoded = new Page_C2_C3_C4_C5_C6_Certance();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.SerialNumber = new byte[12];
+            Array.Copy(pageResponse, 4, decoded.SerialNumber, 0, 12);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_C2_C3_C4_C5_C6_Certance(DecodePage_C2_C3_C4_C5_C6_Certance(pageResponse));
+        }
+
+        // TODO: Decode ATA signature?
+        public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(Page_C2_C3_C4_C5_C6_Certance? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C2_C3_C4_C5_C6_Certance page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Certance Drive Component Serial Number page:");
+
+            switch(page.PageCode)
+            {
+                case 0xC2:
+                    sb.AppendFormat("\tHead Assembly Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    break;
+                case 0xC3:
+                    sb.AppendFormat("\tReel Motor 1 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    break;
+                case 0xC4:
+                    sb.AppendFormat("\tReel Motor 2 Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    break;
+                case 0xC5:
+                    sb.AppendFormat("\tBoard Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    break;
+                case 0xC6:
+                    sb.AppendFormat("\tBase Mechanical Serial Number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Pages 0xC0, 0xC1 (Certance): Drive component revision level pages
+
+        #region EVPD Page 0xDF (Certance): Drive status pages
+
+        /// <summary>
+        /// Drive status pages
+        /// Page codes 0xDF (Certance)
+        /// </summary>
+        public struct Page_DF_Certance
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// Command forwarding
+            /// </summary>
+            public byte CmdFwd;
+            /// <summary>
+            /// Alerts
+            /// </summary>
+            public bool Alerts;
+            /// <summary>
+            /// Removable prevention
+            /// </summary>
+            public bool NoRemov;
+            /// <summary>
+            /// Unit reservation
+            /// </summary>
+            public bool UnitRsvd;
+            /// <summary>
+            /// Needs cleaning
+            /// </summary>
+            public bool Clean;
+            /// <summary>
+            /// Tape threaded
+            /// </summary>
+            public bool Threaded;
+            /// <summary>
+            /// Commands await forwarding
+            /// </summary>
+            public bool Lun1Cmd;
+            /// <summary>
+            /// Autoload mode
+            /// </summary>
+            public byte AutoloadMode;
+            /// <summary>
+            /// Cartridge type
+            /// </summary>
+            public byte CartridgeType;
+            /// <summary>
+            /// Cartridge format
+            /// </summary>
+            public byte CartridgeFormat;
+            /// <summary>
+            /// Cartridge capacity in 10e9 bytes
+            /// </summary>
+            public ushort CartridgeCapacity;
+            /// <summary>
+            /// Port A transport type
+            /// </summary>
+            public byte PortATransportType;
+            /// <summary>
+            /// Port A SCSI ID
+            /// </summary>
+            public byte PortASelectionID;
+            /// <summary>
+            /// Total number of head-tape contact time
+            /// </summary>
+            public uint OperatingHours;
+            /// <summary>
+            /// ID that reserved the device
+            /// </summary>
+            public ulong InitiatorID;
+            /// <summary>
+            /// Cartridge serial number
+            /// </summary>
+            public byte[] CartridgeSerialNumber;
+        }
+
+        public static Page_DF_Certance? DecodePage_DF_Certance(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xDF)
+                return null;
+
+            if(pageResponse[3] != 60)
+                return null;
+
+            if(pageResponse.Length != 64)
+                return null;
+
+            Page_DF_Certance decoded = new Page_DF_Certance();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.CmdFwd = (byte)((pageResponse[5] & 0xC0) >> 5);
+            decoded.Alerts |= (pageResponse[5] & 0x20) == 0x20;
+            decoded.NoRemov |= (pageResponse[5] & 0x08) == 0x08;
+            decoded.UnitRsvd |= (pageResponse[5] & 0x04) == 0x04;
+            decoded.Clean |= (pageResponse[5] & 0x01) == 0x01;
+            decoded.Threaded |= (pageResponse[6] & 0x10) == 0x10;
+            decoded.Lun1Cmd |= (pageResponse[6] & 0x08) == 0x08;
+            decoded.AutoloadMode = (byte)(pageResponse[6] & 0x07);
+            decoded.CartridgeType = pageResponse[8];
+            decoded.CartridgeFormat = pageResponse[9];
+            decoded.CartridgeCapacity = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4);
+            decoded.PortATransportType = pageResponse[12];
+            decoded.PortASelectionID = pageResponse[15];
+            decoded.OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) + pageResponse[23]);
+
+            byte[] buf = new byte[8];
+            Array.Copy(pageResponse, 24, buf, 0, 8);
+            decoded.InitiatorID = BitConverter.ToUInt64(buf.Reverse().ToArray(), 0);
+
+            decoded.CartridgeSerialNumber = new byte[32];
+            Array.Copy(pageResponse, 32, decoded.CartridgeSerialNumber, 0, 32);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_DF_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_DF_Certance(DecodePage_DF_Certance(pageResponse));
+        }
+
+        // TODO: Decode ATA signature?
+        public static string PrettifyPage_DF_Certance(Page_DF_Certance? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_DF_Certance page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Certance drive status page:");
+
+            switch(page.CmdFwd)
+            {
+                case 0:
+                    sb.AppendLine("\tCommand forwarding is disabled");
+                    break;
+                case 1:
+                    sb.AppendLine("\tCommand forwarding is enabled");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown command forwarding code {0}", page.CmdFwd).AppendLine();
+                    break;
+            }
+
+            if(page.Alerts)
+                sb.AppendLine("\tAlerts are enabled");
+            if(page.NoRemov)
+                sb.AppendLine("\tCartridge removable is prevented");
+            if(page.UnitRsvd)
+                sb.AppendFormat("\tUnit is reserved by initiator ID {0:X16}", page.InitiatorID).AppendLine();
+            if(page.Clean)
+                sb.AppendLine("\tDevice needs cleaning cartridge");
+            if(page.Threaded)
+                sb.AppendLine("\tCartridge tape is threaded");
+            if(page.Lun1Cmd)
+                sb.AppendLine("\tThere are commands pending to be forwarded");
+
+            switch(page.AutoloadMode)
+            {
+                case 0:
+                    sb.AppendLine("\tCartridge will be loaded and threaded on insertion");
+                    break;
+                case 1:
+                    sb.AppendLine("\tCartridge will be loaded but not threaded on insertion");
+                    break;
+                case 2:
+                    sb.AppendLine("\tCartridge will not be loaded");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown autoloading mode code {0}", page.AutoloadMode).AppendLine();
+                    break;
+            }
+
+            switch(page.PortATransportType)
+            {
+                case 0:
+                    sb.AppendLine("\tPort A link is down");
+                    break;
+                case 3:
+                    sb.AppendLine("\tPort A uses Parallel SCSI Ultra-160 interface");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown port A transport type code {0}", page.AutoloadMode).AppendLine();
+                    break;
+            }
+
+            if(page.PortATransportType > 0)
+                sb.AppendFormat("\tDrive responds to SCSI ID {0}", page.PortASelectionID).AppendLine();
+
+            sb.AppendFormat("\tDrive has been operating {0}", TimeSpan.FromHours(page.OperatingHours)).AppendLine();
+
+            if(page.CartridgeType > 0)
+            {
+                switch(page.CartridgeFormat)
+                {
+                    case 0:
+                        sb.AppendLine("\tInserted cartridge is LTO");
+                        break;
+                    default:
+                        sb.AppendFormat("\tUnknown cartridge format code {0}", page.CartridgeType).AppendLine();
+                        break;
+                }
+
+                switch(page.CartridgeType)
+                {
+                    case 0:
+                        sb.AppendLine("\tThere is no cartridge inserted");
+                        break;
+                    case 1:
+                        sb.AppendLine("\tCleaning cartridge inserted");
+                        break;
+                    case 2:
+                        sb.AppendLine("\tUnknown data cartridge inserted");
+                        break;
+                    case 3:
+                        sb.AppendLine("\tFirmware cartridge inserted");
+                        break;
+                    case 4:
+                        sb.AppendLine("\tLTO Ultrium 1 Type A cartridge inserted");
+                        break;
+                    case 5:
+                        sb.AppendLine("\tLTO Ultrium 1 Type B cartridge inserted");
+                        break;
+                    case 6:
+                        sb.AppendLine("\tLTO Ultrium 1 Type C cartridge inserted");
+                        break;
+                    case 7:
+                        sb.AppendLine("\tLTO Ultrium 1 Type D cartridge inserted");
+                        break;
+                    case 8:
+                        sb.AppendLine("\tLTO Ultrium 2 cartridge inserted");
+                    break;
+                    default:
+                        sb.AppendFormat("\tUnknown cartridge type code {0}", page.CartridgeType).AppendLine();
+                        break;
+                }
+
+                sb.AppendFormat("\tCartridge has an uncompressed capabity of {0} gigabytes", page.CartridgeCapacity).AppendLine();
+                sb.AppendFormat("\tCartridge serial number: {0}", StringHandlers.SpacePaddedToString(page.CartridgeSerialNumber)).AppendLine();
+            }
+            else
+                sb.AppendLine("\tThere is no cartridge inserted");
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xDF (Certance): Drive status pages
 
     }
 }

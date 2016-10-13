@@ -1,5 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DumpMedia.cs:
+	* Commands/DeviceInfo.cs:
+	  Added Certance vendor EVPD pages.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DeviceInfo.cs:
 	  Added Quantum vendor INQUIRY values and EVPD page C0h.
 

@@ -310,6 +310,34 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if((page == 0xC0 || page == 0xC1) && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_C1_Certance(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if((page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5 || page == 0xC6) &&
+                                            StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0xDF && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_DF_Certance(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else
                                     {
                                         if(page != 0x00)
