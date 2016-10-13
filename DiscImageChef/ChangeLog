@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added MODE PAGE 1Dh
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added Certance vendor mode pages 21h and 22h.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

@@ -605,6 +605,15 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x1D:
+                                            {
+                                                if(page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1D(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         case 0x21:
                                             {
                                                 if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "CERTANCE")
