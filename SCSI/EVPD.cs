@@ -104,6 +104,29 @@ namespace DiscImageChef.Decoders.SCSI
 
             return StringHandlers.CToString(ascii);
         }
+
+        /// <summary>
+        /// Decodes VPD page 0x82: ASCII implemented operating definition
+        /// </summary>
+        /// <returns>ASCII implemented operating definition.</returns>
+        /// <param name="page">Page 0x82.</param>
+        public static string DecodePage82(byte[] page)
+        {
+            if(page == null)
+                return null;
+
+            if(page[1] != 0x82)
+                return null;
+
+            if(page.Length != page[3] + 4)
+                return null;
+
+            byte[] ascii = new byte[page.Length - 4];
+
+            Array.Copy(page, 4, ascii, 0, page.Length - 4);
+
+            return StringHandlers.CToString(ascii);
+        }
     }
 }
 
