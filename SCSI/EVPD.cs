@@ -2137,6 +2137,7 @@ namespace DiscImageChef.Decoders.SCSI
             /// The length of the page.
             /// </summary>
             public ushort PageLength;
+            public bool TSMC;
             public bool WORM;
         }
 
@@ -2160,6 +2161,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
             decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
 
+            decoded.TSMC = (pageResponse[4] & 0x02) == 0x02;
             decoded.WORM = (pageResponse[4] & 0x01) == 0x01;
 
             return decoded;
@@ -2182,12 +2184,102 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(page.WORM)
                 sb.AppendLine("\tDevice supports WORM media");
+            if(page.TSMC)
+                sb.AppendLine("\tDevice supports Tape Stream Mirroring");
 
             return sb.ToString();
         }
 
         #endregion EVPD Page 0xB0: Sequential-access device capabilities page
 
+        #region EVPD Page 0xB1: Manufacturer-assigned Serial Number page
+
+        public static string DecodePageB1(byte[] page)
+        {
+            if(page == null)
+                return null;
+
+            if(page[1] != 0xB1)
+                return null;
+
+            if(page.Length != page[3] + 4)
+                return null;
+
+            byte[] ascii = new byte[page.Length - 4];
+
+            Array.Copy(page, 4, ascii, 0, page.Length - 4);
+
+            return StringHandlers.CToString(ascii).Trim();
+        }
+
+        #endregion EVPD Page 0xB1: Manufacturer-assigned Serial Number page
+
+        #region EVPD Page 0xB2: TapeAlert Supported Flags page
+
+        public static ulong DecodePageB2(byte[] page)
+        {
+            if(page == null)
+                return 0;
+
+            if(page[1] != 0xB2)
+                return 0;
+
+            if(page.Length != 12)
+                return 0;
+
+            byte[] bitmap = new byte[8];
+
+            Array.Copy(page, 4, bitmap, 0, 8);
+
+            return BitConverter.ToUInt64(bitmap.Reverse().ToArray(), 0);
+        }
+
+        #endregion EVPD Page 0xB2: TapeAlert Supported Flags page
+    
+        #region EVPD Page 0xB3: Automation Device Serial Number page
+
+        public static string DecodePageB3(byte[] page)
+        {
+            if(page == null)
+                return null;
+
+            if(page[1] != 0xB3)
+                return null;
+
+            if(page.Length != page[3] + 4)
+                return null;
+
+            byte[] ascii = new byte[page.Length - 4];
+
+            Array.Copy(page, 4, ascii, 0, page.Length - 4);
+
+            return StringHandlers.CToString(ascii).Trim();
+        }
+
+        #region EVPD Page 0xB3: Automation Device Serial Number page
+
+        #region EVPD Page 0xB4: Data Transfer Device Element Address page
+
+        public static string DecodePageB4(byte[] page)
+        {
+            if(page == null)
+                return null;
+
+            if(page[1] != 0xB3)
+                return null;
+
+            if(page.Length != page[3] + 4)
+                return null;
+
+            byte[] element = new byte[page.Length - 4];
+            StringBuilder sb = new StringBuilder();
+            foreach(byte b in element)
+                sb.AppendFormat("{0:X2}", b);
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xB4: Data Transfer Device Element Address page
     }
 }
 
