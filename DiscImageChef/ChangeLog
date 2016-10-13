@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added EVPD page B0h.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added IBM vendor EVPD, MODE pages and INQUIRY fields.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

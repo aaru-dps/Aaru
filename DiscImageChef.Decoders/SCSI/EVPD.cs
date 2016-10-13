@@ -2113,6 +2113,81 @@ namespace DiscImageChef.Decoders.SCSI
 
         #endregion EVPD Page 0xC1 (IBM): Drive Serial Numbers page
 
+        #region EVPD Page 0xB0: Sequential-access device capabilities page
+
+        /// <summary>
+        /// Sequential-access device capabilities page
+        /// Page code 0xB0
+        /// </summary>
+        public struct Page_B0
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public ushort PageLength;
+            public bool WORM;
+        }
+
+        public static Page_B0? DecodePage_B0(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xB0)
+                return null;
+
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 5)
+                return null;
+
+            Page_B0 decoded = new Page_B0();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
+
+            decoded.WORM = (pageResponse[4] & 0x01) == 0x01;
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_B0(byte[] pageResponse)
+        {
+            return PrettifyPage_B0(DecodePage_B0(pageResponse));
+        }
+
+        public static string PrettifyPage_B0(Page_B0? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_B0 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Sequential-access Device Capabilities:");
+
+            if(page.WORM)
+                sb.AppendLine("\tDevice supports WORM media");
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xB0: Sequential-access device capabilities page
+
     }
 }
 
