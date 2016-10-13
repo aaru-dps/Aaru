@@ -1,5 +1,10 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs:
+	* Modes.cs: Added Certance vendor mode pages 21h and 22h.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs: Added Certance vendor EVPD pages.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

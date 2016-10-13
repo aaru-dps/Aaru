@@ -1484,7 +1484,6 @@ namespace DiscImageChef.Decoders.SCSI
             return PrettifyPage_C0_Quantum(DecodePage_C0_Quantum(pageResponse));
         }
 
-        // TODO: Decode ATA signature?
         public static string PrettifyPage_C0_Quantum(Page_C0_Quantum? modePage)
         {
             if(!modePage.HasValue)
@@ -1573,7 +1572,6 @@ namespace DiscImageChef.Decoders.SCSI
             return PrettifyPage_C0_C1_Certance(DecodePage_C0_C1_Certance(pageResponse));
         }
 
-        // TODO: Decode ATA signature?
         public static string PrettifyPage_C0_C1_Certance(Page_C0_C1_Certance? modePage)
         {
             if(!modePage.HasValue)
@@ -1654,7 +1652,6 @@ namespace DiscImageChef.Decoders.SCSI
             return PrettifyPage_C2_C3_C4_C5_C6_Certance(DecodePage_C2_C3_C4_C5_C6_Certance(pageResponse));
         }
 
-        // TODO: Decode ATA signature?
         public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(Page_C2_C3_C4_C5_C6_Certance? modePage)
         {
             if(!modePage.HasValue)
@@ -1829,7 +1826,6 @@ namespace DiscImageChef.Decoders.SCSI
             return PrettifyPage_DF_Certance(DecodePage_DF_Certance(pageResponse));
         }
 
-        // TODO: Decode ATA signature?
         public static string PrettifyPage_DF_Certance(Page_DF_Certance? modePage)
         {
             if(!modePage.HasValue)
@@ -1891,7 +1887,7 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine("\tPort A uses Parallel SCSI Ultra-160 interface");
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown port A transport type code {0}", page.AutoloadMode).AppendLine();
+                    sb.AppendFormat("\tUnknown port A transport type code {0}", page.PortATransportType).AppendLine();
                     break;
             }
 

@@ -7094,6 +7094,308 @@ namespace DiscImageChef.Decoders.SCSI
 
         #endregion Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
 
+        #region Certance Mode Page 0x21: Drive Capabilities Control Mode page
+        public struct Certance_ModePage_21
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            public byte OperatingSystemsSupport;
+            public byte FirmwareTestControl2;
+            public byte ExtendedPOSTMode;
+            public byte InquiryStringControl;
+            public byte FirmwareTestControl;
+            public byte DataCompressionControl;
+            public bool HostUnloadOverride;
+            public byte AutoUnloadMode;
+        }
+
+        public static Certance_ModePage_21? DecodeCertanceModePage_21(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
+            if((pageResponse[0] & 0x3F) != 0x21)
+                return null;
+
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length != 9)
+                return null;
+
+            Certance_ModePage_21 decoded = new Certance_ModePage_21();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.OperatingSystemsSupport = pageResponse[2];
+            decoded.FirmwareTestControl2 = pageResponse[3];
+            decoded.ExtendedPOSTMode = pageResponse[4];
+            decoded.InquiryStringControl = pageResponse[5];
+            decoded.FirmwareTestControl = pageResponse[6];
+            decoded.DataCompressionControl = pageResponse[7];
+            decoded.HostUnloadOverride |= (pageResponse[8] & 0x80) == 0x80;
+            decoded.AutoUnloadMode = (byte)(pageResponse[8] & 0x7F);
+
+            return decoded;
+        }
+
+        public static string PrettifyCertanceModePage_21(byte[] pageResponse)
+        {
+            return PrettifyCertanceModePage_21(DecodeCertanceModePage_21(pageResponse));
+        }
+
+        public static string PrettifyCertanceModePage_21(Certance_ModePage_21? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Certance_ModePage_21 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Certance Drive Capabilities Control Mode Page:");
+
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            switch(page.OperatingSystemsSupport)
+            {
+                case 0:
+                    sb.AppendLine("\tOperating systems support is standard LTO");
+                    break;
+                default:
+                    sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport).AppendLine();
+                    break;
+            }
+
+            if(page.FirmwareTestControl == page.FirmwareTestControl2)
+            {
+                switch(page.FirmwareTestControl)
+                {
+                    case 0:
+                        sb.AppendLine("\tFactory test code is disabled");
+                        break;
+                    case 1:
+                        sb.AppendLine("\tFactory test code 1 is disabled");
+                        break;
+                    case 2:
+                        sb.AppendLine("\tFactory test code 2 is disabled");
+                        break;
+                    default:
+                        sb.AppendFormat("\tUnknown factory test code {0}", page.FirmwareTestControl).AppendLine();
+                        break;
+                }
+            }
+
+            switch(page.ExtendedPOSTMode)
+            {
+                case 0:
+                    sb.AppendLine("\tPower-On Self-Test is enabled");
+                    break;
+                case 1:
+                    sb.AppendLine("\tPower-On Self-Test is disable");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown Power-On Self-Test code {0}", page.ExtendedPOSTMode).AppendLine();
+                    break;
+            }
+
+            switch(page.DataCompressionControl)
+            {
+                case 0:
+                    sb.AppendLine("\tCompression is controlled using mode pages 0Fh and 10h");
+                    break;
+                case 1:
+                    sb.AppendLine("\tCompression is enabled and not controllable");
+                    break;
+                case 2:
+                    sb.AppendLine("\tCompression is disabled and not controllable");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown compression control code {0}", page.DataCompressionControl).AppendLine();
+                    break;
+            }
+
+            if(page.HostUnloadOverride)
+                sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
+
+            sb.Append("\tHow should tapes be unloaded in a power cycle, tape incompatibility, firmware download or cleaning end: ");
+            switch(page.AutoUnloadMode)
+            {
+                case 0:
+                    sb.AppendLine("\tTape will stay threaded at beginning");
+                    break;
+                case 1:
+                    sb.AppendLine("\tTape will be unthreaded");
+                    break;
+                case 2:
+                    sb.AppendLine("\tTape will be unthreaded and unloaded");
+                    break;
+                case 3:
+                    sb.AppendLine("\tData tapes will be threaded at beginning, rest will be unloaded");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown auto unload code {0}", page.AutoUnloadMode).AppendLine();
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion Certance Mode Page 0x21: Drive Capabilities Control Mode page
+
+        #region Certance Mode Page 0x22: Interface Control Mode Page
+        public struct Certance_ModePage_22
+        {
+            /// <summary>
+            /// Parameters can be saved
+            /// </summary>
+            public bool PS;
+            public byte BaudRate;
+            public byte CmdFwd;
+            public bool StopBits;
+            public byte Alerts;
+            public byte PortATransportType;
+            public byte PortAPresentSelectionID;
+            public byte NextSelectionID;
+            public byte JumperedSelectionID;
+            public byte TargetInitiatedBusControl;
+            public bool PortAEnabled;
+            public bool PortAEnabledOnPower;
+        }
+
+        public static Certance_ModePage_22? DecodeCertanceModePage_22(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if((pageResponse[0] & 0x40) == 0x40)
+                return null;
+
+            if((pageResponse[0] & 0x3F) != 0x22)
+                return null;
+
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length != 16)
+                return null;
+
+            Certance_ModePage_22 decoded = new Certance_ModePage_22();
+
+            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+            decoded.BaudRate = pageResponse[2];
+            decoded.CmdFwd = (byte)((pageResponse[3] & 0x18) >> 3);
+            decoded.StopBits |= (pageResponse[3] & 0x04) == 0x04;
+            decoded.CmdFwd = (byte)((pageResponse[3] & 0x03));
+            decoded.PortATransportType = pageResponse[4];
+            decoded.PortAPresentSelectionID = pageResponse[7];
+            decoded.NextSelectionID = pageResponse[12];
+            decoded.JumperedSelectionID = pageResponse[13];
+            decoded.TargetInitiatedBusControl = pageResponse[14];
+            decoded.PortAEnabled |= (pageResponse[15] & 0x10) == 0x10;
+            decoded.PortAEnabledOnPower |= (pageResponse[15] & 0x04) == 0x04;
+
+            return decoded;
+        }
+
+        public static string PrettifyCertanceModePage_22(byte[] pageResponse)
+        {
+            return PrettifyCertanceModePage_22(DecodeCertanceModePage_22(pageResponse));
+        }
+
+        public static string PrettifyCertanceModePage_22(Certance_ModePage_22? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Certance_ModePage_22 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Certance Interface Control Mode Page:");
+
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            switch(page.BaudRate)
+            {
+                case 0:
+                case 1:
+                case 2:
+                    sb.AppendLine("\tLibrary interface will operate at 9600 baud on next reset");
+                    break;
+                case 3:
+                    sb.AppendLine("\tLibrary interface will operate at 19200 baud on next reset");
+                    break;
+                case 4:
+                    sb.AppendLine("\tLibrary interface will operate at 38400 baud on next reset");
+                    break;
+                case 5:
+                    sb.AppendLine("\tLibrary interface will operate at 57600 baud on next reset");
+                    break;
+                case 6:
+                    sb.AppendLine("\tLibrary interface will operate at 115200 baud on next reset");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown library interface baud rate code {0}", page.BaudRate).AppendLine();
+                    break;
+            }
+
+            if(page.StopBits)
+                sb.AppendLine("Library interface transmits 2 stop bits per byte");
+            else
+                sb.AppendLine("Library interface transmits 1 stop bits per byte");
+
+            switch(page.CmdFwd)
+            {
+                case 0:
+                    sb.AppendLine("\tCommand forwarding is disabled");
+                    break;
+                case 1:
+                    sb.AppendLine("\tCommand forwarding is enabled");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown command forwarding code {0}", page.CmdFwd).AppendLine();
+                    break;
+            }
+
+            switch(page.PortATransportType)
+            {
+                case 0:
+                    sb.AppendLine("\tPort A link is down");
+                    break;
+                case 3:
+                    sb.AppendLine("\tPort A uses Parallel SCSI Ultra-160 interface");
+                    break;
+                default:
+                    sb.AppendFormat("\tUnknown port A transport type code {0}", page.PortATransportType).AppendLine();
+                    break;
+            }
+
+            if(page.PortATransportType > 0)
+                sb.AppendFormat("\tDrive responds to SCSI ID {0}", page.PortAPresentSelectionID).AppendLine();
+
+            sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID).AppendLine();
+            sb.AppendFormat("\tDrive jumpers choose SCSI ID {0}", page.JumperedSelectionID).AppendLine();
+
+            if(page.PortAEnabled)
+                sb.AppendLine("\tSCSI port is enabled");
+            else
+                sb.AppendLine("\tSCSI port is disabled");
+
+            if(page.PortAEnabledOnPower)
+                sb.AppendLine("\tSCSI port will be enabled on next power up");
+            else
+                sb.AppendLine("\tSCSI port will be disabled on next power up");
+
+            return sb.ToString();
+        }
+
+        #endregion Certance Mode Page 0x22: Interface Control Mode Page
+
     }
 }
 
