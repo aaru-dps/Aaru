@@ -210,7 +210,9 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
 
                         bool scsi80 = false;
+                        bool scsi82 = false;
                         string scsiSerial = null;
+                        string scsiAsciiOperatingDefs = null;
                         StringBuilder sb = null;
 
                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
@@ -246,6 +248,17 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if(page == 0x82)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            scsi82 = true;
+                                            scsiAsciiOperatingDefs = Decoders.SCSI.EVPD.DecodePage82(inqBuf);
+
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else
                                     {
                                         if(page != 0x00)
@@ -265,6 +278,8 @@ namespace DiscImageChef.Commands
 
                         if(scsi80)
                             DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
+                        if(scsi82)
+                            DicConsole.WriteLine("ASCII implemented operating definitions: {0}", scsiAsciiOperatingDefs);
 
                         if(sb != null)
                         {

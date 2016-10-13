@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Implemented SCSI EVPD 82h
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added support for SCSI MODE PAGEs 11h, 12h, 13h and 14h
 	  (medium partitions)
 
