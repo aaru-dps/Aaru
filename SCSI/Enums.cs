@@ -303,5 +303,14 @@ namespace DiscImageChef.Decoders.SCSI
         /// </summary>
         NoProtocol = 15
     }
+
+    public enum ScsiDefinitions : byte
+    {
+        Current = 0,
+        SCSI1 = 1,
+        CCS = 2,
+        SCSI2 = 3,
+        SCSI3 = 4
+    }
 }
 

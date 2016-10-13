@@ -1,6 +1,12 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* EVPD.cs:
+	* Enums.cs: Added EVPD page 81h, implemented operating
+	definition page.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* EVPD.cs:
 	* Modes.cs:
 	* Enums.cs: Updated EVPD Page 83h to SPC-5.
 

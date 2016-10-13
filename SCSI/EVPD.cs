@@ -107,6 +107,133 @@ namespace DiscImageChef.Decoders.SCSI
             return StringHandlers.CToString(ascii);
         }
 
+        #region EVPD Page 0x81: Implemented operating definition page
+
+        /// <summary>
+        /// Implemented operating definition page
+        /// Page code 0x81
+        /// </summary>
+        public struct Page_81
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// Current operating definition
+            /// </summary>
+            public ScsiDefinitions Current;
+            /// <summary>
+            /// Default operating definition
+            /// </summary>
+            public ScsiDefinitions Default;
+            /// <summary>
+            /// Support operating definition list
+            /// </summary>
+            public ScsiDefinitions[] Supported;
+        }
+
+        public static Page_81? DecodePage_81(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x81)
+                return null;
+
+            if(pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 6)
+                return null;
+
+            Page_81 decoded = new Page_81();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+            decoded.Current = (ScsiDefinitions)(pageResponse[4] & 0x7F);
+            decoded.Default = (ScsiDefinitions)(pageResponse[5] & 0x7F);
+
+            int position = 6;
+            List<ScsiDefinitions> definitions = new List<ScsiDefinitions>();
+
+            while(position < pageResponse.Length)
+            {
+                ScsiDefinitions definition = (ScsiDefinitions)(pageResponse[position] & 0x7F);
+                position++;
+                definitions.Add(definition);
+            }
+
+            decoded.Supported = definitions.ToArray();
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_81(byte[] pageResponse)
+        {
+            return PrettifyPage_81(DecodePage_81(pageResponse));
+        }
+
+        public static string DefinitionToString(ScsiDefinitions definition)
+        {
+            switch(definition)
+            {
+                case ScsiDefinitions.Current:
+                    return "";
+                case ScsiDefinitions.CCS:
+                    return "CCS";
+                case ScsiDefinitions.SCSI1:
+                    return "SCSI-1";
+                case ScsiDefinitions.SCSI2:
+                    return "SCSI-2";
+                case ScsiDefinitions.SCSI3:
+                    return "SCSI-3";
+                default:
+                    return string.Format("Unknown definition code {0}", (byte)definition);
+            }
+        }
+
+        public static string PrettifyPage_81(Page_81? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_81 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Implemented operating definitions:");
+
+            sb.AppendFormat("\tDefault operating definition: {0}", DefinitionToString(page.Current)).AppendLine();
+            sb.AppendFormat("\tCurrent operating definition: {0}", DefinitionToString(page.Current)).AppendLine();
+
+            if(page.Supported.Length == 0)
+            {
+                sb.AppendLine("\tThere are no supported definitions");
+                return sb.ToString();
+            }
+
+            sb.AppendLine("\tSupported operating definitions:");
+            foreach(ScsiDefinitions definition in page.Supported)
+                sb.AppendFormat("\t\t{0}", DefinitionToString(definition)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x81: Implemented operating definition page
+
         /// <summary>
         /// Decodes VPD page 0x82: ASCII implemented operating definition
         /// </summary>
