@@ -301,6 +301,15 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if(page == 0xC0 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "quantum")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_Quantum(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else
                                     {
                                         if(page != 0x00)

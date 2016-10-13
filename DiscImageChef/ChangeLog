@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added Quantum vendor INQUIRY values and EVPD page C0h.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added EVPD page 89h, SCSI to ATA translation layer
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

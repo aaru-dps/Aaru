@@ -864,7 +864,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[1] != 0x85)
                 return null;
 
-            if((pageResponse[2] << 4) + pageResponse[3] + 4 != pageResponse.Length)
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
                 return null;
 
             if(pageResponse.Length < 4)
@@ -874,7 +874,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
             decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (ushort)((pageResponse[2] << 4) + pageResponse[3] + 4);
+            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
 
             int position = 4;
             List<NetworkDescriptor> descriptors = new List<NetworkDescriptor>();
@@ -884,7 +884,7 @@ namespace DiscImageChef.Decoders.SCSI
                 NetworkDescriptor descriptor = new NetworkDescriptor();
                 descriptor.Association = (IdentificationAssociation)((pageResponse[position] & 0x60) >> 5);
                 descriptor.Type = (NetworkServiceTypes)(pageResponse[position] & 0x1F);
-                descriptor.Length = (ushort)((pageResponse[position + 2] << 4) + pageResponse[position + 3]);
+                descriptor.Length = (ushort)((pageResponse[position + 2] << 8) + pageResponse[position + 3]);
                 descriptor.Address = new byte[descriptor.Length];
                 Array.Copy(pageResponse, position + 4, descriptor.Address, 0, descriptor.Length);
 
@@ -1125,7 +1125,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
             decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (byte)((pageResponse[2] << 4) + pageResponse[3] + 4);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
 
             decoded.ActivateMicrocode = (byte)((pageResponse[4] & 0xC0) >> 6);
             decoded.SPT = (byte)((pageResponse[4] & 0x38) >> 3);
@@ -1321,7 +1321,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[1] != 0x89)
                 return null;
 
-            if((pageResponse[2] << 4) + pageResponse[3] + 4 != pageResponse.Length)
+            if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
                 return null;
 
             if(pageResponse.Length < 572)
@@ -1331,7 +1331,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
             decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
-            decoded.PageLength = (ushort)((pageResponse[2] << 4) + pageResponse[3] + 4);
+            decoded.PageLength = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4);
 
             decoded.VendorIdentification = new byte[8];
             decoded.ProductIdentification = new byte[16];
@@ -1406,6 +1406,103 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0x89: ATA Information page
+
+        #region EVPD Page 0xC0 (Quantum): Firmware Build Information page
+
+        /// <summary>
+        /// Firmware Build Information page
+        /// Page code 0xC0 (Quantum)
+        /// </summary>
+        public struct Page_C0_Quantum
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// Servo firmware checksum
+            /// </summary>
+            public ushort ServoFirmwareChecksum;
+            /// <summary>
+            /// Servo EEPROM checksum
+            /// </summary>
+            public ushort ServoEEPROMChecksum;
+            /// <summary>
+            /// Read/Write firmware checksum
+            /// </summary>
+            public uint ReadWriteFirmwareChecksum;
+            /// <summary>
+            /// Read/Write firmware build data
+            /// </summary>
+            public byte[] ReadWriteFirmwareBuildData;
+        }
+
+        public static Page_C0_Quantum? DecodePage_C0_Quantum(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC0)
+                return null;
+
+            if(pageResponse[3] != 20)
+                return null;
+
+            if(pageResponse.Length != 36)
+                return null;
+
+            Page_C0_Quantum decoded = new Page_C0_Quantum();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.ServoFirmwareChecksum = (ushort)((pageResponse[4] << 8) + pageResponse[5]);
+            decoded.ServoEEPROMChecksum = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
+            decoded.ReadWriteFirmwareChecksum = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+            decoded.ReadWriteFirmwareBuildData = new byte[24];
+            Array.Copy(pageResponse, 12, decoded.ReadWriteFirmwareBuildData, 0, 24);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C0_Quantum(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_Quantum(DecodePage_C0_Quantum(pageResponse));
+        }
+
+        // TODO: Decode ATA signature?
+        public static string PrettifyPage_C0_Quantum(Page_C0_Quantum? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C0_Quantum page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Quantum Firmware Build Information page:");
+
+            sb.AppendFormat("\tServo firmware checksum: 0x{0:X4}", page.ServoFirmwareChecksum).AppendLine();
+            sb.AppendFormat("\tEEPROM firmware checksum: 0x{0:X4}", page.ServoEEPROMChecksum).AppendLine();
+            sb.AppendFormat("\tRead/write firmware checksum: 0x{0:X8}", page.ReadWriteFirmwareChecksum).AppendLine();
+            sb.AppendFormat("\tRead/write firmware build date: {0}", StringHandlers.CToString(page.ReadWriteFirmwareBuildData)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xC0 (Quantum): Firmware Build Information page
 
     }
 }
