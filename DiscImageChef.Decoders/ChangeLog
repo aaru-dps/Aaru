@@ -1,5 +1,12 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs:
+	* Modes.cs:
+	* Inquiry.cs: Added IBM vendor EVPD, MODE pages and INQUIRY
+	fields.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* Modes.cs: Added MODE PAGE 1Dh
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

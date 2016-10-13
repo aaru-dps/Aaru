@@ -168,7 +168,14 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Qt_LibraryPresent = SCSIInquiryResponse[51] > 0;
                 decoded.Qt_ModuleRevision = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 52, decoded.Qt_ModuleRevision, 0, 4);
+
+                // IBM
+                decoded.IBMPresent = true;
+                decoded.IBM_AutDis |= (SCSIInquiryResponse[36] & 0x01) == 0x01;
+                decoded.IBM_PerformanceLimit = SCSIInquiryResponse[37];
+                decoded.IBM_OEMSpecific = SCSIInquiryResponse[41];
             }
+
             if(SCSIInquiryResponse.Length >= 57)
             {
                 decoded.Reserved3 = (byte)((SCSIInquiryResponse[56] & 0xF0) >> 4);
@@ -1892,10 +1899,6 @@ namespace DiscImageChef.Decoders.SCSI
             if(response.QuantumPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant() == "quantum")
             {
                 sb.AppendLine("Quantum vendor-specific information:");
-                /// <summary>
-                /// The product family.
-                /// Byte 36, bits 7 to 5
-                /// </summary>
                 switch(response.Qt_ProductFamily)
                 {
                     case 0:
@@ -1921,65 +1924,17 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                 }
 
-                /// <summary>
-                /// The released firmware.
-                /// Byte 36, bits 4 to 0
-                /// </summary>
                 sb.AppendFormat("Release firmware: {0}", response.Qt_ReleasedFirmware).AppendLine();
-                /// <summary>
-                /// The .
-                /// Byte 37
-                /// </summary>
                 sb.AppendFormat("Firmware version: {0}.{1}", response.Qt_FirmwareMajorVersion, response.Qt_FirmwareMinorVersion).AppendLine();
-                /// <summary>
-                /// The EEPROM format major version.
-                /// Byte 39
-                /// </summary>
                 sb.AppendFormat("EEPROM format version: {0}.{1}", response.Qt_EEPROMFormatMajorVersion, response.Qt_EEPROMFormatMinorVersion).AppendLine();
-                /// <summary>
-                /// The firmware personality.
-                /// Byte 41
-                /// </summary>
                 sb.AppendFormat("Firmware personality: {0}", response.Qt_FirmwarePersonality).AppendLine();
-                /// <summary>
-                /// The firmware sub personality.
-                /// Byte 42
-                /// </summary>
                 sb.AppendFormat("Firmware subpersonality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
-                /// <summary>
-                /// The tape directory format version.
-                /// Byte 43
-                /// </summary>
                 sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).AppendLine();
-                /// <summary>
-                /// The controller hardware version.
-                /// Byte 44
-                /// </summary>
                 sb.AppendFormat("Controller hardware version: {0}", response.Qt_ControllerHardwareVersion).AppendLine();
-                /// <summary>
-                /// The drive EEPROM version.
-                /// Byte 45
-                /// </summary>
                 sb.AppendFormat("Drive EEPROM version: {0}", response.Qt_DriveEEPROMVersion).AppendLine();
-                /// <summary>
-                /// The drive hardware version.
-                /// Byte 46
-                /// </summary>
                 sb.AppendFormat("Drive hardware version: {0}", response.Qt_DriveHardwareVersion).AppendLine();
-                /// <summary>
-                /// The media loader firmware version.
-                /// Byte 47
-                /// </summary>
                 sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion).AppendLine();
-                /// <summary>
-                /// The media loader hardware version.
-                /// Byte 48
-                /// </summary>
                 sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion).AppendLine();
-                /// <summary>
-                /// The media loader mechanical version.
-                /// Byte 49
-                /// </summary>
                 sb.AppendFormat("Media loader mechanical version: {0}", response.Qt_MediaLoaderMechanicalVersion).AppendLine();
                 if(response.Qt_LibraryPresent)
                     sb.AppendLine("Library is present");
@@ -1988,6 +1943,23 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision)).AppendLine();
             }
             #endregion Quantum vendor prettifying
+
+            #region IBM vendor prettifying
+            if(response.IBMPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant() == "ibm")
+            {
+                sb.AppendLine("IBM vendor-specific information:");
+
+                if(response.IBM_PerformanceLimit == 0)
+                    sb.AppendLine("Performance is not limited");
+                else
+                    sb.AppendFormat("Performance is limited using factor {0}", response.IBM_PerformanceLimit);
+
+                if(response.IBM_AutDis)
+                    sb.AppendLine("Automation is disabled");
+
+                sb.AppendFormat("IBM OEM Specific Field: {0}", response.IBM_OEMSpecific).AppendLine();
+            }
+            #endregion IBM vendor prettifying
 
 #if DEBUG
             if(response.DeviceTypeModifier != 0)
@@ -2372,6 +2344,27 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public byte[] Qt_ModuleRevision;
             #endregion Quantum vendor unique inquiry data structure
+
+            #region IBM vendor unique inquiry data structure
+            /// <summary>
+            /// Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
+            /// </summary>
+            public bool IBMPresent;
+            /// <summary>
+            /// Drive is not capable of automation
+            /// Byte 36 bit 0
+            /// </summary>
+            public bool IBM_AutDis;
+            /// <summary>
+            /// If not zero, limit in MB/s = Max * (this / 256)
+            /// Byte 37
+            /// </summary>
+            public byte IBM_PerformanceLimit;
+            /// <summary>
+            /// Byte 41
+            /// </summary>
+            public byte IBM_OEMSpecific;
+            #endregion IBM vendor unique inquiry data structure
         }
 
         #endregion Public structures

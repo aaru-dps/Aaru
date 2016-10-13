@@ -310,6 +310,24 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if(page == 0xC0 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_IBM(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0xC1 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C1_IBM(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else if((page == 0xC0 || page == 0xC1) && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "certance")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -632,10 +650,37 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x24:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyIBMModePage_24(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         case 0x2A:
                                             {
                                                 if(page.Subpage == 0)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_2A(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x2F:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyIBMModePage_2F(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x3D:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyIBMModePage_3D(page.PageResponse));
                                                 else
                                                     goto default;
 
