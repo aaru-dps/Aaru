@@ -310,6 +310,42 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if(page == 0xB1)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("Manufacturer-assigned Serial Number: {0}", Decoders.SCSI.EVPD.DecodePageB1(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0xB2)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}", Decoders.SCSI.EVPD.DecodePageB2(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0xB3)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("Automation Device Serial Number: {0}", Decoders.SCSI.EVPD.DecodePageB3(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0xB4)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("Data Transfer Device Element Address: 0x{0}", Decoders.SCSI.EVPD.DecodePageB4(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else if(page == 0xC0 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);

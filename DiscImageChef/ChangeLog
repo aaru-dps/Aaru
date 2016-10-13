@@ -1,3 +1,8 @@
+2016-10-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
+	  Added EVPD pages B1h, B2h, B3h and B4h.
+
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
