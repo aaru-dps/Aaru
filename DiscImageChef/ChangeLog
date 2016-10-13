@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Add EVPD page 85h, management network addresses.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Added EVPD page 81h, implemented operating definition page.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

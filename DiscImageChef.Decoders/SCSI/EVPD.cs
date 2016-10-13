@@ -683,6 +683,287 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0x83: Device identification page
+
+        #region EVPD Page 0x84: Software Interface Identification page
+
+        public struct SoftwareIdentifier
+        {
+            /// <summary>
+            /// EUI-48 identifier
+            /// </summary>
+            public byte[] Identifier;
+        }
+
+        /// <summary>
+        /// Software Interface Identification page
+        /// Page code 0x84
+        /// </summary>
+        public struct Page_84
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// The descriptors.
+            /// </summary>
+            public SoftwareIdentifier[] Identifiers;
+        }
+
+        public static Page_84? DecodePage_84(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x84)
+                return null;
+
+            if(pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 10)
+                return null;
+
+            Page_84 decoded = new Page_84();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            int position = 4;
+            List<SoftwareIdentifier> identifiers = new List<SoftwareIdentifier>();
+
+            while(position < pageResponse.Length)
+            {
+                SoftwareIdentifier identifier = new SoftwareIdentifier();
+                identifier.Identifier = new byte[6];
+                Array.Copy(pageResponse, position, identifier.Identifier, 0, 6);
+                identifiers.Add(identifier);
+                position += 6;
+            }
+
+            decoded.Identifiers = identifiers.ToArray();
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_84(byte[] pageResponse)
+        {
+            return PrettifyPage_84(DecodePage_84(pageResponse));
+        }
+
+        public static string PrettifyPage_84(Page_84? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_84 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Software Interface Identifiers:");
+
+            if(page.Identifiers.Length == 0)
+            {
+                sb.AppendLine("\tThere are no identifiers");
+                return sb.ToString();
+            }
+
+            foreach(SoftwareIdentifier identifier in page.Identifiers)
+            {
+                sb.AppendFormat("\t{0:X2}", identifier.Identifier[0]);
+                for(int i = 1; i < identifier.Identifier.Length; i++)
+                sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x84: Software Interface Identification page
+
+        #region EVPD Page 0x85: Management Network Addresses page
+
+        public enum NetworkServiceTypes : byte
+        {
+            Unspecified = 0,
+            StorageConf = 1,
+            Diagnostics = 2,
+            Status = 3,
+            Logging = 4,
+            CodeDownload = 5
+        }
+
+        public struct NetworkDescriptor
+        {
+            /// <summary>
+            /// Identifies which device the identifier associates with
+            /// </summary>
+            public IdentificationAssociation Association;
+            /// <summary>
+            /// Defines the type of the identifier
+            /// </summary>
+            public NetworkServiceTypes Type;
+            /// <summary>
+            /// Length of the identifier
+            /// </summary>
+            public ushort Length;
+            /// <summary>
+            /// Binary identifier
+            /// </summary>
+            public byte[] Address;
+        }
+
+        /// <summary>
+        /// Device identification page
+        /// Page code 0x85
+        /// </summary>
+        public struct Page_85
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public ushort PageLength;
+            /// <summary>
+            /// The descriptors.
+            /// </summary>
+            public NetworkDescriptor[] Descriptors;
+        }
+
+        public static Page_85? DecodePage_85(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x85)
+                return null;
+
+            if((pageResponse[2] << 4) + pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 4)
+                return null;
+
+            Page_85 decoded = new Page_85();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (ushort)((pageResponse[2] << 4) + pageResponse[3] + 4);
+
+            int position = 4;
+            List<NetworkDescriptor> descriptors = new List<NetworkDescriptor>();
+
+            while(position < pageResponse.Length)
+            {
+                NetworkDescriptor descriptor = new NetworkDescriptor();
+                descriptor.Association = (IdentificationAssociation)((pageResponse[position] & 0x60) >> 5);
+                descriptor.Type = (NetworkServiceTypes)(pageResponse[position] & 0x1F);
+                descriptor.Length = (ushort)((pageResponse[position + 2] << 4) + pageResponse[position + 3]);
+                descriptor.Address = new byte[descriptor.Length];
+                Array.Copy(pageResponse, position + 4, descriptor.Address, 0, descriptor.Length);
+
+                position += 4 + descriptor.Length;
+                descriptors.Add(descriptor);
+            }
+
+            decoded.Descriptors = descriptors.ToArray();
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_85(byte[] pageResponse)
+        {
+            return PrettifyPage_85(DecodePage_85(pageResponse));
+        }
+
+        public static string PrettifyPage_85(Page_85? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_85 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Management Network Addresses:");
+
+            if(page.Descriptors.Length == 0)
+            {
+                sb.AppendLine("\tThere are no addresses");
+                return sb.ToString();
+            }
+
+            foreach(NetworkDescriptor descriptor in page.Descriptors)
+            {
+                switch(descriptor.Association)
+                {
+                    case IdentificationAssociation.LogicalUnit:
+                        sb.AppendLine("\tIdentifier belongs to addressed logical unit");
+                        break;
+                    case IdentificationAssociation.TargetPort:
+                        sb.AppendLine("\tIdentifier belongs to target port");
+                        break;
+                    case IdentificationAssociation.TargetDevice:
+                        sb.AppendLine("\tIdentifier belongs to target device that contains the addressed logical unit");
+                        break;
+                    default:
+                        sb.AppendFormat("\tIndentifier has unknown association with code {0}", (byte)descriptor.Association).AppendLine();
+                        break;
+                }
+
+                switch(descriptor.Type)
+                {
+                    case NetworkServiceTypes.CodeDownload:
+                        sb.AppendFormat("Address for code download: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.Diagnostics:
+                        sb.AppendFormat("Address for diagnostics: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.Logging:
+                        sb.AppendFormat("Address for logging: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.Status:
+                        sb.AppendFormat("Address for status: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.StorageConf:
+                        sb.AppendFormat("Address for storage configuration service: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    case NetworkServiceTypes.Unspecified:
+                        sb.AppendFormat("Unspecified address: {0}", StringHandlers.CToString(descriptor.Address)).AppendLine();
+                        break;
+                    default:
+                        sb.AppendFormat("Address of unknown type {1}: {0}", StringHandlers.CToString(descriptor.Address), (byte)descriptor.Type).AppendLine();
+                        break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x85: Management Network Addresses page
+
     }
 }
 
