@@ -1953,6 +1953,166 @@ namespace DiscImageChef.Decoders.SCSI
 
         #endregion EVPD Page 0xDF (Certance): Drive status pages
 
+        #region EVPD Page 0xC0 (IBM): Drive Component Revision Levels page
+
+        /// <summary>
+        /// Drive Component Revision Levels page
+        /// Page code 0xC0 (IBM)
+        /// </summary>
+        public struct Page_C0_IBM
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] CodeName;
+            public byte[] Date;
+        }
+
+        public static Page_C0_IBM? DecodePage_C0_IBM(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC0)
+                return null;
+
+            if(pageResponse[3] != 39)
+                return null;
+
+            if(pageResponse.Length != 43)
+                return null;
+
+            Page_C0_IBM decoded = new Page_C0_IBM();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.CodeName = new byte[12];
+            decoded.Date = new byte[8];
+
+            Array.Copy(pageResponse, 4, decoded.CodeName, 0, 12);
+            Array.Copy(pageResponse, 23, decoded.Date, 0, 8);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C0_IBM(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_IBM(DecodePage_C0_IBM(pageResponse));
+        }
+
+        public static string PrettifyPage_C0_IBM(Page_C0_IBM? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C0_IBM page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("IBM Drive Component Revision Levels page:");
+
+            sb.AppendFormat("\tCode name: {0}", StringHandlers.CToString(page.CodeName)).AppendLine();
+            sb.AppendFormat("\tDate: {0}", StringHandlers.CToString(page.Date)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xC0 (IBM): Drive Component Revision Levels page
+
+        #region EVPD Page 0xC1 (IBM): Drive Serial Numbers page
+
+        /// <summary>
+        /// Drive Serial Numbers page
+        /// Page code 0xC1 (IBM)
+        /// </summary>
+        public struct Page_C1_IBM
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] ManufacturingSerial;
+            public byte[] ReportedSerial;
+        }
+
+        public static Page_C1_IBM? DecodePage_C1_IBM(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC1)
+                return null;
+
+            if(pageResponse[3] != 24)
+                return null;
+
+            if(pageResponse.Length != 28)
+                return null;
+
+            Page_C1_IBM decoded = new Page_C1_IBM();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            decoded.ManufacturingSerial = new byte[12];
+            decoded.ReportedSerial = new byte[12];
+
+            Array.Copy(pageResponse, 4, decoded.ManufacturingSerial, 0, 12);
+            Array.Copy(pageResponse, 16, decoded.ReportedSerial, 0, 12);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C1_IBM(byte[] pageResponse)
+        {
+            return PrettifyPage_C1_IBM(DecodePage_C1_IBM(pageResponse));
+        }
+
+        public static string PrettifyPage_C1_IBM(Page_C1_IBM? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C1_IBM page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("IBM Drive Serial Numbers page:");
+
+            sb.AppendFormat("\tManufacturing serial number: {0}", StringHandlers.CToString(page.ManufacturingSerial)).AppendLine();
+            sb.AppendFormat("\tReported serial number: {0}", StringHandlers.CToString(page.ReportedSerial)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xC1 (IBM): Drive Serial Numbers page
+
     }
 }
 
