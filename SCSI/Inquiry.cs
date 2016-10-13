@@ -146,6 +146,28 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 decoded.VendorSpecific = new byte[20];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.VendorSpecific, 0, 20);
+
+                // Quantum
+                decoded.QuantumPresent = true;
+                decoded.Qt_ProductFamily = (byte)((SCSIInquiryResponse[36] & 0xF0) >> 4);
+                decoded.Qt_ReleasedFirmware = (byte)(SCSIInquiryResponse[36] & 0x0F);
+                decoded.Qt_FirmwareMajorVersion = SCSIInquiryResponse[37];
+                decoded.Qt_FirmwareMinorVersion = SCSIInquiryResponse[38];
+                decoded.Qt_EEPROMFormatMajorVersion = SCSIInquiryResponse[39];
+                decoded.Qt_EEPROMFormatMinorVersion = SCSIInquiryResponse[40];
+                decoded.Qt_FirmwarePersonality = SCSIInquiryResponse[41];
+                decoded.Qt_FirmwareSubPersonality = SCSIInquiryResponse[42];
+                decoded.Qt_TapeDirectoryFormatVersion = SCSIInquiryResponse[43];
+                decoded.Qt_ControllerHardwareVersion = SCSIInquiryResponse[44];
+                decoded.Qt_DriveEEPROMVersion = SCSIInquiryResponse[45];
+                decoded.Qt_DriveHardwareVersion = SCSIInquiryResponse[46];
+                decoded.Qt_MediaLoaderFirmwareVersion = SCSIInquiryResponse[47];
+                decoded.Qt_MediaLoaderHardwareVersion = SCSIInquiryResponse[48];
+                decoded.Qt_MediaLoaderMechanicalVersion = SCSIInquiryResponse[49];
+                decoded.Qt_MediaLoaderPresent = SCSIInquiryResponse[50] > 0;
+                decoded.Qt_LibraryPresent = SCSIInquiryResponse[51] > 0;
+                decoded.Qt_ModuleRevision = new byte[4];
+                Array.Copy(SCSIInquiryResponse, 52, decoded.Qt_ModuleRevision, 0, 4);
             }
             if(SCSIInquiryResponse.Length >= 57)
             {
@@ -1866,6 +1888,107 @@ namespace DiscImageChef.Decoders.SCSI
                 }
             }
 
+            #region Quantum vendor prettifying
+            if(response.QuantumPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant() == "quantum")
+            {
+                sb.AppendLine("Quantum vendor-specific information:");
+                /// <summary>
+                /// The product family.
+                /// Byte 36, bits 7 to 5
+                /// </summary>
+                switch(response.Qt_ProductFamily)
+                {
+                    case 0:
+                        sb.AppendLine("Product family is not specified");
+                        break;
+                    case 1:
+                        sb.AppendLine("Product family is 2.6 GB");
+                        break;
+                    case 2:
+                        sb.AppendLine("Product family is 6.0 GB");
+                        break;
+                    case 3:
+                        sb.AppendLine("Product family is 10.0/20.0 GB");
+                        break;
+                    case 5:
+                        sb.AppendLine("Product family is 20.0/40.0 GB");
+                        break;
+                    case 6:
+                        sb.AppendLine("Product family is 15.0/30.0 GB");
+                        break;
+                    default:
+                        sb.AppendFormat("Product family: {0}", response.Qt_ProductFamily).AppendLine();
+                        break;
+                }
+
+                /// <summary>
+                /// The released firmware.
+                /// Byte 36, bits 4 to 0
+                /// </summary>
+                sb.AppendFormat("Release firmware: {0}", response.Qt_ReleasedFirmware).AppendLine();
+                /// <summary>
+                /// The .
+                /// Byte 37
+                /// </summary>
+                sb.AppendFormat("Firmware version: {0}.{1}", response.Qt_FirmwareMajorVersion, response.Qt_FirmwareMinorVersion).AppendLine();
+                /// <summary>
+                /// The EEPROM format major version.
+                /// Byte 39
+                /// </summary>
+                sb.AppendFormat("EEPROM format version: {0}.{1}", response.Qt_EEPROMFormatMajorVersion, response.Qt_EEPROMFormatMinorVersion).AppendLine();
+                /// <summary>
+                /// The firmware personality.
+                /// Byte 41
+                /// </summary>
+                sb.AppendFormat("Firmware personality: {0}", response.Qt_FirmwarePersonality).AppendLine();
+                /// <summary>
+                /// The firmware sub personality.
+                /// Byte 42
+                /// </summary>
+                sb.AppendFormat("Firmware subpersonality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
+                /// <summary>
+                /// The tape directory format version.
+                /// Byte 43
+                /// </summary>
+                sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).AppendLine();
+                /// <summary>
+                /// The controller hardware version.
+                /// Byte 44
+                /// </summary>
+                sb.AppendFormat("Controller hardware version: {0}", response.Qt_ControllerHardwareVersion).AppendLine();
+                /// <summary>
+                /// The drive EEPROM version.
+                /// Byte 45
+                /// </summary>
+                sb.AppendFormat("Drive EEPROM version: {0}", response.Qt_DriveEEPROMVersion).AppendLine();
+                /// <summary>
+                /// The drive hardware version.
+                /// Byte 46
+                /// </summary>
+                sb.AppendFormat("Drive hardware version: {0}", response.Qt_DriveHardwareVersion).AppendLine();
+                /// <summary>
+                /// The media loader firmware version.
+                /// Byte 47
+                /// </summary>
+                sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion).AppendLine();
+                /// <summary>
+                /// The media loader hardware version.
+                /// Byte 48
+                /// </summary>
+                sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion).AppendLine();
+                /// <summary>
+                /// The media loader mechanical version.
+                /// Byte 49
+                /// </summary>
+                sb.AppendFormat("Media loader mechanical version: {0}", response.Qt_MediaLoaderMechanicalVersion).AppendLine();
+                if(response.Qt_LibraryPresent)
+                    sb.AppendLine("Library is present");
+                if(response.Qt_MediaLoaderPresent)
+                    sb.AppendLine("Media loader is present");
+                sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision)).AppendLine();
+            }
+            #endregion Quantum vendor prettifying
+
 #if DEBUG
             if(response.DeviceTypeModifier != 0)
                 sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
@@ -2151,6 +2274,104 @@ namespace DiscImageChef.Decoders.SCSI
             /// Bytes 96 to end
             /// </summary>
             public byte[] VendorSpecific2;
+
+            // Per DLT4000/DLT4500/DLT4700 Cartridge Tape Subsystem Product Manual
+            #region Quantum vendor unique inquiry data structure
+            /// <summary>
+            /// Means that the INQUIRY response contains 56 bytes or more, so this data has been filled
+            /// </summary>
+            public bool QuantumPresent;
+            /// <summary>
+            /// The product family.
+            /// Byte 36, bits 7 to 5
+            /// </summary>
+            public byte Qt_ProductFamily;
+            /// <summary>
+            /// The released firmware.
+            /// Byte 36, bits 4 to 0
+            /// </summary>
+            public byte Qt_ReleasedFirmware;
+            /// <summary>
+            /// The firmware major version.
+            /// Byte 37
+            /// </summary>
+            public byte Qt_FirmwareMajorVersion;
+            /// <summary>
+            /// The firmware minor version.
+            /// Byte 38
+            /// </summary>
+            public byte Qt_FirmwareMinorVersion;
+            /// <summary>
+            /// The EEPROM format major version.
+            /// Byte 39
+            /// </summary>
+            public byte Qt_EEPROMFormatMajorVersion;
+            /// <summary>
+            /// The EEPROM format minor version.
+            /// Byte 40
+            /// </summary>
+            public byte Qt_EEPROMFormatMinorVersion;
+            /// <summary>
+            /// The firmware personality.
+            /// Byte 41
+            /// </summary>
+            public byte Qt_FirmwarePersonality;
+            /// <summary>
+            /// The firmware sub personality.
+            /// Byte 42
+            /// </summary>
+            public byte Qt_FirmwareSubPersonality;
+            /// <summary>
+            /// The tape directory format version.
+            /// Byte 43
+            /// </summary>
+            public byte Qt_TapeDirectoryFormatVersion;
+            /// <summary>
+            /// The controller hardware version.
+            /// Byte 44
+            /// </summary>
+            public byte Qt_ControllerHardwareVersion;
+            /// <summary>
+            /// The drive EEPROM version.
+            /// Byte 45
+            /// </summary>
+            public byte Qt_DriveEEPROMVersion;
+            /// <summary>
+            /// The drive hardware version.
+            /// Byte 46
+            /// </summary>
+            public byte Qt_DriveHardwareVersion;
+            /// <summary>
+            /// The media loader firmware version.
+            /// Byte 47
+            /// </summary>
+            public byte Qt_MediaLoaderFirmwareVersion;
+            /// <summary>
+            /// The media loader hardware version.
+            /// Byte 48
+            /// </summary>
+            public byte Qt_MediaLoaderHardwareVersion;
+            /// <summary>
+            /// The media loader mechanical version.
+            /// Byte 49
+            /// </summary>
+            public byte Qt_MediaLoaderMechanicalVersion;
+            /// <summary>
+            /// Is a media loader present?
+            /// Byte 50
+            /// </summary>
+            public bool Qt_MediaLoaderPresent;
+            /// <summary>
+            /// Is a library present?
+            /// Byte 51
+            /// </summary>
+            public bool Qt_LibraryPresent;
+            /// <summary>
+            /// The module revision.
+            /// Bytes 52 to 55
+            /// </summary>
+            public byte[] Qt_ModuleRevision;
+            #endregion Quantum vendor unique inquiry data structure
         }
 
         #endregion Public structures
