@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Security.Policy;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -971,6 +972,440 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0x85: Management Network Addresses page
+
+        #region EVPD Page 0x86: Extended INQUIRY data page
+
+        /// <summary>
+        /// Device identification page
+        /// Page code 0x86
+        /// </summary>
+        public struct Page_86
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// Indicates how a device server activates microcode
+            /// </summary>
+            public byte ActivateMicrocode;
+            /// <summary>
+            /// Protection types supported by device
+            /// </summary>
+            public byte SPT;
+            /// <summary>
+            /// Checks logical block guard field
+            /// </summary>
+            public bool GRD_CHK;
+            /// <summary>
+            /// Checks logical block application tag
+            /// </summary>
+            public bool APP_CHK;
+            /// <summary>
+            /// Checks logical block reference
+            /// </summary>
+            public bool REF_CHK;
+            /// <summary>
+            /// Supports unit attention condition sense key specific data
+            /// </summary>
+            public bool UASK_SUP;
+            /// <summary>
+            /// Supports grouping
+            /// </summary>
+            public bool GROUP_SUP;
+            /// <summary>
+            /// Supports priority
+            /// </summary>
+            public bool PRIOR_SUP;
+            /// <summary>
+            /// Supports head of queue
+            /// </summary>
+            public bool HEADSUP;
+            /// <summary>
+            /// Supports ordered
+            /// </summary>
+            public bool ORDSUP;
+            /// <summary>
+            /// Supports simple
+            /// </summary>
+            public bool SIMPSUP;
+            /// <summary>
+            /// Supports marking a block as uncorrectable
+            /// </summary>
+            public bool WU_SUP;
+            /// <summary>
+            /// Supports disabling correction on WRITE LONG
+            /// </summary>
+            public bool CRD_SUP;
+            /// <summary>
+            /// Supports a non-volatile cache
+            /// </summary>
+            public bool NV_SUP;
+            /// <summary>
+            /// Supports a volatile cache
+            /// </summary>
+            public bool V_SUP;
+            /// <summary>
+            /// Disable protection information checks
+            /// </summary>
+            public bool NO_PI_CHK;
+            /// <summary>
+            /// Protection information interval supported
+            /// </summary>
+            public bool P_I_I_SUP;
+            /// <summary>
+            /// Clears all LUNs unit attention when clearing one
+            /// </summary>
+            public bool LUICLR;
+            /// <summary>
+            /// Referrals support
+            /// </summary>
+            public bool R_SUP;
+            /// <summary>
+            /// History snapshots release effects
+            /// </summary>
+            public bool HSSRELEF;
+            /// <summary>
+            /// Capability based command security
+            /// </summary>
+            public bool CBCS;
+            /// <summary>
+            /// Indicates how it handles microcode updating with multiple nexuxes
+            /// </summary>
+            public byte Nexus;
+            /// <summary>
+            /// Time to complete extended self-test
+            /// </summary>
+            public ushort ExtendedTestMinutes;
+            /// <summary>
+            /// Power on activation support
+            /// </summary>
+            public bool POA_SUP;
+            /// <summary>
+            /// Hard reset actication
+            /// </summary>
+            public bool HRA_SUP;
+            /// <summary>
+            /// Vendor specific activation
+            /// </summary>
+            public bool VSA_SUP;
+            /// <summary>
+            /// Maximum length in bytes of sense data
+            /// </summary>
+            public byte MaximumSenseLength;
+        }
+
+        public static Page_86? DecodePage_86(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x86)
+                return null;
+
+            if(pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 64)
+                return null;
+
+            Page_86 decoded = new Page_86();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)((pageResponse[2] << 4) + pageResponse[3] + 4);
+
+            decoded.ActivateMicrocode = (byte)((pageResponse[4] & 0xC0) >> 6);
+            decoded.SPT = (byte)((pageResponse[4] & 0x38) >> 3);
+            decoded.GRD_CHK |= (pageResponse[4] & 0x04) == 0x04;
+            decoded.APP_CHK |= (pageResponse[4] & 0x02) == 0x02;
+            decoded.REF_CHK |= (pageResponse[4] & 0x01) == 0x01;
+            decoded.UASK_SUP |= (pageResponse[5] & 0x20) == 0x20;
+            decoded.GROUP_SUP |= (pageResponse[5] & 0x10) == 0x10;
+            decoded.PRIOR_SUP |= (pageResponse[5] & 0x08) == 0x08;
+            decoded.HEADSUP |= (pageResponse[5] & 0x04) == 0x04;
+            decoded.ORDSUP |= (pageResponse[5] & 0x02) == 0x02;
+            decoded.SIMPSUP |= (pageResponse[5] & 0x01) == 0x01;
+            decoded.WU_SUP |= (pageResponse[6] & 0x08) == 0x08;
+            decoded.CRD_SUP |= (pageResponse[6] & 0x04) == 0x04;
+            decoded.NV_SUP |= (pageResponse[6] & 0x02) == 0x02;
+            decoded.V_SUP |= (pageResponse[6] & 0x01) == 0x01;
+            decoded.NO_PI_CHK |= (pageResponse[7] & 0x20) == 0x20;
+            decoded.P_I_I_SUP |= (pageResponse[7] & 0x10) == 0x10;
+            decoded.LUICLR |= (pageResponse[7] & 0x01) == 0x01;
+            decoded.R_SUP |= (pageResponse[8] & 0x10) == 0x10;
+            decoded.HSSRELEF |= (pageResponse[8] & 0x02) == 0x02;
+            decoded.CBCS |= (pageResponse[8] & 0x01) == 0x01;
+            decoded.Nexus = (byte)(pageResponse[9] & 0x0F);
+            decoded.ExtendedTestMinutes = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.POA_SUP |= (pageResponse[12] & 0x80) == 0x80;
+            decoded.HRA_SUP |= (pageResponse[12] & 0x40) == 0x40;
+            decoded.VSA_SUP |= (pageResponse[12] & 0x20) == 0x20;
+            decoded.MaximumSenseLength = pageResponse[13];
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_86(byte[] pageResponse)
+        {
+            return PrettifyPage_86(DecodePage_86(pageResponse));
+        }
+
+        public static string PrettifyPage_86(Page_86? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_86 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Extended INQUIRY Data:");
+
+            if(page.PeripheralDeviceType == PeripheralDeviceTypes.DirectAccess ||
+               page.PeripheralDeviceType == PeripheralDeviceTypes.SCSIZonedBlockDEvice)
+            {
+                switch(page.SPT)
+                {
+                    case 0:
+                        sb.AppendLine("Logical unit supports type 1 protection");
+                        break;
+                    case 1:
+                        sb.AppendLine("Logical unit supports types 1 and 2 protection");
+                        break;
+                    case 2:
+                        sb.AppendLine("Logical unit supports type 2 protection");
+                        break;
+                    case 3:
+                        sb.AppendLine("Logical unit supports types 1 and 3 protection");
+                        break;
+                    case 4:
+                        sb.AppendLine("Logical unit supports type 3 protection");
+                        break;
+                    case 5:
+                        sb.AppendLine("Logical unit supports types 2 and 3 protection");
+                        break;
+                    case 7:
+                        sb.AppendLine("Logical unit supports types 1, 2 and 3 protection");
+                        break;
+                    default:
+                        sb.AppendFormat("Logical unit supports unknown protection defined by code {0}", (byte)page.SPT).AppendLine();
+                        break;
+                }
+            }
+            else if(page.PeripheralDeviceType == PeripheralDeviceTypes.SequentialAccess && page.SPT == 1)
+                sb.AppendLine("Logical unit supports logical block protection");
+
+            if(page.GRD_CHK)
+                sb.AppendLine("Device checks the logical block guard");
+            if(page.APP_CHK)
+                sb.AppendLine("Device checks the logical block application tag");
+            if(page.REF_CHK)
+                sb.AppendLine("Device checks the logical block reference tag");
+            if(page.UASK_SUP)
+                sb.AppendLine("Device supports unit attention condition sense key specific data");
+            if(page.GROUP_SUP)
+                sb.AppendLine("Device supports grouping");
+            if(page.PRIOR_SUP)
+                sb.AppendLine("Device supports priority");
+            if(page.HEADSUP)
+                sb.AppendLine("Device supports head of queue");
+            if(page.ORDSUP)
+                sb.AppendLine("Device supports the ORDERED task attribute");
+            if(page.SIMPSUP)
+                sb.AppendLine("Device supports the SIMPLE task attribute");
+            if(page.WU_SUP)
+                sb.AppendLine("Device supports marking a block as uncorrectable with WRITE LONG");
+            if(page.CRD_SUP)
+                sb.AppendLine("Device supports disabling correction with WRITE LONG");
+            if(page.NV_SUP)
+                sb.AppendLine("Device has a non-volatile cache");
+            if(page.V_SUP)
+                sb.AppendLine("Device has a volatile cache");
+            if(page.NO_PI_CHK)
+                sb.AppendLine("Device has disabled protection information checks");
+            if(page.P_I_I_SUP)
+                sb.AppendLine("Device supports protection information intervals");
+            if(page.LUICLR)
+                sb.AppendLine("Device clears any unit attention condition in all LUNs after reporting for any LUN");
+            if(page.R_SUP)
+                sb.AppendLine("Device supports referrals");
+            if(page.HSSRELEF)
+                sb.AppendLine("Devoce implements alternate reset handling");
+            if(page.CBCS)
+                sb.AppendLine("Device supports capability-based command security");
+            if(page.POA_SUP)
+                sb.AppendLine("Device supports power-on activation for new microcode");
+            if(page.HRA_SUP)
+                sb.AppendLine("Device supports hard reset activation for new microcode");
+            if(page.VSA_SUP)
+                sb.AppendLine("Device supports vendor specific activation for new microcode");
+
+            if(page.ExtendedTestMinutes > 0)
+                sb.AppendFormat("Extended self-test takes {0} to complete", TimeSpan.FromMinutes(page.ExtendedTestMinutes)).AppendLine();
+
+            if(page.MaximumSenseLength > 0)
+                sb.AppendFormat("Device supports a maximum of {0} bytes for sense data", page.MaximumSenseLength).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x86: Extended INQUIRY data page
+
+        #region EVPD Page 0x89: ATA Information page
+
+        /// <summary>
+        /// ATA Information page
+        /// Page code 0x89
+        /// </summary>
+        public struct Page_89
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public ushort PageLength;
+            /// <summary>
+            /// Contains the SAT vendor identification
+            /// </summary>
+            public byte[] VendorIdentification;
+            /// <summary>
+            /// Contains the SAT product identification
+            /// </summary>
+            public byte[] ProductIdentification;
+            /// <summary>
+            /// Contains the SAT revision level
+            /// </summary>
+            public byte[] ProductRevisionLevel;
+            /// <summary>
+            /// Contains the ATA device signature
+            /// </summary>
+            public byte[] Signature;
+            /// <summary>
+            /// Contains the command code used to identify the device
+            /// </summary>
+            public byte CommandCode;
+            /// <summary>
+            /// Contains the response to ATA IDENTIFY (PACKET) DEVICE
+            /// </summary>
+            public byte[] IdentifyData;
+        }
+
+        public static Page_89? DecodePage_89(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x89)
+                return null;
+
+            if((pageResponse[2] << 4) + pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 572)
+                return null;
+
+            Page_89 decoded = new Page_89();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (ushort)((pageResponse[2] << 4) + pageResponse[3] + 4);
+
+            decoded.VendorIdentification = new byte[8];
+            decoded.ProductIdentification = new byte[16];
+            decoded.ProductRevisionLevel = new byte[4];
+            decoded.Signature = new byte[20];
+            decoded.IdentifyData = new byte[512];
+
+            Array.Copy(pageResponse, 8, decoded.VendorIdentification, 0, 8);
+            Array.Copy(pageResponse, 8, decoded.ProductIdentification, 0, 16);
+            Array.Copy(pageResponse, 8, decoded.ProductRevisionLevel, 0, 4);
+            Array.Copy(pageResponse, 8, decoded.Signature, 0, 20);
+            decoded.CommandCode = pageResponse[56];
+            Array.Copy(pageResponse, 8, decoded.IdentifyData, 0, 512);
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_89(byte[] pageResponse)
+        {
+            return PrettifyPage_89(DecodePage_89(pageResponse));
+        }
+
+        // TODO: Decode ATA signature?
+        public static string PrettifyPage_89(Page_89? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_89 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI to ATA Translation Layer Data:");
+
+            sb.AppendFormat("\tTranslation layer vendor: {0}", VendorString.Prettify(StringHandlers.CToString(page.VendorIdentification).Trim())).AppendLine();
+            sb.AppendFormat("\tTranslation layer name: {0}", StringHandlers.CToString(page.ProductIdentification).Trim()).AppendLine();
+            sb.AppendFormat("\tTranslation layer release level: {0}", StringHandlers.CToString(page.ProductRevisionLevel).Trim()).AppendLine();
+            switch(page.CommandCode)
+            {
+                case 0xEC:
+                    sb.AppendLine("\tDevice responded to ATA IDENTIFY DEVICE command.");
+                    break;
+                case 0xA1:
+                    sb.AppendLine("\tDevice responded to ATA IDENTIFY PACKET DEVICE command.");
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice responded to ATA command {0:X2}h", page.CommandCode).AppendLine();
+                    break;
+            }
+            switch(page.Signature[0])
+            {
+                case 0x00:
+                    sb.AppendLine("\tDevice uses Parallel ATA.");
+                    break;
+                case 0x34:
+                    sb.AppendLine("\tDevice uses Serial ATA.");
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice uses unknown transport with code {0}", page.Signature[0]).AppendLine();
+                    break;
+            }
+
+            ATA.Identify.IdentifyDevice? id = ATA.Identify.Decode(page.IdentifyData);
+            if(id.HasValue)
+            {
+                sb.AppendLine("\tATA IDENTIFY information follows:");
+                sb.AppendFormat("{0}", ATA.Identify.Prettify(id)).AppendLine();
+            }
+            else
+                sb.AppendLine("\tCould not decode ATA IDENTIFY information");
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x89: ATA Information page
 
     }
 }
