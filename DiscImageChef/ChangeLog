@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added SCSI EVPD page 83h.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Implemented SCSI EVPD 82h
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

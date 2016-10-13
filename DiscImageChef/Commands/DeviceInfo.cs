@@ -209,12 +209,6 @@ namespace DiscImageChef.Commands
                         Decoders.SCSI.Inquiry.SCSIInquiry? inq = Decoders.SCSI.Inquiry.Decode(inqBuf);
                         DicConsole.WriteLine(Decoders.SCSI.Inquiry.Prettify(inq));
 
-                        bool scsi80 = false;
-                        bool scsi82 = false;
-                        string scsiSerial = null;
-                        string scsiAsciiOperatingDefs = null;
-                        StringBuilder sb = null;
-
                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
 
                         if(!sense)
@@ -230,9 +224,7 @@ namespace DiscImageChef.Commands
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
                                         {
-                                            if(sb == null)
-                                                sb = new StringBuilder();
-                                            sb.AppendFormat("Page 0x{0:X2}: ", Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf)).AppendLine();
+                                            DicConsole.WriteLine("ASCII Page {0:X2}h: {1}", page, Decoders.SCSI.EVPD.DecodeASCIIPage(inqBuf));
 
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
@@ -242,9 +234,7 @@ namespace DiscImageChef.Commands
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
                                         {
-                                            scsi80 = true;
-                                            scsiSerial = Decoders.SCSI.EVPD.DecodePage80(inqBuf);
-
+                                            DicConsole.WriteLine("Unit Serial Number: {0}", Decoders.SCSI.EVPD.DecodePage80(inqBuf));
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
@@ -253,9 +243,16 @@ namespace DiscImageChef.Commands
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
                                         {
-                                            scsi82 = true;
-                                            scsiAsciiOperatingDefs = Decoders.SCSI.EVPD.DecodePage82(inqBuf);
-
+                                            DicConsole.WriteLine("ASCII implemented operating definitions: {0}", Decoders.SCSI.EVPD.DecodePage82(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0x83)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_83(inqBuf));
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
@@ -274,17 +271,6 @@ namespace DiscImageChef.Commands
                                     }
                                 }
                             }
-                        }
-
-                        if(scsi80)
-                            DicConsole.WriteLine("Unit Serial Number: {0}", scsiSerial);
-                        if(scsi82)
-                            DicConsole.WriteLine("ASCII implemented operating definitions: {0}", scsiAsciiOperatingDefs);
-
-                        if(sb != null)
-                        {
-                            DicConsole.WriteLine("ASCII VPDs:");
-                            DicConsole.WriteLine(sb.ToString());
                         }
 
                         byte[] modeBuf;

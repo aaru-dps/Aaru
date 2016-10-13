@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -127,6 +129,203 @@ namespace DiscImageChef.Decoders.SCSI
 
             return StringHandlers.CToString(ascii);
         }
+
+        #region EVPD Page 0x83: Device identification page
+
+        public enum IdentificationCodeSet : byte
+        {
+            /// <summary>
+            /// Identifier is binary
+            /// </summary>
+            Binary = 1,
+            /// <summary>
+            /// Identifier is pure ASCII
+            /// </summary>
+            ASCII = 2
+        }
+
+        public enum IdentificationTypes : byte
+        {
+            /// <summary>
+            /// No assignment authority was used and there is no guarantee the identifier is unique
+            /// </summary>
+            NoAuthority = 0,
+            /// <summary>
+            /// Concatenates vendor and product identifier from INQUIRY plus unit serial number from page 80h
+            /// </summary>
+            Inquiry = 1,
+            /// <summary>
+            /// Identifier is a 64-bit IEEE EUI-64
+            /// </summary>
+            EUI = 2,
+            /// <summary>
+            /// Identifier is a 64-bit FC-PH Name_Identifier
+            /// </summary>
+            FCPH = 3
+        }
+
+        public struct IdentificatonDescriptor
+        {
+            /// <summary>
+            /// Defines how the identifier is stored
+            /// </summary>
+            public IdentificationCodeSet CodeSet;
+            /// <summary>
+            /// Defines the type of the identifier
+            /// </summary>
+            public IdentificationTypes Type;
+            /// <summary>
+            /// Length of the identifier
+            /// </summary>
+            public byte Length;
+            /// <summary>
+            /// Identifier as an ASCII string if applicable
+            /// </summary>
+            public string ASCII;
+            /// <summary>
+            /// Binary identifier
+            /// </summary>
+            public byte[] Binary;
+        }
+
+        /// <summary>
+        /// Device identification page
+        /// Page code 0x83
+        /// </summary>
+        public struct Page_83
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            /// <summary>
+            /// The descriptors.
+            /// </summary>
+            public IdentificatonDescriptor[] Descriptors;
+        }
+
+        public static Page_83? DecodePage_83(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0x83)
+                return null;
+
+            if(pageResponse[3] + 4 != pageResponse.Length)
+                return null;
+
+            if(pageResponse.Length < 6)
+                return null;
+
+            Page_83 decoded = new Page_83();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+
+            int position = 4;
+            List<IdentificatonDescriptor> descriptors = new List<IdentificatonDescriptor>();
+
+            while(position < pageResponse.Length)
+            {
+                IdentificatonDescriptor descriptor = new IdentificatonDescriptor();
+                descriptor.CodeSet = (IdentificationCodeSet)(pageResponse[position] & 0x0F);
+                descriptor.Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F);
+                descriptor.Length = pageResponse[position + 3];
+                descriptor.Binary = new byte[descriptor.Length];
+                Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
+                if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                    descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
+                else
+                    descriptor.ASCII = "";
+
+                position += 4 + descriptor.Length;
+            }
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_83(byte[] pageResponse)
+        {
+            return PrettifyPage_83(DecodePage_83(pageResponse));
+        }
+
+        public static string PrettifyPage_83(Page_83? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_83 page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("SCSI Device identification page:");
+
+            if(page.Descriptors.Length == 0)
+            {
+                sb.AppendLine("\tThere are no identifiers");
+                return sb.ToString();
+            }
+
+            foreach(IdentificatonDescriptor descriptor in page.Descriptors)
+            {
+                switch(descriptor.Type)
+                {
+                    case IdentificationTypes.NoAuthority:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                            sb.AppendFormat("Vendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
+                            sb.AppendFormat("Vendor descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                        else
+                            sb.AppendFormat("Vendor descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                        break;
+                    case IdentificationTypes.Inquiry:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                            sb.AppendFormat("Inquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
+                            sb.AppendFormat("Inquiry descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                        else
+                            sb.AppendFormat("Inquiry descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                        break;
+                    case IdentificationTypes.EUI:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                            sb.AppendFormat("IEEE EUI-64: {0}", descriptor.ASCII).AppendLine();
+                        else
+                            sb.AppendFormat("IEEE EUI-64: {0:X16}", descriptor.Binary).AppendLine();
+                        break;
+                    case IdentificationTypes.FCPH:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                            sb.AppendFormat("FC-PH Name_Identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                            sb.AppendFormat("FC-PH Name_Identifier: {0:X16}", descriptor.Binary).AppendLine();
+                        break;
+                    default:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
+                            sb.AppendFormat("Unknown descriptor type {1} contains: {0}", descriptor.ASCII, (byte)descriptor.Type).AppendLine();
+                        else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
+                            sb.AppendFormat("Inquiry descriptor type {1} contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.Type).AppendLine();
+                        else
+                            sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
+                        break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0x83: Device identification page
     }
 }
 
