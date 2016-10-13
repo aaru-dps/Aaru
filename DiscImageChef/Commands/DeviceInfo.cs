@@ -301,7 +301,7 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
-                                    else if(page == 0xC0 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "quantum")
+                                    else if(page == 0xC0 && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
@@ -310,7 +310,7 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
-                                    else if((page == 0xC0 || page == 0xC1) && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                    else if((page == 0xC0 || page == 0xC1) && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "certance")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
@@ -320,7 +320,7 @@ namespace DiscImageChef.Commands
                                         }
                                     }
                                     else if((page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5 || page == 0xC6) &&
-                                            StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                            StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "certance")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
@@ -329,7 +329,7 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
-                                    else if(page == 0xDF && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant() == "certance")
+                                    else if(page == 0xDF && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "certance")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
                                         if(!sense)
@@ -600,6 +600,24 @@ namespace DiscImageChef.Commands
                                                 }
                                                 else if(page.Subpage == 1)
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_1C_S01(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x21:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "CERTANCE")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyCertanceModePage_21(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x22:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "CERTANCE")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyCertanceModePage_22(page.PageResponse));
                                                 else
                                                     goto default;
 
