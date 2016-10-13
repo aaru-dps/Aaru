@@ -132,6 +132,22 @@ namespace DiscImageChef.Decoders.SCSI
 
         #region EVPD Page 0x83: Device identification page
 
+        public enum IdentificationAssociation : byte
+        {
+            /// <summary>
+            /// Identifier field is associated with the addressed logical unit
+            /// </summary>
+            LogicalUnit = 0,
+            /// <summary>
+            /// Identifier field is associated with the target port
+            /// </summary>
+            TargetPort = 1,
+            /// <summary>
+            /// Identifier field is associated with the target device that contains the LUN
+            /// </summary>
+            TargetDevice = 2
+        }
+
         public enum IdentificationCodeSet : byte
         {
             /// <summary>
@@ -141,7 +157,11 @@ namespace DiscImageChef.Decoders.SCSI
             /// <summary>
             /// Identifier is pure ASCII
             /// </summary>
-            ASCII = 2
+            ASCII = 2,
+            /// <summary>
+            /// Identifier is in UTF-8
+            /// </summary>
+            UTF8 = 3
         }
 
         public enum IdentificationTypes : byte
@@ -155,21 +175,57 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             Inquiry = 1,
             /// <summary>
-            /// Identifier is a 64-bit IEEE EUI-64
+            /// Identifier is a 64-bit IEEE EUI-64, or extended
             /// </summary>
             EUI = 2,
             /// <summary>
-            /// Identifier is a 64-bit FC-PH Name_Identifier
+            /// Identifier is compatible with 64-bit FC-PH Name_Identifier
             /// </summary>
-            FCPH = 3
+            NAA = 3,
+            /// <summary>
+            /// Identifier to relative port in device
+            /// </summary>
+            Relative = 4,
+            /// <summary>
+            /// Identifier to group of target ports in device
+            /// </summary>
+            TargetPortGroup = 5,
+            /// <summary>
+            /// Identifier to group of target LUNs in device
+            /// </summary>
+            LogicalUnitGroup = 6,
+            /// <summary>
+            /// MD5 of device identification values
+            /// </summary>
+            MD5 = 7,
+            /// <summary>
+            /// SCSI name string
+            /// </summary>
+            SCSI = 8,
+            /// <summary>
+            /// Protocol specific port identifier
+            /// </summary>
+            ProtocolSpecific = 9
         }
 
         public struct IdentificatonDescriptor
         {
             /// <summary>
+            /// Protocol identifier
+            /// </summary>
+            public ProtocolIdentifiers ProtocolIdentifier;
+            /// <summary>
             /// Defines how the identifier is stored
             /// </summary>
             public IdentificationCodeSet CodeSet;
+            /// <summary>
+            /// Set if protocol identifier is valid
+            /// </summary>
+            public bool PIV;
+            /// <summary>
+            /// Identifies which decide the identifier associates with
+            /// </summary>
+            public IdentificationAssociation Association;
             /// <summary>
             /// Defines the type of the identifier
             /// </summary>
@@ -179,7 +235,7 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public byte Length;
             /// <summary>
-            /// Identifier as an ASCII string if applicable
+            /// Identifier as a string if applicable
             /// </summary>
             public string ASCII;
             /// <summary>
@@ -242,18 +298,26 @@ namespace DiscImageChef.Decoders.SCSI
             while(position < pageResponse.Length)
             {
                 IdentificatonDescriptor descriptor = new IdentificatonDescriptor();
+                descriptor.ProtocolIdentifier = (ProtocolIdentifiers)((pageResponse[position] & 0xF0) >> 4);
                 descriptor.CodeSet = (IdentificationCodeSet)(pageResponse[position] & 0x0F);
+                descriptor.PIV |= (pageResponse[position + 1] & 0x80) == 0x80;
+                descriptor.Association = (IdentificationAssociation)((pageResponse[position + 1] & 0x30) >> 4);
                 descriptor.Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F);
                 descriptor.Length = pageResponse[position + 3];
                 descriptor.Binary = new byte[descriptor.Length];
                 Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
                 if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
                     descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
+                else if(descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
                 else
                     descriptor.ASCII = "";
 
                 position += 4 + descriptor.Length;
+                descriptors.Add(descriptor);
             }
+
+            decoded.Descriptors = descriptors.ToArray();
 
             return decoded;
         }
@@ -271,7 +335,7 @@ namespace DiscImageChef.Decoders.SCSI
             Page_83 page = modePage.Value;
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("SCSI Device identification page:");
+            sb.AppendLine("SCSI Device identification:");
 
             if(page.Descriptors.Length == 0)
             {
@@ -281,41 +345,207 @@ namespace DiscImageChef.Decoders.SCSI
 
             foreach(IdentificatonDescriptor descriptor in page.Descriptors)
             {
+                switch(descriptor.Association)
+                {
+                    case IdentificationAssociation.LogicalUnit:
+                        sb.AppendLine("\tIdentifier belongs to addressed logical unit");
+                        break;
+                    case IdentificationAssociation.TargetPort:
+                        sb.AppendLine("\tIdentifier belongs to target port");
+                        break;
+                    case IdentificationAssociation.TargetDevice:
+                        sb.AppendLine("\tIdentifier belongs to target device that contains the addressed logical unit");
+                        break;
+                    default:
+                        sb.AppendFormat("\tIndentifier has unknown association with code {0}", (byte)descriptor.Association).AppendLine();
+                        break;
+                }
+
+                if(descriptor.PIV)
+                {
+                    string protocol = "";
+                    switch(descriptor.ProtocolIdentifier)
+                    {
+                        case ProtocolIdentifiers.ADT:
+                            protocol = "Automation/Drive Interface Transport";
+                            break;
+                        case ProtocolIdentifiers.ATA:
+                            protocol = "AT Attachment Interface (ATA/ATAPI)";
+                            break;
+                        case ProtocolIdentifiers.FibreChannel:
+                            protocol = "Fibre Channel";
+                            break;
+                        case ProtocolIdentifiers.Firewire:
+                            protocol = "IEEE 1394";
+                            break;
+                        case ProtocolIdentifiers.iSCSI:
+                            protocol = "Internet SCSI";
+                            break;
+                        case ProtocolIdentifiers.NoProtocol:
+                            protocol = "no specific";
+                            break;
+                        case ProtocolIdentifiers.PCIe:
+                            protocol = "PCI Express";
+                            break;
+                        case ProtocolIdentifiers.RDMAP:
+                            protocol = "SCSI Remote Direct Memory Access";
+                            break;
+                        case ProtocolIdentifiers.SAS:
+                            protocol = "Serial Attachment SCSI";
+                            break;
+                        case ProtocolIdentifiers.SCSI:
+                            protocol = "Parallel SCSI";
+                            break;
+                        case ProtocolIdentifiers.SCSIe:
+                            protocol = "SCSI over PCI Express";
+                            break;
+                        case ProtocolIdentifiers.SSA:
+                            protocol = "SSA";
+                            break;
+                        case ProtocolIdentifiers.UAS:
+                            protocol = "USB Attached SCSI";
+                            break;
+                        default:
+                            protocol = string.Format("unknown code {0}", (byte)descriptor.ProtocolIdentifier);
+                            break;
+                    }
+                    sb.AppendFormat("\tDescriptor referes to {0} protocol", protocol).AppendLine();
+                }
+
                 switch(descriptor.Type)
                 {
                     case IdentificationTypes.NoAuthority:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                            sb.AppendFormat("Vendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tVendor descriptor contains: {0}", descriptor.ASCII).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("Vendor descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                            sb.AppendFormat("\tVendor descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
                         else
-                            sb.AppendFormat("Vendor descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                            sb.AppendFormat("\tVendor descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
                         break;
                     case IdentificationTypes.Inquiry:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                            sb.AppendFormat("Inquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tInquiry descriptor contains: {0}", descriptor.ASCII).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("Inquiry descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                            sb.AppendFormat("\tInquiry descriptor contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
                         else
-                            sb.AppendFormat("Inquiry descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
+                            sb.AppendFormat("\tInquiry descriptor contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet).AppendLine();
                         break;
                     case IdentificationTypes.EUI:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                            sb.AppendFormat("IEEE EUI-64: {0}", descriptor.ASCII).AppendLine();
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tIEEE EUI-64: {0}", descriptor.ASCII).AppendLine();
                         else
-                            sb.AppendFormat("IEEE EUI-64: {0:X16}", descriptor.Binary).AppendLine();
+                        {
+                            sb.AppendFormat("\tIEEE EUI-64: {0:X2}", descriptor.Binary[0]);
+                            for(int i = 1; i < descriptor.Binary.Length; i++)
+                                sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+                            sb.AppendLine();
+                        }
                         break;
-                    case IdentificationTypes.FCPH:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                            sb.AppendFormat("FC-PH Name_Identifier: {0}", descriptor.ASCII).AppendLine();
+                    case IdentificationTypes.NAA:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tNAA: {0}", descriptor.ASCII).AppendLine();
                         else
-                            sb.AppendFormat("FC-PH Name_Identifier: {0:X16}", descriptor.Binary).AppendLine();
+                        {
+                            sb.AppendFormat("\tNAA: {0:X2}", descriptor.Binary[0]);
+                            for(int i = 1; i < descriptor.Binary.Length; i++)
+                                sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+                            sb.AppendLine();
+                        }
+                        break;
+                    case IdentificationTypes.Relative:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tRelative target port identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                            sb.AppendFormat("\tRelative target port identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                        break;
+                    case IdentificationTypes.TargetPortGroup:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tTarget group identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                            sb.AppendFormat("\tTarget group identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                        break;
+                    case IdentificationTypes.LogicalUnitGroup:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tLogical unit group identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                            sb.AppendFormat("\tLogical unit group identifier: {0}", (descriptor.Binary[2] << 8) + descriptor.Binary[3]).AppendLine();
+                        break;
+                    case IdentificationTypes.MD5:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tMD5 logical unit identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                        {
+                            sb.AppendFormat("\tMD5 logical unit identifier: {0:x2}", descriptor.Binary[0]);
+                            for(int i = 1; i < descriptor.Binary.Length; i++)
+                                sb.AppendFormat("{0:x2}", descriptor.Binary[i]);
+                            sb.AppendLine();
+                        }
+                        break;
+                    case IdentificationTypes.SCSI:
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tSCSI name string identifier: {0}", descriptor.ASCII).AppendLine();
+                        else
+                        {
+                            sb.AppendFormat("\tSCSI name string identifier (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                        }
+                        break;
+                    case IdentificationTypes.ProtocolSpecific:
+                        {
+                            if(descriptor.PIV)
+                            {
+                                switch(descriptor.ProtocolIdentifier)
+                                {
+                                    case ProtocolIdentifiers.ADT:
+                                        sb.AppendFormat("\tProtocol (Automation/Drive Interface Transport) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.ATA:
+                                        sb.AppendFormat("\tProtocol (ATA/ATAPI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.FibreChannel:
+                                        sb.AppendFormat("\tProtocol (Fibre Channel) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.Firewire:
+                                        sb.AppendFormat("\tProtocol (IEEE 1394) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.iSCSI:
+                                        sb.AppendFormat("\tProtocol (Internet SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.NoProtocol:
+                                        sb.AppendFormat("\tProtocol (unknown) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.PCIe:
+                                        sb.AppendFormat("\tProtocol (PCI Express) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.RDMAP:
+                                        sb.AppendFormat("\tProtocol (SCSI Remote Direct Memory Access) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.SAS:
+                                        sb.AppendFormat("\tProtocol (Serial Attachment SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.SCSI:
+                                        sb.AppendFormat("\tProtocol (Parallel SCSI) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.SSA:
+                                        sb.AppendFormat("\tProtocol (SSA) specific descriptor with unknown format (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.SCSIe:
+                                        sb.AppendFormat("\tProtocol (SCSIe) specific descriptor: Routing ID is {0}", (descriptor.Binary[0] << 8) + descriptor.Binary[1]).AppendLine();
+                                        break;
+                                    case ProtocolIdentifiers.UAS:
+                                        sb.AppendFormat("\tProtocol (UAS) specific descriptor: USB address {0} interface {1}", descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).AppendLine();
+                                        break;
+                                    default:
+                                        sb.AppendFormat("\tProtocol (unknown code {0}) specific descriptor with unknown format (hex): {1}", (byte)descriptor.ProtocolIdentifier, PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).AppendLine();
+                                        break;
+                                }
+                            }
+                        }
                         break;
                     default:
-                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
-                            sb.AppendFormat("Unknown descriptor type {1} contains: {0}", descriptor.ASCII, (byte)descriptor.Type).AppendLine();
+                        if(descriptor.CodeSet == IdentificationCodeSet.ASCII || descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                            sb.AppendFormat("\tUnknown descriptor type {1} contains: {0}", descriptor.ASCII, (byte)descriptor.Type).AppendLine();
                         else if(descriptor.CodeSet == IdentificationCodeSet.Binary)
-                            sb.AppendFormat("Inquiry descriptor type {1} contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.Type).AppendLine();
+                            sb.AppendFormat("\tUnknown descriptor type {1} contains binary data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.Type).AppendLine();
                         else
                             sb.AppendFormat("Inquiry descriptor type {2} contains unknown kind {1} of data (hex): {0}", PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40), (byte)descriptor.CodeSet, (byte)descriptor.Type).AppendLine();
                         break;

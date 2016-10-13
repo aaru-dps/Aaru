@@ -1,5 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs:
+	* Modes.cs:
+	* Enums.cs: Updated EVPD Page 83h to SPC-5.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs: Added SCSI EVPD page 83h.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
