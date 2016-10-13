@@ -466,6 +466,26 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x11:
+                                            {
+                                                if(page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_11(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x12:
+                                        case 0x13:
+                                        case 0x14:
+                                            {
+                                                if(page.Subpage == 0)
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyModePage_12_13_14(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         case 0x1A:
                                             {
                                                 if(page.Subpage == 0)

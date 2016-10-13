@@ -1,3 +1,8 @@
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Modes.cs: Added support for SCSI MODE PAGEs 11h, 12h, 13h
+	and 14h (medium partitions)
+
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
 
 	* Modes.cs: Added DDS-2.
