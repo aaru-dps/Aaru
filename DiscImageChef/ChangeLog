@@ -1,6 +1,11 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:
+	  Added EVPD page 89h, SCSI to ATA translation layer
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DeviceInfo.cs:
 	  Add EVPD page 85h, management network addresses.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>

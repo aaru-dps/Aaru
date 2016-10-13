@@ -283,6 +283,24 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if(page == 0x86)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_86(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
+                                    else if(page == 0x89)
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_89(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else
                                     {
                                         if(page != 0x00)

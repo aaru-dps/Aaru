@@ -1,5 +1,9 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs: Added EVPD page 89h, SCSI to ATA translation layer
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs: Updated page 85h to SPC-5.
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
