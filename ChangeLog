@@ -1,5 +1,9 @@
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs: Added SCSI EVPD page 83h.
+
+2016-10-13  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs: Implemented SCSI EVPD 82h
 
 2016-10-13  Natalia Portillo  <claunia@claunia.com>
