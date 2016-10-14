@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Policy;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -2256,7 +2257,7 @@ namespace DiscImageChef.Decoders.SCSI
             return StringHandlers.CToString(ascii).Trim();
         }
 
-        #region EVPD Page 0xB3: Automation Device Serial Number page
+        #endregion EVPD Page 0xB3: Automation Device Serial Number page
 
         #region EVPD Page 0xB4: Data Transfer Device Element Address page
 
@@ -2280,6 +2281,174 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0xB4: Data Transfer Device Element Address page
+
+        #region EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
+
+        /// <summary>
+        /// Drive component revision level pages
+        /// Page codes 0xC0 to 0xC5 (HP)
+        /// </summary>
+        public struct Page_C0_to_C5_HP
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] Component;
+            public byte[] Version;
+            public byte[] Date;
+            public byte[] Variant;
+            public byte[] Copyright;
+        }
+
+        public static Page_C0_to_C5_HP? DecodePage_C0_to_C5_HP(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1 &&
+                pageResponse[1] != 0xC2 && pageResponse[1] != 0xC3 &&
+                pageResponse[1] != 0xC4 && pageResponse[1] != 0xC5)
+                return null;
+
+            if(pageResponse.Length < 4)
+                return null;
+
+            Page_C0_to_C5_HP decoded = new Page_C0_to_C5_HP();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+            decoded.PageCode = pageResponse[1];
+
+            if(pageResponse[3] == 92 && pageResponse.Length < 96)
+            {
+                decoded.Component = new byte[26];
+                decoded.Version = new byte[19];
+                decoded.Date = new byte[24];
+                decoded.Variant = new byte[23];
+
+                Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
+                Array.Copy(pageResponse, 30, decoded.Version, 0, 19);
+                Array.Copy(pageResponse, 49, decoded.Date, 0, 24);
+                Array.Copy(pageResponse, 73, decoded.Variant, 0, 23);
+
+                return decoded;
+            }
+
+            if(pageResponse[4] == pageResponse[3] - 1)
+            {
+                List<byte> array = new List<byte>();
+                string fwRegExStr = "Firmware Rev\\s+=\\s+(?<fw>\\d+\\.\\d+)\\s+Build date\\s+=\\s+(?<date>(\\w|\\d|\\s*.)*)\\s*$";
+                string fwcRegExStr = "FW_CONF\\s+=\\s+(?<value>0x[0-9A-Fa-f]{8})\\s*$";
+                string servoRegExStr = "Servo\\s+Rev\\s+=\\s+(?<version>\\d+\\.\\d+)\\s*$";
+                Regex fwRegEx = new Regex(fwRegExStr);
+                Regex fwcRegEx = new Regex(fwcRegExStr);
+                Regex servoRegEx = new Regex(servoRegExStr);
+                Match fwMatch;
+                Match fwcMatch;
+                Match servoMatch;
+
+                for(int pos = 5; pos < pageResponse.Length; pos++)
+                {
+                    if(pageResponse[pos] == 0x00)
+                    {
+                        string str = StringHandlers.CToString(array.ToArray());
+                        fwMatch = fwRegEx.Match(str);
+                        fwcMatch = fwcRegEx.Match(str);
+                        servoMatch = servoRegEx.Match(str);
+
+                        if(str.ToLowerInvariant().StartsWith("copyright", StringComparison.Ordinal))
+                            decoded.Copyright = Encoding.ASCII.GetBytes(str);
+                        else if(fwMatch.Success)
+                        {
+                            decoded.Component = Encoding.ASCII.GetBytes("Firmware");
+                            decoded.Version = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
+                            decoded.Date = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
+                        }
+                        else if(fwcMatch.Success)
+                            decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
+                        else if(servoMatch.Success)
+                        {
+                            decoded.Component = Encoding.ASCII.GetBytes("Servo");
+                            decoded.Version = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
+                        }
+
+                        array = new List<byte>();
+                    }
+                    else
+                        array.Add(pageResponse[pos]);
+                }
+
+                return decoded;
+            }
+
+            return null;
+        }
+
+        public static string PrettifyPage_C0_to_C5_HP(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_to_C5_HP(DecodePage_C0_to_C5_HP(pageResponse));
+        }
+
+        public static string PrettifyPage_C0_to_C5_HP(Page_C0_to_C5_HP? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C0_to_C5_HP page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            switch(page.PageCode)
+            {
+                case 0xC0:
+                    sb.AppendLine("HP Drive Firmware Revision Levels page:");
+                    break;
+                case 0xC1:
+                    sb.AppendLine("HP Drive Hardware Revision Levels page:");
+                    break;
+                case 0xC2:
+                    sb.AppendLine("HP Drive PCA Revision Levels page:");
+                    break;
+                case 0xC3:
+                    sb.AppendLine("HP Drive Mechanism Revision Levels page:");
+                    break;
+                case 0xC4:
+                    sb.AppendLine("HP Drive Head Assembly Revision Levels page:");
+                    break;
+                case 0xC5:
+                    sb.AppendLine("HP Drive ACI Revision Levels page:");
+                    break;
+            }
+
+            if(page.Component != null && page.Component.Length > 0)
+                sb.AppendFormat("\tComponent: {0}", StringHandlers.CToString(page.Component)).AppendLine();
+            if(page.Version != null && page.Version.Length > 0)
+                sb.AppendFormat("\tVersion: {0}", StringHandlers.CToString(page.Version)).AppendLine();
+            if(page.Date != null && page.Date.Length > 0)
+                sb.AppendFormat("\tDate: {0}", StringHandlers.CToString(page.Date)).AppendLine();
+            if(page.Variant != null && page.Variant.Length > 0)
+                sb.AppendFormat("\tVariant: {0}", StringHandlers.CToString(page.Variant)).AppendLine();
+            if(page.Copyright != null && page.Copyright.Length > 0)
+                sb.AppendFormat("\tCopyright: {0}", StringHandlers.CToString(page.Copyright)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
+
     }
 }
 

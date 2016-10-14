@@ -392,6 +392,16 @@ namespace DiscImageChef.Commands
                                             doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
                                         }
                                     }
+                                    else if((page == 0xC0 || page == 0xC1 || page == 0xC2 || page == 0xC3 || page == 0xC4 || page == 0xC5) &&
+                                            StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "hp")
+                                    {
+                                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                                        if(!sense)
+                                        {
+                                            DicConsole.WriteLine("{0}", Decoders.SCSI.EVPD.PrettifyPage_C0_to_C5_HP(inqBuf));
+                                            doWriteFile(options.OutputPrefix, string.Format("_scsi_evpd_{0:X2}h.bin", page), string.Format("SCSI INQUIRY EVPD {0:X2}h", page), inqBuf);
+                                        }
+                                    }
                                     else if(page == 0xDF && StringHandlers.CToString(inq.Value.VendorIdentification).ToLowerInvariant().Trim() == "certance")
                                     {
                                         sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -722,10 +732,30 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x3B:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyHPModePage_3B(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
+                                        case 0x3C:
+                                            {
+                                                if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyHPModePage_3C(page.PageResponse));
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         case 0x3D:
                                             {
                                                 if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "IBM")
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyIBMModePage_3D(page.PageResponse));
+                                                else if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyHPModePage_3D(page.PageResponse));
                                                 else
                                                     goto default;
 
@@ -735,6 +765,8 @@ namespace DiscImageChef.Commands
                                             {
                                                 if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "FUJITSU")
                                                     DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyFujitsuModePage_3E(page.PageResponse));
+                                                else if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
+                                                    DicConsole.WriteLine(Decoders.SCSI.Modes.PrettifyHPModePage_3E(page.PageResponse));
                                                 else
                                                     goto default;
 

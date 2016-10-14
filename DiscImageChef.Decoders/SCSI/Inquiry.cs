@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using DiscImageChef.Console;
+using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -141,6 +142,15 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 decoded.ProductRevisionLevel = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 32, decoded.ProductRevisionLevel, 0, 4);
+            }
+            if(SCSIInquiryResponse.Length >= 49)
+            {
+                // HP
+                decoded.HPPresent = true;
+                decoded.HP_WORM |= (SCSIInquiryResponse[40] & 0x01) == 0x01;
+                decoded.HP_WORMVersion = (byte)((SCSIInquiryResponse[40] & 0x7F) >> 1);
+                decoded.HP_OBDR = new byte[6];
+                Array.Copy(SCSIInquiryResponse, 43, decoded.HP_OBDR, 0, 6);
             }
             if(SCSIInquiryResponse.Length >= 56)
             {
@@ -1896,7 +1906,7 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             #region Quantum vendor prettifying
-            if(response.QuantumPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant() == "quantum")
+            if(response.QuantumPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
             {
                 sb.AppendLine("Quantum vendor-specific information:");
                 switch(response.Qt_ProductFamily)
@@ -1945,7 +1955,7 @@ namespace DiscImageChef.Decoders.SCSI
             #endregion Quantum vendor prettifying
 
             #region IBM vendor prettifying
-            if(response.IBMPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant() == "ibm")
+            if(response.IBMPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
             {
                 sb.AppendLine("IBM vendor-specific information:");
 
@@ -1960,6 +1970,20 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendFormat("IBM OEM Specific Field: {0}", response.IBM_OEMSpecific).AppendLine();
             }
             #endregion IBM vendor prettifying
+
+            #region HP vendor prettifying
+            if(response.HPPresent && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "hp")
+            {
+                sb.AppendLine("HP vendor-specific information:");
+
+                if(response.HP_WORM)
+                    sb.AppendFormat("Device supports WORM version {0}", response.HP_WORMVersion).AppendLine();
+
+                byte[] OBDRSign = { 0x24, 0x44, 0x52, 0x2D, 0x31, 0x30};
+                if(OBDRSign.SequenceEqual(response.HP_OBDR))
+                    sb.AppendLine("Device supports Tape Disaster Recovery");
+            }
+            #endregion HP vendor prettifying
 
 #if DEBUG
             if(response.DeviceTypeModifier != 0)
@@ -2365,6 +2389,27 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public byte IBM_OEMSpecific;
             #endregion IBM vendor unique inquiry data structure
+
+            #region HP vendor unique inquiry data structure
+            /// <summary>
+            /// Means that the INQUIRY response contains 49 bytes or more, so this data has been filled
+            /// </summary>
+            public bool HPPresent;
+            /// <summary>
+            /// WORM version
+            /// Byte 40 bits 7 to 1
+            /// </summary>
+            public byte HP_WORMVersion;
+            /// <summary>
+            /// WORM supported
+            /// Byte 40 bit 0
+            /// </summary>
+            public bool HP_WORM;
+            /// <summary>
+            /// Bytes 43 to 48
+            /// </summary>
+            public byte[] HP_OBDR;
+            #endregion HP vendor unique inquiry data structure
         }
 
         #endregion Public structures
