@@ -143,6 +143,13 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.ProductRevisionLevel = new byte[4];
                 Array.Copy(SCSIInquiryResponse, 32, decoded.ProductRevisionLevel, 0, 4);
             }
+            if(SCSIInquiryResponse.Length >= 44)
+            {
+                // Seagate 1
+                decoded.SeagatePresent = true;
+                decoded.Seagate_DriveSerialNumber = new byte[8];
+                Array.Copy(SCSIInquiryResponse, 36, decoded.Seagate_DriveSerialNumber, 0, 8);
+            }
             if(SCSIInquiryResponse.Length >= 49)
             {
                 // HP
@@ -224,6 +231,20 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 decoded.VendorSpecific2 = new byte[SCSIInquiryResponse.Length - 96];
                 Array.Copy(SCSIInquiryResponse, 96, decoded.VendorSpecific2, 0, SCSIInquiryResponse.Length - 96);
+            }
+            if(SCSIInquiryResponse.Length >= 144)
+            {
+                // Seagate 2
+                decoded.Seagate2Present = true;
+                decoded.Seagate_Copyright = new byte[48];
+                Array.Copy(SCSIInquiryResponse, 96, decoded.Seagate_Copyright, 0, 48);
+            }
+            if(SCSIInquiryResponse.Length >= 148)
+            {
+                // Seagate 2
+                decoded.Seagate3Present = true;
+                decoded.Seagate_ServoPROMPartNo = new byte[4];
+                Array.Copy(SCSIInquiryResponse, 144, decoded.Seagate_ServoPROMPartNo, 0, 4);
             }
 
             return decoded;
@@ -1985,6 +2006,23 @@ namespace DiscImageChef.Decoders.SCSI
             }
             #endregion HP vendor prettifying
 
+            #region Seagate vendor prettifying
+            if((response.SeagatePresent || response.Seagate2Present || response.Seagate3Present)
+               && StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "seagate")
+            {
+                sb.AppendLine("Seagate vendor-specific information:");
+
+                if(response.SeagatePresent)
+                    sb.AppendFormat("Drive serial number: {0}", StringHandlers.CToString(response.Seagate_DriveSerialNumber)).AppendLine();
+
+                if(response.Seagate2Present)
+                    sb.AppendFormat("Drive copyright: {0}", StringHandlers.CToString(response.Seagate_Copyright)).AppendLine();
+
+                if(response.Seagate3Present)
+                    sb.AppendFormat("Drive servo part number: {0}", PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).AppendLine();
+            }
+            #endregion Seagate vendor prettifying
+
 #if DEBUG
             if(response.DeviceTypeModifier != 0)
                 sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
@@ -2410,6 +2448,36 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public byte[] HP_OBDR;
             #endregion HP vendor unique inquiry data structure
+
+            #region Seagate vendor unique inquiry data structure
+            /// <summary>
+            /// Means that bytes 36 to 43 are filled
+            /// </summary>
+            public bool SeagatePresent;
+            /// <summary>
+            /// Drive Serial Number
+            /// Bytes 36 to 43
+            /// </summary>
+            public byte[] Seagate_DriveSerialNumber;
+            /// <summary>
+            /// Means that bytes 96 to 143 are filled
+            /// </summary>
+            public bool Seagate2Present;
+            /// <summary>
+            /// Contains Seagate copyright notice
+            /// Bytes 96 to 143
+            /// </summary>
+            public byte[] Seagate_Copyright;
+            /// <summary>
+            /// Means that bytes 144 to 147 are filled
+            /// </summary>
+            public bool Seagate3Present;
+            /// <summary>
+            /// Reserved Seagate field
+            /// Bytes 144 to 147
+            /// </summary>
+            public byte[] Seagate_ServoPROMPartNo;
+            #endregion Seagate vendor unique inquiry data structure
         }
 
         #endregion Public structures

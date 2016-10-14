@@ -2333,7 +2333,7 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.PageLength = (byte)(pageResponse[3] + 4);
             decoded.PageCode = pageResponse[1];
 
-            if(pageResponse[3] == 92 && pageResponse.Length < 96)
+            if(pageResponse[3] == 92 && pageResponse.Length >= 96)
             {
                 decoded.Component = new byte[26];
                 decoded.Version = new byte[19];
@@ -2448,6 +2448,91 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Pages 0xC0 to 0xC5 (HP): Drive component revision level pages
+
+        #region EVPD Page 0xC0 (Seagate): Firmware numbers page
+
+        /// <summary>
+        /// Firmware numbers page
+        /// Page code 0xC0 (Seagate)
+        /// </summary>
+        public struct Page_C0_Seagate
+        {
+            /// <summary>
+            /// The peripheral qualifier.
+            /// </summary>
+            public PeripheralQualifiers PeripheralQualifier;
+            /// <summary>
+            /// The type of the peripheral device.
+            /// </summary>
+            public PeripheralDeviceTypes PeripheralDeviceType;
+            /// <summary>
+            /// The page code.
+            /// </summary>
+            public byte PageCode;
+            /// <summary>
+            /// The length of the page.
+            /// </summary>
+            public byte PageLength;
+            public byte[] ControllerFirmware;
+            public byte[] BootFirmware;
+            public byte[] ServoFirmware;
+        }
+
+        public static Page_C0_Seagate? DecodePage_C0_Seagate(byte[] pageResponse)
+        {
+            if(pageResponse == null)
+                return null;
+
+            if(pageResponse[1] != 0xC0)
+                return null;
+
+            if(pageResponse[3] != 12)
+                return null;
+
+            if(pageResponse.Length != 16)
+                return null;
+
+            Page_C0_Seagate decoded = new Page_C0_Seagate();
+
+            decoded.PeripheralQualifier = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5);
+            decoded.PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F);
+            decoded.PageLength = (byte)(pageResponse[3] + 4);
+            decoded.PageCode = pageResponse[1];
+
+            decoded.ControllerFirmware = new byte[4];
+            decoded.BootFirmware = new byte[4];
+            decoded.ServoFirmware = new byte[4];
+
+            Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);
+            Array.Copy(pageResponse, 8, decoded.BootFirmware, 0, 4);
+            Array.Copy(pageResponse, 12, decoded.ServoFirmware, 0, 4)
+
+            return decoded;
+        }
+
+        public static string PrettifyPage_C0_Seagate(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_Seagate(DecodePage_C0_Seagate(pageResponse));
+        }
+
+        public static string PrettifyPage_C0_Seagate(Page_C0_Seagate? modePage)
+        {
+            if(!modePage.HasValue)
+                return null;
+
+            Page_C0_Seagate page = modePage.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Seagate Firmware Numbers page:");
+
+            sb.AppendFormat("\tController firmware version: {0}", StringHandlers.CToString(page.ControllerFirmware)).AppendLine();
+            sb.AppendFormat("\tBoot firmware version: {0}", StringHandlers.CToString(page.BootFirmware)).AppendLine();
+            sb.AppendFormat("\tServo firmware version: {0}", StringHandlers.CToString(page.ServoFirmware)).AppendLine();
+
+            return sb.ToString();
+        }
+
+        #endregion EVPD Page 0xC0 (Seagate): Firmware numbers page
 
     }
 }

@@ -1,5 +1,10 @@
 2016-10-14  Natalia Portillo  <claunia@claunia.com>
 
+	* EVPD.cs:
+	* Inquiry.cs: Added Seagate EVPD and INQUIRY fields.
+
+2016-10-14  Natalia Portillo  <claunia@claunia.com>
+
 	* Modes.cs: Added Apple OEM MODE page 30h.
 
 2016-10-14  Natalia Portillo  <claunia@claunia.com>
