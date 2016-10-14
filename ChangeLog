@@ -1,5 +1,9 @@
 2016-10-14  Natalia Portillo  <claunia@claunia.com>
 
+	* Modes.cs: Added Apple OEM MODE page 30h.
+
+2016-10-14  Natalia Portillo  <claunia@claunia.com>
+
 	* EVPD.cs:
 	* Modes.cs:
 	* Inquiry.cs: Added HP vendor EVPD, MODE pages and INQUIRY
