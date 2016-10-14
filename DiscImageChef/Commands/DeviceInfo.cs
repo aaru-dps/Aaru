@@ -732,6 +732,15 @@ namespace DiscImageChef.Commands
 
                                                 break;
                                             }
+                                        case 0x30:
+                                            {
+                                                if(Decoders.SCSI.Modes.IsAppleModePage_30(page.PageResponse))
+                                                    DicConsole.WriteLine("Drive identifies as Apple OEM drive");
+                                                else
+                                                    goto default;
+
+                                                break;
+                                            }
                                         case 0x3B:
                                             {
                                                 if(StringHandlers.CToString(inq.Value.VendorIdentification).Trim() == "HP")
