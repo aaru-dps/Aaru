@@ -32,9 +32,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Security.Policy;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace DiscImageChef.Decoders.SCSI
@@ -787,7 +786,7 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 sb.AppendFormat("\t{0:X2}", identifier.Identifier[0]);
                 for(int i = 1; i < identifier.Identifier.Length; i++)
-                sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
+                    sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
                 sb.AppendLine();
             }
 
@@ -1937,7 +1936,7 @@ namespace DiscImageChef.Decoders.SCSI
                         break;
                     case 8:
                         sb.AppendLine("\tLTO Ultrium 2 cartridge inserted");
-                    break;
+                        break;
                     default:
                         sb.AppendFormat("\tUnknown cartridge type code {0}", page.CartridgeType).AppendLine();
                         break;
@@ -2236,7 +2235,7 @@ namespace DiscImageChef.Decoders.SCSI
         }
 
         #endregion EVPD Page 0xB2: TapeAlert Supported Flags page
-    
+
         #region EVPD Page 0xB3: Automation Device Serial Number page
 
         public static string DecodePageB3(byte[] page)
@@ -2505,7 +2504,7 @@ namespace DiscImageChef.Decoders.SCSI
 
             Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);
             Array.Copy(pageResponse, 8, decoded.BootFirmware, 0, 4);
-            Array.Copy(pageResponse, 12, decoded.ServoFirmware, 0, 4)
+            Array.Copy(pageResponse, 12, decoded.ServoFirmware, 0, 4);
 
             return decoded;
         }
