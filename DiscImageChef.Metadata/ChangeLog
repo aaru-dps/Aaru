@@ -1,3 +1,7 @@
+2016-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* DeviceReport.cs: Added PCMCIA support.
+
 2016-10-12  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaType.cs: Added support for DDS, DDS-2, DDS-3, DDS-4.

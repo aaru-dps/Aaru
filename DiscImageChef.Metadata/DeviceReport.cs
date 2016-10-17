@@ -47,6 +47,7 @@ namespace DiscImageChef.Metadata
         public ataType ATAPI;
         public scsiType SCSI;
         public bool CompactFlash;
+        public pcmciaType PCMCIA;
 
         [XmlIgnore]
         public bool CompactFlashSpecified;
@@ -1000,6 +1001,22 @@ namespace DiscImageChef.Metadata
         public bool DensitySpecified;
         [XmlIgnore]
         public bool MediumTypeSpecified;
+    }
+
+    public class pcmciaType
+    {
+        public byte[] CIS;
+        public string Compliance;
+        public ushort ManufacturerCode;
+        public ushort CardCode;
+        public string Manufacturer;
+        public string ProductName;
+        public string[] AdditionalInformation;
+
+        [XmlIgnore]
+        public bool ManufacturerCodeSpecified;
+        [XmlIgnore]
+        public bool CardCodeSpecified;
     }
 }
 

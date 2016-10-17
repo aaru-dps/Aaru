@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
@@ -160,6 +161,47 @@ namespace DiscImageChef.Commands
                     sidecar.BlockMedia[0].USB.Descriptors.Size = dev.USBDescriptors.Length;
                     sidecar.BlockMedia[0].USB.Descriptors.Checksums = Core.Checksum.GetChecksums(dev.USBDescriptors).ToArray();
                     writeToFile(sidecar.BlockMedia[0].USB.Descriptors.Image, dev.USBDescriptors);
+                }
+
+                if(dev.IsPCMCIA)
+                {
+                    sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
+                    sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
+                    sidecar.BlockMedia[0].PCMCIA.CIS.Image = options.OutputPrefix + ".cis.bin";
+                    sidecar.BlockMedia[0].PCMCIA.CIS.Size = dev.CIS.Length;
+                    sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Core.Checksum.GetChecksums(dev.CIS).ToArray();
+                    writeToFile(sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.CIS);
+                    Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
+                    if(tuples != null)
+                    {
+                        foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                        {
+                            if(tuple.Code == TupleCodes.CISTPL_MANFID)
+                            {
+                                ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
+
+                                if(manfid != null)
+                                {
+                                    sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                    sidecar.BlockMedia[0].PCMCIA.CardCode = manfid.CardID;
+                                    sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
+                                    sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
+                                }
+                            }
+                            else if(tuple.Code == TupleCodes.CISTPL_VERS_1)
+                            {
+                                Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                                if(vers != null)
+                                {
+                                    sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
+                                    sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
+                                    sidecar.BlockMedia[0].PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                                    sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 sidecar.BlockMedia[0].ATA = new ATAType();
@@ -863,7 +905,12 @@ namespace DiscImageChef.Commands
 
                 sidecar.BlockMedia[0].Checksums = dataChk.End().ToArray();
                 string xmlDskTyp, xmlDskSubTyp;
-                Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
+                if(dev.IsCompactFlash)
+                    Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp, out xmlDskSubTyp);
+                else if(dev.IsPCMCIA)
+                    Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI, out xmlDskTyp, out xmlDskSubTyp);
+                else
+                    Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD, out xmlDskTyp, out xmlDskSubTyp);
                 sidecar.BlockMedia[0].DiskType = xmlDskTyp;
                 sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                 // TODO: Implement device firmware revision

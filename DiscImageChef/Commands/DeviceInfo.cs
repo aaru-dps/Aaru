@@ -94,6 +94,76 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
+            if(dev.IsPCMCIA)
+            {
+                DicConsole.WriteLine("PCMCIA device");
+                DicConsole.WriteLine("PCMCIA CIS is {0} bytes", dev.CIS.Length);
+                Decoders.PCMCIA.Tuple[] tuples = Decoders.PCMCIA.CIS.GetTuples(dev.CIS);
+                if(tuples != null)
+                {
+                    foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                    {
+                        switch(tuple.Code)
+                        {
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_NULL:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_END:
+                                break;
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICEGEO_A:
+                                DicConsole.WriteLine("{0}", Decoders.PCMCIA.CIS.PrettifyDeviceGeometryTuple(tuple));
+                                break;
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_MANFID:
+                                DicConsole.WriteLine("{0}", Decoders.PCMCIA.CIS.PrettifyManufacturerIdentificationTuple(tuple));
+                                break;
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_1:
+                                DicConsole.WriteLine("{0}", Decoders.PCMCIA.CIS.PrettifyLevel1VersionTuple(tuple));
+                                break;
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_ALTSTR:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_BAR:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_BATTERY:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_BYTEORDER:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_CFTABLE_ENTRY:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_CHECKSUM:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_CONFIG:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_CONFIG_CB:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DATE:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_A:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_OA:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_DEVICE_OC:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_EXTDEVIC:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_FORMAT:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_FORMAT_A:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_FUNCE:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_FUNCID:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_GEOMETRY:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_INDIRECT:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_JEDEC_A:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_JEDEC_C:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_LINKTARGET:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_A:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_C:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_CB:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_LONGLINK_MFC:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_NO_LINK:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_ORG:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_PWR_MGMNT:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_SPCL:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_SWIL:
+                            case Decoders.PCMCIA.TupleCodes.CISTPL_VERS_2:
+                                DicConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}", tuple.Code);
+                                break;
+                            default:
+                                DicConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}", (byte)tuple.Code);
+                                break;
+                        }
+                    }
+                }
+                else
+                    DicConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
+            }
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:

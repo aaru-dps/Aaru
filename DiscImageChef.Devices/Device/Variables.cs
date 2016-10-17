@@ -58,6 +58,9 @@ namespace DiscImageChef.Devices
         readonly string firewireModelName;
         readonly uint firewireVendor;
         readonly string firewireVendorName;
+        readonly bool compactFlash;
+        readonly bool pcmcia;
+        readonly byte[] cis;
 
         /// <summary>
         /// Gets the Platform ID for this device
@@ -320,6 +323,41 @@ namespace DiscImageChef.Devices
         /// </summary>
         /// <value>The FireWire vendor name.</value>
         public string FireWireVendorName { get { return firewireVendorName; } }
+
+        /// <summary>
+        /// Gets a value indicating whether this device is a CompactFlash device.
+        /// </summary>
+        /// <value><c>true</c> if this device is a CompactFlash device; otherwise, <c>false</c>.</value>
+        public bool IsCompactFlash
+        {
+            get
+            {
+                return compactFlash;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this device is a PCMCIA device.
+        /// </summary>
+        /// <value><c>true</c> if this device is a PCMCIA device; otherwise, <c>false</c>.</value>
+        public bool IsPCMCIA
+        {
+            get
+            {
+                return pcmcia;
+            }
+        }
+
+        /// <summary>
+        /// Contains the PCMCIA CIS if applicable
+        /// </summary>
+        public byte[] CIS
+        {
+            get
+            {
+                return cis;
+            }
+        }
     }
 }
 

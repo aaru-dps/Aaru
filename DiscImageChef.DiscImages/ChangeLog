@@ -1,3 +1,7 @@
+2016-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* CHD.cs: Added PCMCIA support.
+
 2016-10-10  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscJuggler.cs:

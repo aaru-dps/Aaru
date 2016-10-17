@@ -40,6 +40,7 @@ using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Filters;
+using DiscImageChef.Decoders.PCMCIA;
 
 namespace DiscImageChef.Commands
 {
@@ -687,10 +688,42 @@ namespace DiscImageChef.Commands
                                         sidecar.BlockMedia[0].ATA.Identify.Size = _imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length;
                                         break;
                                     case MediaTagType.PCMCIA_CIS:
+                                        byte[] cis = _imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
                                         sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
                                         sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
-                                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Core.Checksum.GetChecksums(_imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS)).ToArray();
-                                        sidecar.BlockMedia[0].PCMCIA.CIS.Size = _imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS).Length;
+                                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Core.Checksum.GetChecksums(cis).ToArray();
+                                        sidecar.BlockMedia[0].PCMCIA.CIS.Size = cis.Length;
+                                        Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(cis);
+                                        if(tuples != null)
+                                        {
+                                            foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                                            {
+                                                if(tuple.Code == TupleCodes.CISTPL_MANFID)
+                                                {
+                                                    ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
+
+                                                    if(manfid != null)
+                                                    {
+                                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                                        sidecar.BlockMedia[0].PCMCIA.CardCode = manfid.CardID;
+                                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
+                                                        sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
+                                                    }
+                                                }
+                                                else if(tuple.Code == TupleCodes.CISTPL_VERS_1)
+                                                {
+                                                    Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                                                    if(vers != null)
+                                                    {
+                                                        sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
+                                                        sidecar.BlockMedia[0].PCMCIA.ProductName = vers.Product;
+                                                        sidecar.BlockMedia[0].PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                                                        sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                                                    }
+                                                }
+                                            }
+                                        }
                                         break;
                                     case MediaTagType.SCSI_INQUIRY:
                                         sidecar.BlockMedia[0].SCSI = new SCSIType();

@@ -1,3 +1,11 @@
+2016-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/DumpMedia.cs:
+	* Commands/DeviceInfo.cs:
+	* Commands/DeviceReport.cs:
+	* Commands/CreateSidecar.cs:
+	  Added PCMCIA support.
+
 2016-10-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceInfo.cs:

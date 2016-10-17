@@ -36,6 +36,7 @@ using DiscImageChef.Devices;
 using DiscImageChef.Metadata;
 using System.IO;
 using System.Collections.Generic;
+using DiscImageChef.Decoders.PCMCIA;
 
 namespace DiscImageChef.Commands
 {
@@ -172,6 +173,44 @@ namespace DiscImageChef.Commands
                     report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
                     removable = true;
                 }
+            }
+
+            if(dev.IsPCMCIA)
+            {
+                report.PCMCIA = new pcmciaType();
+                report.PCMCIA.CIS = dev.CIS;
+                Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
+                if(tuples != null)
+                {
+                    foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                    {
+                        if(tuple.Code == TupleCodes.CISTPL_MANFID)
+                        {
+                            ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
+
+                            if(manfid != null)
+                            {
+                                report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                report.PCMCIA.CardCode = manfid.CardID;
+                                report.PCMCIA.ManufacturerCodeSpecified = true;
+                                report.PCMCIA.CardCodeSpecified = true;
+                            }
+                        }
+                        else if(tuple.Code == TupleCodes.CISTPL_VERS_1)
+                        {
+                            Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                            if(vers != null)
+                            {
+                                report.PCMCIA.Manufacturer = vers.Manufacturer;
+                                report.PCMCIA.ProductName = vers.Product;
+                                report.PCMCIA.Compliance = string.Format("{0}.{1}", vers.MajorVersion, vers.MinorVersion);
+                                report.PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                            }
+                        }
+                    }
+                }
+
             }
 
             DicConsole.WriteLine("Querying ATA IDENTIFY...");

@@ -29,13 +29,298 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2016 Natalia Portillo
 // ****************************************************************************/
+
 using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace DiscImageChef.Decoders.PCMCIA
 {
-    public class CIS
+    public static class CIS
     {
-        public CIS()
+        // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?
+        public static Tuple[] GetTuples(byte[] data)
         {
+            List<Tuple> tuples = new List<Tuple>();
+            int position = 0;
+
+            while(position < data.Length)
+            {
+                Tuple tuple = new Tuple();
+
+                tuple.Code = (TupleCodes)data[position];
+
+                if(tuple.Code == TupleCodes.CISTPL_NULL)
+                    continue;
+                if(tuple.Code == TupleCodes.CISTPL_END)
+                    break;
+
+                tuple.Link = data[position + 1];
+
+                if(position + 2 + tuple.Link > data.Length)
+                    break;
+
+                tuple.Data = new byte[tuple.Link + 2];
+                Array.Copy(data, position, tuple.Data, 0, tuple.Link + 2);
+
+                tuples.Add(tuple);
+                position += tuple.Link + 2;
+            }
+
+            return tuples.ToArray();
         }
-    }
+
+        public static DeviceGeometryTuple DecodeDeviceGeometryTuple(Tuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
+                return null;
+
+            if(tuple.Data == null)
+                return null;
+
+            return DecodeDeviceGeometryTuple(tuple.Data);
+        }
+
+        public static DeviceGeometryTuple DecodeDeviceGeometryTuple(byte[] data)
+        {
+            if(data == null)
+                return null;
+            if((data.Length - 2) % 6 != 0)
+                return null;
+
+            DeviceGeometryTuple tuple = new DeviceGeometryTuple();
+            List<DeviceGeometry> geometries = new List<DeviceGeometry>();
+
+            for(int position = 2; position < data.Length; position += 6)
+            {
+                DeviceGeometry geometry = new DeviceGeometry();
+                geometry.CardInterface = data[position];
+                geometry.EraseBlockSize = data[position + 1];
+                geometry.ReadBlockSize = data[position + 2];
+                geometry.WriteBlockSize = data[position + 3];
+                geometry.Partitions = data[position + 4];
+                geometry.Interleaving = data[position + 5];
+                geometries.Add(geometry);
+            }
+
+            tuple.Code = (TupleCodes)data[0];
+            tuple.Link = data[1];
+            tuple.Geometries = geometries.ToArray();
+
+            return tuple;
+        }
+
+        public static string PrettifyDeviceGeometryTuple(DeviceGeometryTuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("PCMCIA Device Geometry Tuples:");
+            foreach(DeviceGeometry geometry in tuple.Geometries)
+            {
+                sb.AppendLine("\tGeometry:");
+                sb.AppendFormat("\t\tDevice width: {0} bits", (1 << (geometry.CardInterface - 1)) * 8).AppendLine();
+                sb.AppendFormat("\t\tErase block = {0} bytes", (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                sb.AppendFormat("\t\tRead block = {0} bytes", (1 << (geometry.ReadBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                sb.AppendFormat("\t\tWrite block = {0} bytes", (1 << (geometry.WriteBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                sb.AppendFormat("\t\tPartition alignment = {0} bytes", (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1)) * (1 << (geometry.Partitions - 1))).AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyDeviceGeometryTuple(Tuple tuple)
+        {
+            return PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(tuple));
+        }
+
+        public static string PrettifyDeviceGeometryTuple(byte[] data)
+        {
+            return PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(data));
+        }
+
+        public static ManufacturerIdentificationTuple DecodeManufacturerIdentificationTuple(Tuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_MANFID)
+                return null;
+
+            if(tuple.Data == null)
+                return null;
+
+            return DecodeManufacturerIdentificationTuple(tuple.Data);
+        }
+
+        public static ManufacturerIdentificationTuple DecodeManufacturerIdentificationTuple(byte[] data)
+        {
+            if(data == null)
+                return null;
+
+            if(data.Length < 6)
+                return null;
+
+            ManufacturerIdentificationTuple tuple = new ManufacturerIdentificationTuple();
+            tuple.Code = (TupleCodes)data[0];
+            tuple.Link = data[1];
+            tuple.ManufacturerID = BitConverter.ToUInt16(data, 2);
+            tuple.CardID = BitConverter.ToUInt16(data, 4);
+
+            return tuple;
+        }
+
+        public static string PrettifyManufacturerIdentificationTuple(ManufacturerIdentificationTuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_MANFID)
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("PCMCIA Manufacturer Identification Tuple:");
+            sb.AppendFormat("\tManufacturer ID: {0}", VendorCode.Prettify(tuple.ManufacturerID)).AppendLine();
+            sb.AppendFormat("\tCard ID:D 0x{0:X4}", tuple.CardID).AppendLine();
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyManufacturerIdentificationTuple(Tuple tuple)
+        {
+            return PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(tuple));
+        }
+
+        public static string PrettifyManufacturerIdentificationTuple(byte[] data)
+        {
+            return PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(data));
+        }
+
+        public static Level1VersionTuple DecodeLevel1VersionTuple(Tuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_VERS_1)
+                return null;
+
+            if(tuple.Data == null)
+                return null;
+
+            return DecodeLevel1VersionTuple(tuple.Data);
+        }
+
+        public static Level1VersionTuple DecodeLevel1VersionTuple(byte[] data)
+        {
+            if(data == null)
+                return null;
+
+            if(data.Length < 4)
+                return null;
+
+            List<byte> buffer = new List<byte>();
+            List<string> strings = null;
+            bool firstString = false;
+            bool secondString = false;
+
+            Level1VersionTuple tuple = new Level1VersionTuple();
+            tuple.Code = (TupleCodes)data[0];
+            tuple.Link = data[1];
+            tuple.MajorVersion = data[2];
+            tuple.MinorVersion = data[3];
+
+            for(int position = 4; position < data.Length; position++)
+            {
+                if(data[position] == 0xFF)
+                    break;
+
+                buffer.Add(data[position]);
+
+                if(data[position] == 0x00)
+                {
+                    if(!firstString)
+                    {
+                        tuple.Manufacturer = StringHandlers.CToString(buffer.ToArray());
+                        buffer = new List<byte>();
+                        firstString = true;
+                        continue;
+                    }
+
+                    if(!secondString)
+                    {
+                        tuple.Product = StringHandlers.CToString(buffer.ToArray());
+                        buffer = new List<byte>();
+                        firstString = true;
+                        continue;
+                    }
+
+                    if(strings == null)
+                        strings = new List<string>();
+
+                    strings.Add(StringHandlers.CToString(buffer.ToArray()));
+                    buffer = new List<byte>();
+                }
+            }
+
+            if(strings != null)
+                tuple.AdditionalInformation = strings.ToArray();
+
+            return tuple;
+        }
+
+        public static string PrettifyLevel1VersionTuple(Level1VersionTuple tuple)
+        {
+            if(tuple == null)
+                return null;
+
+            if(tuple.Code != TupleCodes.CISTPL_VERS_1)
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("PCMCIA Level 1 Version / Product Information Tuple:");
+
+            sb.AppendFormat("\tCard indicates compliance with PC Card Standard Release {0}.{1}", tuple.MajorVersion, tuple.MinorVersion).AppendLine();
+
+            if(string.IsNullOrEmpty(tuple.Manufacturer))
+                sb.AppendLine("\tNo manufacturer information string.");
+            else
+                sb.AppendFormat("\tManufacturer: {0}", tuple.Manufacturer).AppendLine();
+
+            if(string.IsNullOrEmpty(tuple.Product))
+                sb.AppendLine("\tNo product name string.");
+            else
+                sb.AppendFormat("\tProduct name: {0}", tuple.Product).AppendLine();
+
+            if(tuple.AdditionalInformation == null || tuple.AdditionalInformation.Length == 0)
+                sb.AppendLine("\tNo additional information.");
+            else
+            {
+                sb.AppendLine("\tAdditional information:");
+                foreach(string info in tuple.AdditionalInformation)
+                {
+                    if(!string.IsNullOrEmpty(info))
+                        sb.AppendFormat("\t\t{0}", info).AppendLine();
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyLevel1VersionTuple(Tuple tuple)
+        {
+            return PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(tuple));
+        }
+    
+        public static string PrettifyLevel1VersionTuple(byte[] data)
+        {
+            return PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(data));
+        }
+}
 }

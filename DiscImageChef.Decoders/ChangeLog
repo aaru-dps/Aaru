@@ -1,3 +1,11 @@
+2016-10-17  Natalia Portillo  <claunia@claunia.com>
+
+	* CIS.cs:
+	* Enums.cs:
+	* Types.cs:
+	* VendorCode.cs:
+	* DiscImageChef.Decoders.csproj: Added PCMCIA support.
+
 2016-10-16  Natalia Portillo  <claunia@claunia.com>
 
 	* EVPD.cs: Corrected typo. Cleaned code.

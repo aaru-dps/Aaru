@@ -33,18 +33,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
-using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
-using System.Linq;
-using System.Text;
-using SharpCompress.Compressors.Deflate;
 using SharpCompress.Compressors;
-using System.Reflection;
-using System.Reflection.Emit;
+using SharpCompress.Compressors.Deflate;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -594,6 +591,7 @@ namespace DiscImageChef.ImagePlugins
 		Dictionary<ulong, uint> offsetmap;
 
 		byte[] identify;
+		byte[] cis;
 
 		#endregion
 
@@ -961,7 +959,7 @@ namespace DiscImageChef.ImagePlugins
 						case hardDiskMetadata:
 							if(isCdrom || isGdrom)
 								throw new ImageNotSupportedException("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
-							
+
 							string gddd = StringHandlers.CToString(meta);
 							Regex gdddRegEx = new Regex(hardDiskMetadataRegEx);
 							Match gdddMatch = gdddRegEx.Match(gddd);
@@ -1424,6 +1422,11 @@ namespace DiscImageChef.ImagePlugins
 							if(!ImageInfo.readableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
 								ImageInfo.readableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
 							break;
+						case pcmciaCisMetadata:
+							cis = meta;
+							if(!ImageInfo.readableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+								ImageInfo.readableMediaTags.Add(MediaTagType.PCMCIA_CIS);
+							break;
 					}
 
 					nextMetaOff = header.next;
@@ -1548,6 +1551,11 @@ namespace DiscImageChef.ImagePlugins
 			sectorCache = new Dictionary<ulong, byte[]>();
 			hunkCache = new Dictionary<ulong, byte[]>();
 
+			// TODO: Detect CompactFlash
+			// TODO: Get manufacturer and drive name from CIS if applicable
+			if(cis != null)
+				ImageInfo.mediaType = MediaType.PCCardTypeI;
+
 			return true;
 		}
 
@@ -1639,7 +1647,7 @@ namespace DiscImageChef.ImagePlugins
 								}
 								break;
 							case CHDV3EntryFlags.Uncompressed:
-								uncompressedV3:
+							uncompressedV3:
 								hunk = new byte[bytesPerHunk];
 								imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
 								imageStream.Read(hunk, 0, hunk.Length);
@@ -1697,7 +1705,7 @@ namespace DiscImageChef.ImagePlugins
 		{
 			if(isHdd)
 				throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-			
+
 			return VerifySector(GetAbsoluteSector(sectorAddress, track));
 		}
 
@@ -2310,6 +2318,9 @@ namespace DiscImageChef.ImagePlugins
 		{
 			if(ImageInfo.readableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
 				return identify;
+
+			if(ImageInfo.readableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+				return cis;
 
 			throw new FeatureUnsupportedImageException("Feature not supported by image format");
 		}

@@ -239,6 +239,56 @@ namespace DiscImageChef.Devices
                 firewire = false;
             #endregion FireWire
 
+            #region PCMCIA
+            if(platformID == Interop.PlatformID.Linux)
+            {
+                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) || devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) || devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                {
+                    string devPath = devicePath.Substring(5);
+                    if(System.IO.Directory.Exists("/sys/block/" + devPath))
+                    {
+                        string resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                        resolvedLink = "/sys" + resolvedLink.Substring(2);
+                        if(!string.IsNullOrEmpty(resolvedLink))
+                        {
+                            while(resolvedLink.Contains("/sys/devices"))
+                            {
+                                resolvedLink = System.IO.Path.GetDirectoryName(resolvedLink);
+                                if(System.IO.Directory.Exists(resolvedLink + "/pcmcia_socket"))
+                                {
+                                    string[] subdirs = System.IO.Directory.GetDirectories(resolvedLink + "/pcmcia_socket", "pcmcia_socket*", System.IO.SearchOption.TopDirectoryOnly);
+
+                                    if(subdirs.Length > 0)
+                                    {
+                                        string possibleDir = System.IO.Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+                                        if(System.IO.File.Exists(possibleDir + "/card_type") &&
+                                           System.IO.File.Exists(possibleDir + "/cis"))
+                                        {
+                                            System.IO.FileStream cisFs;
+
+                                            cisFs = new System.IO.FileStream(possibleDir + "/cis", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                            byte[] cisBuf = new byte[65536];
+                                            int cisCount = cisFs.Read(cisBuf, 0, 65536);
+                                            cis = new byte[cisCount];
+                                            Array.Copy(cisBuf, 0, cis, 0, cisCount);
+                                            cisFs.Close();
+
+                                            pcmcia = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // TODO: Implement for other operating systems
+            else
+                pcmcia = false;
+            #endregion PCMCIA
+
+
             if(!scsiSense)
             {
                 Decoders.SCSI.Inquiry.SCSIInquiry? Inquiry = Decoders.SCSI.Inquiry.Decode(inqBuf);
@@ -305,6 +355,8 @@ namespace DiscImageChef.Devices
                         {
                             removable |= (ATAID.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) == Identify.GeneralConfigurationBit.Removable;
                         }
+                        else
+                            compactFlash = true;
                     }
                 }
             }
