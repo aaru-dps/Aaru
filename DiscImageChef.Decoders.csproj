@@ -93,6 +93,10 @@
     <Compile Include="SCSI\ModesEncoders.cs" />
     <Compile Include="LisaTag.cs" />
     <Compile Include="CD\Sector.cs" />
+    <Compile Include="PCMCIA\Enums.cs" />
+    <Compile Include="PCMCIA\Types.cs" />
+    <Compile Include="PCMCIA\CIS.cs" />
+    <Compile Include="PCMCIA\VendorCode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -115,6 +119,7 @@
     <Folder Include="Floppy\" />
     <Folder Include="Xbox\" />
     <Folder Include="SCSI\SSC\" />
+    <Folder Include="PCMCIA\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
