@@ -328,6 +328,71 @@ namespace DiscImageChef.Devices.Linux
             return error;
         }
 
+        /// <summary>
+        /// Sends a MMC/SD command
+        /// </summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="fd">File handle</param>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
+        internal static int SendMmcCommand(int fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer, out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        {
+            response = null;
+            duration = 0;
+            sense = false;
+
+            if(buffer == null)
+                return -1;
+
+            mmc_ioc_cmd io_cmd = new mmc_ioc_cmd();
+
+            IntPtr bufPtr = Marshal.AllocHGlobal(buffer.Length);
+
+            io_cmd.write_flag = write;
+            io_cmd.is_ascmd = isApplication;
+            io_cmd.opcode = (uint)command;
+            io_cmd.arg = argument;
+            io_cmd.flags = flags;
+            io_cmd.blksz = blockSize;
+            io_cmd.blksz = blocks;
+            if(timeout > 0)
+            {
+                io_cmd.data_timeout_ns = timeout * 1000000000;
+                io_cmd.cmd_timeout_ms = timeout * 1000;
+            }
+            io_cmd.data_ptr = (ulong)bufPtr;
+
+            Marshal.Copy(buffer, 0, bufPtr, buffer.Length);
+
+            DateTime start = DateTime.UtcNow;
+            int error = Extern.ioctlMmc(fd, LinuxIoctl.MMC_IOC_CMD, ref io_cmd);
+            DateTime end = DateTime.UtcNow;
+
+            sense |= error < 0;
+
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
+
+            Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
+
+            response = io_cmd.response;
+            duration = (end - start).TotalMilliseconds;
+
+            Marshal.FreeHGlobal(bufPtr);
+
+            return error;
+        }
+
         public static string ReadLink(string path)
         {
             IntPtr buf = Marshal.AllocHGlobal(4096);

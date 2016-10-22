@@ -114,6 +114,30 @@ namespace DiscImageChef.Devices
             return Command.SendAtaCommand(platformID, fd, registers, out errorRegisters, protocol, transferRegister,
                 ref buffer, timeout, transferBlocks, out duration, out sense);
         }
+
+        /// <summary>
+        /// Sends a MMC/SD command to this device
+        /// </summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
+        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+                                  uint argument, uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
+                                  out double duration, out bool sense, uint timeout = 0)
+        {
+            return Command.SendMmcCommand(platformID, fd, command, write, isApplication, flags, argument, blockSize, blocks,
+                                          ref buffer, out response, out duration, out sense, timeout);
+        }
     }
 }
 

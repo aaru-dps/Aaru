@@ -1,3 +1,19 @@
+2016-10-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Enums.cs:
+	* Command.cs:
+	* Enums.cs:
+	* Extern.cs:
+	* Command.cs:
+	* Structs.cs:
+	* Commands.cs:
+	* Constructor.cs:
+	* MMC.cs:
+	* DiscImageChef.Devices.csproj:
+	* SecureDigital.cs: Add MMC/SecureDigital device support. Not
+	yet used because of a bad implementation of SEND_CSD and
+	SEND_CID commands (TODO).
+
 2016-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* Variables.cs:

@@ -3455,5 +3455,355 @@ namespace DiscImageChef.Devices
         Obsolete1 = 4,
         Obsolete2 = 5
     }
+
+    /// <summary>
+    /// MMC / SecureDigital commands
+    /// </summary>
+    public enum MmcCommands : byte
+    {
+        #region Class 1 MMC Commands (Basic and read-stream)
+        /// <summary>
+        /// Resets device to idle (BC)
+        /// </summary>
+        GoIdle = 0,
+        /// <summary>
+        /// Resets the device to pre-idle (BC)
+        /// </summary>
+        GoPreIdleState = 0,
+        /// <summary>
+        /// Initiate alternative boot operation
+        /// </summary>
+        BootInitiation = 0,
+        /// <summary>
+        /// Asks device in idle state to send their operation conditions in response (BCR, R3)
+        /// </summary>
+        SendOpCond = 1,
+        /// <summary>
+        /// Asks device to send their CID numbers (BCR, R2)
+        /// </summary>
+        AllSendCID = 2,
+        /// <summary>
+        /// Assigns a relative address to the device (AC, R1)
+        /// </summary>
+        SetRelativeAddress = 3,
+        /// <summary>
+        /// Programs the DSR of the device (BC)
+        /// </summary>
+        SetDSR = 4,
+        /// <summary>
+        /// Toggles the device between sleep and standby (AC, R1b)
+        /// </summary>
+        SleepAwake = 5,
+        /// <summary>
+        /// Switches device mode of operation (AC, R1b)
+        /// </summary>
+        Switch = 6,
+        /// <summary>
+        /// Toggles a device between the stand-by and transfer stats or between the programming and disconnect states (AC, R1b)
+        /// </summary>
+        SelectCard = 7,
+        /// <summary>
+        /// Asks device to send its extended card-specific data (ExtCSD) (ADTC, R1)
+        /// </summary>
+        SendExtCSD = 8,
+        /// <summary>
+        /// Asks device to send its card-specific data (CSD) (AC, R2)
+        /// </summary>
+        SendCSD = 9,
+        /// <summary>
+        /// Asks device to send its card identification (CID) (AC, R2)
+        /// </summary>
+        SendCID = 10,
+        /// <summary>
+        /// Reads data stream from device, starting at given address, until a <see cref="StopTransmission"/> follows (ADTC, R1)
+        /// </summary>
+        [Obsolete]
+        ReadDatUntilStop = 11,
+        /// <summary>
+        /// Terminates a read/write stream/multiple block operation (AC, R1 / R1b)
+        /// </summary>
+        StopTransmission = 12,
+        /// <summary>
+        /// Asks device to send its status register (AC, R1)
+        /// </summary>
+        SendStatus = 13,
+        /// <summary>
+        /// The host reads the reversed bus testing data pattern from a device (ADTC, R1)
+        /// </summary>
+        BusTestRead = 14,
+        /// <summary>
+        /// Sets the card to inactive state (AC)
+        /// </summary>
+        GoInactiveState = 15,
+        /// <summary>
+        /// The host sends the bus testing data pattern to a device (ADTC, R1)
+        /// </summary>
+        BusTestWrite = 19,
+        SPIReadOCR = 58,
+        SPICRCOnOff = 59,
+        #endregion Class 1 MMC Commands (Basic and read-stream)
+
+        #region Class 2 MMC Commands (Block-oriented read)
+        /// <summary>
+        /// Sets the block length in bytes (AC, R1)
+        /// </summary>
+        SetBlocklen = 16,
+        /// <summary>
+        /// Reads a block (ADTC, R1)
+        /// </summary>
+        ReadSingleBlock = 17,
+        /// <summary>
+        /// Transfers data blocks from card to host until interrupted (ADTC, R1)
+        /// </summary>
+        ReadMultipleBlock = 18,
+        /// <summary>
+        /// 128 blocks of tuning pattern is sent for HS200 optimal sampling point detection (ADTC, R1)
+        /// </summary>
+        SendTuningBlockHS200 = 21,
+        #endregion Class 2 MMC Commands (Block-oriented read)
+
+        #region Class 3 MMC Commands (Stream write)
+        /// <summary>
+        /// Writes data stream from host until a <see cref="StopTransmission"/> follows (ADTC, R1)
+        /// </summary>
+        [Obsolete]
+        WriteDatUntilStop = 20,
+        #endregion Class 3 MMC Commands (Stream write)
+
+        #region Class 4 MMC Commands (Block-oriented write)
+        /// <summary>
+        /// Defines the number of blocks which are going to be transferred in the immediately succeeding multiple block command (AC, R1)
+        /// </summary>
+        SetBlockCount = 23,
+        /// <summary>
+        /// Writes a block (ADTC, R1)
+        /// </summary>
+        WriteBlock = 24,
+        /// <summary>
+        /// Continuosly writes blocks until interrupted (ADTC, R1)
+        /// </summary>
+        WriteMultipleBlock = 25,
+        /// <summary>
+        /// Programs the Card Information register (ADTC, R1)
+        /// </summary>
+        ProgramCID = 26,
+        /// <summary>
+        /// Programs the programmable bits of the CSD (ADTC, R1)
+        /// </summary>
+        ProgramCSD = 27,
+        /// <summary>
+        /// Sets the real time clock according to information in block (ADTC, R1)
+        /// </summary>
+        SetTime = 49,
+        #endregion Class 4 MMC Commands (Block-oriented write)
+
+        #region Class 5 MMC Commands (Erase)
+        /// <summary>
+        /// Sets the address of the first erase group (AC, R1)
+        /// </summary>
+        EraseGroupStart = 35,
+        /// <summary>
+        /// Sets the address of the last erase group (AC, R1)
+        /// </summary>
+        EraseGroupEnd = 36,
+        /// <summary>
+        /// Erases previously selected write blocks (AC, R1b)
+        /// </summary>
+        Erase = 38,
+        #endregion Class 5 MMC Commands (Erase)
+
+        #region Class 6 MMC Commands (Block-oriented write protection)
+        /// <summary>
+        /// Sets the write protection bit (AC, R1b)
+        /// </summary>
+        SetWriteProtect = 28,
+        /// <summary>
+        /// Clears the write protection bit (AC, R1b)
+        /// </summary>
+        ClearWriteProtect = 29,
+        /// <summary>
+        /// Asks the device to send the status of the write protection bit (ADTC, R1)
+        /// </summary>
+        SendWriteProtect = 30,
+        /// <summary>
+        /// Sends the type of write protection that is set for the different write protection groups (ADTC, R1)
+        /// </summary>
+        SentWriteProtectType = 31,
+        #endregion Class 6 MMC Commands (Block-oriented write protection)
+
+        #region Class 7 MMC Commands (Lock)
+        /// <summary>
+        /// Used to set/reset the password or lock/unlock the card (ADTC, R1b)
+        /// </summary>
+        LockUnlock = 42,
+        #endregion Class 7 MMC Commands (Lock)
+
+        #region Class 8 MMC Commands (Application-specific)
+        /// <summary>
+        /// Indicates the card that the next command is an application specific command (AC, R1)
+        /// </summary>
+        ApplicationCommand = 55,
+        /// <summary>
+        /// Transfers a data block to/from the card for general purpose / application specific commands (ADTC, R1b)
+        /// </summary>
+        GenericCommand = 56,
+        #endregion Class 8 MMC Commands (Application-specific)
+
+        #region Class 9 MMC Commands (I/O mode)
+        /// <summary>
+        /// Used to write and read 8 bit data field, used to access application dependent registers not defined in MMC standard (AC, R4)
+        /// </summary>
+        FastIO = 39,
+        /// <summary>
+        /// Sets the system into interrupt mode (BCR, R5)
+        /// </summary>
+        GoIRQState = 40,
+        #endregion Class 9 MMC Commands (I/O mode)
+
+        #region Class 10 MMC Commands (Security Protocols)
+        /// <summary>
+        /// Reads data blocks (ADTC, R1)
+        /// </summary>
+        ProtocolRead = 53,
+        /// <summary>
+        /// Writes data blocks (ADTC, R1)
+        /// </summary>
+        ProtocolWrite = 54,
+        #endregion Class 10 MMC Commands (Security Protocols)
+
+        #region Class 11 MMC Commands (Command Queue)
+        /// <summary>
+        /// Defines data direction, priority, task ID and block count of queued task (AC, R1)
+        /// </summary>
+        QueuedTaskParameters = 44,
+        /// <summary>
+        /// Defines the block address of queued task (AC, R1)
+        /// </summary>
+        QueuedTaskAddress = 45,
+        /// <summary>
+        /// Executes the task queue for reading (ADTC, R1)
+        /// </summary>
+        ExecuteTaskRead = 46,
+        /// <summary>
+        /// Executes the task queue for writing (ADTC, R1)
+        /// </summary>
+        ExecuteTaskWrite = 47,
+        /// <summary>
+        /// Manages queues and tasks (AC, R1b)
+        /// </summary>
+        CmdQTaskManagement = 48,
+        #endregion Class 11 MMC Commands (Command Queue)
+
+        #region Class 1 SecureDigital Commands (Basic)
+        /// <summary>
+        /// Sends SD interface condition (BCR, R7)
+        /// </summary>
+        SendInterfaceCondition = 8,
+        /// <summary>
+        /// Switch to 1.8V bus signaling level (AC, R1)
+        /// </summary>
+        VoltageSwitch = 11,
+        #endregion Class 1 SecureDigital Commands (Basic)
+
+        #region Class 2 SecureDigital Commands (Block-oriented read)
+        /// <summary>
+        /// 64 bytes of tuning pattern is sent for SDR50 and SDR104 optinal sampling point detection (ADTC, R1)
+        /// </summary>
+        SendTuningBlock = 19,
+        /// <summary>
+        /// Speed class control command (AC, R1b)
+        /// </summary>
+        SpeedClassControl = 20,
+        #endregion Class 2 SecureDigital Commands (Block-oriented read)
+
+        #region Class 11 SecureDigital Commands (Function Extension)
+        /// <summary>
+        /// Single block read type (ADTC, R1)
+        /// </summary>
+        ReadExtraSingle = 48,
+        /// <summary>
+        /// Single block write type (ADTC, R1)
+        /// </summary>
+        WriteExtraSingle = 49,
+        /// <summary>
+        /// Multiple block read type (ADTC, R1)
+        /// </summary>
+        ReadExtraMulti = 58,
+        /// <summary>
+        /// Multiple block write type (ADTC, R1)
+        /// </summary>
+        WriteExtraMulti = 59,
+        #endregion Class 11 SecureDigital Commands (Function Extension)
+    }
+
+    /// <summary>
+    /// SecureDigital application-specific commands
+    /// </summary>
+    public enum SecureDigitalCommands : byte
+    {
+        /// <summary>
+        /// Defines the data bus width to be used for data transfer (AC, R1)
+        /// </summary>
+        SetBusWidth = 6,
+        /// <summary>
+        /// Sends the SD status register (ADTC, R1)
+        /// </summary>
+        SendStatus = 13,
+        /// <summary>
+        /// Send the number of the written write blocks (ADTC, R1)
+        /// </summary>
+        SendNumWriteBlocks = 22,
+        /// <summary>
+        /// Set the number of write blocks to be pre-erased before writing (AC, R1)
+        /// </summary>
+        SetWriteBlockEraseCount = 23,
+        /// <summary>
+        /// Sends host capacity support information and asks the card to send its operating condition register (BCR, R3)
+        /// </summary>
+        SendOperatingCondition = 41,
+        /// <summary>
+        /// Connects/Disconnects the 50 kOhm pull-up resistor on CD/DAT3 pin of card (AC, R1)
+        /// </summary>
+        SetClearCardDetect = 42,
+        /// <summary>
+        /// Reads the SD Configuration Register SCR (ADTC, R1)
+        /// </summary>
+        SendSCR = 51,
+    }
+
+    [Flags]
+    public enum MmcFlags : uint
+    {
+        ResponsePresent = 1 << 0,
+        Response136 = 1 << 1,
+        ResponseCrc = 1 << 2,
+        ResponseBusy = 1 << 3,
+        ResponseOpcode = 1 << 4,
+        CommandMask = 3 << 5,
+        CommandAC = 0 << 5,
+        CommandADTC = 1 << 5,
+        CommandBC = 2 << 5,
+        CommandBCR = 3 << 5,
+        ResponseSPI_S1 = 1 << 7,
+        ResponseSPI_S2 = 1 << 8,
+        ResponseSPI_B4 = 1 << 9,
+        ResponseSPI_Busy = 1 << 10,
+        ResponseNone = 0,
+        Response_R1 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        Response_R1b = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
+        Response_R2 = ResponsePresent | Response136 | ResponseCrc,
+        Response_R3 = ResponsePresent,
+        Response_R4 = ResponsePresent,
+        Response_R5 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        Response_R6 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        Response_R7 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseSPI_R1 = ResponseSPI_S1,
+        ResponseSPI_R1b = ResponseSPI_S1 | ResponseSPI_Busy,
+        ResponseSPI_R2 = ResponseSPI_S1 | ResponseSPI_S2,
+        ResponseSPI_R3 = ResponseSPI_S1 | ResponseSPI_B4,
+        ResponseSPI_R4 = ResponseSPI_S1 | ResponseSPI_B4,
+        ResponseSPI_R5 = ResponseSPI_S1 | ResponseSPI_S2,
+        ResponseSPI_R7 = ResponseSPI_S1 | ResponseSPI_B4
+    }
 }
 

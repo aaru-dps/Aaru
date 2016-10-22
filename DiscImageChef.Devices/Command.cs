@@ -219,6 +219,34 @@ namespace DiscImageChef.Devices
                     throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
             }
         }
+
+        public static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication,
+                                         MmcFlags flags, uint argument, uint blockSize, uint blocks,
+                                         ref byte[] buffer, out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        {
+            Interop.PlatformID ptID = DetectOS.GetRealPlatformID();
+
+            return SendMmcCommand(ptID, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
+        }
+
+        public static int SendMmcCommand(Interop.PlatformID ptID, object fd, MmcCommands command, bool write, bool isApplication,
+                                         MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer,
+                                         out uint[] response, out double duration, out bool sense, uint timeout = 0)
+        {
+            switch(ptID)
+            {
+                case Interop.PlatformID.Win32NT:
+                    {
+                        throw new NotImplementedException();
+                    }
+                case Interop.PlatformID.Linux:
+                    {
+                        return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument, blockSize, blocks, ref buffer, out response, out duration, out sense, timeout);
+                    }
+                default:
+                    throw new InvalidOperationException(string.Format("Platform {0} not yet supported.", ptID));
+            }
+        }
     }
 }
 

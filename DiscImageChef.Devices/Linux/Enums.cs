@@ -145,6 +145,8 @@ namespace DiscImageChef.Devices.Linux
         // SCSI IOCtls
         SG_GET_VERSION_NUM = 0x2282,
         SG_IO = 0x2285,
+        // MMC IOCtl
+        MMC_IOC_CMD = 0xC048B300
     }
 
     [Flags]

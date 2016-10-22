@@ -90,6 +90,41 @@ namespace DiscImageChef.Devices
             type = DeviceType.Unknown;
             scsiType = Decoders.SCSI.PeripheralDeviceTypes.UnknownDevice;
 
+            // TODO: This is getting error -110 in Linux. Apparently I should set device to standby, request CID/CSD, put device to transition. However I can't get it right now.
+            /*
+            try
+            {
+                byte[] csdBuf;
+                byte[] scrBuf;
+                uint[] mmcResponse;
+                double mmcDuration;
+
+                bool mmcSense = ReadCID(out csdBuf, out mmcResponse, 0, out mmcDuration);
+
+                if(!mmcSense)
+                {
+                    mmcSense = ReadSCR(out scrBuf, out mmcResponse, 0, out mmcDuration);
+
+                    if(!mmcSense)
+                        type = DeviceType.SecureDigital;
+                    else
+                        type = DeviceType.MMC;
+
+                    manufacturer = "To be filled manufacturer";
+                    model = "To be filled model";
+                    revision = "To be filled revision";
+                    serial = "To be filled serial";
+                    scsiType = Decoders.SCSI.PeripheralDeviceTypes.DirectAccess;
+                    removable = false;
+                    return;
+                }
+                else
+                    System.Console.WriteLine("Error {0}: {1}", error, lastError);
+            }
+            catch(NotImplementedException) { }
+            catch(InvalidOperationException) { }
+            */
+
             AtaErrorRegistersCHS errorRegisters;
 
             byte[] ataBuf;
@@ -287,7 +322,6 @@ namespace DiscImageChef.Devices
             else
                 pcmcia = false;
             #endregion PCMCIA
-
 
             if(!scsiSense)
             {

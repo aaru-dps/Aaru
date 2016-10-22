@@ -97,6 +97,16 @@
     <Compile Include="PCMCIA\Types.cs" />
     <Compile Include="PCMCIA\CIS.cs" />
     <Compile Include="PCMCIA\VendorCode.cs" />
+    <Compile Include="MMC\CSD.cs" />
+    <Compile Include="MMC\CID.cs" />
+    <Compile Include="MMC\ExtendedCSD.cs" />
+    <Compile Include="MMC\OCR.cs" />
+    <Compile Include="MMC\VendorString.cs" />
+    <Compile Include="SecureDigital\CID.cs" />
+    <Compile Include="SecureDigital\CSD.cs" />
+    <Compile Include="SecureDigital\SCR.cs" />
+    <Compile Include="SecureDigital\OCR.cs" />
+    <Compile Include="SecureDigital\VendorString.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -120,6 +130,8 @@
     <Folder Include="Xbox\" />
     <Folder Include="SCSI\SSC\" />
     <Folder Include="PCMCIA\" />
+    <Folder Include="MMC\" />
+    <Folder Include="SecureDigital\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
