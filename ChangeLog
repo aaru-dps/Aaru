@@ -1,3 +1,19 @@
+2016-10-22  Natalia Portillo  <claunia@claunia.com>
+
+	* OCR.cs:
+	* CID.cs:
+	* CSD.cs:
+	* ExtendedCSD.cs:
+	* VendorString.cs:
+	* SCR.cs:
+	* CID.cs:
+	* CSD.cs:
+	* OCR.cs:
+	* DiscImageChef.Decoders.csproj:
+	* VendorString.cs: Add MMC/SecureDigital device support. Not
+	yet used because of a bad implementation of SEND_CSD and
+	SEND_CID commands (TODO).
+
 2016-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* CIS.cs:
