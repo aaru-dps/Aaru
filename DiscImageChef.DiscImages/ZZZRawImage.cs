@@ -704,6 +704,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.XDF_35;
                     case 2949120:
                         return MediaType.DOS_35_ED;
+					case 40387584:
+						return MediaType.PocketZip;
                     case 127923200:
                         return MediaType.ECMA_154;
                     case 229632000:
