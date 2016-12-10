@@ -70,6 +70,12 @@ namespace DiscImageChef.CommonTypes
                             return MediaType.Unknown;
                         }
 
+                        if(vendor.ToLowerInvariant().StartsWith("iomega") &&
+                           (model.ToLowerInvariant().StartsWith("clik") ||
+                            model.ToLowerInvariant().StartsWith("pocketzip")) &&
+                           blockSize == 512 && blocks == 78882)
+                            return MediaType.PocketZip;
+
                         if(model.ToLowerInvariant().StartsWith("zip"))
                         {
                             if(blockSize == 512)
