@@ -378,7 +378,7 @@ namespace DiscImageChef.Commands
                                 xmlTrk.StartSector = (long)trk.TrackStartSector;
                                 xmlTrk.EndSector = (long)trk.TrackEndSector;
 
-                                if(trk.Indexes.ContainsKey(0))
+                                if(trk.Indexes != null && trk.Indexes.ContainsKey(0))
                                 {
                                     ulong idx0;
                                     if(trk.Indexes.TryGetValue(0, out idx0))
