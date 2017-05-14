@@ -167,6 +167,9 @@ namespace DiscImageChef.Settings
                 reportsPath = null;
             }
 
+            FileStream prefsFs = null;
+            StreamReader prefsSr = null;
+
             try
             {
                 switch(ptID)
@@ -183,7 +186,9 @@ namespace DiscImageChef.Settings
                                 SaveSettings();
                             }
 
-                            NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(new FileInfo(preferencesFilePath));
+                            prefsFs = new FileStream(preferencesFilePath, FileMode.Open, FileAccess.Read);
+
+                            NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(prefsFs);
                             if(parsedPreferences != null)
                             {
                                 NSObject obj;
@@ -288,13 +293,18 @@ namespace DiscImageChef.Settings
                                         }
                                         else
                                             Current.Stats.VerifyStats = false;
+                                    
                                     }
                                 }
                                 else
                                     Current.Stats = null;
+                            
+                                prefsFs.Close();
                             }
                             else
                             {
+                                prefsFs.Close();
+
                                 SetDefaultSettings();
                                 SaveSettings();
                             }
@@ -357,14 +367,18 @@ namespace DiscImageChef.Settings
                             }
 
                             XmlSerializer xs = new XmlSerializer(Current.GetType());
-                            StreamReader sr = new StreamReader(settingsPath);
-                            Current = (DicSettings)xs.Deserialize(sr);
+                            prefsSr = new StreamReader(settingsPath);
+                            Current = (DicSettings)xs.Deserialize(prefsSr);
                         }
                         break;
                 }
             }
             catch
             {
+                if(prefsFs != null)
+                    prefsFs.Close();
+                if(prefsSr != null)
+                    prefsSr.Close();
                 SetDefaultSettings();
                 SaveSettings();
             }

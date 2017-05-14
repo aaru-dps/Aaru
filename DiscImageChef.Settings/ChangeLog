@@ -1,3 +1,8 @@
+2017-05-14  Natalia Portillo  <claunia@claunia.com>
+
+	* Settings.cs: Corrected a share violation when the
+	  preferences file exists but it's not ours.
+
 2016-09-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Settings.cs: Added filters.
