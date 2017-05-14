@@ -695,6 +695,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "DDS";
                     DiscSubType = "DDS-4";
                     break;
+                case CommonTypes.MediaType.PocketZip:
+                    DiscType = "Iomega PocketZip";
+                    DiscSubType = "Iomega PocketZip";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";

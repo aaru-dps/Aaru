@@ -1,3 +1,7 @@
+2017-05-14  Natalia Portillo  <claunia@claunia.com>
+
+	* MediaType.cs: Added Iomega PocketZip types.
+
 2016-10-17  Natalia Portillo  <claunia@claunia.com>
 
 	* DeviceReport.cs: Added PCMCIA support.
