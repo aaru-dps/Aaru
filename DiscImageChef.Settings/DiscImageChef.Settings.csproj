@@ -30,7 +30,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Xml.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="plist-cil">
       <HintPath>..\packages\plist-cil.1.14\lib\plist-cil.dll</HintPath>
