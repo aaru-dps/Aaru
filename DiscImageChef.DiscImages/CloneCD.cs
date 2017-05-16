@@ -129,7 +129,7 @@ namespace DiscImageChef.DiscImages
 				// Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
 				foreach(byte b in testArray)
 				{
-					if(b < 0x20 && b != 0x0A && b != 0x0D)
+					if(b < 0x20 && b != 0x0A && b != 0x0D && b != 0x00)
 						return false;
 				}
 
