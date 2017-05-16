@@ -429,7 +429,7 @@ namespace DiscImageChef.Settings
                     case Interop.PlatformID.WinCE:
                     case Interop.PlatformID.WindowsPhone:
                         {
-                            RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE").CreateSubKey("Claunia.com");
+                            RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true).CreateSubKey("Claunia.com");
                             RegistryKey key = parentKey.CreateSubKey("DiscImageChef");
 
                             key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
