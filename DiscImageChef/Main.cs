@@ -48,9 +48,14 @@ namespace DiscImageChef
             Settings.Settings.LoadSettings();
             Core.Statistics.LoadStats();
 
-            Parser.Default.ParseArguments<AnalyzeOptions, CompareOptions, ChecksumOptions, EntropyOptions, VerifyOptions, PrintHexOptions,
-                  DecodeOptions, DeviceInfoOptions, MediaInfoOptions, MediaScanOptions, FormatsOptions, BenchmarkOptions, CreateSidecarOptions,
-                  DumpMediaOptions, DeviceReportOptions, ConfigureOptions, StatsOptions, LsOptions, ExtractFilesOptions>(args)
+            Parser.Default.ParseArguments(args, new[] {typeof(AnalyzeOptions), typeof(CompareOptions), typeof(ChecksumOptions),
+                                          typeof(EntropyOptions), typeof(VerifyOptions), typeof(PrintHexOptions),
+                                          typeof(DecodeOptions), typeof(DeviceInfoOptions), typeof(MediaInfoOptions),
+                                          typeof(MediaScanOptions), typeof(FormatsOptions), typeof(BenchmarkOptions),
+                                          typeof(CreateSidecarOptions),
+                                          typeof(DumpMediaOptions), typeof(DeviceReportOptions),
+                                          typeof(ConfigureOptions), typeof(StatsOptions), typeof(LsOptions),
+                typeof(ExtractFilesOptions)})
                   .WithParsed<AnalyzeOptions>(opts =>
                   {
                       if(opts.Debug)
