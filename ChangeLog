@@ -1,5 +1,82 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* PMA.cs:
+	* TOC.cs:
+	* CSD.cs:
+	* PRI.cs:
+	* PFI.cs:
+	* DMI.cs:
+	* BCA.cs:
+	* DDS.cs:
+	* RMD.cs:
+	* LisaTag.cs:
+	* OCR.cs:
+	* UDI.cs:
+	* CID.cs:
+	* ATIP.cs:
+	* AACS.cs:
+	* ADIP.cs:
+	* CPRM.cs:
+	* DMI.cs:
+	* Enums.cs:
+	* EVPD.cs:
+	* Sector.cs:
+	* Spare.cs:
+	* Enums.cs:
+	* Layers.cs:
+	* ISO.cs:
+	* Sense.cs:
+	* Types.cs:
+	* Errors.cs:
+	* DI.cs:
+	* FullTOC.cs:
+	* Session.cs:
+	* CIS.cs:
+	* Enums.cs:
+	* Modes.cs:
+	* DDS.cs:
+	* BCA.cs:
+	* CSS&CPRM.cs:
+	* Amiga.cs:
+	* Identify.cs:
+	* Enums.cs:
+	* Types.cs:
+	* Inquiry.cs:
+	* Enums.cs:
+	* Apple2.cs:
+	* Spare.cs:
+	* CPRM.cs:
+	* Cartridge.cs:
+	* AACS.cs:
+	* Enums.cs:
+	* ExtendedCSD.cs:
+	* System34.cs:
+	* Hybrid.cs:
+	* AppleSony.cs:
+	* Commodore.cs:
+	* VendorString.cs:
+	* CID.cs:
+	* System3740.cs:
+	* CSD.cs:
+	* Features.cs:
+	* VendorCode.cs:
+	* Cartridge.cs:
+	* CDTextOnLeadIn.cs:
+	* VendorString.cs:
+	* OCR.cs:
+	* SCR.cs:
+	* ModesEncoders.cs:
+	* Perpendicular.cs:
+	* BlockLimits.cs:
+	* WriteProtect.cs:
+	* DensitySupport.cs:
+	* AssemblyInfo.cs:
+	* DiscInformation.cs:
+	* VendorString.cs:
+	* DiscStructureCapabilities.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
