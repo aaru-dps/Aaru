@@ -1,5 +1,11 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* DetectOS.cs:
+	* PlatformID.cs:
+	* AssemblyInfo.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>

@@ -1,5 +1,19 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* GZip.cs:
+	* BZip2.cs:
+	* Filter.cs:
+	* Filters.cs:
+	* MacBinary.cs:
+	* PCExchange.cs:
+	* AppleSingle.cs:
+	* AppleDouble.cs:
+	* ZZZNoFilter.cs:
+	* OffsetStream.cs:
+	* ForcedSeekStream.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* packages.config:
 	* DiscImageChef.Filters.csproj: Updated NuGet packages.
 

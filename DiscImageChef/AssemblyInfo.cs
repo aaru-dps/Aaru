@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2016 Natalia Portillo
+// Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 
 using System.Reflection;
@@ -40,7 +40,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Claunia.com")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright © 2011-2016 Natalia Portillo")]
+[assembly: AssemblyCopyright("Copyright © 2011-2017 Natalia Portillo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

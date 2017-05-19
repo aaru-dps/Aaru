@@ -1,5 +1,41 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* BLU.cs:
+	* CHD.cs:
+	* GDI.cs:
+	* QED.cs:
+	* VHD.cs:
+	* VDI.cs:
+	* DIM.cs:
+	* NDIF.cs:
+	* UDIF.cs:
+	* VHDX.cs:
+	* Nero.cs:
+	* QCOW.cs:
+	* DART.cs:
+	* QCOW2.cs:
+	* CPCDSK.cs:
+	* VMware.cs:
+	* CopyQM.cs:
+	* CDRDAO.cs:
+	* CDRWin.cs:
+	* CloneCD.cs:
+	* AppleNIB.cs:
+	* TeleDisk.cs:
+	* Apple2MG.cs:
+	* Parallels.cs:
+	* ImageInfo.cs:
+	* DiskCopy42.cs:
+	* Alcohol120.cs:
+	* BlindWrite5.cs:
+	* DiscJuggler.cs:
+	* BlindWrite4.cs:
+	* ZZZRawImage.cs:
+	* ImagePlugin.cs:
+	* AssemblyInfo.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>

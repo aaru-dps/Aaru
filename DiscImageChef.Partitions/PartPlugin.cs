@@ -28,7 +28,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2016 Natalia Portillo
+// Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 
 using System;

@@ -1,5 +1,38 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Main.cs:
+	* Plugins.cs:
+	* Options.cs:
+	* Commands/Ls.cs:
+	* Core/IBGLog.cs:
+	* AssemblyInfo.cs:
+	* Core/MHDDLog.cs:
+	* Core/Checksum.cs:
+	* Commands/Verify.cs:
+	* Core/Statistics.cs:
+	* Commands/Decode.cs:
+	* Commands/Entropy.cs:
+	* Commands/Formats.cs:
+	* Commands/Analyze.cs:
+	* Commands/Compare.cs:
+	* Commands/Checksum.cs:
+	* Commands/Commands.cs:
+	* Commands/PrintHex.cs:
+	* DetectImageFormat.cs:
+	* Commands/Configure.cs:
+	* Commands/Benchmark.cs:
+	* Commands/DumpMedia.cs:
+	* Commands/MediaScan.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/Statistics.cs:
+	* Commands/DeviceInfo.cs:
+	* Commands/DeviceReport.cs:
+	* Commands/ExtractFiles.cs:
+	* Commands/CreateSidecar.cs:
+	  Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs:
 	  Bumped version to 3.3.99.0.
 

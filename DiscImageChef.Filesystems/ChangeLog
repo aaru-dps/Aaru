@@ -1,5 +1,97 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* FAT.cs:
+	* XFS.cs:
+	* FFS.cs:
+	* PFS.cs:
+	* UDF.cs:
+	* BFS.cs:
+	* SFS.cs:
+	* CBM.cs:
+	* ODS.cs:
+	* ZFS.cs:
+	* JFS.cs:
+	* Cram.cs:
+	* NTFS.cs:
+	* SysV.cs:
+	* VMfs.cs:
+	* APFS.cs:
+	* HPFS.cs:
+	* VxFS.cs:
+	* F2FS.cs:
+	* QNX6.cs:
+	* FATX.cs:
+	* QNX4.cs:
+	* BTRFS.cs:
+	* Opera.cs:
+	* Acorn.cs:
+	* exFAT.cs:
+	* extFS.cs:
+	* Squash.cs:
+	* ECMA67.cs:
+	* ProDOS.cs:
+	* Reiser.cs:
+	* NILFS2.cs:
+	* ext2FS.cs:
+	* Dir.cs:
+	* Reiser4.cs:
+	* CPM.cs:
+	* UNIXBFS.cs:
+	* SolarFS.cs:
+	* Structs.cs:
+	* MinixFS.cs:
+	* Symbian.cs:
+	* ISO9660.cs:
+	* AmigaDOS.cs:
+	* Info.cs:
+	* Nintendo.cs:
+	* PCEngine.cs:
+	* AppleHFS.cs:
+	* File.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Consts.cs:
+	* Filesystem.cs:
+	* Dir.cs:
+	* Structs.cs:
+	* File.cs:
+	* Info.cs:
+	* Dir.cs:
+	* Super.cs:
+	* AppleHFSPlus.cs:
+	* Xattr.cs:
+	* Dir.cs:
+	* Extent.cs:
+	* File.cs:
+	* Info.cs:
+	* Consts.cs:
+	* Info.cs:
+	* LisaFS.cs:
+	* File.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Dir.cs:
+	* Structs.cs:
+	* Super.cs:
+	* Xattr.cs:
+	* Encoding.cs:
+	* File.cs:
+	* Definitions.cs:
+	* Info.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* Super.cs:
+	* Structs.cs:
+	* AppleDOS.cs:
+	* Encoding.cs:
+	* AppleMFS.cs:
+	* Consts.cs:
+	* Structs.cs:
+	* UCSDPascal.cs:
+	* AssemblyInfo.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>

@@ -1,5 +1,27 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* GPT.cs:
+	* Sun.cs:
+	* RDB.cs:
+	* BSD.cs:
+	* MBR.cs:
+	* DEC.cs:
+	* SGI.cs:
+	* PC98.cs:
+	* UNIX.cs:
+	* Xbox.cs:
+	* NeXT.cs:
+	* Atari.cs:
+	* Acorn.cs:
+	* RioKarma.cs:
+	* Human68k.cs:
+	* AppleMap.cs:
+	* PartPlugin.cs:
+	* DragonFlyBSD.cs:
+	* AssemblyInfo.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>

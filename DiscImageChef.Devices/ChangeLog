@@ -1,5 +1,52 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Enums.cs:
+	* Command.cs:
+	* Enums.cs:
+	* Extern.cs:
+	* Enums.cs:
+	* Command.cs:
+	* Enums.cs:
+	* Structs.cs:
+	* Extern.cs:
+	* Extern.cs:
+	* Command.cs:
+	* Commands.cs:
+	* Structs.cs:
+	* Command.cs:
+	* Structs.cs:
+	* Variables.cs:
+	* Destructor.cs:
+	* Constructor.cs:
+	* Cfa.cs:
+	* HP.cs:
+	* MMC.cs:
+	* MCPT.cs:
+	* SMC.cs:
+	* SBC.cs:
+	* SPC.cs:
+	* AssemblyInfo.cs:
+	* NEC.cs:
+	* MMC.cs:
+	* SSC.cs:
+	* Atapi.cs:
+	* Ata48.cs:
+	* Smart.cs:
+	* Ata28.cs:
+	* AtaCHS.cs:
+	* SyQuest.cs:
+	* Plasmon.cs:
+	* Pioneer.cs:
+	* Fujitsu.cs:
+	* Adaptec.cs:
+	* Plextor.cs:
+	* Certance.cs:
+	* HL-DT-ST.cs:
+	* ArchiveCorp.cs:
+	* SecureDigital.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
