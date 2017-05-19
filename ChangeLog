@@ -1,5 +1,23 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* MD5Context.cs:
+	* SHA1Context.cs:
+	* ReedSolomon.cs:
+	* CDChecksums.cs:
+	* CRC64Context.cs:
+	* CRC32Context.cs:
+	* CRC16Context.cs:
+	* SHA384Context.cs:
+	* SHA256Context.cs:
+	* SHA512Context.cs:
+	* Adler32Context.cs:
+	* SpamSumContext.cs:
+	* FletcherContext.cs:
+	* RIPEMD160Context.cs:
+	* AssemblyInfo.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
