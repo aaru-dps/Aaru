@@ -1,5 +1,18 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* Swapping.cs:
+	* PrintHex.cs:
+	* ArrayFill.cs:
+	* ArrayIsEmpty.cs:
+	* DateHandlers.cs:
+	* StringHandlers.cs:
+	* BigEndianMarshal.cs:
+	* BigEndianBitConverter.cs:
+	* AssemblyInfo.cs:
+	* EndianAwareBinaryReader.cs: Updated copyright string.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
