@@ -1,5 +1,9 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* AssemblyInfo.cs: Bumped version to 3.3.99.0.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Console.csproj: Upped version to 3.3.99.0. Do
 	  not use version from solution on library projects.
 
