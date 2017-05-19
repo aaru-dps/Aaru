@@ -1,3 +1,8 @@
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Decoders.csproj: Upped version to 3.3.99.0. Do
+	  not use version from solution on library projects.
+
 2016-10-22  Natalia Portillo  <claunia@claunia.com>
 
 	* OCR.cs:

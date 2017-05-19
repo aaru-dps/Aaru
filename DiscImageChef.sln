@@ -102,15 +102,34 @@ Global
 		Policies = $0
 		$0.StandardHeader = $1
 		$1.Text = @/***************************************************************************\nThe Disc Image Chef\n----------------------------------------------------------------------------\n \nFilename       : ${FileName}\nVersion        : 1.0\nAuthor(s)      : ${AuthorName}\n \nComponent      : Component\n\nRevision       : $Revision$\nLast change by : $Author$\nDate           : $Date$\n \n--[ Description ] ----------------------------------------------------------\n \nDescription\n \n--[ License ] --------------------------------------------------------------\n \n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as\n    published by the Free Software Foundation, either version 3 of the\n    License, or (at your option) any later version.\n\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n    GNU General Public License for more details.\n\n    You should have received a copy of the GNU General Public License\n    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n----------------------------------------------------------------------------\nCopyright (C) 2011-2015 Claunia.com\n****************************************************************************/\n//$Id$
+		$1.IncludeInNewFiles = True
 		$0.TextStylePolicy = $2
 		$2.scope = text/x-csharp
-		$2.TabsToSpaces = True
+		$2.FileWidth = 120
+		$2.inheritsSet = VisualStudio
+		$2.inheritsScope = text/plain
 		$0.CSharpFormattingPolicy = $3
 		$3.scope = text/x-csharp
 		$3.IndentBraces = True
 		$3.IndentBlock = False
 		$3.IndentSwitchCaseSection = False
 		$3.SpaceAfterControlFlowStatementKeyword = False
+		$3.IndentSwitchSection = True
+		$3.NewLinesForBracesInProperties = True
+		$3.NewLinesForBracesInAccessors = True
+		$3.NewLinesForBracesInAnonymousMethods = True
+		$3.NewLinesForBracesInControlBlocks = True
+		$3.NewLinesForBracesInAnonymousTypes = True
+		$3.NewLinesForBracesInObjectCollectionArrayInitializers = True
+		$3.NewLinesForBracesInLambdaExpressionBody = True
+		$3.NewLineForElse = True
+		$3.NewLineForCatch = True
+		$3.NewLineForFinally = True
+		$3.SpacingAfterMethodDeclarationName = False
+		$3.SpaceAfterMethodCallName = False
+		$3.SpaceBeforeOpenSquareBracket = False
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
 		$0.DotNetNamingPolicy = $4
 		$4.DirectoryNamespaceAssociation = Hierarchical
 		$4.ResourceNamePolicy = MSBuild
@@ -253,7 +272,9 @@ Global
 		$31.Indent = @\t
 		$31.LastFilePostfix = "@:\n  "
 		$31.IncludeDirectoryPaths = True
+		$31.LineAlign = 0
+		$30.inheritsSet = Mono
 		description = The Disc Image Chef.
-		version = 3.2.99.2
+		version = 3.3.99.0
 	EndGlobalSection
 EndGlobal

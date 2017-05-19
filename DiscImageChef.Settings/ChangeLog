@@ -1,3 +1,8 @@
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Settings.csproj: Upped version to 3.3.99.0. Do
+	  not use version from solution on library projects.
+
 2017-05-14  Natalia Portillo  <claunia@claunia.com>
 
 	* Settings.cs: Corrected a share violation when the
