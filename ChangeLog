@@ -1,3 +1,8 @@
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.CommonTypes.csproj: Upped version to 3.3.99.0.
+	  Do not use version from solution on library projects.
+
 2016-10-12  Natalia Portillo  <claunia@claunia.com>
 
 	* MediaTypeFromSCSI.cs: Added DDS-2, DDS-3, DDS-4 with no
