@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="SharpCompress">
-      <HintPath>..\packages\SharpCompress.0.13.0\lib\net40\SharpCompress.dll</HintPath>
+      <HintPath>..\packages\SharpCompress.0.15.2\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

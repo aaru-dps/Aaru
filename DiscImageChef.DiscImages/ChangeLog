@@ -1,5 +1,47 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* packages.config:
+	* README.txt:
+	* LICENSE.txt:
+	* ChangeLog.txt:
+	* index.xml:
+	* index.html:
+	* DiscImageChef.DiscImages.csproj:
+	* ns-Claunia.PropertyList.xml:
+	* UID.xml:
+	* UID.html:
+	* NSSet.xml:
+	* index.html:
+	* NSData.xml:
+	* NSDate.xml:
+	* NSSet.html:
+	* NSData.html:
+	* NSArray.xml:
+	* NSDate.html:
+	* NSNumber.xml:
+	* NSObject.xml:
+	* NSString.xml:
+	* NSArray.html:
+	* NSObject.html:
+	* NSNumber.html:
+	* NSString.html:
+	* NSDictionary.xml:
+	* NSDictionary.html:
+	* PropertyListParser.xml:
+	* PropertyListParser.html:
+	* XmlPropertyListParser.xml:
+	* XmlPropertyListParser.html:
+	* ASCIIPropertyListParser.xml:
+	* BinaryPropertyListWriter.xml:
+	* BinaryPropertyListParser.xml:
+	* ASCIIPropertyListParser.html:
+	* BinaryPropertyListWriter.html:
+	* BinaryPropertyListParser.html:
+	* PropertyListFormatException.xml:
+	* PropertyListFormatException.html: Updated NuGet packages.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.DiscImages.csproj: Upped version to 3.3.99.0.
 	  Do not use version from solution on library projects.
 

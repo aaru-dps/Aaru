@@ -1,5 +1,10 @@
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
+	* packages.config:
+	* DiscImageChef.Filters.csproj: Updated NuGet packages.
+
+2017-05-19  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Filters.csproj: Upped version to 3.3.99.0. Do
 	  not use version from solution on library projects.
 

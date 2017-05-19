@@ -32,11 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="plist-cil">
-      <HintPath>..\packages\plist-cil.1.14\lib\plist-cil.dll</HintPath>
-    </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\packages\SharpCompress.0.13.0\lib\net40\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="plist-cil">
+      <HintPath>..\packages\plist-cil.1.15.0\lib\net40\plist-cil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -111,43 +111,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="docs\ChangeLog.txt" />
-    <None Include="docs\LICENSE.txt" />
-    <None Include="docs\README.txt" />
-    <None Include="docs\html\index.html" />
-    <None Include="docs\html\Claunia.PropertyList\ASCIIPropertyListParser.html" />
-    <None Include="docs\html\Claunia.PropertyList\BinaryPropertyListParser.html" />
-    <None Include="docs\html\Claunia.PropertyList\BinaryPropertyListWriter.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSArray.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSData.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSDate.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSDictionary.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSNumber.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSObject.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSSet.html" />
-    <None Include="docs\html\Claunia.PropertyList\NSString.html" />
-    <None Include="docs\html\Claunia.PropertyList\PropertyListFormatException.html" />
-    <None Include="docs\html\Claunia.PropertyList\PropertyListParser.html" />
-    <None Include="docs\html\Claunia.PropertyList\UID.html" />
-    <None Include="docs\html\Claunia.PropertyList\XmlPropertyListParser.html" />
-    <None Include="docs\html\Claunia.PropertyList\index.html" />
-    <None Include="docs\mono\index.xml" />
-    <None Include="docs\mono\ns-Claunia.PropertyList.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\ASCIIPropertyListParser.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\BinaryPropertyListParser.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\BinaryPropertyListWriter.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSArray.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSData.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSDate.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSDictionary.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSNumber.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSObject.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSSet.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\NSString.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\PropertyListFormatException.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\PropertyListParser.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\UID.xml" />
-    <None Include="docs\mono\Claunia.PropertyList\XmlPropertyListParser.xml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ProjectExtensions>
