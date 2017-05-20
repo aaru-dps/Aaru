@@ -1,3 +1,8 @@
+2017-05-20  Natalia Portillo  <claunia@claunia.com>
+
+	* packages.config:
+	* DiscImageChef.DiscImages.csproj: Updated dependencies.
+
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
 	* BLU.cs:

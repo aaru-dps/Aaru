@@ -33,7 +33,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="plist-cil">
-      <HintPath>..\packages\plist-cil.1.15.0\lib\net40\plist-cil.dll</HintPath>
+      <HintPath>..\packages\plist-cil.1.16.0\lib\net40\plist-cil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@
       <HintPath>..\packages\SharpCompress.0.13.0\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="plist-cil">
-      <HintPath>..\packages\plist-cil.1.15.0\lib\net40\plist-cil.dll</HintPath>
+      <HintPath>..\packages\plist-cil.1.16.0\lib\net40\plist-cil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
