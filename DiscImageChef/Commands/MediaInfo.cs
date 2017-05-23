@@ -539,10 +539,12 @@ namespace DiscImageChef.Commands
                     else
                     {
                         doWriteFile(outputPrefix, "_readdiscstructure_dvd_dmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                        //if(Decoders.Xbox.DMI.IsXbox(cmdBuf))
-                        //    Nop();
-                        //else if
-                        if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
+                        if(Decoders.Xbox.DMI.IsXbox(cmdBuf))
+                        {
+                            dskType = MediaType.XGD;
+                            DicConsole.WriteLine("Xbox DMI:\n{0}", Decoders.Xbox.DMI.PrettifyXbox(cmdBuf));
+                        }
+                        else if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
                         {
                             // TODO: Detect XGD3 from XGD2...
                             dskType = MediaType.XGD2;

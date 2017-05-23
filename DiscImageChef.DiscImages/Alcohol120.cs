@@ -506,10 +506,12 @@ namespace DiscImageChef.ImagePlugins
                                 break;
                         }
 
-                        if(Decoders.Xbox.DMI.IsXbox360(dmi))
-                            ImageInfo.mediaType = MediaType.XGD2;
+						if(Decoders.Xbox.DMI.IsXbox(dmi))
+							ImageInfo.mediaType = MediaType.XGD;
+						else if(Decoders.Xbox.DMI.IsXbox360(dmi))
+							ImageInfo.mediaType = MediaType.XGD2;
 
-                        ImageInfo.readableMediaTags.Add(MediaTagType.DVD_PFI);
+						ImageInfo.readableMediaTags.Add(MediaTagType.DVD_PFI);
                         ImageInfo.readableMediaTags.Add(MediaTagType.DVD_DMI);
                     }
                 }

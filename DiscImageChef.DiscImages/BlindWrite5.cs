@@ -986,7 +986,9 @@ namespace DiscImageChef.ImagePlugins
                             break;
                     }
 
-                    if(Decoders.Xbox.DMI.IsXbox360(dmi))
+					if(Decoders.Xbox.DMI.IsXbox(dmi))
+						ImageInfo.mediaType = MediaType.XGD;
+					else if(Decoders.Xbox.DMI.IsXbox360(dmi))
                         ImageInfo.mediaType = MediaType.XGD2;
                 }
             }

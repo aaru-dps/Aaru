@@ -44,8 +44,31 @@ namespace DiscImageChef.Decoders.Xbox
             if(dmi.Length != 2052)
                 return false;
 
-            // TODO: Need to implement it
-            return false;
+            // Version is 1
+            if(BitConverter.ToUInt32(dmi, 4) != 1)
+                return false;
+
+            // Catalogue number is two letters, five numbers, one letter
+            for(int i = 12; i < 14; i++)
+            {
+                if(dmi[i] < 0x41 || dmi[i] > 0x5A)
+                    return false;
+            }
+            for(int i = 14; i < 19; i++)
+            {
+                if(dmi[i] < 0x30 || dmi[i] > 0x39)
+                    return false;
+            }
+            if(dmi[19] < 0x41 || dmi[19] > 0x5A)
+                return false;
+
+            long timestamp = BitConverter.ToInt64(dmi, 20);
+
+            // Game cannot exist before the Xbox
+            if(timestamp < 0x1BD164833DFC000)
+                return false;
+
+            return true;
         }
 
         public static bool IsXbox360(byte[] dmi)
@@ -59,6 +82,43 @@ namespace DiscImageChef.Decoders.Xbox
 
             // "XBOX" swapped as .NET is little endian
             return signature == 0x584F4258;
+        }
+
+        public struct XboxDMI
+        {
+            /// <summary>
+            /// Bytes 0 to 1
+            /// Data length
+            /// </summary>
+            public ushort DataLength;
+            /// <summary>
+            /// Byte 2
+            /// Reserved
+            /// </summary>
+            public byte Reserved1;
+            /// <summary>
+            /// Byte 3
+            /// Reserved
+            /// </summary>
+            public byte Reserved2;
+
+            /// <summary>
+            /// Bytes 4 to 7
+            /// 0x01 in XGD
+            /// </summary>
+            public uint Version;
+
+            /// <summary>
+            /// Bytes 12 to 16
+            /// Catalogue number in XX-XXXXX-X
+            /// </summary>
+            public string CatalogNumber;
+
+            /// <summary>
+            /// Bytes 20 to 27
+            /// DMI timestamp
+            /// </summary>
+            public long Timestamp;
         }
 
         public struct Xbox360DMI
@@ -104,6 +164,27 @@ namespace DiscImageChef.Decoders.Xbox
             public string CatalogNumber;
         }
 
+        public static XboxDMI? DecodeXbox(byte[] response)
+        {
+            bool isXbox = IsXbox(response);
+            if(!isXbox)
+                return null;
+
+            XboxDMI dmi = new XboxDMI();
+
+            dmi.DataLength = (ushort)((response[0] << 8) + response[1]);
+            dmi.Reserved1 = response[2];
+            dmi.Reserved2 = response[3];
+
+            dmi.Version = BitConverter.ToUInt32(response, 4);
+            dmi.Timestamp = BitConverter.ToInt64(response, 20);
+            byte[] tmp = new byte[8];
+            Array.Copy(response, 12, tmp, 0, 8);
+            dmi.CatalogNumber = StringHandlers.CToString(tmp);
+
+            return dmi;
+        }
+
         public static Xbox360DMI? DecodeXbox360(byte[] response)
         {
             bool isX360 = IsXbox360(response);
@@ -128,6 +209,29 @@ namespace DiscImageChef.Decoders.Xbox
                 return null;
 
             return dmi;
+        }
+
+        public static string PrettifyXbox(XboxDMI? dmi)
+        {
+            if(dmi == null)
+                return null;
+
+            XboxDMI decoded = dmi.Value;
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("Catalogue number: ");
+            for(int i = 0; i < 2; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append("-");
+            for(int i = 2; i < 7; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append("-");
+            sb.AppendFormat("{0}", decoded.CatalogNumber[7]);
+            sb.AppendLine();
+
+            sb.AppendFormat("Timestamp: {0}", DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
+
+            return sb.ToString();
         }
 
         public static string PrettifyXbox360(Xbox360DMI? dmi)
@@ -186,6 +290,11 @@ namespace DiscImageChef.Decoders.Xbox
             sb.AppendFormat("Timestamp: {0}", DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
 
             return sb.ToString();
+        }
+
+        public static string PrettifyXbox(byte[] response)
+        {
+            return PrettifyXbox(DecodeXbox(response));
         }
 
         public static string PrettifyXbox360(byte[] response)
