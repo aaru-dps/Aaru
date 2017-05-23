@@ -1,5 +1,9 @@
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
+	* Kreon.cs: Typo correction.
+
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Enums.cs:
 	* DiscImageChef.Devices.csproj:
 	* Kreon.cs: Added Kreon commands.

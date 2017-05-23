@@ -149,7 +149,7 @@ namespace DiscImageChef.Devices
             cdb[0] = (byte)ScsiCommands.Kreon_Command;
             cdb[1] = 0x08;
             cdb[2] = 0x01;
-            cdb[3] = 0x01;
+            cdb[3] = 0x10;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
             error = lastError != 0;
@@ -159,10 +159,10 @@ namespace DiscImageChef.Devices
             if(sense)
                 return sense;
 
-            if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] == 0xA5)
+            if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5)
                 return true;
 
-            for(int i = 4; i < 26; i += 4)
+            for(int i = 4; i < 26; i += 2)
             {
                 ushort feature = BitConverter.ToUInt16(buffer, i);
 
