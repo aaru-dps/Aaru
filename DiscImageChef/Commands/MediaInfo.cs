@@ -1079,6 +1079,27 @@ namespace DiscImageChef.Commands
                 #endregion Nintendo
             }
 
+            if((dskType == MediaType.XGD || dskType == MediaType.XGD2 || dskType == MediaType.XGD3))
+            {
+                // We need to get INQUIRY to know if it is a Kreon drive
+                byte[] inqBuffer;
+                Decoders.SCSI.Inquiry.SCSIInquiry? inq;
+
+                sense = dev.ScsiInquiry(out inqBuffer, out senseBuf);
+                if(!sense)
+                {
+                    inq = Decoders.SCSI.Inquiry.Decode(inqBuffer);
+                    if(inq.HasValue && inq.Value.KreonPresent)
+                    {
+                        sense = dev.KreonExtractSS(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                            DicConsole.DebugWriteLine("Media-Info command", "KREON EXTRACT SS:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                        else
+                            doWriteFile(outputPrefix, "_xbox_ss.bin", "KREON EXTRACT SS", cmdBuf);
+                    }
+                }
+            }
+
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumType, scsiDensityCode, blocks, blockSize);
 
