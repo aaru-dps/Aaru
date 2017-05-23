@@ -79,6 +79,7 @@
     <Compile Include="FreeBSD\Structs.cs" />
     <Compile Include="Device\MmcCommands\MMC.cs" />
     <Compile Include="Device\MmcCommands\SecureDigital.cs" />
+    <Compile Include="Device\ScsiCommands\Kreon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

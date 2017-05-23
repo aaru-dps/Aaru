@@ -2678,6 +2678,17 @@ namespace DiscImageChef.Devices
         /// </summary>
         Plasmon_Shred = 0xEE,
         #endregion Plasmon vendor commands
+
+        #region Kreon vendor commands
+        /// <summary>
+        /// Most Kreon commands start with this
+        /// </summary>
+        Kreon_Command = 0xFF,
+        /// <summary>
+        /// Kreon extract Security Sectors command start with this
+        /// </summary>
+        Kreon_SS_Command = 0xAD
+        #endregion Kreon vendor commands
     }
     #endregion SCSI Commands
 
@@ -3804,6 +3815,58 @@ namespace DiscImageChef.Devices
         ResponseSPI_R4 = ResponseSPI_S1 | ResponseSPI_B4,
         ResponseSPI_R5 = ResponseSPI_S1 | ResponseSPI_S2,
         ResponseSPI_R7 = ResponseSPI_S1 | ResponseSPI_B4
+    }
+
+    [Flags]
+    public enum KreonFeatures
+    {
+        /// <summary>
+        /// Drive can set the xtreme unlock state with Xbox 360 discs
+        /// </summary>
+        XtremeUnlock360,
+        /// <summary>
+        /// Drive can set the wxripper unlock state with Xbox 360 discs
+        /// </summary>
+        WxripperUnlock360,
+        /// <summary>
+        /// Drive can read and decrypt the SS from Xbox 360 discs
+        /// </summary>
+        DecryptSS360,
+        /// <summary>
+        /// Drive has full challenge response capabilities with Xbox 360 discs
+        /// </summary>
+        ChallengeResponse360,
+        /// <summary>
+        /// Drive can set the xtreme unlock state with Xbox discs
+        /// </summary>
+        XtremeUnlock,
+        /// <summary>
+        /// Drive can set the wxripper unlock state with Xbox discs
+        /// </summary>
+        WxripperUnlock,
+        /// <summary>
+        /// Drive can read and decrypt the SS from Xbox discs
+        /// </summary>
+        DecryptSS,
+        /// <summary>
+        /// Drive has full challenge response capabilities with Xbox discs
+        /// </summary>
+        ChallengeResponse,
+        /// <summary>
+        /// Drive supports the locked state
+        /// </summary>
+        Lock,
+        /// <summary>
+        /// Drive supports skipping read errors
+        /// </summary>
+        ErrorSkipping
+    }
+
+    public enum KreonLockStates : byte
+    {
+        Locked = 0,
+        Xtreme = 1,
+        Wxripper = 2
     }
 }
 
