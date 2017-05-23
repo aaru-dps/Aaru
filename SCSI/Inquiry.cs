@@ -150,6 +150,18 @@ namespace DiscImageChef.Decoders.SCSI
                 decoded.Seagate_DriveSerialNumber = new byte[8];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.Seagate_DriveSerialNumber, 0, 8);
             }
+            if(SCSIInquiryResponse.Length >= 46)
+            {
+                // Kreon
+                decoded.KreonIdentifier = new byte[5];
+                Array.Copy(SCSIInquiryResponse, 36, decoded.KreonIdentifier, 0, 5);
+                decoded.KreonSpace = SCSIInquiryResponse[41];
+                decoded.KreonVersion = new byte[5];
+                Array.Copy(SCSIInquiryResponse, 42, decoded.KreonVersion, 0, 5);
+
+                if(decoded.KreonSpace == 0x20 && decoded.KreonIdentifier.SequenceEqual(new byte[] { 0x4B, 0x52, 0x45, 0x4F, 0x4E }))
+                    decoded.KreonPresent = true;
+            }
             if(SCSIInquiryResponse.Length >= 49)
             {
                 // HP
@@ -2023,6 +2035,13 @@ namespace DiscImageChef.Decoders.SCSI
             }
             #endregion Seagate vendor prettifying
 
+            #region Kreon vendor prettifying
+            if(response.KreonPresent)
+            {
+                sb.AppendFormat("Drive is flashed with Kreon firmware {0}.", StringHandlers.CToString(response.KreonVersion)).AppendLine();
+            }
+            #endregion Kreon vendor prettifying
+
 #if DEBUG
             if(response.DeviceTypeModifier != 0)
                 sb.AppendFormat("Vendor's device type modifier = 0x{0:X2}", response.DeviceTypeModifier).AppendLine();
@@ -2043,10 +2062,22 @@ namespace DiscImageChef.Decoders.SCSI
 
             if(response.VendorSpecific != null)
             {
-                sb.AppendLine("Vendor-specific bytes 36 to 55");
-                sb.AppendLine("============================================================");
-                sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
-                sb.AppendLine("============================================================");
+                if(response.KreonPresent)
+                {
+                    byte[] vendor = new byte[7];
+                    Array.Copy(response.VendorSpecific, 11, vendor, 0, 7);
+                    sb.AppendLine("Vendor-specific bytes 47 to 55");
+                    sb.AppendLine("============================================================");
+                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(vendor, 60));
+                    sb.AppendLine("============================================================");
+                }
+                else
+                {
+                    sb.AppendLine("Vendor-specific bytes 36 to 55");
+                    sb.AppendLine("============================================================");
+                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
+                    sb.AppendLine("============================================================");
+                }
             }
 
             if(response.VendorSpecific2 != null)
@@ -2478,6 +2509,28 @@ namespace DiscImageChef.Decoders.SCSI
             /// </summary>
             public byte[] Seagate_ServoPROMPartNo;
             #endregion Seagate vendor unique inquiry data structure
+
+            #region Kreon vendor unique inquiry data structure
+            /// <summary>
+            /// Means that firmware is Kreon
+            /// </summary>
+            public bool KreonPresent;
+            /// <summary>
+            /// Kreon identifier
+            /// Bytes 36 to 40
+            /// </summary>
+            public byte[] KreonIdentifier;
+            /// <summary>
+            /// Kreon just a 0x20
+            /// Bytes 41
+            /// </summary>
+            public byte KreonSpace;
+            /// <summary>
+            /// Kreon version string
+            /// Bytes 42 to 46
+            /// </summary>
+            public byte[] KreonVersion;
+            #endregion Kreon vendor unique inquiry data structure
         }
 
         #endregion Public structures
