@@ -1326,6 +1326,35 @@ namespace DiscImageChef.Commands
                                 }
                             }
                             #endregion Plextor
+
+                            if(inq.Value.KreonPresent)
+                            {
+                                KreonFeatures krFeatures;
+                                if(!dev.KreonGetFeatureList(out senseBuf, out krFeatures, dev.Timeout, out duration))
+                                {
+                                    DicConsole.WriteLine("Drive has kreon firmware:");
+                                    if(krFeatures.HasFlag(KreonFeatures.ChallengeResponse))
+                                        DicConsole.WriteLine("\tCan do challenge/response with Xbox discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.DecryptSS))
+                                        DicConsole.WriteLine("\tCan read and descrypt SS from Xbox discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.XtremeUnlock))
+                                        DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.WxripperUnlock))
+                                        DicConsole.WriteLine("\tCan set wxripper unlock state with Xbox discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.ChallengeResponse360))
+                                        DicConsole.WriteLine("\tCan do challenge/response with Xbox 360 discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.DecryptSS360))
+                                        DicConsole.WriteLine("\tCan read and descrypt SS from Xbox 360 discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.XtremeUnlock360))
+                                        DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox 360 discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.WxripperUnlock360))
+                                        DicConsole.WriteLine("\tCan set wxripper unlock state with Xbox 360 discs");
+                                    if(krFeatures.HasFlag(KreonFeatures.Lock))
+                                        DicConsole.WriteLine("\tCan set locked state");
+                                    if(krFeatures.HasFlag(KreonFeatures.ErrorSkipping))
+                                        DicConsole.WriteLine("\tCan skip read errors");
+                                }
+                            }
                         }
 
                         if(devType == Decoders.SCSI.PeripheralDeviceTypes.SequentialAccess)
