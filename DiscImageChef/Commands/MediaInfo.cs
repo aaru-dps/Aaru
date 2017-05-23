@@ -546,9 +546,14 @@ namespace DiscImageChef.Commands
                         }
                         else if(Decoders.Xbox.DMI.IsXbox360(cmdBuf))
                         {
-                            // TODO: Detect XGD3 from XGD2...
                             dskType = MediaType.XGD2;
                             DicConsole.WriteLine("Xbox 360 DMI:\n{0}", Decoders.Xbox.DMI.PrettifyXbox360(cmdBuf));
+
+                            // All XGD3 all have the same number of blocks
+                            if(blocks == 25063 || // Locked (or non compatible drive)
+                               blocks == 4229664 || // Xtreme unlock
+                               blocks == 4246304) // Wxripper unlock
+                                dskType = MediaType.XGD3;
                         }
                     }
                 }

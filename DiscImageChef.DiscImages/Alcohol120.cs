@@ -742,6 +742,15 @@ namespace DiscImageChef.ImagePlugins
                 ImageInfo.readableSectorTags.Add(SectorTagType.CDTrackFlags);
             }
 
+			if(ImageInfo.mediaType == MediaType.XGD2)
+			{
+				// All XGD3 all have the same number of blocks
+				if(ImageInfo.sectors == 25063 || // Locked (or non compatible drive)
+				   ImageInfo.sectors == 4229664 || // Xtreme unlock
+				   ImageInfo.sectors == 4246304) // Wxripper unlock
+					ImageInfo.mediaType = MediaType.XGD3;
+			}
+
             DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", ImageInfo.mediaType);
 
             return true;

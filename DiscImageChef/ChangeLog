@@ -1,5 +1,11 @@
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/MediaInfo.cs:
+	* Commands/CreateSidecar.cs:
+	  Added XGD3 detection (by its size).
+
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DeviceInfo.cs:
 	  Show information from Kreon drives.
 

@@ -621,6 +621,17 @@ namespace DiscImageChef.Commands
                             if(trksLst != null)
                                 sidecar.OpticalDisc[0].Track = trksLst.ToArray();
 
+                            // All XGD3 all have the same number of blocks
+                            if(dskType == MediaType.XGD2 && sidecar.OpticalDisc[0].Track.Length == 1)
+                            {
+                                ulong blocks = (ulong)(sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector + 1);
+                                if(blocks == 25063 || // Locked (or non compatible drive)
+                                   blocks == 4229664 || // Xtreme unlock
+                                   blocks == 4246304) // Wxripper unlock
+                                    dskType = MediaType.XGD3;
+                            }
+
+
                             string dscType, dscSubType;
                             Metadata.MediaType.MediaTypeToString(dskType, out dscType, out dscSubType);
                             sidecar.OpticalDisc[0].DiscType = dscType;

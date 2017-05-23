@@ -1,3 +1,8 @@
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Alcohol120.cs:
+	* BlindWrite5.cs: Added XGD3 detection (by its size).
+
 2017-05-20  Natalia Portillo  <claunia@claunia.com>
 
 	* packages.config:
