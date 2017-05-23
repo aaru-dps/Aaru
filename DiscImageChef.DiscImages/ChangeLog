@@ -1,5 +1,9 @@
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
+	* ImagePlugin.cs: Added support for Xbox security sector.
+
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Alcohol120.cs:
 	* BlindWrite5.cs: Added XGD3 detection (by its size).
 

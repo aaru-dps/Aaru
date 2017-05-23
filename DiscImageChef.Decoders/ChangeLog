@@ -1,5 +1,11 @@
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
+	* SS.cs:
+	* DiscImageChef.Decoders.csproj: Added support for Xbox
+	  security sector.
+
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
 	* Inquiry.cs: Detect Kreon firmware.
 
 2017-05-19  Natalia Portillo  <claunia@claunia.com>

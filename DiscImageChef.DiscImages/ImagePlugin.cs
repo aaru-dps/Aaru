@@ -681,7 +681,9 @@ namespace DiscImageChef.ImagePlugins
         /// <summary>SecureDigital / MMC CSD</summary>
         SD_CSD,
         /// <summary>SecureDigital Extended CSD</summary>
-        SD_ExtendedCSD
+        SD_ExtendedCSD,
+		/// <summary>Xbox Security Sector</summary>
+		Xbox_SecuritySector
     };
 
     /// <summary>

@@ -1,6 +1,11 @@
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:
+	  Added support for Xbox security sector.
+
+2017-05-23  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/MediaInfo.cs:
 	  Added support for extracting SS in Kreon drives.
 
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
