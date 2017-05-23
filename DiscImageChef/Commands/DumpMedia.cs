@@ -2397,7 +2397,7 @@ namespace DiscImageChef.Commands
 
             // TODO: Raw reading
             bool read6 = false, read10 = false, read12 = false, read16 = false, readcd = false;
-            bool readLong10 = false, readLong16 = false, hldtstReadRaw = false;
+            bool readLong10 = false, readLong16 = false, hldtstReadRaw = false, readLongDvd = false;
             bool plextorReadRaw = false, syqReadLong6 = false, syqReadLong10 = false;
 
             #region CompactDisc dump
@@ -3006,6 +3006,18 @@ namespace DiscImageChef.Commands
                             rawAble = true;
                             longBlockSize = 2064;
                         }
+
+                        // READ LONG (10) for some DVD drives
+                        if(!rawAble && dev.Manufacturer == "MATSHITA")
+                        {
+                            testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 37856, dev.Timeout, out duration);
+                            if(!testSense && !dev.Error)
+                            {
+                                readLongDvd = true;
+                                longBlockSize = 37856;
+                                rawAble = true;
+                            }
+                        }
                     }
 
                     if(blockSize == longBlockSize)
@@ -3033,7 +3045,7 @@ namespace DiscImageChef.Commands
                     {
                         if(readLong16)
                             DicConsole.WriteLine("Using SCSI READ LONG (16) command.");
-                        else if(readLong10)
+                        else if(readLong10 || readLongDvd)
                             DicConsole.WriteLine("Using SCSI READ LONG (10) command.");
                         else if(syqReadLong10)
                             DicConsole.WriteLine("Using SyQuest READ LONG (10) command.");
@@ -3046,9 +3058,12 @@ namespace DiscImageChef.Commands
                         else
                             throw new AccessViolationException("Should not arrive here");
 
+                        if(readLongDvd) // Only a block will be read, but it contains 16 sectors and command expect sector number not block number
+                            blocksToRead = 16;
+                        else
+                            blocksToRead = 1;
                         DicConsole.WriteLine("Reading {0} raw bytes ({1} cooked bytes) per sector.",
-                            longBlockSize, blockSize);
-                        blocksToRead = 1;
+                                             longBlockSize, blockSize * blocksToRead);
                         physicalBlockSize = longBlockSize;
                         blockSize = longBlockSize;
                     }
@@ -3167,7 +3182,7 @@ namespace DiscImageChef.Commands
                         sense = dev.ReadLong16(out readBuffer, out senseBuf, false, i, blockSize, dev.Timeout, out cmdDuration);
                         totalDuration += cmdDuration;
                     }
-                    else if(readLong10)
+                    else if(readLong10 || readLongDvd)
                     {
                         sense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, (uint)i, (ushort)blockSize, dev.Timeout, out cmdDuration);
                         totalDuration += cmdDuration;
