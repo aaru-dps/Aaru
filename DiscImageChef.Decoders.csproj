@@ -108,6 +108,7 @@
     <Compile Include="SecureDigital\SCR.cs" />
     <Compile Include="SecureDigital\OCR.cs" />
     <Compile Include="SecureDigital\VendorString.cs" />
+    <Compile Include="Xbox\SS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
