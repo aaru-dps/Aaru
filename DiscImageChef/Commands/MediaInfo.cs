@@ -1100,6 +1100,85 @@ namespace DiscImageChef.Commands
 
                         if(Decoders.Xbox.SS.Decode(cmdBuf).HasValue)
                             DicConsole.WriteLine("Xbox Security Sector:\n{0}", Decoders.Xbox.SS.Prettify(cmdBuf));
+
+                        ulong l0Video, l1Video, middleZone, gameSize, totalSize, layerBreak;
+
+                        // Get video partition size
+                        DicConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
+                        sense = dev.KreonLock(out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot lock drive, not continuing.");
+                            return;
+                        }
+                        sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                            return;
+                        }
+                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
+                        sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot get PFI.");
+                            return;
+                        }
+                        DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
+                        l0Video = Decoders.DVD.PFI.Decode(cmdBuf).Value.Layer0EndPSN - Decoders.DVD.PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1;
+                        l1Video = totalSize - l0Video + 1;
+
+                        // Get game partition size
+                        DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
+                        sense = dev.KreonUnlockXtreme(out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
+                            return;
+                        }
+                        sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                            return;
+                        }
+                        gameSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3])) + 1;
+                        DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
+
+                        // Get middle zone size
+                        DicConsole.DebugWriteLine("Dump-media command", "Getting middle zone size");
+                        sense = dev.KreonUnlockWxripper(out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
+                            return;
+                        }
+                        sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                            return;
+                        }
+                        totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
+                        sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.PhysicalInformation, 0, 0, out duration);
+                        if(sense)
+                        {
+                            DicConsole.ErrorWriteLine("Cannot get PFI.");
+                            return;
+                        }
+                        DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
+                        middleZone = totalSize - (Decoders.DVD.PFI.Decode(cmdBuf).Value.Layer0EndPSN - Decoders.DVD.PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
+
+                        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
+                        layerBreak = l0Video + middleZone + gameSize / 2;
+
+                        DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
+                        DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);
+                        DicConsole.WriteLine("Middle zone size: {0} sectors", middleZone);
+                        DicConsole.WriteLine("Game data size: {0} sectors", gameSize);
+                        DicConsole.WriteLine("Total size: {0} sectors", totalSize);
+                        DicConsole.WriteLine("Real layer break: {0}", layerBreak);
+                        DicConsole.WriteLine();
                     }
                 }
             }
