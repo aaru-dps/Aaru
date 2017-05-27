@@ -1,5 +1,9 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Checksum.cs: Enabled option to set which checksums to use.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* MHDDLog.cs:
 	* DiscImageChef.Core.csproj: Refactor: Move MHDDLog to Core.
 
