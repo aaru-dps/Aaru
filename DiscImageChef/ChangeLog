@@ -1,5 +1,10 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.csproj:
+	  Refactor: Move Statistics to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Decode.cs:
 	* Commands/Verify.cs:
 	* Commands/Compare.cs:

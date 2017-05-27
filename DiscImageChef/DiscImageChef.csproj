@@ -36,10 +36,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
     <Reference Include="CommandLine">
       <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net40\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -65,7 +65,6 @@
     <Compile Include="Core\Checksum.cs" />
     <Compile Include="Commands\DeviceReport.cs" />
     <Compile Include="Commands\Configure.cs" />
-    <Compile Include="Core\Statistics.cs" />
     <Compile Include="Commands\Statistics.cs" />
     <Compile Include="Core\IBGLog.cs" />
     <Compile Include="Core\MHDDLog.cs" />

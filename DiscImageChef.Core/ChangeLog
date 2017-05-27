@@ -1,5 +1,11 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Statistics.cs:
+	* DiscImageChef.Core.csproj: Refactor: Move Statistics to
+	  Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* ImageFormat.cs:
 	* DiscImageChef.Core.csproj: Refactor: Move ImageFormat to
 	  Core.

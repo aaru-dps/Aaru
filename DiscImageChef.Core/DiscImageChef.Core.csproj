@@ -31,11 +31,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginBase.cs" />
     <Compile Include="ImageFormat.cs" />
+    <Compile Include="Statistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -57,6 +59,18 @@
     <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>DiscImageChef.Filters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj">
+      <Project>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</Project>
+      <Name>DiscImageChef.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj">
+      <Project>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</Project>
+      <Name>DiscImageChef.Devices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
+      <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
