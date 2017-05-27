@@ -427,7 +427,7 @@ namespace DiscImageChef.Commands
                     byte[] image1Sector = input1Format.ReadSector(sector);
                     byte[] image2Sector = input2Format.ReadSector(sector);
                     bool different, sameSize;
-                    CompareBytes(out different, out sameSize, image1Sector, image2Sector);
+                    ArrayHelpers.CompareBytes(out different, out sameSize, image1Sector, image2Sector);
                     if(different)
                     {
                         imagesDiffer = true;
@@ -454,35 +454,6 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine(sb.ToString());
 
             Core.Statistics.AddCommand("compare");
-        }
-
-        static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1, byte[] compareArray2)
-        {
-            different = false;
-            sameSize = true;
-
-            long leastBytes;
-            if(compareArray1.LongLength < compareArray2.LongLength)
-            {
-                sameSize = false;
-                leastBytes = compareArray1.LongLength;
-            }
-            else if(compareArray1.LongLength > compareArray2.LongLength)
-            {
-                sameSize = false;
-                leastBytes = compareArray2.LongLength;
-            }
-            else
-                leastBytes = compareArray1.LongLength;
-
-            for(long i = 0; i < leastBytes; i++)
-            {
-                if(compareArray1[i] != compareArray2[i])
-                {
-                    different = true;
-                    return;
-                }
-            }
         }
     }
 }

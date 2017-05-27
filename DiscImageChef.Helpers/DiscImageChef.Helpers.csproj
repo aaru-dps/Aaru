@@ -44,6 +44,7 @@
     <Compile Include="Swapping.cs" />
     <Compile Include="ArrayIsEmpty.cs" />
     <Compile Include="BigEndianMarshal.cs" />
+    <Compile Include="CompareBytes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
