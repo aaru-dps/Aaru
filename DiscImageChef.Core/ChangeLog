@@ -1,5 +1,11 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Sidecar.cs:
+	* DiscImageChef.Core.csproj: Refactor: Move create-sidecar
+	  logic to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Filesystems.cs: Refactor: Move filesystem identification
 	  code to Core.
 
