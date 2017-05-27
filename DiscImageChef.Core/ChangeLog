@@ -1,5 +1,10 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Checksum.cs:
+	* DiscImageChef.Core.csproj: Refactor: Move Checksum to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Statistics.cs:
 	* DiscImageChef.Core.csproj: Refactor: Move Statistics to
 	  Core.

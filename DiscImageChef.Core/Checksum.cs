@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace DiscImageChef.Core
 {
-    class Checksum
+    public class Checksum
     {
         Adler32Context adler32ctx;
         CRC16Context crc16ctx;
@@ -75,7 +75,7 @@ namespace DiscImageChef.Core
         sha512Packet sha512Pkt;
         spamsumPacket spamsumPkt;
 
-        internal Checksum()
+        public Checksum()
         {
             adler32ctx = new Adler32Context();
             crc16ctx = new CRC16Context();
@@ -137,7 +137,7 @@ namespace DiscImageChef.Core
             spamsumPkt.context = ssctx;
         }
 
-        internal void Update(byte[] data)
+        public void Update(byte[] data)
         {
             adlerPkt.data = data;
             adlerThread.Start(adlerPkt);
@@ -184,7 +184,7 @@ namespace DiscImageChef.Core
             spamsumThread = new Thread(updateSpamSum);
         }
 
-        internal List<ChecksumType> End()
+        public List<ChecksumType> End()
         {
             List<ChecksumType> chks = new List<ChecksumType>();
 
@@ -246,7 +246,7 @@ namespace DiscImageChef.Core
             return chks;
         }
 
-        internal static List<ChecksumType> GetChecksums(byte[] data)
+        public static List<ChecksumType> GetChecksums(byte[] data)
         {
             Adler32Context adler32ctxData = new Adler32Context();
             CRC16Context crc16ctxData = new CRC16Context();

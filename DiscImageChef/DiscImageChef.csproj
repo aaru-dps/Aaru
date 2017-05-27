@@ -62,7 +62,6 @@
     <Compile Include="Commands\CreateSidecar.cs" />
     <Compile Include="Commands\MediaScan.cs" />
     <Compile Include="Commands\DumpMedia.cs" />
-    <Compile Include="Core\Checksum.cs" />
     <Compile Include="Commands\DeviceReport.cs" />
     <Compile Include="Commands\Configure.cs" />
     <Compile Include="Commands\Statistics.cs" />

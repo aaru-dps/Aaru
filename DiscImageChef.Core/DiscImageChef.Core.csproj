@@ -38,6 +38,7 @@
     <Compile Include="PluginBase.cs" />
     <Compile Include="ImageFormat.cs" />
     <Compile Include="Statistics.cs" />
+    <Compile Include="Checksum.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -71,6 +72,14 @@
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
       <Name>DiscImageChef.CommonTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
+      <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
+      <Name>DiscImageChef.Checksums</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
+      <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
+      <Name>DiscImageChef.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
