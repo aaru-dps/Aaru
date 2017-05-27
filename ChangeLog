@@ -1,3 +1,9 @@
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* CompareBytes.cs:
+	* DiscImageChef.Helpers.csproj: Refactor: Moved CompareBytes
+	  to Helpers.
+
 2017-05-19  Natalia Portillo  <claunia@claunia.com>
 
 	* Swapping.cs:
