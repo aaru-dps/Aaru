@@ -50,6 +50,7 @@
     <Compile Include="Devices\Dumping\SCSI.cs" />
     <Compile Include="Devices\Dumping\SecureDigital.cs" />
     <Compile Include="DataFile.cs" />
+    <Compile Include="Filesystems.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

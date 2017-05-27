@@ -1,5 +1,12 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/Ls.cs:
+	* Commands/Analyze.cs:
+	* Commands/ExtractFiles.cs:
+	  Refactor: Move filesystem identification code to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/DumpMedia.cs:
 	* Commands/MediaInfo.cs:
 	* Commands/DeviceInfo.cs:

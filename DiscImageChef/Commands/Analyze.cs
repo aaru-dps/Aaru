@@ -164,7 +164,7 @@ namespace DiscImageChef.Commands
                             {
                                 DicConsole.WriteLine("Identifying filesystem on partition");
 
-                                IdentifyFilesystems(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors);
+                                Core.Filesystems.Identify(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors);
                                 if(id_plugins.Count == 0)
                                     DicConsole.WriteLine("Filesystem not identified");
                                 else if(id_plugins.Count > 1)
@@ -197,7 +197,7 @@ namespace DiscImageChef.Commands
 
                 if(checkraw)
                 {
-                    IdentifyFilesystems(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors() - 1);
+                    Core.Filesystems.Identify(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors() - 1);
                     if(id_plugins.Count == 0)
                         DicConsole.WriteLine("Filesystem not identified");
                     else if(id_plugins.Count > 1)
@@ -232,19 +232,6 @@ namespace DiscImageChef.Commands
             }
 
             Core.Statistics.AddCommand("analyze");
-        }
-
-        static void IdentifyFilesystems(ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionStart, ulong partitionEnd)
-        {
-            id_plugins = new List<string>();
-            PluginBase plugins = new PluginBase();
-            plugins.RegisterAllPlugins();
-
-            foreach(Filesystem _plugin in plugins.PluginsList.Values)
-            {
-                if(_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
-                    id_plugins.Add(_plugin.Name.ToLower());
-            }
         }
     }
 }

@@ -1,5 +1,10 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* DiscImageChef.Core.csproj: Refactor: Move filesystem
+	  identification code to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* DataFile.cs:
 	* ATA.cs:
 	* NVMe.cs:
