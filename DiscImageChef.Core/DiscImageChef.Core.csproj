@@ -40,6 +40,7 @@
     <Compile Include="Statistics.cs" />
     <Compile Include="Checksum.cs" />
     <Compile Include="Logging\IBGLog.cs" />
+    <Compile Include="Logging\MHDDLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

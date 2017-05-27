@@ -41,7 +41,7 @@ namespace DiscImageChef.Commands
     public static class MediaScan
     {
         static bool aborted;
-        static Core.MHDDLog mhddLog;
+        static MHDDLog mhddLog;
         static IBGLog ibgLog;
 
         public static void doMediaScan(MediaScanOptions options)
@@ -338,7 +338,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                    mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                    mhddLog = new MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
                     ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                     start = DateTime.UtcNow;
@@ -490,7 +490,7 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                    mhddLog = new MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
                     ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                     ulong currentBlock = 0;
@@ -920,7 +920,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                mhddLog = new MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
                 ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                 for(ulong i = 0; i < blocks; i += blocksToRead)
@@ -1106,7 +1106,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
+                mhddLog = new MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
                 ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                 for(ulong i = 0; i < blocks; i += blocksToRead)

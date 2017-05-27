@@ -51,7 +51,7 @@ namespace DiscImageChef.Commands
     {
         static bool aborted;
         static FileStream dataFs;
-        static Core.MHDDLog mhddLog;
+        static MHDDLog mhddLog;
         static IBGLog ibgLog;
         // TODO: Implement dump map
 
@@ -426,7 +426,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                    mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                    mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                     ibgLog = new IBGLog(options.OutputPrefix + ".ibg", currentProfile);
                     initDataFile(options.OutputPrefix + ".bin");
 
@@ -640,7 +640,7 @@ namespace DiscImageChef.Commands
                 }
                 else
                 {
-                    mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                    mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                     ibgLog = new IBGLog(options.OutputPrefix + ".ibg", currentProfile);
                     initDataFile(options.OutputPrefix + ".bin");
 
@@ -1334,7 +1334,7 @@ namespace DiscImageChef.Commands
                 initDataFile(options.OutputPrefix + ".bin");
                 dataChk = new Core.Checksum();
                 start = DateTime.UtcNow;
-                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
+                mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
                 ibgLog = new IBGLog(options.OutputPrefix + ".ibg", 0x0008);
 
                 currentTapeFile = new TapeFileType();
@@ -2547,7 +2547,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 initDataFile(options.OutputPrefix + ".bin");
-                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                 ibgLog = new IBGLog(options.OutputPrefix + ".ibg", 0x0008);
 
                 start = DateTime.UtcNow;
@@ -2950,7 +2950,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                 ibgLog = new IBGLog(options.OutputPrefix + ".ibg", currentProfile);
                 initDataFile(options.OutputPrefix + ".bin");
 
@@ -3897,7 +3897,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-                mhddLog = new Core.MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+                mhddLog = new MHDDLog(options.OutputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
                 ibgLog = new IBGLog(options.OutputPrefix + ".ibg", currentProfile);
                 initDataFile(options.OutputPrefix + ".bin");
 

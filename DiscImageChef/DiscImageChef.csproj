@@ -65,14 +65,12 @@
     <Compile Include="Commands\DeviceReport.cs" />
     <Compile Include="Commands\Configure.cs" />
     <Compile Include="Commands\Statistics.cs" />
-    <Compile Include="Core\MHDDLog.cs" />
     <Compile Include="Commands\Ls.cs" />
     <Compile Include="Commands\ExtractFiles.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Core\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
