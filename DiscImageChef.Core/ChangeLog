@@ -1,5 +1,10 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Benchmark.cs:
+	* DiscImageChef.Core.csproj: Refactor: Move benchmark to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Sidecar.cs:
 	* DiscImageChef.Core.csproj: Refactor: Move create-sidecar
 	  logic to Core.
