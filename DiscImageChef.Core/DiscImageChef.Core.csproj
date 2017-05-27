@@ -39,6 +39,7 @@
     <Compile Include="ImageFormat.cs" />
     <Compile Include="Statistics.cs" />
     <Compile Include="Checksum.cs" />
+    <Compile Include="Logging\IBGLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -81,6 +82,9 @@
       <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
       <Name>DiscImageChef.Metadata</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logging\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

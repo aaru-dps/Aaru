@@ -34,6 +34,7 @@ using System;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
 using System.Collections.Generic;
+using DiscImageChef.Core.Logging;
 
 namespace DiscImageChef.Commands
 {
@@ -41,7 +42,7 @@ namespace DiscImageChef.Commands
     {
         static bool aborted;
         static Core.MHDDLog mhddLog;
-        static Core.IBGLog ibgLog;
+        static IBGLog ibgLog;
 
         public static void doMediaScan(MediaScanOptions options)
         {
@@ -338,7 +339,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                     mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                    ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
+                    ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                     start = DateTime.UtcNow;
                     for(ulong i = 0; i < blocks; i += blocksToRead)
@@ -490,7 +491,7 @@ namespace DiscImageChef.Commands
                 else
                 {
                     mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                    ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
+                    ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                     ulong currentBlock = 0;
                     blocks = (ulong)(cylinders * heads * sectors);
@@ -920,7 +921,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
+                ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                 for(ulong i = 0; i < blocks; i += blocksToRead)
                 {
@@ -1106,7 +1107,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 mhddLog = new Core.MHDDLog(MHDDLogPath, dev, blocks, blockSize, blocksToRead);
-                ibgLog = new Core.IBGLog(IBGLogPath, currentProfile);
+                ibgLog = new IBGLog(IBGLogPath, currentProfile);
 
                 for(ulong i = 0; i < blocks; i += blocksToRead)
                 {

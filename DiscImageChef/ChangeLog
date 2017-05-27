@@ -1,6 +1,13 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
 	* DiscImageChef.csproj:
+	* Commands/DumpMedia.cs:
+	* Commands/MediaScan.cs:
+	  Refactor: Move IBGLog to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.csproj:
 	  Refactor: Move Checksum to Core.
 
 2017-05-27  Natalia Portillo  <claunia@claunia.com>

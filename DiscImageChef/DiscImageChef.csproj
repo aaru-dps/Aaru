@@ -65,7 +65,6 @@
     <Compile Include="Commands\DeviceReport.cs" />
     <Compile Include="Commands\Configure.cs" />
     <Compile Include="Commands\Statistics.cs" />
-    <Compile Include="Core\IBGLog.cs" />
     <Compile Include="Core\MHDDLog.cs" />
     <Compile Include="Commands\Ls.cs" />
     <Compile Include="Commands\ExtractFiles.cs" />

@@ -36,7 +36,7 @@ using System.IO;
 using System.Text;
 using DiscImageChef.Devices;
 
-namespace DiscImageChef.Core
+namespace DiscImageChef.Core.Logging
 {
     public class IBGLog
     {
