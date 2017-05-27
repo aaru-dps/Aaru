@@ -531,7 +531,7 @@ namespace DiscImageChef.Core
             }
         }
 
-        public static void AddDevice(Devices.Device dev)
+        public static void AddDevice(DiscImageChef.Devices.Device dev)
         {
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.DeviceStats)
             {

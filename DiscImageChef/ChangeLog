@@ -1,5 +1,10 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/MediaScan.cs:
+	  Refactor: Moved media scanning to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Compare.cs:
 	  Refactor: Moved CompareBytes to Helpers.
 

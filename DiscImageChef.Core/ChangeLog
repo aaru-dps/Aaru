@@ -1,5 +1,14 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Statistics.cs:
+	* ATA.cs:
+	* NVMe.cs:
+	* SCSI.cs:
+	* DiscImageChef.Core.csproj:
+	* SecureDigital.cs: Refactor: Moved media scanning to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Checksum.cs: Enabled option to set which checksums to use.
 
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
