@@ -1,5 +1,15 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* DataFile.cs:
+	* ATA.cs:
+	* NVMe.cs:
+	* SCSI.cs:
+	* DiscImageChef.Core.csproj:
+	* SecureDigital.cs: Refactor: Move dumping code, and misc file
+	  writing code, to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Statistics.cs:
 	* ATA.cs:
 	* NVMe.cs:

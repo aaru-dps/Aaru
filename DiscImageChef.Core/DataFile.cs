@@ -1,0 +1,109 @@
+﻿// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : DataFile.cs
+// Version        : 1.0
+// Author(s)      : Natalia Portillo
+//
+// Component      : Component
+//
+// Revision       : $Revision$
+// Last change by : $Author$
+// Date           : $Date$
+//
+// --[ Description ] ----------------------------------------------------------
+//
+// Description
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright (C) 2011-2015 Claunia.com
+// ****************************************************************************/
+// //$Id$
+using System;
+using System.IO;
+using DiscImageChef.Console;
+
+namespace DiscImageChef.Core
+{
+    public class DataFile
+    {
+        static FileStream dataFs;
+
+        public DataFile(string outputFile)
+        {
+            dataFs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        }
+
+        public void Close()
+        {
+            if(dataFs != null)
+                dataFs.Close();
+        }
+
+        public int Read(byte[] array, int offset, int count)
+        {
+            return dataFs.Read(array, offset, count);
+        }
+
+        public long Seek(long offset, SeekOrigin origin)
+        {
+            return dataFs.Seek(offset, origin);
+        }
+
+        public void Write(byte[] data)
+        {
+            dataFs.Write(data, 0, data.Length);
+        }
+
+        public void WriteAt(byte[] data, ulong block, uint blockSize)
+        {
+            dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
+            dataFs.Write(data, 0, data.Length);
+        }
+
+        public static void WriteTo(string who, string outputPrefix, string outputSuffix, string what, byte[] data)
+        {
+            if(!string.IsNullOrEmpty(outputPrefix) && !string.IsNullOrEmpty(outputSuffix))
+                WriteTo(who, outputPrefix + outputSuffix, data, what);
+        }
+
+        public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null)
+        {
+            if(!string.IsNullOrEmpty(filename))
+            {
+                if(!File.Exists(filename))
+                {
+                    try
+                    {
+                        DicConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
+                        FileStream outputFs = new FileStream(filename, FileMode.CreateNew);
+                        outputFs.Write(data, 0, data.Length);
+                        outputFs.Close();
+                    }
+                    catch
+                    {
+                        DicConsole.ErrorWriteLine("Unable to write file {0}", filename);
+                    }
+                }
+                else
+                    DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+            }
+        }
+    }
+}

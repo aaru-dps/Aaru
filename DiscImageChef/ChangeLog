@@ -1,5 +1,13 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DumpMedia.cs:
+	* Commands/MediaInfo.cs:
+	* Commands/DeviceInfo.cs:
+	  Refactor: Move dumping code, and misc file writing code, to
+	  Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/MediaScan.cs:
 	  Refactor: Moved media scanning to Core.
 

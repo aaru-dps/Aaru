@@ -45,6 +45,11 @@
     <Compile Include="Devices\Scanning\SecureDigital.cs" />
     <Compile Include="Devices\Scanning\NVMe.cs" />
     <Compile Include="Devices\Scanning\SCSI.cs" />
+    <Compile Include="Devices\Dumping\ATA.cs" />
+    <Compile Include="Devices\Dumping\NVMe.cs" />
+    <Compile Include="Devices\Dumping\SCSI.cs" />
+    <Compile Include="Devices\Dumping\SecureDigital.cs" />
+    <Compile Include="DataFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -91,11 +96,16 @@
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
+      <Name>DiscImageChef.Interop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logging\" />
     <Folder Include="Devices\" />
     <Folder Include="Devices\Scanning\" />
+    <Folder Include="Devices\Dumping\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
