@@ -93,6 +93,14 @@ namespace DiscImageChef.Commands
                 Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
                 Core.Statistics.AddFilter(inputFilter.Name);
 
+                Sidecar.InitProgressEvent += Progress.InitProgress;
+                Sidecar.UpdateProgressEvent += Progress.UpdateProgress;
+                Sidecar.EndProgressEvent += Progress.EndProgress;
+                Sidecar.InitProgressEvent2 += Progress.InitProgress2;
+                Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
+                Sidecar.EndProgressEvent2 += Progress.EndProgress2;
+                Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
+
                 CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile);
 
                 DicConsole.WriteLine("Writing metadata sidecar");

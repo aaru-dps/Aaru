@@ -53,6 +53,7 @@
     <Compile Include="Filesystems.cs" />
     <Compile Include="Sidecar.cs" />
     <Compile Include="Benchmark.cs" />
+    <Compile Include="Delegates.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

@@ -40,7 +40,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.Checksums;
-using DiscImageChef.Console;
 
 namespace DiscImageChef.Core
 {
@@ -69,6 +68,28 @@ namespace DiscImageChef.Core
 
     public static class Benchmark
     {
+        public static event InitProgressHandler InitProgressEvent;
+        public static event UpdateProgressHandler UpdateProgressEvent;
+        public static event EndProgressHandler EndProgressEvent;
+
+        public static void InitProgress()
+        {
+            if(InitProgressEvent != null)
+                InitProgressEvent();
+        }
+
+        public static void UpdateProgress(string text, int current, int maximum)
+        {
+            if(UpdateProgressEvent != null)
+                UpdateProgressEvent(string.Format(text, current, maximum), current, maximum);
+        }
+
+        public static void EndProgress()
+        {
+            if(EndProgressEvent != null)
+                EndProgressEvent();
+        }
+
         public static BenchmarkResults Do(int bufferSize, int blockSize)
         {
             BenchmarkResults results = new BenchmarkResults();
@@ -83,19 +104,18 @@ namespace DiscImageChef.Core
             long mem;
             object ctx;
 
-            DicConsole.WriteLine();
-
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rWriting block {0} of {1} with random data.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Writing block {0} of {1} with random data.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 rnd.NextBytes(tmp);
                 ms.Write(tmp, 0, blockSize);
             }
+            EndProgress();
             end = DateTime.Now;
 
-            DicConsole.WriteLine();
             results.fillTime = (end - start).TotalSeconds;
             results.fillSpeed = (bufferSize / 1048576) / (end - start).TotalSeconds;
 
@@ -106,12 +126,14 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rReading block {0} of {1}.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Reading block {0} of {1}.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
             }
+            EndProgress();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
             if(mem > results.maxMemory)
@@ -119,7 +141,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.readTime = (end - start).TotalSeconds;
             results.readSpeed = (bufferSize / 1048576) / (end - start).TotalSeconds;
 
@@ -133,13 +154,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with Adler32.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with Adler32.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((Adler32Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((Adler32Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -148,7 +171,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("Adler32", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion Adler32
@@ -163,13 +185,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with CRC16.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with CRC16.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((CRC16Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((CRC16Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -178,7 +202,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("CRC16", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion CRC16
@@ -193,13 +216,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with CRC32.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with CRC32.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((CRC32Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((CRC32Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -208,7 +233,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("CRC32", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion CRC32
@@ -223,13 +247,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with CRC64.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with CRC64.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((CRC64Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((CRC64Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -238,7 +264,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("CRC64", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion CRC64
@@ -253,13 +278,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with MD5.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with MD5.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((MD5Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((MD5Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -268,7 +295,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("MD5", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion MD5
@@ -283,13 +309,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with RIPEMD160.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with RIPEMD160.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((RIPEMD160Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((RIPEMD160Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -298,7 +326,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("RIPEMD160", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion RIPEMD160
@@ -313,13 +340,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with SHA1.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with SHA1.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((SHA1Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((SHA1Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -328,7 +357,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("SHA1", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion SHA1
@@ -343,13 +371,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with SHA256.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with SHA256.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((SHA256Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((SHA256Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -358,7 +388,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("SHA256", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion SHA256
@@ -373,13 +402,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with SHA384.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with SHA384.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((SHA384Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((SHA384Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -388,7 +419,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("SHA384", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion SHA384
@@ -403,13 +433,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with SHA512.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with SHA512.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((SHA512Context)ctx).Update(tmp);
             }
+            EndProgress();
             ((SHA512Context)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -418,7 +450,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("SHA512", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion SHA512
@@ -433,13 +464,15 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with SpamSum.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with SpamSum.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 ((SpamSumContext)ctx).Update(tmp);
             }
+            EndProgress();
             ((SpamSumContext)ctx).End();
             end = DateTime.Now;
             mem = GC.GetTotalMemory(false);
@@ -448,7 +481,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entries.Add("SpamSum", new BenchmarkEntry() { timeSpan = (end - start).TotalSeconds, speed = (bufferSize / 1048576) / (end - start).TotalSeconds });
             results.separateTime += (end - start).TotalSeconds;
             #endregion SpamSum
@@ -462,14 +494,16 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
             start = DateTime.Now;
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rEntropying block {0} of {1}.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Entropying block {0} of {1}.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
                 foreach(byte b in tmp)
                     entTable[b]++;
             }
+            EndProgress();
             double entropy = 0;
             foreach(ulong l in entTable)
             {
@@ -485,7 +519,6 @@ namespace DiscImageChef.Core
             if(mem < results.minMemory)
                 results.minMemory = mem;
 
-            DicConsole.WriteLine();
             results.entropyTime = (end - start).TotalSeconds;
             results.entropySpeed = (bufferSize / 1048576) / (end - start).TotalSeconds;
             #endregion Entropy
@@ -493,16 +526,16 @@ namespace DiscImageChef.Core
             #region Multitasking
             start = DateTime.Now;
             Checksum allChecksums = new Checksum();
-
+            InitProgress();
             for(int i = 0; i < bufferSize / blockSize; i++)
             {
-                DicConsole.Write("\rChecksumming block {0} of {1} with all algorithms at the same time.", i + 1, bufferSize / blockSize);
+                UpdateProgress("Checksumming block {0} of {1} with all algorithms at the same time.", i + 1, bufferSize / blockSize);
                 byte[] tmp = new byte[blockSize];
                 ms.Read(tmp, 0, blockSize);
 
                 allChecksums.Update(tmp);
             }
-            DicConsole.WriteLine();
+            EndProgress();
 
             allChecksums.End();
             end = DateTime.Now;

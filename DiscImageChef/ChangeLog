@@ -1,3 +1,11 @@
+2017-05-28  Natalia Portillo  <claunia@claunia.com>
+
+	* Progress.cs:
+	* DiscImageChef.csproj:
+	* Commands/Benchmark.cs:
+	* Commands/CreateSidecar.cs:
+	  Refactor: Use delegates to report progress and status.
+
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Benchmark.cs:

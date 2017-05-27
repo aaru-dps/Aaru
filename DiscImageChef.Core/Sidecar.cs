@@ -49,6 +49,56 @@ namespace DiscImageChef.Core
 {
     public static class Sidecar
     {
+        public static event InitProgressHandler InitProgressEvent;
+        public static event UpdateProgressHandler UpdateProgressEvent;
+        public static event EndProgressHandler EndProgressEvent;
+        public static event InitProgressHandler2 InitProgressEvent2;
+        public static event UpdateProgressHandler2 UpdateProgressEvent2;
+        public static event EndProgressHandler2 EndProgressEvent2;
+        public static event UpdateStatusHandler UpdateStatusEvent;
+
+        public static void InitProgress()
+        {
+            if(InitProgressEvent != null)
+                InitProgressEvent();
+        }
+
+        public static void UpdateProgress(string text, long current, long maximum)
+        {
+            if(UpdateProgressEvent != null)
+                UpdateProgressEvent(string.Format(text, current, maximum), current, maximum);
+        }
+
+        public static void EndProgress()
+        {
+            if(EndProgressEvent != null)
+                EndProgressEvent();
+        }
+
+        public static void InitProgress2()
+        {
+            if(InitProgressEvent2 != null)
+                InitProgressEvent2();
+        }
+
+        public static void UpdateProgress2(string text, long current, long maximum)
+        {
+            if(UpdateProgressEvent2 != null)
+                UpdateProgressEvent2(string.Format(text, current, maximum), current, maximum);
+        }
+
+        public static void EndProgress2()
+        {
+            if(EndProgressEvent2 != null)
+                EndProgressEvent2();
+        }
+
+        public static void UpdateStatus(string text, params object[] args)
+        {
+            if(UpdateStatusEvent != null)
+                UpdateStatusEvent(string.Format(text, args));
+        }
+
         public static CICMMetadataType Create(ImagePlugin image, string imagePath)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
@@ -65,12 +115,13 @@ namespace DiscImageChef.Core
 
             byte[] data;
             long position = 0;
+            InitProgress();
             while(position < (fi.Length - 1048576))
             {
                 data = new byte[1048576];
                 fs.Read(data, 0, 1048576);
 
-                DicConsole.Write("\rHashing image file byte {0} of {1}", position, fi.Length);
+                UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);
 
                 imgChkWorker.Update(data);
 
@@ -80,14 +131,14 @@ namespace DiscImageChef.Core
             data = new byte[fi.Length - position];
             fs.Read(data, 0, (int)(fi.Length - position));
 
-            DicConsole.Write("\rHashing image file byte {0} of {1}", position, fi.Length);
+            UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);
 
             imgChkWorker.Update(data);
 
             // For fast debugging, skip checksum
             //skipImageChecksum:
 
-            DicConsole.WriteLine();
+            EndProgress();
             fs.Close();
 
             List<ChecksumType> imgChecksums = imgChkWorker.End();
@@ -286,8 +337,10 @@ namespace DiscImageChef.Core
                             trksLst = new List<Schemas.TrackType>();
                         }
 
+                        InitProgress();
                         foreach(Track trk in tracks)
                         {
+                            UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
                             Schemas.TrackType xmlTrk = new Schemas.TrackType();
                             switch(trk.TrackType)
                             {
@@ -374,6 +427,7 @@ namespace DiscImageChef.Core
                             ulong sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                             ulong doneSectors = 0;
 
+                            InitProgress2();
                             while(doneSectors < sectors)
                             {
                                 byte[] sector;
@@ -381,13 +435,13 @@ namespace DiscImageChef.Core
                                 if((sectors - doneSectors) >= sectorsToRead)
                                 {
                                     sector = image.ReadSectorsLong(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber);
-                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1} ({3} sectors)", doneSectors, xmlTrk.Sequence.TrackNumber, doneSectors + sectorsToRead, sectors);
+                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                                     doneSectors += sectorsToRead;
                                 }
                                 else
                                 {
                                     sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors), (uint)xmlTrk.Sequence.TrackNumber);
-                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1} ({3} sectors)", doneSectors, xmlTrk.Sequence.TrackNumber, doneSectors + (sectors - doneSectors), sectors);
+                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                                     doneSectors += (sectors - doneSectors);
                                 }
 
@@ -398,7 +452,7 @@ namespace DiscImageChef.Core
 
                             xmlTrk.Checksums = trkChecksums.ToArray();
 
-                            DicConsole.WriteLine();
+                            EndProgress2();
 
                             if(trk.TrackSubchannelType != TrackSubchannelType.None)
                             {
@@ -435,6 +489,7 @@ namespace DiscImageChef.Core
                                 sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                                 doneSectors = 0;
 
+                                InitProgress2();
                                 while(doneSectors < sectors)
                                 {
                                     byte[] sector;
@@ -442,13 +497,13 @@ namespace DiscImageChef.Core
                                     if((sectors - doneSectors) >= sectorsToRead)
                                     {
                                         sector = image.ReadSectorsTag(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber, SectorTagType.CDSectorSubchannel);
-                                        DicConsole.Write("\rHashings subchannel sectors {0} to {2} of track {1} ({3} sectors)", doneSectors, xmlTrk.Sequence.TrackNumber, doneSectors + sectorsToRead, sectors);
+                                        UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                                         doneSectors += sectorsToRead;
                                     }
                                     else
                                     {
                                         sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors), (uint)xmlTrk.Sequence.TrackNumber, SectorTagType.CDSectorSubchannel);
-                                        DicConsole.Write("\rHashings subchannel sectors {0} to {2} of track {1} ({3} sectors)", doneSectors, xmlTrk.Sequence.TrackNumber, doneSectors + (sectors - doneSectors), sectors);
+                                        UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
                                         doneSectors += (sectors - doneSectors);
                                     }
 
@@ -459,13 +514,13 @@ namespace DiscImageChef.Core
 
                                 xmlTrk.SubChannel.Checksums = subChecksums.ToArray();
 
-                                DicConsole.WriteLine();
+                                EndProgress2();
                             }
 
                             // For fast debugging, skip checksum
                             //skipChecksum:
 
-                            DicConsole.WriteLine("Checking filesystems on track {0} from sector {1} to {2}", xmlTrk.Sequence.TrackNumber, xmlTrk.StartSector, xmlTrk.EndSector);
+                            UpdateStatus("Checking filesystems on track {0} from sector {1} to {2}", xmlTrk.Sequence.TrackNumber, xmlTrk.StartSector, xmlTrk.EndSector);
 
                             List<Partition> partitions = new List<Partition>();
 
@@ -572,6 +627,7 @@ namespace DiscImageChef.Core
 
                             trksLst.Add(xmlTrk);
                         }
+                        EndProgress();
 
                         if(trksLst != null)
                             sidecar.OpticalDisc[0].Track = trksLst.ToArray();
@@ -734,7 +790,7 @@ namespace DiscImageChef.Core
                         // TODO: Detect it
                         sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.GetSectorSize();
 
-                        DicConsole.WriteLine("Checking filesystems...");
+                        UpdateStatus("Checking filesystems...");
 
                         List<Partition> partitions = new List<Partition>();
 

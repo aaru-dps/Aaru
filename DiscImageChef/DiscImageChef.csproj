@@ -67,6 +67,7 @@
     <Compile Include="Commands\Statistics.cs" />
     <Compile Include="Commands\Ls.cs" />
     <Compile Include="Commands\ExtractFiles.cs" />
+    <Compile Include="Progress.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
