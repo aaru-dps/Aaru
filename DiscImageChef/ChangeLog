@@ -1,6 +1,11 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/Benchmark.cs:
+	  Refactor: Return result from core to CLI, show in CLI.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Benchmark.cs:
 	  Refactor: Move benchmark to Core.
 
 2017-05-27  Natalia Portillo  <claunia@claunia.com>

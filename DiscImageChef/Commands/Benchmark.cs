@@ -30,8 +30,9 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 
-
-using System.Threading;
+using DiscImageChef.Core;
+using System.Collections.Generic;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Commands
 {
@@ -39,7 +40,29 @@ namespace DiscImageChef.Commands
     {
         public static void doBenchmark(BenchmarkOptions options)
         {
-            Core.Benchmark.Do(options.BufferSize * 1024 * 1024, options.BlockSize);
+            Dictionary<string, double> checksumTimes = new Dictionary<string, double>();
+
+            BenchmarkResults results = Core.Benchmark.Do(options.BufferSize * 1024 * 1024, options.BlockSize);
+
+            DicConsole.WriteLine("Took {0} seconds to fill buffer, {1:F3} MiB/sec.", results.fillTime, results.fillSpeed);
+            DicConsole.WriteLine("Took {0} seconds to read buffer, {1:F3} MiB/sec.", results.readTime, results.readSpeed);
+            DicConsole.WriteLine("Took {0} seconds to entropy buffer, {1:F3} MiB/sec.", results.entropyTime, results.entropySpeed);
+
+            foreach(KeyValuePair<string, BenchmarkEntry> entry in results.entries)
+            {
+                checksumTimes.Add(entry.Key, entry.Value.timeSpan);
+                DicConsole.WriteLine("Took {0} seconds to {1} buffer, {2:F3} MiB/sec.", entry.Value.timeSpan, entry.Key, entry.Value.speed);
+            }
+
+            DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1} MiB/sec.", results.totalTime, results.totalSpeed);
+            DicConsole.WriteLine("Took {0} seconds to do all algorithms sequentially, {1} MiB/sec.", results.separateTime, results.separateSpeed);
+
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Max memory used is {0} bytes", results.maxMemory);
+            DicConsole.WriteLine("Min memory used is {0} bytes", results.minMemory);
+
+            Core.Statistics.AddCommand("benchmark");
+            Core.Statistics.AddBenchmark(checksumTimes, results.entropyTime, results.totalTime, results.separateTime, results.maxMemory, results.minMemory);
         }
     }
 }
