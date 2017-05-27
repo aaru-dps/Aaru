@@ -33,6 +33,7 @@
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using DiscImageChef.Core;
 
 namespace DiscImageChef.Commands
 {

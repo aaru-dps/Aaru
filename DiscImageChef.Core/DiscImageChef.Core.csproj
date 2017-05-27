@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginBase.cs" />
+    <Compile Include="ImageFormat.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -52,6 +53,10 @@
     <ProjectReference Include="..\DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj">
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
       <Name>DiscImageChef.DiscImages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+      <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
+      <Name>DiscImageChef.Filters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

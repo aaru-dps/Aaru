@@ -1,5 +1,11 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* ImageFormat.cs:
+	* DiscImageChef.Core.csproj: Refactor: Move ImageFormat to
+	  Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* PluginBase.cs:
 	* DiscImageChef.Core.csproj: Refactor: Moved PluginBase to
 	  Core.

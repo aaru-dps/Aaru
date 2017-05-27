@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using System.Threading;
 using DiscImageChef.Filters;
+using DiscImageChef.Core;
 
 namespace DiscImageChef.Commands
 {

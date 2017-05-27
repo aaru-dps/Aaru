@@ -1,5 +1,16 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/Decode.cs:
+	* Commands/Verify.cs:
+	* Commands/Compare.cs:
+	* Commands/Entropy.cs:
+	* Commands/Checksum.cs:
+	* Commands/PrintHex.cs:
+	* DiscImageChef.csproj:
+	  Refactor: Move ImageFormat to Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/Ls.cs:
 	* Commands/Analyze.cs:
 	* Commands/Formats.cs:

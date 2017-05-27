@@ -34,8 +34,9 @@ using System;
 using DiscImageChef.Filters;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.ImagePlugins;
 
-namespace DiscImageChef.ImagePlugins
+namespace DiscImageChef.Core
 {
     public static class ImageFormat
     {
