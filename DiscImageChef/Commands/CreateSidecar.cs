@@ -41,6 +41,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.PartPlugins;
 using DiscImageChef.Filters;
 using DiscImageChef.Decoders.PCMCIA;
+using DiscImageChef.Core;
 
 namespace DiscImageChef.Commands
 {

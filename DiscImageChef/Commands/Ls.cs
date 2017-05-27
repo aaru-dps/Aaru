@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;

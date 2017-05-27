@@ -1,3 +1,15 @@
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* Commands/Ls.cs:
+	* Commands/Analyze.cs:
+	* Commands/Formats.cs:
+	* DetectImageFormat.cs:
+	* DiscImageChef.csproj:
+	* Commands/DumpMedia.cs:
+	* Commands/ExtractFiles.cs:
+	* Commands/CreateSidecar.cs:
+	  Refactor: Moved PluginBase to Core.
+
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/MediaInfo.cs:

@@ -38,7 +38,7 @@ using DiscImageChef.PartPlugins;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Console;
 
-namespace DiscImageChef
+namespace DiscImageChef.Core
 {
     public class PluginBase
     {

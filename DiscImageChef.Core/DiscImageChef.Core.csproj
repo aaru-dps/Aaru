@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Core</RootNamespace>
     <AssemblyName>DiscImageChef.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ReleaseVersion>3.3.99.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
@@ -35,6 +34,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PluginBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
+      <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
+      <Name>DiscImageChef.Filesystems</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Partitions\DiscImageChef.Partitions.csproj">
+      <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
+      <Name>DiscImageChef.Partitions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj">
+      <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
+      <Name>DiscImageChef.DiscImages</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

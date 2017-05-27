@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Plugins.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Commands\Formats.cs" />
     <Compile Include="Commands\Analyze.cs" />
@@ -240,6 +239,10 @@
     <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>DiscImageChef.Filters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj">
+      <Project>{679659B8-25D0-4279-B632-56EF8F94ADC0}</Project>
+      <Name>DiscImageChef.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

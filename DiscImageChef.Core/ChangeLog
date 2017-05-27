@@ -1,5 +1,11 @@
 2017-05-27  Natalia Portillo  <claunia@claunia.com>
 
+	* PluginBase.cs:
+	* DiscImageChef.Core.csproj: Refactor: Moved PluginBase to
+	  Core.
+
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
 	* DiscImageChef.Core.csproj:
 	* AssemblyInfo.cs: Added project for separation of engine from
 	  CLI.

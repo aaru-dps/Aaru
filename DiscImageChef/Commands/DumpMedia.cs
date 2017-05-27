@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
 using DiscImageChef.Filesystems;
