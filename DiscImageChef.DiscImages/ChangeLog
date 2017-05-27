@@ -1,3 +1,8 @@
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.DiscImages.csproj: Added project for
+	  separation of engine from CLI.
+
 2017-05-23  Natalia Portillo  <claunia@claunia.com>
 
 	* ImagePlugin.cs: Added support for Xbox security sector.

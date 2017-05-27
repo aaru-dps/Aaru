@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claunia.RsrcFork", "Claunia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Filters", "DiscImageChef.Filters\DiscImageChef.Filters.csproj", "{D571B8EF-903D-4353-BDD5-B834F9F029EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Core", "DiscImageChef.Core\DiscImageChef.Core.csproj", "{679659B8-25D0-4279-B632-56EF8F94ADC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -97,6 +99,10 @@ Global
 		{D571B8EF-903D-4353-BDD5-B834F9F029EF}.Debug|x86.Build.0 = Debug|Any CPU
 		{D571B8EF-903D-4353-BDD5-B834F9F029EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{D571B8EF-903D-4353-BDD5-B834F9F029EF}.Release|x86.Build.0 = Release|Any CPU
+		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Debug|x86.Build.0 = Debug|Any CPU
+		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Release|x86.ActiveCfg = Release|Any CPU
+		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

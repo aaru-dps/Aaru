@@ -1,0 +1,6 @@
+2017-05-27  Natalia Portillo  <claunia@claunia.com>
+
+	* DiscImageChef.Core.csproj:
+	* AssemblyInfo.cs: Added project for separation of engine from
+	  CLI.
+
