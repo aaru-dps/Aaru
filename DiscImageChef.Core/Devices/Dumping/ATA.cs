@@ -341,13 +341,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 }
 
-                ulong A = 0; // <3ms
-                ulong B = 0; // >=3ms, <10ms
-                ulong C = 0; // >=10ms, <50ms
-                ulong D = 0; // >=50ms, <150ms
-                ulong E = 0; // >=150ms, <500ms
-                ulong F = 0; // >=500ms
-                ulong errored = 0;
                 DateTime start;
                 DateTime end;
                 double totalDuration = 0;
@@ -442,31 +435,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(!error)
                         {
-                            if(cmdDuration >= 500)
-                            {
-                                F += blocksToRead;
-                            }
-                            else if(cmdDuration >= 150)
-                            {
-                                E += blocksToRead;
-                            }
-                            else if(cmdDuration >= 50)
-                            {
-                                D += blocksToRead;
-                            }
-                            else if(cmdDuration >= 10)
-                            {
-                                C += blocksToRead;
-                            }
-                            else if(cmdDuration >= 3)
-                            {
-                                B += blocksToRead;
-                            }
-                            else
-                            {
-                                A += blocksToRead;
-                            }
-
                             mhddLog.Write(i, cmdDuration);
                             ibgLog.Write(i, currentSpeed * 1024);
                             dumpFile.Write(cmdBuf);
@@ -474,7 +442,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         else
                         {
                             DicConsole.DebugWriteLine("Media-Scan", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
-                            errored += blocksToRead;
                             unreadableSectors.Add(i);
                             if(cmdDuration < 500)
                                 mhddLog.Write(i, 65535);
@@ -647,31 +614,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 if(!error)
                                 {
-                                    if(cmdDuration >= 500)
-                                    {
-                                        F += blocksToRead;
-                                    }
-                                    else if(cmdDuration >= 150)
-                                    {
-                                        E += blocksToRead;
-                                    }
-                                    else if(cmdDuration >= 50)
-                                    {
-                                        D += blocksToRead;
-                                    }
-                                    else if(cmdDuration >= 10)
-                                    {
-                                        C += blocksToRead;
-                                    }
-                                    else if(cmdDuration >= 3)
-                                    {
-                                        B += blocksToRead;
-                                    }
-                                    else
-                                    {
-                                        A += blocksToRead;
-                                    }
-
                                     mhddLog.Write(currentBlock, cmdDuration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     dumpFile.Write(cmdBuf);
@@ -679,7 +621,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 else
                                 {
                                     DicConsole.DebugWriteLine("Media-Scan", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
-                                    errored += blocksToRead;
                                     unreadableSectors.Add(currentBlock);
                                     if(cmdDuration < 500)
                                         mhddLog.Write(currentBlock, 65535);

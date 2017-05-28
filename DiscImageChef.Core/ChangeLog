@@ -1,5 +1,9 @@
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
+	* ATA.cs: Removed unused code.
+
+2017-05-28  Natalia Portillo  <claunia@claunia.com>
+
 	* ATA.cs:
 	* NVMe.cs:
 	* SCSI.cs:
