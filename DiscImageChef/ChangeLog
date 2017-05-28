@@ -1,5 +1,11 @@
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/DeviceReport.cs:
+	  Refactor: Move device-report logic to Core and separate by
+	  category.
+
+2017-05-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Commands/MediaScan.cs:
 	  Refactor: Return result from core to CLI, show in CLI.
 
