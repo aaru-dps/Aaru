@@ -1,5 +1,15 @@
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
+	* ATA.cs:
+	* NVMe.cs:
+	* SCSI.cs:
+	* DiscImageChef.Core.csproj:
+	* ScanResults.cs:
+	* SecureDigital.cs: Refactor: Return result from core to CLI,
+	  show in CLI.
+
+2017-05-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Sidecar.cs:
 	* Benchmark.cs:
 	* Delegates.cs:

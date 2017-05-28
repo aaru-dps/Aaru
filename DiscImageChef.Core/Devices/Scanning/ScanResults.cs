@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : NVMe.cs
+// Filename       : ScanResults.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -36,15 +36,29 @@
 // ****************************************************************************/
 // //$Id$
 using System;
-using DiscImageChef.Devices;
+using System.Collections.Generic;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
-    public static class NVMe
+    public struct ScanResults
     {
-        public static ScanResults Scan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
-        {
-            throw new NotImplementedException("NVMe devices not yet supported.");
-        }
+        public double totalTime;
+        public double processingTime;
+        public double avgSpeed;
+        public double maxSpeed;
+        public double minSpeed;
+        public ulong A;
+        public ulong B;
+        public ulong C;
+        public ulong D;
+        public ulong E;
+        public ulong F;
+        public List<ulong> unreadableSectors;
+        public double seekMax;
+        public double seekMin;
+        public double seekTotal;
+        public int seekTimes;
+        public ulong blocks;
+        public ulong errored;
     }
 }

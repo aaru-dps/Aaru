@@ -1,5 +1,10 @@
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
+	* Commands/MediaScan.cs:
+	  Refactor: Return result from core to CLI, show in CLI.
+
+2017-05-28  Natalia Portillo  <claunia@claunia.com>
+
 	* Progress.cs:
 	* DiscImageChef.csproj:
 	* Commands/Benchmark.cs:

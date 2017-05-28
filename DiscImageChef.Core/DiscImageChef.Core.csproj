@@ -54,6 +54,7 @@
     <Compile Include="Sidecar.cs" />
     <Compile Include="Benchmark.cs" />
     <Compile Include="Delegates.cs" />
+    <Compile Include="Devices\Scanning\ScanResults.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

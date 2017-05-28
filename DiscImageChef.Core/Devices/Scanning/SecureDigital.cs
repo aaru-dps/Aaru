@@ -42,7 +42,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 {
     public static class SecureDigital
     {
-        public static void Scan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
+        public static ScanResults Scan(string MHDDLogPath, string IBGLogPath, string devicePath, Device dev)
         {
             throw new NotImplementedException("MMC/SD devices not yet supported.");
         }
