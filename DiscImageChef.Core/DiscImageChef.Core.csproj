@@ -72,6 +72,7 @@
     <Compile Include="Devices\Reader.cs" />
     <Compile Include="Devices\ReaderATA.cs" />
     <Compile Include="Devices\ReaderSCSI.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

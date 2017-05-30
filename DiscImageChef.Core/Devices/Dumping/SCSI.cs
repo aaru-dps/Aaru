@@ -621,10 +621,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
                 sidecar.BlockMedia[0].DumpHardwareArray[0].Revision = dev.Revision;
                 sidecar.BlockMedia[0].DumpHardwareArray[0].Serial = dev.Serial;
-                sidecar.BlockMedia[0].DumpHardwareArray[0].Software = new SoftwareType();
-                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
-                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
-                sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Version = typeof(SCSI).Assembly.GetName().Version.ToString();
+                sidecar.BlockMedia[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                 sidecar.BlockMedia[0].TapeInformation = partitions.ToArray();
 
                 if(!aborted)
@@ -1831,10 +1828,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = new SoftwareType();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Version = typeof(SCSI).Assembly.GetName().Version.ToString();
+                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                 sidecar.OpticalDisc[0].Image = new ImageType();
                 sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
                 sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".bin";
@@ -2538,10 +2532,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = new SoftwareType();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Version = typeof(SCSI).Assembly.GetName().Version.ToString();
+                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                 sidecar.OpticalDisc[0].Image = new ImageType();
                 sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
                 sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".bin";
@@ -3009,10 +3000,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
                     sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
                     sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
-                    sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = new SoftwareType();
-                    sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
-                    sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
-                    sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Version = typeof(SCSI).Assembly.GetName().Version.ToString();
+                    sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                     sidecar.OpticalDisc[0].Image = new ImageType();
                     sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
                     sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".bin";
@@ -3123,10 +3111,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
                         sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
                         sidecar.BlockMedia[0].DumpHardwareArray[0].Revision = dev.Revision;
-                        sidecar.BlockMedia[0].DumpHardwareArray[0].Software = new SoftwareType();
-                        sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Name = "DiscImageChef";
-                        sidecar.BlockMedia[0].DumpHardwareArray[0].Software.OperatingSystem = dev.PlatformID.ToString();
-                        sidecar.BlockMedia[0].DumpHardwareArray[0].Software.Version = typeof(SCSI).Assembly.GetName().Version.ToString();
+                        sidecar.BlockMedia[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                     }
                 }
             }
