@@ -144,6 +144,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            Reader scsiReader = null;
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
@@ -151,36 +152,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
-                sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(!sense)
+                scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
+                blocks = scsiReader.GetDeviceBlocks();
+                blockSize = scsiReader.LogicalBlockSize;
+                if(scsiReader.FindReadCommand())
                 {
-                    blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
-                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
-                }
-
-                if(sense || blocks == 0xFFFFFFFF)
-                {
-                    sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-
-                    if(sense && blocks == 0)
-                    {
-                        // Not all MMC devices support READ CAPACITY, as they have READ TOC
-                        if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
-                        {
-                            DicConsole.ErrorWriteLine("Unable to get media capacity");
-                            DicConsole.ErrorWriteLine("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                        }
-                    }
-
-                    if(!sense)
-                    {
-                        byte[] temp = new byte[8];
-
-                        Array.Copy(cmdBuf, 0, temp, 0, 8);
-                        Array.Reverse(temp);
-                        blocks = BitConverter.ToUInt64(temp, 0);
-                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
-                    }
+                    DicConsole.ErrorWriteLine("Unable to read medium.");
+                    return;
                 }
 
                 if(blocks != 0 && blockSize != 0)
@@ -191,7 +169,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 logicalBlockSize = blockSize;
-                physicalBlockSize = blockSize;
+                physicalBlockSize = scsiReader.PhysicalBlockSize;
             }
 
             DateTime start;
@@ -1502,10 +1480,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 e.Cancel = aborted = true;
             };
 
-            // TODO: Raw reading
-            bool read6 = false, read10 = false, read12 = false, read16 = false, readcd = false;
-            bool readLong10 = false, readLong16 = false, hldtstReadRaw = false, readLongDvd = false;
-            bool plextorReadRaw = false, syqReadLong6 = false, syqReadLong10 = false;
+            bool readcd = false;
 
             #region CompactDisc dump
             if(compactDisc)
@@ -1994,7 +1969,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.WriteLine("Real layer break: {0}", layerBreak);
                 DicConsole.WriteLine();
 
-                read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
+                bool read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
                 if(!read12)
                 {
                     DicConsole.ErrorWriteLine("Cannot read medium, aborting scan...");
@@ -2605,246 +2580,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             #endregion Xbox Game Disc
             else
             {
-                uint longBlockSize = blockSize;
-                bool rawAble = false;
+                uint longBlockSize = scsiReader.LongBlockSize;
 
                 if(dumpRaw)
                 {
-                    bool testSense;
-                    Decoders.SCSI.FixedSense? decSense;
-
-                    if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
-                    {
-                        /*testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 0xFFFF, dev.Timeout, out duration);
-                        if (testSense && !dev.Error)
-                        {
-                            decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
-                            if (decSense.HasValue)
-                            {
-                                if (decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
-                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
-                                {
-                                    rawAble = true;
-                                    if (decSense.Value.InformationValid && decSense.Value.ILI)
-                                    {
-                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                        readLong16 = !dev.ReadLong16(out readBuffer, out senseBuf, false, 0, longBlockSize, dev.Timeout, out duration);
-                                    }
-                                }
-                            }
-                        }*/
-
-                        testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 0xFFFF, dev.Timeout, out duration);
-                        if(testSense && !dev.Error)
-                        {
-                            decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
-                            if(decSense.HasValue)
-                            {
-                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
-                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
-                                {
-                                    rawAble = true;
-                                    if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                    {
-                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                        readLong10 = !dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, (ushort)longBlockSize, dev.Timeout, out duration);
-                                    }
-                                }
-                            }
-                        }
-
-                        if(rawAble && longBlockSize == blockSize)
-                        {
-                            if(blockSize == 512)
-                            {
-                                // Long sector sizes for 512-byte magneto-opticals
-                                foreach(ushort testSize in new[] { 600, 610, 630 })
-                                {
-                                    testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, testSize, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong16 = true;
-                                        longBlockSize = testSize;
-                                        rawAble = true;
-                                        break;
-                                    }
-
-                                    testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, testSize, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong10 = true;
-                                        longBlockSize = testSize;
-                                        rawAble = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            else if(blockSize == 1024)
-                            {
-                                testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 1200, dev.Timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong16 = true;
-                                    longBlockSize = 1200;
-                                    rawAble = true;
-                                }
-                                else
-                                {
-                                    testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 1200, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong10 = true;
-                                        longBlockSize = 1200;
-                                        rawAble = true;
-                                    }
-                                }
-                            }
-                            else if(blockSize == 2048)
-                            {
-                                testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 2380, dev.Timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong16 = true;
-                                    longBlockSize = 2380;
-                                    rawAble = true;
-                                }
-                                else
-                                {
-                                    testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 2380, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong10 = true;
-                                        longBlockSize = 2380;
-                                        rawAble = true;
-                                    }
-                                }
-                            }
-                            else if(blockSize == 4096)
-                            {
-                                testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 4760, dev.Timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong16 = true;
-                                    longBlockSize = 4760;
-                                    rawAble = true;
-                                }
-                                else
-                                {
-                                    testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 4760, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong10 = true;
-                                        longBlockSize = 4760;
-                                        rawAble = true;
-                                    }
-                                }
-                            }
-                            else if(blockSize == 8192)
-                            {
-                                testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 9424, dev.Timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    readLong16 = true;
-                                    longBlockSize = 9424;
-                                    rawAble = true;
-                                }
-                                else
-                                {
-                                    testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 9424, dev.Timeout, out duration);
-                                    if(!testSense && !dev.Error)
-                                    {
-                                        readLong10 = true;
-                                        longBlockSize = 9424;
-                                        rawAble = true;
-                                    }
-                                }
-                            }
-                        }
-
-                        if(!rawAble && dev.Manufacturer == "SYQUEST")
-                        {
-                            testSense = dev.SyQuestReadLong10(out readBuffer, out senseBuf, 0, 0xFFFF, dev.Timeout, out duration);
-                            if(testSense)
-                            {
-                                decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
-                                if(decSense.HasValue)
-                                {
-                                    if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
-                                        decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
-                                    {
-                                        rawAble = true;
-                                        if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                        {
-                                            longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                            syqReadLong10 = !dev.SyQuestReadLong10(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        testSense = dev.SyQuestReadLong6(out readBuffer, out senseBuf, 0, 0xFFFF, dev.Timeout, out duration);
-                                        if(testSense)
-                                        {
-                                            decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
-                                            if(decSense.HasValue)
-                                            {
-                                                if(decSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest &&
-                                                    decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
-                                                {
-                                                    rawAble = true;
-                                                    if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                                    {
-                                                        longBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                                        syqReadLong6 = !dev.SyQuestReadLong6(out readBuffer, out senseBuf, 0, longBlockSize, dev.Timeout, out duration);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if(!rawAble && blockSize == 256)
-                            {
-                                testSense = dev.SyQuestReadLong6(out readBuffer, out senseBuf, 0, 262, dev.Timeout, out duration);
-                                if(!testSense && !dev.Error)
-                                {
-                                    syqReadLong6 = true;
-                                    longBlockSize = 262;
-                                    rawAble = true;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(dev.Manufacturer == "HL-DT-ST")
-                            hldtstReadRaw = !dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, 0, 1, dev.Timeout, out duration);
-
-                        if(dev.Manufacturer == "PLEXTOR")
-                            hldtstReadRaw = !dev.PlextorReadRawDvd(out readBuffer, out senseBuf, 0, 1, dev.Timeout, out duration);
-
-                        if(hldtstReadRaw || plextorReadRaw)
-                        {
-                            rawAble = true;
-                            longBlockSize = 2064;
-                        }
-
-                        // READ LONG (10) for some DVD drives
-                        if(!rawAble && dev.Manufacturer == "MATSHITA")
-                        {
-                            testSense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, 0, 37856, dev.Timeout, out duration);
-                            if(!testSense && !dev.Error)
-                            {
-                                readLongDvd = true;
-                                longBlockSize = 37856;
-                                rawAble = true;
-                            }
-                        }
-                    }
-
                     if(blockSize == longBlockSize)
                     {
-                        if(!rawAble)
+                        if(!scsiReader.CanReadRaw)
                         {
                             DicConsole.ErrorWriteLine("Device doesn't seem capable of reading raw data from media.");
                         }
@@ -2865,22 +2607,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        if(readLong16)
-                            DicConsole.WriteLine("Using SCSI READ LONG (16) command.");
-                        else if(readLong10 || readLongDvd)
-                            DicConsole.WriteLine("Using SCSI READ LONG (10) command.");
-                        else if(syqReadLong10)
-                            DicConsole.WriteLine("Using SyQuest READ LONG (10) command.");
-                        else if(syqReadLong6)
-                            DicConsole.WriteLine("Using SyQuest READ LONG (6) command.");
-                        else if(hldtstReadRaw)
-                            DicConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
-                        else if(plextorReadRaw)
-                            DicConsole.WriteLine("Using Plextor raw DVD reading.");
-                        else
-                            throw new AccessViolationException("Should not arrive here");
 
-                        if(readLongDvd) // Only a block will be read, but it contains 16 sectors and command expect sector number not block number
+                        if(longBlockSize == 37856) // Only a block will be read, but it contains 16 sectors and command expect sector number not block number
                             blocksToRead = 16;
                         else
                             blocksToRead = 1;
@@ -2889,87 +2617,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         physicalBlockSize = longBlockSize;
                         blockSize = longBlockSize;
                     }
+
                 }
-
-                if(!dumpRaw)
-                {
-                    read6 = !dev.Read6(out readBuffer, out senseBuf, 0, blockSize, dev.Timeout, out duration);
-
-                    read10 = !dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, dev.Timeout, out duration);
-
-                    read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
-
-                    read16 = !dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
-
-                    if(!read6 && !read10 && !read12 && !read16)
-                    {
-                        DicConsole.ErrorWriteLine("Cannot read medium, aborting scan...");
-                        return;
-                    }
-
-                    if(read6 && !read10 && !read12 && !read16 && blocks > (0x001FFFFF + 1))
-                    {
-                        DicConsole.ErrorWriteLine("Device only supports SCSI READ (6) but has more than {0} blocks ({1} blocks total)", 0x001FFFFF + 1, blocks);
-                        return;
-                    }
-
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    if(!read16 && blocks > ((long)0xFFFFFFFF + (long)1))
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
-                    {
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
-                        DicConsole.ErrorWriteLine("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)", (long)0xFFFFFFFF + (long)1, blocks);
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
-                        return;
-                    }
-
-                    if(read16)
-                        DicConsole.WriteLine("Using SCSI READ (16) command.");
-                    else if(read12)
-                        DicConsole.WriteLine("Using SCSI READ (12) command.");
-                    else if(read10)
-                        DicConsole.WriteLine("Using SCSI READ (10) command.");
-                    else if(read6)
-                        DicConsole.WriteLine("Using SCSI READ (6) command.");
-
-                    while(true)
-                    {
-                        if(read16)
-                        {
-                            sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, blocksToRead, false, dev.Timeout, out duration);
-                            if(dev.Error)
-                                blocksToRead /= 2;
-                        }
-                        else if(read12)
-                        {
-                            sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, blockSize, 0, blocksToRead, false, dev.Timeout, out duration);
-                            if(dev.Error)
-                                blocksToRead /= 2;
-                        }
-                        else if(read10)
-                        {
-                            sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, (ushort)blocksToRead, dev.Timeout, out duration);
-                            if(dev.Error)
-                                blocksToRead /= 2;
-                        }
-                        else if(read6)
-                        {
-                            sense = dev.Read6(out readBuffer, out senseBuf, 0, blockSize, (byte)blocksToRead, dev.Timeout, out duration);
-                            if(dev.Error)
-                                blocksToRead /= 2;
-                        }
-
-                        if(!dev.Error || blocksToRead == 1)
-                            break;
-                    }
-
-                    if(dev.Error)
-                    {
-                        DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                        return;
-                    }
-                }
-
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
                 mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
@@ -2999,56 +2648,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
-                    if(readLong16)
-                    {
-                        sense = dev.ReadLong16(out readBuffer, out senseBuf, false, i, blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(readLong10 || readLongDvd)
-                    {
-                        sense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, (uint)i, (ushort)blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(syqReadLong10)
-                    {
-                        sense = dev.SyQuestReadLong10(out readBuffer, out senseBuf, (uint)i, blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(syqReadLong6)
-                    {
-                        sense = dev.SyQuestReadLong6(out readBuffer, out senseBuf, (uint)i, blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(hldtstReadRaw)
-                    {
-                        sense = dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, (uint)i, blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(plextorReadRaw)
-                    {
-                        sense = dev.PlextorReadRawDvd(out readBuffer, out senseBuf, (uint)i, blockSize, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(read16)
-                    {
-                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(read12)
-                    {
-                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(read10)
-                    {
-                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, (ushort)blocksToRead, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
-                    else if(read6)
-                    {
-                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout, out cmdDuration);
-                        totalDuration += cmdDuration;
-                    }
+                    sense = scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out cmdDuration);
+                    totalDuration += cmdDuration;
 
                     if(!sense && !dev.Error)
                     {
@@ -3069,7 +2670,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         errored += blocksToRead;
                         unreadableSectors.Add(i);
-                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if(cmdDuration < 500)
                             mhddLog.Write(i, 65535);
                         else
@@ -3119,56 +2719,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
 
-                        if(readLong16)
-                        {
-                            sense = dev.ReadLong16(out readBuffer, out senseBuf, false, badSector, blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(readLong10)
-                        {
-                            sense = dev.ReadLong10(out readBuffer, out senseBuf, false, false, (uint)badSector, (ushort)blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(syqReadLong10)
-                        {
-                            sense = dev.SyQuestReadLong10(out readBuffer, out senseBuf, (uint)badSector, blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(syqReadLong6)
-                        {
-                            sense = dev.SyQuestReadLong6(out readBuffer, out senseBuf, (uint)badSector, blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(hldtstReadRaw)
-                        {
-                            sense = dev.HlDtStReadRawDvd(out readBuffer, out senseBuf, (uint)badSector, blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(plextorReadRaw)
-                        {
-                            sense = dev.PlextorReadRawDvd(out readBuffer, out senseBuf, (uint)badSector, blockSize, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(read16)
-                        {
-                            sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, badSector, blockSize, 0, 1, false, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(read12)
-                        {
-                            sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector, blockSize, 0, 1, false, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(read10)
-                        {
-                            sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector, blockSize, 0, 1, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
-                        else if(read6)
-                        {
-                            sense = dev.Read6(out readBuffer, out senseBuf, (uint)badSector, blockSize, 1, dev.Timeout, out cmdDuration);
-                            totalDuration += cmdDuration;
-                        }
+                        sense = scsiReader.ReadBlock(out readBuffer, badSector, out cmdDuration);
+                        totalDuration += cmdDuration;
 
                         if(!sense && !dev.Error)
                         {

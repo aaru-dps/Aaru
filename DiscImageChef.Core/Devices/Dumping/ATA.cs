@@ -74,15 +74,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             byte[] cmdBuf;
             bool sense;
-            ulong blocks = 0;
-            uint blockSize = 512;
             ushort currentProfile = 0x0001;
             Decoders.ATA.AtaErrorRegistersCHS errorChs;
-            Decoders.ATA.AtaErrorRegistersLBA28 errorLba;
-            Decoders.ATA.AtaErrorRegistersLBA48 errorLba48;
-            bool lbaMode = false;
-            byte heads = 0, sectors = 0;
-            ushort cylinders = 0;
             uint timeout = 5;
             double duration;
 
@@ -155,192 +148,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].ATA.Identify.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
                 DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].ATA.Identify.Image, cmdBuf);
 
-                if(ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
-                {
-                    cylinders = ataId.CurrentCylinders;
-                    heads = (byte)ataId.CurrentHeads;
-                    sectors = (byte)ataId.CurrentSectorsPerTrack;
-                    blocks = (ulong)(cylinders * heads * sectors);
-                }
-
-                if((ataId.CurrentCylinders == 0 || ataId.CurrentHeads == 0 || ataId.CurrentSectorsPerTrack == 0) &&
-                    (ataId.Cylinders > 0 && ataId.Heads > 0 && ataId.SectorsPerTrack > 0))
-                {
-                    cylinders = ataId.Cylinders;
-                    heads = (byte)ataId.Heads;
-                    sectors = (byte)ataId.SectorsPerTrack;
-                    blocks = (ulong)(cylinders * heads * sectors);
-                }
-
-                if(ataId.Capabilities.HasFlag(Decoders.ATA.Identify.CapabilitiesBit.LBASupport))
-                {
-                    blocks = ataId.LBASectors;
-                    lbaMode = true;
-                }
-
-                if(ataId.CommandSet2.HasFlag(Decoders.ATA.Identify.CommandSetBit2.LBA48))
-                {
-                    blocks = ataId.LBA48Sectors;
-                    lbaMode = true;
-                }
-
-                uint physicalsectorsize = blockSize;
-                if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-                                    (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
-                {
-                    if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                    {
-                        if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
-                            blockSize = 512;
-                        else
-                            blockSize = ataId.LogicalSectorWords * 2;
-                    }
-                    else
-                        blockSize = 512;
-
-                    if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    {
-#pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                        physicalsectorsize = blockSize * (uint)Math.Pow(2, (double)(ataId.PhysLogSectorSize & 0xF));
-#pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
-                    }
-                    else
-                        physicalsectorsize = blockSize;
-                }
-                else
-                {
-                    blockSize = 512;
-                    physicalsectorsize = 512;
-                }
-
-                bool ReadLba = false;
-                bool ReadRetryLba = false;
-                bool ReadDmaLba = false;
-                bool ReadDmaRetryLba = false;
-
-                bool ReadLba48 = false;
-                bool ReadDmaLba48 = false;
-
-                bool Read = false;
-                bool ReadRetry = false;
-                bool ReadDma = false;
-                bool ReadDmaRetry = false;
-
-                sense = dev.Read(out cmdBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
-                Read = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                sense = dev.Read(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
-                ReadRetry = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                sense = dev.ReadDma(out cmdBuf, out errorChs, false, 0, 0, 1, 1, timeout, out duration);
-                ReadDma = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                sense = dev.ReadDma(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out duration);
-                ReadDmaRetry = (!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-
-                sense = dev.Read(out cmdBuf, out errorLba, false, 0, 1, timeout, out duration);
-                ReadLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                sense = dev.Read(out cmdBuf, out errorLba, true, 0, 1, timeout, out duration);
-                ReadRetryLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                sense = dev.ReadDma(out cmdBuf, out errorLba, false, 0, 1, timeout, out duration);
-                ReadDmaLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                sense = dev.ReadDma(out cmdBuf, out errorLba, true, 0, 1, timeout, out duration);
-                ReadDmaRetryLba = (!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-
-                sense = dev.Read(out cmdBuf, out errorLba48, 0, 1, timeout, out duration);
-                ReadLba48 = (!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                sense = dev.ReadDma(out cmdBuf, out errorLba48, 0, 1, timeout, out duration);
-                ReadDmaLba48 = (!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-
-                if(!lbaMode)
-                {
-                    if(blocks > 0xFFFFFFF && !ReadLba48 && !ReadDmaLba48)
-                    {
-                        DicConsole.ErrorWriteLine("Device needs 48-bit LBA commands but I can't issue them... Aborting.");
-                        return;
-                    }
-
-                    if(!ReadLba && !ReadRetryLba && !ReadDmaLba && !ReadDmaRetryLba)
-                    {
-                        DicConsole.ErrorWriteLine("Device needs 28-bit LBA commands but I can't issue them... Aborting.");
-                        return;
-                    }
-                }
-                else
-                {
-                    if(!Read && !ReadRetry && !ReadDma && !ReadDmaRetry)
-                    {
-                        DicConsole.ErrorWriteLine("Device needs CHS commands but I can't issue them... Aborting.");
-                        return;
-                    }
-                }
-
-                if(ReadDmaLba48)
-                    DicConsole.WriteLine("Using ATA READ DMA EXT command.");
-                else if(ReadLba48)
-                    DicConsole.WriteLine("Using ATA READ EXT command.");
-                else if(ReadDmaRetryLba)
-                    DicConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
-                else if(ReadDmaLba)
-                    DicConsole.WriteLine("Using ATA READ DMA command (LBA).");
-                else if(ReadRetryLba)
-                    DicConsole.WriteLine("Using ATA READ command with retries (LBA).");
-                else if(ReadLba)
-                    DicConsole.WriteLine("Using ATA READ command (LBA).");
-                else if(ReadDmaRetry)
-                    DicConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
-                else if(ReadDma)
-                    DicConsole.WriteLine("Using ATA READ DMA command (CHS).");
-                else if(ReadRetry)
-                    DicConsole.WriteLine("Using ATA READ command with retries (CHS).");
-                else if(Read)
-                    DicConsole.WriteLine("Using ATA READ command (CHS).");
-
-                uint blocksToRead = 64;
-                bool error = true;
-                while(lbaMode)
-                {
-                    if(ReadDmaLba48)
-                    {
-                        sense = dev.ReadDma(out cmdBuf, out errorLba48, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                    }
-                    else if(ReadLba48)
-                    {
-                        sense = dev.Read(out cmdBuf, out errorLba48, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                    }
-                    else if(ReadDmaRetryLba)
-                    {
-                        sense = dev.ReadDma(out cmdBuf, out errorLba, true, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                    }
-                    else if(ReadDmaLba)
-                    {
-                        sense = dev.ReadDma(out cmdBuf, out errorLba, false, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                    }
-                    else if(ReadRetryLba)
-                    {
-                        sense = dev.Read(out cmdBuf, out errorLba, true, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                    }
-                    else if(ReadLba)
-                    {
-                        sense = dev.Read(out cmdBuf, out errorLba, false, 0, (byte)blocksToRead, timeout, out duration);
-                        error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                    }
-
-                    if(error)
-                        blocksToRead /= 2;
-
-                    if(!error || blocksToRead == 1)
-                        break;
-                }
-
-                if(error && lbaMode)
-                {
-                    DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                    return;
-                }
-
                 DateTime start;
                 DateTime end;
                 double totalDuration = 0;
@@ -359,7 +166,30 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DataFile dumpFile;
 
-                if(lbaMode)
+                // Initializate reader
+                Reader ataReader = new Reader(dev, timeout, cmdBuf);
+                // Fill reader blocks
+                ulong blocks = ataReader.GetDeviceBlocks();
+                // Check block sizes
+                if(ataReader.GetBlockSize())
+                {
+                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    return;
+                }
+                uint blockSize = ataReader.LogicalBlockSize;
+                uint physicalsectorsize = ataReader.PhysicalBlockSize;
+                // Check how many blocks to read, if error show and return
+                if(ataReader.GetBlocksToRead())
+                {
+                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    return;
+                }
+                uint blocksToRead = ataReader.BlocksToRead;
+                ushort cylinders = ataReader.Cylinders;
+                byte heads = ataReader.Heads;
+                byte sectors = ataReader.Sectors;
+
+                if(ataReader.IsLBA)
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
@@ -373,8 +203,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(aborted)
                             break;
 
-                        double cmdDuration = 0;
-
                         if((blocks - i) < blocksToRead)
                             blocksToRead = (byte)(blocks - i);
 
@@ -387,73 +215,28 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
 
-                        error = true;
-                        byte status = 0, errorByte = 0;
-
-                        if(ReadDmaLba48)
-                        {
-                            sense = dev.ReadDma(out cmdBuf, out errorLba48, i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba48.status;
-                            errorByte = errorLba48.error;
-                        }
-                        else if(ReadLba48)
-                        {
-                            sense = dev.Read(out cmdBuf, out errorLba48, i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba48.status;
-                            errorByte = errorLba48.error;
-                        }
-                        else if(ReadDmaRetryLba)
-                        {
-                            sense = dev.ReadDma(out cmdBuf, out errorLba, true, (uint)i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba.status;
-                            errorByte = errorLba.error;
-                        }
-                        else if(ReadDmaLba)
-                        {
-                            sense = dev.ReadDma(out cmdBuf, out errorLba, false, (uint)i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba.status;
-                            errorByte = errorLba.error;
-                        }
-                        else if(ReadRetryLba)
-                        {
-                            sense = dev.Read(out cmdBuf, out errorLba, true, (uint)i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba.status;
-                            errorByte = errorLba.error;
-                        }
-                        else if(ReadLba)
-                        {
-                            sense = dev.Read(out cmdBuf, out errorLba, false, (uint)i, (byte)blocksToRead, timeout, out cmdDuration);
-                            error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            status = errorLba.status;
-                            errorByte = errorLba.error;
-                        }
+                        bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
 
                         if(!error)
                         {
-                            mhddLog.Write(i, cmdDuration);
+                            mhddLog.Write(i, duration);
                             ibgLog.Write(i, currentSpeed * 1024);
                             dumpFile.Write(cmdBuf);
                         }
                         else
                         {
-                            DicConsole.DebugWriteLine("Media-Scan", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
                             unreadableSectors.Add(i);
-                            if(cmdDuration < 500)
+                            if(duration < 500)
                                 mhddLog.Write(i, 65535);
                             else
-                                mhddLog.Write(i, cmdDuration);
+                                mhddLog.Write(i, duration);
 
                             ibgLog.Write(i, 0);
                             dumpFile.Write(new byte[blockSize * blocksToRead]);
                         }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                        currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
+                        currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (duration / (double)1000);
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
                         GC.Collect();
                     }
@@ -490,42 +273,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(aborted)
                                 break;
 
-                            double cmdDuration = 0;
-
                             DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
 
-                            if(ReadDmaLba48)
-                            {
-                                sense = dev.ReadDma(out cmdBuf, out errorLba48, badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                            }
-                            else if(ReadLba48)
-                            {
-                                sense = dev.Read(out cmdBuf, out errorLba48, badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba48.status & 0x27) == 0 && errorLba48.error == 0 && cmdBuf.Length > 0);
-                            }
-                            else if(ReadDmaRetryLba)
-                            {
-                                sense = dev.ReadDma(out cmdBuf, out errorLba, true, (uint)badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            }
-                            else if(ReadDmaLba)
-                            {
-                                sense = dev.ReadDma(out cmdBuf, out errorLba, false, (uint)badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            }
-                            else if(ReadRetryLba)
-                            {
-                                sense = dev.Read(out cmdBuf, out errorLba, true, (uint)badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            }
-                            else if(ReadLba)
-                            {
-                                sense = dev.Read(out cmdBuf, out errorLba, false, (uint)badSector, 1, timeout, out cmdDuration);
-                                error = !(!sense && (errorLba.status & 0x27) == 0 && errorLba.error == 0 && cmdBuf.Length > 0);
-                            }
+                            bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
 
-                            totalDuration += cmdDuration;
+                            totalDuration += duration;
 
                             if(!error)
                             {
@@ -567,8 +319,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(aborted)
                                     break;
 
-                                double cmdDuration = 0;
-
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                                 if(currentSpeed > maxSpeed && currentSpeed != 0)
                                     maxSpeed = currentSpeed;
@@ -578,61 +328,30 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", Cy, Hd, Sc, currentSpeed);
 
-                                error = true;
-                                byte status = 0, errorByte = 0;
+                                bool error = ataReader.ReadCHS(out cmdBuf, Cy, Hd, Sc, out duration);
 
-                                if(ReadDmaRetry)
-                                {
-                                    sense = dev.ReadDma(out cmdBuf, out errorChs, true, Cy, Hd, Sc, 1, timeout, out cmdDuration);
-                                    error = !(!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                                    status = errorChs.status;
-                                    errorByte = errorChs.error;
-                                }
-                                else if(ReadDma)
-                                {
-                                    sense = dev.ReadDma(out cmdBuf, out errorChs, false, Cy, Hd, Sc, 1, timeout, out cmdDuration);
-                                    error = !(!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                                    status = errorChs.status;
-                                    errorByte = errorChs.error;
-                                }
-                                else if(ReadRetry)
-                                {
-                                    sense = dev.Read(out cmdBuf, out errorChs, true, Cy, Hd, Sc, 1, timeout, out cmdDuration);
-                                    error = !(!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                                    status = errorChs.status;
-                                    errorByte = errorChs.error;
-                                }
-                                else if(Read)
-                                {
-                                    sense = dev.Read(out cmdBuf, out errorChs, false, Cy, Hd, Sc, 1, timeout, out cmdDuration);
-                                    error = !(!sense && (errorChs.status & 0x27) == 0 && errorChs.error == 0 && cmdBuf.Length > 0);
-                                    status = errorChs.status;
-                                    errorByte = errorChs.error;
-                                }
-
-                                totalDuration += cmdDuration;
+                                totalDuration += duration;
 
                                 if(!error)
                                 {
-                                    mhddLog.Write(currentBlock, cmdDuration);
+                                    mhddLog.Write(currentBlock, duration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     dumpFile.Write(cmdBuf);
                                 }
                                 else
                                 {
-                                    DicConsole.DebugWriteLine("Media-Scan", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
                                     unreadableSectors.Add(currentBlock);
-                                    if(cmdDuration < 500)
+                                    if(duration < 500)
                                         mhddLog.Write(currentBlock, 65535);
                                     else
-                                        mhddLog.Write(currentBlock, cmdDuration);
+                                        mhddLog.Write(currentBlock, duration);
 
                                     ibgLog.Write(currentBlock, 0);
                                     dumpFile.Write(new byte[blockSize]);
                                 }
 
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
-                                currentSpeed = ((double)blockSize / (double)1048576) / (cmdDuration / (double)1000);
+                                currentSpeed = ((double)blockSize / (double)1048576) / (duration / (double)1000);
 #pragma warning disable IDE0004 // Cast is necessary, otherwise incorrect value is created
                                 GC.Collect();
 

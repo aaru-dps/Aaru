@@ -32,6 +32,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.3.1\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +69,9 @@
     <Compile Include="Devices\Report\SCSI\General.cs" />
     <Compile Include="Remote.cs" />
     <Compile Include="Devices\Report\PCMCIA.cs" />
+    <Compile Include="Devices\Reader.cs" />
+    <Compile Include="Devices\ReaderATA.cs" />
+    <Compile Include="Devices\ReaderSCSI.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
@@ -128,6 +134,9 @@
     <Folder Include="Devices\Dumping\" />
     <Folder Include="Devices\Report\" />
     <Folder Include="Devices\Report\SCSI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

@@ -121,6 +121,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
             }
 
+            Reader scsiReader = null;
+
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.DirectAccess ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.OCRWDevice ||
@@ -128,37 +130,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.SimplifiedDevice ||
                 dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.WriteOnceDevice)
             {
-                sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-                if(!sense)
+                scsiReader = new Reader(dev, dev.Timeout, null, false);
+                results.blocks = scsiReader.GetDeviceBlocks();
+                if(scsiReader.FindReadCommand())
                 {
-                    results.blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + (cmdBuf[3]));
-                    blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
+                    DicConsole.ErrorWriteLine("Unable to read medium.");
+                    return results;
                 }
-
-                if(sense || results.blocks == 0xFFFFFFFF)
-                {
-                    sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out duration);
-
-                    if(sense && results.blocks == 0)
-                    {
-                        // Not all MMC devices support READ CAPACITY, as they have READ TOC
-                        if(dev.SCSIType != Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
-                        {
-                            DicConsole.ErrorWriteLine("Unable to get media capacity");
-                            DicConsole.ErrorWriteLine("{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                        }
-                    }
-
-                    if(!sense)
-                    {
-                        byte[] temp = new byte[8];
-
-                        Array.Copy(cmdBuf, 0, temp, 0, 8);
-                        Array.Reverse(temp);
-                        results.blocks = BitConverter.ToUInt64(temp, 0);
-                        blockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + (cmdBuf[7]));
-                    }
-                }
+                blockSize = scsiReader.LogicalBlockSize;
 
                 if(results.blocks != 0 && blockSize != 0)
                 {
@@ -249,7 +228,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 e.Cancel = aborted = true;
             };
 
-            bool read6 = false, read10 = false, read12 = false, read16 = false, readcd;
+            bool readcd = false;
 
             if(compactDisc)
             {
@@ -399,79 +378,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             }
             else
             {
-                read6 = !dev.Read6(out readBuffer, out senseBuf, 0, blockSize, dev.Timeout, out duration);
-
-                read10 = !dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, dev.Timeout, out duration);
-
-                read12 = !dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
-
-                read16 = !dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, 1, false, dev.Timeout, out duration);
-
-                if(!read6 && !read10 && !read12 && !read16)
-                {
-                    DicConsole.ErrorWriteLine("Cannot read medium, aborting scan...");
-                    return results;
-                }
-
-                if(read6 && !read10 && !read12 && !read16 && results.blocks > (0x001FFFFF + 1))
-                {
-                    DicConsole.ErrorWriteLine("Device only supports SCSI READ (6) but has more than {0} blocks ({1} blocks total)", 0x001FFFFF + 1, results.blocks);
-                    return results;
-                }
-
-                if(!read16 && results.blocks > 0xFFFFFFFFL + 1L)
-                {
-                    DicConsole.ErrorWriteLine("Device only supports SCSI READ (10) but has more than {0} blocks ({1} blocks total)", 0xFFFFFFFFL + 1L, results.blocks);
-                    return results;
-                }
-
-                if(read16)
-                    DicConsole.WriteLine("Using SCSI READ (16) command.");
-                else if(read12)
-                    DicConsole.WriteLine("Using SCSI READ (12) command.");
-                else if(read10)
-                    DicConsole.WriteLine("Using SCSI READ (10) command.");
-                else if(read6)
-                    DicConsole.WriteLine("Using SCSI READ (6) command.");
-
                 start = DateTime.UtcNow;
-
-                while(true)
-                {
-                    if(read16)
-                    {
-                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, 0, blockSize, 0, blocksToRead, false, dev.Timeout, out duration);
-                        if(dev.Error)
-                            blocksToRead /= 2;
-                    }
-                    else if(read12)
-                    {
-                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, blockSize, 0, blocksToRead, false, dev.Timeout, out duration);
-                        if(dev.Error)
-                            blocksToRead /= 2;
-                    }
-                    else if(read10)
-                    {
-                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, (ushort)blocksToRead, dev.Timeout, out duration);
-                        if(dev.Error)
-                            blocksToRead /= 2;
-                    }
-                    else if(read6)
-                    {
-                        sense = dev.Read6(out readBuffer, out senseBuf, 0, blockSize, (byte)blocksToRead, dev.Timeout, out duration);
-                        if(dev.Error)
-                            blocksToRead /= 2;
-                    }
-
-                    if(!dev.Error || blocksToRead == 1)
-                        break;
-                }
-
-                if(dev.Error)
-                {
-                    DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                    return results;
-                }
 
                 DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
@@ -497,26 +404,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.blocks, currentSpeed);
 
-                    if(read16)
-                    {
-                        sense = dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, i, blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
-                        results.processingTime += cmdDuration;
-                    }
-                    else if(read12)
-                    {
-                        sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize, 0, blocksToRead, false, dev.Timeout, out cmdDuration);
-                        results.processingTime += cmdDuration;
-                    }
-                    else if(read10)
-                    {
-                        sense = dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0, (ushort)blocksToRead, dev.Timeout, out cmdDuration);
-                        results.processingTime += cmdDuration;
-                    }
-                    else if(read6)
-                    {
-                        sense = dev.Read6(out readBuffer, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout, out cmdDuration);
-                        results.processingTime += cmdDuration;
-                    }
+                    sense = scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out cmdDuration);
+                    results.processingTime += cmdDuration;
 
                     if(!sense && !dev.Error)
                     {
@@ -541,7 +430,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                     {
                         results.errored += blocksToRead;
                         results.unreadableSectors.Add(i);
-                        DicConsole.DebugWriteLine("Media-Scan", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if(cmdDuration < 500)
                             mhddLog.Write(i, 65535);
                         else
@@ -562,12 +450,6 @@ namespace DiscImageChef.Core.Devices.Scanning
 #pragma warning restore IDE0004 // Without this specific cast, it gives incorrect values
             }
 
-            bool seek6, seek10;
-
-            seek6 = !dev.Seek6(out senseBuf, 0, dev.Timeout, out duration);
-
-            seek10 = !dev.Seek10(out senseBuf, 0, dev.Timeout, out duration);
-
             results.seekMax = double.MinValue;
             results.seekMin = double.MaxValue;
             results.seekTotal = 0;
@@ -579,28 +461,6 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             uint seekPos = (uint)rnd.Next((int)results.blocks);
 
-            if(seek6)
-            {
-                dev.Seek6(out senseBuf, seekPos, dev.Timeout, out seekCur);
-                DicConsole.WriteLine("Using SCSI SEEK (6) command.");
-            }
-            else if(seek10)
-            {
-                dev.Seek10(out senseBuf, seekPos, dev.Timeout, out seekCur);
-                DicConsole.WriteLine("Using SCSI SEEK (10) command.");
-            }
-            else
-            {
-                if(read16)
-                    DicConsole.WriteLine("Using SCSI READ (16) command for seeking.");
-                else if(read12)
-                    DicConsole.WriteLine("Using SCSI READ (12) command for seeking.");
-                else if(read10)
-                    DicConsole.WriteLine("Using SCSI READ (10) command for seeking.");
-                else if(read6)
-                    DicConsole.WriteLine("Using SCSI READ (6) command for seeking.");
-            }
-
             for(int i = 0; i < seekTimes; i++)
             {
                 if(aborted)
@@ -610,29 +470,10 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
 
-                if(seek6)
-                    dev.Seek6(out senseBuf, seekPos, dev.Timeout, out seekCur);
-                else if(seek10)
-                    dev.Seek10(out senseBuf, seekPos, dev.Timeout, out seekCur);
+                if(scsiReader.CanSeek)
+                    scsiReader.Seek(seekPos, out seekCur);
                 else
-                {
-                    if(read16)
-                    {
-                        dev.Read16(out readBuffer, out senseBuf, 0, false, true, false, seekPos, blockSize, 0, 1, false, dev.Timeout, out seekCur);
-                    }
-                    else if(read12)
-                    {
-                        dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, seekPos, blockSize, 0, 1, false, dev.Timeout, out seekCur);
-                    }
-                    else if(read10)
-                    {
-                        dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, seekPos, blockSize, 0, 1, dev.Timeout, out seekCur);
-                    }
-                    else if(read6)
-                    {
-                        dev.Read6(out readBuffer, out senseBuf, seekPos, blockSize, 1, dev.Timeout, out seekCur);
-                    }
-                }
+                    scsiReader.ReadBlock(out readBuffer, seekPos, out seekCur);
 
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.seekMax && seekCur != 0)
