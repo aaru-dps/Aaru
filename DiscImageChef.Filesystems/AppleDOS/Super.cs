@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
     partial class AppleDOS : Filesystem
     {
         /// <summary>
-        /// Mounts an Apple Lisa filesystem
+        /// Mounts an Apple DOS filesystem
         /// </summary>
         public override Errno Mount()
         {
@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Mounts an Apple Lisa filesystem
+        /// Mounts an Apple DOS filesystem
         /// </summary>
         public override Errno Mount(bool debug)
         {
@@ -119,7 +119,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         }
 
         /// <summary>
-        /// Umounts this Lisa filesystem
+        /// Umounts this DOS filesystem
         /// </summary>
         public override Errno Unmount()
         {
