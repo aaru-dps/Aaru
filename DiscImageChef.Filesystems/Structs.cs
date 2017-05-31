@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems
         NoCopyOnWrite = 0x10000000,
         /// <summary>File will not be backed up</summary>
         NoDump = 0x20000000,
-        /// <summary>File contents should not be scrubed</summary>
+        /// <summary>File contents should not be scrubbed</summary>
         NoScrub = 0x40000000,
         /// <summary>File contents should not be indexed</summary>
         NotIndexed = 0x80000000,
@@ -130,7 +130,7 @@ namespace DiscImageChef.Filesystems
         Sync = 0x40000000000,
         /// <summary>File belongs to the operating system</summary>
         System = 0x80000000000,
-        /// <summary>If file end is a partial block its contend will be merged with other files</summary>
+        /// <summary>If file end is a partial block its content will be merged with other files</summary>
         TailMerged = 0x100000000000,
         /// <summary>File is temporary</summary>
         Temporary = 0x200000000000,
