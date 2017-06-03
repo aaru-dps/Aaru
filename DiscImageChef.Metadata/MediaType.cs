@@ -699,6 +699,14 @@ namespace DiscImageChef.Metadata
                     DiscType = "Iomega PocketZip";
                     DiscSubType = "Iomega PocketZip";
                     break;
+                case CommonTypes.MediaType.CompactFloppy:
+                    DiscType = "3\" floppy";
+                    DiscSubType = "Compact Floppy";
+                    break;
+                case CommonTypes.MediaType.GENERIC_HDD:
+                    DiscType = "HDD";
+                    DiscSubType = "Unknown";
+                    break;
                 default:
                     DiscType = "Unknown";
                     DiscSubType = "Unknown";
