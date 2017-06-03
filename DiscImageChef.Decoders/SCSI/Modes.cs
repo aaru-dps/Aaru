@@ -2337,7 +2337,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if(pageResponse.Length < 16)
+            if(pageResponse.Length < 12)
                 return null;
 
             ModePage_02 decoded = new ModePage_02();
@@ -2349,11 +2349,17 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.DisconnectTimeLimit = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
             decoded.ConnectTimeLimit = (ushort)((pageResponse[8] << 8) + pageResponse[9]);
             decoded.MaxBurstSize = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
-            decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
-            decoded.EMDP |= (pageResponse[12] & 0x80) == 0x80;
-            decoded.DIMM |= (pageResponse[12] & 0x08) == 0x08;
-            decoded.FairArbitration = (byte)((pageResponse[12] & 0x70) >> 4);
-            decoded.DTDC = (byte)(pageResponse[12] & 0x07);
+
+            if(pageResponse.Length >= 13)
+            {
+                decoded.EMDP |= (pageResponse[12] & 0x80) == 0x80;
+                decoded.DIMM |= (pageResponse[12] & 0x08) == 0x08;
+                decoded.FairArbitration = (byte)((pageResponse[12] & 0x70) >> 4);
+                decoded.DTDC = (byte)(pageResponse[12] & 0x07);
+            }
+
+            if(pageResponse.Length >= 16)
+                decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
             return decoded;
         }
@@ -3476,7 +3482,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if(pageResponse.Length < 24)
+            if(pageResponse.Length < 20)
                 return null;
 
             ModePage_04 decoded = new ModePage_04();
@@ -3490,7 +3496,9 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.LandingCylinder = ((pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16]);
             decoded.RPL = (byte)(pageResponse[17] & 0x03);
             decoded.RotationalOffset = pageResponse[18];
-            decoded.MediumRotationRate = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
+
+            if(pageResponse.Length >= 22)
+                decoded.MediumRotationRate = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
 
             return decoded;
         }
