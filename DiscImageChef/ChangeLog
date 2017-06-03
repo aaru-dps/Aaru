@@ -1,3 +1,6 @@
+* Commands/Statistics.cs:
+  Call to statistics from metadata.
+
 * Commands/DeviceReport.cs:
   Added code to submit statistics.
 
