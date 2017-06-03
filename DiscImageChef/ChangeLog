@@ -1,3 +1,6 @@
+* Main.cs:
+  Submit pending statistics on bootup.
+
 * Commands/Statistics.cs:
   Call to statistics from metadata.
 
