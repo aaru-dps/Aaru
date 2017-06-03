@@ -15,7 +15,7 @@
 //
 //     This library is free software; you can redistribute it and/or modify
 //     it under the terms of the GNU Lesser General Public License as
-//     published by the Free Software Foundation; either version 2.1 of the
+//     published by the Free Software Foundation { get; set; } either version 2.1 of the
 //     License, or (at your option) any later version.
 //
 //     This library is distributed in the hope that it will be useful, but
@@ -41,982 +41,982 @@ namespace DiscImageChef.Metadata
     [XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
     public class DeviceReport
     {
-        public usbType USB;
-        public firewireType FireWire;
-        public ataType ATA;
-        public ataType ATAPI;
-        public scsiType SCSI;
-        public bool CompactFlash;
-        public pcmciaType PCMCIA;
+        public usbType USB { get; set; }
+        public firewireType FireWire { get; set; }
+        public ataType ATA { get; set; }
+        public ataType ATAPI { get; set; }
+        public scsiType SCSI { get; set; }
+        public bool CompactFlash { get; set; }
+        public pcmciaType PCMCIA { get; set; }
 
         [XmlIgnore]
-        public bool CompactFlashSpecified;
+        public bool CompactFlashSpecified { get; set; }
     }
 
     public class usbType
     {
-        public ushort VendorID;
-        public ushort ProductID;
-        public string Manufacturer;
-        public string Product;
-        public bool RemovableMedia;
+        public ushort VendorID { get; set; }
+        public ushort ProductID { get; set; }
+        public string Manufacturer { get; set; }
+        public string Product { get; set; }
+        public bool RemovableMedia { get; set; }
     }
 
     public class firewireType
     {
-        public uint VendorID;
-        public uint ProductID;
-        public string Manufacturer;
-        public string Product;
-        public bool RemovableMedia;
+        public uint VendorID { get; set; }
+        public uint ProductID { get; set; }
+        public string Manufacturer { get; set; }
+        public string Product { get; set; }
+        public bool RemovableMedia { get; set; }
     }
 
     public class ataType
     {
 
-        public string AdditionalPID;
-        public Identify.TransferMode APIOSupported;
-        public ushort ATAPIByteCount;
-        public ushort BufferType;
-        public ushort BufferSize;
-        public Identify.CapabilitiesBit Capabilities;
-        public Identify.CapabilitiesBit2 Capabilities2;
-        public Identify.CapabilitiesBit3 Capabilities3;
-        public ushort CFAPowerMode;
-        public Identify.CommandSetBit CommandSet;
-        public Identify.CommandSetBit2 CommandSet2;
-        public Identify.CommandSetBit3 CommandSet3;
-        public Identify.CommandSetBit4 CommandSet4;
-        public Identify.CommandSetBit5 CommandSet5;
-        public byte CurrentAAM;
-        public ushort CurrentAPM;
-        public Identify.DataSetMgmtBit DataSetMgmt;
-        public ushort DataSetMgmtSize;
-        public Identify.DeviceFormFactorEnum DeviceFormFactor;
-        public Identify.TransferMode DMAActive;
-        public Identify.TransferMode DMASupported;
-        public byte DMATransferTimingMode;
-        public ushort EnhancedSecurityEraseTime;
-        public Identify.CommandSetBit EnabledCommandSet;
-        public Identify.CommandSetBit2 EnabledCommandSet2;
-        public Identify.CommandSetBit3 EnabledCommandSet3;
-        public Identify.CommandSetBit4 EnabledCommandSet4;
-        public Identify.SATAFeaturesBit EnabledSATAFeatures;
-        public ulong ExtendedUserSectors;
-        public byte FreeFallSensitivity;
-        public string FirmwareRevision;
-        public Identify.GeneralConfigurationBit GeneralConfiguration;
-        public ushort HardwareResetResult;
-        public ushort InterseekDelay;
-        public Identify.MajorVersionBit MajorVersion;
-        public ushort MasterPasswordRevisionCode;
-        public ushort MaxDownloadMicroMode3;
-        public ushort MaxQueueDepth;
-        public Identify.TransferMode MDMAActive;
-        public Identify.TransferMode MDMASupported;
-        public ushort MinDownloadMicroMode3;
-        public ushort MinMDMACycleTime;
-        public ushort MinorVersion;
-        public ushort MinPIOCycleTimeNoFlow;
-        public ushort MinPIOCycleTimeFlow;
-        public string Model;
-        public byte MultipleMaxSectors;
-        public byte MultipleSectorNumber;
-        public ushort NVCacheCaps;
-        public uint NVCacheSize;
-        public ushort NVCacheWriteSpeed;
-        public byte NVEstimatedSpinUp;
-        public ushort PacketBusRelease;
-        public byte PIOTransferTimingMode;
-        public byte RecommendedAAM;
-        public ushort RecommendedMDMACycleTime;
-        public ushort RemovableStatusSet;
-        public Identify.SATACapabilitiesBit SATACapabilities;
-        public Identify.SATACapabilitiesBit2 SATACapabilities2;
-        public Identify.SATAFeaturesBit SATAFeatures;
-        public Identify.SCTCommandTransportBit SCTCommandTransport;
-        public uint SectorsPerCard;
-        public ushort SecurityEraseTime;
-        public Identify.SecurityStatusBit SecurityStatus;
-        public ushort ServiceBusyClear;
-        public Identify.SpecificConfigurationEnum SpecificConfiguration;
-        public ushort StreamAccessLatency;
-        public ushort StreamMinReqSize;
-        public uint StreamPerformanceGranularity;
-        public ushort StreamTransferTimeDMA;
-        public ushort StreamTransferTimePIO;
-        public ushort TransportMajorVersion;
-        public ushort TransportMinorVersion;
-        public Identify.TrustedComputingBit TrustedComputing;
-        public Identify.TransferMode UDMAActive;
-        public Identify.TransferMode UDMASupported;
-        public byte WRVMode;
-        public uint WRVSectorCountMode3;
-        public uint WRVSectorCountMode2;
+        public string AdditionalPID { get; set; }
+        public Identify.TransferMode APIOSupported { get; set; }
+        public ushort ATAPIByteCount { get; set; }
+        public ushort BufferType { get; set; }
+        public ushort BufferSize { get; set; }
+        public Identify.CapabilitiesBit Capabilities { get; set; }
+        public Identify.CapabilitiesBit2 Capabilities2 { get; set; }
+        public Identify.CapabilitiesBit3 Capabilities3 { get; set; }
+        public ushort CFAPowerMode { get; set; }
+        public Identify.CommandSetBit CommandSet { get; set; }
+        public Identify.CommandSetBit2 CommandSet2 { get; set; }
+        public Identify.CommandSetBit3 CommandSet3 { get; set; }
+        public Identify.CommandSetBit4 CommandSet4 { get; set; }
+        public Identify.CommandSetBit5 CommandSet5 { get; set; }
+        public byte CurrentAAM { get; set; }
+        public ushort CurrentAPM { get; set; }
+        public Identify.DataSetMgmtBit DataSetMgmt { get; set; }
+        public ushort DataSetMgmtSize { get; set; }
+        public Identify.DeviceFormFactorEnum DeviceFormFactor { get; set; }
+        public Identify.TransferMode DMAActive { get; set; }
+        public Identify.TransferMode DMASupported { get; set; }
+        public byte DMATransferTimingMode { get; set; }
+        public ushort EnhancedSecurityEraseTime { get; set; }
+        public Identify.CommandSetBit EnabledCommandSet { get; set; }
+        public Identify.CommandSetBit2 EnabledCommandSet2 { get; set; }
+        public Identify.CommandSetBit3 EnabledCommandSet3 { get; set; }
+        public Identify.CommandSetBit4 EnabledCommandSet4 { get; set; }
+        public Identify.SATAFeaturesBit EnabledSATAFeatures { get; set; }
+        public ulong ExtendedUserSectors { get; set; }
+        public byte FreeFallSensitivity { get; set; }
+        public string FirmwareRevision { get; set; }
+        public Identify.GeneralConfigurationBit GeneralConfiguration { get; set; }
+        public ushort HardwareResetResult { get; set; }
+        public ushort InterseekDelay { get; set; }
+        public Identify.MajorVersionBit MajorVersion { get; set; }
+        public ushort MasterPasswordRevisionCode { get; set; }
+        public ushort MaxDownloadMicroMode3 { get; set; }
+        public ushort MaxQueueDepth { get; set; }
+        public Identify.TransferMode MDMAActive { get; set; }
+        public Identify.TransferMode MDMASupported { get; set; }
+        public ushort MinDownloadMicroMode3 { get; set; }
+        public ushort MinMDMACycleTime { get; set; }
+        public ushort MinorVersion { get; set; }
+        public ushort MinPIOCycleTimeNoFlow { get; set; }
+        public ushort MinPIOCycleTimeFlow { get; set; }
+        public string Model { get; set; }
+        public byte MultipleMaxSectors { get; set; }
+        public byte MultipleSectorNumber { get; set; }
+        public ushort NVCacheCaps { get; set; }
+        public uint NVCacheSize { get; set; }
+        public ushort NVCacheWriteSpeed { get; set; }
+        public byte NVEstimatedSpinUp { get; set; }
+        public ushort PacketBusRelease { get; set; }
+        public byte PIOTransferTimingMode { get; set; }
+        public byte RecommendedAAM { get; set; }
+        public ushort RecommendedMDMACycleTime { get; set; }
+        public ushort RemovableStatusSet { get; set; }
+        public Identify.SATACapabilitiesBit SATACapabilities { get; set; }
+        public Identify.SATACapabilitiesBit2 SATACapabilities2 { get; set; }
+        public Identify.SATAFeaturesBit SATAFeatures { get; set; }
+        public Identify.SCTCommandTransportBit SCTCommandTransport { get; set; }
+        public uint SectorsPerCard { get; set; }
+        public ushort SecurityEraseTime { get; set; }
+        public Identify.SecurityStatusBit SecurityStatus { get; set; }
+        public ushort ServiceBusyClear { get; set; }
+        public Identify.SpecificConfigurationEnum SpecificConfiguration { get; set; }
+        public ushort StreamAccessLatency { get; set; }
+        public ushort StreamMinReqSize { get; set; }
+        public uint StreamPerformanceGranularity { get; set; }
+        public ushort StreamTransferTimeDMA { get; set; }
+        public ushort StreamTransferTimePIO { get; set; }
+        public ushort TransportMajorVersion { get; set; }
+        public ushort TransportMinorVersion { get; set; }
+        public Identify.TrustedComputingBit TrustedComputing { get; set; }
+        public Identify.TransferMode UDMAActive { get; set; }
+        public Identify.TransferMode UDMASupported { get; set; }
+        public byte WRVMode { get; set; }
+        public uint WRVSectorCountMode3 { get; set; }
+        public uint WRVSectorCountMode2 { get; set; }
 
-        public testedMediaType ReadCapabilities;
-        public testedMediaType[] RemovableMedias;
+        public testedMediaType ReadCapabilities { get; set; }
+        public testedMediaType[] RemovableMedias { get; set; }
 
 
         [XmlIgnore]
-        public bool AdditionalPIDSpecified;
+        public bool AdditionalPIDSpecified { get; set; }
         [XmlIgnore]
-        public bool APIOSupportedSpecified;
+        public bool APIOSupportedSpecified { get; set; }
         [XmlIgnore]
-        public bool ATAPIByteCountSpecified;
+        public bool ATAPIByteCountSpecified { get; set; }
         [XmlIgnore]
-        public bool BufferTypeSpecified;
+        public bool BufferTypeSpecified { get; set; }
         [XmlIgnore]
-        public bool BufferSizeSpecified;
+        public bool BufferSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool CapabilitiesSpecified;
+        public bool CapabilitiesSpecified { get; set; }
         [XmlIgnore]
-        public bool Capabilities2Specified;
+        public bool Capabilities2Specified { get; set; }
         [XmlIgnore]
-        public bool Capabilities3Specified;
+        public bool Capabilities3Specified { get; set; }
         [XmlIgnore]
-        public bool CFAPowerModeSpecified;
+        public bool CFAPowerModeSpecified { get; set; }
         [XmlIgnore]
-        public bool CommandSetSpecified;
+        public bool CommandSetSpecified { get; set; }
         [XmlIgnore]
-        public bool CommandSet2Specified;
+        public bool CommandSet2Specified { get; set; }
         [XmlIgnore]
-        public bool CommandSet3Specified;
+        public bool CommandSet3Specified { get; set; }
         [XmlIgnore]
-        public bool CommandSet4Specified;
+        public bool CommandSet4Specified { get; set; }
         [XmlIgnore]
-        public bool CommandSet5Specified;
+        public bool CommandSet5Specified { get; set; }
         [XmlIgnore]
-        public bool CurrentAAMSpecified;
+        public bool CurrentAAMSpecified { get; set; }
         [XmlIgnore]
-        public bool CurrentAPMSpecified;
+        public bool CurrentAPMSpecified { get; set; }
         [XmlIgnore]
-        public bool DataSetMgmtSpecified;
+        public bool DataSetMgmtSpecified { get; set; }
         [XmlIgnore]
-        public bool DataSetMgmtSizeSpecified;
+        public bool DataSetMgmtSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool DeviceFormFactorSpecified;
+        public bool DeviceFormFactorSpecified { get; set; }
         [XmlIgnore]
-        public bool DMAActiveSpecified;
+        public bool DMAActiveSpecified { get; set; }
         [XmlIgnore]
-        public bool DMASupportedSpecified;
+        public bool DMASupportedSpecified { get; set; }
         [XmlIgnore]
-        public bool DMATransferTimingModeSpecified;
+        public bool DMATransferTimingModeSpecified { get; set; }
         [XmlIgnore]
-        public bool EnhancedSecurityEraseTimeSpecified;
+        public bool EnhancedSecurityEraseTimeSpecified { get; set; }
         [XmlIgnore]
-        public bool EnabledCommandSetSpecified;
+        public bool EnabledCommandSetSpecified { get; set; }
         [XmlIgnore]
-        public bool EnabledCommandSet2Specified;
+        public bool EnabledCommandSet2Specified { get; set; }
         [XmlIgnore]
-        public bool EnabledCommandSet3Specified;
+        public bool EnabledCommandSet3Specified { get; set; }
         [XmlIgnore]
-        public bool EnabledCommandSet4Specified;
+        public bool EnabledCommandSet4Specified { get; set; }
         [XmlIgnore]
-        public bool EnabledSATAFeaturesSpecified;
+        public bool EnabledSATAFeaturesSpecified { get; set; }
         [XmlIgnore]
-        public bool ExtendedIdentifySpecified;
+        public bool ExtendedIdentifySpecified { get; set; }
         [XmlIgnore]
-        public bool ExtendedUserSectorsSpecified;
+        public bool ExtendedUserSectorsSpecified { get; set; }
         [XmlIgnore]
-        public bool FreeFallSensitivitySpecified;
+        public bool FreeFallSensitivitySpecified { get; set; }
         [XmlIgnore]
-        public bool FirmwareRevisionSpecified;
+        public bool FirmwareRevisionSpecified { get; set; }
         [XmlIgnore]
-        public bool GeneralConfigurationSpecified;
+        public bool GeneralConfigurationSpecified { get; set; }
         [XmlIgnore]
-        public bool HardwareResetResultSpecified;
+        public bool HardwareResetResultSpecified { get; set; }
         [XmlIgnore]
-        public bool InterseekDelaySpecified;
+        public bool InterseekDelaySpecified { get; set; }
         [XmlIgnore]
-        public bool MajorVersionSpecified;
+        public bool MajorVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool MasterPasswordRevisionCodeSpecified;
+        public bool MasterPasswordRevisionCodeSpecified { get; set; }
         [XmlIgnore]
-        public bool MaxDownloadMicroMode3Specified;
+        public bool MaxDownloadMicroMode3Specified { get; set; }
         [XmlIgnore]
-        public bool MaxQueueDepthSpecified;
+        public bool MaxQueueDepthSpecified { get; set; }
         [XmlIgnore]
-        public bool MDMAActiveSpecified;
+        public bool MDMAActiveSpecified { get; set; }
         [XmlIgnore]
-        public bool MDMASupportedSpecified;
+        public bool MDMASupportedSpecified { get; set; }
         [XmlIgnore]
-        public bool MinDownloadMicroMode3Specified;
+        public bool MinDownloadMicroMode3Specified { get; set; }
         [XmlIgnore]
-        public bool MinMDMACycleTimeSpecified;
+        public bool MinMDMACycleTimeSpecified { get; set; }
         [XmlIgnore]
-        public bool MinorVersionSpecified;
+        public bool MinorVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool MinPIOCycleTimeNoFlowSpecified;
+        public bool MinPIOCycleTimeNoFlowSpecified { get; set; }
         [XmlIgnore]
-        public bool MinPIOCycleTimeFlowSpecified;
+        public bool MinPIOCycleTimeFlowSpecified { get; set; }
         [XmlIgnore]
-        public bool ModelSpecified;
+        public bool ModelSpecified { get; set; }
         [XmlIgnore]
-        public bool MultipleMaxSectorsSpecified;
+        public bool MultipleMaxSectorsSpecified { get; set; }
         [XmlIgnore]
-        public bool MultipleSectorNumberSpecified;
+        public bool MultipleSectorNumberSpecified { get; set; }
         [XmlIgnore]
-        public bool NVCacheCapsSpecified;
+        public bool NVCacheCapsSpecified { get; set; }
         [XmlIgnore]
-        public bool NVCacheSizeSpecified;
+        public bool NVCacheSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool NVCacheWriteSpeedSpecified;
+        public bool NVCacheWriteSpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool NVEstimatedSpinUpSpecified;
+        public bool NVEstimatedSpinUpSpecified { get; set; }
         [XmlIgnore]
-        public bool PacketBusReleaseSpecified;
+        public bool PacketBusReleaseSpecified { get; set; }
         [XmlIgnore]
-        public bool PIOTransferTimingModeSpecified;
+        public bool PIOTransferTimingModeSpecified { get; set; }
         [XmlIgnore]
-        public bool RecommendedAAMSpecified;
+        public bool RecommendedAAMSpecified { get; set; }
         [XmlIgnore]
-        public bool RecommendedMDMACycleTimeSpecified;
+        public bool RecommendedMDMACycleTimeSpecified { get; set; }
         [XmlIgnore]
-        public bool RemovableStatusSetSpecified;
+        public bool RemovableStatusSetSpecified { get; set; }
         [XmlIgnore]
-        public bool SATACapabilitiesSpecified;
+        public bool SATACapabilitiesSpecified { get; set; }
         [XmlIgnore]
-        public bool SATACapabilities2Specified;
+        public bool SATACapabilities2Specified { get; set; }
         [XmlIgnore]
-        public bool SATAFeaturesSpecified;
+        public bool SATAFeaturesSpecified { get; set; }
         [XmlIgnore]
-        public bool SCTCommandTransportSpecified;
+        public bool SCTCommandTransportSpecified { get; set; }
         [XmlIgnore]
-        public bool SectorsPerCardSpecified;
+        public bool SectorsPerCardSpecified { get; set; }
         [XmlIgnore]
-        public bool SecurityEraseTimeSpecified;
+        public bool SecurityEraseTimeSpecified { get; set; }
         [XmlIgnore]
-        public bool SecurityStatusSpecified;
+        public bool SecurityStatusSpecified { get; set; }
         [XmlIgnore]
-        public bool ServiceBusyClearSpecified;
+        public bool ServiceBusyClearSpecified { get; set; }
         [XmlIgnore]
-        public bool SpecificConfigurationSpecified;
+        public bool SpecificConfigurationSpecified { get; set; }
         [XmlIgnore]
-        public bool StreamAccessLatencySpecified;
+        public bool StreamAccessLatencySpecified { get; set; }
         [XmlIgnore]
-        public bool StreamMinReqSizeSpecified;
+        public bool StreamMinReqSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool StreamPerformanceGranularitySpecified;
+        public bool StreamPerformanceGranularitySpecified { get; set; }
         [XmlIgnore]
-        public bool StreamTransferTimeDMASpecified;
+        public bool StreamTransferTimeDMASpecified { get; set; }
         [XmlIgnore]
-        public bool StreamTransferTimePIOSpecified;
+        public bool StreamTransferTimePIOSpecified { get; set; }
         [XmlIgnore]
-        public bool TransportMajorVersionSpecified;
+        public bool TransportMajorVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool TransportMinorVersionSpecified;
+        public bool TransportMinorVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool TrustedComputingSpecified;
+        public bool TrustedComputingSpecified { get; set; }
         [XmlIgnore]
-        public bool UDMAActiveSpecified;
+        public bool UDMAActiveSpecified { get; set; }
         [XmlIgnore]
-        public bool UDMASupportedSpecified;
+        public bool UDMASupportedSpecified { get; set; }
         [XmlIgnore]
-        public bool WRVModeSpecified;
+        public bool WRVModeSpecified { get; set; }
         [XmlIgnore]
-        public bool WRVSectorCountMode3Specified;
+        public bool WRVSectorCountMode3Specified { get; set; }
         [XmlIgnore]
-        public bool WRVSectorCountMode2Specified;
+        public bool WRVSectorCountMode2Specified { get; set; }
     }
 
     public class chsType
     {
-        public ushort Cylinders;
-        public ushort Heads;
-        public ushort Sectors;
+        public ushort Cylinders { get; set; }
+        public ushort Heads { get; set; }
+        public ushort Sectors { get; set; }
     }
 
     public class scsiType
     {
-        public scsiInquiryType Inquiry;
-        public pageType[] EVPDPages;
-        public bool SupportsModeSense6;
-        public bool SupportsModeSense10;
-        public bool SupportsModeSubpages;
-        public modeType ModeSense;
-        public mmcType MultiMediaDevice;
-        public testedMediaType ReadCapabilities;
-        public testedMediaType[] RemovableMedias;
-        public sscType SequentialDevice;
+        public scsiInquiryType Inquiry { get; set; }
+        public pageType[] EVPDPages { get; set; }
+        public bool SupportsModeSense6 { get; set; }
+        public bool SupportsModeSense10 { get; set; }
+        public bool SupportsModeSubpages { get; set; }
+        public modeType ModeSense { get; set; }
+        public mmcType MultiMediaDevice { get; set; }
+        public testedMediaType ReadCapabilities { get; set; }
+        public testedMediaType[] RemovableMedias { get; set; }
+        public sscType SequentialDevice { get; set; }
 
         [XmlIgnore]
-        public bool ReadCapabilitiesSpecified;
+        public bool ReadCapabilitiesSpecified { get; set; }
     }
 
     public class scsiInquiryType
     {
-        public bool AccessControlCoordinator;
-        public bool ACKRequests;
-        public bool AERCSupported;
-        public bool Address16;
-        public bool Address32;
-        public byte ANSIVersion;
-        public TGPSValues AsymmetricalLUNAccess;
-        public bool BasicQueueing;
-        public byte DeviceTypeModifier;
-        public byte ECMAVersion;
-        public bool EnclosureServices;
-        public bool HierarchicalLUN;
-        public bool IUS;
-        public byte ISOVersion;
-        public bool LinkedCommands;
-        public bool MediumChanger;
-        public bool MultiPortDevice;
-        public bool NormalACA;
-        public PeripheralDeviceTypes PeripheralDeviceType;
-        public PeripheralQualifiers PeripheralQualifier;
-        public string ProductIdentification;
-        public string ProductRevisionLevel;
-        public bool Protection;
-        public bool QAS;
-        public bool RelativeAddressing;
-        public bool Removable;
-        public byte ResponseDataFormat;
-        public bool TaggedCommandQueue;
-        public bool TerminateTaskSupported;
-        public bool ThirdPartyCopy;
-        public bool TranferDisable;
-        public bool SoftReset;
-        public SPIClocking SPIClocking;
-        public bool StorageArrayController;
-        public bool SyncTransfer;
-        public string VendorIdentification;
-        public ushort[] VersionDescriptors;
-        public bool WideBus16;
-        public bool WideBus32;
+        public bool AccessControlCoordinator { get; set; }
+        public bool ACKRequests { get; set; }
+        public bool AERCSupported { get; set; }
+        public bool Address16 { get; set; }
+        public bool Address32 { get; set; }
+        public byte ANSIVersion { get; set; }
+        public TGPSValues AsymmetricalLUNAccess { get; set; }
+        public bool BasicQueueing { get; set; }
+        public byte DeviceTypeModifier { get; set; }
+        public byte ECMAVersion { get; set; }
+        public bool EnclosureServices { get; set; }
+        public bool HierarchicalLUN { get; set; }
+        public bool IUS { get; set; }
+        public byte ISOVersion { get; set; }
+        public bool LinkedCommands { get; set; }
+        public bool MediumChanger { get; set; }
+        public bool MultiPortDevice { get; set; }
+        public bool NormalACA { get; set; }
+        public PeripheralDeviceTypes PeripheralDeviceType { get; set; }
+        public PeripheralQualifiers PeripheralQualifier { get; set; }
+        public string ProductIdentification { get; set; }
+        public string ProductRevisionLevel { get; set; }
+        public bool Protection { get; set; }
+        public bool QAS { get; set; }
+        public bool RelativeAddressing { get; set; }
+        public bool Removable { get; set; }
+        public byte ResponseDataFormat { get; set; }
+        public bool TaggedCommandQueue { get; set; }
+        public bool TerminateTaskSupported { get; set; }
+        public bool ThirdPartyCopy { get; set; }
+        public bool TranferDisable { get; set; }
+        public bool SoftReset { get; set; }
+        public SPIClocking SPIClocking { get; set; }
+        public bool StorageArrayController { get; set; }
+        public bool SyncTransfer { get; set; }
+        public string VendorIdentification { get; set; }
+        public ushort[] VersionDescriptors { get; set; }
+        public bool WideBus16 { get; set; }
+        public bool WideBus32 { get; set; }
 
         [XmlIgnore]
-        public bool ANSIVersionSpecified;
+        public bool ANSIVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool ECMAVersionSpecified;
+        public bool ECMAVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool DeviceTypeModifierSpecified;
+        public bool DeviceTypeModifierSpecified { get; set; }
         [XmlIgnore]
-        public bool ISOVersionSpecified;
+        public bool ISOVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool ProductIdentificationSpecified;
+        public bool ProductIdentificationSpecified { get; set; }
         [XmlIgnore]
-        public bool ProductRevisionLevelSpecified;
+        public bool ProductRevisionLevelSpecified { get; set; }
         [XmlIgnore]
-        public bool ResponseDataFormatSpecified;
+        public bool ResponseDataFormatSpecified { get; set; }
         [XmlIgnore]
-        public bool VendorIdentificationSpecified;
+        public bool VendorIdentificationSpecified { get; set; }
     }
 
     [Serializable]
     public class pageType
     {
         [XmlAttribute]
-        public byte page;
+        public byte page { get; set; }
 
         [XmlText]
-        public byte[] value;
+        public byte[] value { get; set; }
     }
 
     public class modeType
     {
-        public byte MediumType;
-        public bool WriteProtected;
-        public blockDescriptorType[] BlockDescriptors;
-        public byte Speed;
-        public byte BufferedMode;
-        public bool BlankCheckEnabled;
-        public bool DPOandFUA;
-        public modePageType[] ModePages;
+        public byte MediumType { get; set; }
+        public bool WriteProtected { get; set; }
+        public blockDescriptorType[] BlockDescriptors { get; set; }
+        public byte Speed { get; set; }
+        public byte BufferedMode { get; set; }
+        public bool BlankCheckEnabled { get; set; }
+        public bool DPOandFUA { get; set; }
+        public modePageType[] ModePages { get; set; }
 
         [XmlIgnore]
-        public bool MediumTypeSpecified;
+        public bool MediumTypeSpecified { get; set; }
         [XmlIgnore]
-        public bool SpeedSpecified;
+        public bool SpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool BufferedModeSpecified;
+        public bool BufferedModeSpecified { get; set; }
     }
 
     public class blockDescriptorType
     {
-        public byte Density;
-        public ulong Blocks;
-        public uint BlockLength;
+        public byte Density { get; set; }
+        public ulong Blocks { get; set; }
+        public uint BlockLength { get; set; }
 
         [XmlIgnore]
-        public bool BlocksSpecified;
+        public bool BlocksSpecified { get; set; }
         [XmlIgnore]
-        public bool BlockLengthSpecified;
+        public bool BlockLengthSpecified { get; set; }
     }
 
     [Serializable]
     public class modePageType
     {
         [XmlAttribute]
-        public byte page;
+        public byte page { get; set; }
 
         [XmlAttribute]
-        public byte subpage;
+        public byte subpage { get; set; }
 
         [XmlText]
-        public byte[] value;
+        public byte[] value { get; set; }
     }
 
     public class mmcType
     {
-        public mmcModeType ModeSense2A;
-        public mmcFeaturesType Features;
-        public testedMediaType[] TestedMedia;
+        public mmcModeType ModeSense2A { get; set; }
+        public mmcFeaturesType Features { get; set; }
+        public testedMediaType[] TestedMedia { get; set; }
     }
 
     public class mmcModeType
     {
-        public bool AccurateCDDA;
-        public bool BCK;
-        public ushort BufferSize;
-        public bool BufferUnderRunProtection;
-        public bool CanEject;
-        public bool CanLockMedia;
-        public bool CDDACommand;
-        public bool CompositeAudioVideo;
-        public bool CSSandCPPMSupported;
-        public ushort CurrentSpeed;
-        public ushort CurrentWriteSpeed;
-        public ushort CurrentWriteSpeedSelected;
-        public bool DeterministicSlotChanger;
-        public bool DigitalPort1;
-        public bool DigitalPort2;
-        public bool LeadInPW;
-        public byte LoadingMechanismType;
-        public bool LockStatus;
-        public bool LSBF;
-        public ushort MaximumSpeed;
-        public ushort MaximumWriteSpeed;
-        public bool PlaysAudio;
-        public bool PreventJumperStatus;
-        public bool RCK;
-        public bool ReadsBarcode;
-        public bool ReadsBothSides;
-        public bool ReadsCDR;
-        public bool ReadsCDRW;
-        public bool ReadsDeinterlavedSubchannel;
-        public bool ReadsDVDR;
-        public bool ReadsDVDRAM;
-        public bool ReadsDVDROM;
-        public bool ReadsISRC;
-        public bool ReadsMode2Form2;
-        public bool ReadsMode2Form1;
-        public bool ReadsPacketCDR;
-        public bool ReadsSubchannel;
-        public bool ReadsUPC;
-        public bool ReturnsC2Pointers;
-        public byte RotationControlSelected;
-        public bool SeparateChannelMute;
-        public bool SeparateChannelVolume;
-        public bool SSS;
-        public bool SupportsMultiSession;
-        public ushort SupportedVolumeLevels;
-        public bool TestWrite;
-        public bool WritesCDR;
-        public bool WritesCDRW;
-        public bool WritesDVDR;
-        public bool WritesDVDRAM;
-        public Modes.ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
+        public bool AccurateCDDA { get; set; }
+        public bool BCK { get; set; }
+        public ushort BufferSize { get; set; }
+        public bool BufferUnderRunProtection { get; set; }
+        public bool CanEject { get; set; }
+        public bool CanLockMedia { get; set; }
+        public bool CDDACommand { get; set; }
+        public bool CompositeAudioVideo { get; set; }
+        public bool CSSandCPPMSupported { get; set; }
+        public ushort CurrentSpeed { get; set; }
+        public ushort CurrentWriteSpeed { get; set; }
+        public ushort CurrentWriteSpeedSelected { get; set; }
+        public bool DeterministicSlotChanger { get; set; }
+        public bool DigitalPort1 { get; set; }
+        public bool DigitalPort2 { get; set; }
+        public bool LeadInPW { get; set; }
+        public byte LoadingMechanismType { get; set; }
+        public bool LockStatus { get; set; }
+        public bool LSBF { get; set; }
+        public ushort MaximumSpeed { get; set; }
+        public ushort MaximumWriteSpeed { get; set; }
+        public bool PlaysAudio { get; set; }
+        public bool PreventJumperStatus { get; set; }
+        public bool RCK { get; set; }
+        public bool ReadsBarcode { get; set; }
+        public bool ReadsBothSides { get; set; }
+        public bool ReadsCDR { get; set; }
+        public bool ReadsCDRW { get; set; }
+        public bool ReadsDeinterlavedSubchannel { get; set; }
+        public bool ReadsDVDR { get; set; }
+        public bool ReadsDVDRAM { get; set; }
+        public bool ReadsDVDROM { get; set; }
+        public bool ReadsISRC { get; set; }
+        public bool ReadsMode2Form2 { get; set; }
+        public bool ReadsMode2Form1 { get; set; }
+        public bool ReadsPacketCDR { get; set; }
+        public bool ReadsSubchannel { get; set; }
+        public bool ReadsUPC { get; set; }
+        public bool ReturnsC2Pointers { get; set; }
+        public byte RotationControlSelected { get; set; }
+        public bool SeparateChannelMute { get; set; }
+        public bool SeparateChannelVolume { get; set; }
+        public bool SSS { get; set; }
+        public bool SupportsMultiSession { get; set; }
+        public ushort SupportedVolumeLevels { get; set; }
+        public bool TestWrite { get; set; }
+        public bool WritesCDR { get; set; }
+        public bool WritesCDRW { get; set; }
+        public bool WritesDVDR { get; set; }
+        public bool WritesDVDRAM { get; set; }
+        public Modes.ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors { get; set; }
 
         [XmlIgnore]
-        public bool MaximumSpeedSpecified;
+        public bool MaximumSpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportedVolumeLevelsSpecified;
+        public bool SupportedVolumeLevelsSpecified { get; set; }
         [XmlIgnore]
-        public bool BufferSizeSpecified;
+        public bool BufferSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool CurrentSpeedSpecified;
+        public bool CurrentSpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool MaximumWriteSpeedSpecified;
+        public bool MaximumWriteSpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool CurrentWriteSpeedSpecified;
+        public bool CurrentWriteSpeedSpecified { get; set; }
         [XmlIgnore]
-        public bool RotationControlSelectedSpecified;
+        public bool RotationControlSelectedSpecified { get; set; }
         [XmlIgnore]
-        public bool CurrentWriteSpeedSelectedSpecified;
+        public bool CurrentWriteSpeedSelectedSpecified { get; set; }
     }
 
     public class mmcFeaturesType
     {
-        public byte AACSVersion;
-        public byte AGIDs;
-        public byte BindingNonceBlocks;
-        public ushort BlocksPerReadableUnit;
-        public bool BufferUnderrunFreeInDVD;
-        public bool BufferUnderrunFreeInSAO;
-        public bool BufferUnderrunFreeInTAO;
-        public bool CanAudioScan;
-        public bool CanEject;
-        public bool CanEraseSector;
-        public bool CanExpandBDRESpareArea;
-        public bool CanFormat;
-        public bool CanFormatBDREWithoutSpare;
-        public bool CanFormatCert;
-        public bool CanFormatFRF;
-        public bool CanFormatQCert;
-        public bool CanFormatRRM;
-        public bool CanGenerateBindingNonce;
-        public bool CanLoad;
-        public bool CanMuteSeparateChannels;
-        public bool CanOverwriteSAOTrack;
-        public bool CanOverwriteTAOTrack;
-        public bool CanPlayCDAudio;
-        public bool CanPseudoOverwriteBDR;
-        public bool CanReadAllDualR;
-        public bool CanReadAllDualRW;
-        public bool CanReadBD;
-        public bool CanReadBDR;
-        public bool CanReadBDRE1;
-        public bool CanReadBDRE2;
-        public bool CanReadBDROM;
-        public bool CanReadBluBCA;
-        public bool CanReadCD;
-        public bool CanReadCDMRW;
-        public bool CanReadCPRM_MKB;
-        public bool CanReadDDCD;
-        public bool CanReadDVD;
-        public bool CanReadDVDPlusMRW;
-        public bool CanReadDVDPlusR;
-        public bool CanReadDVDPlusRDL;
-        public bool CanReadDVDPlusRW;
-        public bool CanReadDVDPlusRWDL;
-        public bool CanReadDriveAACSCertificate;
-        public bool CanReadHDDVD;
-        public bool CanReadHDDVDR;
-        public bool CanReadHDDVDRAM;
-        public bool CanReadLeadInCDText;
-        public bool CanReadOldBDR;
-        public bool CanReadOldBDRE;
-        public bool CanReadOldBDROM;
-        public bool CanReadSpareAreaInformation;
-        public bool CanReportDriveSerial;
-        public bool CanReportMediaSerial;
-        public bool CanTestWriteDDCDR;
-        public bool CanTestWriteDVD;
-        public bool CanTestWriteInSAO;
-        public bool CanTestWriteInTAO;
-        public bool CanUpgradeFirmware;
-        public bool CanWriteBD;
-        public bool CanWriteBDR;
-        public bool CanWriteBDRE1;
-        public bool CanWriteBDRE2;
-        public bool CanWriteBusEncryptedBlocks;
-        public bool CanWriteCDMRW;
-        public bool CanWriteCDRW;
-        public bool CanWriteCDRWCAV;
-        public bool CanWriteCDSAO;
-        public bool CanWriteCDTAO;
-        public bool CanWriteCSSManagedDVD;
-        public bool CanWriteDDCDR;
-        public bool CanWriteDDCDRW;
-        public bool CanWriteDVDPlusMRW;
-        public bool CanWriteDVDPlusR;
-        public bool CanWriteDVDPlusRDL;
-        public bool CanWriteDVDPlusRW;
-        public bool CanWriteDVDPlusRWDL;
-        public bool CanWriteDVDR;
-        public bool CanWriteDVDRDL;
-        public bool CanWriteDVDRW;
-        public bool CanWriteHDDVDR;
-        public bool CanWriteHDDVDRAM;
-        public bool CanWriteOldBDR;
-        public bool CanWriteOldBDRE;
-        public bool CanWritePackedSubchannelInTAO;
-        public bool CanWriteRWSubchannelInSAO;
-        public bool CanWriteRWSubchannelInTAO;
-        public bool CanWriteRaw;
-        public bool CanWriteRawMultiSession;
-        public bool CanWriteRawSubchannelInTAO;
-        public bool ChangerIsSideChangeCapable;
-        public byte ChangerSlots;
-        public bool ChangerSupportsDiscPresent;
-        public byte CPRMVersion;
-        public byte CSSVersion;
-        public bool DBML;
-        public bool DVDMultiRead;
-        public bool EmbeddedChanger;
-        public bool ErrorRecoveryPage;
+        public byte AACSVersion { get; set; }
+        public byte AGIDs { get; set; }
+        public byte BindingNonceBlocks { get; set; }
+        public ushort BlocksPerReadableUnit { get; set; }
+        public bool BufferUnderrunFreeInDVD { get; set; }
+        public bool BufferUnderrunFreeInSAO { get; set; }
+        public bool BufferUnderrunFreeInTAO { get; set; }
+        public bool CanAudioScan { get; set; }
+        public bool CanEject { get; set; }
+        public bool CanEraseSector { get; set; }
+        public bool CanExpandBDRESpareArea { get; set; }
+        public bool CanFormat { get; set; }
+        public bool CanFormatBDREWithoutSpare { get; set; }
+        public bool CanFormatCert { get; set; }
+        public bool CanFormatFRF { get; set; }
+        public bool CanFormatQCert { get; set; }
+        public bool CanFormatRRM { get; set; }
+        public bool CanGenerateBindingNonce { get; set; }
+        public bool CanLoad { get; set; }
+        public bool CanMuteSeparateChannels { get; set; }
+        public bool CanOverwriteSAOTrack { get; set; }
+        public bool CanOverwriteTAOTrack { get; set; }
+        public bool CanPlayCDAudio { get; set; }
+        public bool CanPseudoOverwriteBDR { get; set; }
+        public bool CanReadAllDualR { get; set; }
+        public bool CanReadAllDualRW { get; set; }
+        public bool CanReadBD { get; set; }
+        public bool CanReadBDR { get; set; }
+        public bool CanReadBDRE1 { get; set; }
+        public bool CanReadBDRE2 { get; set; }
+        public bool CanReadBDROM { get; set; }
+        public bool CanReadBluBCA { get; set; }
+        public bool CanReadCD { get; set; }
+        public bool CanReadCDMRW { get; set; }
+        public bool CanReadCPRM_MKB { get; set; }
+        public bool CanReadDDCD { get; set; }
+        public bool CanReadDVD { get; set; }
+        public bool CanReadDVDPlusMRW { get; set; }
+        public bool CanReadDVDPlusR { get; set; }
+        public bool CanReadDVDPlusRDL { get; set; }
+        public bool CanReadDVDPlusRW { get; set; }
+        public bool CanReadDVDPlusRWDL { get; set; }
+        public bool CanReadDriveAACSCertificate { get; set; }
+        public bool CanReadHDDVD { get; set; }
+        public bool CanReadHDDVDR { get; set; }
+        public bool CanReadHDDVDRAM { get; set; }
+        public bool CanReadLeadInCDText { get; set; }
+        public bool CanReadOldBDR { get; set; }
+        public bool CanReadOldBDRE { get; set; }
+        public bool CanReadOldBDROM { get; set; }
+        public bool CanReadSpareAreaInformation { get; set; }
+        public bool CanReportDriveSerial { get; set; }
+        public bool CanReportMediaSerial { get; set; }
+        public bool CanTestWriteDDCDR { get; set; }
+        public bool CanTestWriteDVD { get; set; }
+        public bool CanTestWriteInSAO { get; set; }
+        public bool CanTestWriteInTAO { get; set; }
+        public bool CanUpgradeFirmware { get; set; }
+        public bool CanWriteBD { get; set; }
+        public bool CanWriteBDR { get; set; }
+        public bool CanWriteBDRE1 { get; set; }
+        public bool CanWriteBDRE2 { get; set; }
+        public bool CanWriteBusEncryptedBlocks { get; set; }
+        public bool CanWriteCDMRW { get; set; }
+        public bool CanWriteCDRW { get; set; }
+        public bool CanWriteCDRWCAV { get; set; }
+        public bool CanWriteCDSAO { get; set; }
+        public bool CanWriteCDTAO { get; set; }
+        public bool CanWriteCSSManagedDVD { get; set; }
+        public bool CanWriteDDCDR { get; set; }
+        public bool CanWriteDDCDRW { get; set; }
+        public bool CanWriteDVDPlusMRW { get; set; }
+        public bool CanWriteDVDPlusR { get; set; }
+        public bool CanWriteDVDPlusRDL { get; set; }
+        public bool CanWriteDVDPlusRW { get; set; }
+        public bool CanWriteDVDPlusRWDL { get; set; }
+        public bool CanWriteDVDR { get; set; }
+        public bool CanWriteDVDRDL { get; set; }
+        public bool CanWriteDVDRW { get; set; }
+        public bool CanWriteHDDVDR { get; set; }
+        public bool CanWriteHDDVDRAM { get; set; }
+        public bool CanWriteOldBDR { get; set; }
+        public bool CanWriteOldBDRE { get; set; }
+        public bool CanWritePackedSubchannelInTAO { get; set; }
+        public bool CanWriteRWSubchannelInSAO { get; set; }
+        public bool CanWriteRWSubchannelInTAO { get; set; }
+        public bool CanWriteRaw { get; set; }
+        public bool CanWriteRawMultiSession { get; set; }
+        public bool CanWriteRawSubchannelInTAO { get; set; }
+        public bool ChangerIsSideChangeCapable { get; set; }
+        public byte ChangerSlots { get; set; }
+        public bool ChangerSupportsDiscPresent { get; set; }
+        public byte CPRMVersion { get; set; }
+        public byte CSSVersion { get; set; }
+        public bool DBML { get; set; }
+        public bool DVDMultiRead { get; set; }
+        public bool EmbeddedChanger { get; set; }
+        public bool ErrorRecoveryPage { get; set; }
         [XmlElement(DataType = "date")]
-        public DateTime FirmwareDate;
-        public byte LoadingMechanismType;
-        public bool Locked;
-        public uint LogicalBlockSize;
-        public bool MultiRead;
-        public Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard;
-        public bool PreventJumper;
-        public bool SupportsAACS;
-        public bool SupportsBusEncryption;
-        public bool SupportsC2;
-        public bool SupportsCPRM;
-        public bool SupportsCSS;
-        public bool SupportsDAP;
-        public bool SupportsDeviceBusyEvent;
-        public bool SupportsHybridDiscs;
-        public bool SupportsModePage1Ch;
-        public bool SupportsOSSC;
-        public bool SupportsPWP;
-        public bool SupportsSWPP;
-        public bool SupportsSecurDisc;
-        public bool SupportsSeparateVolume;
-        public bool SupportsVCPS;
-        public bool SupportsWriteInhibitDCB;
-        public bool SupportsWriteProtectPAC;
-        public ushort VolumeLevels;
+        public DateTime FirmwareDate { get; set; }
+        public byte LoadingMechanismType { get; set; }
+        public bool Locked { get; set; }
+        public uint LogicalBlockSize { get; set; }
+        public bool MultiRead { get; set; }
+        public Decoders.SCSI.MMC.PhysicalInterfaces PhysicalInterfaceStandard { get; set; }
+        public bool PreventJumper { get; set; }
+        public bool SupportsAACS { get; set; }
+        public bool SupportsBusEncryption { get; set; }
+        public bool SupportsC2 { get; set; }
+        public bool SupportsCPRM { get; set; }
+        public bool SupportsCSS { get; set; }
+        public bool SupportsDAP { get; set; }
+        public bool SupportsDeviceBusyEvent { get; set; }
+        public bool SupportsHybridDiscs { get; set; }
+        public bool SupportsModePage1Ch { get; set; }
+        public bool SupportsOSSC { get; set; }
+        public bool SupportsPWP { get; set; }
+        public bool SupportsSWPP { get; set; }
+        public bool SupportsSecurDisc { get; set; }
+        public bool SupportsSeparateVolume { get; set; }
+        public bool SupportsVCPS { get; set; }
+        public bool SupportsWriteInhibitDCB { get; set; }
+        public bool SupportsWriteProtectPAC { get; set; }
+        public ushort VolumeLevels { get; set; }
 
         [XmlIgnore]
-        public bool PhysicalInterfaceStandardSpecified;
+        public bool PhysicalInterfaceStandardSpecified { get; set; }
         [XmlIgnore]
-        public bool AACSVersionSpecified;
+        public bool AACSVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool AGIDsSpecified;
+        public bool AGIDsSpecified { get; set; }
         [XmlIgnore]
-        public bool BindingNonceBlocksSpecified;
+        public bool BindingNonceBlocksSpecified { get; set; }
         [XmlIgnore]
-        public bool CPRMVersionSpecified;
+        public bool CPRMVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool CSSVersionSpecified;
+        public bool CSSVersionSpecified { get; set; }
         [XmlIgnore]
-        public bool ChangerHighestSlotNumberSpecified;
+        public bool ChangerHighestSlotNumberSpecified { get; set; }
         [XmlIgnore]
-        public bool LoadingMechanismTypeSpecified;
+        public bool LoadingMechanismTypeSpecified { get; set; }
         [XmlIgnore]
-        public bool LogicalBlockSizeSpecified;
+        public bool LogicalBlockSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool BlocksPerReadableUnitSpecified;
+        public bool BlocksPerReadableUnitSpecified { get; set; }
         [XmlIgnore]
-        public bool FirmwareDateSpecified;
+        public bool FirmwareDateSpecified { get; set; }
         [XmlIgnore]
-        public bool VolumeLevelsSpecified;
+        public bool VolumeLevelsSpecified { get; set; }
     }
 
     public class testedMediaType
     {
-        public ulong Blocks;
-        public uint BlockSize;
-        public bool CanReadAACS;
-        public bool CanReadADIP;
-        public bool CanReadATIP;
-        public bool CanReadBCA;
-        public bool CanReadC2Pointers;
-        public bool CanReadCMI;
-        public bool CanReadCorrectedSubchannel;
-        public bool CanReadCorrectedSubchannelWithC2;
-        public bool CanReadDCB;
-        public bool CanReadDDS;
-        public bool CanReadDMI;
-        public bool CanReadDiscInformation;
-        public bool CanReadFullTOC;
-        public bool CanReadHDCMI;
-        public bool CanReadLayerCapacity;
-        public bool CanReadLeadIn;
-        public bool CanReadLeadOut;
-        public bool CanReadMediaID;
-        public bool CanReadMediaSerial;
-        public bool CanReadPAC;
-        public bool CanReadPFI;
-        public bool CanReadPMA;
-        public bool CanReadPQSubchannel;
-        public bool CanReadPQSubchannelWithC2;
-        public bool CanReadPRI;
-        public bool CanReadRWSubchannel;
-        public bool CanReadRWSubchannelWithC2;
-        public bool CanReadRecordablePFI;
-        public bool CanReadSpareAreaInformation;
-        public bool CanReadTOC;
-        public byte Density;
-        public uint LongBlockSize;
-        public string Manufacturer;
-        public bool MediaIsRecognized;
-        public byte MediumType;
-        public string MediumTypeName;
-        public string Model;
-        public bool SupportsHLDTSTReadRawDVD;
-        public bool SupportsNECReadCDDA;
-        public bool SupportsPioneerReadCDDA;
-        public bool SupportsPioneerReadCDDAMSF;
-        public bool SupportsPlextorReadCDDA;
-        public bool SupportsPlextorReadRawDVD;
-        public bool SupportsRead10;
-        public bool SupportsRead12;
-        public bool SupportsRead16;
-        public bool SupportsRead;
-        public bool SupportsReadCapacity16;
-        public bool SupportsReadCapacity;
-        public bool SupportsReadCd;
-        public bool SupportsReadCdMsf;
-        public bool SupportsReadCdRaw;
-        public bool SupportsReadCdMsfRaw;
-        public bool SupportsReadLong16;
-        public bool SupportsReadLong;
+        public ulong Blocks { get; set; }
+        public uint BlockSize { get; set; }
+        public bool CanReadAACS { get; set; }
+        public bool CanReadADIP { get; set; }
+        public bool CanReadATIP { get; set; }
+        public bool CanReadBCA { get; set; }
+        public bool CanReadC2Pointers { get; set; }
+        public bool CanReadCMI { get; set; }
+        public bool CanReadCorrectedSubchannel { get; set; }
+        public bool CanReadCorrectedSubchannelWithC2 { get; set; }
+        public bool CanReadDCB { get; set; }
+        public bool CanReadDDS { get; set; }
+        public bool CanReadDMI { get; set; }
+        public bool CanReadDiscInformation { get; set; }
+        public bool CanReadFullTOC { get; set; }
+        public bool CanReadHDCMI { get; set; }
+        public bool CanReadLayerCapacity { get; set; }
+        public bool CanReadLeadIn { get; set; }
+        public bool CanReadLeadOut { get; set; }
+        public bool CanReadMediaID { get; set; }
+        public bool CanReadMediaSerial { get; set; }
+        public bool CanReadPAC { get; set; }
+        public bool CanReadPFI { get; set; }
+        public bool CanReadPMA { get; set; }
+        public bool CanReadPQSubchannel { get; set; }
+        public bool CanReadPQSubchannelWithC2 { get; set; }
+        public bool CanReadPRI { get; set; }
+        public bool CanReadRWSubchannel { get; set; }
+        public bool CanReadRWSubchannelWithC2 { get; set; }
+        public bool CanReadRecordablePFI { get; set; }
+        public bool CanReadSpareAreaInformation { get; set; }
+        public bool CanReadTOC { get; set; }
+        public byte Density { get; set; }
+        public uint LongBlockSize { get; set; }
+        public string Manufacturer { get; set; }
+        public bool MediaIsRecognized { get; set; }
+        public byte MediumType { get; set; }
+        public string MediumTypeName { get; set; }
+        public string Model { get; set; }
+        public bool SupportsHLDTSTReadRawDVD { get; set; }
+        public bool SupportsNECReadCDDA { get; set; }
+        public bool SupportsPioneerReadCDDA { get; set; }
+        public bool SupportsPioneerReadCDDAMSF { get; set; }
+        public bool SupportsPlextorReadCDDA { get; set; }
+        public bool SupportsPlextorReadRawDVD { get; set; }
+        public bool SupportsRead10 { get; set; }
+        public bool SupportsRead12 { get; set; }
+        public bool SupportsRead16 { get; set; }
+        public bool SupportsRead { get; set; }
+        public bool SupportsReadCapacity16 { get; set; }
+        public bool SupportsReadCapacity { get; set; }
+        public bool SupportsReadCd { get; set; }
+        public bool SupportsReadCdMsf { get; set; }
+        public bool SupportsReadCdRaw { get; set; }
+        public bool SupportsReadCdMsfRaw { get; set; }
+        public bool SupportsReadLong16 { get; set; }
+        public bool SupportsReadLong { get; set; }
 
         [XmlIgnore]
-        public bool BlocksSpecified;
+        public bool BlocksSpecified { get; set; }
         [XmlIgnore]
-        public bool BlockSizeSpecified;
+        public bool BlockSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadAACSSpecified;
+        public bool CanReadAACSSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadADIPSpecified;
+        public bool CanReadADIPSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadATIPSpecified;
+        public bool CanReadATIPSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadBCASpecified;
+        public bool CanReadBCASpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadC2PointersSpecified;
+        public bool CanReadC2PointersSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadCMISpecified;
+        public bool CanReadCMISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadCorrectedSubchannelSpecified;
+        public bool CanReadCorrectedSubchannelSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadCorrectedSubchannelWithC2Specified;
+        public bool CanReadCorrectedSubchannelWithC2Specified { get; set; }
         [XmlIgnore]
-        public bool CanReadDCBSpecified;
+        public bool CanReadDCBSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadDDSSpecified;
+        public bool CanReadDDSSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadDMISpecified;
+        public bool CanReadDMISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadDiscInformationSpecified;
+        public bool CanReadDiscInformationSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadFullTOCSpecified;
+        public bool CanReadFullTOCSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadHDCMISpecified;
+        public bool CanReadHDCMISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadLayerCapacitySpecified;
+        public bool CanReadLayerCapacitySpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadLeadInSpecified;
+        public bool CanReadLeadInSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadLeadOutSpecified;
+        public bool CanReadLeadOutSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadMediaIDSpecified;
+        public bool CanReadMediaIDSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadMediaSerialSpecified;
+        public bool CanReadMediaSerialSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadPACSpecified;
+        public bool CanReadPACSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadPFISpecified;
+        public bool CanReadPFISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadPMASpecified;
+        public bool CanReadPMASpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadPQSubchannelSpecified;
+        public bool CanReadPQSubchannelSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadPQSubchannelWithC2Specified;
+        public bool CanReadPQSubchannelWithC2Specified { get; set; }
         [XmlIgnore]
-        public bool CanReadPRISpecified;
+        public bool CanReadPRISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadRWSubchannelSpecified;
+        public bool CanReadRWSubchannelSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadRWSubchannelWithC2Specified;
+        public bool CanReadRWSubchannelWithC2Specified { get; set; }
         [XmlIgnore]
-        public bool CanReadRecordablePFISpecified;
+        public bool CanReadRecordablePFISpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadSpareAreaInformationSpecified;
+        public bool CanReadSpareAreaInformationSpecified { get; set; }
         [XmlIgnore]
-        public bool CanReadTOCSpecified;
+        public bool CanReadTOCSpecified { get; set; }
         [XmlIgnore]
-        public bool DensitySpecified;
+        public bool DensitySpecified { get; set; }
         [XmlIgnore]
-        public bool LongBlockSizeSpecified;
+        public bool LongBlockSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool ManufacturerSpecified;
+        public bool ManufacturerSpecified { get; set; }
         [XmlIgnore]
-        public bool MediumTypeSpecified;
+        public bool MediumTypeSpecified { get; set; }
         [XmlIgnore]
-        public bool ModelSpecified;
+        public bool ModelSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsHLDTSTReadRawDVDSpecified;
+        public bool SupportsHLDTSTReadRawDVDSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsNECReadCDDASpecified;
+        public bool SupportsNECReadCDDASpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsPioneerReadCDDASpecified;
+        public bool SupportsPioneerReadCDDASpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsPioneerReadCDDAMSFSpecified;
+        public bool SupportsPioneerReadCDDAMSFSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsPlextorReadCDDASpecified;
+        public bool SupportsPlextorReadCDDASpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsPlextorReadRawDVDSpecified;
+        public bool SupportsPlextorReadRawDVDSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsRead10Specified;
+        public bool SupportsRead10Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsRead12Specified;
+        public bool SupportsRead12Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsRead16Specified;
+        public bool SupportsRead16Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadSpecified;
+        public bool SupportsReadSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCapacity16Specified;
+        public bool SupportsReadCapacity16Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCapacitySpecified;
+        public bool SupportsReadCapacitySpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCdSpecified;
+        public bool SupportsReadCdSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCdMsfSpecified;
+        public bool SupportsReadCdMsfSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCdRawSpecified;
+        public bool SupportsReadCdRawSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadCdMsfRawSpecified;
+        public bool SupportsReadCdMsfRawSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLong16Specified;
+        public bool SupportsReadLong16Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLongSpecified;
+        public bool SupportsReadLongSpecified { get; set; }
 
-        public chsType CHS;
-        public chsType CurrentCHS;
-        public uint LBASectors;
-        public ulong LBA48Sectors;
-        public ushort LogicalAlignment;
-        public ushort NominalRotationRate;
-        public uint PhysicalBlockSize;
-        public bool SolidStateDevice;
-        public ushort UnformattedBPT;
-        public ushort UnformattedBPS;
-
-        [XmlIgnore]
-        public bool LBASectorsSpecified;
-        [XmlIgnore]
-        public bool LBA48SectorsSpecified;
-        [XmlIgnore]
-        public bool LogicalAlignmentSpecified;
-        [XmlIgnore]
-        public bool NominalRotationRateSpecified;
-        [XmlIgnore]
-        public bool PhysicalBlockSizeSpecified;
-        [XmlIgnore]
-        public bool SolidStateDeviceSpecified;
-        [XmlIgnore]
-        public bool UnformattedBPTSpecified;
-        [XmlIgnore]
-        public bool UnformattedBPSSpecified;
-
-        public bool SupportsReadDmaLba;
-        public bool SupportsReadDmaRetryLba;
-        public bool SupportsReadLba;
-        public bool SupportsReadRetryLba;
-        public bool SupportsReadLongLba;
-        public bool SupportsReadLongRetryLba;
-        public bool SupportsSeekLba;
-
-        public bool SupportsReadDmaLba48;
-        public bool SupportsReadLba48;
-
-        public bool SupportsReadDma;
-        public bool SupportsReadDmaRetry;
-        public bool SupportsReadRetry;
-        public bool SupportsReadLongRetry;
-        public bool SupportsSeek;
+        public chsType CHS { get; set; }
+        public chsType CurrentCHS { get; set; }
+        public uint LBASectors { get; set; }
+        public ulong LBA48Sectors { get; set; }
+        public ushort LogicalAlignment { get; set; }
+        public ushort NominalRotationRate { get; set; }
+        public uint PhysicalBlockSize { get; set; }
+        public bool SolidStateDevice { get; set; }
+        public ushort UnformattedBPT { get; set; }
+        public ushort UnformattedBPS { get; set; }
 
         [XmlIgnore]
-        public bool SupportsReadDmaLbaSpecified;
+        public bool LBASectorsSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadDmaRetryLbaSpecified;
+        public bool LBA48SectorsSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLbaSpecified;
+        public bool LogicalAlignmentSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadRetryLbaSpecified;
+        public bool NominalRotationRateSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLongLbaSpecified;
+        public bool PhysicalBlockSizeSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLongRetryLbaSpecified;
+        public bool SolidStateDeviceSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsSeekLbaSpecified;
+        public bool UnformattedBPTSpecified { get; set; }
+        [XmlIgnore]
+        public bool UnformattedBPSSpecified { get; set; }
+
+        public bool SupportsReadDmaLba { get; set; }
+        public bool SupportsReadDmaRetryLba { get; set; }
+        public bool SupportsReadLba { get; set; }
+        public bool SupportsReadRetryLba { get; set; }
+        public bool SupportsReadLongLba { get; set; }
+        public bool SupportsReadLongRetryLba { get; set; }
+        public bool SupportsSeekLba { get; set; }
+
+        public bool SupportsReadDmaLba48 { get; set; }
+        public bool SupportsReadLba48 { get; set; }
+
+        public bool SupportsReadDma { get; set; }
+        public bool SupportsReadDmaRetry { get; set; }
+        public bool SupportsReadRetry { get; set; }
+        public bool SupportsReadLongRetry { get; set; }
+        public bool SupportsSeek { get; set; }
 
         [XmlIgnore]
-        public bool SupportsReadDmaLba48Specified;
+        public bool SupportsReadDmaLbaSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLba48Specified;
+        public bool SupportsReadDmaRetryLbaSpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsReadLbaSpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsReadRetryLbaSpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsReadLongLbaSpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsReadLongRetryLbaSpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsSeekLbaSpecified { get; set; }
 
         [XmlIgnore]
-        public bool SupportsReadDmaSpecified;
+        public bool SupportsReadDmaLba48Specified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadDmaRetrySpecified;
+        public bool SupportsReadLba48Specified { get; set; }
+
         [XmlIgnore]
-        public bool SupportsReadRetrySpecified;
+        public bool SupportsReadDmaSpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsReadLongRetrySpecified;
+        public bool SupportsReadDmaRetrySpecified { get; set; }
         [XmlIgnore]
-        public bool SupportsSeekSpecified;
+        public bool SupportsReadRetrySpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsReadLongRetrySpecified { get; set; }
+        [XmlIgnore]
+        public bool SupportsSeekSpecified { get; set; }
     }
 
     public class sscType
     {
-        public byte BlockSizeGranularity;
-        public uint MaxBlockLength;
-        public uint MinBlockLength;
+        public byte BlockSizeGranularity { get; set; }
+        public uint MaxBlockLength { get; set; }
+        public uint MinBlockLength { get; set; }
 
-        public SupportedDensity[] SupportedDensities;
-        public SupportedMedia[] SupportedMediaTypes;
-        public SequentialMedia[] TestedMedia;
+        public SupportedDensity[] SupportedDensities { get; set; }
+        public SupportedMedia[] SupportedMediaTypes { get; set; }
+        public SequentialMedia[] TestedMedia { get; set; }
 
         [XmlIgnore]
-        public bool BlockSizeGranularitySpecified;
+        public bool BlockSizeGranularitySpecified { get; set; }
         [XmlIgnore]
-        public bool MaxBlockLengthSpecified;
+        public bool MaxBlockLengthSpecified { get; set; }
         [XmlIgnore]
-        public bool MinBlockLengthSpecified;
+        public bool MinBlockLengthSpecified { get; set; }
     }
 
     public struct SupportedDensity
     {
-        public byte PrimaryCode;
-        public byte SecondaryCode;
-        public bool Writable;
-        public bool Duplicate;
-        public bool DefaultDensity;
-        public uint BitsPerMm;
-        public ushort Width;
-        public ushort Tracks;
-        public uint Capacity;
-        public string Organization;
-        public string Name;
-        public string Description;
+        public byte PrimaryCode { get; set; }
+        public byte SecondaryCode { get; set; }
+        public bool Writable { get; set; }
+        public bool Duplicate { get; set; }
+        public bool DefaultDensity { get; set; }
+        public uint BitsPerMm { get; set; }
+        public ushort Width { get; set; }
+        public ushort Tracks { get; set; }
+        public uint Capacity { get; set; }
+        public string Organization { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 
     public struct SupportedMedia
     {
-        public byte MediumType;
-        public int[] DensityCodes;
-        public ushort Width;
-        public ushort Length;
-        public string Organization;
-        public string Name;
-        public string Description;
+        public byte MediumType { get; set; }
+        public int[] DensityCodes { get; set; }
+        public ushort Width { get; set; }
+        public ushort Length { get; set; }
+        public string Organization { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 
     public struct SequentialMedia
     {
-        public bool CanReadMediaSerial;
-        public byte Density;
-        public string Manufacturer;
-        public bool MediaIsRecognized;
-        public byte MediumType;
-        public string MediumTypeName;
-        public string Model;
-        public SupportedDensity[] SupportedDensities;
-        public SupportedMedia[] SupportedMediaTypes;
+        public bool CanReadMediaSerial { get; set; }
+        public byte Density { get; set; }
+        public string Manufacturer { get; set; }
+        public bool MediaIsRecognized { get; set; }
+        public byte MediumType { get; set; }
+        public string MediumTypeName { get; set; }
+        public string Model { get; set; }
+        public SupportedDensity[] SupportedDensities { get; set; }
+        public SupportedMedia[] SupportedMediaTypes { get; set; }
 
         [XmlIgnore]
-        public bool CanReadMediaSerialSpecified;
+        public bool CanReadMediaSerialSpecified { get; set; }
         [XmlIgnore]
-        public bool DensitySpecified;
+        public bool DensitySpecified { get; set; }
         [XmlIgnore]
-        public bool MediumTypeSpecified;
+        public bool MediumTypeSpecified { get; set; }
     }
 
     public class pcmciaType
     {
-        public byte[] CIS;
-        public string Compliance;
-        public ushort ManufacturerCode;
-        public ushort CardCode;
-        public string Manufacturer;
-        public string ProductName;
-        public string[] AdditionalInformation;
+        public byte[] CIS { get; set; }
+        public string Compliance { get; set; }
+        public ushort ManufacturerCode { get; set; }
+        public ushort CardCode { get; set; }
+        public string Manufacturer { get; set; }
+        public string ProductName { get; set; }
+        public string[] AdditionalInformation { get; set; }
 
         [XmlIgnore]
-        public bool ManufacturerCodeSpecified;
+        public bool ManufacturerCodeSpecified { get; set; }
         [XmlIgnore]
-        public bool CardCodeSpecified;
+        public bool CardCodeSpecified { get; set; }
     }
 }
 
