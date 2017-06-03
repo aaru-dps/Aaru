@@ -223,7 +223,6 @@ namespace DiscImageChef.Decoders.Xbox
                 return null;
 
             SecuritySector ss = new SecuritySector();
-            byte[] tmp;
 
             // Common
             ss.DiskCategory = (DiskCategory)((response[0] & 0xF0) >> 4);
