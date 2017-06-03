@@ -5260,7 +5260,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
         public static string Prettify_0109(Feature_0109? feature)
         {
-            return !feature.HasValue ? null : "Drive is to read media serial number\n";
+            return !feature.HasValue ? null : "Drive is able to read media serial number\n";
         }
 
         public static string Prettify_010A(Feature_010A? feature)
