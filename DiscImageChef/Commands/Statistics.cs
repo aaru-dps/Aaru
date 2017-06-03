@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using DiscImageChef.Console;
+using DiscImageChef.Metadata;
 
 namespace DiscImageChef.Commands
 {
@@ -88,7 +89,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Benchmark statistics");
                 DicConsole.WriteLine("====================");
-                foreach(Core.ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
+                foreach(ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
                 {
                     DicConsole.WriteLine("Took {0} seconds to calculate {1} algorithm", chk.Value, chk.algorithm);
                 }
@@ -105,7 +106,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Filters statistics");
                 DicConsole.WriteLine("==================");
-                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Filters)
+                foreach(NameValueStats nvs in Core.Statistics.AllStats.Filters)
                     DicConsole.WriteLine("Filter {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -115,7 +116,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Media image statistics");
                 DicConsole.WriteLine("======================");
-                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.MediaImages)
+                foreach(NameValueStats nvs in Core.Statistics.AllStats.MediaImages)
                     DicConsole.WriteLine("Format {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -125,7 +126,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Partition statistics");
                 DicConsole.WriteLine("====================");
-                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Partitions)
+                foreach(NameValueStats nvs in Core.Statistics.AllStats.Partitions)
                     DicConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -135,7 +136,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Filesystem statistics");
                 DicConsole.WriteLine("=====================");
-                foreach(Core.NameValueStats nvs in Core.Statistics.AllStats.Filesystems)
+                foreach(NameValueStats nvs in Core.Statistics.AllStats.Filesystems)
                     DicConsole.WriteLine("Filesystem {0} has been found {1} times.", nvs.name, nvs.Value);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -145,7 +146,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Device statistics");
                 DicConsole.WriteLine("=================");
-                foreach(Core.DeviceStats ds in Core.Statistics.AllStats.Devices)
+                foreach(DeviceStats ds in Core.Statistics.AllStats.Devices)
                     DicConsole.WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.", ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
                 DicConsole.WriteLine();
                 thereAreStats = true;
@@ -155,7 +156,7 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.WriteLine("Media statistics");
                 DicConsole.WriteLine("================");
-                foreach(Core.MediaStats ms in Core.Statistics.AllStats.Medias)
+                foreach(MediaStats ms in Core.Statistics.AllStats.Medias)
                 {
                     if(ms.real)
                         DicConsole.WriteLine("Media type {0} has been found {1} times in a real device.", ms.type, ms.Value);

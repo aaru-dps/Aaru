@@ -56,7 +56,6 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.blocks = 0;
             ushort currentProfile = 0x0001;
             Decoders.ATA.AtaErrorRegistersCHS errorChs;
-            bool lbaMode = false;
             uint timeout = 5;
             double duration = 0;
 
@@ -69,6 +68,11 @@ namespace DiscImageChef.Core.Devices.Scanning
                 Reader ataReader = new Reader(dev, timeout, cmdBuf);
                 // Fill reader blocks
                 results.blocks = ataReader.GetDeviceBlocks();
+                if(ataReader.FindReadCommand())
+                {
+                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    return results;
+                }
                 // Check block sizes
                 if(ataReader.GetBlockSize())
                 {
@@ -77,7 +81,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
                 uint blockSize = ataReader.LogicalBlockSize;
                 // Check how many blocks to read, if error show and return
-                if(ataReader.GetBlocksToRead(254))
+                if(ataReader.GetBlocksToRead(64))
                 {
                     DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
                     return results;
@@ -121,7 +125,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     e.Cancel = aborted = true;
                 };
 
-                if(lbaMode)
+                if(ataReader.IsLBA)
                 {
                     DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 

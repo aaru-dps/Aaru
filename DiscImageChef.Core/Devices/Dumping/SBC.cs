@@ -287,9 +287,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
+            string outputExtension = ".bin";
+            if(opticalDisc && blockSize == 2048)
+                outputExtension = ".iso";
             mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             ibgLog = new IBGLog(outputPrefix + ".ibg", currentProfile);
-            dumpFile = new DataFile(outputPrefix + ".bin");
+            dumpFile = new DataFile(outputPrefix + outputExtension);
 
             start = DateTime.UtcNow;
 
@@ -536,7 +539,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             plugins.RegisterAllPlugins();
             ImagePlugin _imageFormat;
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
+            Filter inputFilter = filtersList.GetFilter(outputPrefix + outputExtension);
 
             if(inputFilter == null)
             {
@@ -678,7 +681,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
                 sidecar.OpticalDisc[0].Image = new ImageType();
                 sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
-                sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".bin";
+                sidecar.OpticalDisc[0].Image.Value = outputPrefix + outputExtension;
                 // TODO: Implement layers
                 //sidecar.OpticalDisc[0].Layers = new LayersType();
                 sidecar.OpticalDisc[0].Sessions = 1;

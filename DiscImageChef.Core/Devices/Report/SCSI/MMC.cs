@@ -439,6 +439,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 break;
                             case 0x0051:
                                 {
+                                    // TODO: Write HD DVD-RW
                                     Decoders.SCSI.MMC.Feature_0051? ftr0051 = Decoders.SCSI.MMC.Features.Decode_0051(desc.Data);
                                     if(ftr0051.HasValue)
                                     {

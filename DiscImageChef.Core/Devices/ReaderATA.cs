@@ -191,6 +191,11 @@ namespace DiscImageChef.Core.Devices
                 DicConsole.WriteLine("Using ATA READ command with retries (CHS).");
             else if(ataRead)
                 DicConsole.WriteLine("Using ATA READ command (CHS).");
+            else
+            {
+                errorMessage = "Could not get a working read command!";
+                return true;
+            }
 
             return false;
         }

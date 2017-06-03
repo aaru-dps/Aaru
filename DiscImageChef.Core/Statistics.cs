@@ -34,145 +34,32 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using DiscImageChef.Metadata;
+using System.Net;
+using DiscImageChef.Console;
+using System.Threading;
 
 namespace DiscImageChef.Core
 {
-    [XmlRoot("DicStats", Namespace = "", IsNullable = false)]
-    public class Stats
-    {
-        public CommandsStats Commands;
-        [XmlArrayItem("Filesystem")]
-        public List<NameValueStats> Filesystems;
-        [XmlArrayItem("Scheme")]
-        public List<NameValueStats> Partitions;
-        [XmlArrayItem("Format")]
-        public List<NameValueStats> MediaImages;
-        [XmlArrayItem("Filter", IsNullable = true)]
-        public List<NameValueStats> Filters;
-        [XmlArrayItem("Device", IsNullable = true)]
-        public List<DeviceStats> Devices;
-        [XmlArrayItem("Media")]
-        public List<MediaStats> Medias;
-        public BenchmarkStats Benchmark;
-        public MediaScanStats MediaScan;
-        public VerifyStats Verify;
-    }
-
-    public class CommandsStats
-    {
-        public long Analyze;
-        public long Benchmark;
-        public long Checksum;
-        public long Compare;
-        public long CreateSidecar;
-        public long Decode;
-        public long DeviceInfo;
-        public long DeviceReport;
-        public long DumpMedia;
-        public long Entropy;
-        public long Formats;
-        public long MediaInfo;
-        public long MediaScan;
-        public long PrintHex;
-        public long Verify;
-    }
-
-    public class VerifiedItems
-    {
-        public long Correct;
-        public long Failed;
-    }
-
-    public class VerifyStats
-    {
-        public VerifiedItems MediaImages;
-        public ScannedSectors Sectors;
-    }
-
-    public class ScannedSectors
-    {
-        public long Total;
-        public long Error;
-        public long Correct;
-        public long Unverifiable;
-    }
-
-    public class TimeStats
-    {
-        public long LessThan3ms;
-        public long LessThan10ms;
-        public long LessThan50ms;
-        public long LessThan150ms;
-        public long LessThan500ms;
-        public long MoreThan500ms;
-    }
-
-    public class MediaScanStats
-    {
-        public ScannedSectors Sectors;
-        public TimeStats Times;
-    }
-
-    public class ChecksumStats
-    {
-        [XmlAttribute]
-        public string algorithm;
-        [XmlText]
-        public double Value;
-    }
-
-    public class BenchmarkStats
-    {
-        [XmlElement("Checksum")]
-        public List<ChecksumStats> Checksum;
-        public double Entropy;
-        public double All;
-        public double Sequential;
-        public long MaxMemory;
-        public long MinMemory;
-    }
-
-    public class MediaStats
-    {
-        [XmlAttribute]
-        public bool real;
-        [XmlAttribute]
-        public string type;
-        [XmlText]
-        public long Value;
-    }
-
-    public class DeviceStats
-    {
-        public string Manufacturer;
-        public string Model;
-        public string Revision;
-        public string Bus;
-
-        [XmlIgnore]
-        public bool ManufacturerSpecified;
-    }
-
-    public class NameValueStats
-    {
-        [XmlAttribute]
-        public string name;
-        [XmlText]
-        public long Value;
-    }
-
     public static class Statistics
     {
         public static Stats AllStats;
         public static Stats CurrentStats;
+
+        static bool submitStatsLock;
 
         public static void LoadStats()
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats();
-
+                CurrentStats = new Stats()
+                {
+                    OperatingSystems = new List<NameValueStats>
+                    {
+                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    }
+                };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 AllStats = (Stats)xs.Deserialize(sr);
@@ -181,7 +68,13 @@ namespace DiscImageChef.Core
             else if(Settings.Settings.Current.Stats != null)
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats();
+                CurrentStats = new Stats()
+                {
+                    OperatingSystems = new List<NameValueStats>
+                    {
+                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    }
+                };
             }
             else
             {
@@ -194,6 +87,27 @@ namespace DiscImageChef.Core
         {
             if(AllStats != null)
             {
+                if(AllStats.OperatingSystems != null)
+                {
+                    long count = 0;
+
+                    NameValueStats old = null;
+                    foreach(NameValueStats nvs in AllStats.OperatingSystems)
+                    {
+                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString())
+                        {
+                            count = nvs.Value;
+                            old = nvs;
+                            break;
+                        }
+                    }
+
+                    if(old != null)
+                        AllStats.OperatingSystems.Remove(old);
+
+                    count++;
+                    AllStats.OperatingSystems.Add(new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count });
+                }
                 FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"), FileMode.Create);
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 xs.Serialize(fs, AllStats);
@@ -216,7 +130,77 @@ namespace DiscImageChef.Core
 
         public static void SubmitStats()
         {
-            // TODO: Implement it
+            Thread submitThread = new Thread(() =>
+            {
+                if(submitStatsLock)
+                    return;
+                submitStatsLock = true;
+
+                var statsFiles = Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml", SearchOption.TopDirectoryOnly);
+
+                foreach(string statsFile in statsFiles)
+                {
+                    try
+                    {
+                        if(!File.Exists(statsFile))
+                            continue;
+
+                        Stats stats = new Stats();
+
+                        // This can execute before debug console has been inited
+#if DEBUG
+                        System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
+#else
+                    DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
+#endif
+
+                        FileStream fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
+                        XmlSerializer xs = new XmlSerializer(stats.GetType());
+                        stats = (Stats)xs.Deserialize(fs);
+                        fs.Seek(0, SeekOrigin.Begin);
+
+                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
+                        ((HttpWebRequest)request).UserAgent = string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                        request.Method = "POST";
+                        request.ContentLength = fs.Length;
+                        request.ContentType = "application/xml";
+                        Stream reqStream = request.GetRequestStream();
+                        fs.CopyTo(reqStream);
+                        reqStream.Close();
+                        WebResponse response = request.GetResponse();
+
+                        if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                            return;
+
+                        Stream data = response.GetResponseStream();
+                        StreamReader reader = new StreamReader(data);
+
+                        string responseFromServer = reader.ReadToEnd();
+                        data.Close();
+                        response.Close();
+                        fs.Close();
+                        if(responseFromServer == "ok")
+                            File.Delete(statsFile);
+                    }
+                    catch(WebException)
+                    {
+                        // Can't connect to the server, postpone til next try
+                        break;
+                    }
+                    catch
+                    {
+#if DEBUG
+                        submitStatsLock = false;
+                        throw;
+#else
+                        continue;
+#endif
+                    }
+                }
+
+                submitStatsLock = false;
+            });
+            submitThread.Start();
         }
 
         public static void AddCommand(string command)

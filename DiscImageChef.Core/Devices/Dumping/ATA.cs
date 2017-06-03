@@ -178,6 +178,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 uint blockSize = ataReader.LogicalBlockSize;
                 uint physicalsectorsize = ataReader.PhysicalBlockSize;
+                if(ataReader.FindReadCommand())
+                {
+                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    return;
+                }
                 // Check how many blocks to read, if error show and return
                 if(ataReader.GetBlocksToRead())
                 {

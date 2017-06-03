@@ -216,7 +216,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0010);
-            dumpFile = new DataFile(outputPrefix + ".bin");
+            dumpFile = new DataFile(outputPrefix + ".iso");
 
             start = DateTime.UtcNow;
 
@@ -615,7 +615,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             plugins.RegisterAllPlugins();
             ImagePlugin _imageFormat;
             FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(outputPrefix + ".bin");
+            Filter inputFilter = filtersList.GetFilter(outputPrefix + ".iso");
 
             if(inputFilter == null)
             {
@@ -755,7 +755,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
             sidecar.OpticalDisc[0].Image = new ImageType();
             sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
-            sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".bin";
+            sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".iso";
             sidecar.OpticalDisc[0].Layers = new LayersType();
             sidecar.OpticalDisc[0].Layers.type = LayersTypeType.OTP;
             sidecar.OpticalDisc[0].Layers.typeSpecified = true;

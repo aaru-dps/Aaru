@@ -1,3 +1,6 @@
+* Commands/DeviceReport.cs:
+  Don't generate report files with '/', '\\' or '?' characters.
+
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceReport.cs:

@@ -213,5 +213,86 @@ namespace DiscImageChef.Interop
         {
             return IntPtr.Size == 4;
         }
+
+        public static string GetPlatformName(PlatformID id)
+        {
+            switch(id)
+            {
+                case PlatformID.AIX:
+                    return "AIX";
+                case PlatformID.Android:
+                    return "Android";
+                case PlatformID.DragonFly:
+                    return "DragonFly BSD";
+                case PlatformID.FreeBSD:
+                    return "FreeBSD";
+                case PlatformID.Haiku:
+                    return "Haiku";
+                case PlatformID.HPUX:
+                    return "HP/UX";
+                case PlatformID.Hurd:
+                    return "Hurd";
+                case PlatformID.iOS:
+                    return "iOS";
+                case PlatformID.IRIX:
+                    return "IRIX";
+                case PlatformID.Linux:
+                    return "Linux";
+                case PlatformID.MacOSX:
+                    return "macOS";
+                case PlatformID.Minix:
+                    return "MINIX";
+                case PlatformID.NetBSD:
+                    return "NetBSD";
+                case PlatformID.NonStop:
+                    return "NonStop OS";
+                case PlatformID.OpenBSD:
+                    return "OpenBSD";
+                case PlatformID.OpenServer:
+                    return "SCO OpenServer";
+                case PlatformID.OS400:
+                    return "OS/400";
+                case PlatformID.PlayStation3:
+                    return "Sony CellOS";
+                case PlatformID.PlayStation4:
+                    return "Sony Orbis OS";
+                case PlatformID.QNX:
+                    return "QNX";
+                case PlatformID.SINIX:
+                    return "SINIX";
+                case PlatformID.Solaris:
+                    return "Sun Solaris";
+                case PlatformID.Tizen:
+                    return "Samsung Tizen";
+                case PlatformID.Tru64:
+                    return "Tru64 UNIX";
+                case PlatformID.Ultrix:
+                    return "Ultrix";
+                case PlatformID.Unix:
+                    return "UNIX";
+                case PlatformID.UnixWare:
+                    return "SCO UnixWare";
+                case PlatformID.Wii:
+                    return "Nintendo Wii";
+                case PlatformID.WiiU:
+                    return "Nintendo Wii U";
+                case PlatformID.Win32NT:
+                    return "Windows NT/2000/XP/Vista/7/10";
+                case PlatformID.Win32S:
+                    return "Windows 3.x with win32s";
+                case PlatformID.Win32Windows:
+                    return "Windows 9x/Me";
+                case PlatformID.WinCE:
+                    return "Windows CE/Mobile";
+                case PlatformID.WindowsPhone:
+                    return "Windows Phone";
+                case PlatformID.Xbox:
+                    return "Xbox OS";
+                case PlatformID.zOS:
+                    return "z/OS";
+                default:
+                    return id.ToString();
+            }
+        }
     }
 }
