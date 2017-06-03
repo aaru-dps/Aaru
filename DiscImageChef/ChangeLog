@@ -1,3 +1,6 @@
+* DiscImageChef.csproj:
+  Project file formatting.
+
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 
 	* Commands/DeviceReport.cs:
