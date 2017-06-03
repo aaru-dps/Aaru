@@ -434,6 +434,8 @@ namespace DiscImageChef.Decoders.SCSI
                 descriptor.Type = (IdentificationTypes)(pageResponse[position + 1] & 0x0F);
                 descriptor.Length = pageResponse[position + 3];
                 descriptor.Binary = new byte[descriptor.Length];
+                if(descriptor.Length + position + 4 >= pageResponse.Length)
+                    descriptor.Length = (byte)(pageResponse.Length - position - 4);
                 Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
                 if(descriptor.CodeSet == IdentificationCodeSet.ASCII)
                     descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
