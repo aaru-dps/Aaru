@@ -64,6 +64,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             if(dev.IsFireWire)
                 FireWire.Report(dev, ref report, debug, ref removable);
 
+            if(dev.IsPCMCIA)
+                PCMCIA.Report(dev, ref report, debug, ref removable);
+
             if(!dev.IsUSB && !dev.IsFireWire && dev.IsRemovable)
             {
                 pressedKey = new ConsoleKeyInfo();
