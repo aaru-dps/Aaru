@@ -15,7 +15,7 @@
 //
 //     This library is free software; you can redistribute it and/or modify
 //     it under the terms of the GNU Lesser General Public License as
-//     published by the Free Software Foundation { get; set; } either version 2.1 of the
+//     published by the Free Software Foundation; either version 2.1 of the
 //     License, or (at your option) any later version.
 //
 //     This library is distributed in the hope that it will be useful, but
@@ -43,11 +43,11 @@ namespace DiscImageChef.Metadata
     {
         public usbType USB { get; set; }
         public firewireType FireWire { get; set; }
+        public pcmciaType PCMCIA { get; set; }
+        public bool CompactFlash { get; set; }
         public ataType ATA { get; set; }
         public ataType ATAPI { get; set; }
         public scsiType SCSI { get; set; }
-        public bool CompactFlash { get; set; }
-        public pcmciaType PCMCIA { get; set; }
 
         [XmlIgnore]
         public bool CompactFlashSpecified { get; set; }
@@ -1003,6 +1003,7 @@ namespace DiscImageChef.Metadata
         public bool MediumTypeSpecified { get; set; }
     }
 
+    [Serializable]
     public class pcmciaType
     {
         public byte[] CIS { get; set; }
