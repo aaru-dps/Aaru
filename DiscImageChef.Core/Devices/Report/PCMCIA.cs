@@ -47,10 +47,10 @@ namespace DiscImageChef.Core.Devices.Report
         {
             report.PCMCIA = new pcmciaType();
             report.PCMCIA.CIS = dev.CIS;
-            Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
+            Tuple[] tuples = CIS.GetTuples(dev.CIS);
             if(tuples != null)
             {
-                foreach(Decoders.PCMCIA.Tuple tuple in tuples)
+                foreach(Tuple tuple in tuples)
                 {
                     if(tuple.Code == TupleCodes.CISTPL_MANFID)
                     {
