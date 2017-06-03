@@ -39,12 +39,12 @@ using System.Web;
 using System.Web.Http;
 
 namespace DiscImageChef.Server
-    {
+{
     public class Global : HttpApplication
-        {
+    {
         protected void Application_Start()
-            {
-        GlobalConfiguration.Configure(WebApiConfig.Register);
-            }
+        {
+            GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }
+}

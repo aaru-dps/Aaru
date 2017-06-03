@@ -10,6 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Server</RootNamespace>
     <AssemblyName>DiscImageChef.Server</AssemblyName>
+    <ReleaseVersion>3.3.99.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,11 +33,30 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Http">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="Default.aspx" />
+    <Content Include="packages.config" />
+    <Content Include="dos.css" />
+    <Content Include="int10h.org\vga_squarepx.eot" />
+    <Content Include="int10h.org\vga_squarepx.ttf" />
+    <Content Include="int10h.org\vga_squarepx.woff" />
+    <Content Include="ViewReport.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.asax.cs">
@@ -49,12 +69,83 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ViewReport.aspx.cs">
+      <DependentUpon>ViewReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewReport.aspx.designer.cs">
+      <DependentUpon>ViewReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\ScsiInquiry.cs" />
+    <Compile Include="App_Start\Ata.cs" />
+    <Compile Include="App_Start\ScsiModeSense.cs" />
+    <Compile Include="App_Start\ScsiEvpd.cs" />
+    <Compile Include="App_Start\ScsiMmcMode.cs" />
+    <Compile Include="App_Start\ScsiMmcFeatures.cs" />
+    <Compile Include="App_Start\SscTestedMedia.cs" />
+    <Compile Include="App_Start\TestedMedia.cs" />
+    <Compile Include="Controllers\UploadStatsController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controllers\UploadReportController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Metadata\DiscImageChef.Metadata.csproj">
+      <Project>{9F213318-5CB8-4066-A757-074489C9F818}</Project>
+      <Name>DiscImageChef.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
+      <Name>DiscImageChef.CommonTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
+      <Name>DiscImageChef.Interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
+      <Name>DiscImageChef.Decoders</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="int10h.org\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Statistics\" />
+    <Folder Include="Reports\" />
+    <Folder Include="Upload\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="int10h.org\vga_squarepx.woff2" />
+    <None Include="usb.ids" />
+    <None Include="Statistics\Statistics.xml" />
+    <None Include="Upload\.htaccess" />
+    <None Include="Statistics\.htaccess" />
+    <None Include="Reports\.htaccess" />
+    <None Include="int10h.org\.htaccess" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild">
+            <inheritsSet />
+            <inheritsScope />
+          </DotNetNamingPolicy>
+          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp">
+            <inheritsSet />
+            <inheritsScope />
+          </TextStylePolicy>
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceAfterControlFlowStatementKeyword="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" scope="text/x-csharp">
+            <inheritsSet />
+            <inheritsScope />
+          </CSharpFormattingPolicy>
+          <ChangeLogPolicy VcsIntegration="Enabled" UpdateMode="ProjectRoot">
+            <MessageStyle Header="${Date:yyyy-MM-dd}  ${AuthorName}  &lt;${AuthorEmail}&gt;&#xA;&#xA;" Indent="&#x9;" FirstFilePrefix="* " FileSeparator=":&#xA;* " LastFilePostfix=": " LineAlign="0" InterMessageLines="1" IncludeDirectoryPaths="False" Wrap="True" />
+            <inheritsSet />
+            <inheritsScope />
+          </ChangeLogPolicy>
+        </Policies>
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>

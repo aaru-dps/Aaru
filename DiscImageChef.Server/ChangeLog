@@ -1,0 +1,27 @@
+2017-06-03  Natalia Portillo  <claunia@claunia.com>
+
+	* dos.css:
+	* Web.config:
+	* Default.aspx:
+	* Global.asax.cs:
+	* packages.config:
+	* Default.aspx.cs:
+	* ViewReport.aspx:
+	* Ata.cs:
+	* ViewReport.aspx.cs:
+	* ScsiEvpd.cs:
+	* ScsiMmcMode.cs:
+	* TestedMedia.cs:
+	* Default.aspx.designer.cs:
+	* Statistics.xml:
+	* WebApiConfig.cs:
+	* ScsiModeSense.cs:
+	* SscTestedMedia.cs:
+	* ViewReport.aspx.designer.cs:
+	* DiscImageChef.Server.csproj:
+	* ScsiMmcFeatures.cs:
+	* UploadStatsController.cs:
+	* UploadReportController.cs: Added server side code for
+	creating http://discimagechef.claunia.com with statistics and
+	device reports.
+

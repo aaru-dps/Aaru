@@ -36,12 +36,42 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.Collections.Generic;
+using DiscImageChef.Metadata;
+
 namespace DiscImageChef.Server.App_Start
 {
-    public class SscTestedMedia
+    public static class SscTestedMedia
     {
-        public SscTestedMedia()
+        public static void Report(SequentialMedia[] testedMedia, ref List<string> mediaOneValue)
         {
+            foreach(SequentialMedia media in testedMedia)
+            {
+                if(!string.IsNullOrWhiteSpace(media.MediumTypeName))
+                {
+                    mediaOneValue.Add(string.Format("<i>Information for medium named \"{0}\"</i>", media.MediumTypeName));
+                    if(media.MediumTypeSpecified)
+                        mediaOneValue.Add(string.Format("Medium type code: {0:X2}h", media.MediumType));
+                }
+                else if(media.MediumTypeSpecified)
+                    mediaOneValue.Add(string.Format("<i>Information for medium type {0:X2}h</i>", media.MediumType));
+                else
+                    mediaOneValue.Add("<i>Information for unknown medium type</i>");
+
+                if(!string.IsNullOrWhiteSpace(media.Manufacturer))
+                    mediaOneValue.Add(string.Format("Medium manufactured by: {0}", media.Manufacturer));
+                if(!string.IsNullOrWhiteSpace(media.Model))
+                    mediaOneValue.Add(string.Format("Medium model: {0}", media.Model));
+
+                if(media.DensitySpecified)
+                    mediaOneValue.Add(string.Format("Medium has density code {0:X2}h", media.Density));
+                if(media.CanReadMediaSerial)
+                    mediaOneValue.Add("Drive can read medium serial number.");
+                if(media.MediaIsRecognized)
+                    mediaOneValue.Add("DiscImageChef recognizes this medium.");
+
+                mediaOneValue.Add("");
+            }
         }
     }
 }

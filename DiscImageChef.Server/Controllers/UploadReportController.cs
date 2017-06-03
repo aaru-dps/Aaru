@@ -36,12 +36,67 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.IO;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web;
+using DiscImageChef.Metadata;
+using System.Xml.Serialization;
+
 namespace DiscImageChef.Server.Controllers
 {
-    public class UploadReportController
+    public class UploadReportController : ApiController
     {
-        public UploadReportController()
+        [Route("api/uploadreport")]
+        [HttpPost]
+        public HttpResponseMessage UploadReport()
         {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.StatusCode = System.Net.HttpStatusCode.OK;
+
+            try
+            {
+                DeviceReport newReport = new DeviceReport();
+                HttpRequest request = HttpContext.Current.Request;
+
+                if(request.InputStream == null)
+                {
+                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    return response;
+                }
+
+                XmlSerializer xs = new XmlSerializer(newReport.GetType());
+                newReport = (DeviceReport)xs.Deserialize(request.InputStream);
+
+                if(newReport == null)
+                {
+                    response.Content = new StringContent("notstats", System.Text.Encoding.UTF8, "text/plain");
+                    return response;
+                }
+
+                Random rng = new Random();
+                string filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                while(File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename)))
+                {
+                    filename = string.Format("NewReport_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());
+                }
+
+                FileStream newFile = new FileStream(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Upload", filename), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                xs.Serialize(newFile, newReport);
+                newFile.Close();
+
+                response.Content = new StringContent("ok", System.Text.Encoding.UTF8, "text/plain");
+                return response;
+            }
+            catch
+            {
+#if DEBUG
+                throw;
+#else
+                response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
+                return response;
+#endif
+            }
         }
     }
 }
