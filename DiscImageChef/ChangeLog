@@ -1,3 +1,6 @@
+* Commands/DeviceReport.cs:
+  Added code to submit statistics.
+
 * ChangeLog:
   
 

@@ -109,7 +109,7 @@ namespace DiscImageChef.Commands
 
             if(Settings.Settings.Current.ShareReports)
             {
-                Remote.SubmitReport(xmlSer);
+                Remote.SubmitReport(report);
             }
         }
     }

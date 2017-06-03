@@ -130,7 +130,77 @@ namespace DiscImageChef.Core
 
         public static void SubmitStats()
         {
-            // TODO: Implement it
+            Thread submitThread = new Thread(() =>
+            {
+                if(submitStatsLock)
+                    return;
+                submitStatsLock = true;
+
+                var statsFiles = Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml", SearchOption.TopDirectoryOnly);
+
+                foreach(string statsFile in statsFiles)
+                {
+                    try
+                    {
+                        if(!File.Exists(statsFile))
+                            continue;
+
+                        Stats stats = new Stats();
+
+                        // This can execute before debug console has been inited
+#if DEBUG
+                        System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
+#else
+                    DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
+#endif
+
+                        FileStream fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
+                        XmlSerializer xs = new XmlSerializer(stats.GetType());
+                        stats = (Stats)xs.Deserialize(fs);
+                        fs.Seek(0, SeekOrigin.Begin);
+
+                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
+                        ((HttpWebRequest)request).UserAgent = string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                        request.Method = "POST";
+                        request.ContentLength = fs.Length;
+                        request.ContentType = "application/xml";
+                        Stream reqStream = request.GetRequestStream();
+                        fs.CopyTo(reqStream);
+                        reqStream.Close();
+                        WebResponse response = request.GetResponse();
+
+                        if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                            return;
+
+                        Stream data = response.GetResponseStream();
+                        StreamReader reader = new StreamReader(data);
+
+                        string responseFromServer = reader.ReadToEnd();
+                        data.Close();
+                        response.Close();
+                        fs.Close();
+                        if(responseFromServer == "ok")
+                            File.Delete(statsFile);
+                    }
+                    catch(WebException)
+                    {
+                        // Can't connect to the server, postpone til next try
+                        break;
+                    }
+                    catch
+                    {
+#if DEBUG
+                        submitStatsLock = false;
+                        throw;
+#else
+                        continue;
+#endif
+                    }
+                }
+
+                submitStatsLock = false;
+            });
+            submitThread.Start();
         }
 
         public static void AddCommand(string command)

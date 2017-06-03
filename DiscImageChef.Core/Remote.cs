@@ -35,13 +35,65 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
+using System.Threading;
+using System.IO;
+using System.Net;
+using DiscImageChef.Console;
+
 namespace DiscImageChef.Core
 {
     public static class Remote
     {
-        public static void SubmitReport(System.Xml.Serialization.XmlSerializer xmlSer)
+        public static void SubmitReport(Metadata.DeviceReport report)
         {
-            // TODO: Implement this
+            Thread submitThread = new Thread(() =>
+            {
+                try
+                {
+#if DEBUG
+                    System.Console.WriteLine("Uploading device report");
+#else
+                    DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
+#endif
+
+                    MemoryStream xmlStream = new MemoryStream();
+                    System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(Metadata.DeviceReport));
+                    xmlSer.Serialize(xmlStream, report);
+                    xmlStream.Seek(0, SeekOrigin.Begin);
+                    WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreport");
+                    ((HttpWebRequest)request).UserAgent = string.Format("DiscImageChef {0}", typeof(Version).Assembly.GetName().Version);
+                    request.Method = "POST";
+                    request.ContentLength = xmlStream.Length;
+                    request.ContentType = "application/xml";
+                    Stream reqStream = request.GetRequestStream();
+                    xmlStream.CopyTo(reqStream);
+                    reqStream.Close();
+                    WebResponse response = request.GetResponse();
+
+                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                        return;
+
+                    Stream data = response.GetResponseStream();
+                    StreamReader reader = new StreamReader(data);
+
+                    string responseFromServer = reader.ReadToEnd();
+                    data.Close();
+                    response.Close();
+                    xmlStream.Close();
+                }
+                catch(WebException)
+                {
+                    // Can't connect to the server, do nothing
+                    return;
+                }
+                catch
+                {
+#if DEBUG
+                    throw;
+#endif
+                }
+            });
+            submitThread.Start();
         }
     }
 }
