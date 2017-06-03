@@ -1,20 +1,5 @@
-* Main.cs:
-  Submit pending statistics on bootup.
-
-* Commands/Statistics.cs:
-  Call to statistics from metadata.
-
 * Commands/DeviceReport.cs:
-  Added code to submit statistics.
-
-* ChangeLog:
-  
-
-* ChangeLog:
-  
-
-* DiscImageChef.csproj:
-  Project file formatting.
+  Don't generate report files with '/', '\\' or '?' characters.
 
 2017-05-28  Natalia Portillo  <claunia@claunia.com>
 

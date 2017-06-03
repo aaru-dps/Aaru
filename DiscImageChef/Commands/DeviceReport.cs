@@ -80,6 +80,8 @@ namespace DiscImageChef.Commands
             else
                 xmlFile = dev.Model + ".xml";
 
+            xmlFile = xmlFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
@@ -87,10 +89,10 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    Core.Devices.Report.ATA.Report(dev, ref report, options.Debug, ref removable);
+                    Core.Devices.Report.SecureDigital.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.NVMe:
-                    Core.Devices.Report.ATA.Report(dev, ref report, options.Debug, ref removable);
+                    Core.Devices.Report.NVMe.Report(dev, ref report, options.Debug, ref removable);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
