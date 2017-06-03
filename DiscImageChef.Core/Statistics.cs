@@ -34,145 +34,32 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using DiscImageChef.Metadata;
+using System.Net;
+using DiscImageChef.Console;
+using System.Threading;
 
 namespace DiscImageChef.Core
 {
-    [XmlRoot("DicStats", Namespace = "", IsNullable = false)]
-    public class Stats
-    {
-        public CommandsStats Commands;
-        [XmlArrayItem("Filesystem")]
-        public List<NameValueStats> Filesystems;
-        [XmlArrayItem("Scheme")]
-        public List<NameValueStats> Partitions;
-        [XmlArrayItem("Format")]
-        public List<NameValueStats> MediaImages;
-        [XmlArrayItem("Filter", IsNullable = true)]
-        public List<NameValueStats> Filters;
-        [XmlArrayItem("Device", IsNullable = true)]
-        public List<DeviceStats> Devices;
-        [XmlArrayItem("Media")]
-        public List<MediaStats> Medias;
-        public BenchmarkStats Benchmark;
-        public MediaScanStats MediaScan;
-        public VerifyStats Verify;
-    }
-
-    public class CommandsStats
-    {
-        public long Analyze;
-        public long Benchmark;
-        public long Checksum;
-        public long Compare;
-        public long CreateSidecar;
-        public long Decode;
-        public long DeviceInfo;
-        public long DeviceReport;
-        public long DumpMedia;
-        public long Entropy;
-        public long Formats;
-        public long MediaInfo;
-        public long MediaScan;
-        public long PrintHex;
-        public long Verify;
-    }
-
-    public class VerifiedItems
-    {
-        public long Correct;
-        public long Failed;
-    }
-
-    public class VerifyStats
-    {
-        public VerifiedItems MediaImages;
-        public ScannedSectors Sectors;
-    }
-
-    public class ScannedSectors
-    {
-        public long Total;
-        public long Error;
-        public long Correct;
-        public long Unverifiable;
-    }
-
-    public class TimeStats
-    {
-        public long LessThan3ms;
-        public long LessThan10ms;
-        public long LessThan50ms;
-        public long LessThan150ms;
-        public long LessThan500ms;
-        public long MoreThan500ms;
-    }
-
-    public class MediaScanStats
-    {
-        public ScannedSectors Sectors;
-        public TimeStats Times;
-    }
-
-    public class ChecksumStats
-    {
-        [XmlAttribute]
-        public string algorithm;
-        [XmlText]
-        public double Value;
-    }
-
-    public class BenchmarkStats
-    {
-        [XmlElement("Checksum")]
-        public List<ChecksumStats> Checksum;
-        public double Entropy;
-        public double All;
-        public double Sequential;
-        public long MaxMemory;
-        public long MinMemory;
-    }
-
-    public class MediaStats
-    {
-        [XmlAttribute]
-        public bool real;
-        [XmlAttribute]
-        public string type;
-        [XmlText]
-        public long Value;
-    }
-
-    public class DeviceStats
-    {
-        public string Manufacturer;
-        public string Model;
-        public string Revision;
-        public string Bus;
-
-        [XmlIgnore]
-        public bool ManufacturerSpecified;
-    }
-
-    public class NameValueStats
-    {
-        [XmlAttribute]
-        public string name;
-        [XmlText]
-        public long Value;
-    }
-
     public static class Statistics
     {
         public static Stats AllStats;
         public static Stats CurrentStats;
+
+        static bool submitStatsLock;
 
         public static void LoadStats()
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats();
-
+                CurrentStats = new Stats()
+                {
+                    OperatingSystems = new List<NameValueStats>
+                    {
+                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    }
+                };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 AllStats = (Stats)xs.Deserialize(sr);
@@ -181,7 +68,13 @@ namespace DiscImageChef.Core
             else if(Settings.Settings.Current.Stats != null)
             {
                 AllStats = new Stats();
-                CurrentStats = new Stats();
+                CurrentStats = new Stats()
+                {
+                    OperatingSystems = new List<NameValueStats>
+                    {
+                        new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    }
+                };
             }
             else
             {
@@ -194,6 +87,27 @@ namespace DiscImageChef.Core
         {
             if(AllStats != null)
             {
+                if(AllStats.OperatingSystems != null)
+                {
+                    long count = 0;
+
+                    NameValueStats old = null;
+                    foreach(NameValueStats nvs in AllStats.OperatingSystems)
+                    {
+                        if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString())
+                        {
+                            count = nvs.Value;
+                            old = nvs;
+                            break;
+                        }
+                    }
+
+                    if(old != null)
+                        AllStats.OperatingSystems.Remove(old);
+
+                    count++;
+                    AllStats.OperatingSystems.Add(new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count });
+                }
                 FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"), FileMode.Create);
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 xs.Serialize(fs, AllStats);
