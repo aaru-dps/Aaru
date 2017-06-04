@@ -362,6 +362,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ == 0x00 && fxSense.Value.ILI && fxSense.Value.InformationValid)
                     {
                         blockSize = (uint)((int)blockSize - BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
+                        currentTapeFile.BlockSize = blockSize;
 
                         DicConsole.WriteLine();
                         DicConsole.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
@@ -460,7 +461,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 totalChkDuration += chkDuration;
 
                 if(currentBlock % 10 == 0)
-                    currentSpeed = ((double)2448 / (double)1048576) / (duration / (double)1000);
+                    currentSpeed = ((double)blockSize / (double)1048576) / (duration / (double)1000);
                 currentBlock++;
                 currentSize += blockSize;
                 currentFileSize += blockSize;
