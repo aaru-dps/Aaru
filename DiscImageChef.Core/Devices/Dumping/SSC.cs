@@ -276,6 +276,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             currentTapeFile.Image.Value = outputPrefix + ".bin";
             currentTapeFile.Sequence = (long)currentFile;
             currentTapeFile.StartBlock = (long)currentBlock;
+            currentTapeFile.BlockSize = blockSize;
             fileChk = new Checksum();
             currentTapePartition = new TapePartitionType();
             currentTapePartition.Image = new ImageType();
@@ -321,6 +322,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         currentTapeFile.Image.Value = outputPrefix + ".bin";
                         currentTapeFile.Sequence = (long)currentFile;
                         currentTapeFile.StartBlock = (long)currentBlock;
+                        currentTapeFile.BlockSize = blockSize;
                         currentFileSize = 0;
                         fileChk = new Checksum();
                         files = new List<TapeFileType>();
@@ -429,6 +431,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         currentTapeFile.Image.Value = outputPrefix + ".bin";
                         currentTapeFile.Sequence = (long)currentFile;
                         currentTapeFile.StartBlock = (long)currentBlock;
+                        currentTapeFile.BlockSize = blockSize;
                         currentFileSize = 0;
                         fileChk = new Checksum();
 
