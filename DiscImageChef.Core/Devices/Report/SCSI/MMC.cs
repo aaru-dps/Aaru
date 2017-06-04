@@ -1558,7 +1558,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)mediaTest.LongBlockSize, timeout, out duration);
                             if(!sense)
-                                DataFile.WriteTo("SCSI Report", "readlong10", "_debug_" + mediaTest.MediumTypeName + ".bin", "read results", buffer);
+                                DataFile.WriteTo("SCSI Report", "readlong10", "_debug_" + report.SCSI.Inquiry.ProductIdentification + "_" + mediaType + ".bin", "read results", buffer);
                         }
                     }
                     mediaTests.Add(mediaTest);
