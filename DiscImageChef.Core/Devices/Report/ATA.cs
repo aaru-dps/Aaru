@@ -646,6 +646,12 @@ namespace DiscImageChef.Core.Devices.Report
                                     mediaTest.LongBlockSizeSpecified = true;
                                 }
 
+                                if(ataId.UnformattedBPS > logicalsectorsize && (!mediaTest.LongBlockSizeSpecified || mediaTest.LongBlockSize == 516))
+                                {
+                                    mediaTest.LongBlockSize = ataId.UnformattedBPS;
+                                    mediaTest.LongBlockSizeSpecified = true;
+                                }
+
                                 if(ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeSet) &&
                                 !ataId.CommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MustBeClear) &&
                                 ataId.EnabledCommandSet3.HasFlag(Decoders.ATA.Identify.CommandSetBit3.MediaSerial))
@@ -937,6 +943,12 @@ namespace DiscImageChef.Core.Devices.Report
                     if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                     {
                         report.ATA.ReadCapabilities.LongBlockSize = logicalsectorsize + ataId.EccBytes;
+                        report.ATA.ReadCapabilities.LongBlockSizeSpecified = true;
+                    }
+
+                    if(ataId.UnformattedBPS > logicalsectorsize && (!report.ATA.ReadCapabilities.LongBlockSizeSpecified || report.ATA.ReadCapabilities.LongBlockSize == 516))
+                    {
+                        report.ATA.ReadCapabilities.LongBlockSize = ataId.UnformattedBPS;
                         report.ATA.ReadCapabilities.LongBlockSizeSpecified = true;
                     }
 
