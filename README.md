@@ -1,11 +1,13 @@
-DiscImageChef v3.1.0.0
-======================
+DiscImageChef v3.4.99.0
+=======================
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
 Copyright © 2011-2017 Natalia Portillo <claunia@claunia.com>
 
 [![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
+
+You can see statistics and device reports at http://discimagechef.claunia.com
 
 Usage
 =====

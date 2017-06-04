@@ -1,7 +1,10 @@
-# [4.0.0.0-beta] - 2017-05-19
+# [4.0.0.0-beta] - 2017-06-04
 ## Added
 ### - Create Sidecar command
 - Use dump drive information from images that support it.
+
+### - Decoders
+- Xbox DMI
 
 ### - Devices
 - MMC
@@ -35,6 +38,10 @@
 
 ### - DiskCopy 4.2 disk image
 - Use resource fork to get DiskCopy version used to create them.
+
+### - Dumping
+- Raw dump of DVD with Matshita recorders
+- XGD with Kreon drives
 
 ### - Filesystems
 - Apple DOS.
@@ -81,6 +88,7 @@
 - IOMEGA Clik! (aka PocketZip)
 - NEC floppies.
 - SHARP floppies.
+- XGD3
 
 ### - Partitions
 - Acorn FileCore.
@@ -92,6 +100,9 @@
 - Rio Karma.
 - SGI Disk Volume Headers.
 - UNIX disklabels.
+
+### - Statistics
+- Added version and operating system statistics.
 
 ## Fixes
 ### - AmigaDOS filesystem
@@ -106,11 +117,20 @@
 - CD+G data return.
 - Prevent reading binary files.
 
+### - Device reports
+- Call ATA READ LONG last, as it confuses some drives
+- Try SCSI READ LONG (10) until max block size (65535)
+
 ### - DiskCopy 4.2
 - Track order for Lisa and Macintosh Twiggy
 
 ### - Dreamcast GDI images
 - Prevent reading binary files.
+
+### - Dumping
+- Streaming Devices now store block size changes in metadata sidecar.
+- Calculation of streaming device dumping speed.
+- Optical media with 2048 bytes/sector now get ".iso" file extension.
 
 ### - FAT filesystem
 - Behaviour with some non-compliant media descriptors.
@@ -123,6 +143,10 @@
 
 ### - ProDOS filesystem
 - Volume size.
+
+### - SCSI decoding
+- Handling of modes 02h and 04h smaller than expected.
+- Handling of EVPDs smaller than length field.
 
 ## Changes
 - Added a public changelog.

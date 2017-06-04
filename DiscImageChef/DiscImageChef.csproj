@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>DiscImageChef</RootNamespace>
     <AssemblyName>DiscImageChef</AssemblyName>
-    <ReleaseVersion>3.3.99.0</ReleaseVersion>
+    <ReleaseVersion>3.4.99.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -83,7 +83,7 @@
             <inheritsScope />
           </VersionControlPolicy>
           <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="RequireEntry">
-            <MessageStyle LastFilePostfix=":&#xA;  " LineAlign="2" IncludeDirectoryPaths="True" />
+            <MessageStyle Header="" Indent="" LastFilePostfix=":&#xA;  " LineAlign="2" IncludeDirectoryPaths="True" />
             <inheritsSet />
             <inheritsScope />
           </ChangeLogPolicy>

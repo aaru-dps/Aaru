@@ -266,6 +266,6 @@ Global
 		$31.IncludeDirectoryPaths = True
 		$31.LineAlign = 0
 		description = The Disc Image Chef.
-		version = 3.3.99.0
+		version = 3.4.99.0
 	EndGlobalSection
 EndGlobal

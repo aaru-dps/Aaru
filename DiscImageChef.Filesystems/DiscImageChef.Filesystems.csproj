@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Filesystems</RootNamespace>
     <AssemblyName>DiscImageChef.Filesystems</AssemblyName>
-    <ReleaseVersion>3.3.99.0</ReleaseVersion>
+    <ReleaseVersion>3.4.99.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

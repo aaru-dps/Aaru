@@ -10,8 +10,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Server</RootNamespace>
     <AssemblyName>DiscImageChef.Server</AssemblyName>
-    <ReleaseVersion>3.3.99.0</ReleaseVersion>
+    <ReleaseVersion>3.4.99.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

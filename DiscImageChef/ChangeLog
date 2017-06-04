@@ -1,3 +1,7 @@
+* AssemblyInfo.cs:
+* DiscImageChef.csproj:
+  Version bumped to 3.4.99.0.
+
 * Commands/ExtractFiles.cs:
   Store and show statistics for "ls" and "extract-files" commands.
 

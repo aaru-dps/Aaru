@@ -1,5 +1,10 @@
 2017-06-04  Natalia Portillo  <claunia@claunia.com>
 
+	* AssemblyInfo.cs:
+	* DiscImageChef.Server.csproj: Version bumped to 3.4.99.0.
+
+2017-06-04  Natalia Portillo  <claunia@claunia.com>
+
 	* Default.aspx:
 	* Default.aspx.cs:
 	* Default.aspx.designer.cs:
