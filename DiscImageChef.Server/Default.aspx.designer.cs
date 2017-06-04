@@ -49,7 +49,11 @@ namespace DiscImageChef.Server {
 		
 		protected System.Web.UI.WebControls.Label lblEntropy;
 		
+		protected System.Web.UI.WebControls.Label lblExtractFiles;
+		
 		protected System.Web.UI.WebControls.Label lblFormats;
+		
+		protected System.Web.UI.WebControls.Label lblLs;
 		
 		protected System.Web.UI.WebControls.Label lblMediaInfo;
 		

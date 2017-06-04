@@ -1,5 +1,13 @@
 2017-06-04  Natalia Portillo  <claunia@claunia.com>
 
+	* Default.aspx:
+	* Default.aspx.cs:
+	* Default.aspx.designer.cs:
+	* UploadStatsController.cs: Store and show statistics for "ls"
+	and "extract-files" commands.
+
+2017-06-04  Natalia Portillo  <claunia@claunia.com>
+
 	* UploadStatsController.cs: Added support for versions.
 
 2017-06-03  Natalia Portillo  <claunia@claunia.com>

@@ -72,7 +72,9 @@ namespace DiscImageChef.Metadata
         public long DeviceReport;
         public long DumpMedia;
         public long Entropy;
+        public long ExtractFiles;
         public long Formats;
+        public long Ls;
         public long MediaInfo;
         public long MediaScan;
         public long PrintHex;

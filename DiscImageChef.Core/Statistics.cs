@@ -290,7 +290,15 @@ namespace DiscImageChef.Core
                         AllStats.Commands.Entropy++;
                         CurrentStats.Commands.Entropy++;
                         break;
+                    case "extract-files":
+                        AllStats.Commands.Entropy++;
+                        CurrentStats.Commands.Entropy++;
+                        break;
                     case "formats":
+                        AllStats.Commands.Formats++;
+                        CurrentStats.Commands.Formats++;
+                        break;
+                    case "ls":
                         AllStats.Commands.Formats++;
                         CurrentStats.Commands.Formats++;
                         break;

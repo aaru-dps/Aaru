@@ -1,3 +1,6 @@
+* Commands/ExtractFiles.cs:
+  Store and show statistics for "ls" and "extract-files" commands.
+
 * Commands/DeviceReport.cs:
   Don't generate report files with '/', '\\' or '?' characters.
 

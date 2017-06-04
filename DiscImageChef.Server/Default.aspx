@@ -47,7 +47,9 @@
 		            <i>device-report</i> command has been run <asp:Label id="lblDeviceReport" runat="server"/> times<br/>
 		            <i>dump-media</i> command has been run <asp:Label id="lblDumpMedia" runat="server"/> times<br/>
 		            <i>entropy</i> command has been run <asp:Label id="lblEntropy" runat="server"/> times<br/>
+                    <i>extract-files</i> command has been run <asp:Label id="lblExtractFiles" runat="server"/> times<br/>
 		            <i>formats</i> command has been run <asp:Label id="lblFormats" runat="server"/> times<br/>
+                    <i>ls</i> command has been run <asp:Label id="lblLs" runat="server"/> times<br/>
 		            <i>media-info</i> command has been run <asp:Label id="lblMediaInfo" runat="server"/> times<br/>
 		            <i>media-scan</i> command has been run <asp:Label id="lblMediaScan" runat="server"/> times<br/>
 		            <i>printhex</i> command has been run <asp:Label id="lblPrintHex" runat="server"/> times<br/>

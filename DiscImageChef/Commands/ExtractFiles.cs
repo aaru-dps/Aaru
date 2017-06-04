@@ -379,7 +379,7 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
             }
 
-            Core.Statistics.AddCommand("ls");
+            Core.Statistics.AddCommand("extract-files");
         }
     }
 }

@@ -107,6 +107,8 @@ namespace DiscImageChef.Server.Controllers
                         oldStats.Commands.MediaScan += newStats.Commands.MediaScan;
                         oldStats.Commands.PrintHex += newStats.Commands.PrintHex;
                         oldStats.Commands.Verify += newStats.Commands.Verify;
+                        oldStats.Commands.Ls += newStats.Commands.Ls;
+                        oldStats.Commands.ExtractFiles += newStats.Commands.ExtractFiles;
                     }
                 }
 

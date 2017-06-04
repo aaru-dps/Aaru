@@ -103,6 +103,8 @@ namespace DiscImageChef.Server
                     lblCreateSidecar.Text = statistics.Commands.CreateSidecar.ToString();
                     lblDumpMedia.Text = statistics.Commands.DumpMedia.ToString();
                     lblDeviceReport.Text = statistics.Commands.DeviceReport.ToString();
+                    lblLs.Text = statistics.Commands.Ls.ToString();
+                    lblExtractFiles.Text = statistics.Commands.ExtractFiles.ToString();
                 }
                 else
                     divCommands.Visible = false;
