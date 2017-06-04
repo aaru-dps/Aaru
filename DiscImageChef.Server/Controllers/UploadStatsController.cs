@@ -173,6 +173,69 @@ namespace DiscImageChef.Server.Controllers
                     }
                 }
 
+                if(newStats.Versions != null)
+                {
+                    if(oldStats.Versions == null)
+                        oldStats.Versions = newStats.Versions;
+                    else
+                    {
+                        foreach(NameValueStats newNvs in newStats.Versions)
+                        {
+                            NameValueStats removeNvs = null;
+                            NameValueStats addNvs = null;
+
+                            foreach(NameValueStats oldNvs in oldStats.Versions)
+                            {
+                                if(oldNvs.name == newNvs.name)
+                                {
+                                    addNvs = new NameValueStats { name = oldNvs.name, Value = oldNvs.Value + newNvs.Value };
+                                    removeNvs = oldNvs;
+                                    break;
+                                }
+                            }
+
+                            if(removeNvs != null && addNvs != null)
+                            {
+                                oldStats.Versions.Remove(removeNvs);
+                                oldStats.Versions.Add(addNvs);
+                            }
+                            else
+                                oldStats.Versions.Add(newNvs);
+                        }
+                    }
+                }
+                else
+                {
+                    if(oldStats.Versions == null)
+                        oldStats.Versions = new System.Collections.Generic.List<NameValueStats>
+                        {
+                            new NameValueStats { name = "previous", Value = 1 }
+                        };
+                    else
+                    {
+                        NameValueStats removeNvs = null;
+                        NameValueStats addNvs = null;
+
+                        foreach(NameValueStats oldNvs in oldStats.Versions)
+                        {
+                            if(oldNvs.name == "previous")
+                            {
+                                addNvs = new NameValueStats { name = oldNvs.name, Value = oldNvs.Value + 1 };
+                                removeNvs = oldNvs;
+                                break;
+                            }
+                        }
+
+                        if(removeNvs != null && addNvs != null)
+                        {
+                            oldStats.Versions.Remove(removeNvs);
+                            oldStats.Versions.Add(addNvs);
+                        }
+                        else
+                            oldStats.Versions.Add(new NameValueStats { name = "previous", Value = 1 });
+                    }
+                }
+
                 if(newStats.Filesystems != null)
                 {
                     if(oldStats.Filesystems == null)
