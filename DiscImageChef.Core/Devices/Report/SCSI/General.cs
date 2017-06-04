@@ -582,7 +582,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                     if(pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        for(ushort i = (ushort)mediaTest.BlockSize; i < (ushort)mediaTest.BlockSize * 144; i++)
+                                        for(ushort i = (ushort)mediaTest.BlockSize; i <= ushort.MaxValue; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
@@ -592,6 +592,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                 mediaTest.LongBlockSizeSpecified = true;
                                                 break;
                                             }
+
+                                            if(i == ushort.MaxValue)
+                                                break;
                                         }
                                         DicConsole.WriteLine();
                                     }
@@ -799,7 +802,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                         if(pressedKey.Key == ConsoleKey.Y)
                         {
-                            for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i < (ushort)report.SCSI.ReadCapabilities.BlockSize * 144; i++)
+                            for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize; i <= ushort.MaxValue; i++)
                             {
                                 DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i, timeout, out duration);
@@ -815,6 +818,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
                                     break;
                                 }
+
+                                if(i == ushort.MaxValue)
+                                    break;
                             }
                             DicConsole.WriteLine();
                         }
