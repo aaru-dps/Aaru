@@ -40,6 +40,8 @@ namespace DiscImageChef.Metadata
     {
         [XmlArrayItem("OperatingSystem")]
         public List<NameValueStats> OperatingSystems { get; set; }
+        [XmlArrayItem("Version")]
+        public List<NameValueStats> Versions { get; set; }
         public CommandsStats Commands;
         [XmlArrayItem("Filesystem")]
         public List<NameValueStats> Filesystems { get; set; }

@@ -34,6 +34,7 @@ namespace DiscImageChef.Server
         List<MediaItem> virtualMedia;
         List<NameValueStats> operatingSystems;
         List<DeviceItem> devices;
+        List<NameValueStats> versions;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -68,6 +69,22 @@ namespace DiscImageChef.Server
                 }
                 else
                     divOperatingSystems.Visible = false;
+
+                if(statistics.Versions != null)
+                {
+                    versions = new List<NameValueStats>();
+                    foreach(NameValueStats nvs in statistics.Versions)
+                    {
+                        if(nvs.name == "previous")
+                            versions.Add(new NameValueStats { name = "Previous than 3.4.99.0", Value = nvs.Value });
+                        else
+                            versions.Add(nvs);
+                    }
+                    repVersions.DataSource = versions.OrderBy(ver => ver.name).ToList();
+                    repVersions.DataBind();
+                }
+                else
+                    divVersions.Visible = false;
 
                 if(statistics.Commands != null)
                 {

@@ -10,6 +10,30 @@
     <h1 align="center">Welcome to <i><a href="http://github.com/claunia/discimagechef" target="_blank">DiscImageChef</a></i> Server version <asp:Label id="lblVersion" runat="server"/></h1>
     <br/>
 	<div id="content" runat="server">
+            <div id="divOperatingSystems" runat="server">
+                <table>
+                    <asp:Repeater id="repOperatingSystems" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td>DiscImageChef has run on <i><asp:Label runat="server" Text='<%# Eval("name") %>' /></i> <asp:Label runat="server" Text='<%# Eval("Value") %>' /> times.</td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </table>
+                <br/>
+            </div>
+            <div id="divVersions" runat="server">
+                <table>
+                    <asp:Repeater id="repVersions" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td>DiscImageChef version <i><asp:Label runat="server" Text='<%# Eval("name") %>' /></i> has been used <asp:Label runat="server" Text='<%# Eval("Value") %>' /> times.</td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </table>
+                <br/>
+            </div>
 			<div id="divCommands" runat="server">
 				<h4>Commands run:</h4>
                 <p>
@@ -30,18 +54,6 @@
 		            <i>verify</i> command has been run <asp:Label id="lblVerify" runat="server"/> times
 				</p>
             </div>
-			<div id="divOperatingSystems" runat="server">
-				<table>
-					<asp:Repeater id="repOperatingSystems" runat="server">
-						<ItemTemplate>
-							<tr>
-								<td>DiscImageChef has run on <i><asp:Label runat="server" Text='<%# Eval("name") %>' /></i> <asp:Label runat="server" Text='<%# Eval("Value") %>' /> times.</td>
-							</tr>
-						</ItemTemplate>
-					</asp:Repeater>
-			    </table>
-				<br/>
-			</div>
             <div id="divFilters" runat="server">
                 <h3>Filters found:</h3>
                 <table align="center" border="1">

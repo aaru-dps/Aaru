@@ -52,5 +52,10 @@ namespace DiscImageChef.Core
                 Version = typeof(Version).Assembly.GetName().Version.ToString()
             };
         }
+
+        public static string GetVersion()
+        {
+            return typeof(Version).Assembly.GetName().Version.ToString();
+        }
     }
 }

@@ -58,6 +58,10 @@ namespace DiscImageChef.Core
                     OperatingSystems = new List<NameValueStats>
                     {
                         new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    },
+                    Versions = new List<NameValueStats>
+                    {
+                        new NameValueStats{ name = Version.GetVersion(), Value = 1 } 
                     }
                 };
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
@@ -73,6 +77,10 @@ namespace DiscImageChef.Core
                     OperatingSystems = new List<NameValueStats>
                     {
                         new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = 1 }
+                    },
+                    Versions = new List<NameValueStats>
+                    {
+                        new NameValueStats{ name = Version.GetVersion(), Value = 1 }
                     }
                 };
             }
@@ -96,7 +104,7 @@ namespace DiscImageChef.Core
                     {
                         if(nvs.name == Interop.DetectOS.GetRealPlatformID().ToString())
                         {
-                            count = nvs.Value;
+                            count = nvs.Value + 1;
                             old = nvs;
                             break;
                         }
@@ -108,6 +116,33 @@ namespace DiscImageChef.Core
                     count++;
                     AllStats.OperatingSystems.Add(new NameValueStats { name = Interop.DetectOS.GetRealPlatformID().ToString(), Value = count });
                 }
+                else if(CurrentStats != null)
+                    AllStats.OperatingSystems = CurrentStats.OperatingSystems;
+
+                if(AllStats.Versions != null)
+                {
+                    long count = 0;
+
+                    NameValueStats old = null;
+                    foreach(NameValueStats nvs in AllStats.Versions)
+                    {
+                        if(nvs.name == Version.GetVersion())
+                        {
+                            count = nvs.Value + 1;
+                            old = nvs;
+                            break;
+                        }
+                    }
+
+                    if(old != null)
+                        AllStats.Versions.Remove(old);
+
+                    count++;
+                    AllStats.Versions.Add(new NameValueStats { name = Version.GetVersion(), Value = count });
+                }
+                else if(CurrentStats != null)
+                    AllStats.Versions = CurrentStats.Versions;
+                
                 FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"), FileMode.Create);
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 xs.Serialize(fs, AllStats);

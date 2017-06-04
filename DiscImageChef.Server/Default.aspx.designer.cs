@@ -19,6 +19,14 @@ namespace DiscImageChef.Server {
 		
 		protected System.Web.UI.HtmlControls.HtmlGenericControl content;
 		
+		protected System.Web.UI.HtmlControls.HtmlGenericControl divOperatingSystems;
+		
+		protected System.Web.UI.WebControls.Repeater repOperatingSystems;
+		
+		protected System.Web.UI.HtmlControls.HtmlGenericControl divVersions;
+		
+		protected System.Web.UI.WebControls.Repeater repVersions;
+		
 		protected System.Web.UI.HtmlControls.HtmlGenericControl divCommands;
 		
 		protected System.Web.UI.WebControls.Label lblAnalyze;
@@ -50,10 +58,6 @@ namespace DiscImageChef.Server {
 		protected System.Web.UI.WebControls.Label lblPrintHex;
 		
 		protected System.Web.UI.WebControls.Label lblVerify;
-		
-		protected System.Web.UI.HtmlControls.HtmlGenericControl divOperatingSystems;
-		
-		protected System.Web.UI.WebControls.Repeater repOperatingSystems;
 		
 		protected System.Web.UI.HtmlControls.HtmlGenericControl divFilters;
 		
