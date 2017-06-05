@@ -108,6 +108,16 @@ namespace DiscImageChef.Server.App_Start
                     mediaOneValue.Add(string.Format("Medium size in CHS mode: {0} bytes, {1} Mb, {2:F2} MiB", (ulong)currentSectors * testedMedia.BlockSize,
                         ((ulong)currentSectors * testedMedia.BlockSize) / 1000 / 1000, (double)((ulong)currentSectors * testedMedia.BlockSize) / 1024 / 1024));
                 }
+                else if(testedMedia.CHS != null)
+                {
+                    int currentSectors = testedMedia.CHS.Cylinders * testedMedia.CHS.Heads * testedMedia.CHS.Sectors;
+                    mediaOneValue.Add(string.Format("Cylinders: {0}", testedMedia.CHS.Cylinders));
+                    mediaOneValue.Add(string.Format("Heads: {0}", testedMedia.CHS.Heads));
+                    mediaOneValue.Add(string.Format("Sectors per track: {0}", testedMedia.CHS.Sectors));
+                    mediaOneValue.Add(string.Format("Sectors addressable in CHS mode: {0}", currentSectors));
+                    mediaOneValue.Add(string.Format("Medium size in CHS mode: {0} bytes, {1} Mb, {2:F2} MiB", (ulong)currentSectors * testedMedia.BlockSize,
+                        ((ulong)currentSectors * testedMedia.BlockSize) / 1000 / 1000, (double)((ulong)currentSectors * testedMedia.BlockSize) / 1024 / 1024));
+                }
 
                 if(testedMedia.LBASectorsSpecified)
                 {

@@ -1673,6 +1673,7 @@ ataReport.CommandSet3.HasFlag(CommandSetBit3.Streaming))
             if(ataReport.ReadCapabilities != null)
             {
                 removable = false;
+                ataOneValue.Add("");
 
                 if(ataReport.ReadCapabilities.NominalRotationRateSpecified &&
                    ataReport.ReadCapabilities.NominalRotationRate != 0x0000 &&
@@ -1707,7 +1708,7 @@ ataReport.CommandSet3.HasFlag(CommandSetBit3.Streaming))
                     }
 
                     if(ataReport.ReadCapabilities.CHS != null &&
-ataReport.ReadCapabilities.CurrentCHS != null)
+                       ataReport.ReadCapabilities.CurrentCHS != null)
                     {
                         int currentSectors = ataReport.ReadCapabilities.CurrentCHS.Cylinders * ataReport.ReadCapabilities.CurrentCHS.Heads * ataReport.ReadCapabilities.CurrentCHS.Sectors;
                         ataTwoValue.Add("Cylinders", string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Cylinders, ataReport.ReadCapabilities.CurrentCHS.Cylinders));
@@ -1715,6 +1716,16 @@ ataReport.ReadCapabilities.CurrentCHS != null)
                         ataTwoValue.Add("Sectors per track", string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Sectors, ataReport.ReadCapabilities.CurrentCHS.Sectors));
                         ataTwoValue.Add("Sectors addressable in CHS mode", string.Format("{0} max., {1} current", ataReport.ReadCapabilities.CHS.Cylinders * ataReport.ReadCapabilities.CHS.Heads * ataReport.ReadCapabilities.CHS.Sectors,
                                                                                          currentSectors));
+                        ataTwoValue.Add("Device size in CHS mode", string.Format("{0} bytes, {1} Mb, {2:F2} MiB", (ulong)currentSectors * logicalsectorsize,
+                            ((ulong)currentSectors * logicalsectorsize) / 1000 / 1000, (double)((ulong)currentSectors * logicalsectorsize) / 1024 / 1024));
+                    }
+                    else if(ataReport.ReadCapabilities.CHS != null)
+                    {
+                        int currentSectors = ataReport.ReadCapabilities.CHS.Cylinders * ataReport.ReadCapabilities.CHS.Heads * ataReport.ReadCapabilities.CHS.Sectors;
+                        ataTwoValue.Add("Cylinders", string.Format("{0}", ataReport.ReadCapabilities.CHS.Cylinders));
+                        ataTwoValue.Add("Heads", string.Format("{0}", ataReport.ReadCapabilities.CHS.Heads));
+                        ataTwoValue.Add("Sectors per track", string.Format("{0}", ataReport.ReadCapabilities.CHS.Sectors));
+                        ataTwoValue.Add("Sectors addressable in CHS mode", string.Format("{0}", currentSectors));
                         ataTwoValue.Add("Device size in CHS mode", string.Format("{0} bytes, {1} Mb, {2:F2} MiB", (ulong)currentSectors * logicalsectorsize,
                             ((ulong)currentSectors * logicalsectorsize) / 1000 / 1000, (double)((ulong)currentSectors * logicalsectorsize) / 1024 / 1024));
                     }

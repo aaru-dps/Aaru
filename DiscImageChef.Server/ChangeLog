@@ -1,6 +1,12 @@
 2017-06-05  Natalia Portillo  <claunia@claunia.com>
 
 	* Ata.cs:
+	* TestedMedia.cs: Add support for showing devices without
+	current CHS.
+
+2017-06-05  Natalia Portillo  <claunia@claunia.com>
+
+	* Ata.cs:
 	* ViewReport.aspx.cs:
 	* TestedMedia.cs: Use decimal point for SI units otherwise it
 	seems much smaller.
