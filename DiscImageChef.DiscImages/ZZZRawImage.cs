@@ -708,6 +708,8 @@ namespace DiscImageChef.ImagePlugins
 						return MediaType.PocketZip;
                     case 127923200:
                         return MediaType.ECMA_154;
+					case 201410560:
+						return MediaType.HiFD;
                     case 229632000:
                         return MediaType.ECMA_201;
                     case 481520640:
