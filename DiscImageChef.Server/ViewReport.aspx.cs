@@ -351,6 +351,8 @@ namespace DiscImageChef.Server
                     else if(report.SCSI.ReadCapabilities != null)
                     {
                         removable = false;
+                        scsiOneValue.Add("");
+
                         if(report.SCSI.ReadCapabilities.BlocksSpecified && report.SCSI.ReadCapabilities.BlockSizeSpecified)
                         {
                             scsiOneValue.Add(string.Format("Device has {0} blocks of {1} bytes each", report.SCSI.ReadCapabilities.Blocks, report.SCSI.ReadCapabilities.BlockSize));

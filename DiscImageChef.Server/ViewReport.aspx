@@ -48,6 +48,7 @@
                     <i><asp:Label runat="server" Text='<%# Eval("key") %>' /></i>: <asp:Label runat="server" Text='<%# Eval("value") %>' /><br/>
                 </ItemTemplate>
             </asp:Repeater>
+			<br/>
             <asp:Repeater ID="repAtaOne" runat="server">
                 <ItemTemplate>
                     <%# Container.DataItem?.ToString() ?? string.Empty%><br/>

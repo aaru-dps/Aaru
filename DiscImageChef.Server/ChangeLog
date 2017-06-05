@@ -1,5 +1,10 @@
 2017-06-05  Natalia Portillo  <claunia@claunia.com>
 
+	* ViewReport.aspx:
+	* ViewReport.aspx.cs: Add a newline before read capabilities.
+
+2017-06-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Ata.cs:
 	* TestedMedia.cs: Add support for showing devices without
 	current CHS.
