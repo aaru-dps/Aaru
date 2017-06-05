@@ -770,7 +770,7 @@ namespace DiscImageChef.Metadata
                     return dmns;
                 case CommonTypes.MediaType.MLR1:
                 case CommonTypes.MediaType.MLR3:
-                case CommonTypes.MediaType.MRL1SL:
+                case CommonTypes.MediaType.MLR1SL:
                     dmns.Height = 101.6;
                     dmns.HeightSpecified = true;
                     dmns.Width = 152.4;
