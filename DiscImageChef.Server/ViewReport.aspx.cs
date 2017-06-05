@@ -357,18 +357,18 @@ namespace DiscImageChef.Server
 
                             if(((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024) > 1000000)
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Tb, {2} TiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000 / 1000, (report.SCSI.ReadCapabilities.Blocks * 512) / 1024 / 1024 / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Tb, {2:F2} TiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
+                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024 / 1024));
                             }
                             else if(((report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024) > 1000)
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Gb, {2} GiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000, (report.SCSI.ReadCapabilities.Blocks * 512) / 1024 / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Gb, {2:F2} GiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
+                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024 / 1024));
                             }
                             else
                             {
-                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Mb, {2} MiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
-                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000, (report.SCSI.ReadCapabilities.Blocks * 512) / 1024 / 1024));
+                                scsiOneValue.Add(string.Format("Device size: {0} bytes, {1} Mb, {2:F2} MiB", report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize,
+                                    (report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1000 / 1000, (double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024));
                             }
                         }
 

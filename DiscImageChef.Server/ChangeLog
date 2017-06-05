@@ -1,5 +1,12 @@
 2017-06-05  Natalia Portillo  <claunia@claunia.com>
 
+	* Ata.cs:
+	* ViewReport.aspx.cs:
+	* TestedMedia.cs: Use decimal point for SI units otherwise it
+	seems much smaller.
+
+2017-06-05  Natalia Portillo  <claunia@claunia.com>
+
 	* Default.aspx.cs:
 	* UploadStatsController.cs: 
 

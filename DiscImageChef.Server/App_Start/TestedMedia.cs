@@ -82,18 +82,18 @@ namespace DiscImageChef.Server.App_Start
 
                     if(((testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024) > 1000000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Tb, {2} TiB", testedMedia.Blocks * testedMedia.BlockSize,
-                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, (testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Tb, {2:F2} TiB", testedMedia.Blocks * testedMedia.BlockSize,
+                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
                     }
                     else if(((testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024) > 1000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Gb, {2} GiB", testedMedia.Blocks * testedMedia.BlockSize,
-                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000 / 1000, (testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Gb, {2:F2} GiB", testedMedia.Blocks * testedMedia.BlockSize,
+                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000 / 1000, (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024 / 1024));
                     }
                     else
                     {
-                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Mb, {2} MiB", testedMedia.Blocks * testedMedia.BlockSize,
-                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000, (testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size: {0} bytes, {1} Mb, {2:F2} MiB", testedMedia.Blocks * testedMedia.BlockSize,
+                            (testedMedia.Blocks * testedMedia.BlockSize) / 1000 / 1000, (double)(testedMedia.Blocks * testedMedia.BlockSize) / 1024 / 1024));
                     }
                 }
 
@@ -105,8 +105,8 @@ namespace DiscImageChef.Server.App_Start
                     mediaOneValue.Add(string.Format("Sectors per track: {0} max., {1} current", testedMedia.CHS.Sectors, testedMedia.CurrentCHS.Sectors));
                     mediaOneValue.Add(string.Format("Sectors addressable in CHS mode: {0} max., {1} current", testedMedia.CHS.Cylinders * testedMedia.CHS.Heads * testedMedia.CHS.Sectors,
                                                                                      currentSectors));
-                    mediaOneValue.Add(string.Format("Medium size in CHS mode: {0} bytes, {1} Mb, {2} MiB", (ulong)currentSectors * testedMedia.BlockSize,
-                        ((ulong)currentSectors * testedMedia.BlockSize) / 1000 / 1000, ((ulong)currentSectors * testedMedia.BlockSize) / 1024 / 1024));
+                    mediaOneValue.Add(string.Format("Medium size in CHS mode: {0} bytes, {1} Mb, {2:F2} MiB", (ulong)currentSectors * testedMedia.BlockSize,
+                        ((ulong)currentSectors * testedMedia.BlockSize) / 1000 / 1000, (double)((ulong)currentSectors * testedMedia.BlockSize) / 1024 / 1024));
                 }
 
                 if(testedMedia.LBASectorsSpecified)
@@ -115,18 +115,18 @@ namespace DiscImageChef.Server.App_Start
 
                     if((((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024) > 1000000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Tb, {2} TiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
-                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Tb, {2:F2} TiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
+                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, (double)((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
                     }
                     else if((((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024) > 1000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Gb, {2} GiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
-                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000 / 1000, ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Gb, {2:F2} GiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
+                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000 / 1000, (double)((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024 / 1024));
                     }
                     else
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Mb, {2} MiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
-                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000, ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 28-bit LBA mode: {0} bytes, {1} Mb, {2:F2} MiB", (ulong)testedMedia.LBASectors * testedMedia.BlockSize,
+                            ((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1000 / 1000, (double)((ulong)testedMedia.LBASectors * testedMedia.BlockSize) / 1024 / 1024));
                     }
                 }
 
@@ -136,18 +136,18 @@ namespace DiscImageChef.Server.App_Start
 
                     if(((testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024) > 1000000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
-                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Tb, {2:F2} TiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
+                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000 / 1000 / 1000, (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024 / 1024 / 1024));
                     }
                     else if(((testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024) > 1000)
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
-                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000 / 1000, (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Gb, {2:F2} GiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
+                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000 / 1000, (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024 / 1024));
                     }
                     else
                     {
-                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
-                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000, (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024));
+                        mediaOneValue.Add(string.Format("Medium size in 48-bit LBA mode: {0} bytes, {1} Mb, {2:F2} MiB", testedMedia.LBA48Sectors * testedMedia.BlockSize,
+                            (testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1000 / 1000, (double)(testedMedia.LBA48Sectors * testedMedia.BlockSize) / 1024 / 1024));
                     }
                 }
 
