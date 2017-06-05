@@ -83,7 +83,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Not in BOM/P
-            if(fxSense.HasValue && fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04)
+            if(fxSense.HasValue && fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.SenseKey != Decoders.SCSI.SenseKeys.IllegalRequest)
             {
                 DicConsole.Write("Rewinding, please wait...");
                 // Rewind, let timeout apply
@@ -122,7 +122,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // READ POSITION is mandatory starting SCSI-2, so do not cry if the drive does not recognize the command (SCSI-1 or earlier)
                 // Anyway, <=SCSI-1 tapes do not support partitions
                 fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
-                if(fxSense.HasValue && ((fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00) || fxSense.Value.ASC != 0x20))
+
+                if(fxSense.HasValue && ((fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ != 0x00) || fxSense.Value.ASC != 0x20 && fxSense.Value.SenseKey != Decoders.SCSI.SenseKeys.IllegalRequest))
                 {
                     DicConsole.ErrorWriteLine("Could not get position. Sense follows...");
                     DicConsole.ErrorWriteLine("{0}", strSense);
@@ -237,7 +238,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                blockSize = decMode.Value.Header.BlockDescriptors[0].BlockLength;
             }
+            else
+                blockSize = 1;
 
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromSCSI.Get((byte)dev.SCSIType, dev.Manufacturer, dev.Model, scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize);
@@ -249,10 +253,73 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong currentFile = 0;
             byte currentPartition = 0;
             byte totalPartitions = 1; // TODO: Handle partitions.
-            blockSize = 1;
             ulong currentSize = 0;
             ulong currentPartitionSize = 0;
             ulong currentFileSize = 0;
+
+            bool fixedLen = false;
+            uint transferLen = blockSize;
+
+            sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout, out duration);
+            if(sense)
+            {
+                fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                if(fxSense.HasValue)
+                {
+                    if(fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.IllegalRequest)
+                    {
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                            if(!fxSense.HasValue || !fxSense.Value.EOM)
+                            {
+                                DicConsole.WriteLine();
+                                DicConsole.ErrorWriteLine("Drive could not return back. Sense follows...");
+                                DicConsole.ErrorWriteLine("{0}", strSense);
+                                return;
+                            }
+                        }
+
+                        fixedLen = true;
+                        transferLen = 1;
+                        sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout, out duration);
+                        if(sense)
+                        {
+                            DicConsole.WriteLine();
+                            DicConsole.ErrorWriteLine("Drive could not read. Sense follows...");
+                            DicConsole.ErrorWriteLine("{0}", strSense);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        DicConsole.WriteLine();
+                        DicConsole.ErrorWriteLine("Drive could not read. Sense follows...");
+                        DicConsole.ErrorWriteLine("{0}", strSense);
+                        return;
+                    }
+                }
+                else
+                {
+                    DicConsole.WriteLine();
+                    DicConsole.ErrorWriteLine("Cannot read device, don't know why, exiting...");
+                    return;
+                }
+            }
+
+            sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
+            if(sense)
+            {
+                fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
+                if(!fxSense.HasValue || !fxSense.Value.EOM)
+                {
+                    DicConsole.WriteLine();
+                    DicConsole.ErrorWriteLine("Drive could not return back. Sense follows...");
+                    DicConsole.ErrorWriteLine("{0}", strSense);
+                    return;
+                }
+            }
 
             Checksum partitionChk;
             Checksum fileChk;
@@ -353,7 +420,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DicConsole.Write("\rReading block {0} ({1:F3} MiB/sec.)", currentBlock, currentSpeed);
 
-                sense = dev.Read6(out cmdBuf, out senseBuf, false, blockSize, blockSize, dev.Timeout, out duration);
+                sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout, out duration);
                 totalDuration += duration;
 
                 if(sense)
@@ -394,7 +461,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         // For sure this is an end-of-tape/partition
-                        if(fxSense.Value.ASC == 0x00 && (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05))
+                        if(fxSense.Value.ASC == 0x00 && (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
                         {
                             // TODO: Detect end of partition
                             endOfMedia = true;
@@ -408,7 +475,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     if((fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.NoSense || fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.RecoveredError) &&
-                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05))
+                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
                     {
                         // TODO: Detect end of partition
                         endOfMedia = true;
@@ -416,7 +483,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     if((fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.NoSense || fxSense.Value.SenseKey == Decoders.SCSI.SenseKeys.RecoveredError) &&
-                       fxSense.Value.ASCQ == 0x01)
+                       (fxSense.Value.ASCQ == 0x01 || fxSense.Value.Filemark))
                     {
                         currentTapeFile.Checksums = fileChk.End().ToArray();
                         currentTapeFile.EndBlock = (long)(currentBlock - 1);
@@ -444,7 +511,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // TODO: Add error recovering for tapes
                     fxSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf, out strSense);
                     DicConsole.ErrorWriteLine("Drive could not read block. Sense follows...");
-                    DicConsole.ErrorWriteLine("{0}", strSense);
+                    DicConsole.ErrorWriteLine("{0} {1}", fxSense.Value.SenseKey, strSense);
                     return;
                 }
 
