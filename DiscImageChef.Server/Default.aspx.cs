@@ -212,6 +212,8 @@ namespace DiscImageChef.Server
                                                 HttpUtility.UrlPathEncode(device.Model));
                         }
 
+                        xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
+
                         if(!File.Exists(Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
                         {
                             url = null;

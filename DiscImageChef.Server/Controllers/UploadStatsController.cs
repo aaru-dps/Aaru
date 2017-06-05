@@ -37,6 +37,7 @@
 // //$Id$
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
@@ -481,6 +482,9 @@ namespace DiscImageChef.Server.Controllers
                         }
                     }
                 }
+
+                if(oldStats.Devices != null)
+                    oldStats.Devices = oldStats.Devices.OrderBy(device => device.Manufacturer).ThenBy(device => device.Model).ThenBy(device => device.Revision).ThenBy(device => device.Bus).ToList();
 
                 Random rng = new Random();
                 string filename = string.Format("BackupStats_{0:yyyyMMddHHmmssfff}_{1}.xml", DateTime.UtcNow, rng.Next());

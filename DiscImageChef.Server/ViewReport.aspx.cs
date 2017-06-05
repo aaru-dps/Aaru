@@ -34,10 +34,6 @@ namespace DiscImageChef.Server
                 if(revision != null)
                     revision = Encoding.ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(revision))).Replace('/', '_').Replace('\\', '_').Replace('?', '_');
 
-                lblManufacturer.Text = manufacturer;
-                lblModel.Text = model;
-                lblRevision.Text = revision;
-
                 string xmlFile = null;
                 if(!string.IsNullOrWhiteSpace(manufacturer)  && !string.IsNullOrWhiteSpace(model) && !string.IsNullOrWhiteSpace(revision))
                     xmlFile = manufacturer + "_" + model + "_" + revision + ".xml";
@@ -53,6 +49,10 @@ namespace DiscImageChef.Server
                     content.InnerHtml = "<b>Could not find the specified report</b>";
                     return;
                 }
+
+                lblManufacturer.Text = Request.QueryString["manufacturer"];
+                lblModel.Text = Request.QueryString["model"];
+                lblRevision.Text = Request.QueryString["revision"];
 
                 DeviceReport report = new DeviceReport();
                 XmlSerializer xs = new XmlSerializer(report.GetType());
