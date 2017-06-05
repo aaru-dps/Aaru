@@ -613,11 +613,13 @@ namespace DiscImageChef.CommonTypes
         MMC,
         MMCmicro,
         RSMMC,
+        MMCplus,
+        MMCmobile,
         #endregion MultiMediaCard
 
         #region SLR
         MLR1,
-        MRL1SL,
+        MLR1SL,
         MLR3,
         SLR1,
         SLR2,
