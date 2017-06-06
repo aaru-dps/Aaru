@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Text;
+using System;
 
 namespace DiscImageChef
 {
@@ -57,17 +58,20 @@ namespace DiscImageChef
             if(CString == null)
                 return null;
 
-            StringBuilder sb = new StringBuilder();
+            int len = 0;
 
             for(int i = 0; i < CString.Length; i++)
             {
                 if(CString[i] == 0)
                     break;
 
-                sb.Append(encoding.GetString(CString, i, 1));
+                len++;
             }
 
-            return sb.ToString();
+            byte[] dest = new byte[len];
+            Array.Copy(CString, 0, dest, 0, len);
+
+            return len == 0 ? "" : encoding.GetString(dest);
         }
 
         /// <summary>
@@ -91,16 +95,21 @@ namespace DiscImageChef
             if(PascalString == null)
                 return null;
 
-            StringBuilder sb = new StringBuilder();
-
             byte length = PascalString[0];
+            int len = 0;
 
-            for(int i = 1; i < length + 1; i++)
+            for(int i = 1; i < length + 1 && i < PascalString.Length; i++)
             {
-                sb.Append(encoding.GetString(PascalString, i, 1));
+                if(PascalString[i] == 0)
+                    break;
+                
+                len++;
             }
 
-            return sb.ToString();
+            byte[] dest = new byte[len];
+            Array.Copy(PascalString, 1, dest, 0, len);
+
+            return len == 0 ? "" : encoding.GetString(dest);
         }
 
         /// <summary>
@@ -124,7 +133,7 @@ namespace DiscImageChef
             if(SpacePaddedString == null)
                 return null;
 
-            int length = 0;
+            int len = 0;
 
             for(int i = SpacePaddedString.Length; i >= 0; i--)
             {
@@ -133,12 +142,12 @@ namespace DiscImageChef
 
                 if(SpacePaddedString[i - 1] != 0x20)
                 {
-                    length = i;
+                    len = i;
                     break;
                 }
             }
 
-            return length == 0 ? "" : encoding.GetString(SpacePaddedString, 0, length);
+            return len == 0 ? "" : encoding.GetString(SpacePaddedString, 0, len);
         }
 
         /// <summary>
@@ -173,7 +182,6 @@ namespace DiscImageChef
 
             return temp;
         }
-
     }
 }
 
