@@ -2461,11 +2461,21 @@ namespace DiscImageChef.Decoders.ATA
 
                 if(minatalevel <= 5)
                 {
-                    sb.AppendFormat("Cylinders: {0} max., {1} current", ATAID.Cylinders, ATAID.CurrentCylinders).AppendLine();
-                    sb.AppendFormat("Heads: {0} max., {1} current", ATAID.Heads, ATAID.CurrentHeads).AppendLine();
-                    sb.AppendFormat("Sectors per track: {0} max., {1} current", ATAID.SectorsPerTrack, ATAID.CurrentSectorsPerTrack).AppendLine();
-                    sb.AppendFormat("Sectors addressable in CHS mode: {0} max., {1} current", ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack,
-                        ATAID.CurrentSectors).AppendLine();
+                    if(ATAID.CurrentCylinders > 0 && ATAID.CurrentHeads > 0 && ATAID.CurrentSectorsPerTrack > 0)
+                    {
+                        sb.AppendFormat("Cylinders: {0} max., {1} current", ATAID.Cylinders, ATAID.CurrentCylinders).AppendLine();
+                        sb.AppendFormat("Heads: {0} max., {1} current", ATAID.Heads, ATAID.CurrentHeads).AppendLine();
+                        sb.AppendFormat("Sectors per track: {0} max., {1} current", ATAID.SectorsPerTrack, ATAID.CurrentSectorsPerTrack).AppendLine();
+                        sb.AppendFormat("Sectors addressable in CHS mode: {0} max., {1} current", ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack,
+                            ATAID.CurrentSectors).AppendLine();
+                    }
+                    else
+                    {
+                        sb.AppendFormat("Cylinders: {0}", ATAID.Cylinders).AppendLine();
+                        sb.AppendFormat("Heads: {0}", ATAID.Heads).AppendLine();
+                        sb.AppendFormat("Sectors per track: {0}", ATAID.SectorsPerTrack).AppendLine();
+                        sb.AppendFormat("Sectors addressable in CHS mode: {0}", ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack).AppendLine();
+                    }
                 }
 
                 if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
@@ -2480,8 +2490,15 @@ namespace DiscImageChef.Decoders.ATA
 
                 if(minatalevel <= 5)
                 {
-                    sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB", (ulong)ATAID.CurrentSectors * logicalsectorsize,
-                        ((ulong)ATAID.CurrentSectors * logicalsectorsize) / 1000 / 1000, ((ulong)ATAID.CurrentSectors * 512) / 1024 / 1024).AppendLine();
+                    if(ATAID.CurrentSectors > 0)
+                        sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB", (ulong)ATAID.CurrentSectors * logicalsectorsize,
+                            ((ulong)ATAID.CurrentSectors * logicalsectorsize) / 1000 / 1000, ((ulong)ATAID.CurrentSectors * 512) / 1024 / 1024).AppendLine();
+                    else
+                    {
+                        ulong currentSectors = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
+                        sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB", currentSectors * logicalsectorsize,
+                            (currentSectors * logicalsectorsize) / 1000 / 1000, (currentSectors * 512) / 1024 / 1024).AppendLine();
+                    }
                 }
 
                 if(ATAID.Capabilities.HasFlag(CapabilitiesBit.LBASupport))
