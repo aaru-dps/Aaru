@@ -111,6 +111,66 @@ namespace DiscImageChef.Decoders.SCSI
             return PrettifyModeHeader(DecodeModeHeader6(modeResponse, deviceType), deviceType);
         }
 
+        public static string GetMediumTypeDescription(MediumTypes type)
+        {
+            switch(type)
+            {
+                case MediumTypes.ECMA54:
+                    return "ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side";
+                case MediumTypes.ECMA59:
+                    return "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides";
+                case MediumTypes.ECMA69:
+                    return "ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides";
+                case MediumTypes.ECMA66:
+                    return "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side";
+                case MediumTypes.ECMA70:
+                    return "ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm";
+                case MediumTypes.ECMA78:
+                    return "ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm";
+                case MediumTypes.ECMA99:
+                    return "ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm";
+                case MediumTypes.ECMA100:
+                    return "ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm";
+                // Most probably they will never appear, but magneto-opticals use these codes
+                /*
+                case MediumTypes.Unspecified_SS:
+                    return "Unspecified single sided flexible disk";
+                case MediumTypes.Unspecified_DS:
+                    return "Unspecified double sided flexible disk";
+                */
+                case MediumTypes.X3_73:
+                    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73_DS:
+                    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
+                case MediumTypes.X3_82:
+                    return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.Type3Floppy:
+                    return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
+                case MediumTypes.HDFloppy:
+                    return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
+                case MediumTypes.ReadOnly:
+                    return "a Read-only optical";
+                case MediumTypes.WORM:
+                    return "a Write-once Read-many optical";
+                case MediumTypes.Erasable:
+                    return "a Erasable optical";
+                case MediumTypes.RO_WORM:
+                    return "a combination of read-only and write-once optical";
+                // These magneto-opticals were never manufactured
+                /*
+                case MediumTypes.RO_RW:
+                    return "a combination of read-only and erasable optical";
+                    break;
+                case MediumTypes.WORM_RW:
+                    return "a combination of write-once and erasable optical";
+                */
+                case MediumTypes.DOW:
+                    return "a direct-overwrite optical";
+                default:
+                    return string.Format("Unknown medium type 0x{0:X2}", (byte)type);
+            }
+        }
+
         public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
         {
             if(!header.HasValue)
@@ -126,88 +186,7 @@ namespace DiscImageChef.Decoders.SCSI
                 case PeripheralDeviceTypes.DirectAccess:
                     {
                         if(header.Value.MediumType != MediumTypes.Default)
-                        {
-                            sb.Append("\tMedium is ");
-
-                            switch(header.Value.MediumType)
-                            {
-                                case MediumTypes.ECMA54:
-                                    sb.AppendLine("ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side");
-                                    break;
-                                case MediumTypes.ECMA59:
-                                    sb.AppendLine("ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides");
-                                    break;
-                                case MediumTypes.ECMA69:
-                                    sb.AppendLine("ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides");
-                                    break;
-                                case MediumTypes.ECMA66:
-                                    sb.AppendLine("ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side");
-                                    break;
-                                case MediumTypes.ECMA70:
-                                    sb.AppendLine("ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm");
-                                    break;
-                                case MediumTypes.ECMA78:
-                                    sb.AppendLine("ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm");
-                                    break;
-                                case MediumTypes.ECMA99:
-                                    sb.AppendLine("ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm");
-                                    break;
-                                case MediumTypes.ECMA100:
-                                    sb.AppendLine("ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm");
-                                    break;
-                                // Most probably they will never appear, but magneto-opticals use these codes
-                                /*
-                                case MediumTypes.Unspecified_SS:
-                                    sb.AppendLine("Unspecified single sided flexible disk");
-                                    break;
-                                case MediumTypes.Unspecified_DS:
-                                    sb.AppendLine("Unspecified double sided flexible disk");
-                                    break;
-                                */
-                                case MediumTypes.X3_73:
-                                    sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side");
-                                    break;
-                                case MediumTypes.X3_73_DS:
-                                    sb.AppendLine("ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides");
-                                    break;
-                                case MediumTypes.X3_82:
-                                    sb.AppendLine("ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side");
-                                    break;
-                                case MediumTypes.Type3Floppy:
-                                    sb.AppendLine("3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)");
-                                    break;
-                                case MediumTypes.HDFloppy:
-                                    sb.AppendLine("3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)");
-                                    break;
-                                case MediumTypes.ReadOnly:
-                                    sb.AppendLine("a Read-only optical");
-                                    break;
-                                case MediumTypes.WORM:
-                                    sb.AppendLine("a Write-once Read-many optical");
-                                    break;
-                                case MediumTypes.Erasable:
-                                    sb.AppendLine("a Erasable optical");
-                                    break;
-                                case MediumTypes.RO_WORM:
-                                    sb.AppendLine("a combination of read-only and write-once optical");
-                                    break;
-                                // These magneto-opticals were never manufactured
-                                /*
-                                case MediumTypes.RO_RW:
-                                    sb.AppendLine("a combination of read-only and erasable optical");
-                                    break;
-                                case MediumTypes.WORM_RW:
-                                    sb.AppendLine("a combination of write-once and erasable optical");
-                                    break;
-                                */
-                                case MediumTypes.DOW:
-                                    sb.AppendLine("a direct-overwrite optical");
-                                    break;
-                                default:
-                                    sb.AppendFormat("Unknown medium type 0x{0:X2}", (byte)header.Value.MediumType).AppendLine();
-                                    break;
-                            }
-                        }
+                            sb.AppendFormat("\tMedium is {0}", GetMediumTypeDescription(header.Value.MediumType)).AppendLine();
 
                         if(header.Value.WriteProtected)
                             sb.AppendLine("\tMedium is write protected");
@@ -3183,10 +3162,10 @@ namespace DiscImageChef.Decoders.SCSI
             /// Parameters can be saved
             /// </summary>
             public bool PS;
-            public byte MediumType1;
-            public byte MediumType2;
-            public byte MediumType3;
-            public byte MediumType4;
+            public MediumTypes MediumType1;
+            public MediumTypes MediumType2;
+            public MediumTypes MediumType3;
+            public MediumTypes MediumType4;
         }
 
         public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
@@ -3209,10 +3188,10 @@ namespace DiscImageChef.Decoders.SCSI
             ModePage_0B decoded = new ModePage_0B();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.MediumType1 = pageResponse[4];
-            decoded.MediumType2 = pageResponse[5];
-            decoded.MediumType3 = pageResponse[6];
-            decoded.MediumType4 = pageResponse[7];
+            decoded.MediumType1 = (MediumTypes)pageResponse[4];
+            decoded.MediumType2 = (MediumTypes)pageResponse[5];
+            decoded.MediumType3 = (MediumTypes)pageResponse[6];
+            decoded.MediumType4 = (MediumTypes)pageResponse[7];
 
             return decoded;
         }
@@ -3235,8 +3214,14 @@ namespace DiscImageChef.Decoders.SCSI
             if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            // TODO: Implement it when all known medium types are supported
-            sb.AppendLine("Not yet implemented");
+            if(page.MediumType1 != MediumTypes.Default)
+                sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1)).AppendLine();
+            if(page.MediumType2 != MediumTypes.Default)
+                sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2)).AppendLine();
+            if(page.MediumType3 != MediumTypes.Default)
+                sb.AppendFormat("Supported medium type three: {0}", GetMediumTypeDescription(page.MediumType3)).AppendLine();
+            if(page.MediumType4 != MediumTypes.Default)
+                sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4)).AppendLine();
 
             return sb.ToString();
         }
@@ -5291,7 +5276,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(pageResponse[1] + 2 != pageResponse.Length)
                 return null;
 
-            if(pageResponse.Length < 12)
+            if(pageResponse.Length < 8)
                 return null;
 
             ModePage_1C decoded = new ModePage_1C();
@@ -5306,12 +5291,14 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MRIE = (byte)(pageResponse[3] & 0x0F);
 
             decoded.IntervalTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
-            decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
 
             decoded.EBF |= (pageResponse[2] & 0x20) == 0x20;
             decoded.EWasc |= (pageResponse[2] & 0x10) == 0x10;
 
             decoded.EBACKERR |= (pageResponse[2] & 0x02) == 0x02;
+
+            if(pageResponse.Length >= 12)
+                decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
 
             return decoded;
         }
