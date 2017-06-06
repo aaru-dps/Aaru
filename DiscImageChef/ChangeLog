@@ -1,3 +1,7 @@
+* Commands/Ls.cs:
+* Commands/ExtractFiles.cs:
+  Add support for encodings.
+
 * AssemblyInfo.cs:
 * DiscImageChef.csproj:
   Version bumped to 3.4.99.0.

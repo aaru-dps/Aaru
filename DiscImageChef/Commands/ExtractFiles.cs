@@ -166,7 +166,7 @@ namespace DiscImageChef.Commands
                                 if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                 {
                                     DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
-                                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
+                                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, null });
 
                                     error = fs.Mount(options.Debug);
                                     if(error == Errno.NoError)
@@ -192,7 +192,7 @@ namespace DiscImageChef.Commands
                         {
                             plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                             DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors });
+                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, null });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -226,7 +226,7 @@ namespace DiscImageChef.Commands
                         if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                         {
                             DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
+                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1, null });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -251,7 +251,7 @@ namespace DiscImageChef.Commands
                 {
                     plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                     DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
-                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1 });
+                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, (ulong)0, _imageFormat.GetSectors() - 1, null });
                     error = fs.Mount(options.Debug);
                     if(error == Errno.NoError)
                     {
