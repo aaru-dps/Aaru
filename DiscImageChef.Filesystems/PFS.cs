@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Professional File System";
             PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public PFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public PFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Professional File System";
             PluginUUID = new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         /// <summary>
@@ -220,7 +223,7 @@ namespace DiscImageChef.Filesystems
 
             sbInformation.AppendLine();
 
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname)).AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize).AppendLine();
             sbInformation.AppendFormat("Volume created on {0}", DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick)).AppendLine();
             if(rootBlock.extension > 0)
@@ -234,7 +237,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Clusters = rootBlock.diskSize / imagePlugin.GetSectorSize();
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
-            xmlFSType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname);
+            xmlFSType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
         }
 
         public override Errno Mount()

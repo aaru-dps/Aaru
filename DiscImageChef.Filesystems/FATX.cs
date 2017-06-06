@@ -54,12 +54,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "FATX Filesystem Plugin";
             PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public FATX(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public FATX(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "FATX Filesystem Plugin";
             PluginUUID = new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

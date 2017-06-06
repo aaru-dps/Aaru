@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+            CurrentEncoding = Encoding.GetEncoding("ibm850");
         }
 
-        public HPFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public HPFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("ibm850");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -108,9 +111,9 @@ namespace DiscImageChef.Filesystems
             hpfs_bpb.signature = hpfs_bpb_sector[0x02A];
             hpfs_bpb.serial_no = BitConverter.ToUInt32(hpfs_bpb_sector, 0x02B);
             Array.Copy(hpfs_bpb_sector, 0x02F, volume_name, 0, 11);
-            hpfs_bpb.volume_label = StringHandlers.CToString(volume_name);
+            hpfs_bpb.volume_label = StringHandlers.CToString(volume_name, CurrentEncoding);
             Array.Copy(hpfs_bpb_sector, 0x03A, oem_name, 0, 8);
-            hpfs_bpb.fs_type = StringHandlers.CToString(oem_name);
+            hpfs_bpb.fs_type = StringHandlers.CToString(oem_name, CurrentEncoding);
 
             hpfs_sb.magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
             hpfs_sb.magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);

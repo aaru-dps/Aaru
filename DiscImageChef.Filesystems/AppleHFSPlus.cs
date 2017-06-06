@@ -56,12 +56,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public AppleHFSPlus(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AppleHFSPlus(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

@@ -139,7 +139,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 return;
 
             sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.firstBlock, volEntry.lastBlock).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.volumeName)).AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", volEntry.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", volEntry.files).AppendLine();
             sbInformation.AppendFormat("Volume last booted at {0}", DateHandlers.UCSDPascalToDateTime(volEntry.lastBoot)).AppendLine();
@@ -153,7 +153,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             xmlFSType.Files = volEntry.files;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Type = "UCSD Pascal";
-            xmlFSType.VolumeName = StringHandlers.PascalToString(volEntry.volumeName);
+            xmlFSType.VolumeName = StringHandlers.PascalToString(volEntry.volumeName, CurrentEncoding);
 
             return;
         }

@@ -44,12 +44,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public SolarFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public SolarFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -96,10 +99,10 @@ namespace DiscImageChef.Filesystems
             BPB.signature = bpb_sector[0x25];
             bpb_strings = new byte[8];
             Array.Copy(bpb_sector, 0x2A, bpb_strings, 0, 11);
-            BPB.vol_name = StringHandlers.CToString(bpb_strings);
+            BPB.vol_name = StringHandlers.CToString(bpb_strings, CurrentEncoding);
             bpb_strings = new byte[8];
             Array.Copy(bpb_sector, 0x35, bpb_strings, 0, 8);
-            BPB.fs_type = StringHandlers.CToString(bpb_strings);
+            BPB.fs_type = StringHandlers.CToString(bpb_strings, CurrentEncoding);
 
             BPB.x86_jump = new byte[3];
             Array.Copy(bpb_sector, 0x00, BPB.x86_jump, 0, 3);

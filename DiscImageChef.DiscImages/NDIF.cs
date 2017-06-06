@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
@@ -292,7 +293,7 @@ namespace DiscImageChef.DiscImages
 
 				DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", header.version);
 				DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
-				DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}", StringHandlers.PascalToString(header.name));
+				DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}", StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh")));
 				DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
 				DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
 				DicConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", header.dataOffset);
@@ -443,7 +444,7 @@ namespace DiscImageChef.DiscImages
 
 			ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
 			ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
-			ImageInfo.imageName = StringHandlers.PascalToString(header.name);
+			ImageInfo.imageName = StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
 			ImageInfo.sectorSize = sectorSize;
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 			ImageInfo.imageSize = ImageInfo.sectors * sectorSize;

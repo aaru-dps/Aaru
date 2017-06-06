@@ -221,7 +221,8 @@ namespace DiscImageChef.Filters
                 byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
                 datEntry = BigEndianMarshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
-                string macName = StringHandlers.PascalToString(datEntry.macName);
+                // TODO: Add support for encoding on filters
+                string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
                 byte[] tmpDosName_b = new byte[8];
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
@@ -274,7 +275,7 @@ namespace DiscImageChef.Filters
                 byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
                 datEntry = BigEndianMarshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
-                string macName = StringHandlers.PascalToString(datEntry.macName);
+                string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
                 byte[] tmpDosName_b = new byte[8];
                 byte[] tmpDosExt_b = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);

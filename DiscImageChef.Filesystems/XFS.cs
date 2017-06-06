@@ -107,12 +107,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public XFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public XFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -169,7 +172,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
             if(xfsSb.inprogress > 0)
                 sb.AppendLine("fsck in progress");
-            sb.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(xfsSb.fname)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(xfsSb.fname)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
 
             information = sb.ToString();
@@ -183,7 +186,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = (long)(xfsSb.icount - xfsSb.ifree);
             xmlFSType.FilesSpecified = true;
             xmlFSType.Dirty |= xfsSb.inprogress > 0;
-            xmlFSType.VolumeName = Encoding.ASCII.GetString(xfsSb.fname);
+            xmlFSType.VolumeName = CurrentEncoding.GetString(xfsSb.fname);
             xmlFSType.VolumeSerial = xfsSb.uuid.ToString();
         }
 

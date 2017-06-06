@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public VxFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public VxFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -233,7 +236,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendLine("Veritas file system");
 
             sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname)).AppendLine();
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, CurrentEncoding)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size).AppendLine();
             sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();

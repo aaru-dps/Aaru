@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
@@ -45,6 +46,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>Plugin UUID.</summary>
         public Guid PluginUUID;
         internal Schemas.FileSystemType xmlFSType;
+        public Encoding CurrentEncoding;
 
         /// <summary>
         /// Information about the filesystem as expected by CICM Metadata XML
@@ -68,7 +70,8 @@ namespace DiscImageChef.Filesystems
         /// <param name="imagePlugin">Image plugin.</param>
         /// <param name="partitionStart">Partition start.</param>
         /// <param name="partitionEnd">Partition end.</param>
-        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        /// <param name="encoding">Which encoding to use for this filesystem.</param>
+        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
         }
 

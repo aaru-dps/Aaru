@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
-        public CBM(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public CBM(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+            if(encoding == null)
+                CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -246,9 +249,9 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.diskVersion })).AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
                 // TODO: Use PETSCII
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name)).AppendLine();
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding)).AppendLine();
 
-                xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name);
+                xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
                 xmlFSType.VolumeSerial = string.Format("{0}", cbmHdr.diskId);
             }
             else
@@ -265,9 +268,9 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmBam.dosVersion })).AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
                 // TODO: Use PETSCII
-                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name)).AppendLine();
+                sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding)).AppendLine();
 
-                xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name);
+                xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
                 xmlFSType.VolumeSerial = string.Format("{0}", cbmBam.diskId);
             }
 

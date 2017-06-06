@@ -44,12 +44,14 @@ namespace DiscImageChef.Filesystems
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+            CurrentEncoding = Encoding.Unicode;
         }
 
-        public NTFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public NTFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+            CurrentEncoding = Encoding.Unicode;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
@@ -110,12 +111,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public QNX4(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public QNX4(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -173,7 +177,7 @@ namespace DiscImageChef.Filesystems
 
             // Too much useless information
             /*
-            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_fname = {0}", Encoding.ASCII.GetString(qnxSb.rootDir.di_fname));
+            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_fname = {0}", CurrentEncoding.GetString(qnxSb.rootDir.di_fname));
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_size = {0}", qnxSb.rootDir.di_size);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_first_xtnt.block = {0}", qnxSb.rootDir.di_first_xtnt.block);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_first_xtnt.length = {0}", qnxSb.rootDir.di_first_xtnt.length);
@@ -191,7 +195,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_type = {0}", qnxSb.rootDir.di_type);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.rootDir.di_status = {0}", qnxSb.rootDir.di_status);
 
-            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_fname = {0}", Encoding.ASCII.GetString(qnxSb.inode.di_fname));
+            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_fname = {0}", CurrentEncoding.GetString(qnxSb.inode.di_fname));
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_size = {0}", qnxSb.inode.di_size);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_first_xtnt.block = {0}", qnxSb.inode.di_first_xtnt.block);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_first_xtnt.length = {0}", qnxSb.inode.di_first_xtnt.length);
@@ -209,7 +213,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_type = {0}", qnxSb.inode.di_type);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.inode.di_status = {0}", qnxSb.inode.di_status);
 
-            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_fname = {0}", Encoding.ASCII.GetString(qnxSb.boot.di_fname));
+            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_fname = {0}", CurrentEncoding.GetString(qnxSb.boot.di_fname));
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_size = {0}", qnxSb.boot.di_size);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_first_xtnt.block = {0}", qnxSb.boot.di_first_xtnt.block);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_first_xtnt.length = {0}", qnxSb.boot.di_first_xtnt.length);
@@ -227,7 +231,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_type = {0}", qnxSb.boot.di_type);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.boot.di_status = {0}", qnxSb.boot.di_status);
 
-            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_fname = {0}", Encoding.ASCII.GetString(qnxSb.altBoot.di_fname));
+            DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_fname = {0}", CurrentEncoding.GetString(qnxSb.altBoot.di_fname));
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_size = {0}", qnxSb.altBoot.di_size);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_first_xtnt.block = {0}", qnxSb.altBoot.di_first_xtnt.block);
             DicConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_first_xtnt.length = {0}", qnxSb.altBoot.di_first_xtnt.length);

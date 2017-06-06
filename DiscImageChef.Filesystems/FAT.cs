@@ -45,12 +45,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Microsoft File Allocation Table";
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+            CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
 
-        public FAT(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public FAT(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Microsoft File Allocation Table";
             PluginUUID = new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -282,7 +285,7 @@ namespace DiscImageChef.Filesystems
                     FAT32PB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x43);
                     dosString = new byte[11];
                     Array.Copy(bpb_sector, 0x47, dosString, 0, 11);
-                    FAT32PB.volume_label = StringHandlers.CToString(dosString);
+                    FAT32PB.volume_label = StringHandlers.CToString(dosString, CurrentEncoding);
                     dosString = new byte[8];
                     Array.Copy(bpb_sector, 0x52, dosString, 0, 8);
                     FAT32PB.fs_type = StringHandlers.CToString(dosString);
@@ -295,7 +298,7 @@ namespace DiscImageChef.Filesystems
                     EPB.serial_no = BitConverter.ToUInt32(bpb_sector, 0x27);
                     dosString = new byte[11];
                     Array.Copy(bpb_sector, 0x2B, dosString, 0, 11);
-                    EPB.volume_label = StringHandlers.CToString(dosString);
+                    EPB.volume_label = StringHandlers.CToString(dosString, CurrentEncoding);
                     dosString = new byte[8];
                     Array.Copy(bpb_sector, 0x36, dosString, 0, 8);
                     EPB.fs_type = StringHandlers.CToString(dosString);

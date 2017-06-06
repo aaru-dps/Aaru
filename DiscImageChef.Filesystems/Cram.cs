@@ -44,12 +44,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public Cram(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public Cram(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         enum CramCompression : ushort
@@ -125,7 +128,7 @@ namespace DiscImageChef.Filesystems
             else
                 sbInformation.AppendLine("Big-endian");
             sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name)).AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, CurrentEncoding)).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", crSb.size).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", crSb.blocks).AppendLine();
             sbInformation.AppendFormat("Volume has {0} files", crSb.files).AppendLine();
@@ -133,7 +136,7 @@ namespace DiscImageChef.Filesystems
             information = sbInformation.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.VolumeName = StringHandlers.CToString(crSb.name);
+            xmlFSType.VolumeName = StringHandlers.CToString(crSb.name, CurrentEncoding);
             xmlFSType.Type = "Cram file system";
             xmlFSType.Clusters = crSb.blocks;
             xmlFSType.Files = crSb.files;

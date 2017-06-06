@@ -65,12 +65,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Minix Filesystem";
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public MinixFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public MinixFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Minix Filesystem";
             PluginUUID = new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

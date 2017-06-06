@@ -33,6 +33,7 @@
 using System;
 
 using System.Collections.Generic;
+using System.Text;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
@@ -71,13 +72,15 @@ namespace DiscImageChef.Filesystems.LisaFS
         {
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public LisaFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public LisaFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             device = imagePlugin;
             Name = "Apple Lisa File System";
             PluginUUID = new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
     }
 }

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.ImagePlugins;
+using System.Text;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -64,14 +65,17 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+            CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
-        public AppleMFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AppleMFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             device = imagePlugin;
             this.partitionStart = partitionStart;
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
     }
 }

@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Nintendo optical filesystems";
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+            CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
-        public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public NintendoPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Nintendo optical filesystems";
             PluginUUID = new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -106,7 +109,7 @@ namespace DiscImageChef.Filesystems
             fields.streamBufferSize = header[9];
             byte[] temp = new byte[64];
             Array.Copy(header, 0x20, temp, 0, 64);
-            fields.title = StringHandlers.CToString(temp);
+            fields.title = StringHandlers.CToString(temp, CurrentEncoding);
 
             if(!wii)
             {

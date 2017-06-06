@@ -90,7 +90,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             MDB.drVNSiz = mdb_sector[0x024];
             variable_size = new byte[MDB.drVNSiz+1];
             Array.Copy(mdb_sector, 0x024, variable_size, 0, MDB.drVNSiz+1);
-            MDB.drVN = GetStringFromPascal(variable_size);
+            MDB.drVN = StringHandlers.PascalToString(variable_size, CurrentEncoding);
 
             BB.signature = BigEndianBitConverter.ToUInt16(bb_sector, 0x000);
 
@@ -103,19 +103,19 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 BB.sec_sv_pages = BigEndianBitConverter.ToInt16(bb_sector, 0x008);
 
                 Array.Copy(mdb_sector, 0x00A, pString, 0, 16);
-                BB.system_name = GetStringFromPascal(pString);
+                BB.system_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x01A, pString, 0, 16);
-                BB.finder_name = GetStringFromPascal(pString);
+                BB.finder_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x02A, pString, 0, 16);
-                BB.debug_name = GetStringFromPascal(pString);
+                BB.debug_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x03A, pString, 0, 16);
-                BB.disasm_name = GetStringFromPascal(pString);
+                BB.disasm_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x04A, pString, 0, 16);
-                BB.stupscr_name = GetStringFromPascal(pString);
+                BB.stupscr_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x05A, pString, 0, 16);
-                BB.bootup_name = GetStringFromPascal(pString);
+                BB.bootup_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 Array.Copy(mdb_sector, 0x06A, pString, 0, 16);
-                BB.clipbrd_name = GetStringFromPascal(pString);
+                BB.clipbrd_name = StringHandlers.PascalToString(pString, CurrentEncoding);
 
                 BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
                 BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);

@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Squash filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public Squash(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public Squash(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Squash filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         enum SquashCompression : ushort

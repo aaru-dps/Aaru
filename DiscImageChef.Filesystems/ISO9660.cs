@@ -51,13 +51,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-            //alreadyLaunched = false;
+            CurrentEncoding = Encoding.ASCII;
         }
 
-        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+            if(encoding == null)
+                CurrentEncoding = Encoding.ASCII;
         }
 
         struct DecodedVolumeDescriptor
@@ -109,9 +111,9 @@ namespace DiscImageChef.Filesystems
 
             Array.Copy(vd_sector, 0x001 + xa_off, VDMagic, 0, 5);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(VDMagic));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", CurrentEncoding.GetString(VDMagic));
 
-            return Encoding.ASCII.GetString(VDMagic) == "CD001";
+            return CurrentEncoding.GetString(VDMagic) == "CD001";
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
@@ -189,7 +191,7 @@ namespace DiscImageChef.Filesystems
 
                 Array.Copy(vd_sector, 0x001, VDMagic, 0, 5);
 
-                if(Encoding.ASCII.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
+                if(CurrentEncoding.GetString(VDMagic) != "CD001") // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
                         return;
@@ -206,7 +208,7 @@ namespace DiscImageChef.Filesystems
                             // Read to boot system identifier
                             Array.Copy(vd_sector, 0x007, BootSysId, 0, 32);
 
-                            if(Encoding.ASCII.GetString(BootSysId).Substring(0, 23) == "EL TORITO SPECIFICATION")
+                            if(CurrentEncoding.GetString(BootSysId).Substring(0, 23) == "EL TORITO SPECIFICATION")
                                 BootSpec = "El Torito";
 
                             break;
@@ -299,10 +301,10 @@ namespace DiscImageChef.Filesystems
                 byte[] RRMagic = new byte[2];
 
                 Array.Copy(root_dir, 0x22, SUSPMagic, 0, 2);
-                if(Encoding.ASCII.GetString(SUSPMagic) == "SP")
+                if(CurrentEncoding.GetString(SUSPMagic) == "SP")
                 {
                     Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
-                    RockRidge |= Encoding.ASCII.GetString(RRMagic) == "RR";
+                    RockRidge |= CurrentEncoding.GetString(RRMagic) == "RR";
                 }
             }
 
@@ -317,9 +319,9 @@ namespace DiscImageChef.Filesystems
             byte[] ipbin_sector = imagePlugin.ReadSector(0 + partitionStart);
             Array.Copy(ipbin_sector, 0x000, SegaHardwareID, 0, 16);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "SegaHardwareID = \"{0}\"", Encoding.ASCII.GetString(SegaHardwareID));
+            DicConsole.DebugWriteLine("ISO9660 plugin", "SegaHardwareID = \"{0}\"", CurrentEncoding.GetString(SegaHardwareID));
 
-            switch(Encoding.ASCII.GetString(SegaHardwareID))
+            switch(CurrentEncoding.GetString(SegaHardwareID))
             {
                 case "SEGADISCSYSTEM  ":
                 case "SEGADATADISC    ":
@@ -388,7 +390,7 @@ namespace DiscImageChef.Filesystems
                         Array.Copy(ipbin_sector, 0x060, system_reserved, 0, 160); // System Reserved Area
                         Array.Copy(ipbin_sector, 0x100, hardware_id, 0, 16);      // Hardware ID
                         Array.Copy(ipbin_sector, 0x110, copyright, 0, 3);         // "(C)" -- Can be the developer code directly!, if that is the code release date will be displaced
-                        if(Encoding.ASCII.GetString(copyright) == "(C)")
+                        if(CurrentEncoding.GetString(copyright) == "(C)")
                             Array.Copy(ipbin_sector, 0x113, developer_code, 0, 5);    // "SEGA" or "T-xx"
                         else
                             Array.Copy(ipbin_sector, 0x110, developer_code, 0, 5);    // "SEGA" or "T-xx"
@@ -403,9 +405,9 @@ namespace DiscImageChef.Filesystems
                         Array.Copy(ipbin_sector, 0x1B0, spare_space7, 0, 64);     // Inside here should be modem information, but I need to get a modem-enabled game
                         Array.Copy(ipbin_sector, 0x1F0, region_codes, 0, 16);     // Region codes, space-filled
 
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_name = \"{0}\"", Encoding.ASCII.GetString(volume_name));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_name = \"{0}\"", Encoding.ASCII.GetString(system_name));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_version = \"{0}\"", Encoding.ASCII.GetString(volume_version));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_name = \"{0}\"", CurrentEncoding.GetString(volume_name));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_name = \"{0}\"", CurrentEncoding.GetString(system_name));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_version = \"{0}\"", CurrentEncoding.GetString(volume_version));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.volume_type = 0x{0}", BitConverter.ToInt16(volume_type, 0).ToString("X"));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.system_version = 0x{0}", BitConverter.ToInt16(system_version, 0).ToString("X"));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.ip_address = 0x{0}", BitConverter.ToInt32(ip_address, 0).ToString("X"));
@@ -416,27 +418,27 @@ namespace DiscImageChef.Filesystems
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_loadsize = {0}", BitConverter.ToInt32(sp_loadsize, 0));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_entry_address = 0x{0}", BitConverter.ToInt32(sp_entry_address, 0).ToString("X"));
                         DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.sp_work_ram_size = {0}", BitConverter.ToInt32(sp_work_ram_size, 0));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date2 = \"{0}\"", Encoding.ASCII.GetString(release_date2));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.developer_code = \"{0}\"", Encoding.ASCII.GetString(developer_code));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.domestic_title = \"{0}\"", Encoding.ASCII.GetString(domestic_title));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.overseas_title = \"{0}\"", Encoding.ASCII.GetString(overseas_title));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.product_code = \"{0}\"", Encoding.ASCII.GetString(product_code));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date = \"{0}\"", CurrentEncoding.GetString(release_date));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.release_date2 = \"{0}\"", CurrentEncoding.GetString(release_date2));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.developer_code = \"{0}\"", CurrentEncoding.GetString(developer_code));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.domestic_title = \"{0}\"", CurrentEncoding.GetString(domestic_title));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.overseas_title = \"{0}\"", CurrentEncoding.GetString(overseas_title));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.product_code = \"{0}\"", CurrentEncoding.GetString(product_code));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.peripherals = \"{0}\"", CurrentEncoding.GetString(peripherals));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "segacd_ipbin.region_codes = \"{0}\"", CurrentEncoding.GetString(region_codes));
 
                         // Decoding all data
                         DateTime ipbindate = DateTime.MinValue;
                         CultureInfo provider = CultureInfo.InvariantCulture;
                         try
                         {
-                            ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "MMddyyyy", provider);
+                            ipbindate = DateTime.ParseExact(CurrentEncoding.GetString(release_date), "MMddyyyy", provider);
                         }
                         catch
                         {
                             try
                             {
-                                ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date2), "yyyy.MMM", provider);
+                                ipbindate = DateTime.ParseExact(CurrentEncoding.GetString(release_date2), "yyyy.MMM", provider);
                             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             catch { }
@@ -444,7 +446,7 @@ namespace DiscImageChef.Filesystems
                         }
 
                         /*
-                        switch (Encoding.ASCII.GetString(application_type))
+                        switch (CurrentEncoding.GetString(application_type))
                         {
                             case "GM":
                                 IPBinInformation.AppendLine("Disc is a game.");
@@ -458,11 +460,11 @@ namespace DiscImageChef.Filesystems
                         }
                         */
 
-                        IPBinInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(volume_name)).AppendLine();
-                        //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(volume_version)).AppendLine();
-                        //IPBinInformation.AppendFormat("{0}", Encoding.ASCII.GetString(volume_type)).AppendLine();
-                        IPBinInformation.AppendFormat("System name: {0}", Encoding.ASCII.GetString(system_name)).AppendLine();
-                        //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(system_version)).AppendLine();
+                        IPBinInformation.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(volume_name)).AppendLine();
+                        //IPBinInformation.AppendFormat("Volume version: {0}", CurrentEncoding.GetString(volume_version)).AppendLine();
+                        //IPBinInformation.AppendFormat("{0}", CurrentEncoding.GetString(volume_type)).AppendLine();
+                        IPBinInformation.AppendFormat("System name: {0}", CurrentEncoding.GetString(system_name)).AppendLine();
+                        //IPBinInformation.AppendFormat("System version: {0}", CurrentEncoding.GetString(system_version)).AppendLine();
                         IPBinInformation.AppendFormat("Initial program address: 0x{0}", BitConverter.ToInt32(ip_address, 0).ToString("X")).AppendLine();
                         IPBinInformation.AppendFormat("Initial program load size: {0} bytes", BitConverter.ToInt32(ip_loadsize, 0)).AppendLine();
                         IPBinInformation.AppendFormat("Initial program entry address: 0x{0}", BitConverter.ToInt32(ip_entry_address, 0).ToString("X")).AppendLine();
@@ -473,12 +475,12 @@ namespace DiscImageChef.Filesystems
                         IPBinInformation.AppendFormat("System program work RAM: {0} bytes", BitConverter.ToInt32(sp_work_ram_size, 0)).AppendLine();
                         if(ipbindate != DateTime.MinValue)
                             IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-                        //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
-                        IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(hardware_id)).AppendLine();
-                        IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(developer_code)).AppendLine();
-                        IPBinInformation.AppendFormat("Domestic title: {0}", Encoding.ASCII.GetString(domestic_title)).AppendLine();
-                        IPBinInformation.AppendFormat("Overseas title: {0}", Encoding.ASCII.GetString(overseas_title)).AppendLine();
-                        IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(product_code)).AppendLine();
+                        //IPBinInformation.AppendFormat("Release date (other format): {0}", CurrentEncoding.GetString(release_date2)).AppendLine();
+                        IPBinInformation.AppendFormat("Hardware ID: {0}", CurrentEncoding.GetString(hardware_id)).AppendLine();
+                        IPBinInformation.AppendFormat("Developer code: {0}", CurrentEncoding.GetString(developer_code)).AppendLine();
+                        IPBinInformation.AppendFormat("Domestic title: {0}", CurrentEncoding.GetString(domestic_title)).AppendLine();
+                        IPBinInformation.AppendFormat("Overseas title: {0}", CurrentEncoding.GetString(overseas_title)).AppendLine();
+                        IPBinInformation.AppendFormat("Product code: {0}", CurrentEncoding.GetString(product_code)).AppendLine();
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
                         foreach(byte peripheral in peripherals)
                         {
@@ -585,29 +587,29 @@ namespace DiscImageChef.Filesystems
                         Array.Copy(ipbin_sector, 0x050, peripherals, 0, 16);      // Supported peripherals, see above
                         Array.Copy(ipbin_sector, 0x060, product_name, 0, 112);	  // Game name, space-filled
 
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(maker_id));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(product_no));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(product_version));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_datedate = \"{0}\"", Encoding.ASCII.GetString(release_date));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.saturn_media = \"{0}\"", Encoding.ASCII.GetString(saturn_media));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no = {0}", Encoding.ASCII.GetString(disc_no));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no_separator = \"{0}\"", Encoding.ASCII.GetString(disc_no_separator));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_total_nos = {0}", Encoding.ASCII.GetString(disc_total_nos));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(spare_space1));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(product_name));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.maker_id = \"{0}\"", CurrentEncoding.GetString(maker_id));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_no = \"{0}\"", CurrentEncoding.GetString(product_no));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_version = \"{0}\"", CurrentEncoding.GetString(product_version));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_datedate = \"{0}\"", CurrentEncoding.GetString(release_date));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.saturn_media = \"{0}\"", CurrentEncoding.GetString(saturn_media));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no = {0}", CurrentEncoding.GetString(disc_no));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_no_separator = \"{0}\"", CurrentEncoding.GetString(disc_no_separator));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.disc_total_nos = {0}", CurrentEncoding.GetString(disc_total_nos));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.release_date = \"{0}\"", CurrentEncoding.GetString(release_date));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.spare_space1 = \"{0}\"", CurrentEncoding.GetString(spare_space1));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.region_codes = \"{0}\"", CurrentEncoding.GetString(region_codes));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.peripherals = \"{0}\"", CurrentEncoding.GetString(peripherals));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "saturn_ipbin.product_name = \"{0}\"", CurrentEncoding.GetString(product_name));
 
                         // Decoding all data
                         DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
-                        ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "yyyyMMdd", provider);
-                        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(product_name)).AppendLine();
-                        IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(product_no)).AppendLine();
-                        IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(product_version)).AppendLine();
+                        ipbindate = DateTime.ParseExact(CurrentEncoding.GetString(release_date), "yyyyMMdd", provider);
+                        IPBinInformation.AppendFormat("Product name: {0}", CurrentEncoding.GetString(product_name)).AppendLine();
+                        IPBinInformation.AppendFormat("Product number: {0}", CurrentEncoding.GetString(product_no)).AppendLine();
+                        IPBinInformation.AppendFormat("Product version: {0}", CurrentEncoding.GetString(product_version)).AppendLine();
                         IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-                        IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
+                        IPBinInformation.AppendFormat("Disc number {0} of {1}", CurrentEncoding.GetString(disc_no), CurrentEncoding.GetString(disc_total_nos)).AppendLine();
 
                         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
                         foreach(byte peripheral in peripherals)
@@ -713,35 +715,35 @@ namespace DiscImageChef.Filesystems
                         Array.Copy(ipbin_sector, 0x070, producer, 0, 16);     // Game producer, space-filled
                         Array.Copy(ipbin_sector, 0x080, product_name, 0, 128);     // Game name, space-filled
 
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.maker_id = \"{0}\"", Encoding.ASCII.GetString(maker_id));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_crc = 0x{0}", Encoding.ASCII.GetString(dreamcast_crc));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space1 = \"{0}\"", Encoding.ASCII.GetString(spare_space1));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_media = \"{0}\"", Encoding.ASCII.GetString(dreamcast_media));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no = {0}", Encoding.ASCII.GetString(disc_no));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no_separator = \"{0}\"", Encoding.ASCII.GetString(disc_no_separator));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_total_nos = \"{0}\"", Encoding.ASCII.GetString(disc_total_nos));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space2 = \"{0}\"", Encoding.ASCII.GetString(spare_space2));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.region_codes = \"{0}\"", Encoding.ASCII.GetString(region_codes));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.peripherals = \"{0}\"", Encoding.ASCII.GetString(peripherals));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_no = \"{0}\"", Encoding.ASCII.GetString(product_no));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_version = \"{0}\"", Encoding.ASCII.GetString(product_version));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.release_date = \"{0}\"", Encoding.ASCII.GetString(release_date));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space3 = \"{0}\"", Encoding.ASCII.GetString(spare_space3));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.boot_filename = \"{0}\"", Encoding.ASCII.GetString(boot_filename));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.producer = \"{0}\"", Encoding.ASCII.GetString(producer));
-                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_name = \"{0}\"", Encoding.ASCII.GetString(product_name));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.maker_id = \"{0}\"", CurrentEncoding.GetString(maker_id));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_crc = 0x{0}", CurrentEncoding.GetString(dreamcast_crc));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space1 = \"{0}\"", CurrentEncoding.GetString(spare_space1));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.dreamcast_media = \"{0}\"", CurrentEncoding.GetString(dreamcast_media));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no = {0}", CurrentEncoding.GetString(disc_no));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_no_separator = \"{0}\"", CurrentEncoding.GetString(disc_no_separator));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.disc_total_nos = \"{0}\"", CurrentEncoding.GetString(disc_total_nos));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space2 = \"{0}\"", CurrentEncoding.GetString(spare_space2));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.region_codes = \"{0}\"", CurrentEncoding.GetString(region_codes));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.peripherals = \"{0}\"", CurrentEncoding.GetString(peripherals));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_no = \"{0}\"", CurrentEncoding.GetString(product_no));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_version = \"{0}\"", CurrentEncoding.GetString(product_version));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.release_date = \"{0}\"", CurrentEncoding.GetString(release_date));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.spare_space3 = \"{0}\"", CurrentEncoding.GetString(spare_space3));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.boot_filename = \"{0}\"", CurrentEncoding.GetString(boot_filename));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.producer = \"{0}\"", CurrentEncoding.GetString(producer));
+                        DicConsole.DebugWriteLine("ISO9660 plugin", "dreamcast_ipbin.product_name = \"{0}\"", CurrentEncoding.GetString(product_name));
 
                         // Decoding all data
                         DateTime ipbindate;
                         CultureInfo provider = CultureInfo.InvariantCulture;
-                        ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(release_date), "yyyyMMdd", provider);
-                        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(product_name)).AppendLine();
-                        IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(product_version)).AppendLine();
-                        IPBinInformation.AppendFormat("Producer: {0}", Encoding.ASCII.GetString(producer)).AppendLine();
-                        IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(dreamcast_media)).AppendLine();
-                        IPBinInformation.AppendFormat("Disc number {0} of {1}", Encoding.ASCII.GetString(disc_no), Encoding.ASCII.GetString(disc_total_nos)).AppendLine();
+                        ipbindate = DateTime.ParseExact(CurrentEncoding.GetString(release_date), "yyyyMMdd", provider);
+                        IPBinInformation.AppendFormat("Product name: {0}", CurrentEncoding.GetString(product_name)).AppendLine();
+                        IPBinInformation.AppendFormat("Product version: {0}", CurrentEncoding.GetString(product_version)).AppendLine();
+                        IPBinInformation.AppendFormat("Producer: {0}", CurrentEncoding.GetString(producer)).AppendLine();
+                        IPBinInformation.AppendFormat("Disc media: {0}", CurrentEncoding.GetString(dreamcast_media)).AppendLine();
+                        IPBinInformation.AppendFormat("Disc number {0} of {1}", CurrentEncoding.GetString(disc_no), CurrentEncoding.GetString(disc_total_nos)).AppendLine();
                         IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-                        switch(Encoding.ASCII.GetString(boot_filename))
+                        switch(CurrentEncoding.GetString(boot_filename))
                         {
                             case "1ST_READ.BIN":
                                 IPBinInformation.AppendLine("Disc boots natively.");
@@ -750,7 +752,7 @@ namespace DiscImageChef.Filesystems
                                 IPBinInformation.AppendLine("Disc boots using Windows CE.");
                                 break;
                             default:
-                                IPBinInformation.AppendFormat("Disc boots using unknown loader: {0}.", Encoding.ASCII.GetString(boot_filename)).AppendLine();
+                                IPBinInformation.AppendFormat("Disc boots using unknown loader: {0}.", CurrentEncoding.GetString(boot_filename)).AppendLine();
                                 break;
                         }
                         IPBinInformation.AppendLine("Regions supported:");
@@ -775,7 +777,7 @@ namespace DiscImageChef.Filesystems
                             }
                         }
 
-                        int iPeripherals = int.Parse(Encoding.ASCII.GetString(peripherals), NumberStyles.HexNumber);
+                        int iPeripherals = int.Parse(CurrentEncoding.GetString(peripherals), NumberStyles.HexNumber);
 
                         if((iPeripherals & 0x00000001) == 0x00000001)
                             IPBinInformation.AppendLine("Game uses Windows CE.");

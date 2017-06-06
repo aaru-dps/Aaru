@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.CPM
@@ -113,15 +114,18 @@ namespace DiscImageChef.Filesystems.CPM
         {
             Name = "CP/M File System";
             PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+            CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
 
-        public CPM(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public CPM(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             device = imagePlugin;
             partStart = partitionStart;
             partEnd = partitionEnd;
             Name = "CP/M File System";
             PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("IBM437");
         }
     }
 }

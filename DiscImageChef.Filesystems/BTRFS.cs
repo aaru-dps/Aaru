@@ -49,12 +49,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

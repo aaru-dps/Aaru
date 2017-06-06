@@ -34,7 +34,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     partial class LisaFS : Filesystem
     {
-        /// <summary>
+       /* /// <summary>
         /// The Lisa to Unicode character map.
         /// MacRoman is a superset of LisaRoman.
         /// </summary>
@@ -158,7 +158,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
 
             return uni;
-        }
+        }*/
     }
 }
 

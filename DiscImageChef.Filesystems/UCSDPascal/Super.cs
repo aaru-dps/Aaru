@@ -102,7 +102,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             xmlFSType.Files = mountedVolEntry.files;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Type = "UCSD Pascal";
-            xmlFSType.VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName);
+            xmlFSType.VolumeName = StringHandlers.PascalToString(mountedVolEntry.volumeName, CurrentEncoding);
 
             mounted = true;
 

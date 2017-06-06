@@ -58,12 +58,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "UNIX System V filesystem";
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public SysVfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public SysVfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "UNIX System V filesystem";
             PluginUUID = new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -131,9 +134,9 @@ namespace DiscImageChef.Filesystems
 
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                s_fname = StringHandlers.CToString(coherent_string);
+                s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                s_fpack = StringHandlers.CToString(coherent_string);
+                s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
                 if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
                     return true;
@@ -243,9 +246,9 @@ namespace DiscImageChef.Filesystems
 
                 byte[] coherent_string = new byte[6];
                 Array.Copy(sb_sector, 0x1E8, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                s_fname = StringHandlers.CToString(coherent_string);
+                s_fname = StringHandlers.CToString(coherent_string, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1EE, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                s_fpack = StringHandlers.CToString(coherent_string);
+                s_fpack = StringHandlers.CToString(coherent_string, CurrentEncoding);
 
                 if(s_fname == COH_FNAME || s_fpack == COH_FPACK)
                 {
@@ -312,9 +315,9 @@ namespace DiscImageChef.Filesystems
                     xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AC);
                     xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
                     Array.Copy(sb_sector, 0x1B0, xenix_strings, 0, 6);
-                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, CurrentEncoding);
                     Array.Copy(sb_sector, 0x1B6, xenix_strings, 0, 6);
-                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, CurrentEncoding);
                     xnx_sb.s_clean = sb_sector[0x1BC];
                     xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F0);
                     xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x1F4);
@@ -337,9 +340,9 @@ namespace DiscImageChef.Filesystems
                     xnx_sb.s_dinfo0 = BigEndianBitConverter.ToUInt16(sb_sector, 0x274);
                     xnx_sb.s_dinfo1 = BigEndianBitConverter.ToUInt16(sb_sector, 0x276);
                     Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
-                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, CurrentEncoding);
                     Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
-                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings);
+                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, CurrentEncoding);
                     xnx_sb.s_clean = sb_sector[0x284];
                     xnx_sb.s_magic = BigEndianBitConverter.ToUInt32(sb_sector, 0x3F8);
                     xnx_sb.s_type = BigEndianBitConverter.ToUInt32(sb_sector, 0x3FC);
@@ -450,9 +453,9 @@ namespace DiscImageChef.Filesystems
                     sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1B0);
                     sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1B4);
                     Array.Copy(sb_sector, 0x1B8, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                     Array.Copy(sb_sector, 0x1BE, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                 }
                 else
                 {
@@ -471,9 +474,9 @@ namespace DiscImageChef.Filesystems
                     sysv_sb.s_tfree = BigEndianBitConverter.ToUInt32(sb_sector, 0x1AA);
                     sysv_sb.s_tinode = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AE);
                     Array.Copy(sb_sector, 0x1B0, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings);
+                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                     Array.Copy(sb_sector, 0x1B6, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings);
+                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, CurrentEncoding);
                 }
 
                 uint bs = 512;
@@ -571,9 +574,9 @@ namespace DiscImageChef.Filesystems
                 coh_sb.s_int_m = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E4);
                 coh_sb.s_int_n = BigEndianBitConverter.ToUInt16(sb_sector, 0x1E6);
                 Array.Copy(sb_sector, 0x1E8, coh_strings, 0, 6);
-                coh_sb.s_fname = StringHandlers.CToString(coh_strings);
+                coh_sb.s_fname = StringHandlers.CToString(coh_strings, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1EE, coh_strings, 0, 6);
-                coh_sb.s_fpack = StringHandlers.CToString(coh_strings);
+                coh_sb.s_fpack = StringHandlers.CToString(coh_strings, CurrentEncoding);
 
                 xmlFSType.Type = "Coherent fs";
                 xmlFSType.ClusterSize = 512;
@@ -626,9 +629,9 @@ namespace DiscImageChef.Filesystems
                 v7_sb.s_int_m = BigEndianBitConverter.ToUInt16(sb_sector, 0x1A8);
                 v7_sb.s_int_n = BigEndianBitConverter.ToUInt16(sb_sector, 0x1AA);
                 Array.Copy(sb_sector, 0x1AC, sys7_strings, 0, 6);
-                v7_sb.s_fname = StringHandlers.CToString(sys7_strings);
+                v7_sb.s_fname = StringHandlers.CToString(sys7_strings, CurrentEncoding);
                 Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
-                v7_sb.s_fpack = StringHandlers.CToString(sys7_strings);
+                v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, CurrentEncoding);
 
                 xmlFSType.Type = "UNIX 7th Edition fs";
                 xmlFSType.ClusterSize = 512;

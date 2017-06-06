@@ -227,10 +227,10 @@ namespace DiscImageChef.PartPlugins
             APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
             cString = new byte[32];
             Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
-            APMEntry.name = StringHandlers.CToString(cString);
+            APMEntry.name = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
             cString = new byte[32];
             Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
-            APMEntry.type = StringHandlers.CToString(cString);
+            APMEntry.type = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
             APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
             APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
             APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
@@ -243,7 +243,7 @@ namespace DiscImageChef.PartPlugins
             APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
             cString = new byte[16];
             Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
-            APMEntry.processor = StringHandlers.CToString(cString);
+            APMEntry.processor = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
 
             return APMEntry;
         }

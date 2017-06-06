@@ -55,12 +55,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BeFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public BeFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -144,7 +147,7 @@ namespace DiscImageChef.Filesystems
             }
 
             Array.Copy(sb_sector, 0x000, name_bytes, 0, 0x20);
-            besb.name = StringHandlers.CToString(name_bytes);
+            besb.name = StringHandlers.CToString(name_bytes, CurrentEncoding);
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
             besb.fs_byte_order = BigEndianBitConverter.ToUInt32(sb_sector, 0x24);
             besb.block_size = BigEndianBitConverter.ToUInt32(sb_sector, 0x28);

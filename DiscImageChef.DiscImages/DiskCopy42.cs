@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
@@ -178,7 +179,7 @@ namespace DiscImageChef.ImagePlugins
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            tmp_header.diskName = StringHandlers.PascalToString(pString);
+            tmp_header.diskName = StringHandlers.PascalToString(pString, Encoding.GetEncoding("macintosh"));
             tmp_header.dataSize = BigEndianBitConverter.ToUInt32(buffer, 0x40);
             tmp_header.tagSize = BigEndianBitConverter.ToUInt32(buffer, 0x44);
             tmp_header.dataChecksum = BigEndianBitConverter.ToUInt32(buffer, 0x48);
@@ -248,7 +249,7 @@ namespace DiscImageChef.ImagePlugins
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             Array.Copy(buffer, 0, pString, 0, 64);
-            header.diskName = StringHandlers.PascalToString(pString);
+            header.diskName = StringHandlers.PascalToString(pString, Encoding.GetEncoding("macintosh"));
             header.dataSize = BigEndianBitConverter.ToUInt32(buffer, 0x40);
             header.tagSize = BigEndianBitConverter.ToUInt32(buffer, 0x44);
             header.dataChecksum = BigEndianBitConverter.ToUInt32(buffer, 0x48);
@@ -492,7 +493,7 @@ namespace DiscImageChef.ImagePlugins
                         if(dCpyRsrc != null)
                         {
                             // TODO: Use MacRoman
-                            string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]));
+                            string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]), Encoding.GetEncoding("macintosh"));
                             string dCpyRegEx = "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
                             Regex dCpyEx = new Regex(dCpyRegEx);
                             Match dCpyMatch = dCpyEx.Match(dCpy);

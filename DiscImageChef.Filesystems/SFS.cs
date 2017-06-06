@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public SFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public SFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         [Flags]

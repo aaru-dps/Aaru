@@ -44,12 +44,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -324,7 +327,7 @@ namespace DiscImageChef.Filesystems
             #region UFS1
             strings_b = new byte[512];
             Array.Copy(ufs_sb_sectors, 0x00D4, strings_b, 0, 512);
-            ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 512 bytes, name mounted on
+            ufs_sb.fs_fsmnt_ufs1 = StringHandlers.CToString(strings_b, CurrentEncoding);               /// <summary>0x00D4, 512 bytes, name mounted on
             ufs_sb.fs_cgrotor_ufs1 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x0000);             /// <summary>0x02D4 last cg searched
             ufs_sb.fs_cs_ufs1 = new byte[124];
             Array.Copy(ufs_sb_sectors, 0x02D8, ufs_sb.fs_cs_ufs1, 0, 124); /// <summary>0x02D8, 124 bytes, uints, list of fs_cs info buffers
@@ -336,10 +339,10 @@ namespace DiscImageChef.Filesystems
             #region UFS2
             strings_b = new byte[468];
             Array.Copy(ufs_sb_sectors, 0x00D4, strings_b, 0, 468);
-            ufs_sb.fs_fsmnt_ufs2 = StringHandlers.CToString(strings_b);               /// <summary>0x00D4, 468 bytes, name mounted on
+            ufs_sb.fs_fsmnt_ufs2 = StringHandlers.CToString(strings_b, CurrentEncoding);               /// <summary>0x00D4, 468 bytes, name mounted on
             strings_b = new byte[32];
             Array.Copy(ufs_sb_sectors, 0x02A8, strings_b, 0, 32);
-            ufs_sb.fs_volname_ufs2 = StringHandlers.CToString(strings_b);             /// <summary>0x02A8, 32 bytes, volume name
+            ufs_sb.fs_volname_ufs2 = StringHandlers.CToString(strings_b, CurrentEncoding);             /// <summary>0x02A8, 32 bytes, volume name
             ufs_sb.fs_swuid_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02C8);               /// <summary>0x02C8 system-wide uid
             ufs_sb.fs_pad_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D0);                 /// <summary>0x02D0 due to alignment of fs_swuid
             ufs_sb.fs_cgrotor_ufs2 = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x02D4);             /// <summary>0x02D4 last cg searched

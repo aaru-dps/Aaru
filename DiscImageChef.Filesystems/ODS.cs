@@ -51,12 +51,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public ODS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public ODS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -129,13 +132,13 @@ namespace DiscImageChef.Filesystems
             homeblock.copydate = BitConverter.ToUInt64(hb_sector, 0x092);
             homeblock.serialnum = BitConverter.ToUInt32(hb_sector, 0x1C8);
             Array.Copy(hb_sector, 0x1CC, temp_string, 0, 12);
-            homeblock.strucname = StringHandlers.CToString(temp_string);
+            homeblock.strucname = StringHandlers.CToString(temp_string, CurrentEncoding);
             Array.Copy(hb_sector, 0x1D8, temp_string, 0, 12);
-            homeblock.volname = StringHandlers.CToString(temp_string);
+            homeblock.volname = StringHandlers.CToString(temp_string, CurrentEncoding);
             Array.Copy(hb_sector, 0x1E4, temp_string, 0, 12);
-            homeblock.ownername = StringHandlers.CToString(temp_string);
+            homeblock.ownername = StringHandlers.CToString(temp_string, CurrentEncoding);
             Array.Copy(hb_sector, 0x1F0, temp_string, 0, 12);
-            homeblock.format = StringHandlers.CToString(temp_string);
+            homeblock.format = StringHandlers.CToString(temp_string, CurrentEncoding);
             homeblock.checksum2 = BitConverter.ToUInt16(hb_sector, 0x1FE);
 
             if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || homeblock.format != "DECFILE11B  ")

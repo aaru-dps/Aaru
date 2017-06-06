@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
@@ -350,8 +351,7 @@ namespace DiscImageChef.DiscImages
 						Resource dartRsrc = rsrcFork.GetResource(0x44415254);
 						if(dartRsrc != null)
 						{
-							// TODO: Use MacRoman
-							string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]));
+							string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]), Encoding.GetEncoding("macintosh"));
 							string dArtRegEx = "(?<version>\\S+), tag checksum=\\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\\$(?<datachk>[0123456789ABCDEF]{8})$";
 							Regex dArtEx = new Regex(dArtRegEx);
 							Match dArtMatch = dArtEx.Match(dArt);

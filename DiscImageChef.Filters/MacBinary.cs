@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace DiscImageChef.Filters
 {
@@ -336,7 +337,7 @@ namespace DiscImageChef.Filters
                 blocks++;
             rsrcForkOff = blocks * 128;
 
-            filename = StringHandlers.PascalToString(header.filename);
+            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
             creationTime = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 
@@ -364,7 +365,7 @@ namespace DiscImageChef.Filters
                 blocks++;
             rsrcForkOff = blocks * 128;
 
-            filename = StringHandlers.PascalToString(header.filename);
+            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
             creationTime = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 
@@ -393,7 +394,7 @@ namespace DiscImageChef.Filters
                 blocks++;
             rsrcForkOff = blocks * 128;
 
-            filename = StringHandlers.PascalToString(header.filename);
+            filename = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
             creationTime = DateHandlers.MacToDateTime(header.creationTime);
             lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
 

@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -1132,7 +1132,7 @@ namespace DiscImageChef.PartPlugins
                 partEntry.devFlags = BigEndianBitConverter.ToUInt32(sector, 0x20);
                 partEntry.driveNameLen = sector[0x24];
                 Array.Copy(sector, 0x24, driveName, 0, 32);
-                partEntry.driveName = StringHandlers.PascalToString(driveName);
+                partEntry.driveName = StringHandlers.PascalToString(driveName, Encoding.GetEncoding("iso-8859-1"));
                 partEntry.reserved3 = BigEndianBitConverter.ToUInt32(sector, 0x44);
                 partEntry.reserved4 = BigEndianBitConverter.ToUInt32(sector, 0x48);
                 partEntry.reserved5 = BigEndianBitConverter.ToUInt32(sector, 0x4C);

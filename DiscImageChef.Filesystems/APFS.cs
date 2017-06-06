@@ -46,12 +46,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple File System";
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public APFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public APFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Apple File System";
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

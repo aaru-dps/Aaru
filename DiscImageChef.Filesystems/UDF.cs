@@ -47,12 +47,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Universal Disk Format";
             PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public UDF(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public UDF(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Universal Disk Format";
             PluginUUID = new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+            // UDF is always UTF-8
+            CurrentEncoding = Encoding.UTF8;
         }
 
         readonly byte[] UDF_Magic = { 0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61, 0x6E, 0x74, 0x00, 0x00, 0x00, 0x00 };
@@ -403,8 +406,8 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume was las written in {0}", ECMAToDateTime(lvid.recordingDateTime)).AppendLine();
             sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
             sbInformation.AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).AppendLine();
-            sbInformation.AppendFormat("Volume conforms to {0}", Encoding.UTF8.GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] { '\u0000' })).AppendLine();
-            sbInformation.AppendFormat("Volume was last written by: {0}", Encoding.UTF8.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[]{ '\u0000' })).AppendLine();
+            sbInformation.AppendFormat("Volume conforms to {0}", CurrentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] { '\u0000' })).AppendLine();
+            sbInformation.AppendFormat("Volume was last written by: {0}", CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[]{ '\u0000' })).AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:D2} to be read", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10)).AppendLine();
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:D2} to be written to", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8), 10),
@@ -415,7 +418,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = string.Format("UDF v{0}.{1:D2}", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10));
-            xmlFSType.ApplicationIdentifier = Encoding.UTF8.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
+            xmlFSType.ApplicationIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
             xmlFSType.Clusters = (long)(((partitionEnd - partitionStart + 1) * imagePlugin.ImageInfo.sectorSize) / (ulong)xmlFSType.ClusterSize);
             xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);

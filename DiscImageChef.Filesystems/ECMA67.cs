@@ -45,12 +45,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "ECMA-67";
             PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public ECMA67(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public ECMA67(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "ECMA-67";
             PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         readonly byte[] ECMA67_Magic = { 0x56, 0x4F, 0x4C };

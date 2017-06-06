@@ -82,12 +82,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+            if(encoding == null) // TODO: Until Apple ][ encoding is implemented
+                CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -149,7 +152,7 @@ namespace DiscImageChef.Filesystems
             rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & ProDOSNameLengthMask);
             temporal = new byte[rootDirectoryKeyBlock.header.name_length];
             Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
-            rootDirectoryKeyBlock.header.volume_name = Encoding.ASCII.GetString(temporal);
+            rootDirectoryKeyBlock.header.volume_name = CurrentEncoding.GetString(temporal);
             rootDirectoryKeyBlock.header.reserved = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
             temp_timestamp_left = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);

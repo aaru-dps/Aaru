@@ -46,12 +46,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public BFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -84,9 +87,9 @@ namespace DiscImageChef.Filesystems
             bfs_sb.s_bfrom = BitConverter.ToInt32(bfs_sb_sector, 0x14);
             bfs_sb.s_bto = BitConverter.ToInt32(bfs_sb_sector, 0x18);
             Array.Copy(bfs_sb_sector, 0x1C, sb_strings, 0, 6);
-            bfs_sb.s_fsname = StringHandlers.CToString(sb_strings);
+            bfs_sb.s_fsname = StringHandlers.CToString(sb_strings, CurrentEncoding);
             Array.Copy(bfs_sb_sector, 0x22, sb_strings, 0, 6);
-            bfs_sb.s_volume = StringHandlers.CToString(sb_strings);
+            bfs_sb.s_volume = StringHandlers.CToString(sb_strings, CurrentEncoding);
 
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfs_sb.s_magic);
             DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfs_sb.s_start);

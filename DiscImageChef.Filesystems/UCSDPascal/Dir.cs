@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
 
             contents = new List<string>();
             foreach(PascalFileEntry ent in fileEntries)
-                contents.Add(StringHandlers.PascalToString(ent.filename));
+                contents.Add(StringHandlers.PascalToString(ent.filename, CurrentEncoding));
 
             if(debug)
             {

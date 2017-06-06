@@ -106,12 +106,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "QNX6 Plugin";
             PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public QNX6(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public QNX6(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "QNX6 Plugin";
             PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -184,7 +187,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.FilesSpecified = true;
                 xmlFSType.FreeClusters = audiSb.freeBlocks;
                 xmlFSType.FreeClustersSpecified = true;
-                //xmlFSType.VolumeName = Encoding.ASCII.GetString(audiSb.id);
+                //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
                 xmlFSType.VolumeSerial = string.Format("{0:X16}", audiSb.serial);
 
                 information = sb.ToString();
@@ -199,7 +202,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Flags: 0x{0:X8}", qnxSb.flags).AppendLine();
             sb.AppendFormat("Version1: 0x{0:X4}", qnxSb.version1).AppendLine();
             sb.AppendFormat("Version2: 0x{0:X4}", qnxSb.version2).AppendLine();
-            //sb.AppendFormat("Volume ID: \"{0}\"", Encoding.ASCII.GetString(qnxSb.volumeid)).AppendLine();
+            //sb.AppendFormat("Volume ID: \"{0}\"", CurrentEncoding.GetString(qnxSb.volumeid)).AppendLine();
             sb.AppendFormat("{0} bytes per block", qnxSb.blockSize).AppendLine();
             sb.AppendFormat("{0} inodes free of {1}", qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
             sb.AppendFormat("{0} blocks ({1} bytes) free of {2} ({3} bytes)", qnxSb.freeBlocks, qnxSb.freeBlocks * qnxSb.blockSize,
@@ -214,7 +217,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FilesSpecified = true;
             xmlFSType.FreeClusters = qnxSb.freeBlocks;
             xmlFSType.FreeClustersSpecified = true;
-            //xmlFSType.VolumeName = Encoding.ASCII.GetString(qnxSb.volumeid);
+            //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);
             xmlFSType.VolumeSerial = string.Format("{0:X16}", qnxSb.serial);
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.ctime);
             xmlFSType.CreationDateSpecified = true;

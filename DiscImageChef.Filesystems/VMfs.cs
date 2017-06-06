@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public VMfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public VMfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         [Flags]
@@ -124,7 +127,7 @@ namespace DiscImageChef.Filesystems
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name)).AppendLine();
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, CurrentEncoding)).AppendLine();
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
             sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).AppendLine();

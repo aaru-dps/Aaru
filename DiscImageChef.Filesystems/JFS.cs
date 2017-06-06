@@ -137,12 +137,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "JFS Plugin";
             PluginUUID = new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public JFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public JFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "JFS Plugin";
             PluginUUID = new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -231,9 +234,9 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine("Volume is dirty");
             sb.AppendFormat("Volume was last updated on {0}", DateHandlers.UNIXUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)).AppendLine();
             if(jfsSb.s_version == 1)
-                sb.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(jfsSb.s_fpack)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(jfsSb.s_fpack)).AppendLine();
             else
-                sb.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(jfsSb.s_label)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(jfsSb.s_label)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", jfsSb.s_uuid).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
@@ -242,9 +245,9 @@ namespace DiscImageChef.Filesystems
             xmlFSType.ClusterSize = (int)jfsSb.s_bsize;
             xmlFSType.Bootable = true;
             if(jfsSb.s_version == 1)
-                xmlFSType.VolumeName = Encoding.ASCII.GetString(jfsSb.s_fpack);
+                xmlFSType.VolumeName = CurrentEncoding.GetString(jfsSb.s_fpack);
             else
-                xmlFSType.VolumeName = Encoding.ASCII.GetString(jfsSb.s_label);
+                xmlFSType.VolumeName = CurrentEncoding.GetString(jfsSb.s_label);
             xmlFSType.VolumeSerial = string.Format("{0}", jfsSb.s_uuid);
             xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec);
             xmlFSType.ModificationDateSpecified = true;

@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                         for(int i = 0; i < 30; i++)
                             filename_b[i] = (byte)(entry.filename[i] & 0x7F);
 
-                        string filename = StringHandlers.SpacePaddedToString(filename_b);
+                        string filename = StringHandlers.SpacePaddedToString(filename_b, CurrentEncoding);
 
                         if(!catalogCache.ContainsKey(filename))
                             catalogCache.Add(filename, ts);

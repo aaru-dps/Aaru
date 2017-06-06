@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
             PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public ext2FS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public ext2FS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
             PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -149,10 +152,10 @@ namespace DiscImageChef.Filesystems
             // End of volume UUID
             forstrings = new byte[16];
             Array.Copy(sb_sector, 0x078, forstrings, 0, 16);
-            supblk.volume_name = StringHandlers.CToString(forstrings);
+            supblk.volume_name = StringHandlers.CToString(forstrings, CurrentEncoding);
             forstrings = new byte[64];
             Array.Copy(sb_sector, 0x088, forstrings, 0, 64);
-            supblk.last_mount_dir = StringHandlers.CToString(forstrings);
+            supblk.last_mount_dir = StringHandlers.CToString(forstrings, CurrentEncoding);
             supblk.algo_usage_bmp = BitConverter.ToUInt32(sb_sector, 0x0C8);
             supblk.prealloc_blks = sb_sector[0x0CC];
             supblk.prealloc_dir_blks = sb_sector[0x0CD];
@@ -212,7 +215,7 @@ namespace DiscImageChef.Filesystems
             supblk.first_error_block = BitConverter.ToUInt64(sb_sector, 0x19C);
             forstrings = new byte[32];
             Array.Copy(sb_sector, 0x1A0, forstrings, 0, 32);
-            supblk.first_error_func = StringHandlers.CToString(forstrings);
+            supblk.first_error_func = StringHandlers.CToString(forstrings, CurrentEncoding);
             supblk.first_error_line = BitConverter.ToUInt32(sb_sector, 0x1B0);
             supblk.last_error_t = BitConverter.ToUInt32(sb_sector, 0x1B4);
             supblk.last_error_inode = BitConverter.ToUInt32(sb_sector, 0x1B8);
@@ -220,10 +223,10 @@ namespace DiscImageChef.Filesystems
             supblk.last_error_block = BitConverter.ToUInt64(sb_sector, 0x1C0);
             forstrings = new byte[32];
             Array.Copy(sb_sector, 0x1C8, forstrings, 0, 32);
-            supblk.last_error_func = StringHandlers.CToString(forstrings);
+            supblk.last_error_func = StringHandlers.CToString(forstrings, CurrentEncoding);
             forstrings = new byte[64];
             Array.Copy(sb_sector, 0x1D8, forstrings, 0, 64);
-            supblk.mount_options = StringHandlers.CToString(forstrings);
+            supblk.mount_options = StringHandlers.CToString(forstrings, CurrentEncoding);
 
             xmlFSType = new Schemas.FileSystemType();
 

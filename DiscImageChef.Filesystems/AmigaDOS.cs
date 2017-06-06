@@ -43,12 +43,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Amiga DOS filesystem";
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public AmigaDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AmigaDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Amiga DOS filesystem";
             PluginUUID = new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         /// <summary>
@@ -305,7 +308,7 @@ namespace DiscImageChef.Filesystems
             rootBlk.rTicks = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 116));
 
             Array.Copy(RootBlockSector, 0x18 + rootBlk.hashTableSize * 4 + 120, diskName, 0, 32);
-            rootBlk.diskName = StringHandlers.PascalToString(diskName);
+            rootBlk.diskName = StringHandlers.PascalToString(diskName, CurrentEncoding);
 
             rootBlk.reserved1 = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 152));
             rootBlk.reserved2 = BigEndianBitConverter.ToUInt32(RootBlockSector, (int)(0x18 + rootBlk.hashTableSize * 4 + 156));

@@ -42,12 +42,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            CurrentEncoding = Encoding.ASCII;
         }
 
-        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+            if(encoding == null) // TODO: Find correct default encoding
+                CurrentEncoding = Encoding.ASCII;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)

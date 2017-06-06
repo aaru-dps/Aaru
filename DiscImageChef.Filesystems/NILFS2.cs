@@ -100,12 +100,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            CurrentEncoding = Encoding.UTF8;
         }
 
-        public NILFS2(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public NILFS2(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+            if(encoding == null)
+                CurrentEncoding = Encoding.UTF8;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -177,7 +180,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(nilfsSb.volume_name)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(nilfsSb.volume_name)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
             sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.mtime)).AppendLine();
             sb.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime)).AppendLine();
@@ -190,7 +193,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.SystemIdentifier = "Linux";
             xmlFSType.ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10);
             xmlFSType.Clusters = (long)nilfsSb.dev_size / xmlFSType.ClusterSize;
-            xmlFSType.VolumeName = Encoding.Unicode.GetString(nilfsSb.volume_name);
+            xmlFSType.VolumeName = CurrentEncoding.GetString(nilfsSb.volume_name);
             xmlFSType.VolumeSerial = nilfsSb.uuid.ToString();
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime);
             xmlFSType.CreationDateSpecified = true;

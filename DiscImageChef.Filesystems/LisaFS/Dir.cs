@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(entry.parentID == dirId)
                     // Do same trick as Mac OS X, replace filesystem '/' with '-',
                     // as '-' is the path separator in Lisa OS
-                    contents.Add(GetString(entry.filename).Replace('/', '-'));
+                    contents.Add(CurrentEncoding.GetString(entry.filename).Replace('/', '-'));
             }
 
             return Errno.NoError;

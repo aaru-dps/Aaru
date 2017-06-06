@@ -58,12 +58,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
-        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
@@ -181,7 +184,7 @@ namespace DiscImageChef.Filesystems
             MDB.drFreeBks = BigEndianBitConverter.ToUInt16(mdb_sector, 0x022);
             pString = new byte[28];
             Array.Copy(mdb_sector, 0x024, pString, 0, 28);
-            MDB.drVN = StringHandlers.PascalToString(pString);
+            MDB.drVN = StringHandlers.PascalToString(pString, CurrentEncoding);
 
             MDB.drVolBkUp = BigEndianBitConverter.ToUInt32(mdb_sector, 0x040);
             MDB.drVSeqNum = BigEndianBitConverter.ToUInt16(mdb_sector, 0x044);
@@ -225,25 +228,25 @@ namespace DiscImageChef.Filesystems
 
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x00A, pString, 0, 16);
-                BB.system_name = StringHandlers.PascalToString(pString);
+                BB.system_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x01A, pString, 0, 16);
-                BB.finder_name = StringHandlers.PascalToString(pString);
+                BB.finder_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x02A, pString, 0, 16);
-                BB.debug_name = StringHandlers.PascalToString(pString);
+                BB.debug_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x03A, pString, 0, 16);
-                BB.disasm_name = StringHandlers.PascalToString(pString);
+                BB.disasm_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x04A, pString, 0, 16);
-                BB.stupscr_name = StringHandlers.PascalToString(pString);
+                BB.stupscr_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x05A, pString, 0, 16);
-                BB.bootup_name = StringHandlers.PascalToString(pString);
+                BB.bootup_name = StringHandlers.PascalToString(pString, CurrentEncoding);
                 pString = new byte[16];
                 Array.Copy(bb_sector, 0x06A, pString, 0, 16);
-                BB.clipbrd_name = StringHandlers.PascalToString(pString);
+                BB.clipbrd_name = StringHandlers.PascalToString(pString, CurrentEncoding);
 
                 BB.max_files = BigEndianBitConverter.ToUInt16(bb_sector, 0x07A);
                 BB.queue_size = BigEndianBitConverter.ToUInt16(bb_sector, 0x07C);

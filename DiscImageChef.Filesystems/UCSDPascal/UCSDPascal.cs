@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
@@ -52,13 +53,16 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             Name = "U.C.S.D. Pascal filesystem";
             PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public PascalPlugin(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public PascalPlugin(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             device = imagePlugin;
             Name = "U.C.S.D. Pascal filesystem";
             PluginUUID = new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+            if(encoding == null) // TODO: Until Apple ][ encoding is implemented
+                CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
         public override Errno ListXAttr(string path, ref List<string> xattrs)

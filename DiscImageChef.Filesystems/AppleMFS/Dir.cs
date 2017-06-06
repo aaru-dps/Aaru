@@ -93,14 +93,14 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 entry.flMdDat = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 46);
                 entry.flNam = new byte[directoryBlocks[offset + 50] + 1];
                 Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
-                lowerFilename = GetStringFromPascal(entry.flNam).ToLowerInvariant().Replace('/', ':');
+                lowerFilename = StringHandlers.PascalToString(entry.flNam, CurrentEncoding).ToLowerInvariant().Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(MFS_FileFlags.Used) && !idToFilename.ContainsKey(entry.flFlNum) &&
                    !idToEntry.ContainsKey(entry.flFlNum) && !filenameToId.ContainsKey(lowerFilename) &&
                    entry.flFlNum > 0)
                 {
                     idToEntry.Add(entry.flFlNum, entry);
-                    idToFilename.Add(entry.flFlNum, GetStringFromPascal(entry.flNam).Replace('/', ':'));
+                    idToFilename.Add(entry.flFlNum, StringHandlers.PascalToString(entry.flNam, CurrentEncoding).Replace('/', ':'));
                     filenameToId.Add(lowerFilename, entry.flFlNum);
 
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
@@ -114,7 +114,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}", DateHandlers.MacToDateTime(entry.flCrDat));
                     DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}", DateHandlers.MacToDateTime(entry.flMdDat));
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}", GetStringFromPascal(entry.flNam));
+                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}", StringHandlers.PascalToString(entry.flNam, CurrentEncoding));
                 }
 
                 offset += (50 + entry.flNam.Length);

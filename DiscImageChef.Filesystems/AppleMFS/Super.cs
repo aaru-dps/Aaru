@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             volMDB.drVNSiz = mdbBlocks[0x024];
             variable_size = new byte[volMDB.drVNSiz + 1];
             Array.Copy(mdbBlocks, 0x024, variable_size, 0, volMDB.drVNSiz + 1);
-            volMDB.drVN = GetStringFromPascal(variable_size);
+            volMDB.drVN = StringHandlers.PascalToString(variable_size, CurrentEncoding);
 
             directoryBlocks = device.ReadSectors(volMDB.drDirSt + partitionStart, volMDB.drBlLen);
             int bytesInBlockMap = ((volMDB.drNmAlBlks * 12) / 8) + ((volMDB.drNmAlBlks * 12) % 8);

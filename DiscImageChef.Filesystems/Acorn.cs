@@ -46,12 +46,15 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Acorn Advanced Disc Filing System";
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+            if(encoding == null)
+                CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -165,7 +168,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.root = {0}", drSb.root);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}", drSb.disc_size);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}", drSb.disc_id);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}", StringHandlers.CToString(drSb.disc_name));
+            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}", StringHandlers.CToString(drSb.disc_name, CurrentEncoding));
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}", drSb.disc_type);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
             DicConsole.DebugWriteLine("ADFS Plugin", "drSb.flags = {0}", drSb.flags);
@@ -196,7 +199,7 @@ namespace DiscImageChef.Filesystems
             if(bytes > (imagePlugin.GetSectors() * imagePlugin.GetSectorSize()))
                 return;
 
-            string discname = StringHandlers.CToString(drSb.disc_name);
+            string discname = StringHandlers.CToString(drSb.disc_name, CurrentEncoding);
 
             sbInformation.AppendLine("Acorn Advanced Disc Filing System");
             sbInformation.AppendLine();
