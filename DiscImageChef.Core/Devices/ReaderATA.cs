@@ -148,7 +148,7 @@ namespace DiscImageChef.Core.Devices
             sense = dev.Seek(out errorLba, 0, timeout, out duration);
             ataSeekLba = (!sense && (errorLba.status & 0x27) == 0 && errorChs.error == 0);
 
-            if(!lbaMode)
+            if(lbaMode)
             {
                 if(blocks > 0xFFFFFFF && !ataReadLba48 && !ataReadDmaLba48)
                 {
