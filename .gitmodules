@@ -1,6 +1,3 @@
 [submodule "CICMMetadata"]
 	path = CICMMetadata
 	url = https://github.com/claunia/CICMMetadata
-[submodule "Claunia.RsrcFork"]
-	path = Claunia.RsrcFork
-	url = https://github.com/claunia/Claunia.RsrcFork
