@@ -160,7 +160,7 @@ namespace DiscImageChef.Devices.Linux
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
 
-            cdb[2] |= 0x20;
+            //cdb[2] |= 0x20;
 
             cdb[4] = registers.feature;
             cdb[6] = registers.sectorCount;
