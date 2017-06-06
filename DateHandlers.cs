@@ -32,6 +32,7 @@
 
 using System;
 using DiscImageChef.Console;
+using System.Text;
 
 namespace DiscImageChef
 {
@@ -90,52 +91,52 @@ namespace DiscImageChef
             fourcharvalue[1] = VDDateTime[1];
             fourcharvalue[2] = VDDateTime[2];
             fourcharvalue[3] = VDDateTime[3];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"", StringHandlers.CToString(fourcharvalue));
-            if(!int.TryParse(StringHandlers.CToString(fourcharvalue), out year))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"", StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out year))
                 year = 0;
-            //			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue));
+            //			year = Convert.ToInt32(StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[4];
             twocharvalue[1] = VDDateTime[5];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out month))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out month))
                 month = 0;
-            //			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			month = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[6];
             twocharvalue[1] = VDDateTime[7];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out day))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out day))
                 day = 0;
-            //			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			day = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[8];
             twocharvalue[1] = VDDateTime[9];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out hour))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hour))
                 hour = 0;
-            //			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			hour = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[10];
             twocharvalue[1] = VDDateTime[11];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out minute))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out minute))
                 minute = 0;
-            //			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			minute = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[12];
             twocharvalue[1] = VDDateTime[13];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out second))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out second))
                 second = 0;
-            //			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			second = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             twocharvalue[0] = VDDateTime[14];
             twocharvalue[1] = VDDateTime[15];
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"", StringHandlers.CToString(twocharvalue));
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue), out hundredths))
+            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"", StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out hundredths))
                 hundredths = 0;
-            //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue));
+            //			hundredths = Convert.ToInt32(StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);", year, month, day, hour, minute, second, hundredths * 10);
             DateTime decodedDT = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Unspecified);

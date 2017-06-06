@@ -77,6 +77,17 @@ namespace DiscImageChef
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         public static string PascalToString(byte[] PascalString)
         {
+            return PascalToString(PascalString, Encoding.ASCII);
+        }
+
+        /// <summary>
+        /// Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
+        /// <param name="encoding">Encoding.</param>
+        public static string PascalToString(byte[] PascalString, Encoding encoding)
+        {
             if(PascalString == null)
                 return null;
 
@@ -86,7 +97,7 @@ namespace DiscImageChef
 
             for(int i = 1; i < length + 1; i++)
             {
-                sb.Append(Encoding.ASCII.GetString(PascalString, i, 1));
+                sb.Append(encoding.GetString(PascalString, i, 1));
             }
 
             return sb.ToString();
@@ -98,6 +109,17 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         public static string SpacePaddedToString(byte[] SpacePaddedString)
+        {
+            return SpacePaddedToString(SpacePaddedString, Encoding.ASCII);
+        }
+
+        /// <summary>
+        /// Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string
+        /// </summary>
+        /// <returns>The corresponding C# string</returns>
+        /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
+        /// <param name="encoding">Encoding.</param>
+        public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding)
         {
             if(SpacePaddedString == null)
                 return null;
@@ -116,7 +138,7 @@ namespace DiscImageChef
                 }
             }
 
-            return length == 0 ? "" : Encoding.ASCII.GetString(SpacePaddedString, 0, length);
+            return length == 0 ? "" : encoding.GetString(SpacePaddedString, 0, length);
         }
 
         /// <summary>
