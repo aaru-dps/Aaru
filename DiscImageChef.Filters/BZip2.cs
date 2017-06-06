@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using DiscImageChef.Console;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.BZip2;
 
@@ -202,7 +203,7 @@ namespace DiscImageChef.Filters
             DateTime start = DateTime.UtcNow;
             decompressedSize = GuessSize(dataStream);
             DateTime end = DateTime.UtcNow;
-            System.Console.WriteLine("Took {0} seconds to guess size is {1}", (end - start).TotalSeconds, decompressedSize);
+            DicConsole.DebugWriteLine("BZip2 filter", "Took {0} seconds to guess size is {1}", (end - start).TotalSeconds, decompressedSize);
 
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
