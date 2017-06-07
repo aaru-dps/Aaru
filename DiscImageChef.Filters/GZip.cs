@@ -44,6 +44,7 @@ namespace DiscImageChef.Filters
         DateTime creationTime;
         bool opened;
         uint decompressedSize;
+        Stream zStream;
 
         public GZip()
         {
@@ -67,9 +68,7 @@ namespace DiscImageChef.Filters
 
         public override Stream GetDataForkStream()
         {
-            // Otherwise base stream is not at correct position and deflate throws errors
-            dataStream.Seek(0, SeekOrigin.Begin);
-            return new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            return zStream;
         }
 
         public override string GetPath()
@@ -142,6 +141,7 @@ namespace DiscImageChef.Filters
             decompressedSize = isize;
             creationTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
             lastWriteTime = creationTime;
+            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }
 
@@ -167,6 +167,7 @@ namespace DiscImageChef.Filters
             decompressedSize = isize;
             creationTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
             lastWriteTime = creationTime;
+            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }
 
@@ -193,6 +194,7 @@ namespace DiscImageChef.Filters
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
             lastWriteTime = DateHandlers.UNIXUnsignedToDateTime(mtime);
+            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
             opened = true;
         }
 

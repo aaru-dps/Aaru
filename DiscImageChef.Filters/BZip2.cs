@@ -46,6 +46,7 @@ namespace DiscImageChef.Filters
         DateTime creationTime;
         bool opened;
         long decompressedSize;
+        Stream innerStream;
 
         public BZip2()
         {
@@ -69,9 +70,7 @@ namespace DiscImageChef.Filters
 
         public override Stream GetDataForkStream()
         {
-            // Otherwise base stream is not at correct position
-            dataStream.Seek(0, SeekOrigin.Begin);
-            return new ForcedSeekStream<BZip2Stream>(decompressedSize, dataStream, CompressionMode.Decompress, true, false);
+            return innerStream;
         }
 
         public override string GetPath()
@@ -157,31 +156,14 @@ namespace DiscImageChef.Filters
             return false;
         }
 
-        // BZIP2 does not store the uncompressed size so we must read the whole file. Whole. Whatever time it takes. Or we couldn't seek on it...
-        long GuessSize(Stream stream)
-        {
-            stream.Seek(0, SeekOrigin.Begin);
-            BZip2Stream bzStream = new BZip2Stream(stream, CompressionMode.Decompress, true);
-            long size = 0;
-            int read = 0;
-            byte[] buffer = new byte[1048576];
-            do
-            {
-                read = bzStream.Read(buffer, 0, buffer.Length);
-                size += read;
-            }
-            while(read > 0);
-            stream.Seek(0, SeekOrigin.Begin);
-            return size;
-        }
-
         public override void Open(byte[] buffer)
         {
             dataStream = new MemoryStream(buffer);
             basePath = null;
-            decompressedSize = GuessSize(dataStream);
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
+            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            decompressedSize = innerStream.Length;
             opened = true;
         }
 
@@ -189,9 +171,10 @@ namespace DiscImageChef.Filters
         {
             dataStream = stream;
             basePath = null;
-            decompressedSize = GuessSize(dataStream);
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
+            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            decompressedSize = innerStream.Length;
             opened = true;
         }
 
@@ -201,13 +184,15 @@ namespace DiscImageChef.Filters
             basePath = Path.GetFullPath(path);
 
             DateTime start = DateTime.UtcNow;
-            decompressedSize = GuessSize(dataStream);
+            //decompressedSize = GuessSize(dataStream);
             DateTime end = DateTime.UtcNow;
             DicConsole.DebugWriteLine("BZip2 filter", "Took {0} seconds to guess size is {1}", (end - start).TotalSeconds, decompressedSize);
 
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
+            innerStream = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            decompressedSize = innerStream.Length;
             opened = true;
         }
 
