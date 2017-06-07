@@ -234,7 +234,15 @@ namespace DiscImageChef.Filters
 
         public override void Close()
         {
-            backStream.Close();
+            if(backStream!=null)
+                backStream.Close();
+            File.Delete(backFile);
+        }
+
+        ~ForcedSeekStream()
+        {
+            if(backStream != null)
+                backStream.Close();
             File.Delete(backFile);
         }
     }
