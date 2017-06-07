@@ -42,10 +42,11 @@ namespace DiscImageChef.Filters
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
         T baseStream;
-        long currentPosition;
         object[] parameters;
         long streamLength;
         const int bufferLen = 1048576;
+        FileStream backStream;
+        string backFile;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1"/> class.
@@ -55,8 +56,10 @@ namespace DiscImageChef.Filters
         public ForcedSeekStream(long length, params object[] args)
         {
             parameters = args;
-            Rewind();
             streamLength = length;
+            baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
+            backFile = Path.GetTempFileName();
+            backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
         }
 
         /// <summary>
@@ -66,17 +69,10 @@ namespace DiscImageChef.Filters
         public ForcedSeekStream(params object[] args)
         {
             parameters = args;
-            Rewind();
-            streamLength = baseStream.Length;
-        }
-
-        /// <summary>
-        /// Rewinds the stream to start
-        /// </summary>
-        public void Rewind()
-        {
             baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
-            currentPosition = 0;
+            backFile = Path.GetTempFileName();
+            backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            CalculateLength();
         }
 
         /// <summary>
@@ -87,18 +83,17 @@ namespace DiscImageChef.Filters
         /// <returns>The length.</returns>
         public void CalculateLength()
         {
-            long count = 0;
             int read;
-            Rewind();
             do
             {
                 byte[] buffer = new byte[bufferLen];
                 read = baseStream.Read(buffer, 0, bufferLen);
-                count += read;
+                backStream.Write(buffer, 0, read);
             }
             while(read == bufferLen);
 
-            streamLength = count;
+            streamLength = backStream.Length;
+            backStream.Position = 0;
         }
 
         public override bool CanRead
@@ -129,7 +124,7 @@ namespace DiscImageChef.Filters
         {
             get
             {
-                return baseStream.Length;
+                return streamLength;
             }
         }
 
@@ -137,32 +132,41 @@ namespace DiscImageChef.Filters
         {
             get
             {
-                return currentPosition;
+                return backStream.Position;
             }
 
             set
             {
-                if(value == currentPosition)
-                    return;
-                
-                if(value < currentPosition)
-                    Rewind();
-
-                int fullBufferReads = (int)(value / bufferLen);
-                int restToRead = (int)(value % bufferLen);
-                byte[] buffer;
-
-                for(int i = 0; i < fullBufferReads; i++)
-                {
-                    buffer = new byte[bufferLen];
-                    baseStream.Read(buffer, 0, bufferLen);
-                }
-
-                buffer = new byte[restToRead];
-                baseStream.Read(buffer, 0, restToRead);
-
-                currentPosition = value;
+                SetPosition(value);
             }
+        }
+
+        void SetPosition(long position)
+        {
+            if(position == backStream.Position)
+                return;
+
+            if(position < backStream.Length)
+            {
+                backStream.Position = position;
+                return;
+            }
+                
+            long toposition = position - backStream.Position;
+            int fullBufferReads = (int)(toposition / bufferLen);
+            int restToRead = (int)(toposition % bufferLen);
+            byte[] buffer;
+
+            for(int i = 0; i < fullBufferReads; i++)
+            {
+                buffer = new byte[bufferLen];
+                baseStream.Read(buffer, 0, bufferLen);
+                backStream.Write(buffer, 0, bufferLen);
+            }
+
+            buffer = new byte[restToRead];
+            baseStream.Read(buffer, 0, restToRead);
+            backStream.Write(buffer, 0, restToRead);
         }
 
         public override void Flush()
@@ -172,22 +176,24 @@ namespace DiscImageChef.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int read = baseStream.Read(buffer, offset, count);
+            if(backStream.Position + count > backStream.Length)
+            {
+                SetPosition(backStream.Position + count);
+                SetPosition(backStream.Position - count);
+            }
 
-            currentPosition += read;
-
-            return read;
+            return backStream.Read(buffer, offset, count);
         }
 
         public override int ReadByte()
         {
-            int byt = baseStream.ReadByte();
+            if(backStream.Position + 1 > backStream.Length)
+            {
+                SetPosition(backStream.Position + 1);
+                SetPosition(backStream.Position - 1);
+            }
 
-            // Because -1 equals end of stream so we cannot go farther
-            if(byt > 0)
-                currentPosition++;
-            
-            return byt;
+            return backStream.ReadByte();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -197,21 +203,21 @@ namespace DiscImageChef.Filters
                 case SeekOrigin.Begin:
                     if(offset < 0)
                         throw new IOException("Cannot seek before stream start.");
-                    Position = offset;
+                    SetPosition(offset);
                     break;
                 case SeekOrigin.End:
                     if(offset > 0)
                         throw new IOException("Cannot seek after stream end.");
                     if(streamLength == 0)
                         CalculateLength();
-                    Position = streamLength + offset; 
+                    SetPosition(streamLength + offset);
                     break;
                 default:
-                    Position = currentPosition + offset;
+                    SetPosition(backStream.Position + offset);
                     break;
             }
 
-            return currentPosition;
+            return backStream.Position;
         }
 
         public override void SetLength(long value)
@@ -222,6 +228,12 @@ namespace DiscImageChef.Filters
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
+        }
+
+        public override void Close()
+        {
+            backStream.Close();
+            File.Delete(backFile);
         }
     }
 }
