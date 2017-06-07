@@ -299,6 +299,9 @@ namespace DiscImageChef
                 HelpText = "Try to recover partial or incorrect data.")]
         public bool Persistent { get; set; }
 
+        [Option("separate-subchannel", Default = false,
+                HelpText = "Save subchannel in a separate file. Only applicable to CD/DDCD/GD.")]
+        public bool SeparateSubchannel { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]

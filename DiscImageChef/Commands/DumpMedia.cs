@@ -63,6 +63,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", options.Force);
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", options.RetryPasses);
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", options.Persistent);
+            DicConsole.DebugWriteLine("Dump-Media command", "--separate-subchannel={0}", options.SeparateSubchannel);
 
             if(!File.Exists(options.DevicePath))
             {
@@ -100,7 +101,7 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel);
                     break;
                 default:
                     throw new NotSupportedException("Unknown device type.");

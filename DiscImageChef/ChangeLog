@@ -1,3 +1,7 @@
+* Options.cs:
+* Commands/DumpMedia.cs:
+  Added support for dumping subchannel in a separate file.
+
 * Commands/Ls.cs:
 * Commands/ExtractFiles.cs:
   Add support for encodings.

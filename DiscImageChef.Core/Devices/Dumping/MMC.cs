@@ -45,7 +45,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class MMC
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel)
         {
             byte[] cmdBuf = null;
             byte[] senseBuf = null;
@@ -163,7 +163,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType);
+                CompactDisc.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel);
                 return;
             }
 

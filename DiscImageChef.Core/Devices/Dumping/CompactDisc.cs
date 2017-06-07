@@ -50,7 +50,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal class CompactDisc
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
@@ -60,7 +60,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             double duration;
             ulong blocks = 0;
             // TODO: Check subchannel support
-            uint blockSize = 2448;
+            uint blockSize = 0;
+            uint subSize = 0;
             byte[] tmpBuf;
             Decoders.CD.FullTOC.CDFullTOC? toc = null;
             DateTime start;
@@ -234,7 +235,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            blockSize = blockSize;
+            // TODO: Support variable subchannel kinds
+            blockSize = 2448;
+            subSize = 96;
+            int sectorSize;
+            if(separateSubchannel)
+                sectorSize = (int)(blockSize - subSize);
+            else
+                sectorSize = (int)blockSize;
 
             if(toc == null)
             {
@@ -452,20 +460,39 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
             dumpFile = new DataFile(outputPrefix + ".bin");
+            DataFile subFile = null;
+            if(separateSubchannel)
+                subFile = new DataFile(outputPrefix + ".sub");
             mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0008);
 
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Count(); t++)
             {
-                tracks[t].BytesPerSector = (int)blockSize;
-                //tracks[0].Checksums = sidecar.OpticalDisc[0].Checksums;
+                tracks[t].BytesPerSector = (int)sectorSize;
                 tracks[t].Image = new ImageType();
                 tracks[t].Image.format = "BINARY";
                 tracks[t].Image.offset = dumpFile.Position;
                 tracks[t].Image.offsetSpecified = true;
                 tracks[t].Image.Value = outputPrefix + ".bin";
-                tracks[t].Size = (long)((tracks[t].EndSector - tracks[t].StartSector + 1) * blockSize);
+                tracks[t].Size = (long)((tracks[t].EndSector - tracks[t].StartSector + 1) * sectorSize);
+                tracks[t].SubChannel = new SubChannelType();
+                tracks[t].SubChannel.Image = new ImageType();
+                tracks[t].SubChannel.Image.format = "rw_raw";
+                tracks[t].SubChannel.Image.offsetSpecified = true;
+                tracks[t].SubChannel.Size = (long)((tracks[t].EndSector - tracks[t].StartSector + 1) * subSize);
+
+                if(separateSubchannel)
+                {
+                    tracks[t].SubChannel.Image.offset = subFile.Position;
+                    tracks[t].SubChannel.Image.Value = outputPrefix + ".sub";
+                }
+                else
+                {
+                    tracks[t].SubChannel.Image.offset = tracks[t].Image.offset;
+                    tracks[t].SubChannel.Image.Value = tracks[t].Image.Value;
+                }
+
                 bool checkedDataFormat = false;
 
                 for(ulong i = (ulong)tracks[t].StartSector; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
@@ -498,7 +525,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);
-                        dumpFile.Write(readBuffer);
+                        if(separateSubchannel)
+                        {
+                            for(int b = 0; b < blocksToRead; b++)
+                            {
+                                dumpFile.Write(readBuffer, (int)(0 + b * blockSize), sectorSize);
+                                subFile.Write(readBuffer, (int)(sectorSize + b * blockSize), (int)subSize);
+                            }
+                        }
+                        else
+                            dumpFile.Write(readBuffer);
                     }
                     else
                     {
@@ -507,7 +543,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                             return; // TODO: Return more cleanly
 
                         // Write empty data
-                        dumpFile.Write(new byte[blockSize * blocksToRead]);
+                        if(separateSubchannel)
+                        {
+                            dumpFile.Write(new byte[sectorSize * blocksToRead]);
+                            subFile.Write(new byte[subSize * blocksToRead]);
+                        }
+                        else
+                            dumpFile.Write(new byte[blockSize * blocksToRead]);
 
                         // TODO: Record error on mapfile
 
@@ -595,13 +637,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                         totalDuration += cmdDuration;
                     }
 
-                    if(!sense && !dev.Error)
+                    if((!sense && !dev.Error) || runningPersistent)
                     {
-                        unreadableSectors.Remove(badSector);
-                        dumpFile.WriteAt(readBuffer, badSector, blockSize);
+                        if(!sense && !dev.Error)
+                            unreadableSectors.Remove(badSector);
+                        
+                        if(separateSubchannel)
+                        {
+                            dumpFile.WriteAt(readBuffer, badSector, (uint)sectorSize, 0, sectorSize);
+                            subFile.WriteAt(readBuffer, badSector, subSize, sectorSize, (int)subSize);
+                        }
+                        else
+                            dumpFile.WriteAt(readBuffer, badSector, blockSize);
                     }
-                    else if(runningPersistent)
-                        dumpFile.WriteAt(readBuffer, badSector, blockSize);
                 }
 
                 if(pass < retryPasses && !aborted && unreadableSectors.Count > 0)
@@ -683,11 +731,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             dataChk = new Checksum();
             dumpFile.Seek(0, SeekOrigin.Begin);
+            if(separateSubchannel)
+                subFile.Seek(0, SeekOrigin.Begin);
             blocksToRead = 500;
 
             for(int t = 0; t < tracks.Count(); t++)
             {
                 Checksum trkChk = new Checksum();
+                Checksum subChk = new Checksum();
 
                 for(ulong i = (ulong)tracks[t].StartSector; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
                 {
@@ -702,8 +753,24 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DateTime chkStart = DateTime.UtcNow;
                     byte[] dataToCheck = new byte[blockSize * blocksToRead];
                     dumpFile.Read(dataToCheck, 0, (int)(blockSize * blocksToRead));
-                    dataChk.Update(dataToCheck);
-                    trkChk.Update(dataToCheck);
+                    if(separateSubchannel)
+                    {
+                        byte[] data = new byte[sectorSize];
+                        byte[] sub = new byte[subSize];
+                        for(int b = 0; b < blocksToRead; b++)
+                        {
+                            Array.Copy(dataToCheck, 0, data, 0, sectorSize);
+                            Array.Copy(dataToCheck, sectorSize, sub, 0, subSize);
+                            dataChk.Update(data);
+                            trkChk.Update(data);
+                            subChk.Update(sub);
+                        }
+                    }
+                    else
+                    {
+                        dataChk.Update(dataToCheck);
+                        trkChk.Update(dataToCheck);
+                    }
                     DateTime chkEnd = DateTime.UtcNow;
 
                     double chkDuration = (chkEnd - chkStart).TotalMilliseconds;
@@ -715,6 +782,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 tracks[t].Checksums = trkChk.End().ToArray();
+                if(separateSubchannel)
+                    tracks[t].SubChannel.Checksums = subChk.End().ToArray();
+                else
+                    tracks[t].SubChannel.Checksums = tracks[t].Checksums;
             }
             DicConsole.WriteLine();
             dumpFile.Close();
