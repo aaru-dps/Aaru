@@ -36,6 +36,7 @@
 // ****************************************************************************/
 // //$Id$
 using System;
+using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Devices;
@@ -138,13 +139,28 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
+            FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml",
+                                          FileMode.Create);
+            System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
                 MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType);
+
+                DicConsole.WriteLine("Writing metadata sidecar");
+
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
+
                 return;
             }
 
             SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false);
+
+            DicConsole.WriteLine("Writing metadata sidecar");
+
+            xmlSer.Serialize(xmlFs, sidecar);
+            xmlFs.Close();
         }
     }
 }
