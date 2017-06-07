@@ -49,6 +49,7 @@
     <Compile Include="BZip2.cs" />
     <Compile Include="PCExchange.cs" />
     <Compile Include="LZip.cs" />
+    <Compile Include="XZ.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">

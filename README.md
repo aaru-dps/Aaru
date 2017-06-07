@@ -172,6 +172,7 @@ Supported filters
 * GZip
 * LZip
 * MacBinary I, II, III
+* XZ
 
 Changelog
 =========
