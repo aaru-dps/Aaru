@@ -60,6 +60,8 @@ namespace DiscImageChef.Filters
             baseStream = (T)Activator.CreateInstance(typeof(T), parameters);
             backFile = Path.GetTempFileName();
             backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            if(length == 0)
+                CalculateLength();
         }
 
         /// <summary>
