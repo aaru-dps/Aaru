@@ -32,7 +32,6 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Console;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 
@@ -127,8 +126,8 @@ namespace DiscImageChef.Filters
             basePath = null;
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
-            innerStream = new ForcedSeekStream<LZipStream>(dataStream, CompressionMode.Decompress, false);
-            decompressedSize = innerStream.Length;
+            decompressedSize = BitConverter.ToInt64(buffer, buffer.Length - 16);
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress, false);
             opened = true;
         }
 
@@ -138,8 +137,12 @@ namespace DiscImageChef.Filters
             basePath = null;
             creationTime = DateTime.UtcNow;
             lastWriteTime = creationTime;
-            innerStream = new ForcedSeekStream<LZipStream>(dataStream, CompressionMode.Decompress, false);
-            decompressedSize = innerStream.Length;
+            byte[] tmp = new byte[8];
+            dataStream.Seek(-16 ,SeekOrigin.End);
+            dataStream.Read(tmp, 0, 8);
+            decompressedSize = BitConverter.ToInt64(tmp, 0);
+            dataStream.Seek(0, SeekOrigin.Begin);
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress, false);
             opened = true;
         }
 
@@ -154,8 +157,12 @@ namespace DiscImageChef.Filters
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
-            innerStream = new ForcedSeekStream<LZipStream>(dataStream, CompressionMode.Decompress, false);
-            decompressedSize = innerStream.Length;
+            byte[] tmp = new byte[8];
+            dataStream.Seek(-16, SeekOrigin.End);
+            dataStream.Read(tmp, 0, 8);
+            decompressedSize = BitConverter.ToInt64(tmp, 0);
+            dataStream.Seek(0, SeekOrigin.Begin);
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress, false);
             opened = true;
         }
 
