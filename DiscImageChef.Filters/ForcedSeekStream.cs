@@ -151,7 +151,8 @@ namespace DiscImageChef.Filters
                 backStream.Position = position;
                 return;
             }
-                
+
+            backStream.Position = backStream.Length;
             long toposition = position - backStream.Position;
             int fullBufferReads = (int)(toposition / bufferLen);
             int restToRead = (int)(toposition % bufferLen);
@@ -172,6 +173,7 @@ namespace DiscImageChef.Filters
         public override void Flush()
         {
             baseStream.Flush();
+            backStream.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
