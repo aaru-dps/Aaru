@@ -77,6 +77,8 @@ namespace DiscImageChef.Core
             dataFs.Write(data, 0, data.Length);
         }
 
+        public long Position { get { return dataFs.Position; }}
+
         public static void WriteTo(string who, string outputPrefix, string outputSuffix, string what, byte[] data)
         {
             if(!string.IsNullOrEmpty(outputPrefix) && !string.IsNullOrEmpty(outputSuffix))
