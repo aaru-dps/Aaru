@@ -184,9 +184,7 @@ namespace DiscImageChef.Filters
             basePath = Path.GetFullPath(path);
 
             DateTime start = DateTime.UtcNow;
-            //decompressedSize = GuessSize(dataStream);
             DateTime end = DateTime.UtcNow;
-            DicConsole.DebugWriteLine("BZip2 filter", "Took {0} seconds to guess size is {1}", (end - start).TotalSeconds, decompressedSize);
 
             FileInfo fi = new FileInfo(path);
             creationTime = fi.CreationTimeUtc;
