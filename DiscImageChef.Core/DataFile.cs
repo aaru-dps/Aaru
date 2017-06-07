@@ -43,7 +43,7 @@ namespace DiscImageChef.Core
 {
     public class DataFile
     {
-        static FileStream dataFs;
+        FileStream dataFs;
 
         public DataFile(string outputFile)
         {
@@ -68,13 +68,23 @@ namespace DiscImageChef.Core
 
         public void Write(byte[] data)
         {
-            dataFs.Write(data, 0, data.Length);
+            Write(data, 0, data.Length);
+        }
+
+        public void Write(byte[] data, int offset, int count)
+        {
+            dataFs.Write(data, offset, count);
         }
 
         public void WriteAt(byte[] data, ulong block, uint blockSize)
         {
+            WriteAt(data, block, blockSize, 0, data.Length);
+        }
+
+        public void WriteAt(byte[] data, ulong block, uint blockSize, int offset, int count)
+        {
             dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
-            dataFs.Write(data, 0, data.Length);
+            dataFs.Write(data, offset, count);
         }
 
         public long Position { get { return dataFs.Position; }}
