@@ -170,6 +170,7 @@ Supported filters
 * AppleSingle
 * BZip2
 * GZip
+* LZip
 * MacBinary I, II, III
 
 Changelog
