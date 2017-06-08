@@ -208,10 +208,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].PFI = new DumpType();
-                        sidecar.OpticalDisc[0].PFI.Image = outputPrefix + ".pfi.bin";
-                        sidecar.OpticalDisc[0].PFI.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].PFI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].PFI = new DumpType
+                        {
+                            Image = outputPrefix + ".pfi.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFI.Image, tmpBuf);
 
                         Decoders.DVD.PFI.PhysicalFormatInformation decPfi = Decoders.DVD.PFI.Decode(cmdBuf).Value;
@@ -295,8 +297,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 dskType = MediaType.XGD3;
                         }
 
-                        byte[] inqBuf;
-                        sense = dev.ScsiInquiry(out inqBuf, out senseBuf);
+                        sense = dev.ScsiInquiry(out byte[] inqBuf, out senseBuf);
 
                         if(sense || !Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue ||
                            (Decoders.SCSI.Inquiry.Decode(inqBuf).HasValue && !Decoders.SCSI.Inquiry.Decode(inqBuf).Value.KreonPresent))
@@ -316,10 +317,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DMI = new DumpType();
-                        sidecar.OpticalDisc[0].DMI.Image = outputPrefix + ".dmi.bin";
-                        sidecar.OpticalDisc[0].DMI.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].DMI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].DMI = new DumpType
+                        {
+                            Image = outputPrefix + ".dmi.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DMI.Image, tmpBuf);
                     }
                 }
@@ -336,10 +339,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].CMI = new DumpType();
-                        sidecar.OpticalDisc[0].CMI.Image = outputPrefix + ".cmi.bin";
-                        sidecar.OpticalDisc[0].CMI.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].CMI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].CMI = new DumpType
+                        {
+                            Image = outputPrefix + ".cmi.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
 
                         Decoders.DVD.CSS_CPRM.LeadInCopyright cpy = Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(cmdBuf).Value;
@@ -359,10 +364,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].BCA = new DumpType();
-                    sidecar.OpticalDisc[0].BCA.Image = outputPrefix + ".bca.bin";
-                    sidecar.OpticalDisc[0].BCA.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].BCA.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].BCA = new DumpType
+                    {
+                        Image = outputPrefix + ".bca.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].BCA.Image, tmpBuf);
                 }
             }
@@ -378,10 +385,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DDS = new DumpType();
-                        sidecar.OpticalDisc[0].DDS.Image = outputPrefix + ".dds.bin";
-                        sidecar.OpticalDisc[0].DDS.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].DDS.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].DDS = new DumpType
+                        {
+                            Image = outputPrefix + ".dds.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
                     }
                 }
@@ -393,10 +402,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].SAI = new DumpType();
-                        sidecar.OpticalDisc[0].SAI.Image = outputPrefix + ".sai.bin";
-                        sidecar.OpticalDisc[0].SAI.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].SAI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].SAI = new DumpType
+                        {
+                            Image = outputPrefix + ".sai.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
                     }
                 }
@@ -411,10 +422,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].PRI = new DumpType();
-                    sidecar.OpticalDisc[0].PRI.Image = outputPrefix + ".pri.bin";
-                    sidecar.OpticalDisc[0].PRI.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].PRI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].PRI = new DumpType
+                    {
+                        Image = outputPrefix + ".pri.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
                 }
             }
@@ -428,10 +441,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].MediaID = new DumpType();
-                    sidecar.OpticalDisc[0].MediaID.Image = outputPrefix + ".mid.bin";
-                    sidecar.OpticalDisc[0].MediaID.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].MediaID.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].MediaID = new DumpType
+                    {
+                        Image = outputPrefix + ".mid.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].MediaID.Image, tmpBuf);
                 }
 
@@ -440,10 +455,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].PFIR = new DumpType();
-                    sidecar.OpticalDisc[0].PFIR.Image = outputPrefix + ".pfir.bin";
-                    sidecar.OpticalDisc[0].PFIR.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].PFIR.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].PFIR = new DumpType
+                    {
+                        Image = outputPrefix + ".pfir.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFIR.Image, tmpBuf);
                 }
             }
@@ -458,10 +475,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].ADIP = new DumpType();
-                    sidecar.OpticalDisc[0].ADIP.Image = outputPrefix + ".adip.bin";
-                    sidecar.OpticalDisc[0].ADIP.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].ADIP.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].ADIP = new DumpType
+                    {
+                        Image = outputPrefix + ".adip.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].ADIP.Image, tmpBuf);
                 }
 
@@ -470,10 +489,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].DCB = new DumpType();
-                    sidecar.OpticalDisc[0].DCB.Image = outputPrefix + ".dcb.bin";
-                    sidecar.OpticalDisc[0].DCB.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].DCB.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].DCB = new DumpType
+                    {
+                        Image = outputPrefix + ".dcb.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DCB.Image, tmpBuf);
                 }
             }
@@ -487,10 +508,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].CMI = new DumpType();
-                    sidecar.OpticalDisc[0].CMI.Image = outputPrefix + ".cmi.bin";
-                    sidecar.OpticalDisc[0].CMI.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].CMI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].CMI = new DumpType
+                    {
+                        Image = outputPrefix + ".cmi.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].CMI.Image, tmpBuf);
                 }
             }
@@ -507,10 +530,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                        sidecar.OpticalDisc[0].DI = new DumpType();
-                        sidecar.OpticalDisc[0].DI.Image = outputPrefix + ".di.bin";
-                        sidecar.OpticalDisc[0].DI.Size = tmpBuf.Length;
-                        sidecar.OpticalDisc[0].DI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                        sidecar.OpticalDisc[0].DI = new DumpType()
+                        {
+                            Image = outputPrefix + ".di.bin",
+                            Size = tmpBuf.Length,
+                            Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                        };
                         DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DI.Image, tmpBuf);
                     }
                 }
@@ -520,10 +545,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].PAC = new DumpType();
-                    sidecar.OpticalDisc[0].PAC.Image = outputPrefix + ".pac.bin";
-                    sidecar.OpticalDisc[0].PAC.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].PAC.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].PAC = new DumpType
+                    {
+                        Image = outputPrefix + ".pac.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PAC.Image, tmpBuf);
                 }
             }
@@ -538,10 +565,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].BCA = new DumpType();
-                    sidecar.OpticalDisc[0].BCA.Image = outputPrefix + ".bca.bin";
-                    sidecar.OpticalDisc[0].BCA.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].BCA.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].BCA = new DumpType
+                    {
+                        Image = outputPrefix + ".bca.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].BCA.Image, tmpBuf);
                 }
             }
@@ -556,10 +585,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].DDS = new DumpType();
-                    sidecar.OpticalDisc[0].DDS.Image = outputPrefix + ".dds.bin";
-                    sidecar.OpticalDisc[0].DDS.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].DDS.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].DDS = new DumpType
+                    {
+                        Image = outputPrefix + ".dds.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DDS.Image, tmpBuf);
                 }
 
@@ -568,10 +599,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    sidecar.OpticalDisc[0].SAI = new DumpType();
-                    sidecar.OpticalDisc[0].SAI.Image = outputPrefix + ".sai.bin";
-                    sidecar.OpticalDisc[0].SAI.Size = tmpBuf.Length;
-                    sidecar.OpticalDisc[0].SAI.Checksums = Checksum.GetChecksums(tmpBuf).ToArray();
+                    sidecar.OpticalDisc[0].SAI = new DumpType
+                    {
+                        Image = outputPrefix + ".sai.bin",
+                        Size = tmpBuf.Length,
+                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+                    };
                     DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].SAI.Image, tmpBuf);
                 }
             }

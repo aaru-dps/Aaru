@@ -72,41 +72,48 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            byte[] cmdBuf;
             bool sense;
             ushort currentProfile = 0x0001;
-            Decoders.ATA.AtaErrorRegistersCHS errorChs;
             uint timeout = 5;
             double duration;
 
-            sense = dev.AtaIdentify(out cmdBuf, out errorChs);
+            sense = dev.AtaIdentify(out byte[] cmdBuf, out Decoders.ATA.AtaErrorRegistersCHS errorChs);
             if(!sense && Decoders.ATA.Identify.Decode(cmdBuf).HasValue)
             {
                 Decoders.ATA.Identify.IdentifyDevice ataId = Decoders.ATA.Identify.Decode(cmdBuf).Value;
 
-                CICMMetadataType sidecar = new CICMMetadataType();
-                sidecar.BlockMedia = new BlockMediaType[1];
-                sidecar.BlockMedia[0] = new BlockMediaType();
+                CICMMetadataType sidecar = new CICMMetadataType()
+                {
+                    BlockMedia = new BlockMediaType[] { new BlockMediaType() }
+                };
 
                 if(dev.IsUSB)
                 {
-                    sidecar.BlockMedia[0].USB = new USBType();
-                    sidecar.BlockMedia[0].USB.ProductID = dev.USBProductID;
-                    sidecar.BlockMedia[0].USB.VendorID = dev.USBVendorID;
-                    sidecar.BlockMedia[0].USB.Descriptors = new DumpType();
-                    sidecar.BlockMedia[0].USB.Descriptors.Image = outputPrefix + ".usbdescriptors.bin";
-                    sidecar.BlockMedia[0].USB.Descriptors.Size = dev.USBDescriptors.Length;
-                    sidecar.BlockMedia[0].USB.Descriptors.Checksums = Checksum.GetChecksums(dev.USBDescriptors).ToArray();
+                    sidecar.BlockMedia[0].USB = new USBType
+                    {
+                        ProductID = dev.USBProductID,
+                        VendorID = dev.USBVendorID,
+                        Descriptors = new DumpType
+                        {
+                            Image = outputPrefix + ".usbdescriptors.bin",
+                            Size = dev.USBDescriptors.Length,
+                            Checksums = Checksum.GetChecksums(dev.USBDescriptors).ToArray()
+                        }
+                    };
                     DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].USB.Descriptors.Image, dev.USBDescriptors);
                 }
 
                 if(dev.IsPCMCIA)
                 {
-                    sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
-                    sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
-                    sidecar.BlockMedia[0].PCMCIA.CIS.Image = outputPrefix + ".cis.bin";
-                    sidecar.BlockMedia[0].PCMCIA.CIS.Size = dev.CIS.Length;
-                    sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Checksum.GetChecksums(dev.CIS).ToArray();
+                    sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                    {
+                        CIS = new DumpType
+                        {
+                            Image = outputPrefix + ".cis.bin",
+                            Size = dev.CIS.Length,
+                            Checksums = Checksum.GetChecksums(dev.CIS).ToArray()
+                        }
+                    };
                     DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].PCMCIA.CIS.Image, dev.CIS);
                     Decoders.PCMCIA.Tuple[] tuples = CIS.GetTuples(dev.CIS);
                     if(tuples != null)
@@ -141,11 +148,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
-                sidecar.BlockMedia[0].ATA = new ATAType();
-                sidecar.BlockMedia[0].ATA.Identify = new DumpType();
-                sidecar.BlockMedia[0].ATA.Identify.Image = outputPrefix + ".identify.bin";
-                sidecar.BlockMedia[0].ATA.Identify.Size = cmdBuf.Length;
-                sidecar.BlockMedia[0].ATA.Identify.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
+                sidecar.BlockMedia[0].ATA = new ATAType
+                {
+                    Identify = new DumpType
+                    {
+                        Image = outputPrefix + ".identify.bin",
+                        Size = cmdBuf.Length,
+                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                    }
+                };
                 DataFile.WriteTo("ATA Dump", sidecar.BlockMedia[0].ATA.Identify.Image, cmdBuf);
 
                 DateTime start;
@@ -432,9 +443,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
                     {
-                        List<Partition> _partitions;
 
-                        if(_partplugin.GetInformation(_imageFormat, out _partitions))
+                        if(_partplugin.GetInformation(_imageFormat, out List<Partition> _partitions))
                         {
                             partitions.AddRange(_partitions);
                             Statistics.AddPartition(_partplugin.Name);
@@ -446,14 +456,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         xmlFileSysInfo = new PartitionType[partitions.Count];
                         for(int i = 0; i < partitions.Count; i++)
                         {
-                            xmlFileSysInfo[i] = new PartitionType();
-                            xmlFileSysInfo[i].Description = partitions[i].PartitionDescription;
-                            xmlFileSysInfo[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
-                            xmlFileSysInfo[i].Name = partitions[i].PartitionName;
-                            xmlFileSysInfo[i].Sequence = (int)partitions[i].PartitionSequence;
-                            xmlFileSysInfo[i].StartSector = (int)partitions[i].PartitionStartSector;
-                            xmlFileSysInfo[i].Type = partitions[i].PartitionType;
-
+                            xmlFileSysInfo[i] = new PartitionType
+                            {
+                                Description = partitions[i].PartitionDescription,
+                                EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1),
+                                Name = partitions[i].PartitionName,
+                                Sequence = (int)partitions[i].PartitionSequence,
+                                StartSector = (int)partitions[i].PartitionStartSector,
+                                Type = partitions[i].PartitionType
+                            };
                             List<FileSystemType> lstFs = new List<FileSystemType>();
 
                             foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -462,8 +473,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 {
                                     if(_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
                                     {
-                                        string foo;
-                                        _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                        _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out string foo);
                                         lstFs.Add(_plugin.XmlFSType);
                                         Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                     }
@@ -483,10 +493,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     else
                     {
                         xmlFileSysInfo = new PartitionType[1];
-                        xmlFileSysInfo[0] = new PartitionType();
-                        xmlFileSysInfo[0].EndSector = (int)(blocks - 1);
-                        xmlFileSysInfo[0].StartSector = 0;
-
+                        xmlFileSysInfo[0] = new PartitionType
+                        {
+                            EndSector = (int)(blocks - 1),
+                            StartSector = 0
+                        };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
                         foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -495,8 +506,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 if(_plugin.Identify(_imageFormat, (blocks - 1), 0))
                                 {
-                                    string foo;
-                                    _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out foo);
+                                    _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out string foo);
                                     lstFs.Add(_plugin.XmlFSType);
                                     Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                 }
@@ -525,9 +535,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].DiskType = xmlDskTyp;
                 sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                 // TODO: Implement device firmware revision
-                sidecar.BlockMedia[0].Image = new ImageType();
-                sidecar.BlockMedia[0].Image.format = "Raw disk image (sector by sector copy)";
-                sidecar.BlockMedia[0].Image.Value = outputPrefix + ".bin";
+                sidecar.BlockMedia[0].Image = new ImageType
+                {
+                    format = "Raw disk image (sector by sector copy)",
+                    Value = outputPrefix + ".bin"
+                };
                 sidecar.BlockMedia[0].Interface = "ATA";
                 sidecar.BlockMedia[0].LogicalBlocks = (long)blocks;
                 sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalsectorsize;

@@ -56,15 +56,11 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
-            byte[] senseBuf = null;
             bool sense = false;
-            double duration;
             ulong blocks = 0;
             uint blockSize = 2048;
-            byte[] readBuffer;
             uint blocksToRead = 64;
             ulong errored = 0;
-            byte[] ssBuf;
             DateTime start;
             DateTime end;
             double totalDuration = 0;
@@ -81,7 +77,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 e.Cancel = aborted = true;
             };
 
-            sense = dev.KreonExtractSS(out ssBuf, out senseBuf, dev.Timeout, out duration);
+            sense = dev.KreonExtractSS(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out double duration);
             if(sense)
             {
                 DicConsole.ErrorWriteLine("Cannot get Xbox Security Sector, not continuing.");
@@ -113,7 +109,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.ErrorWriteLine("Cannot lock drive, not continuing.");
                 return;
             }
-            sense = dev.ReadCapacity(out readBuffer, out senseBuf, dev.Timeout, out duration);
+            sense = dev.ReadCapacity(out byte[] readBuffer, out senseBuf, dev.Timeout, out duration);
             if(sense)
             {
                 DicConsole.ErrorWriteLine("Cannot get disc capacity.");
@@ -505,42 +501,56 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
                     {
-                        Decoders.SCSI.Modes.ModePage_01_MMC pgMMC = new Decoders.SCSI.Modes.ModePage_01_MMC();
-                        pgMMC.PS = false;
-                        pgMMC.ReadRetryCount = 255;
-                        pgMMC.Parameter = 0x20;
-
-                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode();
-                        md.Header = new Decoders.SCSI.Modes.ModeHeader();
-                        md.Pages = new Decoders.SCSI.Modes.ModePage[1];
-                        md.Pages[0] = new Decoders.SCSI.Modes.ModePage();
-                        md.Pages[0].Page = 0x01;
-                        md.Pages[0].Subpage = 0x00;
-                        md.Pages[0].PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC);
+                        Decoders.SCSI.Modes.ModePage_01_MMC pgMMC = new Decoders.SCSI.Modes.ModePage_01_MMC
+                        {
+                            PS = false,
+                            ReadRetryCount = 255,
+                            Parameter = 0x20
+                        };
+                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode
+                        {
+                            Header = new Decoders.SCSI.Modes.ModeHeader(),
+                            Pages = new Decoders.SCSI.Modes.ModePage[]
+                            {
+                                new Decoders.SCSI.Modes.ModePage
+                                {
+		                            Page = 0x01,
+		                            Subpage = 0x00,
+		                            PageResponse = Decoders.SCSI.Modes.EncodeModePage_01_MMC(pgMMC)
+		                        }
+                            }
+                        };
                         md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
                         md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
                     }
                     else
                     {
-                        Decoders.SCSI.Modes.ModePage_01 pg = new Decoders.SCSI.Modes.ModePage_01();
-                        pg.PS = false;
-                        pg.AWRE = false;
-                        pg.ARRE = false;
-                        pg.TB = true;
-                        pg.RC = false;
-                        pg.EER = true;
-                        pg.PER = false;
-                        pg.DTE = false;
-                        pg.DCR = false;
-                        pg.ReadRetryCount = 255;
-
-                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode();
-                        md.Header = new Decoders.SCSI.Modes.ModeHeader();
-                        md.Pages = new Decoders.SCSI.Modes.ModePage[1];
-                        md.Pages[0] = new Decoders.SCSI.Modes.ModePage();
-                        md.Pages[0].Page = 0x01;
-                        md.Pages[0].Subpage = 0x00;
-                        md.Pages[0].PageResponse = Decoders.SCSI.Modes.EncodeModePage_01(pg);
+                        Decoders.SCSI.Modes.ModePage_01 pg = new Decoders.SCSI.Modes.ModePage_01
+                        {
+                            PS = false,
+                            AWRE = false,
+                            ARRE = false,
+                            TB = true,
+                            RC = false,
+                            EER = true,
+                            PER = false,
+                            DTE = false,
+                            DCR = false,
+                            ReadRetryCount = 255
+                        };
+                        Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode
+                        {
+                            Header = new Decoders.SCSI.Modes.ModeHeader(),
+                            Pages = new Decoders.SCSI.Modes.ModePage[]
+                            {
+                                new Decoders.SCSI.Modes.ModePage
+		                        {
+		                            Page = 0x01,
+		                            Subpage = 0x00,
+		                            PageResponse = Decoders.SCSI.Modes.EncodeModePage_01(pg)
+		                        }
+                            }
+                        };
                         md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
                         md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
                     }
@@ -560,10 +570,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else if(runningPersistent && persistent && currentModePage.HasValue)
                 {
-                    Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode();
-                    md.Header = new Decoders.SCSI.Modes.ModeHeader();
-                    md.Pages = new Decoders.SCSI.Modes.ModePage[1];
-                    md.Pages[0] = currentModePage.Value;
+                    Decoders.SCSI.Modes.DecodedMode md = new Decoders.SCSI.Modes.DecodedMode
+                    {
+                        Header = new Decoders.SCSI.Modes.ModeHeader(),
+                        Pages = new Decoders.SCSI.Modes.ModePage[]
+                        {
+                            currentModePage.Value
+                        }
+                    };
                     md6 = Decoders.SCSI.Modes.EncodeMode6(md, dev.SCSIType);
                     md10 = Decoders.SCSI.Modes.EncodeMode10(md, dev.SCSIType);
 
@@ -642,9 +656,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
                 {
-                    List<Partition> _partitions;
 
-                    if(_partplugin.GetInformation(_imageFormat, out _partitions))
+                    if(_partplugin.GetInformation(_imageFormat, out List<Partition> _partitions))
                     {
                         partitions.AddRange(_partitions);
                         Statistics.AddPartition(_partplugin.Name);
@@ -656,14 +669,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     xmlFileSysInfo = new PartitionType[partitions.Count];
                     for(int i = 0; i < partitions.Count; i++)
                     {
-                        xmlFileSysInfo[i] = new PartitionType();
-                        xmlFileSysInfo[i].Description = partitions[i].PartitionDescription;
-                        xmlFileSysInfo[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
-                        xmlFileSysInfo[i].Name = partitions[i].PartitionName;
-                        xmlFileSysInfo[i].Sequence = (int)partitions[i].PartitionSequence;
-                        xmlFileSysInfo[i].StartSector = (int)partitions[i].PartitionStartSector;
-                        xmlFileSysInfo[i].Type = partitions[i].PartitionType;
-
+                        xmlFileSysInfo[i] = new PartitionType
+                        {
+                            Description = partitions[i].PartitionDescription,
+                            EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1),
+                            Name = partitions[i].PartitionName,
+                            Sequence = (int)partitions[i].PartitionSequence,
+                            StartSector = (int)partitions[i].PartitionStartSector,
+                            Type = partitions[i].PartitionType
+                        };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
                         foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -672,8 +686,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 if(_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
                                 {
-                                    string foo;
-                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                    _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out string foo);
                                     lstFs.Add(_plugin.XmlFSType);
                                     Statistics.AddFilesystem(_plugin.XmlFSType.Type);
 
@@ -702,10 +715,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else
                 {
                     xmlFileSysInfo = new PartitionType[1];
-                    xmlFileSysInfo[0] = new PartitionType();
-                    xmlFileSysInfo[0].EndSector = (int)(blocks - 1);
-                    xmlFileSysInfo[0].StartSector = 0;
-
+                    xmlFileSysInfo[0] = new PartitionType
+                    {
+                        EndSector = (int)(blocks - 1),
+                        StartSector = 0
+                    };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
                     foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -714,8 +728,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(_plugin.Identify(_imageFormat, (blocks - 1), 0))
                             {
-                                string foo;
-                                _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out foo);
+                                _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out string foo);
                                 lstFs.Add(_plugin.XmlFSType);
                                 Statistics.AddFilesystem(_plugin.XmlFSType.Type);
 
@@ -744,47 +757,62 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();
             sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
-            sidecar.OpticalDisc[0].DumpHardwareArray[0] = new DumpHardwareType();
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents = new ExtentType[1];
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0] = new ExtentType();
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].Start = 0;
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].End = (int)(blocks - 1);
+            sidecar.OpticalDisc[0].DumpHardwareArray[0] = new DumpHardwareType
+            {
+                Extents = new ExtentType[1]
+            };
+            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0] = new ExtentType
+            {
+                Start = 0,
+                End = (int)(blocks - 1)
+            };
             sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
             sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
             sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
             sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
-            sidecar.OpticalDisc[0].Image = new ImageType();
-            sidecar.OpticalDisc[0].Image.format = "Raw disk image (sector by sector copy)";
-            sidecar.OpticalDisc[0].Image.Value = outputPrefix + ".iso";
-            sidecar.OpticalDisc[0].Layers = new LayersType();
-            sidecar.OpticalDisc[0].Layers.type = LayersTypeType.OTP;
-            sidecar.OpticalDisc[0].Layers.typeSpecified = true;
-            sidecar.OpticalDisc[0].Layers.Sectors = new SectorsType[1];
-            sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType();
-            sidecar.OpticalDisc[0].Layers.Sectors[0].Value = (long)layerBreak;
+            sidecar.OpticalDisc[0].Image = new ImageType
+            {
+                format = "Raw disk image (sector by sector copy)",
+                Value = outputPrefix + ".iso"
+            };
+            sidecar.OpticalDisc[0].Layers = new LayersType
+            {
+                type = LayersTypeType.OTP,
+                typeSpecified = true,
+                Sectors = new SectorsType[1]
+            };
+            sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType
+            {
+                Value = (long)layerBreak
+            };
             sidecar.OpticalDisc[0].Sessions = 1;
             sidecar.OpticalDisc[0].Tracks = new[] { 1 };
             sidecar.OpticalDisc[0].Track = new Schemas.TrackType[1];
-            sidecar.OpticalDisc[0].Track[0] = new Schemas.TrackType();
-            sidecar.OpticalDisc[0].Track[0].BytesPerSector = (int)blockSize;
-            sidecar.OpticalDisc[0].Track[0].Checksums = sidecar.OpticalDisc[0].Checksums;
-            sidecar.OpticalDisc[0].Track[0].EndSector = (long)(blocks - 1);
-            sidecar.OpticalDisc[0].Track[0].Image = new ImageType();
-            sidecar.OpticalDisc[0].Track[0].Image.format = "BINARY";
-            sidecar.OpticalDisc[0].Track[0].Image.offset = 0;
-            sidecar.OpticalDisc[0].Track[0].Image.offsetSpecified = true;
-            sidecar.OpticalDisc[0].Track[0].Image.Value = sidecar.OpticalDisc[0].Image.Value;
-            sidecar.OpticalDisc[0].Track[0].Sequence = new TrackSequenceType();
-            sidecar.OpticalDisc[0].Track[0].Sequence.Session = 1;
-            sidecar.OpticalDisc[0].Track[0].Sequence.TrackNumber = 1;
-            sidecar.OpticalDisc[0].Track[0].Size = (long)(totalSize * blockSize);
-            sidecar.OpticalDisc[0].Track[0].StartSector = 0;
+            sidecar.OpticalDisc[0].Track[0] = new Schemas.TrackType
+            {
+                BytesPerSector = (int)blockSize,
+                Checksums = sidecar.OpticalDisc[0].Checksums,
+                EndSector = (long)(blocks - 1),
+                Image = new ImageType()
+                {
+                    format = "BINARY",
+                    offset = 0,
+                    offsetSpecified = true,
+                    Value = sidecar.OpticalDisc[0].Image.Value
+                },
+                Sequence = new TrackSequenceType()
+                {
+                    Session = 1,
+                    TrackNumber = 1
+                },
+                Size = (long)(totalSize * blockSize),
+                StartSector = 0
+            };
             if(xmlFileSysInfo != null)
                 sidecar.OpticalDisc[0].Track[0].FileSystemInformation = xmlFileSysInfo;
             sidecar.OpticalDisc[0].Track[0].TrackType1 = TrackTypeTrackType.dvd;
             sidecar.OpticalDisc[0].Dimensions = Metadata.Dimensions.DimensionsFromMediaType(dskType);
-            string xmlDskTyp, xmlDskSubTyp;
-            Metadata.MediaType.MediaTypeToString(dskType, out xmlDskTyp, out xmlDskSubTyp);
+            Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
             sidecar.OpticalDisc[0].DiscType = xmlDskTyp;
             sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
         }

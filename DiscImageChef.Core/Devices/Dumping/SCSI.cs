@@ -51,12 +51,11 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             byte[] senseBuf = null;
             bool sense = false;
-            double duration;
             MediaType dskType = MediaType.Unknown;
 
             if(dev.IsRemovable)
             {
-                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out duration);
+                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out double duration);
                 if(sense)
                 {
                     Decoders.SCSI.FixedSense? decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
