@@ -50,5 +50,7 @@ namespace DiscImageChef.Metadata
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
+        [XmlArrayItem("BadBlock")]
+        public List<ulong> BadBlocks;
     }
 }
