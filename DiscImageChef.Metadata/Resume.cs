@@ -30,12 +30,25 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 using System;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using Schemas;
+
 namespace DiscImageChef.Metadata
 {
+    [Serializable]
+    [XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume
     {
-        public Resume()
-        {
-        }
+        [XmlElement(DataType = "date")]
+        public DateTime CreationDate;
+        [XmlElement(DataType = "date")]
+        public DateTime LastWriteDate;
+        public bool Removable;
+        public ulong LastBlock;
+        public ulong LastTriedBlock;
+
+        [XmlArrayItem("DumpTry")]
+        public List<DumpHardwareType> Tries;
     }
 }
