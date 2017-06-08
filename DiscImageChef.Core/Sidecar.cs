@@ -657,7 +657,7 @@ namespace DiscImageChef.Core
                             sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
                             sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents = new ExtentType[0];
                             sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].Start = 0;
-                            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].End = (int)image.ImageInfo.sectors;
+                            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].End = image.ImageInfo.sectors;
                             sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = image.ImageInfo.driveManufacturer;
                             sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = image.ImageInfo.driveModel;
                             sidecar.OpticalDisc[0].DumpHardwareArray[0].Firmware = image.ImageInfo.driveFirmwareRevision;

@@ -38,31 +38,31 @@ namespace DiscImageChef.Metadata
 {
     public static class ExtentsConverter
     {
-        public static ExtentType[] ToMetadata(ExtentsInt extents)
+        public static ExtentType[] ToMetadata(ExtentsULong extents)
         {
             if(extents == null)
                 return null;
             
-            Tuple<int, int>[] tuples = extents.ToArray();
+            Tuple<ulong, ulong>[] tuples = extents.ToArray();
             ExtentType[] array = new ExtentType[tuples.Length];
 
-            for(int i = 0; i < array.Length; i++)
+            for(ulong i = 0; i < (ulong)array.LongLength; i++)
                 array[i] = new ExtentType { Start = tuples[i].Item1, End = tuples[i].Item2 };
 
             return array;
         }
 
-        public static ExtentsInt FromMetadata(ExtentType[] extents)
+        public static ExtentsULong FromMetadata(ExtentType[] extents)
         {
             if(extents == null)
                 return null;
 
-            List<Tuple<int, int>> tuples = new List<Tuple<int, int>>();
+            List<Tuple<ulong, ulong>> tuples = new List<Tuple<ulong, ulong>>();
 
             foreach(ExtentType extent in extents)
-                tuples.Add(new Tuple<int, int>(extent.Start, extent.End));
+                tuples.Add(new Tuple<ulong, ulong>(extent.Start, extent.End));
 
-            return new ExtentsInt(tuples);
+            return new ExtentsULong(tuples);
         }
     }
 }

@@ -591,7 +591,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] = new ExtentType
             {
                 Start = 0,
-                End = (int)(blocks - 1)
+                End = blocks - 1
             };
             sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
