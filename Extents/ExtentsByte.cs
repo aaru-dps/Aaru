@@ -44,6 +44,11 @@ namespace Extents
             backend = new List<Tuple<byte, byte>>();
         }
 
+        public ExtentsByte(List<Tuple<byte, byte>> list)
+        {
+            backend = list.OrderBy(t => t.Item1).ToList();
+        }
+
         public int Count { get { return backend.Count; } }
 
         public void Add(byte item)

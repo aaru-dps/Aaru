@@ -44,6 +44,11 @@ namespace Extents
             backend = new List<Tuple<ushort, ushort>>();
         }
 
+        public ExtentsUShort(List<Tuple<ushort, ushort>> list)
+        {
+            backend = list.OrderBy(t => t.Item1).ToList();
+        }
+
         public int Count { get { return backend.Count; } }
 
         public void Add(ushort item)
