@@ -47,7 +47,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     public class SCSI
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, bool separateSubchannel, ref Metadata.Resume resume)
         {
             byte[] senseBuf = null;
             bool sense = false;
@@ -135,7 +135,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(dumpRaw)
                     throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                SSC.Dump(dev, outputPrefix, devicePath, ref sidecar);
+                SSC.Dump(dev, outputPrefix, devicePath, ref sidecar, ref resume);
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.SCSIType == Decoders.SCSI.PeripheralDeviceTypes.MultiMediaDevice)
             {
-                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel);
+                MMC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, separateSubchannel, ref resume);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
@@ -155,7 +155,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false);
+            SBC.Dump(dev, devicePath, outputPrefix, retryPasses, force, dumpRaw, persistent, stopOnError, ref sidecar, ref dskType, false, ref resume);
 
             DicConsole.WriteLine("Writing metadata sidecar");
 

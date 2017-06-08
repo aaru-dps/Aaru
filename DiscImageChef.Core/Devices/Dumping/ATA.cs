@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public class ATA
     {
-        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError)
+        public static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref Metadata.Resume resume)
         {
             bool aborted;
             MHDDLog mhddLog;

@@ -45,6 +45,8 @@ using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using Schemas;
+using DiscImageChef.Metadata;
+using System.Xml.Serialization;
 
 namespace DiscImageChef.Commands
 {
@@ -87,24 +89,52 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
+            Resume resume = null;
+            XmlSerializer xs = new XmlSerializer(resume.GetType());
+            if(File.Exists(options.OutputPrefix + ".resume.xml"))
+            {
+                try
+                {
+                    StreamReader sr = new StreamReader(options.OutputPrefix + ".resume.xml");
+                    resume = (Resume)xs.Deserialize(sr);
+                    sr.Close();
+                }
+                catch
+                {
+                    DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                    return;
+                }
+            }
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError);
+                    ATA.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError);
+                    SecureDigital.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
                     break;
                 case DeviceType.NVMe:
-                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError);
+                    NVMe.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, ref resume);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel);
+                    SCSI.Dump(dev, options.DevicePath, options.OutputPrefix, options.RetryPasses, options.Force, options.Raw, options.Persistent, options.StopOnError, options.SeparateSubchannel, ref resume);
                     break;
                 default:
                     throw new NotSupportedException("Unknown device type.");
+            }
+
+            if(resume != null)
+            {
+                if(File.Exists(options.OutputPrefix + ".resume.xml"))
+                    File.Delete(options.OutputPrefix + ".resume.xml");
+
+                FileStream fs = new FileStream(options.OutputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
+                xs = new XmlSerializer(resume.GetType());
+                xs.Serialize(fs, resume);
+                fs.Close();
             }
 
             Core.Statistics.AddCommand("dump-media");

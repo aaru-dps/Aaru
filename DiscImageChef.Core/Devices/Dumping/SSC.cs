@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class SSC
     {
-        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar)
+        internal static void Dump(Device dev, string outputPrefix, string devicePath, ref CICMMetadataType sidecar, ref Metadata.Resume resume)
         {
             Decoders.SCSI.FixedSense? fxSense;
             string strSense;

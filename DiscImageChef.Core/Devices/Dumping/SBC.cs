@@ -52,7 +52,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     internal static class SBC
     {
-        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool opticalDisc)
+        internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool opticalDisc, ref Metadata.Resume resume)
         {
             MHDDLog mhddLog;
             IBGLog ibgLog;
