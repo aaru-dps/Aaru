@@ -44,6 +44,11 @@ namespace Extents
             backend = new List<Tuple<uint, uint>>();
         }
 
+        public ExtentsUInt(List<Tuple<uint, uint>> list)
+        {
+            backend = list.OrderBy(t => t.Item1).ToList();
+        }
+
         public int Count { get { return backend.Count; } }
 
         public void Add(uint item)
