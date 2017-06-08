@@ -50,7 +50,7 @@ namespace DiscImageChef.Filters
         public LZip()
         {
             Name = "LZip";
-            UUID = new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+            UUID = new Guid("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
         }
 
         public override void Close()

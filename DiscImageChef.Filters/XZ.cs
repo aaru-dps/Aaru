@@ -49,7 +49,7 @@ namespace DiscImageChef.Filters
         public XZ()
         {
             Name = "XZ";
-            UUID = new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+            UUID = new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
         }
 
         public override void Close()
