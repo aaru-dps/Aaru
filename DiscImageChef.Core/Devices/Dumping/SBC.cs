@@ -353,7 +353,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // TODO: Record error on mapfile
 
                     errored += blocksToRead;
-                    unreadableSectors.Add(i);
+                    for(ulong b = i; b < i + blocksToRead; b++)
+                        unreadableSectors.Add(b);
                     if(cmdDuration < 500)
                         mhddLog.Write(i, 65535);
                     else

@@ -342,7 +342,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 (senseDecoded.Value.ASC != 0x64 || senseDecoded.Value.ASCQ != 0x00))
                             {
                                 results.errored += blocksToRead;
-                                results.unreadableSectors.Add(i);
+                                for(ulong b = i; b < i + blocksToRead; b++)
+                                    results.unreadableSectors.Add(b);
                                 if(cmdDuration < 500)
                                     mhddLog.Write(i, 65535);
                                 else
@@ -354,7 +355,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                         else
                         {
                             results.errored += blocksToRead;
-                            results.unreadableSectors.Add(i);
+                            for(ulong b = i; b < i + blocksToRead; b++)
+                                results.unreadableSectors.Add(b);
                             if(cmdDuration < 500)
                                 mhddLog.Write(i, 65535);
                             else
@@ -429,7 +431,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     else
                     {
                         results.errored += blocksToRead;
-                        results.unreadableSectors.Add(i);
+                        for(ulong b = i; b < i + blocksToRead; b++)
+                            results.unreadableSectors.Add(b);
                         if(cmdDuration < 500)
                             mhddLog.Write(i, 65535);
                         else

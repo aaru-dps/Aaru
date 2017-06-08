@@ -283,7 +283,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         // TODO: Record error on mapfile
 
                         errored += blocksToRead;
-                        unreadableSectors.Add(i);
+                        for(ulong b = i; b < i + blocksToRead; b++)
+                            unreadableSectors.Add(b);
                         DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if(cmdDuration < 500)
                             mhddLog.Write(i, 65535);

@@ -185,7 +185,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                         else
                         {
                             results.errored += blocksToRead;
-                            results.unreadableSectors.Add(i);
+                            for(ulong b = i; b < i + blocksToRead; b++)
+                                results.unreadableSectors.Add(b);
                             if(duration < 500)
                                 mhddLog.Write(i, 65535);
                             else

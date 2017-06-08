@@ -241,7 +241,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            unreadableSectors.Add(i);
+                            for(ulong b = i; b < i + blocksToRead; b++)
+                                unreadableSectors.Add(b);
                             if(duration < 500)
                                 mhddLog.Write(i, 65535);
                             else
