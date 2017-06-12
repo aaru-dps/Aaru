@@ -492,7 +492,6 @@ namespace DiscImageChef.ImagePlugins
                         Resource dCpyRsrc = rsrcFork.GetResource(0x64437079);
                         if(dCpyRsrc != null)
                         {
-                            // TODO: Use MacRoman
                             string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]), Encoding.GetEncoding("macintosh"));
                             string dCpyRegEx = "(?<application>\\S+)\\s(?<version>\\S+)\\rData checksum=\\$(?<checksum>\\S+)$";
                             Regex dCpyEx = new Regex(dCpyRegEx);

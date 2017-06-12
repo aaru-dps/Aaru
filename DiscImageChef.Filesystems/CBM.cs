@@ -248,7 +248,6 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.dosVersion })).AppendLine();
                 sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmHdr.diskVersion })).AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
-                // TODO: Use PETSCII
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, CurrentEncoding)).AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmHdr.name, CurrentEncoding);
@@ -267,7 +266,6 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Disk DOS type: {0}", Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).AppendLine();
                 sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new byte[] { cbmBam.dosVersion })).AppendLine();
                 sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
-                // TODO: Use PETSCII
                 sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, CurrentEncoding)).AppendLine();
 
                 xmlFSType.VolumeName = StringHandlers.CToString(cbmBam.name, CurrentEncoding);
