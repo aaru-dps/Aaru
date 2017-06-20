@@ -417,42 +417,49 @@ namespace DiscImageChef.Core
                             xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * trk.TrackRawBytesPerSector;
                             xmlTrk.BytesPerSector = trk.TrackBytesPerSector;
 
-                            // For fast debugging, skip checksum
-                            //goto skipChecksum;
-
                             uint sectorsToRead = 512;
-
-                            Checksum trkChkWorker = new Checksum();
-
                             ulong sectors = (ulong)(xmlTrk.EndSector - xmlTrk.StartSector + 1);
                             ulong doneSectors = 0;
 
-                            InitProgress2();
-                            while(doneSectors < sectors)
+                            // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
+                            if(tracks.Count == 1 && xmlTrk.Image.Value == sidecar.OpticalDisc[0].Image.Value)
                             {
-                                byte[] sector;
-
-                                if((sectors - doneSectors) >= sectorsToRead)
-                                {
-                                    sector = image.ReadSectorsLong(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber);
-                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                                    doneSectors += sectorsToRead;
-                                }
-                                else
-                                {
-                                    sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors), (uint)xmlTrk.Sequence.TrackNumber);
-                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
-                                    doneSectors += (sectors - doneSectors);
-                                }
-
-                                trkChkWorker.Update(sector);
+                                xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                             }
+                            else
+                            {
+                                // For fast debugging, skip checksum
+                                //goto skipChecksum;
 
-                            List<ChecksumType> trkChecksums = trkChkWorker.End();
+                                Checksum trkChkWorker = new Checksum();
 
-                            xmlTrk.Checksums = trkChecksums.ToArray();
+                                InitProgress2();
+                                while(doneSectors < sectors)
+                                {
+                                    byte[] sector;
 
-                            EndProgress2();
+                                    if((sectors - doneSectors) >= sectorsToRead)
+                                    {
+                                        sector = image.ReadSectorsLong(doneSectors, sectorsToRead, (uint)xmlTrk.Sequence.TrackNumber);
+                                        UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                        doneSectors += sectorsToRead;
+                                    }
+                                    else
+                                    {
+                                        sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors), (uint)xmlTrk.Sequence.TrackNumber);
+                                        UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                        doneSectors += (sectors - doneSectors);
+                                    }
+
+                                    trkChkWorker.Update(sector);
+                                }
+
+                                List<ChecksumType> trkChecksums = trkChkWorker.End();
+
+                                xmlTrk.Checksums = trkChecksums.ToArray();
+
+                                EndProgress2();
+                            }
 
                             if(trk.TrackSubchannelType != TrackSubchannelType.None)
                             {
