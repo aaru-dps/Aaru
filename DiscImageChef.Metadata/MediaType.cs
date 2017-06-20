@@ -502,6 +502,10 @@ namespace DiscImageChef.Metadata
                     DiscType = "5.25\" floppy";
                     DiscSubType = "Atari double-density";
                     break;
+                case CommonTypes.MediaType.ATARI_35_DS_DD:
+                    DiscType = "3.5\" floppy";
+                    DiscSubType = "Atari ST double-density, double-sided, 10 sectors";
+                    break;
                 case CommonTypes.MediaType.CBM_1540:
                 case CommonTypes.MediaType.CBM_1540_Ext:
                     DiscType = "5.25\" floppy";

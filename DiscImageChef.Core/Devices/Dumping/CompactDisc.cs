@@ -45,11 +45,13 @@ using DiscImageChef.Devices;
 using Schemas;
 using System.Linq;
 using DiscImageChef.Decoders.CD;
+using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
     internal class CompactDisc
     {
+        // TODO: Add support for resume file
         internal static void Dump(Device dev, string devicePath, string outputPrefix, ushort retryPasses, bool force, bool dumpRaw, bool persistent, bool stopOnError, ref CICMMetadataType sidecar, ref MediaType dskType, bool separateSubchannel, ref Metadata.Resume resume)
         {
             MHDDLog mhddLog;
@@ -68,7 +70,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double currentSpeed = 0;
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
-            List<ulong> unreadableSectors = new List<ulong>();
             Checksum dataChk;
             bool readcd = false;
             byte[] readBuffer;
@@ -377,6 +378,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     DicConsole.WriteLine("Using MMC READ CD command.");
             }
 
+            DumpHardwareType currentTry = null;
+            ExtentsULong extents = null;
+            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID, ref resume, ref currentTry, ref extents);
+            if(currentTry == null || extents == null)
+                throw new Exception("Could not process resume file, not continuing...");
+
             DicConsole.WriteLine("Trying to read Lead-In...");
             bool gotLeadIn = false;
             int leadInSectorsGood = 0, leadInSectorsTotal = 0;
@@ -388,7 +395,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             readBuffer = null;
 
-            for(int leadInBlock = -150; leadInBlock < 0; leadInBlock++)
+            for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
             {
                 if(aborted)
                     break;
@@ -434,7 +441,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 sidecar.OpticalDisc[0].LeadIn = new BorderType[]
                 {
-	                sidecar.OpticalDisc[0].LeadIn[0] = new BorderType
+	                new BorderType
 	                {
 	                    Image = outputPrefix + ".leadin.bin",
 	                    Checksums = dataChk.End().ToArray(),
@@ -477,6 +484,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             mhddLog = new MHDDLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             ibgLog = new IBGLog(outputPrefix + ".ibg", 0x0008);
 
+            dumpFile.Seek(resume.NextBlock, (ulong)sectorSize);
+            if(separateSubchannel)
+                subFile.Seek(resume.NextBlock, subSize);
+            
             start = DateTime.UtcNow;
             for(int t = 0; t < tracks.Count(); t++)
             {
@@ -511,10 +522,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 bool checkedDataFormat = false;
 
-                for(ulong i = (ulong)tracks[t].StartSector; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
+                for(ulong i = resume.NextBlock; i <= (ulong)tracks[t].EndSector; i += blocksToRead)
                 {
                     if(aborted)
+                    {
+                        currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
                         break;
+                    }
 
                     double cmdDuration = 0;
 
@@ -541,6 +555,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);
+                        extents.Add(i, blocksToRead, true);
                         if(separateSubchannel)
                         {
                             for(int b = 0; b < blocksToRead; b++)
@@ -567,11 +582,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         else
                             dumpFile.Write(new byte[blockSize * blocksToRead]);
 
-                        // TODO: Record error on mapfile
-
                         errored += blocksToRead;
                         for(ulong b = i; b < i + blocksToRead; b++)
-                            unreadableSectors.Add(b);
+                            resume.BadBlocks.Add(b);
                         DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
                         if(cmdDuration < 500)
                             mhddLog.Write(i, 65535);
@@ -608,6 +621,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                     currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
+                    resume.NextBlock = i + blocksToRead;
                 }
             }
             DicConsole.WriteLine();
@@ -618,30 +632,21 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
 
             #region Compact Disc Error handling
-            if(unreadableSectors.Count > 0 && !aborted)
+            if(resume.BadBlocks.Count > 0 && !aborted)
             {
-                List<ulong> tmpList = new List<ulong>();
-
-                foreach(ulong ur in unreadableSectors)
-                {
-                    for(ulong i = ur; i < ur + blocksToRead; i++)
-                        tmpList.Add(i);
-                }
-
-                tmpList.Sort();
-
                 int pass = 0;
                 bool forward = true;
                 bool runningPersistent = false;
 
-                unreadableSectors = tmpList;
-
             cdRepeatRetry:
-                ulong[] tmpArray = unreadableSectors.ToArray();
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
                 foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)
+                    {
+                        currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
                         break;
+                    }
 
                     double cmdDuration = 0;
 
@@ -657,7 +662,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if((!sense && !dev.Error) || runningPersistent)
                     {
                         if(!sense && !dev.Error)
-                            unreadableSectors.Remove(badSector);
+                        {
+                            resume.BadBlocks.Remove(badSector);
+                            extents.Add(badSector);
+                        }
                         
                         if(separateSubchannel)
                         {
@@ -669,12 +677,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
-                if(pass < retryPasses && !aborted && unreadableSectors.Count > 0)
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
                 {
                     pass++;
                     forward = !forward;
-                    unreadableSectors.Sort();
-                    unreadableSectors.Reverse();
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
                     goto cdRepeatRetry;
                 }
 
@@ -756,6 +764,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.WriteLine();
             }
             #endregion Compact Disc Error handling
+            resume.BadBlocks.Sort();
+            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
 
             dataChk = new Checksum();
             dumpFile.Seek(0, SeekOrigin.Begin);
@@ -821,20 +831,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // TODO: Correct this
             sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();
-            sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
-            sidecar.OpticalDisc[0].DumpHardwareArray[0] = new DumpHardwareType
-            {
-                Extents = new ExtentType[1]
-            };
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0] = new ExtentType
-            {
-                Start = 0,
-                End = blocks - 1
-            };
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
-            sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
+            sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
             sidecar.OpticalDisc[0].Image = new ImageType
             {
                 format = "Raw disk image (sector by sector copy)",
@@ -847,6 +844,20 @@ namespace DiscImageChef.Core.Devices.Dumping
             Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
             sidecar.OpticalDisc[0].DiscType = xmlDskTyp;
             sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
+
+            if(!aborted)
+            {
+                DicConsole.WriteLine("Writing metadata sidecar");
+
+                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml",
+                                       FileMode.Create);
+
+                System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
+            }
+
+            Statistics.AddMedia(dskType, true);
         }
     }
 }

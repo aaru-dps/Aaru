@@ -1,3 +1,7 @@
+* Options.cs:
+* Commands/DumpMedia.cs:
+  Implemented resume mapfile support.
+
 * Commands/DumpMedia.cs:
   Added resume parameter passing.
 

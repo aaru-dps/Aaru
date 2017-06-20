@@ -40,17 +40,17 @@ namespace DiscImageChef.Metadata
     [XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume
     {
-        [XmlElement(DataType = "date")]
+        [XmlElement(DataType = "dateTime")]
         public DateTime CreationDate;
-        [XmlElement(DataType = "date")]
+        [XmlElement(DataType = "dateTime")]
         public DateTime LastWriteDate;
         public bool Removable;
         public ulong LastBlock;
-        public ulong LastTriedBlock;
+        public ulong NextBlock;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
-        [XmlArrayItem("BadBlock")]
+        [XmlArrayItem("Block")]
         public List<ulong> BadBlocks;
     }
 }

@@ -47,6 +47,7 @@ using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using Schemas;
+using Extents;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -75,7 +76,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double currentSpeed = 0;
             double maxSpeed = double.MinValue;
             double minSpeed = double.MaxValue;
-            List<ulong> unreadableSectors = new List<ulong>();
             Checksum dataChk;
             byte[] readBuffer;
             uint blocksToRead = 64;
@@ -101,6 +101,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 blocks++;
                 DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
                     blocks, blockSize, blocks * (ulong)blockSize);
+            }
+            // Check how many blocks to read, if error show and return
+            if(scsiReader.GetBlocksToRead())
+            {
+                DicConsole.ErrorWriteLine(scsiReader.ErrorMessage);
+                return;
             }
             blocksToRead = scsiReader.BlocksToRead;
             logicalBlockSize = blockSize;
@@ -315,10 +321,20 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             readBuffer = null;
 
-            for(ulong i = 0; i < blocks; i += blocksToRead)
+            DumpHardwareType currentTry = null;
+            ExtentsULong extents = null;
+            ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformID, ref resume, ref currentTry, ref extents);
+            if(currentTry == null || extents == null)
+                throw new Exception("Could not process resume file, not continuing...");
+            dumpFile.Seek(resume.NextBlock, blockSize);
+
+            for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
             {
                 if(aborted)
+                {
+                    currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
                     break;
+                }
 
                 if((blocks - i) < blocksToRead)
                     blocksToRead = (uint)(blocks - i);
@@ -340,6 +356,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     dumpFile.Write(readBuffer);
+                    extents.Add(i, blocksToRead, true);
                 }
                 else
                 {
@@ -350,11 +367,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // Write empty data
                     dumpFile.Write(new byte[blockSize * blocksToRead]);
 
-                    // TODO: Record error on mapfile
-
                     errored += blocksToRead;
                     for(ulong b = i; b < i + blocksToRead; b++)
-                        unreadableSectors.Add(b);
+                        resume.BadBlocks.Add(b);
                     if(cmdDuration < 500)
                         mhddLog.Write(i, 65535);
                     else
@@ -366,6 +381,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
                 currentSpeed = ((double)blockSize * blocksToRead / (double)1048576) / (cmdDuration / (double)1000);
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
+                resume.NextBlock = i + blocksToRead;
             }
             end = DateTime.UtcNow;
             DicConsole.WriteLine();
@@ -375,30 +391,21 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
 
             #region Error handling
-            if(unreadableSectors.Count > 0 && !aborted)
+            if(resume.BadBlocks.Count > 0 && !aborted)
             {
-                List<ulong> tmpList = new List<ulong>();
-
-                foreach(ulong ur in unreadableSectors)
-                {
-                    for(ulong i = ur; i < ur + blocksToRead; i++)
-                        tmpList.Add(i);
-                }
-
-                tmpList.Sort();
-
                 int pass = 0;
                 bool forward = true;
                 bool runningPersistent = false;
 
-                unreadableSectors = tmpList;
-
             repeatRetry:
-                ulong[] tmpArray = unreadableSectors.ToArray();
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
                 foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)
+                    {
+                        currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
                         break;
+                    }
 
                     DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass + 1, forward ? "forward" : "reverse", runningPersistent ? "recovering partial data, " : "");
 
@@ -407,19 +414,20 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(!sense && !dev.Error)
                     {
-                        unreadableSectors.Remove(badSector);
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
                         dumpFile.WriteAt(readBuffer, badSector, blockSize);
                     }
                     else if(runningPersistent)
                         dumpFile.WriteAt(readBuffer, badSector, blockSize);
                 }
 
-                if(pass < retryPasses && !aborted && unreadableSectors.Count > 0)
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
                 {
                     pass++;
                     forward = !forward;
-                    unreadableSectors.Sort();
-                    unreadableSectors.Reverse();
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
                     goto repeatRetry;
                 }
 
@@ -535,6 +543,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.WriteLine();
             }
             #endregion Error handling
+            resume.BadBlocks.Sort();
+            currentTry.Extents = Metadata.ExtentsConverter.ToMetadata(extents);
 
             dataChk = new Checksum();
             dumpFile.Seek(0, SeekOrigin.Begin);
@@ -700,20 +710,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(opticalDisc)
             {
                 sidecar.OpticalDisc[0].Checksums = dataChk.End().ToArray();
-                sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
-                sidecar.OpticalDisc[0].DumpHardwareArray[0] = new DumpHardwareType
-                {
-                    Extents = new ExtentType[1]
-                };
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0] = new ExtentType
-                {
-                    Start = 0,
-                    End = blocks - 1
-                };
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = dev.Model;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Revision = dev.Revision;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
+                sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
                 sidecar.OpticalDisc[0].Image = new ImageType
                 {
                     format = "Raw disk image (sector by sector copy)",
@@ -822,22 +819,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].FileSystemInformation = xmlFileSysInfo;
 
                 if(dev.IsRemovable)
-                {
-                    sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
-                    sidecar.BlockMedia[0].DumpHardwareArray[0] = new DumpHardwareType
-                    {
-                        Extents = new ExtentType[1]
-                    };
-                    sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] = new ExtentType
-                    {
-                        Start = 0,
-                        End = blocks - 1
-                    };
-                    sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
-                    sidecar.BlockMedia[0].DumpHardwareArray[0].Model = dev.Model;
-                    sidecar.BlockMedia[0].DumpHardwareArray[0].Revision = dev.Revision;
-                    sidecar.BlockMedia[0].DumpHardwareArray[0].Software = Version.GetSoftwareType(dev.PlatformID);
-                }
+                    sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
             }
 
             DicConsole.WriteLine();
@@ -848,13 +830,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 #pragma warning restore IDE0004 // Cast is necessary, otherwise incorrect value is created
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
-            DicConsole.WriteLine("{0} sectors could not be read.", unreadableSectors.Count);
-            if(unreadableSectors.Count > 0)
-            {
-                unreadableSectors.Sort();
-                foreach(ulong bad in unreadableSectors)
-                    DicConsole.WriteLine("Sector {0} could not be read", bad);
-            }
+            DicConsole.WriteLine("{0} sectors could not be read.", resume.BadBlocks.Count);
             DicConsole.WriteLine();
 
             if(!aborted)

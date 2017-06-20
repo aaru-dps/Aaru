@@ -78,6 +78,7 @@
     <Compile Include="Devices\Dumping\SBC.cs" />
     <Compile Include="Devices\Dumping\XGD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Devices\Dumping\ResumeSupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">

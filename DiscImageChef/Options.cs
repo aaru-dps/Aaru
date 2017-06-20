@@ -302,6 +302,10 @@ namespace DiscImageChef
         [Option("separate-subchannel", Default = false,
                 HelpText = "Save subchannel in a separate file. Only applicable to CD/DDCD/GD.")]
         public bool SeparateSubchannel { get; set; }
+
+        [Option('m', "resume", Default = true,
+            HelpText = "Create/use resume mapfile.")]
+        public bool Resume { get; set; }
     }
 
     [Verb("device-report", HelpText = "Tests the device capabilities and creates an XML report of them.")]

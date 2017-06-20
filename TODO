@@ -31,7 +31,6 @@ Image checksum:
 --- Optimize and multithread
 
 Device handling:
---- Add mapfile support for resuming dumps
 --- Add support for FreeBSD
 --- Add support for MMC/SD devices
 --- Add support for NVMe devices

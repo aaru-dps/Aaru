@@ -52,8 +52,6 @@ namespace DiscImageChef.Commands
 {
     public static class DumpMedia
     {
-        // TODO: Implement dump map
-
         public static void doDumpMedia(DumpMediaOptions options)
         {
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", options.Debug);
@@ -66,6 +64,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", options.RetryPasses);
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", options.Persistent);
             DicConsole.DebugWriteLine("Dump-Media command", "--separate-subchannel={0}", options.SeparateSubchannel);
+            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}", options.Resume);
 
             if(!File.Exists(options.DevicePath))
             {
@@ -90,8 +89,8 @@ namespace DiscImageChef.Commands
             Core.Statistics.AddDevice(dev);
 
             Resume resume = null;
-            XmlSerializer xs = new XmlSerializer(resume.GetType());
-            if(File.Exists(options.OutputPrefix + ".resume.xml"))
+            XmlSerializer xs = new XmlSerializer(typeof(Resume));
+            if(File.Exists(options.OutputPrefix + ".resume.xml") && options.Resume)
             {
                 try
                 {
@@ -104,6 +103,12 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
                     return;
                 }
+            }
+
+            if(resume != null && resume.NextBlock > resume.LastBlock && resume.BadBlocks.Count == 0)
+            {
+                DicConsole.WriteLine("Media already dumped correctly, not continuing...");
+                return;
             }
 
             switch(dev.Type)
@@ -126,8 +131,11 @@ namespace DiscImageChef.Commands
                     throw new NotSupportedException("Unknown device type.");
             }
 
-            if(resume != null)
+            if(resume != null && options.Resume)
             {
+                resume.LastWriteDate = DateTime.UtcNow;
+                resume.BadBlocks.Sort();
+
                 if(File.Exists(options.OutputPrefix + ".resume.xml"))
                     File.Delete(options.OutputPrefix + ".resume.xml");
 

@@ -61,6 +61,16 @@ namespace DiscImageChef.Core
             return dataFs.Read(array, offset, count);
         }
 
+        public long Seek(ulong block, ulong blockSize)
+        {
+            return dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
+        }
+
+        public long Seek(ulong offset, SeekOrigin origin)
+        {
+            return dataFs.Seek((long)offset, origin);
+        }
+
         public long Seek(long offset, SeekOrigin origin)
         {
             return dataFs.Seek(offset, origin);
