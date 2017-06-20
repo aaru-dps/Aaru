@@ -340,7 +340,6 @@ namespace DiscImageChef.Core
                         InitProgress();
                         foreach(Track trk in tracks)
                         {
-                            UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
                             Schemas.TrackType xmlTrk = new Schemas.TrackType();
                             switch(trk.TrackType)
                             {
@@ -422,12 +421,14 @@ namespace DiscImageChef.Core
                             ulong doneSectors = 0;
 
                             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                            if(tracks.Count == 1 && xmlTrk.Image.Value == sidecar.OpticalDisc[0].Image.Value)
+                            if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                             {
                                 xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                             }
                             else
                             {
+                                UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
+
                                 // For fast debugging, skip checksum
                                 //goto skipChecksum;
 
@@ -782,6 +783,47 @@ namespace DiscImageChef.Core
                                     sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Size = image.ReadDiskTag(MediaTagType.SD_ExtendedCSD).Length;
                                     break;
                             }
+                        }
+
+                        // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
+                        if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        {
+                            sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
+                        }
+                        else
+                        {
+                            Checksum contentChkWorker = new Checksum();
+
+                            uint sectorsToRead = 512;
+                            ulong sectors = image.GetSectors();
+                            ulong doneSectors = 0;
+
+                            InitProgress2();
+                            while(doneSectors < sectors)
+                            {
+                                byte[] sector;
+
+                                if((sectors - doneSectors) >= sectorsToRead)
+                                {
+                                    sector = image.ReadSectors(doneSectors, sectorsToRead);
+                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
+                                    doneSectors += sectorsToRead;
+                                }
+                                else
+                                {
+                                    sector = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
+                                    UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
+                                    doneSectors += (sectors - doneSectors);
+                                }
+
+                                contentChkWorker.Update(sector);
+                            }
+
+                            List<ChecksumType> cntChecksums = contentChkWorker.End();
+
+                            sidecar.BlockMedia[0].ContentChecksums = cntChecksums.ToArray();
+
+                            EndProgress2();
                         }
 
                         string dskType, dskSubType;
