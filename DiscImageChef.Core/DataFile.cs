@@ -105,26 +105,32 @@ namespace DiscImageChef.Core
                 WriteTo(who, outputPrefix + outputSuffix, data, what);
         }
 
-        public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null)
+        public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null, bool overwrite = false)
         {
             if(!string.IsNullOrEmpty(filename))
             {
-                if(!File.Exists(filename))
+                if(File.Exists(filename))
                 {
-                    try
+                    if(overwrite)
+                        File.Delete(filename);
+                    else
                     {
-                        DicConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
-                        FileStream outputFs = new FileStream(filename, FileMode.CreateNew);
-                        outputFs.Write(data, 0, data.Length);
-                        outputFs.Close();
-                    }
-                    catch
-                    {
-                        DicConsole.ErrorWriteLine("Unable to write file {0}", filename);
+                        DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+                        return;
                     }
                 }
-                else
-                    DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+
+                try
+                {
+                    DicConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
+                    FileStream outputFs = new FileStream(filename, FileMode.CreateNew);
+                    outputFs.Write(data, 0, data.Length);
+                    outputFs.Close();
+                }
+                catch
+                {
+                    DicConsole.ErrorWriteLine("Unable to write file {0}", filename);
+                }
             }
         }
     }

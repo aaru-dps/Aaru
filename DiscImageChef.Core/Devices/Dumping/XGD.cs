@@ -91,12 +91,25 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            // TODO: Correct metadata
-            /*sidecar.OpticalDisc[0].XboxSecuritySectors = new DumpType();
-            sidecar.OpticalDisc[0].XboxSecuritySectors.Image = outputPrefix + ".bca.bin";
-            sidecar.OpticalDisc[0].XboxSecuritySectors.Size = cmdBuf.Length;
-            sidecar.OpticalDisc[0].XboxSecuritySectors.Checksums = Checksum.GetChecksums(cmbBuf).ToArray();
-            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].XboxSecuritySectors.Image, tmpBuf);*/
+            byte[] tmpBuf = new byte[ssBuf.Length - 4];
+            Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
+            sidecar.OpticalDisc[0].Xbox = new XboxType()
+            {
+                SecuritySectors = new XboxSecuritySectorsType[]
+	            {
+	                new XboxSecuritySectorsType()
+	                {
+	                    RequestNumber = 0,
+	                    RequestVersion = 1,
+	                    SecuritySectors = new DumpType()
+	                    {
+	                        Image = outputPrefix + ".ss.bin",
+	                        Size = tmpBuf.Length,
+	                        Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+	                    }
+	                }
+	            }
+            };
             DataFile.WriteTo("SCSI Dump", outputPrefix + ".ss.bin", ssBuf);
 
             ulong l0Video, l1Video, middleZone, gameSize, totalSize, layerBreak;
@@ -122,9 +135,33 @@ namespace DiscImageChef.Core.Devices.Dumping
                 DicConsole.ErrorWriteLine("Cannot get PFI.");
                 return;
             }
+            tmpBuf = new byte[readBuffer.Length - 4];
+            Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
+            sidecar.OpticalDisc[0].PFI = new DumpType
+            {
+                Image = outputPrefix + ".pfi.bin",
+                Size = tmpBuf.Length,
+                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+            };
+            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].PFI.Image, tmpBuf, "Locked PFI", true);
             DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
             l0Video = Decoders.DVD.PFI.Decode(readBuffer).Value.Layer0EndPSN - Decoders.DVD.PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1;
             l1Video = totalSize - l0Video + 1;
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out duration);
+            if(sense)
+            {
+                DicConsole.ErrorWriteLine("Cannot get DMI.");
+                return;
+            }
+            tmpBuf = new byte[readBuffer.Length - 4];
+            Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
+            sidecar.OpticalDisc[0].DMI = new DumpType
+            {
+                Image = outputPrefix + ".dmi.bin",
+                Size = tmpBuf.Length,
+                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+            };
+            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].DMI.Image, tmpBuf, "Locked DMI", true);
 
             // Get game partition size
             DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
@@ -167,6 +204,33 @@ namespace DiscImageChef.Core.Devices.Dumping
             DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             blocks = totalSize + 1;
             middleZone = totalSize - (Decoders.DVD.PFI.Decode(readBuffer).Value.Layer0EndPSN - Decoders.DVD.PFI.Decode(readBuffer).Value.DataAreaStartPSN + 1) - gameSize + 1;
+
+            tmpBuf = new byte[readBuffer.Length - 4];
+            Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
+            sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
+            {
+                Image = outputPrefix + ".xboxpfi.bin",
+                Size = tmpBuf.Length,
+                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+            };
+            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].Xbox.PFI.Image, tmpBuf, "Unlocked PFI", true);
+
+            sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out duration);
+            if(sense)
+            {
+                DicConsole.ErrorWriteLine("Cannot get DMI.");
+                return;
+            }
+            tmpBuf = new byte[readBuffer.Length - 4];
+            Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
+            sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
+            {
+                Image = outputPrefix + ".xboxdmi.bin",
+                Size = tmpBuf.Length,
+                Checksums = Checksum.GetChecksums(tmpBuf).ToArray()
+            };
+            DataFile.WriteTo("SCSI Dump", sidecar.OpticalDisc[0].Xbox.DMI.Image, tmpBuf, "Unlocked DMI", true);
+
 
             totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
             layerBreak = l0Video + middleZone + gameSize / 2;

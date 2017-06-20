@@ -215,7 +215,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="buffer">The SS sector.</param>
-        public bool KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
+        public bool KreonExtractSS(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration, byte requestNumber = 0x00)
         {
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
@@ -232,8 +232,7 @@ namespace DiscImageChef.Devices
             cdb[7] = 0x00;
             cdb[8] = 0x08;
             cdb[9] = 0x00;
-            // TODO: Documentation puts this as xx but doesn't say what is the meaning.
-            cdb[10] = 0x00;
+            cdb[10] = requestNumber;
             cdb[11] = 0xC0;
 
             lastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out sense);
