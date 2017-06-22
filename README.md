@@ -45,6 +45,7 @@ Supported disk image formats
 * CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
 * CPCEMU Disk file and Extended Disk File
 * CopyQM
+* IBM SaveDskF
 * DiscJuggler images
 * Dreamcast GDI
 * MAME Compressed Hunks of Data (CHD)
