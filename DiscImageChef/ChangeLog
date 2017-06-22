@@ -1,3 +1,7 @@
+* Commands/CreateSidecar.cs:
+  Pass filter UUID to sidecar creation, use it to detect filters and
+  calculate checksums of disk image and its contents correctly.
+
 * Options.cs:
 * Commands/DumpMedia.cs:
   Implemented resume mapfile support.

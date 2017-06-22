@@ -99,7 +99,7 @@ namespace DiscImageChef.Core
                 UpdateStatusEvent(string.Format(text, args));
         }
 
-        public static CICMMetadataType Create(ImagePlugin image, string imagePath)
+        public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
             PluginBase plugins = new PluginBase();
@@ -421,7 +421,8 @@ namespace DiscImageChef.Core
                             ulong doneSectors = 0;
 
                             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                            if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                            if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+                               filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                             {
                                 xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                             }
@@ -786,7 +787,8 @@ namespace DiscImageChef.Core
                         }
 
                         // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
-                        if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
+                           filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                         {
                             sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
                         }

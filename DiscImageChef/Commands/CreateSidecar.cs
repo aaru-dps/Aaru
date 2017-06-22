@@ -101,7 +101,7 @@ namespace DiscImageChef.Commands
                 Sidecar.EndProgressEvent2 += Progress.EndProgress2;
                 Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
 
-                CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile);
+                CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
