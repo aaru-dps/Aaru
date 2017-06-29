@@ -491,12 +491,10 @@ namespace DiscImageChef.Checksums
             fuzzyContext.Init();
 
             fuzzyContext.Update(data, len);
+
             hash = null;
 
-            byte[] result;
-            fuzzy_digest(out result);
-
-            return CToString(result);
+            return fuzzyContext.End();
         }
 
         /// <summary>

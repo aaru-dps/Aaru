@@ -86,7 +86,7 @@ namespace DiscImageChef.Tests.Checksums
             fs.Dispose();
             SpamSumContext ctx = new SpamSumContext();
             string result = ctx.Data(data, out byte[] tmp);
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace DiscImageChef.Tests.Checksums
             ctx.Init();
             ctx.Update(data);
             string result = ctx.End();
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(ExpectedRandom, result);
         }
     }
 }
