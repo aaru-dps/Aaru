@@ -137,6 +137,8 @@ namespace DiscImageChef.Checksums
                 adlerOutput.Append(hash[i].ToString("x2"));
             }
 
+            fileStream.Close();
+
             return adlerOutput.ToString();
         }
 

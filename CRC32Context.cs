@@ -163,6 +163,8 @@ namespace DiscImageChef.Checksums
                 crc32Output.Append(hash[i].ToString("x2"));
             }
 
+            fileStream.Close();
+
             return crc32Output.ToString();
         }
 
