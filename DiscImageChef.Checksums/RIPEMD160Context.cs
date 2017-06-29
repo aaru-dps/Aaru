@@ -102,7 +102,9 @@ namespace DiscImageChef.Checksums
         public byte[] File(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
-            return _ripemd160Provider.ComputeHash(fileStream);
+            byte[] result = _ripemd160Provider.ComputeHash(fileStream);
+            fileStream.Close();
+            return result;
         }
 
         /// <summary>
@@ -120,6 +122,8 @@ namespace DiscImageChef.Checksums
             {
                 ripemd160Output.Append(hash[i].ToString("x2"));
             }
+
+            fileStream.Close();
 
             return ripemd160Output.ToString();
         }
