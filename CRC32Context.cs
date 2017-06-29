@@ -153,8 +153,9 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < fileStream.Length; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ localhashInt & 0xff];
 
+            localhashInt ^= crc32Seed;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash = BitConverter.GetBytes(localhashInt);
+            hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc32Output = new StringBuilder();
 
@@ -209,8 +210,9 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < len; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ localhashInt & 0xff];
 
+            localhashInt ^= crc32Seed;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash = BitConverter.GetBytes(localhashInt);
+            hash = BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc32Output = new StringBuilder();
 

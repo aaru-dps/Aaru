@@ -79,6 +79,7 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             uint finalSum = (uint)((sum2 << 16) | sum1);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -90,6 +91,7 @@ namespace DiscImageChef.Checksums
             uint finalSum = (uint)((sum2 << 16) | sum1);
             StringBuilder adlerOutput = new StringBuilder();
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
             {
                 adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
@@ -123,12 +125,16 @@ namespace DiscImageChef.Checksums
             localSum1 = 1;
             localSum2 = 0;
 
-            localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % AdlerModule);
-            localSum2 = (ushort)((localSum2 + localSum1) % AdlerModule);
+            for(int i = 0; i < fileStream.Length; i++)
+            {
+                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % AdlerModule);
+                localSum2 = (ushort)((localSum2 + localSum1) % AdlerModule);
+            }
 
             finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
@@ -164,7 +170,8 @@ namespace DiscImageChef.Checksums
 
             finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            hash = BitConverter.GetBytes(finalSum);
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
