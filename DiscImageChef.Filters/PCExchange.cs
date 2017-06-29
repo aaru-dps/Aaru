@@ -215,7 +215,7 @@ namespace DiscImageChef.Filters
 
             FileStream finderDatStream = new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
 
-            while(finderDatStream.Position + 0x5C < finderDatStream.Length)
+            while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
                 PCExchangeEntry datEntry = new PCExchangeEntry();
                 byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
@@ -269,7 +269,7 @@ namespace DiscImageChef.Filters
 
             FileStream finderDatStream = new FileStream(Path.Combine(parentFolder, FinderInfo), FileMode.Open, FileAccess.Read);
 
-            while(finderDatStream.Position + 0x5C < finderDatStream.Length)
+            while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
                 PCExchangeEntry datEntry = new PCExchangeEntry();
                 byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
@@ -313,6 +313,8 @@ namespace DiscImageChef.Filters
 
             basePath = path;
             opened = true;
+
+            finderDatStream.Close();
         }
     }
 }
