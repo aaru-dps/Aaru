@@ -46,17 +46,26 @@
     <Compile Include="Checksums\SpamSum.cs" />
     <Compile Include="Checksums\SHA512.cs" />
     <Compile Include="Checksums\Adler32.cs" />
+    <Compile Include="Filters\GZip.cs" />
+    <Compile Include="Filters\XZ.cs" />
+    <Compile Include="Filters\LZip.cs" />
+    <Compile Include="Filters\BZip2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Checksums\" />
+    <Folder Include="Filters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+      <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
+      <Name>DiscImageChef.Filters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
