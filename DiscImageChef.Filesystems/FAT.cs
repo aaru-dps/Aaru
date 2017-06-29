@@ -305,6 +305,7 @@ namespace DiscImageChef.Filesystems
                 }
 
                 sb.AppendFormat("OEM Name: {0}", BPB.OEMName).AppendLine();
+                xmlFSType.SystemIdentifier = BPB.OEMName;
                 sb.AppendFormat("{0} bytes per sector.", BPB.bps).AppendLine();
                 sb.AppendFormat("{0} sectors per cluster.", BPB.spc).AppendLine();
                 xmlFSType.ClusterSize = BPB.bps * BPB.spc;
