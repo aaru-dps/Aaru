@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : CRC16.cs
+// Filename       : MD5.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,39 +43,43 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC16
+    public class MD5
     {
-        static readonly byte[] ExpectedEmpty = { 0x00, 0x00 };
-        static readonly byte[] ExpectedRandom = { 0x2d, 0x6d };
+        static readonly byte[] ExpectedEmpty = { 0xb6, 0xd8, 0x1b, 0x36, 0x0a, 0x56, 0x72, 0xd8, 0x0c, 0x27, 0x43, 0x0f, 0x39, 0x15, 0x3e, 0x2c };
+        static readonly byte[] ExpectedRandom = { 0xd7, 0x8f, 0x0e, 0xec, 0x41, 0x7b, 0xe3, 0x86, 0x21, 0x9b, 0x21, 0xb7, 0x00, 0x04, 0x4b, 0x95 };
 
         [Test]
-        public void CRC16EmptyFile()
+        public void MD5EmptyFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            MD5Context ctx = new MD5Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyData()
+        public void MD5EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            MD5Context ctx = new MD5Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyInstance()
+        public void MD5EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            MD5Context ctx = new MD5Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -83,33 +87,37 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC16RandomFile()
+        public void MD5RandomFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            MD5Context ctx = new MD5Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomData()
+        public void MD5RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            MD5Context ctx = new MD5Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomInstance()
+        public void MD5RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            MD5Context ctx = new MD5Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

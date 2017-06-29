@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SHA384.cs
+// Filename       : Adler32.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,43 +43,39 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class SHA384
+    public class Adler32
     {
-        static readonly byte[] ExpectedEmpty = { 0x31, 0x64, 0x67, 0x3a, 0x8a, 0xc2, 0x75, 0x76, 0xab, 0x5f, 0xc0, 0x6b, 0x9a, 0xdc, 0x4c, 0xe0, 0xac, 0xa5, 0xbd, 0x30, 0x25, 0x38, 0x4b, 0x1c, 0xf2, 0x12, 0x8a, 0x87, 0x95, 0xe7, 0x47, 0xc4, 0x31, 0xe8, 0x82, 0x78, 0x5a, 0x0b, 0xf8, 0xdc, 0x70, 0xb4, 0x29, 0x95, 0xdb, 0x38, 0x85, 0x75 };
-        static readonly byte[] ExpectedRandom = { 0xdb, 0x53, 0x0e, 0x17, 0x9b, 0x81, 0xfe, 0x5f, 0x6d, 0x20, 0x41, 0x04, 0x6e, 0x77, 0xd9, 0x85, 0xf2, 0x85, 0x8a, 0x66, 0xca, 0xd3, 0x8d, 0x1a, 0xd5, 0xac, 0x67, 0xa9, 0x74, 0xe1, 0xef, 0x3f, 0x4d, 0xdf, 0x94, 0x15, 0x2e, 0xac, 0x2e, 0xfe, 0x16, 0x95, 0x81, 0x54, 0xdc, 0x59, 0xd4, 0xc3 };
+        static readonly byte[] ExpectedEmpty = { 0x00, 0xf0, 0x00, 0x01 };
+        static readonly byte[] ExpectedRandom = { 0x37, 0x28, 0xd1, 0x86 };
 
         [Test]
-        public void SHA384EmptyFile()
+        public void Adler32EmptyFile()
         {
-            SHA384Context ctx = new SHA384Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void SHA384EmptyData()
+        public void Adler32EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA384Context ctx = new SHA384Context();
-            ctx.Init();
-            ctx.Data(data, out byte[] result);
+            Adler32Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void SHA384EmptyInstance()
+        public void Adler32EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA384Context ctx = new SHA384Context();
+            Adler32Context ctx = new Adler32Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -87,37 +83,33 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void SHA384RandomFile()
+        public void Adler32RandomFile()
         {
-            SHA384Context ctx = new SHA384Context();
-            ctx.Init();
-            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void SHA384RandomData()
+        public void Adler32RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA384Context ctx = new SHA384Context();
-            ctx.Init();
-            ctx.Data(data, out byte[] result);
+            Adler32Context.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void SHA384RandomInstance()
+        public void Adler32RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            SHA384Context ctx = new SHA384Context();
+            Adler32Context ctx = new Adler32Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

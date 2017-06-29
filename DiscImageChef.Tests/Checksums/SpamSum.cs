@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : CRC16.cs
+// Filename       : SpamSum.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,77 +43,65 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC16
+    public class SpamSum
     {
-        static readonly byte[] ExpectedEmpty = { 0x00, 0x00 };
-        static readonly byte[] ExpectedRandom = { 0x2d, 0x6d };
+        static readonly string ExpectedEmpty = "3::";
+        static readonly string ExpectedRandom = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
 
         [Test]
-        public void CRC16EmptyFile()
-        {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
-            Assert.AreEqual(ExpectedEmpty, result);
-        }
-
-        [Test]
-        public void CRC16EmptyData()
+        public void SpamSumEmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            SpamSumContext ctx = new SpamSumContext();
+            string result = ctx.Data(data, out byte[] tmp);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyInstance()
+        public void SpamSumEmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SpamSumContext ctx = new SpamSumContext();
             ctx.Init();
             ctx.Update(data);
-            byte[] result = ctx.Final();
+            string result = ctx.End();
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16RandomFile()
-        {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
-        }
-
-        [Test]
-        public void CRC16RandomData()
+        public void SpamSumRandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedRandom, result);
+            SpamSumContext ctx = new SpamSumContext();
+            string result = ctx.Data(data, out byte[] tmp);
+            Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16RandomInstance()
+        public void SpamSumRandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SpamSumContext ctx = new SpamSumContext();
             ctx.Init();
             ctx.Update(data);
-            byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedRandom, result);
+            string result = ctx.End();
+            Assert.AreEqual(ExpectedEmpty, result);
         }
     }
 }

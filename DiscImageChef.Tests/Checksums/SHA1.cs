@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : CRC16.cs
+// Filename       : SHA1.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,39 +43,43 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC16
+    public class SHA1
     {
-        static readonly byte[] ExpectedEmpty = { 0x00, 0x00 };
-        static readonly byte[] ExpectedRandom = { 0x2d, 0x6d };
+        static readonly byte[] ExpectedEmpty = { 0x3b, 0x71, 0xf4, 0x3f, 0xf3, 0x0f, 0x4b, 0x15, 0xb5, 0xcd, 0x85, 0xdd, 0x9e, 0x95, 0xeb, 0xc7, 0xe8, 0x4e, 0xb5, 0xa3 };
+        static readonly byte[] ExpectedRandom = { 0x72, 0x0d, 0x3b, 0x71, 0x7d, 0xe0, 0xc7, 0x4c, 0x77, 0xdd, 0x9c, 0xaa, 0x9e, 0xba, 0x50, 0x60, 0xdc, 0xbd, 0x28, 0x8d };
 
         [Test]
-        public void CRC16EmptyFile()
+        public void SHA1EmptyFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            SHA1Context ctx = new SHA1Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyData()
+        public void SHA1EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            SHA1Context ctx = new SHA1Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyInstance()
+        public void SHA1EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SHA1Context ctx = new SHA1Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -83,33 +87,37 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC16RandomFile()
+        public void SHA1RandomFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            SHA1Context ctx = new SHA1Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomData()
+        public void SHA1RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            SHA1Context ctx = new SHA1Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomInstance()
+        public void SHA1RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SHA1Context ctx = new SHA1Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : CRC16.cs
+// Filename       : SHA256.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,39 +43,43 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC16
+    public class SHA256
     {
-        static readonly byte[] ExpectedEmpty = { 0x00, 0x00 };
-        static readonly byte[] ExpectedRandom = { 0x2d, 0x6d };
+        static readonly byte[] ExpectedEmpty = { 0x30, 0xe1, 0x49, 0x55, 0xeb, 0xf1, 0x35, 0x22, 0x66, 0xdc, 0x2f, 0xf8, 0x06, 0x7e, 0x68, 0x10, 0x46, 0x07, 0xe7, 0x50, 0xab, 0xb9, 0xd3, 0xb3, 0x65, 0x82, 0xb8, 0xaf, 0x90, 0x9f, 0xcb, 0x58 };
+        static readonly byte[] ExpectedRandom = { 0x4d, 0x1a, 0x6b, 0x8a, 0x54, 0x67, 0x00, 0xc4, 0x8e, 0xda, 0x70, 0xd3, 0x39, 0x1c, 0x8f, 0x15, 0x8a, 0x8d, 0x12, 0xb2, 0x38, 0x92, 0x89, 0x29, 0x50, 0x47, 0x8c, 0x41, 0x8e, 0x25, 0xcc, 0x39 };
 
         [Test]
-        public void CRC16EmptyFile()
+        public void SHA256EmptyFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            SHA256Context ctx = new SHA256Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyData()
+        public void SHA256EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            SHA256Context ctx = new SHA256Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyInstance()
+        public void SHA256EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SHA256Context ctx = new SHA256Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -83,33 +87,37 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC16RandomFile()
+        public void SHA256RandomFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            SHA256Context ctx = new SHA256Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomData()
+        public void SHA256RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            SHA256Context ctx = new SHA256Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomInstance()
+        public void SHA256RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            SHA256Context ctx = new SHA256Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

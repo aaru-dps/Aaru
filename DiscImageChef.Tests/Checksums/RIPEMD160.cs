@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : CRC16.cs
+// Filename       : RIPEMD160.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -43,39 +43,43 @@ using System.IO;
 namespace DiscImageChef.Tests.Checksums
 {
     [TestFixture]
-    public class CRC16
+    public class RIPEMD160
     {
-        static readonly byte[] ExpectedEmpty = { 0x00, 0x00 };
-        static readonly byte[] ExpectedRandom = { 0x2d, 0x6d };
+        static readonly byte[] ExpectedEmpty = { 0x59, 0xf4, 0x4e, 0x7d, 0xaf, 0xba, 0xe0, 0xfa, 0x30, 0x15, 0xc1, 0x96, 0x41, 0xc5, 0xa5, 0xaf, 0x2d, 0x93, 0x99, 0x8d };
+        static readonly byte[] ExpectedRandom = { 0x2a, 0x7b, 0x6c, 0x0e, 0xc1, 0x80, 0xce, 0x6a, 0xe2, 0xfd, 0x77, 0xb4, 0xe0, 0xb6, 0x80, 0xc5, 0xd9, 0x9f, 0xf6, 0x7b };
 
         [Test]
-        public void CRC16EmptyFile()
+        public void RIPEMD160EmptyFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
+            RIPEMD160Context ctx = new RIPEMD160Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyData()
+        public void RIPEMD160EmptyData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            RIPEMD160Context ctx = new RIPEMD160Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void CRC16EmptyInstance()
+        public void RIPEMD160EmptyInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            RIPEMD160Context ctx = new RIPEMD160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();
@@ -83,33 +87,37 @@ namespace DiscImageChef.Tests.Checksums
         }
 
         [Test]
-        public void CRC16RandomFile()
+        public void RIPEMD160RandomFile()
         {
-            byte[] result = CRC16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            RIPEMD160Context ctx = new RIPEMD160Context();
+            ctx.Init();
+            byte[] result = ctx.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomData()
+        public void RIPEMD160RandomData()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context.Data(data, out byte[] result);
+            RIPEMD160Context ctx = new RIPEMD160Context();
+            ctx.Init();
+            ctx.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void CRC16RandomInstance()
+        public void RIPEMD160RandomInstance()
         {
             byte[] data = new byte[1048576];
             FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open, FileAccess.Read);
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            CRC16Context ctx = new CRC16Context();
+            RIPEMD160Context ctx = new RIPEMD160Context();
             ctx.Init();
             ctx.Update(data);
             byte[] result = ctx.Final();

@@ -35,13 +35,11 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
+
 namespace DiscImageChef.Tests
 {
-    public class Consts
+    public static class Consts
     {
-        public Consts()
-        {
-        }
+        public const string TestFilesRoot = "/mnt/DiscImageChef/tests";
     }
 }
