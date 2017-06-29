@@ -51,6 +51,17 @@
     <Compile Include="Filters\LZip.cs" />
     <Compile Include="Filters\BZip2.cs" />
     <Compile Include="Filters\PCExchange.cs" />
+    <Compile Include="Filters\AppleDoubleOsX.cs" />
+    <Compile Include="Filters\AppleDoubleUnix.cs" />
+    <Compile Include="Filters\AppleDoubleProDos.cs" />
+    <Compile Include="Filters\AppleDoubleDave.cs" />
+    <Compile Include="Filters\AppleDoubleNetatalk.cs" />
+    <Compile Include="Filters\AppleDoubleDos.cs" />
+    <Compile Include="Filters\AppleDoubleUnAr.cs" />
+    <Compile Include="Filters\AppleSingle.cs" />
+    <Compile Include="Filters\MacBinary1.cs" />
+    <Compile Include="Filters\MacBinary3.cs" />
+    <Compile Include="Filters\MacBinary2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
