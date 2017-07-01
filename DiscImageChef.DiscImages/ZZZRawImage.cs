@@ -46,6 +46,7 @@ namespace DiscImageChef.ImagePlugins
 
         Filter rawImageFilter;
         bool differentTrackZeroSize;
+		string extension;
 
         #endregion
 
@@ -121,10 +122,13 @@ namespace DiscImageChef.ImagePlugins
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            string extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+            extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
 			if(extension == ".iso" && (imageFilter.GetDataForkLength() % 2048) == 0)
 				ImageInfo.sectorSize = 2048;
 			else if(extension == ".d81" && imageFilter.GetDataForkLength() == 819200)
+				ImageInfo.sectorSize = 256;
+			else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
+			        (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 || imageFilter.GetDataForkLength() == 655360))
 				ImageInfo.sectorSize = 256;
 			else
 			{
@@ -178,7 +182,8 @@ namespace DiscImageChef.ImagePlugins
                     case 1255168: // T0S0 = 128bps, T0S1 = 256bps
                     case 1261568:
                     case 1310720:
-                        ImageInfo.sectorSize = 1024;
+					case 1638400:
+						ImageInfo.sectorSize = 1024;
                         break;
                     default:
                         ImageInfo.sectorSize = 512;
@@ -623,7 +628,9 @@ namespace DiscImageChef.ImagePlugins
                     case 143360:
                         return MediaType.Apple33SS;
                     case 163840:
-                        return MediaType.DOS_525_SS_DD_8;
+						if(ImageInfo.sectorSize == 256)
+							return MediaType.ACORN_525_SS_DD_40;
+						return MediaType.DOS_525_SS_DD_8;
                     case 184320:
                         return MediaType.DOS_525_SS_DD_9;
                     case 204800:
@@ -643,7 +650,9 @@ namespace DiscImageChef.ImagePlugins
                     case 325632:
                         return MediaType.ECMA_70;
                     case 327680:
-                        return MediaType.DOS_525_DS_DD_8;
+						if(ImageInfo.sectorSize == 256)
+							return MediaType.ACORN_525_SS_DD_80;
+						return MediaType.DOS_525_DS_DD_8;
                     case 368640:
                         return MediaType.DOS_525_DS_DD_9;
                     case 409600:
@@ -661,6 +670,8 @@ namespace DiscImageChef.ImagePlugins
                     case 819200:
 						if(ImageInfo.sectorSize == 256)
 							return MediaType.CBM_35_DD;
+						if(extension == ".adf" || extension == ".adl")
+							return MediaType.ACORN_35_DS_DD;
                         return MediaType.AppleSonyDS;
                     case 839680:
                         return MediaType.FDFORMAT_35_DD;
@@ -692,6 +703,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.FDFORMAT_525_HD;
                     case 1474560:
                         return MediaType.DOS_35_HD;
+					case 1638400:
+						return MediaType.ACORN_35_DS_HD;
                     case 1720320:
                         return MediaType.DMF;
                     case 1763328:
