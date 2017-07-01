@@ -37,7 +37,7 @@ using System.Text;
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.PartPlugins
 {
-    class NeXTDisklabel : PartPlugin
+    public class NeXTDisklabel : PartPlugin
     {
         const uint NEXT_MAGIC1 = 0x4E655854;
         // "NeXT"

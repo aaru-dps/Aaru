@@ -40,7 +40,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class Human68K : PartPlugin
+    public class Human68K : PartPlugin
     {
         const uint X68kMagic = 0x5836384B;
 

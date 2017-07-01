@@ -40,7 +40,7 @@ namespace DiscImageChef.PartPlugins
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
-    class AppleMap : PartPlugin
+    public class AppleMap : PartPlugin
     {
         // "ER"
         const ushort APM_MAGIC = 0x4552;

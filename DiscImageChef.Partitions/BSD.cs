@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class BSD : PartPlugin
+    public class BSD : PartPlugin
     {
         public const uint DISKMAGIC = 0x82564557;
 

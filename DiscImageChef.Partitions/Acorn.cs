@@ -39,7 +39,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class Acorn : PartPlugin
+    public class Acorn : PartPlugin
     {
         const ulong ADFS_SB_POS = 0xC00;
         const uint LINUX_MAGIC = 0xDEAFA1DE;

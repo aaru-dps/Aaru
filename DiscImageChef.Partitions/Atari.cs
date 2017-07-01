@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
 {
-    class AtariPartitions : PartPlugin
+    public class AtariPartitions : PartPlugin
     {
         const uint TypeGEMDOS = 0x0047454D;
         const uint TypeBigGEMDOS = 0x0042474D;

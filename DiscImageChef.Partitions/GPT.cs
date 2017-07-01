@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
 {
-    class GuidPartitionTable : PartPlugin
+    public class GuidPartitionTable : PartPlugin
     {
         const ulong GptMagic = 0x5452415020494645;
         const uint GptRevision1 = 0x00010000;

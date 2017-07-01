@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class DEC : PartPlugin
+    public class DEC : PartPlugin
     {
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;

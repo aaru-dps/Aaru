@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class DragonFlyBSD : PartPlugin
+    public class DragonFlyBSD : PartPlugin
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 

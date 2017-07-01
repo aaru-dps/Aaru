@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class UNIX : PartPlugin
+    public class UNIX : PartPlugin
     {
         public const uint UNIXDiskLabel_MAGIC = 0xCA5E600D;
         public const uint UNIXVTOC_MAGIC = 0x600DDEEE;

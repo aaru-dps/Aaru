@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class RioKarma : PartPlugin
+    public class RioKarma : PartPlugin
     {
         const ushort KarmaMagic = 0xAB56;
         const byte EntryMagic = 0x4D;

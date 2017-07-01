@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class SGI : PartPlugin
+    public class SGI : PartPlugin
     {
         const int SGI_MAGIC = 0x0BE5A941;
 

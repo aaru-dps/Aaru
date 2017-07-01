@@ -36,7 +36,7 @@ using System.Collections.Generic;
 // TODO: Support AAP, AST, SpeedStor and Ontrack extensions
 namespace DiscImageChef.PartPlugins
 {
-    class MBR : PartPlugin
+    public class MBR : PartPlugin
     {
         const ushort MBRSignature = 0xAA55;
 

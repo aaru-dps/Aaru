@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class Xbox : PartPlugin
+    public class Xbox : PartPlugin
     {
         const uint XboxCigam = 0x46415458;
         const uint XboxMagic = 0x58544146;

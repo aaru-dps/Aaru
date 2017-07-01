@@ -39,7 +39,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    class PC98 : PartPlugin
+    public class PC98 : PartPlugin
     {
         const ushort IntelMagic = 0xAA55;
 

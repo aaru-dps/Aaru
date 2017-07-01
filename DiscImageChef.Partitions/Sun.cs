@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.PartPlugins
 {
-    class SunDisklabel : PartPlugin
+    public class SunDisklabel : PartPlugin
     {
         const ushort SUN_MAGIC = 0xDABE;
         const uint VTOC_MAGIC = 0x600DDEEE;
