@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT12_MBR.cs
+// Filename       : FAT32_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -49,94 +49,38 @@ using System.Collections.Generic;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT12_MBR
+    public class FAT32_MBR
     {
         readonly string[] testfiles = {
-            "compaqmsdos331.vdi.lz", "drdos_3.40.vdi.lz", "drdos_3.41.vdi.lz", "drdos_5.00.vdi.lz",
-            "drdos_6.00.vdi.lz", "drdos_7.02.vdi.lz", "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz",
-            "msdos331.vdi.lz", "msdos401.vdi.lz", "msdos500.vdi.lz", "msdos600.vdi.lz",
-            "msdos620rc1.vdi.lz", "msdos620.vdi.lz", "msdos621.vdi.lz", "msdos622.vdi.lz",
-            "msdos710.vdi.lz", "novelldos_7.00.vdi.lz", "opendos_7.01.vdi.lz", "pcdos2000.vdi.lz",
-            "pcdos200.vdi.lz", "pcdos210.vdi.lz", "pcdos300.vdi.lz", "pcdos310.vdi.lz",
-            "pcdos330.vdi.lz", "pcdos400.vdi.lz", "pcdos500.vdi.lz", "pcdos502.vdi.lz",
-            "pcdos610.vdi.lz", "pcdos630.vdi.lz", "toshibamsdos330.vdi.lz", "toshibamsdos401.vdi.lz",
+            "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz", "msdos_7.10.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            8192, 30720, 28672, 28672,
-            28672, 28672, 28672, 28672,
-            8192, 8192, 8192, 8192,
-            8192, 8192, 8192, 8192,
-            16384, 28672, 28672, 32768,
-            32768, 32768, 32768, 32768,
-            32768, 32768, 32768, 32768,
-            32768, 32768, 8192, 8192,
+            8388608, 8388608, 8388608,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            1000, 3654, 3520, 3520,
-            3520, 3520, 3520, 3520,
-            1000, 1000, 1000, 1000,
-            1000, 1000, 1000, 1000,
-            2008, 3520, 3520, 4024,
-            4031, 4031, 4024, 4024,
-            4024, 4024, 4024, 4024,
-            4024, 4024, 1000, 1000,
+            1048233, 1048233, 1048233,
         };
 
         readonly int[] clustersize = {
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
+            4096, 4096, 4096,
         };
 
         readonly string[] volumename = {
-            null,null,null,null,
-            null,null,null,"VOLUMELABEL",
-            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
-            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
-            "VOLUMELABEL",null,null,"VOLUMELABEL",
-            null,null,null,null,
-            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
-            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            null,null,null,
         };
 
         readonly string[] volumeserial = {
-            null,null,null,null,
-            null,null,null,"1BFB1273",
-            null,"407D1907","345D18FB","332518F4",
-            "395718E9","076718EF","1371181B","23281816",
-            "2F781809",null,null,"294F100F",
-            null,null,null,null,
-            null,"0F340FE4","1A5E0FF9","1D2F0FFE",
-            "076C1004","2C481009",null,"3C2319E8",
+            "5955996C","1BFB1A43","3B331809",
         };
 
         readonly string[] oemid = {
-            "IBM  3.3", "IBM  3.2", "IBM  3.2", "IBM  3.3",
-            "IBM  3.3", "IBM  3.3", "DRDOS  7", "IBM  5.0",
-            "IBM  3.3", "MSDOS4.0", "MSDOS5.0", "MSDOS5.0",
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-            "MSWIN4.1", "IBM  3.3", "IBM  3.3", "IBM  7.0",
-            "IBM  2.0", "IBM  2.0", "IBM  3.0", "IBM  3.1",
-            "IBM  3.3", "IBM  4.0", "IBM  5.0", "IBM  5.0",
-            "IBM  6.0", "IBM  6.0", "T V3.30 ", "T V4.00 ",
+            "DRDOS7.X", "IBM  7.1", "MSWIN4.1",
         };
 
         [Test]
@@ -144,7 +88,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat32_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -158,7 +102,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[0].PartitionStartSector, partitions[0].PartitionStartSector + partitions[0].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("FAT32", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
