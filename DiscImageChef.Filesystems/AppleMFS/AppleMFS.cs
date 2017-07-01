@@ -38,7 +38,7 @@ using System.Text;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         bool mounted;
         bool debug;

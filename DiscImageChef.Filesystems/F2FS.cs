@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class F2FS : Filesystem
+    public class F2FS : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct F2FS_Superblock

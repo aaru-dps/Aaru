@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems
     // There is an ODS with signature "DECFILES11A", yet to be seen
     // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
     // TODO: Implement checksum
-    class ODS : Filesystem
+    public class ODS : Filesystem
     {
         public ODS()
         {

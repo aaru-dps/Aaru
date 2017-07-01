@@ -39,7 +39,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems
 {
-    class ECMA67 : Filesystem
+    public class ECMA67 : Filesystem
     {
         public ECMA67()
         {

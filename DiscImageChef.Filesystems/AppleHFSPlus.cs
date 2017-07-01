@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
-    class AppleHFSPlus : Filesystem
+    public class AppleHFSPlus : Filesystem
     {
         /// <summary>
         /// "BD", HFS magic

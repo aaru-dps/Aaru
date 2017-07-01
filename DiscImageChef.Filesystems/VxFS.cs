@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class VxFS : Filesystem
+    public class VxFS : Filesystem
     {
         public VxFS()
         {

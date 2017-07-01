@@ -38,7 +38,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    class BFS : Filesystem
+    public class BFS : Filesystem
     {
         const uint BFS_MAGIC = 0x1BADFACE;
 

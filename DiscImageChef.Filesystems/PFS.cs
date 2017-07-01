@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems
 {
-    class PFS : Filesystem
+    public class PFS : Filesystem
     {
         public PFS()
         {

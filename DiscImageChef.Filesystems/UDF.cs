@@ -41,7 +41,7 @@ using DiscImageChef.ImagePlugins;
 namespace DiscImageChef.Filesystems
 {
     // TODO: Detect bootable
-    class UDF : Filesystem
+    public class UDF : Filesystem
     {
         public UDF()
         {

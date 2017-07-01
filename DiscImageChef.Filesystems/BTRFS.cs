@@ -38,7 +38,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
-    class BTRFS : Filesystem
+    public class BTRFS : Filesystem
     {
         /// <summary>
         /// BTRFS magic "_BHRfS_M"

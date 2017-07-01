@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
-    class OperaFS : Filesystem
+    public class OperaFS : Filesystem
     {
         public OperaFS()
         {

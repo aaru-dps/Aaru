@@ -38,7 +38,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
 {
-    class AcornADFS : Filesystem
+    public class AcornADFS : Filesystem
     {
         const ulong ADFS_SB_POS = 0xC00;
 

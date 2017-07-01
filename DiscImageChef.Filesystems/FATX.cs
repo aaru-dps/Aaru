@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class FATX : Filesystem
+    public class FATX : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FATX_Superblock

@@ -38,7 +38,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
-    class SolarFS : Filesystem
+    public class SolarFS : Filesystem
     {
         public SolarFS()
         {

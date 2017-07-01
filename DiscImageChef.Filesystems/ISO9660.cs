@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems
     // TODO: Differentiate ISO Level 1, 2, 3 and ISO 9660:1999
     // TODO: Apple extensiones, requires XA or advance RR interpretation.
     // TODO: Needs a major rewrite
-    class ISO9660Plugin : Filesystem
+    public class ISO9660Plugin : Filesystem
     {
         //static bool alreadyLaunched;
 

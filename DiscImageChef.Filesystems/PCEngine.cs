@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
-    class PCEnginePlugin : Filesystem
+    public class PCEnginePlugin : Filesystem
     {
         public PCEnginePlugin()
         {

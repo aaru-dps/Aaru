@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class Squash : Filesystem
+    public class Squash : Filesystem
     {
         public Squash()
         {

@@ -37,7 +37,7 @@ using System;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         public override Errno ListXAttr(string path, ref List<string> xattrs)
         {

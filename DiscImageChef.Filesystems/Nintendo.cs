@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
 {
-    class NintendoPlugin : Filesystem
+    public class NintendoPlugin : Filesystem
     {
         public NintendoPlugin()
         {

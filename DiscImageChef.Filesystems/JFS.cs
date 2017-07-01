@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class JFS : Filesystem
+    public class JFS : Filesystem
     {
         [Flags]
         enum JFS_Flags : uint

@@ -38,7 +38,7 @@ using System.Security.Policy;
 
 namespace DiscImageChef.Filesystems
 {
-    class Cram : Filesystem
+    public class Cram : Filesystem
     {
         public Cram()
         {

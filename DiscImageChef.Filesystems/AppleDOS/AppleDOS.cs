@@ -37,7 +37,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    partial class AppleDOS : Filesystem
+    public partial class AppleDOS : Filesystem
     {
         bool mounted;
         bool debug;

@@ -38,7 +38,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class Reiser : Filesystem
+    public class Reiser : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ReiserJournalParams

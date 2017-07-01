@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems
 {
     // TODO: Implement detecting DOS bootable disks
     // TODO: Implement detecting Atari TOS bootable disks and printing corresponding fields
-    class FAT : Filesystem
+    public class FAT : Filesystem
     {
         public FAT()
         {

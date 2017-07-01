@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class QNX6 : Filesystem
+    public class QNX6 : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX6_RootNode

@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    class MinixFS : Filesystem
+    public class MinixFS : Filesystem
     {
         const ushort MINIX_MAGIC = 0x137F;
         // Minix v1, 14 char filenames

@@ -37,7 +37,7 @@ using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
-    class APFS : Filesystem
+    public class APFS : Filesystem
     {
         const uint ApfsContainerMagic = 0x4253584E; // "NXSB"
         const uint ApfsVolumeMagic = 0x42535041; // "APSB"

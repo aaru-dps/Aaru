@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    class extFS : Filesystem
+    public class extFS : Filesystem
     {
         public extFS()
         {

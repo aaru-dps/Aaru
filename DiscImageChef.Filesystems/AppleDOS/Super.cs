@@ -36,7 +36,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    partial class AppleDOS : Filesystem
+    public partial class AppleDOS : Filesystem
     {
         /// <summary>
         /// Mounts an Apple DOS filesystem

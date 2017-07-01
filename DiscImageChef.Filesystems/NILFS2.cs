@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class NILFS2 : Filesystem
+    public class NILFS2 : Filesystem
     {
         enum NILFS2_State : ushort
         {

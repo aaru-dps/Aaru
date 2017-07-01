@@ -36,7 +36,7 @@ using System.Text;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {

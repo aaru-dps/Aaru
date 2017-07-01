@@ -38,7 +38,7 @@ using System.Linq;
 
 namespace DiscImageChef.Filesystems
 {
-    class Reiser4 : Filesystem
+    public class Reiser4 : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Reiser4_Superblock

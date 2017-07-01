@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class SFS : Filesystem
+    public class SFS : Filesystem
     {
         public SFS()
         {

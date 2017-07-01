@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         public override Errno MapBlock(string path, long fileBlock, ref long deviceBlock)
         {

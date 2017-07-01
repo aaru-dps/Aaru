@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from an old unnamed document
-    class HPFS : Filesystem
+    public class HPFS : Filesystem
     {
         public HPFS()
         {

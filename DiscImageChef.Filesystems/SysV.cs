@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from the Linux kernel
-    class SysVfs : Filesystem
+    public class SysVfs : Filesystem
     {
         const uint XENIX_MAGIC = 0x002B5544;
         const uint XENIX_CIGAM = 0x44552B00;

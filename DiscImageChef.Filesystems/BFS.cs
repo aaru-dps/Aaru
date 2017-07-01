@@ -37,7 +37,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
-    class BeFS : Filesystem
+    public class BeFS : Filesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const uint BEFS_MAGIC1 = 0x42465331;

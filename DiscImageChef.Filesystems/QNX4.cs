@@ -38,7 +38,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class QNX4 : Filesystem
+    public class QNX4 : Filesystem
     {
         struct QNX4_Extent
         {

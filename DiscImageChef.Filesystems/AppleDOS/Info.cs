@@ -37,7 +37,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
-    partial class AppleDOS : Filesystem
+    public partial class AppleDOS : Filesystem
     {
         public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {

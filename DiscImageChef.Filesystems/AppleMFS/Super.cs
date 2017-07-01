@@ -36,7 +36,7 @@ using System.Collections.Generic;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         public override Errno Mount(bool debug)
         {

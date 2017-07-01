@@ -37,7 +37,7 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
 {
-    class AmigaDOSPlugin : Filesystem
+    public class AmigaDOSPlugin : Filesystem
     {
         public AmigaDOSPlugin()
         {

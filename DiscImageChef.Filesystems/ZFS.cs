@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems
      * It can also be encoded little or big endian.
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
-    class ZFS : Filesystem
+    public class ZFS : Filesystem
     {
         const ulong ZEC_Magic = 0x0210DA7AB10C7A11;
         const ulong ZEC_Cigam = 0x117A0CB17ADA1002;

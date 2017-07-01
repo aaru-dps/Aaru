@@ -38,7 +38,7 @@ using System.Collections.Generic;
 // Information from Inside Windows NT
 namespace DiscImageChef.Filesystems
 {
-    class NTFS : Filesystem
+    public class NTFS : Filesystem
     {
         public NTFS()
         {

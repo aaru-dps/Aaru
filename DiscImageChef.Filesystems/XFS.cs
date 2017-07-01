@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class XFS : Filesystem
+    public class XFS : Filesystem
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XFS_Superblock

@@ -37,7 +37,7 @@ using System.Text;
 
 namespace DiscImageChef.Filesystems
 {
-    class CBM : Filesystem
+    public class CBM : Filesystem
     {
         public CBM()
         {

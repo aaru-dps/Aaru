@@ -35,7 +35,7 @@ using System;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    partial class AppleMFS : Filesystem
+    public partial class AppleMFS : Filesystem
     {
         /// <summary>
         /// Master Directory Block, should be at offset 0x0400 bytes in volume
