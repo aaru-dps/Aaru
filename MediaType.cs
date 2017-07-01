@@ -333,6 +333,8 @@ namespace DiscImageChef.CommonTypes
         ACORN_525_DS_DD,
         /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         ACORN_35_DS_DD,
+        /// <summary>3,5", DS, HD, 80 tracks, 10 spt, 1024 bytes/sector, MFM</summary>
+        ACORN_35_DS_HD,
         #endregion Acorn standard floppy formats
 
         #region Atari standard floppy formats
