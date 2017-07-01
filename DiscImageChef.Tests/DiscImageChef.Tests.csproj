@@ -63,6 +63,7 @@
     <Compile Include="Filters\MacBinary3.cs" />
     <Compile Include="Filters\MacBinary2.cs" />
     <Compile Include="Filesystems\ADFS.cs" />
+    <Compile Include="Filesystems\FAT12.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
