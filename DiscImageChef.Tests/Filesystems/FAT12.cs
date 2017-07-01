@@ -170,6 +170,10 @@ namespace DiscImageChef.Tests.Filesystems
             // PC-DOS 6.30
             "pcdos_6.30_dsdd.img.lz","pcdos_6.30_dsdd8.img.lz","pcdos_6.30_dshd.img.lz","pcdos_6.30_mf2dd.img.lz",
             "pcdos_6.30_mf2ed.img.lz","pcdos_6.30_mf2hd.img.lz","pcdos_6.30_ssdd.img.lz","pcdos_6.30_ssdd8.img.lz",
+            // mkfs.vfat
+            "mkfs.vfat_dshd.img.lz","mkfs.vfat_mf2dd.img.lz","mkfs.vfat_mf2ed.img.lz","mkfs.vfat_mf2hd.img.lz",
+            // mkfs.vfat for Atari
+            "mkfs.vfat_atari_dshd.img.lz","mkfs.vfat_atari_mf2dd.img.lz","mkfs.vfat_atari_mf2ed.img.lz","mkfs.vfat_atari_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -289,6 +293,10 @@ namespace DiscImageChef.Tests.Filesystems
             // PC-DOS 6.30
             MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
+            // mkfs.vfat
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // mkfs.vfat for Atari
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
@@ -376,6 +384,10 @@ namespace DiscImageChef.Tests.Filesystems
             720,640,2400,1440,5760,2880,360,320,
             // PC-DOS 6.30
             720,640,2400,1440,5760,2880,360,320,
+            // mkfs.vfat
+            2400,1440,5760,2880,
+            // mkfs.vfat for Atari
+            2400,1440,5760,2880,
         };
 
         readonly uint[] sectorsize = {
@@ -463,6 +475,10 @@ namespace DiscImageChef.Tests.Filesystems
             512,512,512,512,512,512,512,512,
             // PC-DOS 6.30
             512,512,512,512,512,512,512,512,
+            // mkfs.vfat
+            512,512,512,512,
+            // mkfs.vfat for Atari
+            512,512,512,512,
         };
 
         readonly long[] clusters = {
@@ -550,6 +566,10 @@ namespace DiscImageChef.Tests.Filesystems
             360,320,2400,720,2880,2880,360,320,
             // PC-DOS 6.30
             360,320,2400,720,2880,2880,360,320,
+            // mkfs.vfat
+            2400,720,2880,2880,
+            // mkfs.vfat for Atari
+            1200,720,2880,1440,
         };
 
         readonly int[] clustersize = {
@@ -570,45 +590,45 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 3.30A
-            1024,/*1024,*/512,1024,512,512,512,512,
+            1024,1024,512,1024,512,512,512,512,
             // MS-DOS 3.31
-            1024,/*1024,*/512,1024,512,512,512,512,
+            1024,1024,512,1024,512,512,512,512,
             // MS-DOS 4.01
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 5.00
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 6.00
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 6.20
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 6.20 RC1
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 6.21
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 6.22
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 7.10
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 3.20 for Amstrad
-            1024,/*1024,*/512,1024,512,512,
+            1024,1024,512,1024,512,512,
             // MS-DOS 2.11 for AT&T
             1024,
             // MS-DOS 3.30 for DeLL
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 3.10 for Epson
             1024,1024,512,
             // MS-DOS 3.20 for Epson
             1024,1024,512,1024,512,512,
             // MS-DOS 3.20 for HP
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 3.21 for Hyosung
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 3.21 for Kaypro
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 3.10 for Olivetti
             1024,512,512,
             // MS-DOS 3.30 for Toshiba
-            1024,/*1024,*/512,1024,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 4.01 for Toshiba
             1024,1024,512,1024,512,512,512,
             // Novell DOS 7.00
@@ -620,7 +640,7 @@ namespace DiscImageChef.Tests.Filesystems
             // PC-DOS 2.10
             1024,
             // PC-DOS 2000
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // PC-DOS 3.00
             512,
             // PC-DOS 3.10
@@ -630,13 +650,17 @@ namespace DiscImageChef.Tests.Filesystems
             // PC-DOS 4.00
             512,512,
             // PC-DOS 5.00
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // PC-DOS 5.02
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // PC-DOS 6.10
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
             // PC-DOS 6.30
-            1024,/*1024,*/512,1024,1024,512,512,512,
+            1024,1024,512,1024,1024,512,512,512,
+            // mkfs.vfat
+            512,1024,1024,512,
+            // mkfs.vfat for Atari
+            1024,1024,1024,1024,
         };
 
         readonly string[] volumename = {
@@ -724,6 +748,10 @@ namespace DiscImageChef.Tests.Filesystems
             "VOLUMELABEL",null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",null,
             // PC-DOS 6.30
             "VOLUMELABEL",null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",null,
+            // mkfs.vfat
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            // mkfs.vfat for Atari
+            null,null,null,null,
         };
 
         readonly string[] volumeserial = {
@@ -811,6 +839,10 @@ namespace DiscImageChef.Tests.Filesystems
             "25551004",null,"3E5F1004","142D1006","17541007","355A1006","0D5E1005",null,
             // PC-DOS 6.30
             "2B22100C",null,"3B47100C","0C55100C","1B80100A","0B59100B","0A3A100D",null,
+            // mkfs.vfat
+            "20C279B1","20FD9501","2132D70A","2118F1AA",
+            // mkfs.vfat for Atari
+            null,null,null,null,
         };
 
         readonly string[] oemid = {
@@ -898,6 +930,10 @@ namespace DiscImageChef.Tests.Filesystems
             "IBM  6.0",null,"IBM  6.0","IBM  6.0","IBM  6.0","IBM  6.0","IBM  6.0",null,
             // PC-DOS 6.30
             "IBM  6.0",null,"IBM  6.0","IBM  6.0","IBM  6.0","IBM  6.0","IBM  6.0",null,
+            // mkfs.vfat
+            "mkfs.fat","mkfs.fat","mkfs.fat","mkfs.fat",
+            // mkfs.vfat for Atari
+            null,null,null,null,
         };
 
         [Test]
