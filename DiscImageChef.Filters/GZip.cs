@@ -225,7 +225,13 @@ namespace DiscImageChef.Filters
 
         public override string GetFilename()
         {
-            return basePath != null ? Path.GetFileName(basePath) : null;
+            if(basePath == null)
+                return null;
+            if(basePath.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase))
+                return basePath.Substring(0, basePath.Length - 3);
+            if(basePath.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase))
+                return basePath.Substring(0, basePath.Length - 5);
+            return basePath;
         }
 
         public override string GetParentFolder()
