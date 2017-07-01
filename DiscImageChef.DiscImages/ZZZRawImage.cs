@@ -152,8 +152,6 @@ namespace DiscImageChef.ImagePlugins
                     case 512512:
                     case 102400:
                     case 204800:
-                    case 163840:
-                    case 327680:
                     case 655360:
                     case 80384: // T0S0 = 128bps
                     case 325632: // T0S0 = 128bps, T0S1 = 256bps
