@@ -44,7 +44,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.ImagePlugins
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
-    class CPCDSK : ImagePlugin
+    public class CPCDSK : ImagePlugin
     {
         #region Internal constants
         /// <summary>

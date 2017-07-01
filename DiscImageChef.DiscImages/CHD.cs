@@ -46,7 +46,7 @@ using SharpCompress.Compressors.Deflate;
 namespace DiscImageChef.ImagePlugins
 {
 	// TODO: Implement PCMCIA support
-	class CHD : ImagePlugin
+	public class CHD : ImagePlugin
 	{
 		#region Internal Structures
 

@@ -43,7 +43,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.ImagePlugins
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
-    class DiskCopy42 : ImagePlugin
+    public class DiskCopy42 : ImagePlugin
     {
         #region Internal Structures
 

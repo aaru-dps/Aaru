@@ -40,7 +40,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.ImagePlugins
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
-    class ZZZRawImage : ImagePlugin
+    public class ZZZRawImage : ImagePlugin
     {
         #region Internal variables
 

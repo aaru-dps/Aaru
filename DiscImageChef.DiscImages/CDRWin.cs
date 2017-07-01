@@ -42,7 +42,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    class CDRWin : ImagePlugin
+    public class CDRWin : ImagePlugin
     {
         #region Internal structures
 

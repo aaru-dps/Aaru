@@ -43,7 +43,7 @@ namespace DiscImageChef.ImagePlugins
 {
     // TODO: Doesn't support compositing from several files
     // TODO: Doesn't support silences that are not in files
-    class CDRDAO : ImagePlugin
+    public class CDRDAO : ImagePlugin
     {
         #region Internal structures
 

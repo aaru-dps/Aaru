@@ -42,7 +42,7 @@ using SharpCompress.Compressors.Deflate;
 
 namespace DiscImageChef.ImagePlugins
 {
-    class QCOW2 : ImagePlugin
+    public class QCOW2 : ImagePlugin
     {
         #region Internal constants
         /// <summary>

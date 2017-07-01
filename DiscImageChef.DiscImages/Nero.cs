@@ -39,7 +39,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    class Nero : ImagePlugin
+    public class Nero : ImagePlugin
     {
         #region Internal structures
 

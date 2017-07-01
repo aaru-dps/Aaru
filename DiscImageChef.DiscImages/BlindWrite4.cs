@@ -43,7 +43,7 @@ using DiscImageChef.Filters;
 
 namespace DiscImageChef.ImagePlugins
 {
-    class BlindWrite4 : ImagePlugin
+    public class BlindWrite4 : ImagePlugin
     {
         #region Internal Constants
         /// <summary>"BLINDWRITE TOC FILE"</summary>

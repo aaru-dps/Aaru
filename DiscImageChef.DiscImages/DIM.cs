@@ -42,7 +42,7 @@ using DiscImageChef.Filters;
 namespace DiscImageChef.ImagePlugins
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
-    class DIM : ImagePlugin
+    public class DIM : ImagePlugin
     {
         #region Internal enumerations
         enum DiskType : byte

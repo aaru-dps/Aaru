@@ -41,7 +41,7 @@ namespace DiscImageChef.ImagePlugins
 {
     // Created following notes from Dave Dunfield
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    class TeleDisk : ImagePlugin
+    public class TeleDisk : ImagePlugin
     {
         #region Internal Structures
 

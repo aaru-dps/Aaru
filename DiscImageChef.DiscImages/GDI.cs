@@ -42,7 +42,7 @@ namespace DiscImageChef.ImagePlugins
 {
     // TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
-    class GDI : ImagePlugin
+    public class GDI : ImagePlugin
     {
         #region Internal structures
 
