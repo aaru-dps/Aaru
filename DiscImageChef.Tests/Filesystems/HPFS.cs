@@ -35,13 +35,93 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
+using System.Collections.Generic;
+using System.IO;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
+using DiscImageChef.PartPlugins;
+using NUnit.Framework;
+
 namespace DiscImageChef.Tests.Filesystems
 {
+    [TestFixture]
     public class HPFS
     {
-        public HPFS()
+        readonly string[] testfiles = {
+            "ecs.vdi.lz", "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz", "os2_1.20.vdi.lz",
+            "os2_1.30.vdi.lz", "os2_6.307.vdi.lz", "os2_6.514.vdi.lz", "os2_6.617.vdi.lz",
+            "os2_8.162.vdi.lz", "os2_9.023.vdi.lz",
+        };
+
+        readonly ulong[] sectors = {
+            262144, 1024000, 1024000, 1024000,
+            1024000, 1024000, 262144, 262144,
+            262144, 262144,
+        };
+
+        readonly uint[] sectorsize = {
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512,
+        };
+
+        readonly long[] clusters = {
+            65268, 63941, 63941, 63941,
+            63941, 63941, 65504, 65504,
+            65504, 65504,
+        };
+
+        readonly int[] clustersize = {
+            2048, 8192, 8192, 8192,
+            8192, 8192, 2048, 2048,
+            2048, 2048,
+        };
+
+        readonly string[] volumename = {
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",
+        };
+
+        readonly string[] volumeserial = {
+            "2BBBD814","AC0DDC15","ABEB2C15","6C4EE015",
+            "6C406015","6C49B015","2BCEB414","2C157414",
+            "2BF55414","2BE31414",
+        };
+
+        readonly string[] oemid = {
+            "IBM 4.50", "OS2 10.1", "OS2 10.0", "OS2 10.0",
+            "OS2 10.0", "OS2 20.0", "OS2 20.0", "OS2 20.1",
+            "OS2 20.0", "OS2 20.0",
+        };
+
+        [Test]
+        public void Test()
         {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hpfs", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new VDI();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                PartPlugin parts = new MBR();
+                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                Filesystem fs = new DiscImageChef.Filesystems.HPFS();
+                Assert.AreEqual(true, fs.Identify(image, partitions[0].PartitionStartSector, partitions[0].PartitionStartSector + partitions[0].PartitionSectors - 1), testfiles[i]);
+                fs.GetInformation(image, partitions[0].PartitionStartSector, partitions[0].PartitionStartSector + partitions[0].PartitionSectors - 1, out string information);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HPFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
         }
     }
 }
