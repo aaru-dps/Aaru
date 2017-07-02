@@ -260,6 +260,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "HPFS";
             xmlFSType.VolumeName = hpfs_bpb.volume_label;
             xmlFSType.VolumeSerial = string.Format("{0:X8}", hpfs_bpb.serial_no);
+            xmlFSType.SystemIdentifier = hpfs_bpb.OEMName;
 
             information = sb.ToString();
         }
