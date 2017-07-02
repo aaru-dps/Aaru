@@ -174,6 +174,32 @@ namespace DiscImageChef.Tests.Filesystems
             "mkfs.vfat_dshd.img.lz","mkfs.vfat_mf2dd.img.lz","mkfs.vfat_mf2ed.img.lz","mkfs.vfat_mf2hd.img.lz",
             // mkfs.vfat for Atari
             "mkfs.vfat_atari_dshd.img.lz","mkfs.vfat_atari_mf2dd.img.lz","mkfs.vfat_atari_mf2ed.img.lz","mkfs.vfat_atari_mf2hd.img.lz",
+            // Microsoft OS/2 1.00 for Tandy
+            "msos2_1.00_tandy_dsdd.img.lz","msos2_1.00_tandy_dshd.img.lz","msos2_1.00_tandy_mf2dd.img.lz","msos2_1.00_tandy_mf2hd.img.lz",
+            // Microsoft OS/2 1.10 for AST
+            "msos2_1.10_ast_dsdd.img.lz","msos2_1.10_ast_dshd.img.lz","msos2_1.10_ast_mf2dd.img.lz","msos2_1.10_ast_mf2hd.img.lz",
+            // Microsoft OS/2 1.10 for Nokia
+            "msos2_1.10_nokia_dsdd.img.lz","msos2_1.10_nokia_dshd.img.lz","msos2_1.10_nokia_mf2dd.img.lz","msos2_1.10_nokia_mf2hd.img.lz",
+            // Microsoft OS/2 1.21
+            "msos2_1.21_dsdd.img.lz","msos2_1.21_dshd.img.lz","msos2_1.21_mf2dd.img.lz","msos2_1.21_mf2hd.img.lz",
+            // Microsoft OS/2 1.30.1
+            "msos2_1.30.1_dsdd.img.lz","msos2_1.30.1_dshd.img.lz","msos2_1.30.1_mf2dd.img.lz","msos2_1.30.1_mf2ed.img.lz","msos2_1.30.1_mf2hd.img.lz",
+            // OS/2 1.20
+            "os2_1.20_dsdd.img.lz","os2_1.20_dshd.img.lz","os2_1.20_mf2dd.img.lz","os2_1.20_mf2hd.img.lz",
+            // OS/2 1.30
+            "os2_1.30_dsdd.img.lz","os2_1.30_dshd.img.lz","os2_1.30_mf2dd.img.lz","os2_1.30_mf2hd.img.lz",
+            // OS/2 2.00
+            "os2_6.307_dsdd.img.lz","os2_6.307_dshd.img.lz","os2_6.307_mf2dd.img.lz","os2_6.307_mf2ed.img.lz","os2_6.307_mf2hd.img.lz",
+            // OS/2 2.10
+            "os2_6.514_dsdd.img.lz","os2_6.514_dshd.img.lz","os2_6.514_mf2dd.img.lz","os2_6.514_mf2ed.img.lz","os2_6.514_mf2hd.img.lz",
+            // OS/2 2.11
+            "os2_6.617_dsdd.img.lz","os2_6.617_dshd.img.lz","os2_6.617_mf2dd.img.lz","os2_6.617_mf2ed.img.lz","os2_6.617_mf2hd.img.lz",
+            // OS/2 Warp 3
+            "os2_8.162_dshd.img.lz","os2_8.162_mf2dd.img.lz","os2_8.162_mf2ed.img.lz","os2_8.162_mf2hd.img.lz",
+            // OS/2 Warp 4
+            "os2_9.023_dshd.img.lz","os2_9.023_mf2dd.img.lz","os2_9.023_mf2ed.img.lz","os2_9.023_mf2hd.img.lz",
+            // eComStation
+            "ecs_dshd.img.lz","ecs_mf2dd.img.lz","ecs_mf2ed.img.lz","ecs_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -297,6 +323,32 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
             // mkfs.vfat for Atari
             MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Microsoft OS/2 1.00 for Tandy
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // Microsoft OS/2 1.10 for AST
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // Microsoft OS/2 1.10 for Nokia
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // Microsoft OS/2 1.21
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // Microsoft OS/2 1.30.1
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // OS/2 1.20
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // OS/2 1.30
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // OS/2 2.00
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // OS/2 2.10
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // OS/2 2.11
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // OS/2 Warp 3
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // OS/2 Warp 4
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // eComStation
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
@@ -387,6 +439,32 @@ namespace DiscImageChef.Tests.Filesystems
             // mkfs.vfat
             2400,1440,5760,2880,
             // mkfs.vfat for Atari
+            2400,1440,5760,2880,
+            // Microsoft OS/2 1.00 for Tandy
+            720,2400,1440,2880,
+            // Microsoft OS/2 1.10 for AST
+            720,2400,1440,2880,
+            // Microsoft OS/2 1.10 for Nokia
+            720,2400,1440,2880,
+            // Microsoft OS/2 1.21
+            720,2400,1440,2880,
+            // Microsoft OS/2 1.30.1
+            720,2400,1440,5760,2880,
+            // OS/2 1.20
+            720,2400,1440,2880,
+            // OS/2 1.30
+            720,2400,1440,2880,
+            // OS/2 2.00
+            720,2400,1440,5760,2880,
+            // OS/2 2.10
+            720,2400,1440,5760,2880,
+            // OS/2 2.11
+            720,2400,1440,5760,2880,
+            // OS/2 Warp 3
+            2400,1440,5760,2880,
+            // OS/2 Warp 4
+            2400,1440,5760,2880,
+            // eComStation
             2400,1440,5760,2880,
         };
 
@@ -479,6 +557,32 @@ namespace DiscImageChef.Tests.Filesystems
             512,512,512,512,
             // mkfs.vfat for Atari
             512,512,512,512,
+            // Microsoft OS/2 1.00 for Tandy
+            512,512,512,512,
+            // Microsoft OS/2 1.10 for AST
+            512,512,512,512,
+            // Microsoft OS/2 1.10 for Nokia
+            512,512,512,512,
+            // Microsoft OS/2 1.21
+            512,512,512,512,
+            // Microsoft OS/2 1.30.1
+            512,512,512,512,512,
+            // OS/2 1.20
+            512,512,512,512,
+            // OS/2 1.30
+            512,512,512,512,
+            // OS/2 2.00
+            512,512,512,512,512,
+            // OS/2 2.10
+            512,512,512,512,512,
+            // OS/2 2.11
+            512,512,512,512,512,
+            // OS/2 Warp 3
+            512,512,512,512,
+            // OS/2 Warp 4
+            512,512,512,512,
+            // eComStation
+            512,512,512,512,
         };
 
         readonly long[] clusters = {
@@ -570,6 +674,32 @@ namespace DiscImageChef.Tests.Filesystems
             2400,720,2880,2880,
             // mkfs.vfat for Atari
             1200,720,2880,1440,
+            // Microsoft OS/2 1.00 for Tandy
+            360,2400,720,2880,
+            // Microsoft OS/2 1.10 for AST
+            360,2400,720,2880,
+            // Microsoft OS/2 1.10 for Nokia
+            360,2400,720,2880,
+            // Microsoft OS/2 1.21
+            360,2400,720,2880,
+            // Microsoft OS/2 1.30.1
+            360,2400,720,2880,2880,
+            // OS/2 1.20
+            360,2400,720,2880,
+            // OS/2 1.30
+            360,2400,720,2880,
+            // OS/2 2.00
+            360,2400,720,2880,2880,
+            // OS/2 2.10
+            360,2400,720,2880,2880,
+            // OS/2 2.11
+            360,2400,720,2880,2880,
+            // OS/2 Warp 3
+            2400,720,2880,2880,
+            // OS/2 Warp 4
+            2400,720,2880,2880,
+            // eComStation
+            2400,720,2880,2880,
         };
 
         readonly int[] clustersize = {
@@ -661,6 +791,32 @@ namespace DiscImageChef.Tests.Filesystems
             512,1024,1024,512,
             // mkfs.vfat for Atari
             1024,1024,1024,1024,
+            // Microsoft OS/2 1.00 for Tandy
+            1024,512,1024,512,
+            // Microsoft OS/2 1.10 for AST
+            1024,512,1024,512,
+            // Microsoft OS/2 1.10 for Nokia
+            1024,512,1024,512,
+            // Microsoft OS/2 1.21
+            1024,512,1024,512,
+            // Microsoft OS/2 1.30.1
+            1024,512,1024,1024,512,
+            // OS/2 1.20
+            1024,512,1024,512,
+            // OS/2 1.30
+            1024,512,1024,512,
+            // OS/2 2.00
+            1024,512,1024,1024,512,
+            // OS/2 2.10
+            1024,512,1024,1024,512,
+            // OS/2 2.11
+            1024,512,1024,1024,512,
+            // OS/2 Warp 3
+            512,1024,1024,512,
+            // OS/2 Warp 4
+            512,1024,1024,512,
+            // eComStation
+            512,1024,1024,512,
         };
 
         readonly string[] volumename = {
@@ -752,6 +908,32 @@ namespace DiscImageChef.Tests.Filesystems
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // mkfs.vfat for Atari
             null,null,null,null,
+            // Microsoft OS/2 1.00 for Tandy
+            null,null,null,null,
+            // Microsoft OS/2 1.10 for AST
+            null,null,null,null,
+            // Microsoft OS/2 1.10 for Nokia
+            null,null,null,null,
+            // Microsoft OS/2 1.21
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Microsoft OS/2 1.30.1
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 1.20
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 1.30
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 2.00
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 2.10
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 2.11
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 Warp 3
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // OS/2 Warp 4
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // eComStation
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
         };
 
         readonly string[] volumeserial = {
@@ -843,6 +1025,32 @@ namespace DiscImageChef.Tests.Filesystems
             "20C279B1","20FD9501","2132D70A","2118F1AA",
             // mkfs.vfat for Atari
             null,null,null,null,
+            // Microsoft OS/2 1.00 for Tandy
+            "9C170C15","9BFB0C15","9C13FC15","9BF99C15",
+            // Microsoft OS/2 1.10 for AST
+            "66A42C15","67696C15","66DEBC15","66DC4C15",
+            // Microsoft OS/2 1.10 for Nokia
+            "676B4C15","67768C15","9C12DC15","66A74C15",
+            // Microsoft OS/2 1.21
+            "9C074C15","66BCFC15","66C1AC15","66C7FC15",
+            // Microsoft OS/2 1.30.1
+            "66C47C15","66CBEC15","9C167C15","9C147C15","9C0FEC15",
+            // OS/2 1.20
+            "5BF5E015","5BE61015","5C26F015","5C376015",
+            // OS/2 1.30
+            "5C418015","5BE20015","5C7F1015","5B83C015",
+            // OS/2 2.00
+            "5C3BD015","5B807015","5BE69015","5C187015","5C390015",
+            // OS/2 2.10
+            "1BFCB414","E6C6C414","E6CCF414","E6AF6414","1C005414",
+            // OS/2 2.11
+            "E6AEB414","1C00D414","1C03B414","E6C90414","E6B6E414",
+            // OS/2 Warp 3
+            "E6AF7414","E6D63414","E6A65414","E6AE6414",
+            // OS/2 Warp 4
+            "E6CD9414","1BFAD414","E6DFF414","E6D4C414",
+            // eComStation
+            "E6CA5814","E6CBC814","E6B81814","1C013814",
         };
 
         readonly string[] oemid = {
@@ -934,6 +1142,32 @@ namespace DiscImageChef.Tests.Filesystems
             "mkfs.fat","mkfs.fat","mkfs.fat","mkfs.fat",
             // mkfs.vfat for Atari
             null,null,null,null,
+            // Microsoft OS/2 1.00 for Tandy
+            "TAN 10.0","TAN 10.0","TAN 10.0","TAN 10.0",
+            // Microsoft OS/2 1.10 for AST
+            "IBM 10.1","IBM 10.1","IBM 10.1","IBM 10.1",
+            // Microsoft OS/2 1.10 for Nokia
+            "IBM 10.1","IBM 10.1","IBM 10.1","IBM 10.1",
+            // Microsoft OS/2 1.21
+            "IBM 10.2","IBM 10.2","IBM 10.2","IBM 10.2",
+            // Microsoft OS/2 1.30.1
+            "IBM 10.2","IBM 10.2","IBM 10.2","IBM 10.2","IBM 10.2",
+            // OS/2 1.20
+            "IBM 10.2","IBM 10.2","IBM 10.2","IBM 10.2",
+            // OS/2 1.30
+            "IBM 10.2","IBM 10.2","IBM 10.2","IBM 10.2",
+            // OS/2 2.00
+            "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
+            // OS/2 2.10
+            "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
+            // OS/2 2.11
+            "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
+            // OS/2 Warp 3
+            "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
+            // OS/2 Warp 4
+            "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
+            // eComStation
+            "IBM 4.50","IBM 4.50","IBM 4.50","IBM 4.50",
         };
 
         [Test]
