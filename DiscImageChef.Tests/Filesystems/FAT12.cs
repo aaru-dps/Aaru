@@ -200,6 +200,41 @@ namespace DiscImageChef.Tests.Filesystems
             "os2_9.023_dshd.img.lz","os2_9.023_mf2dd.img.lz","os2_9.023_mf2ed.img.lz","os2_9.023_mf2hd.img.lz",
             // eComStation
             "ecs_dshd.img.lz","ecs_mf2dd.img.lz","ecs_mf2ed.img.lz","ecs_mf2hd.img.lz",
+            // Windows 95
+            "win95_dsdd8.img.lz","win95_dsdd.img.lz","win95_dshd.img.lz","win95_mf2dd.img.lz",
+            "win95_mf2ed.img.lz","win95_mf2hd.img.lz","win95_ssdd8.img.lz","win95_ssdd.img.lz",
+            // Windows 95 OSR 2
+            "win95osr2_dsdd8.img.lz","win95osr2_dsdd.img.lz","win95osr2_dshd.img.lz","win95osr2_mf2dd.img.lz",
+            "win95osr2_mf2ed.img.lz","win95osr2_mf2hd.img.lz","win95osr2_ssdd8.img.lz","win95osr2_ssdd.img.lz",
+            /// Windows 95 OSR 2.1
+            "win95osr2.1_dsdd8.img.lz","win95osr2.1_dsdd.img.lz","win95osr2.1_dshd.img.lz","win95osr2.1_mf2dd.img.lz",
+            "win95osr2.1_mf2ed.img.lz","win95osr2.1_mf2hd.img.lz","win95osr2.1_ssdd8.img.lz","win95osr2.1_ssdd.img.lz",
+            // Windows 95 OSR 2.5
+            "win95osr2.5_dsdd8.img.lz","win95osr2.5_dsdd.img.lz","win95osr2.5_dshd.img.lz","win95osr2.5_mf2dd.img.lz",
+            "win95osr2.5_mf2ed.img.lz","win95osr2.5_mf2hd.img.lz","win95osr2.5_ssdd8.img.lz","win95osr2.5_ssdd.img.lz",
+            // Windows 98
+            "win98_dsdd8.img.lz","win98_dsdd.img.lz","win98_dshd.img.lz","win98_mf2dd.img.lz",
+            "win98_mf2ed.img.lz","win98_mf2hd.img.lz","win98_ssdd8.img.lz","win98_ssdd.img.lz",
+            // Windows 98 Second Edition
+            "win98se_dsdd8.img.lz","win98se_dsdd.img.lz","win98se_dshd.img.lz","win98se_mf2dd.img.lz",
+            "win98se_mf2ed.img.lz","win98se_mf2hd.img.lz","win98se_ssdd8.img.lz","win98se_ssdd.img.lz",
+            // Windows Me
+            "winme_dsdd.img.lz","winme_dshd.img.lz","winme_mf2dd.img.lz","winme_mf2ed.img.lz","winme_mf2hd.img.lz",
+            // Windows NT 3.10
+            "winnt_3.10_dshd.img.lz","winnt_3.10_mf2dd.img.lz","winnt_3.10_mf2ed.img.lz","winnt_3.10_mf2hd.img.lz",
+            // Windows NT 3.50
+            "winnt_3.50_dshd.img.lz","winnt_3.50_mf2dd.img.lz","winnt_3.50_mf2ed.img.lz","winnt_3.50_mf2hd.img.lz",
+            // Windows NT 3.51
+            "winnt_3.51_dshd.img.lz","winnt_3.51_mf2dd.img.lz","winnt_3.51_mf2ed.img.lz","winnt_3.51_mf2hd.img.lz",
+            // Windows NT 4.00
+            "winnt_4_dsdd.img.lz","winnt_4_dshd.img.lz","winnt_4_mf2dd.img.lz","winnt_4_mf2ed.img.lz",
+            "winnt_4_mf2hd.img.lz","winnt_4_ssdd.img.lz",
+            // Windows 2000
+            "win2000_dsdd.img.lz","win2000_dshd.img.lz","win2000_mf2dd.img.lz","win2000_mf2ed.img.lz","win2000_mf2hd.img.lz",
+            // Windows Vista
+            "winvista_dsdd.img.lz","winvista_dshd.img.lz","winvista_mf2dd.img.lz","winvista_mf2ed.img.lz","winvista_mf2hd.img.lz",
+            // BeOS R4.5
+            "beos_r4.5_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -349,6 +384,41 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
             // eComStation
             MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows 95
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            // Windows 95 OSR 2
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            /// Windows 95 OSR 2.1
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            // Windows 95 OSR 2.5
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            // Windows 98
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            // Windows 98 Second Edition
+            MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_8,MediaType.DOS_525_SS_DD_9,
+            // Windows Me
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows NT 3.10
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows NT 3.50
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows NT 3.51
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows NT 4.00
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,
+            MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,
+            // Windows 2000
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Windows Vista
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // BeOS R4.5
+            MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
@@ -466,6 +536,34 @@ namespace DiscImageChef.Tests.Filesystems
             2400,1440,5760,2880,
             // eComStation
             2400,1440,5760,2880,
+            // Windows 95
+            640,720,2400,1440,5760,2880,320,360,
+            // Windows 95 OSR 2
+            640,720,2400,1440,5760,2880,320,360,
+            /// Windows 95 OSR 2.1
+            640,720,2400,1440,5760,2880,320,360,
+            // Windows 95 OSR 2.5
+            640,720,2400,1440,5760,2880,320,360,
+            // Windows 98
+            640,720,2400,1440,5760,2880,320,360,
+            // Windows 98 Second Edition
+            640,720,2400,1440,5760,2880,320,360,
+            // Windows Me
+            720,2400,1440,5760,2880,
+            // Windows NT 3.10
+            2400,1440,5760,2880,
+            // Windows NT 3.50
+            2400,1440,5760,2880,
+            // Windows NT 3.51
+            2400,1440,5760,2880,
+            // Windows NT 4.00
+            720,2400,1440,5760,2880,360,
+            // Windows 2000
+            720,2400,1440,5760,2880,
+            // Windows Vista
+            720,2400,1440,5760,2880,
+            // BeOS R4.5
+            2880,
         };
 
         readonly uint[] sectorsize = {
@@ -583,6 +681,34 @@ namespace DiscImageChef.Tests.Filesystems
             512,512,512,512,
             // eComStation
             512,512,512,512,
+            // Windows 95
+            512,512,512,512,512,512,512,512,
+            // Windows 95 OSR 2
+            512,512,512,512,512,512,512,512,
+            /// Windows 95 OSR 2.1
+            512,512,512,512,512,512,512,512,
+            // Windows 95 OSR 2.5
+            512,512,512,512,512,512,512,512,
+            // Windows 98
+            512,512,512,512,512,512,512,512,
+            // Windows 98 Second Edition
+            512,512,512,512,512,512,512,512,
+            // Windows Me
+            512,512,512,512,512,
+            // Windows NT 3.10
+            512,512,512,512,
+            // Windows NT 3.50
+            512,512,512,512,
+            // Windows NT 3.51
+            512,512,512,512,
+            // Windows NT 4.00
+            512,512,512,512,512,512,
+            // Windows 2000
+            512,512,512,512,512,
+            // Windows Vista
+            512,512,512,512,512,
+            // BeOS R4.5
+            512,
         };
 
         readonly long[] clusters = {
@@ -700,6 +826,34 @@ namespace DiscImageChef.Tests.Filesystems
             2400,720,2880,2880,
             // eComStation
             2400,720,2880,2880,
+            // Windows 95
+            320,360,2400,720,2880,2880,320,360,
+            // Windows 95 OSR 2
+            320,360,2400,720,2880,2880,320,360,
+            /// Windows 95 OSR 2.1
+            320,360,2400,720,2880,2880,320,360,
+            // Windows 95 OSR 2.5
+            320,360,2400,720,2880,2880,320,360,
+            // Windows 98
+            320,360,2400,720,2880,2880,320,360,
+            // Windows 98 Second Edition
+            320,360,2400,720,2880,2880,320,360,
+            // Windows Me
+            360,2400,720,2880,2880,
+            // Windows NT 3.10
+            2400,720,2880,2880,
+            // Windows NT 3.50
+            2400,720,2880,2880,
+            // Windows NT 3.51
+            2400,720,2880,2880,
+            // Windows NT 4.00
+            360,2400,720,2880,2880,360,
+            // Windows 2000
+            360,2400,720,2880,2880,
+            // Windows Vista
+            360,2400,720,2880,2880,
+            // BeOS R4.5
+            2880,
         };
 
         readonly int[] clustersize = {
@@ -817,6 +971,34 @@ namespace DiscImageChef.Tests.Filesystems
             512,1024,1024,512,
             // eComStation
             512,1024,1024,512,
+            // Windows 95
+            1024,1024,512,1024,1024,512,512,512,
+            // Windows 95 OSR 2
+            1024,1024,512,1024,1024,512,512,512,
+            /// Windows 95 OSR 2.1
+            1024,1024,512,1024,1024,512,512,512,
+            // Windows 95 OSR 2.5
+            1024,1024,512,1024,1024,512,512,512,
+            // Windows 98
+            1024,1024,512,1024,1024,512,512,512,
+            // Windows 98 Second Edition
+            1024,1024,512,1024,1024,512,512,512,
+            // Windows Me
+            1024,512,1024,1024,512,
+            // Windows NT 3.10
+            512,1024,1024,512,
+            // Windows NT 3.50
+            512,1024,1024,512,
+            // Windows NT 3.51
+            512,1024,1024,512,
+            // Windows NT 4.00
+            1024,512,1024,512,512,512,
+            // Windows 2000
+            1024,512,1024,1024,512,
+            // Windows Vista
+            1024,512,1024,1024,512,
+            // BeOS R4.5
+            512,
         };
 
         readonly string[] volumename = {
@@ -934,6 +1116,41 @@ namespace DiscImageChef.Tests.Filesystems
             "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
             // eComStation
             "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Windows 95
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            // Windows 95 OSR 2
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            /// Windows 95 OSR 2.1
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            // Windows 95 OSR 2.5
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            // Windows 98
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            // Windows 98 Second Edition
+            null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
+            // Windows Me
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            // Windows NT 3.10
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Windows NT 3.50
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Windows NT 3.51
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Windows NT 4.00
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "NO NAME    ","NO NAME    ",
+            // Windows 2000
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // Windows Vista
+            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            // BeOS R4.5
+            "NO NAME    ",
         };
 
         readonly string[] volumeserial = {
@@ -1051,6 +1268,41 @@ namespace DiscImageChef.Tests.Filesystems
             "E6CD9414","1BFAD414","E6DFF414","E6D4C414",
             // eComStation
             "E6CA5814","E6CBC814","E6B81814","1C013814",
+            // Windows 95
+            null,"3B360D0D","24240D0D","3C260D11",
+            "30050D10","275A0D11",null,"3B100D0F",
+            // Windows 95 OSR 2
+            null,"1C5B0D19","11510D19","0F1F0D15",
+            "40200D17","3D610D14",null,"280B0D19",
+            /// Windows 95 OSR 2.1
+            null,"1F3B0D1C","14470D1C","1C510DE4",
+            "2E250DE2","10640DE4",null,"2B3E0D1C",
+            // Windows 95 OSR 2.5
+            null,"18190DFB","0A240DFB","1E320DE7",
+            "33230DE8","125B0DE7",null,"21410DFB",
+            // Windows 98
+            null,"40090E0F","28140E0F","0E620E0A",
+            "14390E0D","0E081246",null,"30600E10",
+            // Windows 98 Second Edition
+            null,"1B550EEC","1B100EEB","08410EE6",
+            "0E0F0EE8","325D0EE4",null,"13380EEC",
+            // Windows Me
+            "2F200F02","103A0F01","2F1C0EFC","21570EFF","07040EFB",
+            // Windows NT 3.10
+            "60EA50BC","6C857D51","4009440C","30761EDC",
+            // Windows NT 3.50
+            "0C478404","7CBEB35B","7C1E8DCB","ECB276AF",
+            // Windows NT 3.51
+            "482D8681","8889C95E","54DE6C39","F47D2516",
+            // Windows NT 4.00
+            "D8CAAC1F","E0BB6D70","C08C3C60","9C44B411",
+            "4C7DD099","4CD82982",
+            // Windows 2000
+            "4019989C","78F30AF8","E4217DDE","80B3B996","28043527",
+            // Windows Vista
+            "3C9F0BD2","3A8E465C","B2EFB822","3C30C632","16DAB07A",
+            // BeOS R4.5
+            "00000000",
         };
 
         readonly string[] oemid = {
@@ -1168,6 +1420,41 @@ namespace DiscImageChef.Tests.Filesystems
             "IBM 20.0","IBM 20.0","IBM 20.0","IBM 20.0",
             // eComStation
             "IBM 4.50","IBM 4.50","IBM 4.50","IBM 4.50",
+            // Windows 95
+            null,"MSWIN4.0","MSWIN4.0","MSWIN4.0",
+            "MSWIN4.0","MSWIN4.0",null,"MSWIN4.0",
+            // Windows 95 OSR 2
+            null,"MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            "MSWIN4.1","MSWIN4.1",null,"MSWIN4.1",
+            /// Windows 95 OSR 2.1
+            null,"MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            "MSWIN4.1","MSWIN4.1",null,"MSWIN4.1",
+            // Windows 95 OSR 2.5
+            null,"MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            "MSWIN4.1","MSWIN4.1",null,"MSWIN4.1",
+            // Windows 98
+            null,"MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            "MSWIN4.1","MSWIN4.1",null,"MSWIN4.1",
+            // Windows 98 Second Edition
+            null,"MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            "MSWIN4.1","MSWIN4.1",null,"MSWIN4.1",
+            // Windows Me
+            "MSWIN4.1","MSWIN4.1","MSWIN4.1","MSWIN4.1","MSWIN4.1",
+            // Windows NT 3.10
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            // Windows NT 3.50
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            // Windows NT 3.51
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            // Windows NT 4.00
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            "MSDOS5.0","MSDOS5.0",
+            // Windows 2000
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            // Windows Vista
+            "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
+            // BeOS R4.5
+            "BeOS    ",
         };
 
         [Test]

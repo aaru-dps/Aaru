@@ -35,16 +35,15 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
+using System.Collections.Generic;
 using System.IO;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using NUnit.Framework;
-using DiscImageChef.DiscImages;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.CommonTypes;
-using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
@@ -62,7 +61,11 @@ namespace DiscImageChef.Tests.Filesystems
             "pcdos610.vdi.lz", "pcdos630.vdi.lz", "toshibamsdos330.vdi.lz", "toshibamsdos401.vdi.lz",
             "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz", "multiuserdos_7.22r4.vdi.lz", "os2_1.20.vdi.lz",
             "os2_1.30.vdi.lz", "os2_6.307.vdi.lz", "os2_6.514.vdi.lz", "os2_6.617.vdi.lz",
-            "os2_8.162.vdi.lz", "os2_9.023.vdi.lz", "ecs.vdi.lz",
+            "os2_8.162.vdi.lz", "os2_9.023.vdi.lz", "ecs.vdi.lz", "macosx.vdi.lz",
+            "win10.vdi.lz", "win2000.vdi.lz","win95.vdi.lz","win95osr2.1.vdi.lz",
+            "win95osr2.5.vdi.lz","win95osr2.vdi.lz","win98.vdi.lz","win98se.vdi.lz",
+            "winme.vdi.lz","winnt_3.10.vdi.lz","winnt_3.50.vdi.lz","winnt_3.51.vdi.lz",
+            "winnt_4.00.vdi.lz","winvista.vdi.lz","beos_r4.5.vdi.lz",
         };
 
         readonly ulong[] sectors = {
@@ -76,10 +79,18 @@ namespace DiscImageChef.Tests.Filesystems
             32768, 32768, 8192, 8192,
             16384, 16384, 16384, 16384,
             16384, 16384, 16384, 16384,
+            16384, 16384, 16384, 16384,
+            16384, 16384, 16384, 16384,
+            16384, 16384, 16384, 16384,
+            16384, 16384, 16384, 16384,
             16384, 16384, 16384,
         };
 
         readonly uint[] sectorsize = {
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
@@ -104,7 +115,11 @@ namespace DiscImageChef.Tests.Filesystems
             4024, 4024, 1000, 1000,
             2008, 2008, 2008, 2008,
             2008, 2008, 2008, 2008,
-            2008, 2008, 1890,
+            2008, 2008, 1890, 4079,
+            3552, 4088, 2008, 2008,
+            2008, 2008, 2044, 2044,
+            2044, 4016, 2044, 2044,
+            4016, 3072, 2040,
         };
 
         readonly int[] clustersize = {
@@ -118,7 +133,11 @@ namespace DiscImageChef.Tests.Filesystems
             4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096,
-            4096, 4096, 4096,
+            4096, 4096, 4096, 2048,
+            2048, 2048, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096, 2048, 4096, 4096,
+            2048, 2048, 4096,
         };
 
         readonly string[] volumename = {
@@ -132,6 +151,10 @@ namespace DiscImageChef.Tests.Filesystems
             "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
             "NO NAME    ","NO NAME    ",null,"NO NAME    ",
             "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "NO NAME    ","NO NAME    ","NO NAME    ","VOLUMELABEL",
+            "NO NAME    ","NO NAME    ","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","NO NAME    ","NO NAME    ","NO NAME    ",
             "NO NAME    ","NO NAME    ","NO NAME    ",
         };
 
@@ -146,7 +169,11 @@ namespace DiscImageChef.Tests.Filesystems
             "076C1004","2C481009",null,"3C2319E8",
             "66CC3C15","66A54C15",null,"5C578015",
             "5B845015","5C4BF015","E6B5F414","E6B15414",
-            "E6A41414","E6A39414","E6B0B814",
+            "E6A41414","E6A39414","E6B0B814","26A21EF4",
+            "74F4921D","C4B64D11","29200D0C","234F0DE4",
+            "074C0DFC","33640D18","0E121460","094C0EED",
+            "38310F02","50489A1B","2CE52101","94313E7E",
+            "BC184FE6","BAD08A1E","00000000"
         };
 
         readonly string[] oemid = {
@@ -160,7 +187,11 @@ namespace DiscImageChef.Tests.Filesystems
             "IBM  6.0", "IBM  6.0", "T V3.30 ", "T V4.00 ",
             "IBM 10.2", "IBM 10.2", "IBM  3.2", "IBM 10.2",
             "IBM 10.2", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-            "IBM 20.0", "IBM 20.0", "IBM 4.50",
+            "IBM 20.0", "IBM 20.0", "IBM 4.50", "BSD  4.4",
+            "MSDOS5.0", "MSDOS5.0", "MSWIN4.0", "MSWIN4.1",
+            "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
+            "MSWIN4.1", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+            "MSDOS5.0", "MSDOS5.0", "BeOS    ",
         };
 
         [Test]

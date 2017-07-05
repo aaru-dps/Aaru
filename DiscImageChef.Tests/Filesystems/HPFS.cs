@@ -53,49 +53,49 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles = {
             "ecs.vdi.lz", "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz", "os2_1.20.vdi.lz",
             "os2_1.30.vdi.lz", "os2_6.307.vdi.lz", "os2_6.514.vdi.lz", "os2_6.617.vdi.lz",
-            "os2_8.162.vdi.lz", "os2_9.023.vdi.lz",
+            "os2_8.162.vdi.lz", "os2_9.023.vdi.lz", "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz",
         };
 
         readonly ulong[] sectors = {
             262144, 1024000, 1024000, 1024000,
             1024000, 1024000, 262144, 262144,
-            262144, 262144,
+            262144, 262144, 262144, 262144
         };
 
         readonly uint[] sectorsize = {
             512, 512, 512, 512,
             512, 512, 512, 512,
-            512, 512,
+            512, 512, 512, 512
         };
 
         readonly long[] clusters = {
             65268, 63941, 63941, 63941,
             63941, 63941, 65504, 65504,
-            65504, 65504,
+            65504, 65504, 65504, 65504,
         };
 
         readonly int[] clustersize = {
             2048, 8192, 8192, 8192,
             8192, 8192, 2048, 2048,
-            2048, 2048,
+            2048, 2048, 2048, 2048,
         };
 
         readonly string[] volumename = {
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
-            "VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
         };
 
         readonly string[] volumeserial = {
             "2BBBD814","AC0DDC15","ABEB2C15","6C4EE015",
             "6C406015","6C49B015","2BCEB414","2C157414",
-            "2BF55414","2BE31414",
+            "2BF55414","2BE31414","E851CB14","UNKNOWN0",
         };
 
         readonly string[] oemid = {
             "IBM 4.50", "OS2 10.1", "OS2 10.0", "OS2 10.0",
             "OS2 10.0", "OS2 20.0", "OS2 20.0", "OS2 20.1",
-            "OS2 20.0", "OS2 20.0",
+            "OS2 20.0", "OS2 20.0", "MSDOS5.0", "MSDOS5.0",
         };
 
         [Test]

@@ -35,16 +35,15 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
+using System.Collections.Generic;
 using System.IO;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using NUnit.Framework;
-using DiscImageChef.DiscImages;
 using DiscImageChef.PartPlugins;
-using DiscImageChef.CommonTypes;
-using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
@@ -52,35 +51,59 @@ namespace DiscImageChef.Tests.Filesystems
     public class FAT32_MBR
     {
         readonly string[] testfiles = {
-            "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz", "msdos_7.10.vdi.lz",
+            "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz", "msdos_7.10.vdi.lz", "macosx.vdi.lz",
+            "win10.vdi.lz", "win2000.vdi.lz", "win95osr2.1.vdi.lz", "win95osr2.5.vdi.lz",
+            "win95osr2.vdi.lz", "win98se.vdi.lz", "win98.vdi.lz", "winme.vdi.lz",
+            "winvista.vdi.lz", "beos_r4.5.vdi.lz"
         };
 
         readonly ulong[] sectors = {
-            8388608, 8388608, 8388608,
+            8388608, 8388608, 8388608, 4194304,
+            4194304, 8388608, 4194304, 4194304,
+            4194304, 4194304, 4194304, 4194304,
+            4194304, 4194304,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            1048233, 1048233, 1048233,
+            1048233, 1048233, 1048233, 524287,
+            524016, 1048233, 524152, 524152,
+            524152, 524112, 524112, 524112,
+            523520, 1048560, 
         };
 
         readonly int[] clustersize = {
-            4096, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096, 2048,
         };
 
         readonly string[] volumename = {
-            null,null,null,
+            null,null,null,null,
+            null,null,null,null,
+            null,null,null,null,
+            null,null,
         };
 
         readonly string[] volumeserial = {
-            "5955996C","1BFB1A43","3B331809",
+            "5955996C","1BFB1A43","3B331809","42D51EF1",
+            "48073346","EC62E6DE","2A310DE4","0C140DFC",
+            "3E310D18","0D3D0EED","0E131162","3F500F02",
+            "82EB4C04","00000000",
         };
 
         readonly string[] oemid = {
-            "DRDOS7.X", "IBM  7.1", "MSWIN4.1",
+            "DRDOS7.X", "IBM  7.1", "MSWIN4.1", "BSD  4.4",
+            "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "MSWIN4.1",
+            "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
+            "MSDOS5.0", "BeOS    ",
         };
 
         [Test]
