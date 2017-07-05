@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     // All information by Natalia Portillo
     // Variable names from Lisa API
-    partial class LisaFS : Filesystem
+    public partial class LisaFS : Filesystem
     {
         bool mounted;
         bool debug;

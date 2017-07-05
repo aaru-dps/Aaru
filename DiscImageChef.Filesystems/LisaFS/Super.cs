@@ -38,7 +38,7 @@ using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    partial class LisaFS : Filesystem
+    public partial class LisaFS : Filesystem
     {
         /// <summary>
         /// Mounts an Apple Lisa filesystem

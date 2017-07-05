@@ -38,7 +38,7 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    partial class LisaFS : Filesystem
+    public partial class LisaFS : Filesystem
     {
         public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
         {

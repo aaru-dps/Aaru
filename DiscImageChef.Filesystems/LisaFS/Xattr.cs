@@ -38,7 +38,7 @@ using DiscImageChef.Decoders;
 
 namespace DiscImageChef.Filesystems.LisaFS
 {
-    partial class LisaFS : Filesystem
+    public partial class LisaFS : Filesystem
     {
         /// <summary>
         /// Lists all extended attributes, alternate data streams and forks of the given file.
