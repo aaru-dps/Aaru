@@ -300,6 +300,8 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
+            xmlFSType.SystemIdentifier = ext_os;
+
             if(supblk.mkfs_t > 0)
             {
                 sb.AppendFormat("Volume was created on {0} for {1}", DateHandlers.UNIXUnsignedToDateTime(supblk.mkfs_t), ext_os).AppendLine();

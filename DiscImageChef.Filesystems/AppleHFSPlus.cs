@@ -297,6 +297,7 @@ namespace DiscImageChef.Filesystems
                         xmlFSType.Type = "HFSX";
                     if(HPVH.drFndrInfo6 != 0 && HPVH.drFndrInfo7 != 0)
                         xmlFSType.VolumeSerial = string.Format("{0:X8}{1:x8}", HPVH.drFndrInfo6, HPVH.drFndrInfo7);
+                    xmlFSType.SystemIdentifier = HPVH.lastMountedVersion;
                 }
                 else
                 {
