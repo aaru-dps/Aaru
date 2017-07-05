@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HFSPlus_MBR.cs
+// Filename       : exFAT_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,34 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFSPlus_MBR
+    public class exFAT_MBR
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz", "macosx_journal.vdi.lz",
+            "linux.vdi.lz", "macosx.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            303104, 352256,
+            262144, 262144, 262144, 262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512, 
         };
 
         readonly long[] clusters = {
-            37878, 44021,
+            32464, 32712, 32448, 32208,
         };
 
         readonly int[] clustersize = {
-            4096, 4096,
+            4096, 4096, 4096, 4096,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            null, null, null, null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
-        };
-
-        readonly string[] oemid = {
-            "10.0","HFSJ",
+            "603565AC", "595AC21E", "20126663", "0AC5CA52"
         };
 
         [Test]
@@ -87,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,11 +92,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleHFSPlus();
+                Filesystem fs = new DiscImageChef.Filesystems.exFAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0xAF")
+                    if(partitions[j].PartitionType == "0x07")
                     {
                         part = j;
                         break;
@@ -111,10 +107,9 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFS+", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("exFAT", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

@@ -35,13 +35,87 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
+using System.Collections.Generic;
+using System.IO;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.DiscImages;
+using DiscImageChef.Filesystems;
+using DiscImageChef.Filters;
+using DiscImageChef.ImagePlugins;
+using DiscImageChef.PartPlugins;
+using NUnit.Framework;
+
 namespace DiscImageChef.Tests.Filesystems
 {
+    [TestFixture]
     public class FAT16_APM
     {
-        public FAT16_APM()
+        readonly string[] testfiles = {
+            "macosx.vdi.lz",
+        };
+
+        readonly ulong[] sectors = {
+            1024000,
+        };
+
+        readonly uint[] sectorsize = {
+            512,
+        };
+
+        readonly long[] clusters = {
+            63995,
+        };
+
+        readonly int[] clustersize = {
+            8192,
+        };
+
+        readonly string[] volumename = {
+            "VOLUMELABEL",
+        };
+
+        readonly string[] volumeserial = {
+            "063D1F09",
+        };
+
+        readonly string[] oemid = {
+            "BSD  4.4",
+        };
+
+        [Test]
+        public void Test()
         {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_apm", testfiles[i]);
+                Filter filter = new LZip();
+                filter.Open(location);
+                ImagePlugin image = new VDI();
+                Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
+                PartPlugin parts = new AppleMap();
+                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                Filesystem fs = new DiscImageChef.Filesystems.FAT();
+                int part = -1;
+                for(int j = 0; j < partitions.Count; j++)
+                {
+                    if(partitions[j].PartitionType == "DOS_FAT_16")
+                    {
+                        part = j;
+                        break;
+                    }
+                }
+                Assert.AreNotEqual(-1, part, "Partition not found");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
+                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("FAT16", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }
         }
     }
 }

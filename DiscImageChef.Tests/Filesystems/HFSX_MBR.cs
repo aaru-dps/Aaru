@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BeFS_MBR.cs
+// Filename       : HFSX_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,38 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFSPlus_MBR
+    public class HFSX_MBR
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz", "macosx_journal.vdi.lz",
+            "macosx.vdi.lz", "macosx_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1572864, 1572864,
+            393216, 409600, 262144, 262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512, 
         };
 
         readonly long[] clusters = {
-            37878, 44021,
+            102390, 153590, 32512, 32512,
         };
 
         readonly int[] clustersize = {
-            4096, 4096,
+            4096, 4096, 4096, 4096
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000"
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ",
+            "10.0","HFSJ","10.0","10.0"
         };
 
         [Test]
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFS+", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("HFSX", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);

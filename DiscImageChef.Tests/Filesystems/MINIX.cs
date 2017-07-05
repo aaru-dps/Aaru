@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : JFS2.cs
+// Filename       : MINIX.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,34 +48,26 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class JFS2
+    public class MINIX
     {
         readonly string[] testfiles = {
-            "linux.vdi.lz","linux_caseinsensitive.vdi.lz",
+            "linux_v1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 262144,
+            262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            257632, 257632,
+            65535,
         };
 
         readonly int[] clustersize = {
-            4096, 4096,
-        };
-
-        readonly string[] volumename = {
-            "Volume labe", "Volume labe",
-        };
-
-        readonly string[] volumeserial = {
-            "8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",
+            1024,
         };
 
         [Test]
@@ -83,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "jfs2", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "minix", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -92,11 +84,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.JFS();
+                Filesystem fs = new DiscImageChef.Filesystems.MinixFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x83" || partitions[j].PartitionType == "0x07")
+                    if(partitions[j].PartitionType == "0x81")
                     {
                         part = j;
                         break;
@@ -107,9 +99,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("JFS filesystem", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual("Minix V1", fs.XmlFSType.Type, testfiles[i]);
             }
         }
     }

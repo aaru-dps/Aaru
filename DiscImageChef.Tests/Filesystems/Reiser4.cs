@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : btrfs.cs
+// Filename       : Reiser4.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,7 +48,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class btrfs
+    public class Reiser4
     {
         readonly string[] testfiles = {
             "linux.vdi.lz",
@@ -63,7 +63,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            32512,
+            32511,
         };
 
         readonly int[] clustersize = {
@@ -71,11 +71,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumename = {
-            "VolumeLabel",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "a4fc5201-85cc-6840-8a68-998cab9ae897",
+            "b0c1924e-6f10-8c42-b6c5-66a457896460",
         };
 
         [Test]
@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "btrfs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "reiser4", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -92,7 +92,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BTRFS();
+                Filesystem fs = new DiscImageChef.Filesystems.Reiser4();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
@@ -107,7 +107,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("B-tree file system", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Reiser 4 filesystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

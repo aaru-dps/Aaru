@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HFSPlus_APM.cs
+// Filename       : HFSX_APM.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,14 +48,14 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFSPlus_APM
+    public class HFSX_APM
     {
         readonly string[] testfiles = {
             "macosx.vdi.lz", "macosx_journal.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1572864, 1024000,
+            819200, 1228800,
         };
 
         readonly uint[] sectorsize = {
@@ -63,7 +63,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            51190, 76790,
+            102390, 153590,
         };
 
         readonly int[] clustersize = {
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_apm", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_apm", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -100,7 +100,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Apple_HFS")
+                    if(partitions[j].PartitionType == "Apple_HFSX")
                     {
                         part = j;
                         break;
@@ -111,7 +111,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFS+", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("HFSX", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);

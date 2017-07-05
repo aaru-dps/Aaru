@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT16_GPT.cs
+// Filename       : exFAT_GPT.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,14 +48,14 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT16_GPT
+    public class exFAT_GPT
     {
         readonly string[] testfiles = {
             "macosx.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1024000,
+            262144,
         };
 
         readonly uint[] sectorsize = {
@@ -63,23 +63,19 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            63995,
+            32208,
         };
 
         readonly int[] clustersize = {
-            8192,
+            4096,
         };
 
         readonly string[] volumename = {
-            "VOLUMELABEL",
+            null,
         };
 
         readonly string[] volumeserial = {
-            "2E8A1F1B",
-        };
-
-        readonly string[] oemid = {
-            "BSD  4.4",
+            "595ACC39",
         };
 
         [Test]
@@ -87,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_gpt", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,7 +92,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new GuidPartitionTable();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.FAT();
+                Filesystem fs = new DiscImageChef.Filesystems.exFAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
@@ -111,10 +107,9 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT16", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("exFAT", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

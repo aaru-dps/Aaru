@@ -68,6 +68,42 @@
     <Compile Include="Filesystems\FAT16_MBR.cs" />
     <Compile Include="Filesystems\FAT32_MBR.cs" />
     <Compile Include="Filesystems\HPFS.cs" />
+    <Compile Include="Filesystems\BeFS.cs" />
+    <Compile Include="Filesystems\BeFS_APM.cs" />
+    <Compile Include="Filesystems\BeFS_MBR.cs" />
+    <Compile Include="Filesystems\FAT16_APM.cs" />
+    <Compile Include="Filesystems\FAT16_GPT.cs" />
+    <Compile Include="Filesystems\FAT32_APM.cs" />
+    <Compile Include="Filesystems\FAT32_GPT.cs" />
+    <Compile Include="Filesystems\PFS3_RDB.cs" />
+    <Compile Include="Filesystems\SFS_RDB.cs" />
+    <Compile Include="Filesystems\HFSPlus_MBR.cs" />
+    <Compile Include="Filesystems\HFSPlus_APM.cs" />
+    <Compile Include="Filesystems\HFSPlus_GPT.cs" />
+    <Compile Include="Filesystems\HFSX_APM.cs" />
+    <Compile Include="Filesystems\HFSX_GPT.cs" />
+    <Compile Include="Filesystems\HFSX_MBR.cs" />
+    <Compile Include="Filesystems\LisaFS.cs" />
+    <Compile Include="Filesystems\Locus.cs" />
+    <Compile Include="Filesystems\NTFS_MBR.cs" />
+    <Compile Include="Filesystems\ReFS_MBR.cs" />
+    <Compile Include="Filesystems\UDF.cs" />
+    <Compile Include="Filesystems\btrfs.cs" />
+    <Compile Include="Filesystems\exFAT_APM.cs" />
+    <Compile Include="Filesystems\exFAT_GPT.cs" />
+    <Compile Include="Filesystems\exFAT_MBR.cs" />
+    <Compile Include="Filesystems\ext2.cs" />
+    <Compile Include="Filesystems\F2FS.cs" />
+    <Compile Include="Filesystems\FAT12_APM.cs" />
+    <Compile Include="Filesystems\FAT12_GPT.cs" />
+    <Compile Include="Filesystems\HFS_MBR.cs" />
+    <Compile Include="Filesystems\JFS2.cs" />
+    <Compile Include="Filesystems\MINIX.cs" />
+    <Compile Include="Filesystems\NILFS2.cs" />
+    <Compile Include="Filesystems\Reiser3.cs" />
+    <Compile Include="Filesystems\Reiser4.cs" />
+    <Compile Include="Filesystems\UNIXBFS.cs" />
+    <Compile Include="Filesystems\UFS_MBR.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -116,7 +152,7 @@
             <inheritsSet />
             <inheritsScope />
           </TextStylePolicy>
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp">
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceAfterControlFlowStatementKeyword="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" scope="text/x-csharp">
             <inheritsSet />
             <inheritsScope />
           </CSharpFormattingPolicy>

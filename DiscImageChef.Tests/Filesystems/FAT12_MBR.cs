@@ -65,7 +65,7 @@ namespace DiscImageChef.Tests.Filesystems
             "win10.vdi.lz", "win2000.vdi.lz","win95.vdi.lz","win95osr2.1.vdi.lz",
             "win95osr2.5.vdi.lz","win95osr2.vdi.lz","win98.vdi.lz","win98se.vdi.lz",
             "winme.vdi.lz","winnt_3.10.vdi.lz","winnt_3.50.vdi.lz","winnt_3.51.vdi.lz",
-            "winnt_4.00.vdi.lz","winvista.vdi.lz","beos_r4.5.vdi.lz",
+            "winnt_4.00.vdi.lz","winvista.vdi.lz","beos_r4.5.vdi.lz","linux.vdi.lz",
         };
 
         readonly ulong[] sectors = {
@@ -83,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
             16384, 16384, 16384, 16384,
             16384, 16384, 16384, 16384,
             16384, 16384, 16384, 16384,
-            16384, 16384, 16384,
+            16384, 16384, 16384, 16384,
         };
 
         readonly uint[] sectorsize = {
@@ -101,7 +101,7 @@ namespace DiscImageChef.Tests.Filesystems
             512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
-            512, 512, 512,
+            512, 512, 512, 512,
         };
 
         readonly long[] clusters = {
@@ -119,7 +119,7 @@ namespace DiscImageChef.Tests.Filesystems
             3552, 4088, 2008, 2008,
             2008, 2008, 2044, 2044,
             2044, 4016, 2044, 2044,
-            4016, 3072, 2040,
+            4016, 3072, 2040, 3584,
         };
 
         readonly int[] clustersize = {
@@ -137,7 +137,7 @@ namespace DiscImageChef.Tests.Filesystems
             2048, 2048, 4096, 4096,
             4096, 4096, 4096, 4096,
             4096, 2048, 4096, 4096,
-            2048, 2048, 4096,
+            2048, 2048, 4096, 2048,
         };
 
         readonly string[] volumename = {
@@ -155,7 +155,7 @@ namespace DiscImageChef.Tests.Filesystems
             "NO NAME    ","NO NAME    ","VOLUMELABEL","VOLUMELABEL",
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             "VOLUMELABEL","NO NAME    ","NO NAME    ","NO NAME    ",
-            "NO NAME    ","NO NAME    ","NO NAME    ",
+            "NO NAME    ","NO NAME    ","NO NAME    ","VolumeLabel",
         };
 
         readonly string[] volumeserial = {
@@ -173,7 +173,7 @@ namespace DiscImageChef.Tests.Filesystems
             "74F4921D","C4B64D11","29200D0C","234F0DE4",
             "074C0DFC","33640D18","0E121460","094C0EED",
             "38310F02","50489A1B","2CE52101","94313E7E",
-            "BC184FE6","BAD08A1E","00000000"
+            "BC184FE6","BAD08A1E","00000000","8D418102",
         };
 
         readonly string[] oemid = {
@@ -191,7 +191,7 @@ namespace DiscImageChef.Tests.Filesystems
             "MSDOS5.0", "MSDOS5.0", "MSWIN4.0", "MSWIN4.1",
             "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
             "MSWIN4.1", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-            "MSDOS5.0", "MSDOS5.0", "BeOS    ",
+            "MSDOS5.0", "MSDOS5.0", "BeOS    ", "mkfs.fat",
         };
 
         [Test]

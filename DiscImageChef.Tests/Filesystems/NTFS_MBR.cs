@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BeFS_MBR.cs
+// Filename       : NTFS_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,47 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFSX_MBR
+    public class NTFS_MBR
     {
         readonly string[] testfiles = {
-            /*"macosx.vdi.lz", */"macosx_journal.vdi.lz",
+            "win10.vdi.lz", "win2000.vdi.lz", "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz",
+            "winnt_3.51.vdi.lz", "winnt_4.00.vdi.lz", "winvista.vdi.lz", "linux.vdi.lz",
+
         };
 
         readonly ulong[] sectors = {
-            393216, 409600,
+            524288, 2097152, 1024000, 524288,
+            524288, 524288, 524288, 262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
         };
 
         readonly long[] clusters = {
-            102390, 153590,
+            65263, 1046511, 1023057, 524256, 
+            524256, 524096, 64767, 32512,
         };
 
         readonly int[] clustersize = {
-            4096, 4096,
+            4096, 1024, 512, 512,
+            512, 512, 4096, 4096,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            null, null, null, null,
+            null, null, null, null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "C46C1B3C6C1B28A6","8070C8EC70C8E9CC","10CC6AC6CC6AA5A6","7A14F50014F4BFE5",
+            "24884447884419A6","822C288D2C287E73","E20AF54B0AF51D6B","065BB96B7C1BCFDA",
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ",
+            null, null, null, null,
+            null, null, null, null,
         };
 
         [Test]
@@ -87,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ntfs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,11 +105,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleHFSPlus();
+                Filesystem fs = new DiscImageChef.Filesystems.NTFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0xAF")
+                    if(partitions[j].PartitionType == "0x07")
                     {
                         part = j;
                         break;
@@ -111,7 +120,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFSX", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("NTFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
                 Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
