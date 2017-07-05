@@ -427,6 +427,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FilesSpecified = true;
             xmlFSType.VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier);
             xmlFSType.VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier);
+            xmlFSType.SystemIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
 
             information = sbInformation.ToString();
         }
