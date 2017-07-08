@@ -93,13 +93,13 @@ namespace DiscImageChef.PartPlugins
         /// </summary>
         const uint TypeIDFFS2 = 0x444F5307;
         /// <summary>
-        /// Type ID for Amiga UNIX System V filesystem
-        /// </summary>
-        const uint TypeIDAMIXSysV = 0x554E4900;
-        /// <summary>
         /// Type ID for Amiga UNIX boot filesystem
         /// </summary>
-        const uint TypeIDAMIXBoot = 0x554E4901;
+        const uint TypeIDAMIXBoot = 0x554E4900;
+        /// <summary>
+        /// Type ID for Amiga UNIX System V filesystem
+        /// </summary>
+        const uint TypeIDAMIXSysV = 0x554E4901;
         /// <summary>
         /// Type ID for Amiga UNIX BSD filesystem
         /// </summary>
