@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HFS_APM.cs
+// Filename       : ProDOS_APM.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,69 +48,41 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFS_APM
+    public class ProDOS_APM
     {
         readonly string[] testfiles = {
-            "amigaos_3.9.vdi.lz","darwin_1.3.1.vdi.lz","darwin_1.4.1.vdi.lz","darwin_6.0.2.vdi.lz",
-            "darwin_8.0.1.vdi.lz","macos_1.1.vdi.lz","macos_2.0.vdi.lz","macos_6.0.7.vdi.lz",
-            "macos_7.5.3.vdi.lz","macos_7.5.vdi.lz","macos_7.6.vdi.lz","macos_8.0.vdi.lz",
-            "macos_8.1.vdi.lz","macos_9.0.4.vdi.lz","macos_9.1.vdi.lz","macos_9.2.1.vdi.lz",
-            "macos_9.2.2.vdi.lz","macosx_10.2.vdi.lz","macosx_10.3.vdi.lz","macosx_10.4.vdi.lz",
-            "rhapsody_dr1.vdi.lz",
+            "macos_7.5.3.vdi.lz","macos_7.6.vdi.lz","macos_8.0.vdi.lz","macos_8.1.vdi.lz",
+            "macos_9.0.4.vdi.lz","macos_9.1.vdi.lz","macos_9.2.1.vdi.lz","macos_9.2.2.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1024128,409600,409600,409600,
-            409600,41820,41820,81648,
-            1024000,1024000,1024000,1024000,
-            1024000,1024000,1024000,1024000,
-            1024000,1024000,1024000,1024000,
-            409600,
+            49152,49152,49152,49152,
+            49152,49152,49152,49152,
         };
 
         readonly uint[] sectorsize = {
             512,512,512,512,
             512,512,512,512,
-            512,512,512,512,
-            512,512,512,512,
-            512,512,512,512,
-            512,
         };
 
         readonly long[] clusters = {
-            64003,51189,51189,58502,
-            58502,39991,39991,39991,
-            63954,63990,63954,63954,
-            63954,63922,63922,63922,
-            63922,63884,63883,63883,
-            58506,
+            48438,48438,48438,48438,
+            46326,46326,46326,46326,
         };
 
         readonly int[] clustersize = {
-            8192,4096,4096,3584,
-            3584,1024,1024,1024,
-            8192,8192,8192,8192,
-            8192,8192,8192,8192,
-            8192,8192,8192,8192,
-            3584,
+            512,512,512,512,
+            512,512,512,512,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label"
+            "VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL",
+            "VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL","VOLUME.LABEL",
         };
 
         readonly string[] volumeserial = {
             null,null,null,null,
-            "AAFE1382AF5AA898",null,null,null,
             null,null,null,null,
-            null,null,null,null,
-            null,"5A7C38B0CAF279C4","FB49083EBD150509","632C0B1DB46FD188",
-            null,
         };
 
         [Test]
@@ -118,7 +90,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfs_apm", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "prodos_apm", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -127,11 +99,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new AppleMap();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleHFS();
+                Filesystem fs = new DiscImageChef.Filesystems.ProDOSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Apple_HFS")
+                    if(partitions[j].PartitionType == "Apple_ProDOS")
                     {
                         part = j;
                         break;
@@ -142,7 +114,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("ProDOS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

@@ -51,7 +51,7 @@ namespace DiscImageChef.Tests.Filesystems
     public class exFAT_MBR
     {
         readonly string[] testfiles = {
-            "linux.vdi.lz", "macosx.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz",
+            "linux.vdi.lz", "macosx_10.11.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz",
         };
 
         readonly ulong[] sectors = {

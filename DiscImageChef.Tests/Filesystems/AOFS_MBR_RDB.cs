@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AOFS_MBR.cs
+// Filename       : AOFS_MBR_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,6 +35,7 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
@@ -48,7 +49,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AOFS_MBR
+    public class AOFS_MBR_RDB
     {
         readonly string[] testfiles = {
             "aros.vdi.lz","aros_intl.vdi.lz",
@@ -81,7 +82,8 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            throw new NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
+/*            for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr", testfiles[i]);
                 Filter filter = new LZip();
@@ -110,7 +112,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-            }
+            }*/
         }
     }
 }

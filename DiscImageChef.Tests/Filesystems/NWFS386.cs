@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HAMMER_MBR.cs
+// Filename       : NWFS386.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -49,44 +49,44 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HAMMER_MBR
+    public class NWFS386
     {
         readonly string[] testfiles = {
-            "dflybsd_3.6.1.vdi.lz","dflybsd_4.0.5.vdi.lz",
+            "netware_3.12.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            104857600, 104857600,
+            104857600,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            104856192, 104856192,
+            104856192,
         };
 
         readonly int[] clustersize = {
-            512, 512,
+            512,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "UNKNOWN",
         };
 
         [Test]
         public void Test()
         {
-            throw new NotImplementedException("HAMMER filesystem is not yet implemented");
+            throw new NotImplementedException("NWFS386 filesystem is not yet implemented");
             /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hammer_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "nwfs386", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -95,11 +95,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.HAMMER();
+                Filesystem fs = new DiscImageChef.Filesystems.NetWare();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0xA5")
+                    if(partitions[j].PartitionType == "0x65")
                     {
                         part = j;
                         break;
@@ -110,7 +110,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HAMMER", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("NWFS386", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }*/

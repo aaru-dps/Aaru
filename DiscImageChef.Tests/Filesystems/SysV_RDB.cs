@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS_MBR.cs
+// Filename       : SysV_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,34 +48,38 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS_MBR
+    public class SysV_RDB
     {
         readonly string[] testfiles = {
-            "aros.vdi.lz","aros_intl.vdi.lz",
+            "amix.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            409600,409600,
+            1024128,
         };
 
         readonly uint[] sectorsize = {
-            512,512,
+            512,
         };
 
         readonly long[] clusters = {
-            408240,408240,
+            511488,
         };
 
         readonly int[] clustersize = {
-            512,512,
+            1024,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            null,
+        };
+
+        readonly string[] type = {
+            "SVR4 fs",
         };
 
         [Test]
@@ -83,20 +87,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
+                PartPlugin parts = new AmigaRigidDiskBlock();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AmigaDOSPlugin();
+                Filesystem fs = new DiscImageChef.Filesystems.SysVfs();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x2D")
+                    if(partitions[j].PartitionType == "\"UNI\\1\"")
                     {
                         part = j;
                         break;
@@ -107,7 +111,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

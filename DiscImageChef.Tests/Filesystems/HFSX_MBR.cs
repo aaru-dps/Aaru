@@ -51,35 +51,43 @@ namespace DiscImageChef.Tests.Filesystems
     public class HFSX_MBR
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz", "macosx_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
+            "darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
             393216, 409600, 262144, 262144,
+            262144, 262144,
         };
 
         readonly uint[] sectorsize = {
             512, 512, 512, 512, 
+            512, 512,
         };
 
         readonly long[] clusters = {
             102390, 153590, 32512, 32512,
+            32512, 32512,
         };
 
         readonly int[] clustersize = {
-            4096, 4096, 4096, 4096
+            4096, 4096, 4096, 4096,
+            4096, 4096,
         };
 
         readonly string[] volumename = {
             "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000"
+            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
+            "UNKNOWN","UNKNOWN",
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ","10.0","10.0"
+            "10.0","HFSJ","10.0","10.0",
+            "10.0","10.0",
         };
 
         [Test]

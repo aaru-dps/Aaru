@@ -100,7 +100,6 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    System.Console.WriteLine("{0}", partitions[j].PartitionType);
                     if(partitions[j].PartitionType == "\"PFS\\1\"")
                     {
                         part = j;

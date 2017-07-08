@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_MBR.cs
+// Filename       : UFS_NeXT.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,94 +48,70 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UFS_MBR
+    public class UFS_NeXT
     {
         readonly string[] testfiles = {
-            "ufs1/linux.vdi.lz", "ufs2/linux.vdi.lz", "ffs43/darwin_1.3.1.vdi.lz", "ffs43/darwin_1.4.1.vdi.lz",
-            "ffs43/darwin_6.0.2.vdi.lz", "ffs43/darwin_8.0.1.vdi.lz", "ffs43/dflybsd_1.2.0.vdi.lz", "ffs43/dflybsd_3.6.1.vdi.lz",
-            "ffs43/dflybsd_4.0.5.vdi.lz", "ffs43/netbsd_1.6.vdi.lz", "ffs43/netbsd_7.1.vdi.lz", "ufs1/darwin_1.3.1.vdi.lz",
-            "ufs1/darwin_1.4.1.vdi.lz", "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/dflybsd_1.2.0.vdi.lz",
-            "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz", "ufs1/freebsd_7.0.vdi.lz",
-            "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz",
-            "ufs1/solaris_7.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
-            "ufs2/netbsd_7.1.vdi.lz",
+            "nextstep_3.3.vdi.lz","nextstep_3.3_mf2dd.img.lz","nextstep_3.3_mf2hd.img.lz",
+            "openstep_4.0.vdi.lz","openstep_4.0_mf2dd.img.lz","openstep_4.0_mf2hd.img.lz",
+            "openstep_4.2.vdi.lz","openstep_4.2_mf2dd.img.lz","openstep_4.2_mf2hd.img.lz",
+            "rhapsody_dr1.vdi.lz","rhapsody_dr1_mf2dd.img.lz","rhapsody_dr1_mf2hd.img.lz",
+            "rhapsody_dr2.vdi.lz","rhapsody_dr2_mf2dd.img.lz","rhapsody_dr2_mf2hd.img.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144,
+            262144, 1440, 2880,
+            262144, 1440, 2880,
+            262144, 1440, 2880,
+            262144, 1440, 2880,
+            262144, 1440, 2880,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512, 512, 512, 512,
-            512,
+            512, 512, 512,
+            512, 512, 512,
+            512, 512, 512,
+            512, 512, 512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024,
+            131072, 720, 1440,
+            131072, 720, 1440,
+            131072, 720, 1440,
+            131072, 720, 1440,
+            131072, 720, 1440,
         };
 
         readonly int[] clustersize = {
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048,
+            1024, 1024, 1024,
+            1024, 1024, 1024,
+            1024, 1024, 1024,
+            1024, 1024, 1024,
+            1024, 1024, 1024,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label",
+            "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "59588B778E9ACDEF", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
         };
 
         readonly string[] type = {
-            "UFS", "UFS2", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS2", "UFS2", "UFS2",
-            "UFS2",
+            "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS",
         };
 
         [Test]
@@ -143,20 +119,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
+                PartPlugin parts = new NeXTDisklabel();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x83")
+                    if(partitions[j].PartitionType == "4.3BSD" || partitions[j].PartitionType == "4.4BSD")
                     {
                         part = j;
                         break;

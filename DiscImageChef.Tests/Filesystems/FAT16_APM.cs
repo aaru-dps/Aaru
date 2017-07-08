@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT16_APM.cs
+// Filename       : FAT16_Atari.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,38 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT16_APM
+    public class FAT16_Atari
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz",
+            "tos_1.04.vdi.lz","tos_1.04_small.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1024000,
+            16384, 81920,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            63995,
+            16382, 81918,
         };
 
         readonly int[] clustersize = {
-            8192,
+            512, 512,
         };
 
         readonly string[] volumename = {
-            "VOLUMELABEL",
+            null, null,
         };
 
         readonly string[] volumeserial = {
-            "063D1F09",
+            null, null,
         };
 
         readonly string[] oemid = {
-            "BSD  4.4",
+            null, null,
         };
 
         [Test]
@@ -87,20 +87,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_apm", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_atari", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AppleMap();
+                PartPlugin parts = new AtariPartitions();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.FAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "DOS_FAT_16")
+                    if(partitions[j].PartitionType == "GEM" || partitions[j].PartitionType == "BGM")
                     {
                         part = j;
                         break;

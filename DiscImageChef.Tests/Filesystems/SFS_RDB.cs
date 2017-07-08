@@ -51,35 +51,31 @@ namespace DiscImageChef.Tests.Filesystems
     public class SFS_RDB
     {
         readonly string[] testfiles = {
-            "uae.vdi.lz",
+            "uae.vdi.lz","aros.vdi.lz","amigaos_4.0.vdi.lz","amigaos_4.0_sfs2.vdi.lz"
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            1024128,409600,1024128,1024128,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512,512,512,512,
         };
 
         readonly long[] clusters = {
-            127000,
+            127000,407232,511040,511040,
         };
 
         readonly int[] clustersize = {
-            2048,
+            2048,512,1024,1024,
         };
 
         readonly string[] volumename = {
-            null,
+            null,null,null,null,
         };
 
         readonly string[] volumeserial = {
-            null,
-        };
-
-        readonly string[] oemid = {
-            null,
+            null,null,null,null,
         };
 
         [Test]
@@ -87,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -100,8 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    System.Console.WriteLine("{0}", partitions[j].PartitionType);
-                    if(partitions[j].PartitionType == "\"SFS\\0\"")
+                    if(partitions[j].PartitionType == "\"SFS\\0\"" || partitions[j].PartitionType == "\"SFS\\2\"")
                     {
                         part = j;
                         break;
@@ -115,7 +110,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("SmartFileSystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

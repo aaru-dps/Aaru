@@ -52,30 +52,37 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles = {
             "linux.vdi.lz",
+            "darwin_1.3.1.vdi.lz","darwin_1.4.1.vdi.lz","darwin_6.0.2.vdi.lz","darwin_8.0.1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 
+            262144,
+            409600,409600,409600,409600,
         };
 
         readonly uint[] sectorsize = {
             512,
+            512,512,512,512,
         };
 
         readonly long[] clusters = {
             65018,
+            51145,51145,58452,58502,
         };
 
         readonly int[] clustersize = {
             2048, 
+            4096,4096,3584,3584,
         };
 
         readonly string[] volumename = {
             "Volume label",
+            "Volume label","Volume label","Volume label","Volume label",
         };
 
         readonly string[] volumeserial = {
-            "0000000000000000",
+            null,
+            null,null,null,"81FE805D61458753",
         };
 
         [Test]
@@ -83,7 +90,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

@@ -48,7 +48,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UFS_RDB
+    public class UNIXBFS_RDB
     {
         readonly string[] testfiles = {
             "amix.vdi.lz",
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,11 +96,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new AmigaRigidDiskBlock();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
+                Filesystem fs = new DiscImageChef.Filesystems.BFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\2\"")
+                    if(partitions[j].PartitionType == "\"UNI\\0\"")
                     {
                         part = j;
                         break;

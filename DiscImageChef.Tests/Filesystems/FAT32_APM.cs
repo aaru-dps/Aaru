@@ -51,7 +51,7 @@ namespace DiscImageChef.Tests.Filesystems
     public class FAT32_APM
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz",
+            "macosx_10.11.vdi.lz",
         };
 
         readonly ulong[] sectors = {

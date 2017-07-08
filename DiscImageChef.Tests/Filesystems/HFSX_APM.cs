@@ -51,35 +51,43 @@ namespace DiscImageChef.Tests.Filesystems
     public class HFSX_APM
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz", "macosx_journal.vdi.lz",
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz","darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
+            "macosx_10.4_journal.vdi.lz","macosx_10.4.vdi.lz",
         };
 
         readonly ulong[] sectors = {
+            819200, 1228800, 819200, 1228800,
             819200, 1228800,
         };
 
         readonly uint[] sectorsize = {
-            512, 512
+            512, 512, 512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
+            102390, 153590,102390, 153590,
             102390, 153590,
         };
 
         readonly int[] clustersize = {
+            4096, 4096,4096, 4096,
             4096, 4096,
         };
 
         readonly string[] volumename = {
+            "Volume label","Volume label","Volume label","Volume label",
             "Volume label","Volume label",
         };
 
         readonly string[] volumeserial = {
+            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
             "UNKNOWN","UNKNOWN",
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ"
+            "10.0","HFSJ","10.0","HFSJ",
+            "10.0","HFSJ",
         };
 
         [Test]

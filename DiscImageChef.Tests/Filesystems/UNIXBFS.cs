@@ -51,11 +51,15 @@ namespace DiscImageChef.Tests.Filesystems
     public class unixbfs
     {
         readonly string[] testfiles = {
-            "linux.vdi.lz",
+            "amix.adf.lz",
+        };
+
+        readonly MediaType[] mediatypes = {
+            MediaType.CBM_AMIGA_35_DD,
         };
 
         readonly ulong[] sectors = {
-            262144,
+            1760,
         };
 
         readonly uint[] sectorsize = {
@@ -63,7 +67,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            260096,
+            1760,
         };
 
         readonly int[] clustersize = {
@@ -82,25 +86,14 @@ namespace DiscImageChef.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BFS();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
-                {
-                    if(partitions[j].PartitionType == "0x83")
-                    {
-                        part = j;
-                        break;
-                    }
-                }
-                Assert.AreNotEqual(-1, part, "Partition not found");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
+                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
+                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("BFS", fs.XmlFSType.Type, testfiles[i]);

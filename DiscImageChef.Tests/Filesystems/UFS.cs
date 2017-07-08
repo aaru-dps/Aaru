@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : MFS.cs
+// Filename       : UFS.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -45,46 +45,42 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class MFS
+    public class UFS
     {
         readonly string[] testfiles = {
-            "macos_0.1_mf1dd.img.lz","macos_0.5_mf1dd.img.lz","macos_1.1_mf1dd.img.lz","macos_2.0_mf1dd.img.lz",
-            "macos_6.0.7_mf1dd.img.lz",
+            "amix_mf2dd.adf.lz","netbsd_1.6_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
-            MediaType.AppleSonySS
+            MediaType.CBM_AMIGA_35_DD, MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
-            800, 800, 800, 800,
-            800,
+            1760, 2880,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            391, 391, 391, 391,
-            391,
+            1760, 2880,
         };
 
         readonly int[] clustersize = {
-            1024, 1024, 1024, 1024,
-            1024,
+            512, 512,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label",
+            null, null, 
         };
 
         readonly string[] volumeserial = {
-            null, null, null, null,
-            null, null, null,
+            null, null,
+        };
+
+        readonly string[] type = {
+            "UFS", "UFS",
         };
 
         [Test]
@@ -92,7 +88,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "mfs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
@@ -100,12 +96,12 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleMFS.AppleMFS();
+                Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
                 fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("MFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : unixbfs.cs
+// Filename       : unixbfs_mbr.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,30 +48,30 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class unixbfs
+    public class unixbfs_mbr
     {
         readonly string[] testfiles = {
-            "linux.vdi.lz","amix.adf.lz",
+            "linux.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144,1760,
+            262144,
         };
 
         readonly uint[] sectorsize = {
-            512,512,
+            512,
         };
 
         readonly long[] clusters = {
-            260096,1760,
+            260096,
         };
 
         readonly int[] clustersize = {
-            512,512,
+            512,
         };
 
         readonly string[] volumename = {
-            "Label","Label",
+            "Label",
         };
 
         [Test]
@@ -79,7 +79,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

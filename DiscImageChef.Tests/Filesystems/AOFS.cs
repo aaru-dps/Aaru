@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS.cs
+// Filename       : AOFS.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -45,7 +45,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS
+    public class AOFS
     {
         readonly string[] testfiles = {
             "amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz",
@@ -84,7 +84,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
@@ -97,7 +97,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

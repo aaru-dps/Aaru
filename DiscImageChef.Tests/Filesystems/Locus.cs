@@ -87,6 +87,8 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
+            throw new NotImplementedException("Locus filesystem is not yet implemented");
+            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "locus", testfiles[i]);
@@ -97,8 +99,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                throw new NotImplementedException("Locus filesystem is not yet implemented");
-                /*
                 Filesystem fs = new DiscImageChef.Filesystems.Locus();
                 Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
                 fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
@@ -107,8 +107,8 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("Locus", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);*/
-            }
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
+            }*/
         }
     }
 }

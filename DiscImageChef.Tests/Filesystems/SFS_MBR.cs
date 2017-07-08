@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SFS_RDB.cs
+// Filename       : SFS_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,14 +48,14 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class SFS_RDB
+    public class SFS_MBR
     {
         readonly string[] testfiles = {
-            "uae.vdi.lz",
+            "aros.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            409600,
         };
 
         readonly uint[] sectorsize = {
@@ -63,11 +63,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            127000,
+            408240,
         };
 
         readonly int[] clustersize = {
-            2048,
+            512,
         };
 
         readonly string[] volumename = {
@@ -78,29 +78,25 @@ namespace DiscImageChef.Tests.Filesystems
             null,
         };
 
-        readonly string[] oemid = {
-            null,
-        };
-
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
+                PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.SFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"SFS\\0\"" || partitions[j].PartitionType == "\"SFS\\2\"")
+                    if(partitions[j].PartitionType == "0x2F")
                     {
                         part = j;
                         break;
@@ -114,7 +110,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("SmartFileSystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS.cs
+// Filename       : SysV.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -45,38 +45,42 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS
+    public class SysV
     {
         readonly string[] testfiles = {
-            "amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz",
+            "amix.adf.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD,
+            MediaType.CBM_AMIGA_35_DD,
         };
 
         readonly ulong[] sectors = {
-            1760, 1760,
+            1760,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            1760, 1760,
+            880,
         };
 
         readonly int[] clustersize = {
-            512, 512,
+            1024,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            null, null,
+            null,
+        };
+
+        readonly string[] type = {
+            "SVR4 fs",
         };
 
         [Test]
@@ -84,7 +88,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
@@ -92,12 +96,12 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                Filesystem fs = new AmigaDOSPlugin();
+                Filesystem fs = new DiscImageChef.Filesystems.SysVfs();
                 Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
                 fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

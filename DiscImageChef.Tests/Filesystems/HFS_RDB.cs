@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT16_RDB.cs
+// Filename       : HFS_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -49,7 +49,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT16_RDB
+    public class HFS_RDB
     {
         readonly string[] testfiles = {
             "amigaos_3.9.vdi.lz",
@@ -72,15 +72,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumename = {
-            "VOLUMELABEL"
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN ",
-        };
-
-        readonly string[] oemid = {
-            "CDP  5.0",
+            null,
         };
 
         [Test]
@@ -90,7 +86,7 @@ namespace DiscImageChef.Tests.Filesystems
             /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfs_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

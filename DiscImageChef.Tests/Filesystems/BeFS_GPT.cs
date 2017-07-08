@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BeFS_APM.cs
+// Filename       : BeFS_GPT.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,37 +48,33 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class BeFS_APM
+    public class BeFS_GPT
     {
         readonly string[] testfiles = {
-            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz",
+            "haiku_hrev51259.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1572864, 1572864,
+            8388608,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            786400, 785232,
+            2096640,
         };
 
         readonly int[] clustersize = {
-            1024, 1024,
+            2048
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,null,
-        };
-
-        readonly string[] oemid = {
             null,null,
         };
 
@@ -87,20 +83,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "befs_apm", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "befs_gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AppleMap();
+                PartPlugin parts = new GuidPartitionTable();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.BeFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Be_BFS")
+                    if(partitions[j].PartitionType == "Haiku BFS")
                     {
                         part = j;
                         break;
@@ -114,7 +110,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("BeFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

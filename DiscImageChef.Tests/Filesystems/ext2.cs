@@ -52,34 +52,42 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles = {
             "linux_ext2.vdi.lz", "linux_ext3.vdi.lz","linux_ext4.vdi.lz",
+            "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz",
         };
 
         readonly ulong[] sectors = {
             262144, 262144, 262144,
+            8388608, 2097152,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 
+            512, 512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            130048, 130048, 130048, 
+            130048, 130048, 130048,
+            1046567, 260135,
         };
 
         readonly int[] clustersize = {
-            1024, 1024, 1024, 
+            1024, 1024, 1024,
+            4096, 4096,
         };
 
         readonly string[] volumename = {
-            "VolumeLabel", "VolumeLabel", "VolumeLabel", 
+            "VolumeLabel", "VolumeLabel", "VolumeLabel",
+            "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "cf92398e-987d-4ae4-b753-0591a35913eb", "1615411b-1554-424b-95e6-1a247056a960", "05f3f8b2-0f77-47ad-abe4-f0484aa319e9", 
+            "cf92398e-987d-4ae4-b753-0591a35913eb", "1615411b-1554-424b-95e6-1a247056a960", "05f3f8b2-0f77-47ad-abe4-f0484aa319e9",
+            "05ee2ae7-7b62-e711-a573-0800272a08ec", "f2562707-7c62-e711-a573-0800272a08ec",
         };
 
         readonly string[] extversion = {
             "ext2", "ext3", "ext4",
+            "ext2", "ext2"
         };
 
         [Test]

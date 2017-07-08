@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SFS_RDB.cs
+// Filename       : AFFS2_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,10 +48,10 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class SFS_RDB
+    public class AFFS2_RDB
     {
         readonly string[] testfiles = {
-            "uae.vdi.lz",
+            "amigaos_4.0.vdi.lz",
         };
 
         readonly ulong[] sectors = {
@@ -63,22 +63,18 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            127000,
+            1022080,
         };
 
         readonly int[] clustersize = {
-            2048,
+            512,
         };
 
         readonly string[] volumename = {
-            null,
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,
-        };
-
-        readonly string[] oemid = {
             null,
         };
 
@@ -87,7 +83,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs2_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,12 +92,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new AmigaRigidDiskBlock();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.SFS();
+                Filesystem fs = new DiscImageChef.Filesystems.AmigaDOSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    System.Console.WriteLine("{0}", partitions[j].PartitionType);
-                    if(partitions[j].PartitionType == "\"SFS\\0\"")
+                    if(partitions[j].PartitionType == "\"DOS\\7\"")
                     {
                         part = j;
                         break;
@@ -112,10 +107,9 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("SmartFileSystem", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Amiga FFS2", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

@@ -51,35 +51,59 @@ namespace DiscImageChef.Tests.Filesystems
     public class HFSPlus_MBR
     {
         readonly string[] testfiles = {
-            "macosx.vdi.lz", "macosx_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
+            "darwin_1.3.1.vdi.lz","darwin_1.3.1_wrapped.vdi.lz","darwin_1.4.1.vdi.lz","darwin_1.4.1_wrapped.vdi.lz",
+            "darwin_6.0.2.vdi.lz","darwin_6.0.2_wrapped.vdi.lz","darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
+            "darwin_8.0.1_wrapped.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            303104, 352256, 262144, 262144, 
+            303104, 352256, 262144, 262144,
+            303104, 352256, 262144, 262144,
+            303104, 352256, 262144, 262144,
+            303104,
         };
 
         readonly uint[] sectorsize = {
             512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 
         };
 
         readonly long[] clusters = {
             37878, 44021, 32512, 32512,
+            37878, 44021, 32512, 32512,
+            37878, 44021, 32512, 32512,
+            37878,
         };
 
         readonly int[] clustersize = {
             4096, 4096, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096, 4096, 4096, 4096,
+            4096,
         };
 
         readonly string[] volumename = {
             "Volume label","Volume label","Volume label","Volume label",
+            "Volume label","Volume label","Volume label","Volume label",
+            "Volume label","Volume label","Volume label","Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
             "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
+            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
+            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
+            "UNKNOWN",
         };
 
         readonly string[] oemid = {
             "10.0","HFSJ","10.0","10.0",
+            "10.0","HFSJ","10.0","10.0",
+            "10.0","HFSJ","10.0","10.0",
+            "10.0",
         };
 
         [Test]

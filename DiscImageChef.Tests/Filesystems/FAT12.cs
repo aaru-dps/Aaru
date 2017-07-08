@@ -235,6 +235,22 @@ namespace DiscImageChef.Tests.Filesystems
             "winvista_dsdd.img.lz","winvista_dshd.img.lz","winvista_mf2dd.img.lz","winvista_mf2ed.img.lz","winvista_mf2hd.img.lz",
             // BeOS R4.5
             "beos_r4.5_mf2hd.img.lz",
+            // Hatari
+            "hatari_mf1dd.st.lz","hatari_mf1dd_10.st.lz","hatari_mf1dd_11.st.lz",
+            "hatari_mf2dd.st.lz","hatari_mf2dd_10.st.lz","hatari_mf2dd_11.st.lz",
+            "hatari_mf2ed.st.lz","hatari_mf2hd.st.lz",
+            // Atari TOS 1.04
+            "tos_1.04_mf1dd.st.lz","tos_1.04_mf2dd.st.lz",
+            // NetBSD 1.6
+            "netbsd_1.6_mf2dd.img.lz","netbsd_1.6_mf2hd.img.lz",
+            // NeXTStep 3.3
+            "nextstep_3.3_mf2dd.img.lz","nextstep_3.3_mf2hd.img.lz",
+            // OpenStep for Mach 4.0
+            "openstep_4.0_mf2dd.img.lz","openstep_4.0_mf2hd.img.lz",
+            // OpenStep for Mach 4.2
+            "openstep_4.2_mf2dd.img.lz","openstep_4.2_mf2hd.img.lz",
+            // Solaris 2.4
+            "solaris_2.4_mf2dd.img.lz","solaris_2.4_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -419,6 +435,23 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_ED,MediaType.DOS_35_HD,
             // BeOS R4.5
             MediaType.DOS_35_HD,
+            // Hatari
+            // TODO: Incorrect media types
+            MediaType.DOS_35_SS_DD_9,MediaType.GENERIC_HDD,MediaType.GENERIC_HDD,
+            MediaType.DOS_35_DS_DD_9,MediaType.ATARI_35_DS_DD,MediaType.GENERIC_HDD,
+            MediaType.DOS_35_ED,MediaType.DOS_35_HD,
+            // Atari TOS 1.04
+            MediaType.DOS_35_SS_DD_9,MediaType.DOS_35_DS_DD_9,
+            // NetBSD 1.6
+            MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // NeXTStep 3.3
+            MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // OpenStep for Mach 4.0
+            MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // OpenStep for Mach 4.2
+            MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // Solaris 2.4
+            MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
@@ -564,6 +597,20 @@ namespace DiscImageChef.Tests.Filesystems
             720,2400,1440,5760,2880,
             // BeOS R4.5
             2880,
+            // Hatari
+            720,800,880,1440,1600,1760,5760,2880,
+            // Atari TOS 1.04
+            720,1440,
+            // NetBSD 1.6
+            1440,2880,
+            // NeXTStep 3.3
+            1440,2880,
+            // OpenStep for Mach 4.0
+            1440,2880,
+            // OpenStep for Mach 4.2
+            1440,2880,
+            // Solaris 2.4
+            1440,2880,
         };
 
         readonly uint[] sectorsize = {
@@ -709,6 +756,20 @@ namespace DiscImageChef.Tests.Filesystems
             512,512,512,512,512,
             // BeOS R4.5
             512,
+            // Hatari
+            512,512,512,512,512,512,512,512,
+            // Atari TOS 1.04
+            512,512,
+            // NetBSD 1.6
+            512,512,
+            // NeXTStep 3.3
+            512,512,
+            // OpenStep for Mach 4.0
+            512,512,
+            // OpenStep for Mach 4.2
+            512,512,
+            // Solaris 2.4
+            512,512,
         };
 
         readonly long[] clusters = {
@@ -854,6 +915,20 @@ namespace DiscImageChef.Tests.Filesystems
             360,2400,720,2880,2880,
             // BeOS R4.5
             2880,
+            // Hatari
+            360,400,440,720,800,880,2880,1440,
+            // Atari TOS 1.04
+            360,720,
+            // NetBSD 1.6
+            720,2880,
+            // NeXTStep 3.3
+            720,2880,
+            // OpenStep for Mach 4.0
+            720,2880,
+            // OpenStep for Mach 4.2
+            720,2880,
+            // Solaris 2.4
+            720,2880,
         };
 
         readonly int[] clustersize = {
@@ -999,6 +1074,20 @@ namespace DiscImageChef.Tests.Filesystems
             1024,512,1024,1024,512,
             // BeOS R4.5
             512,
+            // Hatari
+            1024,1024,1024,1024,1024,1024,1024,1024,
+            // Atari TOS 1.04
+            1024,1024,
+            // NetBSD 1.6
+            1024,512,
+            // NeXTStep 3.3
+            1024,512,
+            // OpenStep for Mach 4.0
+            1024,512,
+            // OpenStep for Mach 4.2
+            1024,512,
+            // Solaris 2.4
+            1024,512,
         };
 
         readonly string[] volumename = {
@@ -1151,6 +1240,22 @@ namespace DiscImageChef.Tests.Filesystems
             "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
             // BeOS R4.5
             "NO NAME    ",
+            // Hatari
+            null,null,null,
+            null,null,null,
+            null,null,
+            // Atari TOS 1.04
+            null,null,
+            // NetBSD 1.6
+            "VOLUMELABEL","VOLUMELABEL",
+            // NeXTStep 3.3
+            null,null,
+            // OpenStep for Mach 4.0
+            null,null,
+            // OpenStep for Mach 4.2
+            null,null,
+            // Solaris 2.4
+            null,null,
         };
 
         readonly string[] volumeserial = {
@@ -1303,6 +1408,22 @@ namespace DiscImageChef.Tests.Filesystems
             "3C9F0BD2","3A8E465C","B2EFB822","3C30C632","16DAB07A",
             // BeOS R4.5
             "00000000",
+            // Hatari
+            null,null,null,
+            null,null,null,
+            null,null,
+            // Atari TOS 1.04
+            null,null,
+            // NetBSD 1.6
+            "EEB51A0C","CCFD1A06",
+            // NeXTStep 3.3
+            null,null,
+            // OpenStep for Mach 4.0
+            null,null,
+            // OpenStep for Mach 4.2
+            null,null,
+            // Solaris 2.4
+            null,null,
         };
 
         readonly string[] oemid = {
@@ -1455,6 +1576,22 @@ namespace DiscImageChef.Tests.Filesystems
             "MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0","MSDOS5.0",
             // BeOS R4.5
             "BeOS    ",
+            // Hatari
+            null,null,null,
+            null,null,null,
+            null,null,
+            // Atari TOS 1.04
+            null,null,
+            // NetBSD 1.6
+            "BSD  4.4","BSD  4.4",
+            // NeXTStep 3.3
+            "NEXT    ","NEXT    ",
+            // OpenStep for Mach 4.0
+            "NEXT    ","NEXT    ",
+            // OpenStep for Mach 4.2
+            "NEXT    ","NEXT    ",
+            // Solaris 2.4
+            "MSDOS3.3","MSDOS3.3",
         };
 
         [Test]

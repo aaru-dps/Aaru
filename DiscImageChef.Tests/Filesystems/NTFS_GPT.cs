@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : NTFS_MBR.cs
+// Filename       : NTFS_GPT.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,32 +48,27 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class NTFS_MBR
+    public class NTFS_GPT
     {
         readonly string[] testfiles = {
-            "win10.vdi.lz", "win2000.vdi.lz", "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz",
-            "winnt_3.51.vdi.lz", "winnt_4.00.vdi.lz", "winvista.vdi.lz", "linux.vdi.lz",
+            "haiku_hrev51259.vdi.lz",
 
         };
 
         readonly ulong[] sectors = {
-            524288, 2097152, 1024000, 524288,
-            524288, 524288, 524288, 262144,
+            2097152,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512, 512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            65263, 1046511, 1023057, 524256, 
-            524256, 524096, 64767, 32512,
+            261887,
         };
 
         readonly int[] clustersize = {
-            4096, 1024, 512, 512,
-            512, 512, 4096, 4096,
+            4096,
         };
 
         readonly string[] volumename = {
@@ -82,13 +77,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "C46C1B3C6C1B28A6","8070C8EC70C8E9CC","10CC6AC6CC6AA5A6","7A14F50014F4BFE5",
-            "24884447884419A6","822C288D2C287E73","E20AF54B0AF51D6B","065BB96B7C1BCFDA",
+            "106DA7693F7F6B3F",
         };
 
         readonly string[] oemid = {
-            null, null, null, null,
-            null, null, null, null,
+            null,
         };
 
         [Test]
@@ -96,20 +89,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ntfs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ntfs_gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
+                PartPlugin parts = new GuidPartitionTable();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.NTFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x07")
+                    if(partitions[j].PartitionType == "Microsoft Basic data")
                     {
                         part = j;
                         break;

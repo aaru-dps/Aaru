@@ -51,31 +51,91 @@ namespace DiscImageChef.Tests.Filesystems
     public class UFS_MBR
     {
         readonly string[] testfiles = {
-            "ufs1/linux.vdi.lz", "ufs2/linux.vdi.lz",
+            "ufs1/linux.vdi.lz", "ufs2/linux.vdi.lz", "ffs43/darwin_1.3.1.vdi.lz", "ffs43/darwin_1.4.1.vdi.lz",
+            "ffs43/darwin_6.0.2.vdi.lz", "ffs43/darwin_8.0.1.vdi.lz", "ffs43/dflybsd_1.2.0.vdi.lz", "ffs43/dflybsd_3.6.1.vdi.lz",
+            "ffs43/dflybsd_4.0.5.vdi.lz", "ffs43/netbsd_1.6.vdi.lz", "ffs43/netbsd_7.1.vdi.lz", "ufs1/darwin_1.3.1.vdi.lz",
+            "ufs1/darwin_1.4.1.vdi.lz", "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/dflybsd_1.2.0.vdi.lz",
+            "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz", "ufs1/freebsd_7.0.vdi.lz",
+            "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz",
+            "ufs1/solaris_7.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
+            "ufs2/netbsd_7.1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024,
         };
 
         readonly int[] clustersize = {
-            2048, 2048
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "59588B778E9ACDEF", "UNKNOWN",
+            "59588B778E9ACDEF", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN",
+        };
+
+        readonly string[] type = {
+            "UFS", "UFS2", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS2", "UFS2", "UFS2",
+            "UFS2",
         };
 
         [Test]
@@ -107,7 +167,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("UFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

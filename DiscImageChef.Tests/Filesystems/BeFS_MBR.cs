@@ -51,35 +51,35 @@ namespace DiscImageChef.Tests.Filesystems
     public class BeFS_MBR
     {
         readonly string[] testfiles = {
-            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz",
+            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1572864, 1572864,
+            1572864, 1572864,8388608,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            786400, 785232,
+            786400, 785232, 2096640, 
         };
 
         readonly int[] clustersize = {
-            1024, 1024,
+            1024, 1024, 2048,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            "Volume label","Volume label","Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            null,null,null,
         };
 
         readonly string[] oemid = {
-            null,null,
+            null,null,null,
         };
 
         [Test]

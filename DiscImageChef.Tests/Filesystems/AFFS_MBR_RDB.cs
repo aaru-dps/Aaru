@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS_MBR.cs
+// Filename       : AFFS_MBR_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -44,11 +44,12 @@ using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
 using NUnit.Framework;
+using System;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS_MBR
+    public class AFFS_MBR_RDB
     {
         readonly string[] testfiles = {
             "aros.vdi.lz","aros_intl.vdi.lz",
@@ -81,9 +82,10 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            throw new NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
+/*            for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -110,7 +112,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-            }
+            }*/
         }
     }
 }

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AFFS_MBR_RDB.cs
+// Filename       : SFS_MBR_RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -49,34 +49,34 @@ using System;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class AFFS_MBR_RDB
+    public class SFS_MBR_RDB
     {
         readonly string[] testfiles = {
-            "aros.vdi.lz","aros_intl.vdi.lz",
+            "aros.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            409600,409600,
+            409600,
         };
 
         readonly uint[] sectorsize = {
-            512,512,
+            512,
         };
 
         readonly long[] clusters = {
-            408240,408240,
+            408240,
         };
 
         readonly int[] clustersize = {
-            512,512,
+            512,
         };
 
         readonly string[] volumename = {
-            "Volume label","Volume label",
+            null,
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            null,
         };
 
         [Test]
@@ -85,7 +85,7 @@ namespace DiscImageChef.Tests.Filesystems
             throw new NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
 /*            for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs_mbr_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "sfs_mbr_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -98,7 +98,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x2D")
+                    if(partitions[j].PartitionType == "SFS")
                     {
                         part = j;
                         break;
@@ -109,7 +109,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("SmartFileSystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }*/

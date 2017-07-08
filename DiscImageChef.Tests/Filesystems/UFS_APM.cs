@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_MBR.cs
+// Filename       : UFS_APM.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,34 +48,54 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UFS_MBR
+    public class UFS_APM
     {
         readonly string[] testfiles = {
-            "ufs1/linux.vdi.lz", "ufs2/linux.vdi.lz",
+            "ffs43/darwin_1.3.1.vdi.lz","ffs43/darwin_1.4.1.vdi.lz","ffs43/darwin_6.0.2.vdi.lz","ffs43/darwin_8.0.1.vdi.lz",
+            "ufs1/darwin_1.3.1.vdi.lz","ufs1/darwin_1.4.1.vdi.lz","ufs1/darwin_6.0.2.vdi.lz","ufs1/darwin_8.0.1.vdi.lz",
+            "ufs1/macosx_10.2.vdi.lz","ufs1/macosx_10.3.vdi.lz","ufs1/macosx_10.4.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144, 262144,
+            262144, 262144, 262144,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512,
+            512, 512, 512, 512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024, 65018,
+            65024, 65018, 65024,
         };
 
         readonly int[] clustersize = {
-            2048, 2048
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+            2048, 2048, 2048,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "59588B778E9ACDEF", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+        };
+
+        readonly string[] type = {
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS",
         };
 
         [Test]
@@ -83,20 +103,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_apm", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
+                PartPlugin parts = new AppleMap();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x83")
+                    if(partitions[j].PartitionType == "Apple_UFS")
                     {
                         part = j;
                         break;
@@ -107,7 +127,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("UFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

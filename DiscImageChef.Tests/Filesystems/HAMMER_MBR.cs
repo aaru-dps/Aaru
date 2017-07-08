@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : HFSX_MBR.cs
+// Filename       : HAMMER_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,6 +35,7 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
@@ -48,46 +49,44 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class HFSX_MBR
+    public class HAMMER_MBR
     {
         readonly string[] testfiles = {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
+            "dflybsd_3.6.1.vdi.lz","dflybsd_4.0.5.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            393216, 409600, 262144, 262144,
+            104857600, 104857600,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512, 
+            512, 512,
         };
 
         readonly long[] clusters = {
-            102390, 153590, 32512, 32512,
+            104856192, 104856192,
         };
 
         readonly int[] clustersize = {
-            4096, 4096, 4096, 4096
+            512, 512,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label", "Volume label", "Volume label",
+            "Volume label", "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000"
-        };
-
-        readonly string[] oemid = {
-            "10.0","HFSJ","10.0","10.0"
+            "UNKNOWN","UNKNOWN",
         };
 
         [Test]
         public void Test()
         {
+            throw new NotImplementedException("HAMMER filesystem is not yet implemented");
+            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hammer_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -96,11 +95,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleHFSPlus();
+                Filesystem fs = new DiscImageChef.Filesystems.HAMMER();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0xAF")
+                    if(partitions[j].PartitionType == "0xA5")
                     {
                         part = j;
                         break;
@@ -111,11 +110,10 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HFSX", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("HAMMER", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
-            }
+            }*/
         }
     }
 }

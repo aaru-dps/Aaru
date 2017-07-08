@@ -51,11 +51,11 @@ namespace DiscImageChef.Tests.Filesystems
     public class SysV_MBR
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            "xenix_2.3.2d.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            409600,409600,
+            40960,40960,
         };
 
         readonly uint[] sectorsize = {
@@ -63,23 +63,23 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            511488,
+            19624,19624,
         };
 
         readonly int[] clustersize = {
-            1024,
+            1024,1024,
         };
 
         readonly string[] volumename = {
-            "Volume label",
+            "Volume label","Volume label",
         };
 
         readonly string[] volumeserial = {
-            null,
+            null,null,
         };
 
         readonly string[] type = {
-            "SVR4 fs",
+            "XENIX fs","XENIX fs",
         };
 
         [Test]
@@ -87,20 +87,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "s5fs_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
+                PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AmigaDOSPlugin();
+                Filesystem fs = new DiscImageChef.Filesystems.SysVfs();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\1\"")
+                    if(partitions[j].PartitionType == "0x02")
                     {
                         part = j;
                         break;
