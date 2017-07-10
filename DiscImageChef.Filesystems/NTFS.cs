@@ -34,8 +34,10 @@ using System;
 using System.Text;
 using DiscImageChef;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 // Information from Inside Windows NT
+using DiscImageChef.Checksums;
 namespace DiscImageChef.Filesystems
 {
     public class NTFS : Filesystem
@@ -96,40 +98,12 @@ namespace DiscImageChef.Filesystems
             byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
 
             NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
+            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(ntfs_bpb, 0, bpbPtr, 512);
+            ntfs_bb = (NTFS_BootBlock)Marshal.PtrToStructure(bpbPtr, typeof(NTFS_BootBlock));
+            Marshal.FreeHGlobal(bpbPtr);
 
             byte[] oem_name = new byte[8];
-
-            ntfs_bb.jmp1 = ntfs_bpb[0x000];
-            ntfs_bb.jmp2 = BitConverter.ToUInt16(ntfs_bpb, 0x001);
-            Array.Copy(ntfs_bpb, 0x003, oem_name, 0, 8);
-            ntfs_bb.OEMName = StringHandlers.CToString(oem_name);
-            ntfs_bb.bps = BitConverter.ToUInt16(ntfs_bpb, 0x00B);
-            ntfs_bb.spc = ntfs_bpb[0x00D];
-            ntfs_bb.rsectors = BitConverter.ToUInt16(ntfs_bpb, 0x00E);
-            ntfs_bb.fats_no = ntfs_bpb[0x010];
-            ntfs_bb.root_ent = BitConverter.ToUInt16(ntfs_bpb, 0x011);
-            ntfs_bb.sml_sectors = BitConverter.ToUInt16(ntfs_bpb, 0x013);
-            ntfs_bb.media = ntfs_bpb[0x015];
-            ntfs_bb.spfat = BitConverter.ToUInt16(ntfs_bpb, 0x016);
-            ntfs_bb.sptrk = BitConverter.ToUInt16(ntfs_bpb, 0x018);
-            ntfs_bb.heads = BitConverter.ToUInt16(ntfs_bpb, 0x01A);
-            ntfs_bb.hsectors = BitConverter.ToUInt32(ntfs_bpb, 0x01C);
-            ntfs_bb.big_sectors = BitConverter.ToUInt32(ntfs_bpb, 0x020);
-            ntfs_bb.drive_no = ntfs_bpb[0x024];
-            ntfs_bb.nt_flags = ntfs_bpb[0x025];
-            ntfs_bb.signature1 = ntfs_bpb[0x026];
-            ntfs_bb.dummy = ntfs_bpb[0x027];
-            ntfs_bb.sectors = BitConverter.ToInt64(ntfs_bpb, 0x028);
-            ntfs_bb.mft_lsn = BitConverter.ToInt64(ntfs_bpb, 0x030);
-            ntfs_bb.mftmirror_lsn = BitConverter.ToInt64(ntfs_bpb, 0x038);
-            ntfs_bb.mft_rc_clusters = (sbyte)ntfs_bpb[0x040];
-            ntfs_bb.dummy2 = ntfs_bpb[0x041];
-            ntfs_bb.dummy3 = BitConverter.ToUInt16(ntfs_bpb, 0x042);
-            ntfs_bb.index_blk_cts = (sbyte)ntfs_bpb[0x044];
-            ntfs_bb.dummy4 = ntfs_bpb[0x045];
-            ntfs_bb.dummy5 = BitConverter.ToUInt16(ntfs_bpb, 0x046);
-            ntfs_bb.serial_no = BitConverter.ToUInt64(ntfs_bpb, 0x048);
-            ntfs_bb.signature2 = BitConverter.ToUInt16(ntfs_bpb, 0x1FE);
 
             sb.AppendFormat("{0} bytes per sector", ntfs_bb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfs_bb.spc, ntfs_bb.spc * ntfs_bb.bps).AppendLine();
@@ -165,6 +139,17 @@ namespace DiscImageChef.Filesystems
             //			sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
+
+            if(ntfs_bb.jump[0] == 0xEB && ntfs_bb.jump[1] > 0x4E && ntfs_bb.jump[1] < 0x80 && ntfs_bb.signature2 == 0xAA55)
+            {
+                xmlFSType.Bootable = true;
+                SHA1Context sha1Ctx = new SHA1Context();
+                sha1Ctx.Init();
+                string bootChk = sha1Ctx.Data(ntfs_bb.boot_code, out byte[] sha1_out);
+                sb.AppendLine("Volume is bootable");
+                sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
+            }
+
             xmlFSType.ClusterSize = ntfs_bb.spc * ntfs_bb.bps;
             xmlFSType.Clusters = ntfs_bb.sectors / ntfs_bb.spc;
             xmlFSType.VolumeSerial = string.Format("{0:X16}", ntfs_bb.serial_no);
@@ -176,15 +161,16 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// NTFS $BOOT
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NTFS_BootBlock
         {
             // Start of BIOS Parameter Block
             /// <summary>0x000, Jump to boot code</summary>
-            public byte jmp1;
-            /// <summary>0x001, ...;</summary>
-            public ushort jmp2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] jump;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "</summary>
-            public string OEMName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] oem_name;
             /// <summary>0x00B, Bytes per sector</summary>
             public ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
@@ -221,11 +207,11 @@ namespace DiscImageChef.Filesystems
 
             // Start of NTFS real superblock
             /// <summary>0x028, Sectors on volume</summary>
-            public Int64 sectors;
+            public long sectors;
             /// <summary>0x030, LSN of $MFT</summary>
-            public Int64 mft_lsn;
+            public long mft_lsn;
             /// <summary>0x038, LSN of $MFTMirror</summary>
-            public Int64 mftmirror_lsn;
+            public long mftmirror_lsn;
             /// <summary>0x040, Clusters per MFT record</summary>
             public sbyte mft_rc_clusters;
             /// <summary>0x041, Alignment</summary>
@@ -240,8 +226,9 @@ namespace DiscImageChef.Filesystems
             public ushort dummy5;
             /// <summary>0x048, Volume serial number</summary>
             public ulong serial_no;
-            // End of NTFS superblock, followed by 430 bytes of boot code
-
+            /// <summary>Boot code.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 430)]
+            public byte[] boot_code;
             /// <summary>0x1FE, 0xAA55</summary>
             public ushort signature2;
         }
