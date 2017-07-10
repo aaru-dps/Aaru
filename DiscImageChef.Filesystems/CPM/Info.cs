@@ -865,15 +865,21 @@ namespace DiscImageChef.Filesystems.CPM
             int interleaveSide1;
             int interleaveSide2 = 1;
 
-            interleaveSide1 = workingDefinition.side1.sectorIds[1] - workingDefinition.side1.sectorIds[0];
-            if(interleaveSide1 > 1)
-                sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
+            if(workingDefinition.side1.sectorIds.Length >= 2)
+            {
+                interleaveSide1 = workingDefinition.side1.sectorIds[1] - workingDefinition.side1.sectorIds[0];
+                if(interleaveSide1 > 1)
+                    sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
+            }
             
             if(workingDefinition.sides == 2)
             {
-                interleaveSide2 = workingDefinition.side2.sectorIds[1] - workingDefinition.side2.sectorIds[0];
-                if(interleaveSide2 > 1)
-                    sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
+                if(workingDefinition.side2.sectorIds.Length >= 2)
+                {
+                    interleaveSide2 = workingDefinition.side2.sectorIds[1] - workingDefinition.side2.sectorIds[0];
+                    if(interleaveSide2 > 1)
+                        sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
+                }
                 switch(workingDefinition.order)
                 {
                     case "SIDES":
