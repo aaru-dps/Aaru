@@ -53,6 +53,7 @@
     <Compile Include="Extents\ExtentsUShort.cs" />
     <Compile Include="Extents\ExtentsByte.cs" />
     <Compile Include="Extents\ExtentsSByte.cs" />
+    <Compile Include="CountBits.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

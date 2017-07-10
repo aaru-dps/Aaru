@@ -32,10 +32,13 @@
 using System;
 namespace DiscImageChef.Helpers
 {
-    public class CountBits
+    public static class CountBits
     {
-        public CountBits()
+        public static int Count(uint number)
         {
+            number = number - ((number >> 1) & 0x55555555);
+            number = (number & 0x33333333) + ((number >> 2) & 0x33333333);
+            return (int)((((number + (number >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24);
         }
     }
 }
