@@ -33,6 +33,8 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using DiscImageChef.Checksums;
 
 namespace DiscImageChef.Filesystems
 {
@@ -90,71 +92,22 @@ namespace DiscImageChef.Filesystems
             byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
             byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partitionStart); // Seek to spareblock, on logical sector 17
 
-            hpfs_bpb.jmp1 = hpfs_bpb_sector[0x000];
-            hpfs_bpb.jmp2 = BitConverter.ToUInt16(hpfs_bpb_sector, 0x001);
-            Array.Copy(hpfs_bpb_sector, 0x003, oem_name, 0, 8);
-            hpfs_bpb.OEMName = StringHandlers.CToString(oem_name);
-            hpfs_bpb.bps = BitConverter.ToUInt16(hpfs_bpb_sector, 0x00B);
-            hpfs_bpb.spc = hpfs_bpb_sector[0x00D];
-            hpfs_bpb.rsectors = BitConverter.ToUInt16(hpfs_bpb_sector, 0x00E);
-            hpfs_bpb.fats_no = hpfs_bpb_sector[0x010];
-            hpfs_bpb.root_ent = BitConverter.ToUInt16(hpfs_bpb_sector, 0x011);
-            hpfs_bpb.sectors = BitConverter.ToUInt16(hpfs_bpb_sector, 0x013);
-            hpfs_bpb.media = hpfs_bpb_sector[0x015];
-            hpfs_bpb.spfat = BitConverter.ToUInt16(hpfs_bpb_sector, 0x016);
-            hpfs_bpb.sptrk = BitConverter.ToUInt16(hpfs_bpb_sector, 0x018);
-            hpfs_bpb.heads = BitConverter.ToUInt16(hpfs_bpb_sector, 0x01A);
-            hpfs_bpb.hsectors = BitConverter.ToUInt32(hpfs_bpb_sector, 0x01C);
-            hpfs_bpb.big_sectors = BitConverter.ToUInt32(hpfs_bpb_sector, 0x024);
-            hpfs_bpb.drive_no = hpfs_bpb_sector[0x028];
-            hpfs_bpb.nt_flags = hpfs_bpb_sector[0x029];
-            hpfs_bpb.signature = hpfs_bpb_sector[0x02A];
-            hpfs_bpb.serial_no = BitConverter.ToUInt32(hpfs_bpb_sector, 0x02B);
-            Array.Copy(hpfs_bpb_sector, 0x02F, volume_name, 0, 11);
-            hpfs_bpb.volume_label = StringHandlers.CToString(volume_name, CurrentEncoding);
-            Array.Copy(hpfs_bpb_sector, 0x03A, oem_name, 0, 8);
-            hpfs_bpb.fs_type = StringHandlers.CToString(oem_name, CurrentEncoding);
+            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(hpfs_bpb_sector, 0, bpbPtr, 512);
+            hpfs_bpb = (HPFS_BIOSParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(HPFS_BIOSParameterBlock));
+            Marshal.FreeHGlobal(bpbPtr);
 
-            hpfs_sb.magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
-            hpfs_sb.magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
-            hpfs_sb.version = hpfs_sb_sector[0x008];
-            hpfs_sb.func_version = hpfs_sb_sector[0x009];
-            hpfs_sb.dummy = BitConverter.ToUInt16(hpfs_sb_sector, 0x00A);
-            hpfs_sb.root_fnode = BitConverter.ToUInt32(hpfs_sb_sector, 0x00C);
-            hpfs_sb.sectors = BitConverter.ToUInt32(hpfs_sb_sector, 0x010);
-            hpfs_sb.badblocks = BitConverter.ToUInt32(hpfs_sb_sector, 0x014);
-            hpfs_sb.bitmap_lsn = BitConverter.ToUInt32(hpfs_sb_sector, 0x018);
-            hpfs_sb.zero1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x01C);
-            hpfs_sb.badblock_lsn = BitConverter.ToUInt32(hpfs_sb_sector, 0x020);
-            hpfs_sb.zero2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x024);
-            hpfs_sb.last_chkdsk = BitConverter.ToInt32(hpfs_sb_sector, 0x028);
-            hpfs_sb.last_optim = BitConverter.ToInt32(hpfs_sb_sector, 0x02C);
-            hpfs_sb.dband_sectors = BitConverter.ToUInt32(hpfs_sb_sector, 0x030);
-            hpfs_sb.dband_start = BitConverter.ToUInt32(hpfs_sb_sector, 0x034);
-            hpfs_sb.dband_last = BitConverter.ToUInt32(hpfs_sb_sector, 0x038);
-            hpfs_sb.dband_bitmap = BitConverter.ToUInt32(hpfs_sb_sector, 0x03C);
-            hpfs_sb.zero3 = BitConverter.ToUInt64(hpfs_sb_sector, 0x040);
-            hpfs_sb.zero4 = BitConverter.ToUInt64(hpfs_sb_sector, 0x048);
-            hpfs_sb.zero5 = BitConverter.ToUInt64(hpfs_sb_sector, 0x04C);
-            hpfs_sb.zero6 = BitConverter.ToUInt64(hpfs_sb_sector, 0x050);
-            hpfs_sb.acl_start = BitConverter.ToUInt32(hpfs_sb_sector, 0x058);
+            IntPtr sbPtr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(hpfs_sb_sector, 0, sbPtr, 512);
+            hpfs_sb = (HPFS_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(HPFS_SuperBlock));
+            Marshal.FreeHGlobal(sbPtr);
 
-            hpfs_sp.magic1 = BitConverter.ToUInt32(hpfs_sp_sector, 0x000);
-            hpfs_sp.magic2 = BitConverter.ToUInt32(hpfs_sp_sector, 0x004);
-            hpfs_sp.flags1 = hpfs_sp_sector[0x008];
-            hpfs_sp.flags2 = hpfs_sp_sector[0x009];
-            hpfs_sp.dummy = BitConverter.ToUInt16(hpfs_sp_sector, 0x00A);
-            hpfs_sp.hotfix_start = BitConverter.ToUInt32(hpfs_sp_sector, 0x00C);
-            hpfs_sp.hotfix_used = BitConverter.ToUInt32(hpfs_sp_sector, 0x010);
-            hpfs_sp.hotfix_entries = BitConverter.ToUInt32(hpfs_sp_sector, 0x014);
-            hpfs_sp.spare_dnodes_free = BitConverter.ToUInt32(hpfs_sp_sector, 0x018);
-            hpfs_sp.spare_dnodes = BitConverter.ToUInt32(hpfs_sp_sector, 0x01C);
-            hpfs_sp.codepage_lsn = BitConverter.ToUInt32(hpfs_sp_sector, 0x020);
-            hpfs_sp.codepages = BitConverter.ToUInt32(hpfs_sp_sector, 0x024);
-            hpfs_sp.sb_crc32 = BitConverter.ToUInt32(hpfs_sp_sector, 0x028);
-            hpfs_sp.sp_crc32 = BitConverter.ToUInt32(hpfs_sp_sector, 0x02C);
+            IntPtr spPtr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(hpfs_sp_sector, 0, spPtr, 512);
+            hpfs_sp = (HPFS_SpareBlock)Marshal.PtrToStructure(spPtr, typeof(HPFS_SpareBlock));
+            Marshal.FreeHGlobal(spPtr);
 
-            if(hpfs_bpb.fs_type != "HPFS    " ||
+            if(StringHandlers.CToString(hpfs_bpb.fs_type) != "HPFS    " ||
             hpfs_sb.magic1 != 0xF995E849 || hpfs_sb.magic2 != 0xFA53E9C5 ||
             hpfs_sp.magic1 != 0xF9911849 || hpfs_sp.magic2 != 0xFA5229C5)
             {
@@ -166,9 +119,9 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Spareblock magic2: 0x{0:X8} (Should be 0xFA5229C5)", hpfs_sp.magic2).AppendLine();
             }
 
-            sb.AppendFormat("OEM name: {0}", hpfs_bpb.OEMName).AppendLine();
+            sb.AppendFormat("OEM name: {0}", StringHandlers.CToString(hpfs_bpb.oem_name)).AppendLine();
             sb.AppendFormat("{0} bytes per sector", hpfs_bpb.bps).AppendLine();
-            sb.AppendFormat("{0} sectors per cluster", hpfs_bpb.spc).AppendLine();
+            //          sb.AppendFormat("{0} sectors per cluster", hpfs_bpb.spc).AppendLine();
             //			sb.AppendFormat("{0} reserved sectors", hpfs_bpb.rsectors).AppendLine();
             //			sb.AppendFormat("{0} FATs", hpfs_bpb.fats_no).AppendLine();
             //			sb.AppendFormat("{0} entries on root directory", hpfs_bpb.root_ent).AppendLine();
@@ -178,12 +131,13 @@ namespace DiscImageChef.Filesystems
             //			sb.AppendFormat("{0} sectors per track", hpfs_bpb.sptrk).AppendLine();
             //			sb.AppendFormat("{0} heads", hpfs_bpb.heads).AppendLine();
             sb.AppendFormat("{0} sectors hidden before BPB", hpfs_bpb.hsectors).AppendLine();
-            sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_bpb.big_sectors, hpfs_bpb.big_sectors * hpfs_bpb.bps).AppendLine();
+            sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_sb.sectors, hpfs_sb.sectors * hpfs_bpb.bps).AppendLine();
+            //          sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_bpb.big_sectors, hpfs_bpb.big_sectors * hpfs_bpb.bps).AppendLine();
             sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", hpfs_bpb.drive_no).AppendLine();
-            //			sb.AppendFormat("NT Flags: 0x{0:X2}", hpfs_bpb.nt_flags).AppendLine();
+			sb.AppendFormat("NT Flags: 0x{0:X2}", hpfs_bpb.nt_flags).AppendLine();
             sb.AppendFormat("Signature: 0x{0:X2}", hpfs_bpb.signature).AppendLine();
             sb.AppendFormat("Serial number: 0x{0:X8}", hpfs_bpb.serial_no).AppendLine();
-            sb.AppendFormat("Volume label: {0}", hpfs_bpb.volume_label).AppendLine();
+            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfs_bpb.volume_label, CurrentEncoding)).AppendLine();
             //			sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
             DateTime last_chk = DateHandlers.UNIXToDateTime(hpfs_sb.last_chkdsk);
@@ -192,11 +146,13 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("HPFS version: {0}", hpfs_sb.version).AppendLine();
             sb.AppendFormat("Functional version: {0}", hpfs_sb.func_version).AppendLine();
             sb.AppendFormat("Sector of root directory FNode: {0}", hpfs_sb.root_fnode).AppendLine();
-            //			sb.AppendFormat("{0} sectors on volume", hpfs_sb.sectors).AppendLine();
             sb.AppendFormat("{0} sectors are marked bad", hpfs_sb.badblocks).AppendLine();
             sb.AppendFormat("Sector of free space bitmaps: {0}", hpfs_sb.bitmap_lsn).AppendLine();
             sb.AppendFormat("Sector of bad blocks list: {0}", hpfs_sb.badblock_lsn).AppendLine();
-            sb.AppendFormat("Date of last integrity check: {0}", last_chk).AppendLine();
+            if(hpfs_sb.last_chkdsk > 0)
+                sb.AppendFormat("Date of last integrity check: {0}", last_chk).AppendLine();
+            else
+                sb.AppendLine("Filesystem integrity has never been checked");
             if(hpfs_sb.last_optim > 0)
                 sb.AppendFormat("Date of last optimization {0}", last_optim).AppendLine();
             else
@@ -254,13 +210,25 @@ namespace DiscImageChef.Filesystems
                 sb.AppendLine("Unknown flag 0x80 on flags2 is active");
 
             xmlFSType = new Schemas.FileSystemType();
+
+            // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
+            if(hpfs_bpb.jump[0] == 0xEB && hpfs_bpb.jump[1] > 0x3C && hpfs_bpb.jump[1] < 0x80 && hpfs_bpb.signature2 == 0xAA55)
+            {
+                xmlFSType.Bootable = true;
+                SHA1Context sha1Ctx = new SHA1Context();
+                sha1Ctx.Init();
+                string bootChk = sha1Ctx.Data(hpfs_bpb.boot_code, out byte[] sha1_out);
+                sb.AppendLine("Volume is bootable");
+                sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
+            }
+
             xmlFSType.Dirty |= (hpfs_sp.flags1 & 0x01) == 0x01;
-            xmlFSType.Clusters = hpfs_bpb.big_sectors / hpfs_bpb.spc;
-            xmlFSType.ClusterSize = hpfs_bpb.bps * hpfs_bpb.spc;
+            xmlFSType.Clusters = hpfs_sb.sectors;
+            xmlFSType.ClusterSize = hpfs_bpb.bps;
             xmlFSType.Type = "HPFS";
-            xmlFSType.VolumeName = hpfs_bpb.volume_label;
+            xmlFSType.VolumeName = StringHandlers.CToString(hpfs_bpb.volume_label, CurrentEncoding);
             xmlFSType.VolumeSerial = string.Format("{0:X8}", hpfs_bpb.serial_no);
-            xmlFSType.SystemIdentifier = hpfs_bpb.OEMName;
+            xmlFSType.SystemIdentifier = StringHandlers.CToString(hpfs_bpb.oem_name);
 
             information = sb.ToString();
         }
@@ -268,14 +236,15 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// BIOS Parameter Block, at sector 0
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HPFS_BIOSParameterBlock
         {
             /// <summary>0x000, Jump to boot code</summary>
-            public byte jmp1;
-            /// <summary>0x001, ...;</summary>
-            public ushort jmp2;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] jump;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded</summary>
-            public string OEMName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] oem_name;
             /// <summary>0x00B, Bytes per sector</summary>
             public ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
@@ -309,14 +278,22 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x02B, Volume serial number</summary>
             public uint serial_no;
             /// <summary>0x02F, Volume label, 11 bytes, space-padded</summary>
-            public string volume_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+            public byte[] volume_label;
             /// <summary>0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")</summary>
-            public string fs_type;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] fs_type;
+            /// <summary>Boot code.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 448)]
+            public byte[] boot_code;
+            /// <summary>0x1FE, 0xAA55</summary>
+            public ushort signature2;
         }
 
         /// <summary>
         /// HPFS superblock at sector 16
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HPFS_SuperBlock
         {
             /// <summary>0x000, 0xF995E849</summary>
@@ -370,6 +347,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// HPFS spareblock at sector 17
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HPFS_SpareBlock
         {
             /// <summary>0x000, 0xF9911849</summary>
