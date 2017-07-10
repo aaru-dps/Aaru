@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "328343989312AE9F","FB98504073464C5C",
         };
 
         readonly string[] oemid = {
@@ -87,7 +87,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_apm", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsx_gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "D8C68470046E67BE","FD3CB598F3C6294A",
         };
 
         readonly string[] oemid = {

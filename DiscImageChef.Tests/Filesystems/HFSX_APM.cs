@@ -56,8 +56,8 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors = {
-            819200, 1228800, 819200, 1228800,
-            819200, 1228800,
+            819200, 1228800, 1638400, 1433600,
+            4194304, 1024000,
         };
 
         readonly uint[] sectorsize = {
@@ -66,8 +66,8 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            102390, 153590,102390, 153590,
-            102390, 153590,
+            102390, 153590, 204792, 179192,
+            491290, 127770,
         };
 
         readonly int[] clustersize = {
@@ -81,13 +81,13 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN","UNKNOWN",
+            "CC2D56884950D9AE","7AF1175D8EA7A072","BB4ABD7E7E2FF5AF","E2F212D815EF77B5",
+            "5A8C646A5D77EB16","258C51A750F6A485",
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ","10.0","HFSJ",
-            "10.0","HFSJ",
+            "10.0","HFSJ","10.0","10.0",
+            "HFSJ","10.0",
         };
 
         [Test]

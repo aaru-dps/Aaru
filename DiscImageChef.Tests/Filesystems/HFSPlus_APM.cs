@@ -50,9 +50,10 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class HFSPlus_APM
     {
+        // Missing Darwin 1.4.1
         readonly string[] testfiles = {
             "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz","darwin_1.3.1.vdi.lz","darwin_1.3.1_wrapped.vdi.lz",
-            "darwin_1.4.1.vdi.lz","darwin_1.4.1_wrapped.vdi.lz","darwin_6.0.2.vdi.lz","darwin_6.0.2_wrapped.vdi.lz",
+            "darwin_1.4.1_wrapped.vdi.lz","darwin_6.0.2.vdi.lz","darwin_6.0.2_wrapped.vdi.lz",
             "darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz","darwin_8.0.1_wrapped.vdi.lz","macos_8.1.vdi.lz",
             "macos_9.0.4.vdi.lz","macos_9.1.vdi.lz","macos_9.2.1.vdi.lz","macos_9.2.2.vdi.lz",
             "macosx_10.2.vdi.lz","macosx_10.3_journal.vdi.lz","macosx_10.3.vdi.lz","macosx_10.4_journal.vdi.lz",
@@ -61,7 +62,7 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly ulong[] sectors = {
             409600, 614400, 819200, 614400,
-            819200, 614400, 819200, 614400,
+            614400, 819200, 614400,
             1228800, 819200, 614400, 4194304,
             4194304, 4194304,4194304,4194304,
             4194304, 2097152, 4194304, 2097152,
@@ -70,7 +71,7 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly uint[] sectorsize = {
             512, 512, 512, 512,
-            512, 512, 512, 512,
+            512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
@@ -78,17 +79,17 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            51190, 76790, 51190, 76790,
-            51190, 76790, 51190, 76790,
-            51190, 76790, 51190, 76790,
-            51190, 76790, 51190, 76790,
-            51190, 76790, 51190, 76790,
-            51190,
+            51190, 76790, 102392, 76774,
+            76774, 102392, 76774,
+            153592, 102392, 76774, 524152,
+            524088, 524088, 524088, 524088,
+            524008, 261884, 491240, 261884,
+            491240,
         };
 
         readonly int[] clustersize = {
             4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
+            4096, 4096, 4096,
             4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096,
@@ -97,7 +98,7 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly string[] volumename = {
             null, null, null, null,
-            null, null, null, null,
+            null, null, null,
             null, null, null, null,
             null, null, null, null,
             null, null, null, null,
@@ -105,19 +106,19 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
-            "UNKNOWN",
+            "FA94762D086A18A9","33D4A309C8E7BD10",null,null,
+            null,null,null,
+            "4D5140EB8F14A385","0D592249833E2DC4","AA616146576BD9BC",null,
+            null,null,null,null,
+            "EFA132FFFAC1ADA6","009D570FFCF8F20B","17F6F33AB313EE32","AD5690C093F66FCF",
+            "A7D63854DF76DDE6",
         };
 
         readonly string[] oemid = {
-            "10.0","HFSJ","10.0","HFSJ",
-            "10.0","HFSJ","10.0","HFSJ",
-            "10.0","HFSJ","10.0","HFSJ",
-            "10.0","HFSJ","10.0","HFSJ",
+            "10.0","HFSJ","10.0","10.0",
+            "10.0","10.0","10.0",
+            "10.0","10.0","10.0","8.10",
+            "8.10","8.10","8.10","8.10",
             "10.0","HFSJ","10.0","HFSJ",
             "10.0",
         };

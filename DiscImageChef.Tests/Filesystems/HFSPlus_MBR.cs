@@ -47,62 +47,63 @@ using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
+    // Mising Darwin 6.0.2 wrapped
     [TestFixture]
     public class HFSPlus_MBR
     {
         readonly string[] testfiles = {
             "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
             "darwin_1.3.1.vdi.lz","darwin_1.3.1_wrapped.vdi.lz","darwin_1.4.1.vdi.lz","darwin_1.4.1_wrapped.vdi.lz",
-            "darwin_6.0.2.vdi.lz","darwin_6.0.2_wrapped.vdi.lz","darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
+            "darwin_6.0.2.vdi.lz","darwin_8.0.1_journal.vdi.lz","darwin_8.0.1.vdi.lz",
             "darwin_8.0.1_wrapped.vdi.lz",
         };
 
         readonly ulong[] sectors = {
             303104, 352256, 262144, 262144,
-            303104, 352256, 262144, 262144,
-            303104, 352256, 262144, 262144,
-            303104,
+            819200, 614400, 819200, 614400,
+            819200, 1228800, 819200,
+            614400,
         };
 
         readonly uint[] sectorsize = {
             512, 512, 512, 512,
             512, 512, 512, 512,
-            512, 512, 512, 512,
+            512, 512, 512,
             512, 
         };
 
         readonly long[] clusters = {
             37878, 44021, 32512, 32512,
-            37878, 44021, 32512, 32512,
-            37878, 44021, 32512, 32512,
-            37878,
+            102178, 76708, 102178, 76708,
+            102178, 153592, 102392,
+            76774,
         };
 
         readonly int[] clustersize = {
             4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096,
-            4096, 4096, 4096, 4096,
+            4096, 4096, 4096,
             4096,
         };
 
         readonly string[] volumename = {
             null, null, null, null,
             null, null, null, null,
-            null, null, null, null,
+            null, null, null,
             null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
-            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
-            "UNKNOWN","UNKNOWN","0000000000000000","0000000000000000",
-            "UNKNOWN",
+            "C84F550907D13F50","016599F88029F73D",null,null,
+            null,null,null,null,
+            null,"F92964F9B3F64ABB","A8FAC484A0A2B177",
+            "D5D5BF1346AD2B8D",
         };
 
         readonly string[] oemid = {
             "10.0","HFSJ","10.0","10.0",
-            "10.0","HFSJ","10.0","10.0",
-            "10.0","HFSJ","10.0","10.0",
+            "10.0","10.0","10.0","10.0",
+            "10.0","10.0","10.0",
             "10.0",
         };
 
