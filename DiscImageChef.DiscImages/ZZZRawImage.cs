@@ -652,10 +652,16 @@ namespace DiscImageChef.ImagePlugins
 							return MediaType.ACORN_525_SS_DD_80;
 						return MediaType.DOS_525_DS_DD_8;
                     case 368640:
+						if(extension == ".st")
+							return MediaType.DOS_35_SS_DD_9;
                         return MediaType.DOS_525_DS_DD_9;
                     case 409600:
-                        return MediaType.AppleSonySS;
-                    case 495872:
+						if(extension == ".st")
+							return MediaType.ATARI_35_SS_DD;
+						return MediaType.AppleSonySS;
+					case 450560:
+						return MediaType.ATARI_35_SS_DD_11;
+					case 495872:
                         return MediaType.IBM43FD_128;
                     case 512512:
                         return MediaType.ECMA_59;
@@ -670,11 +676,15 @@ namespace DiscImageChef.ImagePlugins
 							return MediaType.CBM_35_DD;
 						if(extension == ".adf" || extension == ".adl")
 							return MediaType.ACORN_35_DS_DD;
-                        return MediaType.AppleSonyDS;
+						if(extension == ".st")
+							return MediaType.ATARI_35_DS_DD;
+						return MediaType.AppleSonyDS;
                     case 839680:
                         return MediaType.FDFORMAT_35_DD;
                     case 901120:
-                        return MediaType.CBM_AMIGA_35_DD;
+						if(extension == ".st")
+							return MediaType.ATARI_35_DS_DD_11;
+						return MediaType.CBM_AMIGA_35_DD;
                     case 988416:
                         return MediaType.IBM43FD_256;
                     case 995072:
