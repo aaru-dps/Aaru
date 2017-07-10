@@ -139,6 +139,9 @@
     <Compile Include="Filesystems\UNIXBFS_RDB.cs" />
     <Compile Include="Filesystems\UNIXBFS_MBR.cs" />
     <Compile Include="Filesystems\ZFS.cs" />
+    <Compile Include="Devices\IomegaJaz.cs" />
+    <Compile Include="Devices\LS120.cs" />
+    <Compile Include="Devices\PocketZip.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -147,6 +150,7 @@
     <Folder Include="Checksums\" />
     <Folder Include="Filters\" />
     <Folder Include="Filesystems\" />
+    <Folder Include="Devices\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">

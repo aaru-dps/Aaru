@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : IomegaJaz.cs
+// Filename       : LS120.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -44,22 +44,22 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Devices
 {
     [TestFixture]
-    public class IomegaJaz
+    public class LS120
     {
         readonly string[] testfiles = {
-            "jaz1.bin.lz",
+            "ls120.bin.lz","mf2dd.bin.lz","mf2hd.bin.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.Jaz,
+            MediaType.LS120,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
-            2091050,
+            246528,1440,2880,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512,512,512
         };
 
         [Test]
@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Devices
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "devices", "jaz", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "devices", "ls120", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();

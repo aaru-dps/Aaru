@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : IomegaJaz.cs
+// Filename       : PocketZip.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -44,22 +44,22 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Devices
 {
     [TestFixture]
-    public class IomegaJaz
+    public class PocketZip
     {
         readonly string[] testfiles = {
-            "jaz1.bin.lz",
+            "clik!.bin.lz","pocketzip.bin.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.Jaz,
+            MediaType.PocketZip,MediaType.PocketZip,
         };
 
         readonly ulong[] sectors = {
-            2091050,
+            78882,78882,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512,512,
         };
 
         [Test]
@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Devices
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "devices", "jaz", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "devices", "pocketzip", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();

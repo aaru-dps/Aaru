@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : MFS.cs
+// Filename       : IomegaJaz.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -37,54 +37,29 @@
 // //$Id$
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filesystems
+namespace DiscImageChef.Tests.Devices
 {
     [TestFixture]
-    public class MFS
+    public class IomegaJaz
     {
         readonly string[] testfiles = {
-            "macos_0.1_mf1dd.img.lz","macos_0.5_mf1dd.img.lz","macos_1.1_mf1dd.img.lz","macos_2.0_mf1dd.img.lz",
-            "macos_6.0.7_mf1dd.img.lz",
+            "jaz1.bin.lz",
         };
 
         readonly MediaType[] mediatypes = {
-            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
-            MediaType.AppleSonySS
+            MediaType.Jaz,
         };
 
         readonly ulong[] sectors = {
-            800, 800, 800, 800,
-            800,
+            2091050,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512, 512,
-            512, 512, 512,
-        };
-
-        readonly long[] clusters = {
-            391, 391, 391, 391,
-            391,
-        };
-
-        readonly int[] clustersize = {
-            1024, 1024, 1024, 1024,
-            1024,
-        };
-
-        readonly string[] volumename = {
-            "Volume label","Volume label","Volume label","Volume label",
-            "Volume label",
-        };
-
-        readonly string[] volumeserial = {
-            null, null, null, null,
-            null, null, null,
+            512,
         };
 
         [Test]
@@ -92,7 +67,7 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "mfs", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "devices", "jaz", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new ZZZRawImage();
@@ -100,14 +75,6 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.AppleMFS.AppleMFS();
-                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
-                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
-                Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("MFS", fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
         }
     }
