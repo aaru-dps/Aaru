@@ -344,8 +344,14 @@ namespace DiscImageChef.CommonTypes
         ATARI_525_ED,
         /// <summary>5,25", SS, DD, 40 tracks, 18 spt, 256 bytes/sector, MFM</summary>
         ATARI_525_DD,
+        /// <summary>3,5", SS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        ATARI_35_SS_DD,
         /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
         ATARI_35_DS_DD,
+        /// <summary>3,5", SS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM</summary>
+        ATARI_35_SS_DD_11,
+        /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM</summary>
+        ATARI_35_DS_DD_11,
         #endregion Atari standard floppy formats
 
         #region Commodore standard floppy formats
