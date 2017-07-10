@@ -73,10 +73,10 @@ namespace DiscImageChef.Tests.Filesystems
             "drdos_8.00_mf2ed.img.lz", "drdos_8.00_mf2hd.img.lz", "drdos_8.00_ssdd.img.lz", "drdos_8.00_ssdd8.img.lz",
             // MS-DOS 3.30A
             "msdos_3.30A_dsdd.img.lz","msdos_3.30A_dsdd8.img.lz","msdos_3.30A_dshd.img.lz","msdos_3.30A_mf2dd.img.lz",
-            "msdos_3.30A_mf2ed.img.lz","msdos_3.30A_mf2hd.img.lz","msdos_3.30A_ssdd.img.lz","msdos_3.30A_ssdd8.img.lz",
+            "msdos_3.30A_mf2hd.img.lz","msdos_3.30A_ssdd.img.lz","msdos_3.30A_ssdd8.img.lz",
             // MS-DOS 3.31
             "msdos_3.31_dsdd.img.lz","msdos_3.31_dsdd8.img.lz","msdos_3.31_dshd.img.lz","msdos_3.31_mf2dd.img.lz",
-            "msdos_3.31_mf2ed.img.lz","msdos_3.31_mf2hd.img.lz","msdos_3.31_ssdd.img.lz","msdos_3.31_ssdd8.img.lz",
+            "msdos_3.31_mf2hd.img.lz","msdos_3.31_ssdd.img.lz","msdos_3.31_ssdd8.img.lz",
             // MS-DOS 4.01
             "msdos_4.01_dsdd.img.lz","msdos_4.01_dsdd8.img.lz","msdos_4.01_dshd.img.lz","msdos_4.01_mf2dd.img.lz",
             "msdos_4.01_mf2hd.img.lz","msdos_4.01_ssdd.img.lz","msdos_4.01_ssdd8.img.lz",
@@ -126,7 +126,7 @@ namespace DiscImageChef.Tests.Filesystems
             // MS-DOS 3.21 for Kaypro
             "msdos_kaypro_3.21_dsdd.img.lz","msdos_kaypro_3.21_dsdd8.img.lz","msdos_kaypro_3.21_dshd.img.lz",
             "msdos_kaypro_3.21_mf2dd.img.lz","msdos_kaypro_3.21_mf2hd.img.lz","msdos_kaypro_3.21_ssdd.img.lz",
-            //"msdos_kaypro_3.21_ssdd8.img.lz",
+            "msdos_kaypro_3.21_ssdd8.img.lz",
             // MS-DOS 3.10 for Olivetti
             "msdos_olivetti_3.10_dsdd.img.lz","msdos_olivetti_3.10_dshd.img.lz","msdos_olivetti_3.10_ssdd.img.lz",
             // MS-DOS 3.30 for Toshiba
@@ -279,10 +279,10 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
             // MS-DOS 3.30A
             MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
+            MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
             // MS-DOS 3.31
             MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_ED,MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
+            MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
             // MS-DOS 4.01
             MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_DS_DD_8,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_HD,MediaType.DOS_525_SS_DD_9,MediaType.DOS_525_SS_DD_8,
@@ -437,8 +437,8 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_35_HD,
             // Hatari
             // TODO: Incorrect media types
-            MediaType.DOS_35_SS_DD_9,MediaType.GENERIC_HDD,MediaType.GENERIC_HDD,
-            MediaType.DOS_35_DS_DD_9,MediaType.ATARI_35_DS_DD,MediaType.GENERIC_HDD,
+            MediaType.DOS_35_SS_DD_9,MediaType.ATARI_35_SS_DD,MediaType.ATARI_35_SS_DD_11,
+            MediaType.DOS_35_DS_DD_9,MediaType.ATARI_35_DS_DD,MediaType.ATARI_35_DS_DD_11,
             MediaType.DOS_35_ED,MediaType.DOS_35_HD,
             // Atari TOS 1.04
             MediaType.DOS_35_SS_DD_9,MediaType.DOS_35_DS_DD_9,
@@ -472,9 +472,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             720,640,2400,1440,5760,2880,360,320,
             // MS-DOS 3.30A
-            720,640,2400,1440,5760,2880,360,320,
+            720,640,2400,1440,2880,360,320,
             // MS-DOS 3.31
-            720,640,2400,1440,5760,2880,360,320,
+            720,640,2400,1440,2880,360,320,
             // MS-DOS 4.01
             720,640,2400,1440,2880,360,320,
             // MS-DOS 5.00
@@ -631,9 +631,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             512,512,512,512,512,512,512,512,
             // MS-DOS 3.30A
-            512,512,512,512,512,512,512,512,
+            512,512,512,512,512,512,512,
             // MS-DOS 3.31
-            512,512,512,512,512,512,512,512,
+            512,512,512,512,512,512,512,
             // MS-DOS 4.01
             512,512,512,512,512,512,512,
             // MS-DOS 5.00
@@ -790,9 +790,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             360,320,2400,720,2880,2880,360,320,
             // MS-DOS 3.30A
-            360,320,2400,720,5760,2880,360,320,
+            360,320,2400,720,2880,360,320,
             // MS-DOS 3.31
-            360,320,2400,720,5760,2880,360,320,
+            360,320,2400,720,2880,360,320,
             // MS-DOS 4.01
             360,320,2400,720,2880,360,320,
             // MS-DOS 5.00
@@ -949,9 +949,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             1024,1024,512,1024,1024,512,512,512,
             // MS-DOS 3.30A
-            1024,1024,512,1024,512,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 3.31
-            1024,1024,512,1024,512,512,512,512,
+            1024,1024,512,1024,512,512,512,
             // MS-DOS 4.01
             1024,1024,512,1024,512,512,512,
             // MS-DOS 5.00
@@ -1100,7 +1100,7 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 5.00
             null, null, null, null, null, null, null,
             // DR-DOS 6.00
-            null, null, null, null, null, null, null, null,
+            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             // DR-DOS 7.02
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // DR-DOS 7.03
@@ -1108,9 +1108,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // MS-DOS 3.30A
-            null, null, null, null, null, null, null,null,
+            null, null, null, null, null, null, null,
             // MS-DOS 3.31
-            null, null, null, null, null, null, null,null,
+            null, null, null, null, null, null,null,
             // MS-DOS 4.01
             "VOLUMELABEL",null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",null,
             // MS-DOS 5.00
@@ -1178,33 +1178,33 @@ namespace DiscImageChef.Tests.Filesystems
             // mkfs.vfat
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // mkfs.vfat for Atari
-            null,null,null,null,
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Microsoft OS/2 1.00 for Tandy
-            null,null,null,null,
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Microsoft OS/2 1.10 for AST
-            null,null,null,null,
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Microsoft OS/2 1.10 for Nokia
-            null,null,null,null,
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Microsoft OS/2 1.21
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Microsoft OS/2 1.30.1
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 1.20
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 1.30
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 2.00
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 2.10
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 2.11
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 Warp 3
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // OS/2 Warp 4
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // eComStation
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows 95
             null,"VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             "VOLUMELABEL","VOLUMELABEL",null,"VOLUMELABEL",
@@ -1226,26 +1226,26 @@ namespace DiscImageChef.Tests.Filesystems
             // Windows Me
             "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows NT 3.10
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows NT 3.50
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows NT 3.51
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows NT 4.00
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
-            "NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUMELABEL",
             // Windows 2000
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // Windows Vista
-            "NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ","NO NAME    ",
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
             // BeOS R4.5
-            "NO NAME    ",
+            "VOLUMELABEL",
             // Hatari
-            null,null,null,
-            null,null,null,
-            null,null,
+            "volumelabel","volumelabel","volumelabel",
+            "volumelabel","volumelabel","volumelabel",
+            "volumelabel","volumelabel",
             // Atari TOS 1.04
-            null,null,
+            "VOLUMELABEL","VOLUMELABEL",
             // NetBSD 1.6
             "VOLUMELABEL","VOLUMELABEL",
             // NeXTStep 3.3
@@ -1276,9 +1276,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             "1BFD1977","1BFD2D3F","1BFD3531","1BFC3231","1BFA1D58","1BFC117D","1BFE0971","1BFE1423",
             // MS-DOS 3.30A
-            null, null, null, null, null, null, null,null,
+            null, null, null, null, null, null, null,
             // MS-DOS 3.31
-            null, null, null, null, null, null, null,null,
+            null, null, null, null, null, null,null,
             // MS-DOS 4.01
             "122C190A",null,"2480190A","2D471909","0F5A1908","2F3D190A",null,
             // MS-DOS 5.00
@@ -1346,7 +1346,7 @@ namespace DiscImageChef.Tests.Filesystems
             // mkfs.vfat
             "20C279B1","20FD9501","2132D70A","2118F1AA",
             // mkfs.vfat for Atari
-            null,null,null,null,
+            "83E030","C53F06","A154CD","D54DEE",
             // Microsoft OS/2 1.00 for Tandy
             "9C170C15","9BFB0C15","9C13FC15","9BF99C15",
             // Microsoft OS/2 1.10 for AST
@@ -1409,11 +1409,11 @@ namespace DiscImageChef.Tests.Filesystems
             // BeOS R4.5
             "00000000",
             // Hatari
-            null,null,null,
-            null,null,null,
-            null,null,
+            "A82270","D08917","37AD91",
+            "1ED910","299DFE","94AE59",
+            "3A1757","C08249",
             // Atari TOS 1.04
-            null,null,
+            "2356F0","51C7A3",
             // NetBSD 1.6
             "EEB51A0C","CCFD1A06",
             // NeXTStep 3.3
@@ -1444,9 +1444,9 @@ namespace DiscImageChef.Tests.Filesystems
             // DR-DOS 8.00
             "DRDOS  7","DRDOS  7","DRDOS  7","DRDOS  7","DRDOS  7","DRDOS  7","DRDOS  7","DRDOS  7",
             // MS-DOS 3.30A
-            "MSDOS3.3",null,"MSDOS3.3","MSDOS3.3","MSDOS3.3","MSDOS3.3","MSDOS3.3",null,
+            "MSDOS3.3",null,"MSDOS3.3","MSDOS3.3","MSDOS3.3","MSDOS3.3",null,
             // MS-DOS 3.31
-            "IBM  3.3",null,"IBM  3.3","IBM  3.3","IBM  3.3","IBM  3.3","IBM  3.3",null,
+            "IBM  3.3",null,"IBM  3.3","IBM  3.3","IBM  3.3","IBM  3.3",null,
             // MS-DOS 4.01
             "MSDOS4.0",null,"MSDOS4.0","MSDOS4.0","MSDOS4.0","MSDOS4.0",null,
             // MS-DOS 5.00
@@ -1514,7 +1514,7 @@ namespace DiscImageChef.Tests.Filesystems
             // mkfs.vfat
             "mkfs.fat","mkfs.fat","mkfs.fat","mkfs.fat",
             // mkfs.vfat for Atari
-            null,null,null,null,
+            "mkdosf","mkdosf","mkdosf","mkdosf",
             // Microsoft OS/2 1.00 for Tandy
             "TAN 10.0","TAN 10.0","TAN 10.0","TAN 10.0",
             // Microsoft OS/2 1.10 for AST
@@ -1577,11 +1577,11 @@ namespace DiscImageChef.Tests.Filesystems
             // BeOS R4.5
             "BeOS    ",
             // Hatari
-            null,null,null,
-            null,null,null,
-            null,null,
+            "NNNNNN","NNNNNN","NNNNNN",
+            "NNNNNN","NNNNNN","NNNNNN",
+            "NNNNNN","NNNNNN",
             // Atari TOS 1.04
-            null,null,
+            "NNNNNN","NNNNNN",
             // NetBSD 1.6
             "BSD  4.4","BSD  4.4",
             // NeXTStep 3.3

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT16_APM.cs
+// Filename       : MFS.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,51 +35,56 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT16_Atari
+    public class MFS
     {
         readonly string[] testfiles = {
-            "tos_1.04.vdi.lz","tos_1.04_small.vdi.lz",
+            "macos_0.1_mf1dd.img.lz","macos_0.5_mf1dd.img.lz","macos_1.1_mf1dd.img.lz","macos_2.0_mf1dd.img.lz",
+            "macos_6.0.7_mf1dd.img.lz",
+        };
+
+        readonly MediaType[] mediatypes = {
+            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
+            MediaType.AppleSonySS
         };
 
         readonly ulong[] sectors = {
-            81920, 16384,
+            800, 800, 800, 800,
+            800,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512, 512, 512, 512,
+            512, 512, 512,
         };
 
         readonly long[] clusters = {
-            10239, 8191,
+            391, 391, 391, 391,
+            391,
         };
 
         readonly int[] clustersize = {
-            4096, 1024,
+            1024, 1024, 1024, 1024,
+            1024,
         };
 
         readonly string[] volumename = {
-            null, null,
+            "Volume label","Volume label","Volume label","Volume label",
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "BA9831", "2019E1",
-        };
-
-        readonly string[] oemid = {
-            null, null,
+            null, null, null, null,
+            null, null, null,
         };
 
         [Test]
@@ -87,34 +92,22 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_atari", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "mfs", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AtariPartitions();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.FAT();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
-                {
-                    if(partitions[j].PartitionType == "GEM" || partitions[j].PartitionType == "BGM")
-                    {
-                        part = j;
-                        break;
-                    }
-                }
-                Assert.AreNotEqual(-1, part, "Partition not found");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Filesystem fs = new DiscImageChef.Filesystems.AppleMFS.AppleMFS();
+                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
+                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("FAT16", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("MFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

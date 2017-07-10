@@ -48,38 +48,38 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class FAT16_Atari
+    public class FAT16_APM
     {
         readonly string[] testfiles = {
-            "tos_1.04.vdi.lz","tos_1.04_small.vdi.lz",
+            "macosx_10.11.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            16384, 81920,
+            1024000,
         };
 
         readonly uint[] sectorsize = {
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            16382, 81918,
+            63995,
         };
 
         readonly int[] clustersize = {
-            512, 512,
+            8192,
         };
 
         readonly string[] volumename = {
-            null, null,
+            "VOLUMELABEL",
         };
 
         readonly string[] volumeserial = {
-            null, null,
+            "063D1F09",
         };
 
         readonly string[] oemid = {
-            null, null,
+            "BSD  4.4",
         };
 
         [Test]
@@ -87,20 +87,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_atari", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_apm", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AtariPartitions();
+                PartPlugin parts = new AppleMap();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.FAT();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "GEM" || partitions[j].PartitionType == "BGM")
+                    if(partitions[j].PartitionType == "DOS_FAT_16")
                     {
                         part = j;
                         break;

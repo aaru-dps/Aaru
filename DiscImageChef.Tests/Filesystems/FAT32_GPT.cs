@@ -71,7 +71,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumename = {
-            null,
+            "VOLUMELABEL",
         };
 
         readonly string[] volumeserial = {
