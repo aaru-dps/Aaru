@@ -662,7 +662,7 @@ namespace DiscImageChef.Filesystems
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-                xmlFSType.Bootable |= (Fat32BPB.jump[0] == 0xE9 && Fat32BPB.jump[1] > 0x58 && Fat32BPB.jump[1] < 0x80 && Fat32BPB.boot_signature == 0xAA55);
+                xmlFSType.Bootable |= (Fat32BPB.jump[0] == 0xEB && Fat32BPB.jump[1] > 0x58 && Fat32BPB.jump[1] < 0x80 && Fat32BPB.boot_signature == 0xAA55);
 
                 sectors_per_real_sector = Fat32BPB.bps / imagePlugin.ImageInfo.sectorSize;
                 // First root directory sector
@@ -1003,7 +1003,7 @@ namespace DiscImageChef.Filesystems
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 if(xmlFSType.Bootable == false && fakeBPB.jump != null)
-                    xmlFSType.Bootable |= (fakeBPB.jump[0] == 0xE9 && fakeBPB.jump[1] > 0x58 && fakeBPB.jump[1] < 0x80 && fakeBPB.boot_signature == 0xAA55);
+                    xmlFSType.Bootable |= (fakeBPB.jump[0] == 0xEB && fakeBPB.jump[1] > 0x58 && fakeBPB.jump[1] < 0x80 && fakeBPB.boot_signature == 0xAA55);
 
                 sectors_per_real_sector = fakeBPB.bps / imagePlugin.ImageInfo.sectorSize;
                 // First root directory sector
