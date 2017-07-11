@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Filesystems
 {
@@ -97,136 +98,10 @@ namespace DiscImageChef.Filesystems
             }
 
             byte[] sb_sector = imagePlugin.ReadSectors(2 + partitionStart, sb_size_in_sectors);
-            supblk.inodes = BitConverter.ToUInt32(sb_sector, 0x000);
-            supblk.blocks = BitConverter.ToUInt32(sb_sector, 0x004);
-            supblk.reserved_blocks = BitConverter.ToUInt32(sb_sector, 0x008);
-            supblk.free_blocks = BitConverter.ToUInt32(sb_sector, 0x00C);
-            supblk.free_inodes = BitConverter.ToUInt32(sb_sector, 0x010);
-            supblk.first_block = BitConverter.ToUInt32(sb_sector, 0x014);
-            supblk.block_size = BitConverter.ToUInt32(sb_sector, 0x018);
-            supblk.frag_size = BitConverter.ToInt32(sb_sector, 0x01C);
-            supblk.blocks_per_grp = BitConverter.ToUInt32(sb_sector, 0x020);
-            supblk.flags_per_grp = BitConverter.ToUInt32(sb_sector, 0x024);
-            supblk.inodes_per_grp = BitConverter.ToUInt32(sb_sector, 0x028);
-            supblk.mount_t = BitConverter.ToUInt32(sb_sector, 0x02C);
-            supblk.write_t = BitConverter.ToUInt32(sb_sector, 0x030);
-            supblk.mount_c = BitConverter.ToUInt16(sb_sector, 0x034);
-            supblk.max_mount_c = BitConverter.ToInt16(sb_sector, 0x036);
-            supblk.magic = BitConverter.ToUInt16(sb_sector, 0x038);
-            supblk.state = BitConverter.ToUInt16(sb_sector, 0x03A);
-            supblk.err_behaviour = BitConverter.ToUInt16(sb_sector, 0x03C);
-            supblk.minor_revision = BitConverter.ToUInt16(sb_sector, 0x03E);
-            supblk.check_t = BitConverter.ToUInt32(sb_sector, 0x040);
-            supblk.check_inv = BitConverter.ToUInt32(sb_sector, 0x044);
-            // From 0.5a onward
-            supblk.creator_os = BitConverter.ToUInt32(sb_sector, 0x048);
-            supblk.revision = BitConverter.ToUInt32(sb_sector, 0x04C);
-            supblk.default_uid = BitConverter.ToUInt16(sb_sector, 0x050);
-            supblk.default_gid = BitConverter.ToUInt16(sb_sector, 0x052);
-            // From 0.5b onward
-            supblk.first_inode = BitConverter.ToUInt32(sb_sector, 0x054);
-            supblk.inode_size = BitConverter.ToUInt16(sb_sector, 0x058);
-            supblk.block_group_no = BitConverter.ToUInt16(sb_sector, 0x05A);
-            supblk.ftr_compat = BitConverter.ToUInt32(sb_sector, 0x05C);
-            supblk.ftr_incompat = BitConverter.ToUInt32(sb_sector, 0x060);
-            supblk.ftr_ro_compat = BitConverter.ToUInt32(sb_sector, 0x064);
-            // Volume UUID
-            Array.Copy(sb_sector, 0x068, guid_a, 0, 16);
-            guid_b[0] = guid_a[3];
-            guid_b[1] = guid_a[2];
-            guid_b[2] = guid_a[1];
-            guid_b[3] = guid_a[0];
-            guid_b[4] = guid_a[5];
-            guid_b[5] = guid_a[4];
-            guid_b[6] = guid_a[7];
-            guid_b[7] = guid_a[6];
-            guid_b[8] = guid_a[8];
-            guid_b[9] = guid_a[9];
-            guid_b[10] = guid_a[10];
-            guid_b[11] = guid_a[11];
-            guid_b[12] = guid_a[12];
-            guid_b[13] = guid_a[13];
-            guid_b[14] = guid_a[14];
-            guid_b[15] = guid_a[15];
-            supblk.uuid = new Guid(guid_b);
-            // End of volume UUID
-            forstrings = new byte[16];
-            Array.Copy(sb_sector, 0x078, forstrings, 0, 16);
-            supblk.volume_name = StringHandlers.CToString(forstrings, CurrentEncoding);
-            forstrings = new byte[64];
-            Array.Copy(sb_sector, 0x088, forstrings, 0, 64);
-            supblk.last_mount_dir = StringHandlers.CToString(forstrings, CurrentEncoding);
-            supblk.algo_usage_bmp = BitConverter.ToUInt32(sb_sector, 0x0C8);
-            supblk.prealloc_blks = sb_sector[0x0CC];
-            supblk.prealloc_dir_blks = sb_sector[0x0CD];
-            supblk.rsrvd_gdt_blocks = BitConverter.ToUInt16(sb_sector, 0x0CE);
-            // ext3
-            Array.Copy(sb_sector, 0x0D0, guid_a, 0, 16);
-            guid_b[0] = guid_a[3];
-            guid_b[1] = guid_a[2];
-            guid_b[2] = guid_a[1];
-            guid_b[3] = guid_a[0];
-            guid_b[4] = guid_a[5];
-            guid_b[5] = guid_a[4];
-            guid_b[6] = guid_a[7];
-            guid_b[7] = guid_a[6];
-            guid_b[8] = guid_a[8];
-            guid_b[9] = guid_a[9];
-            guid_b[10] = guid_a[10];
-            guid_b[11] = guid_a[11];
-            guid_b[12] = guid_a[12];
-            guid_b[13] = guid_a[13];
-            guid_b[14] = guid_a[14];
-            guid_b[15] = guid_a[15];
-            supblk.journal_uuid = new Guid(guid_b);
-            supblk.journal_inode = BitConverter.ToUInt32(sb_sector, 0x0E0);
-            supblk.journal_dev = BitConverter.ToUInt32(sb_sector, 0x0E4);
-            supblk.last_orphan = BitConverter.ToUInt32(sb_sector, 0x0E8);
-            supblk.hash_seed_1 = BitConverter.ToUInt32(sb_sector, 0x0EC);
-            supblk.hash_seed_2 = BitConverter.ToUInt32(sb_sector, 0x0F0);
-            supblk.hash_seed_3 = BitConverter.ToUInt32(sb_sector, 0x0F4);
-            supblk.hash_seed_4 = BitConverter.ToUInt32(sb_sector, 0x0F8);
-            supblk.hash_version = sb_sector[0x0FC];
-            supblk.jnl_backup_type = sb_sector[0x0FD];
-            supblk.desc_grp_size = BitConverter.ToUInt16(sb_sector, 0x0FE);
-            supblk.default_mnt_opts = BitConverter.ToUInt32(sb_sector, 0x100);
-            supblk.first_meta_bg = BitConverter.ToUInt32(sb_sector, 0x104);
-            // ext4
-            supblk.mkfs_t = BitConverter.ToUInt32(sb_sector, 0x108);
-            supblk.blocks_hi = BitConverter.ToUInt32(sb_sector, 0x14C);
-            supblk.reserved_blocks_hi = BitConverter.ToUInt32(sb_sector, 0x150);
-            supblk.free_blocks_hi = BitConverter.ToUInt32(sb_sector, 0x154);
-            supblk.min_inode_size = BitConverter.ToUInt16(sb_sector, 0x158);
-            supblk.rsv_inode_size = BitConverter.ToUInt16(sb_sector, 0x15A);
-            supblk.flags = BitConverter.ToUInt32(sb_sector, 0x15C);
-            supblk.raid_stride = BitConverter.ToUInt16(sb_sector, 0x160);
-            supblk.mmp_interval = BitConverter.ToUInt16(sb_sector, 0x162);
-            supblk.mmp_block = BitConverter.ToUInt64(sb_sector, 0x164);
-            supblk.raid_stripe_width = BitConverter.ToUInt32(sb_sector, 0x16C);
-            supblk.flex_bg_grp_size = sb_sector[0x170];
-            supblk.kbytes_written = BitConverter.ToUInt64(sb_sector, 0x174);
-            supblk.snapshot_inum = BitConverter.ToUInt32(sb_sector, 0x17C);
-            supblk.snapshot_id = BitConverter.ToUInt32(sb_sector, 0x180);
-            supblk.snapshot_blocks = BitConverter.ToUInt64(sb_sector, 0x184);
-            supblk.snapshot_list = BitConverter.ToUInt32(sb_sector, 0x18C);
-            supblk.error_count = BitConverter.ToUInt32(sb_sector, 0x190);
-            supblk.first_error_t = BitConverter.ToUInt32(sb_sector, 0x194);
-            supblk.first_error_inode = BitConverter.ToUInt32(sb_sector, 0x198);
-            supblk.first_error_block = BitConverter.ToUInt64(sb_sector, 0x19C);
-            forstrings = new byte[32];
-            Array.Copy(sb_sector, 0x1A0, forstrings, 0, 32);
-            supblk.first_error_func = StringHandlers.CToString(forstrings, CurrentEncoding);
-            supblk.first_error_line = BitConverter.ToUInt32(sb_sector, 0x1B0);
-            supblk.last_error_t = BitConverter.ToUInt32(sb_sector, 0x1B4);
-            supblk.last_error_inode = BitConverter.ToUInt32(sb_sector, 0x1B8);
-            supblk.last_error_line = BitConverter.ToUInt32(sb_sector, 0x1BC);
-            supblk.last_error_block = BitConverter.ToUInt64(sb_sector, 0x1C0);
-            forstrings = new byte[32];
-            Array.Copy(sb_sector, 0x1C8, forstrings, 0, 32);
-            supblk.last_error_func = StringHandlers.CToString(forstrings, CurrentEncoding);
-            forstrings = new byte[64];
-            Array.Copy(sb_sector, 0x1D8, forstrings, 0, 64);
-            supblk.mount_options = StringHandlers.CToString(forstrings, CurrentEncoding);
+            IntPtr sbPtr = Marshal.AllocHGlobal(512);
+            Marshal.Copy(sb_sector, 0, sbPtr, 512);
+            supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
+            Marshal.FreeHGlobal(sbPtr);
 
             xmlFSType = new Schemas.FileSystemType();
 
@@ -374,10 +249,10 @@ namespace DiscImageChef.Filesystems
                     sb.AppendFormat("Volume has been mounted {0} times of a maximum of {1} mounts before checking", supblk.mount_c, supblk.max_mount_c).AppendLine();
                 else
                     sb.AppendFormat("Volume has been mounted {0} times with no maximum no. of mounts before checking", supblk.mount_c).AppendLine();
-                if(supblk.last_mount_dir != "")
-                    sb.AppendFormat("Last mounted on: \"{0}\"", supblk.last_mount_dir).AppendLine();
-                if(supblk.mount_options != "")
-                    sb.AppendFormat("Last used mount options were: {0}", supblk.mount_options).AppendLine();
+                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, CurrentEncoding)))
+                    sb.AppendFormat("Last mounted on: \"{0}\"", StringHandlers.CToString(supblk.last_mount_dir, CurrentEncoding)).AppendLine();
+                if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, CurrentEncoding)))
+                    sb.AppendFormat("Last used mount options were: {0}", StringHandlers.CToString(supblk.mount_options, CurrentEncoding)).AppendLine();
             }
             else
             {
@@ -430,8 +305,11 @@ namespace DiscImageChef.Filesystems
                     break;
             }
 
-            if(supblk.volume_name != "")
-                sb.AppendFormat("Volume name: \"{0}\"", supblk.volume_name).AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, CurrentEncoding)))
+            {
+                sb.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(supblk.volume_name, CurrentEncoding)).AppendLine();
+                xmlFSType.VolumeName = StringHandlers.CToString(supblk.volume_name, CurrentEncoding);
+            }
 
             switch(supblk.err_behaviour)
             {
@@ -635,6 +513,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// ext2/3/4 superblock
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ext2FSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
@@ -652,7 +531,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x018, block size</summary>
             public uint block_size;
             /// <summary>0x01C, fragment size</summary>
-            public Int32 frag_size;
+            public int frag_size;
             /// <summary>0x020, blocks per group</summary>
             public uint blocks_per_grp;
             /// <summary>0x024, fragments per group</summary>
@@ -666,7 +545,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x034, mounts count</summary>
             public ushort mount_c;
             /// <summary>0x036, max mounts</summary>
-            public Int16 max_mount_c;
+            public short max_mount_c;
             /// <summary>0x038, (little endian)</summary>
             public ushort magic;
             /// <summary>0x03A, filesystem state</summary>
@@ -710,9 +589,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x068, 16 bytes, UUID</summary>
             public Guid uuid;
             /// <summary>0x078, 16 bytes, volume name</summary>
-            public string volume_name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] volume_name;
             /// <summary>0x088, 64 bytes, where last mounted</summary>
-            public string last_mount_dir;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] last_mount_dir;
             /// <summary>0x0C8, Usage bitmap algorithm, for compression</summary>
             public uint algo_usage_bmp;
             /// <summary>0x0CC, Block to try to preallocate</summary>
@@ -754,7 +635,11 @@ namespace DiscImageChef.Filesystems
             // Introduced with ext4, some can be ext3
             /// <summary>0x108, Filesystem creation time</summary>
             public uint mkfs_t;
-            // Follows 17 uint32 (68 bytes) of journal inode backup
+
+            /// <summary>Backup of the journal inode</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+            public uint[] jnl_blocks;
+
             // Following 3 fields are valid if EXT4_FEATURE_COMPAT_64BIT is set
             /// <summary>0x14C, High 32bits of blocks no.</summary>
             public uint blocks_hi;
@@ -778,11 +663,12 @@ namespace DiscImageChef.Filesystems
             public uint raid_stripe_width;
             /// <summary>0x170, FLEX_BG group size</summary>
             public byte flex_bg_grp_size;
-            /// <summary>0x171 Padding</summary>
-            public byte padding;
-            /// <summary>0x172 Padding</summary>
-            public ushort padding2;
-
+            /// <summary>0x171 Metadata checksum algorithm</summary>
+            public byte checksum_type;
+            /// <summary>0x172 Versioning level for encryption</summary>
+            public byte encryption_level;
+            /// <summary>0x173 Padding</summary>
+            public ushort padding;
             // Following are introduced with ext4
             /// <summary>0x174, Kibibytes written in volume lifetime</summary>
             public ulong kbytes_written;
@@ -805,7 +691,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x19C, block involved of first error</summary>
             public ulong first_error_block;
             /// <summary>0x1A0, 32 bytes, function where the error happened</summary>
-            public string first_error_func;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] first_error_func;
             /// <summary>0x1B0, line number where error happened</summary>
             public uint first_error_line;
             /// <summary>0x1B4, time of most recent error</summary>
@@ -817,11 +704,40 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x1C0, block involved of last error</summary>
             public ulong last_error_block;
             /// <summary>0x1C8, 32 bytes, function where the error happened</summary>
-            public string last_error_func;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] last_error_func;
             // End of optional error-handling features
 
             // 0x1D8, 64 bytes, last used mount options</summary>
-            public string mount_options;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] mount_options;
+
+            /// <summary>Inode for user quota</summary>
+            public uint usr_quota_inum;
+            /// <summary>Inode for group quota</summary>
+            public uint grp_quota_inum;
+            /// <summary>Overhead clusters in volume</summary>
+            public uint overhead_clusters;
+            /// <summary>Groups with sparse_super2 SBs</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public uint[] backup_bgs;
+            /// <summary>Encryption algorithms in use</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] encrypt_algos;
+            /// <summary>Salt used for string2key algorithm</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] encrypt_pw_salt;
+            /// <summary>Inode number of lost+found</summary>
+            public uint lpf_inum;
+            /// <summary>Inode number for tracking project quota</summary>
+            public uint prj_quota_inum;
+            /// <summary>crc32c(uuid) if csum_seed is set</summary>
+            public uint checksum_seed;
+            /// <summary>Reserved</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 98)]
+            public byte[] reserved;
+            /// <summary>crc32c(superblock)</summary>
+            public uint checksum;
         }
 
         // ext? filesystem states
