@@ -53,7 +53,7 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
         /// <param name="encoding">Encoding.</param>
-        public static string CToString(byte[] CString, Encoding encoding)
+        public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false)
         {
             if(CString == null)
                 return null;
@@ -63,7 +63,20 @@ namespace DiscImageChef
             for(int i = 0; i < CString.Length; i++)
             {
                 if(CString[i] == 0)
-                    break;
+                {
+                    if(twoBytes)
+                    {
+                        if((i + 1) < CString.Length && CString[i + 1] == 0)
+                        {
+                            len++;
+                            break;
+                        }
+  //                      if((i + 1) == CString.Length)
+//                            break;
+                    }
+                    else
+                        break;
+                }
 
                 len++;
             }
