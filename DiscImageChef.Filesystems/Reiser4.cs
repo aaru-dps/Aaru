@@ -131,7 +131,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
             sb.AppendFormat("Volume disk format: {0}", reiserSb.diskformat).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", reiserSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(reiserSb.label)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, CurrentEncoding)).AppendLine();
 
             information = sb.ToString();
 
@@ -139,7 +139,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Reiser 4 filesystem";
             xmlFSType.ClusterSize = reiserSb.blocksize;
             xmlFSType.Clusters = (long)(((partitionEnd - partitionStart) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
-            xmlFSType.VolumeName = CurrentEncoding.GetString(reiserSb.label);
+            xmlFSType.VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding);
             xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
         }
 

@@ -192,9 +192,9 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} segments", f2fsSb.segment_count).AppendLine();
             sb.AppendFormat("Root directory resides on inode {0}", f2fsSb.root_ino).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", f2fsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", Encoding.Unicode.GetString(f2fsSb.volume_name)).AppendLine();
-            sb.AppendFormat("Volume last mounted on kernel version: {0}", Encoding.ASCII.GetString(f2fsSb.version)).AppendLine();
-            sb.AppendFormat("Volume created on kernel version: {0}", Encoding.ASCII.GetString(f2fsSb.init_version)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).AppendLine();
+            sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version)).AppendLine();
+            sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version)).AppendLine();
 
             information = sb.ToString();
 
@@ -204,7 +204,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Clusters = (long)f2fsSb.block_count;
             xmlFSType.ClusterSize = 1 << (int)f2fsSb.log_blocksize;
             xmlFSType.DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version);
-            xmlFSType.VolumeName = Encoding.Unicode.GetString(f2fsSb.volume_name);
+            xmlFSType.VolumeName = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true);
             xmlFSType.VolumeSerial = f2fsSb.uuid.ToString();
         }
 
