@@ -727,6 +727,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.DOS_35_ED;
 					case 40387584:
 						return MediaType.PocketZip;
+					case 126222336:
+						return MediaType.LS120;
                     case 127923200:
                         return MediaType.ECMA_154;
 					case 201410560:
@@ -741,6 +743,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.ECMA_184_512;
                     case 654540800:
                         return MediaType.ECMA_184;
+					case 1070617600:
+						return MediaType.Jaz;
 					#region Commodore
 					case 174848:
 					case 175531:
