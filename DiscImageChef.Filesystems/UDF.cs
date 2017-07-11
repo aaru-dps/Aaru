@@ -408,16 +408,16 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).AppendLine();
             sbInformation.AppendFormat("Volume conforms to {0}", CurrentEncoding.GetString(lvd.domainIdentifier.identifier).TrimEnd(new char[] { '\u0000' })).AppendLine();
             sbInformation.AppendFormat("Volume was last written by: {0}", CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[]{ '\u0000' })).AppendLine();
-            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:D2} to be read", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
+            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
                                       Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10)).AppendLine();
-            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:D2} to be written to", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8), 10),
+            sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumWriteUDF & 0xFF00) >> 8), 10),
                           Convert.ToInt32(string.Format("{0}", lvidiu.minimumWriteUDF & 0xFF), 10)).AppendLine();
-            sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:D2}", Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8), 10),
+            sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}", Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8), 10),
                           Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10)).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = string.Format("UDF v{0}.{1:D2}", Convert.ToInt32(string.Format("{0}", (lvidiu.minimumReadUDF & 0xFF00) >> 8), 10),
-                                      Convert.ToInt32(string.Format("{0}", lvidiu.minimumReadUDF & 0xFF), 10));
+            xmlFSType.Type = string.Format("UDF v{0}.{1:X2}", Convert.ToInt32(string.Format("{0}", (lvidiu.maximumWriteUDF & 0xFF00) >> 8), 10),
+                                      Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
             xmlFSType.ApplicationIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
             xmlFSType.Clusters = (long)(((partitionEnd - partitionStart + 1) * imagePlugin.ImageInfo.sectorSize) / (ulong)xmlFSType.ClusterSize);
