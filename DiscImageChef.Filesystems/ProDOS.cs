@@ -234,7 +234,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFSType.ClusterSize = (int)((partitionEnd - partitionStart + 1) / (ulong)xmlFSType.Clusters);
+            xmlFSType.ClusterSize = (int)(((partitionEnd - partitionStart) + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 
             return;
