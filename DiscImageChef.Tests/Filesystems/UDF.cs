@@ -48,9 +48,9 @@ namespace DiscImageChef.Tests.Filesystems
     public class UDF
     {
         readonly string[] testfiles = {
-            "1.02/linux.vdi.lz", "1.02/macosx.vdi.lz", "1.50/linux.vdi.lz", "1.50/macosx.vdi.lz",
-            "2.00/linux.vdi.lz", "2.00/macosx.vdi.lz", "2.01/linux.vdi.lz", "2.01/macosx.vdi.lz",
-            "2.50/linux.vdi.lz", "2.50/macosx.vdi.lz", "2.60/macosx.vdi.lz", "1.50/solaris_7.vdi.lz",
+            "1.02/linux.vdi.lz", "1.02/macosx_10.11.vdi.lz", "1.50/linux.vdi.lz", "1.50/macosx_10.11.vdi.lz",
+            "2.00/linux.vdi.lz", "2.00/macosx_10.11.vdi.lz", "2.01/linux.vdi.lz", "2.01/macosx_10.11.vdi.lz",
+            "2.50/linux.vdi.lz", "2.50/macosx_10.11.vdi.lz", "2.60/macosx_10.11.vdi.lz", "1.50/solaris_7.vdi.lz",
             "1.50/solaris_9.vdi.lz", "2.01/netbsd_7.1.vdi.lz",
         };
 
@@ -85,7 +85,7 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] udfversion = {
             "UDF v1.02", "UDF v1.02", "UDF v1.50", "UDF v1.50",
             "UDF v2.00", "UDF v2.00", "UDF v2.01", "UDF v2.01",
-            "UDF v2.50", "UDF v2.50", "UDF v2.50", "UDF v1.50",
+            "UDF v2.50", "UDF v2.50", "UDF v2.60", "UDF v1.50",
             "UDF v1.50", "UDF v2.01",
         };
 
