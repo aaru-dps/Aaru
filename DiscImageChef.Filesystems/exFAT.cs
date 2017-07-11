@@ -143,7 +143,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
             xmlFSType.ClusterSize = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
-            xmlFSType.Clusters = (long)(vbr.sectors / (ulong)xmlFSType.ClusterSize);
+            xmlFSType.Clusters = vbr.clusterHeapLength;
             xmlFSType.Dirty = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
             xmlFSType.Type = "exFAT";
             xmlFSType.VolumeSerial = string.Format("{0:X8}", vbr.volumeSerial);
