@@ -81,8 +81,8 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "cf92398e-987d-4ae4-b753-0591a35913eb", "1615411b-1554-424b-95e6-1a247056a960", "05f3f8b2-0f77-47ad-abe4-f0484aa319e9",
-            "05ee2ae7-7b62-e711-a573-0800272a08ec", "f2562707-7c62-e711-a573-0800272a08ec",
+            "8e3992cf-7d98-e44a-b753-0591a35913eb", "1b411516-5415-4b42-95e6-1a247056a960", "b2f8f305-770f-ad47-abe4-f0484aa319e9",
+            "e72aee05-627b-11e7-a573-0800272a08ec", "072756f2-627c-11e7-a573-0800272a08ec",
         };
 
         readonly string[] extversion = {
