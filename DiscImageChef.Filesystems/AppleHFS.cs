@@ -262,9 +262,9 @@ namespace DiscImageChef.Filesystems
                 }
                 else
                 {
-                    if(BB.sec_sv_pages > 0)
+                    if(BB.boot_flags > 0)
                         sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if(BB.sec_sv_pages < 0)
+                    else if(BB.boot_flags < 0)
                         sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
                     sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(BB.system_name, CurrentEncoding)).AppendLine();
@@ -426,18 +426,17 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Should be sectors 0 and 1 in volume, followed by boot code
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HFS_BootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
             public ushort signature;
             /// <summary>0x002, Branch</summary>
             public uint branch;
-            /// <summary>0x006, Boot block flags</summary>
-            public byte boot_flags;
             /// <summary>0x007, Boot block version</summary>
-            public byte boot_version;
-            /// <summary>0x008, Allocate secondary buffers</summary>
-            public short sec_sv_pages;
+            public ushort boot_version;
+            /// <summary>0x006, Boot block flags</summary>
+            public short boot_flags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] system_name;
@@ -469,6 +468,12 @@ namespace DiscImageChef.Filesystems
             public uint heap_256k;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
             public uint heap_512k;
+            /// <summary>Padding</summary>
+            public ushort padding;
+            /// <summary>Additional system heap space</summary>
+            public uint heap_extra;
+            /// <summary>Fraction of RAM for system heap</summary>
+            public uint heap_fract;
         }
 
         public override Errno Mount()
