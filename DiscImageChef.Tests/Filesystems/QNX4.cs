@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_RDB.cs
+// Filename       : FAT16.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,51 +35,40 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UNIXBFS_RDB
+    public class QNX4
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            "qnx_4.24_dsdd.img.lz","qnx_4.24_dshd.img.lz","qnx_4.24_mf2dd.img.lz","qnx_4.24_mf2hd.img.lz",
+        };
+
+        readonly MediaType[] mediatypes = {
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            720, 2400, 1440, 2880,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512, 512, 512, 512,
         };
 
         readonly long[] clusters = {
-            65024,
+            720, 2400, 1440, 2880,
         };
 
         readonly int[] clustersize = {
-            2048,
-        };
-
-        readonly string[] volumename = {
-            null,
-        };
-
-        readonly string[] volumeserial = {
-            "UNKNOWN",
-        };
-
-        readonly string[] type = {
-            "UFS",
+            512, 512, 512, 512,
         };
 
         [Test]
@@ -87,33 +76,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "qnx4", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BFS();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
-                {
-                    if(partitions[j].PartitionType == "\"UNI\\0\"")
-                    {
-                        part = j;
-                        break;
-                    }
-                }
-                Assert.AreNotEqual(-1, part, "Partition not found");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Filesystem fs = new DiscImageChef.Filesystems.QNX4();
+                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
+                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual("QNX4 filesystem", fs.XmlFSType.Type, testfiles[i]);
             }
         }
     }

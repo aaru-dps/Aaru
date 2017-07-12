@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_RDB.cs
+// Filename       : Atheros_MBR.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,14 +48,14 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UNIXBFS_RDB
+    public class Atheos_MBR
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            "syllable_0.6.7.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            1572864,
         };
 
         readonly uint[] sectorsize = {
@@ -63,44 +63,42 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            65024,
+            786400,
         };
 
         readonly int[] clustersize = {
-            2048,
+            1024,
         };
 
         readonly string[] volumename = {
-            null,
+            "Volume label",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN",
-        };
-
-        readonly string[] type = {
-            "UFS",
+            null,
         };
 
         [Test]
         public void Test()
         {
+            throw new System.NotImplementedException("Atheos filesystem is not yet implemented");
+            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "atheos_mbr", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
+                PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BFS();
+                Filesystem fs = new DiscImageChef.Filesystems.Atheros();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\0\"")
+                    if(partitions[j].PartitionType == "0x2A")
                     {
                         part = j;
                         break;
@@ -111,10 +109,11 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Atheros", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
+            */
         }
     }
 }

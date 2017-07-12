@@ -251,6 +251,10 @@ namespace DiscImageChef.Tests.Filesystems
             "openstep_4.2_mf2dd.img.lz","openstep_4.2_mf2hd.img.lz",
             // Solaris 2.4
             "solaris_2.4_mf2dd.img.lz","solaris_2.4_mf2hd.img.lz",
+            // COHERENT UNIX 4.2.10
+            "coherentunix_4.2.10_dsdd.img.lz","coherentunix_4.2.10_dshd.img.lz","coherentunix_4.2.10_mf2dd.img.lz","coherentunix_4.2.10_mf2hd.img.lz",
+            // SCO OpenServer 5.0.7Hw
+            "scoopenserver_5.0.7hw_dshd.img.lz","scoopenserver_5.0.7hw_mf2dd.img.lz","scoopenserver_5.0.7hw_mf2hd.img.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -436,7 +440,6 @@ namespace DiscImageChef.Tests.Filesystems
             // BeOS R4.5
             MediaType.DOS_35_HD,
             // Hatari
-            // TODO: Incorrect media types
             MediaType.DOS_35_SS_DD_9,MediaType.ATARI_35_SS_DD,MediaType.ATARI_35_SS_DD_11,
             MediaType.DOS_35_DS_DD_9,MediaType.ATARI_35_DS_DD,MediaType.ATARI_35_DS_DD_11,
             MediaType.DOS_35_ED,MediaType.DOS_35_HD,
@@ -452,6 +455,10 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
             // Solaris 2.4
             MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // COHERENT UNIX 4.2.10
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
+            // SCO OpenServer 5.0.7Hw
+            MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
@@ -611,6 +618,10 @@ namespace DiscImageChef.Tests.Filesystems
             1440,2880,
             // Solaris 2.4
             1440,2880,
+            // COHERENT UNIX 4.2.10
+            720,2400,1440,2880,
+            // SCO OpenServer 5.0.7Hw
+            2400,1440,2880,
         };
 
         readonly uint[] sectorsize = {
@@ -770,6 +781,10 @@ namespace DiscImageChef.Tests.Filesystems
             512,512,
             // Solaris 2.4
             512,512,
+            // COHERENT UNIX 4.2.10
+            512,512,512,512,
+            // SCO OpenServer 5.0.7Hw
+            512,512,512,
         };
 
         readonly long[] clusters = {
@@ -929,6 +944,10 @@ namespace DiscImageChef.Tests.Filesystems
             720,2880,
             // Solaris 2.4
             720,2880,
+            // COHERENT UNIX 4.2.10
+            360,2400,720,2880,
+            // SCO OpenServer 5.0.7Hw
+            2400,1440,2880,
         };
 
         readonly int[] clustersize = {
@@ -1088,6 +1107,10 @@ namespace DiscImageChef.Tests.Filesystems
             1024,512,
             // Solaris 2.4
             1024,512,
+            // COHERENT UNIX 4.2.10
+            1024,512,1024,512,
+            // SCO OpenServer 5.0.7Hw
+            512,512,512,
         };
 
         readonly string[] volumename = {
@@ -1256,6 +1279,10 @@ namespace DiscImageChef.Tests.Filesystems
             null,null,
             // Solaris 2.4
             null,null,
+            // COHERENT UNIX 4.2.10
+            "VOLUMELABEL","VOLUMELABEL","VOLUMELABEL","VOLUMELABEL",
+            // SCO OpenServer 5.0.7Hw
+            null,null,null,
         };
 
         readonly string[] volumeserial = {
@@ -1424,6 +1451,10 @@ namespace DiscImageChef.Tests.Filesystems
             null,null,
             // Solaris 2.4
             null,null,
+            // COHERENT UNIX 4.2.10
+            null,null,null,null,
+            // SCO OpenServer 5.0.7Hw
+            null,null,null,
         };
 
         readonly string[] oemid = {
@@ -1592,6 +1623,10 @@ namespace DiscImageChef.Tests.Filesystems
             "NEXT    ","NEXT    ",
             // Solaris 2.4
             "MSDOS3.3","MSDOS3.3",
+            // COHERENT UNIX 4.2.10
+            "COHERENT","COHERENT","COHERENT","COHERENT",
+            // SCO OpenServer 5.0.7Hw
+            "SCO BOOT","SCO BOOT","SCO BOOT",
         };
 
         [Test]

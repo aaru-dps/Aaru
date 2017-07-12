@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_RDB.cs
+// Filename       : FAT16.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,51 +35,79 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UNIXBFS_RDB
+    public class FAT16
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            // MS-DOS 3.30A
+            "msdos_3.30A_mf2ed.img.lz",
+            // MS-DOS 3.31
+            "msdos_3.31_mf2ed.img.lz",
+        };
+
+        readonly MediaType[] mediatypes = {
+            // MS-DOS 3.30A
+            MediaType.DOS_35_ED,
+            // MS-DOS 3.31
+            MediaType.DOS_35_ED,
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            // MS-DOS 3.30A
+            5760,
+            // MS-DOS 3.31
+            5760,
         };
 
         readonly uint[] sectorsize = {
+            // MS-DOS 3.30A
+            512,
+            // MS-DOS 3.31
             512,
         };
 
         readonly long[] clusters = {
-            65024,
+            // MS-DOS 3.30A
+            5760,
+            // MS-DOS 3.31
+            5760,
         };
 
         readonly int[] clustersize = {
-            2048,
+            // MS-DOS 3.30A
+            512,
+            // MS-DOS 3.31
+            512,
         };
 
         readonly string[] volumename = {
+            // MS-DOS 3.30A
+            null,
+            // MS-DOS 3.31
             null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN",
+            // MS-DOS 3.30A
+            null,
+            // MS-DOS 3.31
+            null,
         };
 
-        readonly string[] type = {
-            "UFS",
+        readonly string[] oemid = {
+            // MS-DOS 3.30A
+            "MSDOS3.3",
+            // MS-DOS 3.31
+            "IBM  3.3",
         };
 
         [Test]
@@ -87,33 +115,23 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BFS();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
-                {
-                    if(partitions[j].PartitionType == "\"UNI\\0\"")
-                    {
-                        part = j;
-                        break;
-                    }
-                }
-                Assert.AreNotEqual(-1, part, "Partition not found");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Filesystem fs = new FAT();
+                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
+                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("FAT16", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
             }
         }
     }

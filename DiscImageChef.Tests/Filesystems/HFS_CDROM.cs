@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_RDB.cs
+// Filename       : HFS_CDROM.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,47 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UNIXBFS_RDB
+    public class HFS_CDROM
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            "toast_3.5.7_hfs_from_volume.iso.lz","toast_3.5.7_iso9660_hfs.iso.lz",
+            "toast_4.1.3_hfs_from_volume.iso.lz","toast_4.1.3_iso9660_hfs.iso.lz",
+            // TODO: These two expect the CD-ROM to return 512 bytes sectors, that is something DIC doesn't if the extension is .iso
+            "toast_3.5.7_hfs_from_files.bin.lz","toast_4.1.3_hfs_from_files.bin.lz",
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            942,1880,
+            943,1882,
+            6036,6116,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            2048,2048,
+            2048,2048,
+            512,512,
         };
 
         readonly long[] clusters = {
-            65024,
+            3724,931,
+            931,931,
+            249,249,
         };
 
         readonly int[] clustersize = {
-            2048,
+            512,2048,
+            2048,2048,
+            12288,12288,
         };
 
         readonly string[] volumename = {
-            null,
+            "Disk utils","Disk utils","Disk utils",
+            "Disk utils","Disk utils","Disk utils",
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN",
-        };
-
-        readonly string[] type = {
-            "UFS",
+            null,null,null,
+            null,null,null,
         };
 
         [Test]
@@ -87,20 +96,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "unixbfs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfs_cdrom", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
+                PartPlugin parts = new AppleMap();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.BFS();
+                Filesystem fs = new DiscImageChef.Filesystems.AppleHFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\0\"")
+                    if(partitions[j].PartitionType == "Apple_HFS")
                     {
                         part = j;
                         break;
@@ -111,7 +120,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(type[i], fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("HFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }

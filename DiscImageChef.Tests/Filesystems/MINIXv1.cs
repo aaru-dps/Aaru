@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : MINIX.cs
+// Filename       : FAT16.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -35,39 +35,40 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.DiscImages;
 using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class MINIX
+    public class MINIXv1
     {
         readonly string[] testfiles = {
-            "linux_v1.vdi.lz",
+            "minix_3.1.2a_dsdd.img.lz","minix_3.1.2a_dshd.img.lz","minix_3.1.2a_mf2dd.img.lz","minix_3.1.2a_mf2hd.img.lz",
+        };
+
+        readonly MediaType[] mediatypes = {
+            MediaType.DOS_525_DS_DD_9,MediaType.DOS_525_HD,MediaType.DOS_35_DS_DD_9,MediaType.DOS_35_HD,
         };
 
         readonly ulong[] sectors = {
-            262144,
+            720, 2400, 1440, 2880,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512, 512, 512, 512
         };
 
         readonly long[] clusters = {
-            130048,
+            360, 1200, 720, 1440,
         };
 
         readonly int[] clustersize = {
-            1024,
+            1024, 1024, 1024, 1024,
         };
 
         [Test]
@@ -75,31 +76,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "minix", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "minixv1", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.ImageInfo.mediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.MinixFS();
-                int part = -1;
-                for(int j = 0; j < partitions.Count; j++)
-                {
-                    if(partitions[j].PartitionType == "0x81")
-                    {
-                        part = j;
-                        break;
-                    }
-                }
-                Assert.AreNotEqual(-1, part, "Partition not found");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[part].PartitionStartSector, partitions[part].PartitionStartSector + partitions[part].PartitionSectors - 1, out string information);
+                Filesystem fs = new MinixFS();
+                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
+                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Minix V1", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("Minix v1", fs.XmlFSType.Type, testfiles[i]);
             }
         }
     }

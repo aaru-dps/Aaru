@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Filesystems
             "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz", "ufs1/freebsd_7.0.vdi.lz",
             "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz",
             "ufs1/solaris_7.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
-            "ufs2/netbsd_7.1.vdi.lz",
+            "ufs2/netbsd_7.1.vdi.lz", "ffs43/att_unix_svr4v2.1.vdi",
         };
 
         readonly ulong[] sectors = {
@@ -69,7 +69,7 @@ namespace DiscImageChef.Tests.Filesystems
             262144, 262144, 262144, 262144,
             262144, 262144, 262144, 262144,
             262144, 262144, 262144, 262144,
-            262144,
+            262144, 262144,
         };
 
         readonly uint[] sectorsize = {
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
             512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
-            512,
+            512, 512,
         };
 
         readonly long[] clusters = {
@@ -91,7 +91,7 @@ namespace DiscImageChef.Tests.Filesystems
             65024, 65018, 65024, 65018,
             65024, 65018, 65024, 65018,
             65024, 65018, 65024, 65018,
-            65024,
+            65024, 65024,
         };
 
         readonly int[] clustersize = {
@@ -102,7 +102,7 @@ namespace DiscImageChef.Tests.Filesystems
             2048, 2048, 2048, 2048,
             2048, 2048, 2048, 2048,
             2048, 2048, 2048, 2048,
-            2048,
+            2048, 2048,
         };
 
         readonly string[] volumename = {
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Filesystems
             "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label",
+            "Volume label", null,
         };
 
         readonly string[] volumeserial = {
@@ -124,7 +124,7 @@ namespace DiscImageChef.Tests.Filesystems
             "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
             "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
             "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN",
+            "UNKNOWN", null,
         };
 
         readonly string[] type = {
@@ -135,7 +135,7 @@ namespace DiscImageChef.Tests.Filesystems
             "UFS", "UFS", "UFS", "UFS",
             "UFS", "UFS", "UFS", "UFS",
             "UFS", "UFS2", "UFS2", "UFS2",
-            "UFS2",
+            "UFS2", "UFS",
         };
 
         [Test]
@@ -156,7 +156,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x83")
+                    if(partitions[j].PartitionType == "0x63" || partitions[j].PartitionType == "0xA8" || partitions[j].PartitionType == "0xA5" || partitions[j].PartitionType == "0xA9")
                     {
                         part = j;
                         break;

@@ -98,7 +98,7 @@
     <Compile Include="Filesystems\FAT12_GPT.cs" />
     <Compile Include="Filesystems\HFS_MBR.cs" />
     <Compile Include="Filesystems\JFS2.cs" />
-    <Compile Include="Filesystems\MINIX.cs" />
+    <Compile Include="Filesystems\MINIXv1_MBR.cs" />
     <Compile Include="Filesystems\NILFS2.cs" />
     <Compile Include="Filesystems\Reiser3.cs" />
     <Compile Include="Filesystems\Reiser4.cs" />
@@ -142,6 +142,17 @@
     <Compile Include="Devices\IomegaJaz.cs" />
     <Compile Include="Devices\LS120.cs" />
     <Compile Include="Devices\PocketZip.cs" />
+    <Compile Include="Filesystems\Atheos_MBR.cs" />
+    <Compile Include="Filesystems\FAT16.cs" />
+    <Compile Include="Filesystems\HFS_CDROM.cs" />
+    <Compile Include="Filesystems\MINIXv2_MBR.cs" />
+    <Compile Include="Filesystems\MINIXv3_MBR.cs" />
+    <Compile Include="Filesystems\MINIXv1.cs" />
+    <Compile Include="Filesystems\MINIXv3.cs" />
+    <Compile Include="Filesystems\MINIXv2.cs" />
+    <Compile Include="Filesystems\QNX4.cs" />
+    <Compile Include="Filesystems\QNX4_MBR.cs" />
+    <Compile Include="Filesystems\XFS_MBR.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
