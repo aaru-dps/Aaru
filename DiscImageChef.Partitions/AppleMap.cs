@@ -34,7 +34,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using DiscImageChef.Console;
-
+using System.Runtime.InteropServices;
 
 namespace DiscImageChef.PartPlugins
 {
@@ -42,12 +42,14 @@ namespace DiscImageChef.PartPlugins
     // Constants from image testing
     public class AppleMap : PartPlugin
     {
-        // "ER"
-        const ushort APM_MAGIC = 0x4552;
-        // "PM"
-        const ushort APM_ENTRY = 0x504D;
-        // "TS", old entry magic
-        const ushort APM_OLDENT = 0x5453;
+        /// <summary>"ER", driver descriptor magic</summary>
+        const ushort DDM_MAGIC = 0x4552;
+        /// <summary>"PM", new entry magic</summary>
+        const ushort APM_MAGIC = 0x504D;
+        /// <summary>"TS", old map magic</summary>
+        const ushort APM_MAGIC_OLD = 0x5453;
+        /// <summary>Old indicator for HFS partition, "TFS1"</summary>
+        const uint HFS_MAGIC_OLD = 0x54465331;
 
         public AppleMap()
         {
@@ -57,7 +59,6 @@ namespace DiscImageChef.PartPlugins
 
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
-            ulong apm_entries;
             uint sector_size;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
@@ -67,249 +68,378 @@ namespace DiscImageChef.PartPlugins
 
             partitions = new List<CommonTypes.Partition>();
 
-            AppleMapBootEntry APMB = new AppleMapBootEntry();
-            AppleMapPartitionEntry APMEntry;
+            byte[] ddm_sector = imagePlugin.ReadSector(0);
+            AppleDriverDescriptorMap ddm;
 
-            byte[] APMB_sector = imagePlugin.ReadSector(0);
+            ushort max_drivers = 61;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            APMB.signature = BigEndianBitConverter.ToUInt16(APMB_sector, 0x00);
-            APMB.sector_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x02);
-            APMB.sectors = BigEndianBitConverter.ToUInt32(APMB_sector, 0x04);
-            APMB.reserved1 = BigEndianBitConverter.ToUInt16(APMB_sector, 0x08);
-            APMB.reserved2 = BigEndianBitConverter.ToUInt16(APMB_sector, 0x0A);
-            APMB.reserved3 = BigEndianBitConverter.ToUInt32(APMB_sector, 0x0C);
-            APMB.driver_entries = BigEndianBitConverter.ToUInt16(APMB_sector, 0x10);
-            APMB.first_driver_blk = BigEndianBitConverter.ToUInt32(APMB_sector, 0x12);
-            APMB.driver_size = BigEndianBitConverter.ToUInt16(APMB_sector, 0x16);
-            APMB.operating_system = BigEndianBitConverter.ToUInt16(APMB_sector, 0x18);
-
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.signature = {0:X4}", APMB.signature);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.sector_size = {0}", APMB.sector_size);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.sectors = {0}", APMB.sectors);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved1 = {0:X4}", APMB.reserved1);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved2 = {0:X4}", APMB.reserved2);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.reserved3 = {0:X8}", APMB.reserved3);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.driver_entries = {0}", APMB.driver_entries);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.first_driver_blk = {0}", APMB.first_driver_blk);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.driver_size = {0}", APMB.driver_size);
-            DicConsole.DebugWriteLine("Apple Partition Map plugin", "APMB.operating_system = {0}", APMB.operating_system);
-
-            ulong first_sector = 0;
-
-            if(APMB.signature == APM_MAGIC) // APM boot block found, APM starts in next sector
-                first_sector = 1;
-
-            // Read first entry
-            byte[] APMEntry_sector;
-            bool APMFromHDDOnCD = false;
-
-            if(sector_size == 2048)
+            if(sector_size == 256)
             {
-                APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector);
-                APMEntry = DecodeAPMEntry(APMEntry_sector);
+                byte[] tmp = new byte[512];
+                Array.Copy(ddm_sector, 0, tmp, 0, 256);
+                ddm_sector = tmp;
+                max_drivers = 29;
+            }
+            else if(sector_size < 256)
+                return false;
+            
+            ddm = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddm_sector);
 
-                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT)
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}", ddm.sbSig);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}", ddm.sbBlocks);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}", ddm.sbDevType);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}", ddm.sbDevId);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
+
+            if(ddm.sbSig != DDM_MAGIC)
+                return false;
+
+            uint sequence = 0;
+
+            if(ddm.sbDrvrCount < max_drivers)
+            {
+                ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
+                for(int i = 0; i < ddm.sbDrvrCount; i++)
                 {
-                    sector_size = 512;
-                    APMFromHDDOnCD = true;
-                    DicConsole.DebugWriteLine("Apple Partition Map plugin", "PM sector size is 512 bytes, but device's 2048");
+                    byte[] tmp = new byte[8];
+                    Array.Copy(ddm_sector, 18 + i * 8, tmp, 0, 8);
+                    ddm.sbMap[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock, i);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
+
+                    CommonTypes.Partition part = new CommonTypes.Partition()
+                    {
+                        PartitionLength = (ulong)(ddm.sbMap[i].ddSize * 512),
+                        PartitionSectors = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
+                        PartitionSequence = sequence,
+                        PartitionStart = ddm.sbMap[i].ddBlock * sector_size,
+                        PartitionStartSector = ddm.sbMap[i].ddBlock,
+                        PartitionType = "Apple_Driver"
+                    };
+
+                    partitions.Add(part);
+
+                    sequence++;
+                }
+            }
+
+            byte[] part_sector = imagePlugin.ReadSector(1);
+            AppleOldDevicePartitionMap old_map = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(part_sector);
+
+            // This is the easy one, no sector size mixing
+            if(old_map.pdSig == APM_MAGIC_OLD)
+            {
+                for(int i = 2; i < part_sector.Length; i+=12)
+                {
+                    byte[] tmp = new byte[12];
+                    Array.Copy(part_sector, i, tmp, 0, 12);
+                    AppleMapOldPartitionEntry old_entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", old_entry.pdStart, (i - 2) / 12);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", old_entry.pdSize, (i - 2) / 12);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}", old_entry.pdFSID, (i - 2) / 12);
+
+                    if(old_entry.pdSize == 0 && old_entry.pdFSID == 0)
+                    {
+                        if(old_entry.pdStart == 0)
+                            break;
+                        continue;
+                    }
+
+                    CommonTypes.Partition part = new CommonTypes.Partition
+                    {
+                        PartitionLength = old_entry.pdStart * ddm.sbBlockSize,
+                        PartitionSectors = (old_entry.pdStart * ddm.sbBlockSize) / sector_size,
+                        PartitionSequence = sequence,
+                        PartitionStart = old_entry.pdSize * ddm.sbBlockSize,
+                        PartitionStartSector = (old_entry.pdSize * ddm.sbBlockSize) / sector_size,
+                    };
+
+                    if(old_entry.pdFSID == HFS_MAGIC_OLD)
+                        part.PartitionType = "Apple_HFS";
+                    else
+                        part.PartitionType = string.Format("0x{0:X8}", old_entry.pdFSID);
+
+                    partitions.Add(part);
+
+                    sequence++;
+                }
+
+                return true;
+            }
+
+            AppleMapPartitionEntry entry;
+            uint entry_size;
+            uint entry_count;
+            uint sectors_to_read;
+            uint skip_ddm;
+
+            // If sector is bigger than 512
+            if(sector_size > 512)
+            {
+                byte[] tmp = new byte[512];
+                Array.Copy(ddm_sector, 512, tmp, 0, 512); 
+                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
+                // Check for a partition entry that's 512-byte aligned
+                if(entry.signature == APM_MAGIC)
+                {
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
+                    entry_size = 512;
+                    entry_count = entry.entries;
+                    skip_ddm = 512;
+                    sectors_to_read = (((entry_count + 1) * 512) / sector_size) + 1;
                 }
                 else
                 {
-                    APMEntry_sector = imagePlugin.ReadSector(first_sector);
-                    APMEntry = DecodeAPMEntry(APMEntry_sector);
-
-                    if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
-                        return false;
+                    entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(part_sector);
+                    if(entry.signature == APM_MAGIC)
+                    {
+                        DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                        entry_size = sector_size;
+                        entry_count = entry.entries;
+                        skip_ddm = sector_size;
+                        sectors_to_read = entry_count + 2;
+                    }
+                    else
+                        return true;
                 }
             }
             else
             {
-                APMEntry_sector = imagePlugin.ReadSector(first_sector);
-                APMEntry = DecodeAPMEntry(APMEntry_sector);
-
-                if(APMEntry.signature != APM_ENTRY && APMEntry.signature != APM_OLDENT)
-                    return false;
-            }
-
-            if(APMEntry.entries <= 1)
-                return false;
-
-            apm_entries = APMEntry.entries;
-
-            for(ulong i = 0; i < apm_entries; i++) // For each partition
-            {
-                if(APMFromHDDOnCD)
+                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(part_sector);
+                if(entry.signature == APM_MAGIC)
                 {
-                    return false;
-                    // TODO This needs several retesting
-                    // APMEntry_sector = Read2048SectorAs512(imagePlugin, first_sector + i);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                    entry_size = sector_size;
+                    entry_count = entry.entries;
+                    skip_ddm = sector_size;
+                    sectors_to_read = entry_count + 2;
                 }
                 else
-                    APMEntry_sector = imagePlugin.ReadSector(first_sector + i);
+                    return true;
+            }
 
-                APMEntry = DecodeAPMEntry(APMEntry_sector);
+            byte[] entries = imagePlugin.ReadSectors(0, sectors_to_read);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entry_size);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entry_count);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skip_ddm);
+            DicConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectors_to_read);
 
-                if(APMEntry.signature == APM_ENTRY || APMEntry.signature == APM_OLDENT) // It should have partition entry signature
+            byte[] copy = new byte[entries.Length - skip_ddm];
+            Array.Copy(entries, skip_ddm, copy, 0, copy.Length);
+            entries = copy;
+
+            for(int i = 0; i < entry_count; i++)
+            {
+                byte[] tmp = new byte[entry_size];
+                Array.Copy(entries, i * entry_size, tmp, 0, entry_size);
+                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
+                if(entry.signature == APM_MAGIC)
                 {
-                    CommonTypes.Partition _partition = new CommonTypes.Partition();
-                    StringBuilder sb = new StringBuilder();
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}", i, entry.entries);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}", i, entry.start);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}", i, entry.sectors);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i, StringHandlers.CToString(entry.name));
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i, StringHandlers.CToString(entry.type));
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i, entry.first_data_block);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i, (AppleMapFlags)entry.flags);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i, entry.first_boot_block);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i, entry.load_address);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i, entry.load_address2);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i, entry.entry_point2);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
+                    DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i, StringHandlers.CToString(entry.processor));
 
-                    _partition.PartitionSequence = i;
-                    _partition.PartitionType = APMEntry.type;
-                    _partition.PartitionName = APMEntry.name;
-                    _partition.PartitionStart = APMEntry.start * sector_size;
-                    _partition.PartitionLength = APMEntry.sectors * sector_size;
-                    _partition.PartitionStartSector = APMEntry.start;
-                    _partition.PartitionSectors = APMEntry.sectors;
+                    AppleMapFlags flags = (AppleMapFlags)entry.flags;
 
-                    sb.AppendLine("Partition flags:");
-                    if((APMEntry.status & 0x01) == 0x01)
-                        sb.AppendLine("Partition is valid.");
-                    if((APMEntry.status & 0x02) == 0x02)
-                        sb.AppendLine("Partition entry is not available.");
-                    if((APMEntry.status & 0x04) == 0x04)
-                        sb.AppendLine("Partition is mounted.");
-                    if((APMEntry.status & 0x08) == 0x08)
-                        sb.AppendLine("Partition is bootable.");
-                    if((APMEntry.status & 0x10) == 0x10)
-                        sb.AppendLine("Partition is readable.");
-                    if((APMEntry.status & 0x20) == 0x20)
-                        sb.AppendLine("Partition is writable.");
-                    if((APMEntry.status & 0x40) == 0x40)
-                        sb.AppendLine("Partition's boot code is position independent.");
-
-                    if((APMEntry.status & 0x08) == 0x08)
+                    // BeOS doesn't mark its partitions as valid
+                    //if(flags.HasFlag(AppleMapFlags.Valid) &&
+                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0)
                     {
-                        sb.AppendFormat("First boot sector: {0}", APMEntry.first_boot_block).AppendLine();
-                        sb.AppendFormat("Boot is {0} bytes.", APMEntry.boot_size).AppendLine();
-                        sb.AppendFormat("Boot load address: 0x{0:X8}", APMEntry.load_address).AppendLine();
-                        sb.AppendFormat("Boot entry point: 0x{0:X8}", APMEntry.entry_point).AppendLine();
-                        sb.AppendFormat("Boot code checksum: 0x{0:X8}", APMEntry.checksum).AppendLine();
-                        sb.AppendFormat("Processor: {0}", APMEntry.processor).AppendLine();
+                        StringBuilder sb = new StringBuilder();
+
+                        CommonTypes.Partition _partition = new CommonTypes.Partition
+                        {
+                            PartitionSequence = sequence,
+                            PartitionType = StringHandlers.CToString(entry.type),
+                            PartitionName = StringHandlers.CToString(entry.name),
+                            PartitionStart = entry.start * entry_size,
+                            PartitionLength = entry.sectors * entry_size,
+                            PartitionStartSector = (entry.start * entry_size) / sector_size,
+                            PartitionSectors = (entry.sectors * entry_size) / sector_size
+                        };
+                        sb.AppendLine("Partition flags:");
+                        if(flags.HasFlag(AppleMapFlags.Valid))
+                            sb.AppendLine("Partition is valid.");
+                        if(flags.HasFlag(AppleMapFlags.Allocated))
+                            sb.AppendLine("Partition entry is allocated.");
+                        if(flags.HasFlag(AppleMapFlags.InUse))
+                            sb.AppendLine("Partition is in use.");
+                        if(flags.HasFlag(AppleMapFlags.Bootable))
+                            sb.AppendLine("Partition is bootable.");
+                        if(flags.HasFlag(AppleMapFlags.Readable))
+                            sb.AppendLine("Partition is readable.");
+                        if(flags.HasFlag(AppleMapFlags.Writable))
+                            sb.AppendLine("Partition is writable.");
+
+                        if(flags.HasFlag(AppleMapFlags.Bootable))
+                        {
+                            sb.AppendFormat("First boot sector: {0}", (entry.first_boot_block * entry_size) / sector_size).AppendLine();
+                            sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
+                            sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
+                            sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
+                            sb.AppendFormat("Boot code checksum: 0x{0:X8}", entry.checksum).AppendLine();
+                            sb.AppendFormat("Processor: {0}", StringHandlers.CToString(entry.processor)).AppendLine();
+
+                            if(flags.HasFlag(AppleMapFlags.PicCode))
+                                sb.AppendLine("Partition's boot code is position independent.");
+                        }
+
+                        _partition.PartitionDescription = sb.ToString();
+                        partitions.Add(_partition);
                     }
-
-                    _partition.PartitionDescription = sb.ToString();
-
-                    if((APMEntry.status & 0x01) == 0x01)
-                        if(APMEntry.type != "Apple_partition_map")
-                            partitions.Add(_partition);
                 }
             }
 
             return true;
         }
 
-        static byte[] Read2048SectorAs512(ImagePlugins.ImagePlugin imagePlugin, ulong LBA)
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct AppleDriverDescriptorMap
         {
-            ulong LBA2k = LBA / 4;
-            int Remainder = (int)(LBA % 4);
-
-            byte[] buffer = imagePlugin.ReadSector(LBA2k);
-            byte[] sector = new byte[512];
-
-            Array.Copy(buffer, Remainder * 512, sector, 0, 512);
-
-            return sector;
+            /// <summary>Signature <see cref="DDM_MAGIC"/></summary>
+            public ushort sbSig;
+            /// <summary>Byter per sector</summary>
+            public ushort sbBlockSize;
+            /// <summary>Sectors of the disk</summary>
+            public uint sbBlocks;
+            /// <summary>Device type</summary>
+            public ushort sbDevType;
+            /// <summary>Device ID</summary>
+            public ushort sbDevId;
+            /// <summary>Reserved</summary>
+            public uint sbData;
+            /// <summary>Number of entries of the driver descriptor</summary>
+            public ushort sbDrvrCount;
+            /// <summary>Entries of the driver descriptor</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 61)]
+            public AppleDriverEntry[] sbMap;
         }
 
-        static AppleMapPartitionEntry DecodeAPMEntry(byte[] APMEntry_sector)
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct AppleDriverEntry
         {
-            AppleMapPartitionEntry APMEntry = new AppleMapPartitionEntry();
-            byte[] cString;
-
-            APMEntry.signature = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x00);
-            APMEntry.reserved1 = BigEndianBitConverter.ToUInt16(APMEntry_sector, 0x02);
-            APMEntry.entries = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x04);
-            APMEntry.start = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x08);
-            APMEntry.sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x0C);
-            cString = new byte[32];
-            Array.Copy(APMEntry_sector, 0x10, cString, 0, 32);
-            APMEntry.name = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
-            cString = new byte[32];
-            Array.Copy(APMEntry_sector, 0x30, cString, 0, 32);
-            APMEntry.type = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
-            APMEntry.first_data_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x50);
-            APMEntry.data_sectors = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x54);
-            APMEntry.status = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x58);
-            APMEntry.first_boot_block = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x5C);
-            APMEntry.boot_size = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x60);
-            APMEntry.load_address = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x64);
-            APMEntry.reserved2 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x68);
-            APMEntry.entry_point = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x6C);
-            APMEntry.reserved3 = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x70);
-            APMEntry.checksum = BigEndianBitConverter.ToUInt32(APMEntry_sector, 0x74);
-            cString = new byte[16];
-            Array.Copy(APMEntry_sector, 0x78, cString, 0, 16);
-            APMEntry.processor = StringHandlers.CToString(cString, Encoding.GetEncoding("macintosh"));
-
-            return APMEntry;
+            /// <summary>First sector of the driver</summary>
+            public uint ddBlock;
+            /// <summary>Size in 512bytes sectors of the driver</summary>
+            public ushort ddSize;
+            /// <summary>Operating system (MacOS = 1)</summary>
+            public ushort ddType;
         }
 
-        public struct AppleMapBootEntry
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct AppleOldDevicePartitionMap
         {
-            // Signature ("ER")
-            public ushort signature;
-            // Byter per sector
-            public ushort sector_size;
-            // Sectors of the disk
-            public uint sectors;
-            // Reserved
-            public ushort reserved1;
-            // Reserved
-            public ushort reserved2;
-            // Reserved
-            public uint reserved3;
-            // Number of entries of the driver descriptor
-            public ushort driver_entries;
-            // First sector of the driver
-            public uint first_driver_blk;
-            // Size in 512bytes sectors of the driver
-            public ushort driver_size;
-            // Operating system (MacOS = 1)
-            public ushort operating_system;
+            /// <summary>Signature <see cref="APM_MAGIC_OLD"/></summary>
+            public ushort pdSig;
+            /// <summary>Entries of the driver descriptor</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
+            public AppleMapOldPartitionEntry[] pdMap;
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct AppleMapOldPartitionEntry
+        {
+            /// <summary>First sector of the partition</summary>
+            public uint pdStart;
+            /// <summary>Number of sectors of the partition</summary>
+            public uint pdSize;
+            /// <summary>Partition type</summary>
+            public uint pdFSID;
+        }
+
+        [Flags]
+        public enum AppleMapFlags : uint
+        {
+            /// <summary>Partition is valid</summary>
+            Valid = 0x01,
+            /// <summary>Partition is allocated</summary>
+            Allocated = 0x02,
+            /// <summary>Partition is in use</summary>
+            InUse = 0x04,
+            /// <summary>Partition is bootable</summary>
+            Bootable = 0x08,
+            /// <summary>Partition is readable</summary>
+            Readable = 0x10,
+            /// <summary>Partition is writable</summary>
+            Writable = 0x20,
+            /// <summary>Partition boot code is position independent</summary>
+            PicCode = 0x40,
+            /// <summary>OS specific flag</summary>
+            Specific1 = 0x80,
+            /// <summary>OS specific flag</summary>
+            Specific2 = 0x100,
+            /// <summary>Unknown, seen in the wild</summary>
+            Unknown = 0x200,
+            /// <summary>Unknown, seen in the wild</summary>
+            Unknown2 = 0x40000000,
+            /// <summary>Reserved, not seen in the wild</summary>
+            Reserved = 0xBFFFFC00,
+        }
+
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct AppleMapPartitionEntry
         {
-            // Signature ("PM" or "TS")
+            /// <summary>Signature <see cref="APM_MAGIC"/></summary>
             public ushort signature;
-            // Reserved
+            /// <summary>Reserved</summary>
             public ushort reserved1;
-            // Number of entries on the partition map, each one sector
+            /// <summary>Number of entries on the partition map, each one sector</summary>
             public uint entries;
-            // First sector of the partition
+            /// <summary>First sector of the partition</summary>
             public uint start;
-            // Number of sectos of the partition
+            /// <summary>Number of sectos of the partition</summary>
             public uint sectors;
-            // Partition name, 32 bytes, null-padded
-            public string name;
-            // Partition type. 32 bytes, null-padded
-            public string type;
-            // First sector of the data area
+            /// <summary>Partition name, 32 bytes, null-padded</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] name;
+            /// <summary>Partition type. 32 bytes, null-padded</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] type;
+            /// <summary>First sector of the data area</summary>
             public uint first_data_block;
-            // Number of sectors of the data area
+            /// <summary>Number of sectors of the data area</summary>
             public uint data_sectors;
-            // Partition status
-            public uint status;
-            // First sector of the boot code
+            /// <summary>Partition flags</summary>
+            public uint flags;
+            /// <summary>First sector of the boot code</summary>
             public uint first_boot_block;
-            // Size in bytes of the boot code
+            /// <summary>Size in bytes of the boot code</summary>
             public uint boot_size;
-            // Load address of the boot code
+            /// <summary>Load address of the boot code</summary>
             public uint load_address;
-            // Reserved
-            public uint reserved2;
-            // Entry point of the boot code
+            /// <summary>Load address of the boot code</summary>
+            public uint load_address2;
+            /// <summary>Entry point of the boot code</summary>
             public uint entry_point;
-            // Reserved
-            public uint reserved3;
-            // Boot code checksum
+            /// <summary>Entry point of the boot code</summary>
+            public uint entry_point2;
+            /// <summary>Boot code checksum</summary>
             public uint checksum;
-            // Processor type, 16 bytes, null-padded
-            public string processor;
+            /// <summary>Processor type, 16 bytes, null-padded</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] processor;
+            /// <summary>Boot arguments</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public uint[] boot_arguments;
         }
     }
 }
