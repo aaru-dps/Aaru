@@ -32,7 +32,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.Console;
 
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.PartPlugins
@@ -57,13 +59,11 @@ namespace DiscImageChef.PartPlugins
 
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
-            byte[] cString;
             bool magic_found = false;
-            byte[] entry_sector;
+            byte[] label_sector;
 
             uint magic;
             uint sector_size;
-            ushort front_porch;
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
                 sector_size = 2048;
@@ -72,124 +72,266 @@ namespace DiscImageChef.PartPlugins
 
             partitions = new List<CommonTypes.Partition>();
 
-            entry_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
-            magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
+            label_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
+            magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
+            ulong label_position = 0;
 
-            if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
-                magic_found = true;
-            else if(imagePlugin.ImageInfo.sectors > 15)
+            foreach(ulong i in new ulong[]{0, 4, 15, 16})
             {
-                entry_sector = imagePlugin.ReadSector(15); // Starts on sector 15 on MBR machines
-                magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
-
+                label_sector = imagePlugin.ReadSector(i);
+                magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
                 if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
+                {
                     magic_found = true;
-                else
-                {
-                    if(sector_size == 2048)
-                        entry_sector = imagePlugin.ReadSector(4); // Starts on sector 4 on RISC CDs
-                    else if(imagePlugin.ImageInfo.sectors > 16)
-                        entry_sector = imagePlugin.ReadSector(16); // Starts on sector 16 on RISC disks
-                    magic = BigEndianBitConverter.ToUInt32(entry_sector, 0x00);
-
-                    if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
-                        magic_found = true;
-                    else
-                        return false;
+                    label_position = i;
+                    break;
                 }
             }
 
-            front_porch = BigEndianBitConverter.ToUInt16(entry_sector, 0x6A);
+            if(!magic_found)
+                return false;
 
-            if(magic_found)
+            uint sectors_to_read = 7680 / imagePlugin.ImageInfo.sectorSize;
+            if(7680 % imagePlugin.ImageInfo.sectorSize > 0)
+                sectors_to_read++;
+
+            label_sector = imagePlugin.ReadSectors(label_position, sectors_to_read);
+
+            NeXTLabel label = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(label_sector);
+            byte[] disktab_b = new byte[498];
+            Array.Copy(label_sector, 44, disktab_b, 0, 498);
+            label.dl_dt = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktab_b);
+            label.dl_dt.d_partitions = new NeXTEntry[8];
+
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}", label.dl_label_blkno);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}", label.dl_size);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"", StringHandlers.CToString(label.dl_label));
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}", label.dl_flags);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_tag = 0x{0:X8}", label.dl_tag);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_name = \"{0}\"", StringHandlers.CToString(label.dl_dt.d_name));
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_type = \"{0}\"", StringHandlers.CToString(label.dl_dt.d_type));
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_secsize = {0}", label.dl_dt.d_secsize);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ntracks = {0}", label.dl_dt.d_ntracks);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_nsectors = {0}", label.dl_dt.d_nsectors);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ncylinders = {0}", label.dl_dt.d_ncylinders);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rpm = {0}", label.dl_dt.d_rpm);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_front = {0}", label.dl_dt.d_front);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_back = {0}", label.dl_dt.d_back);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ngroups = {0}", label.dl_dt.d_ngroups);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_size = {0}", label.dl_dt.d_ag_size);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}", label.dl_dt.d_ag_alts);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}", label.dl_dt.d_ag_off);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}", label.dl_dt.d_boot0_blkno[0]);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}", label.dl_dt.d_boot0_blkno[1]);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_bootfile = \"{0}\"", StringHandlers.CToString(label.dl_dt.d_bootfile));
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_hostname = \"{0}\"", StringHandlers.CToString(label.dl_dt.d_hostname));
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
+            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}", label.dl_dt.d_rwpartition);
+
+            for(int i = 0; i < 8; i++)
             {
-                for(int i = 0; i < 8; i++)
+                byte[] part_b = new byte[44];
+                Array.Copy(label_sector, 44 + 146 + 44 * i, part_b, 0, 44);
+                label.dl_dt.d_partitions[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTEntry>(part_b);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i, label.dl_dt.d_partitions[i].p_base);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, label.dl_dt.d_partitions[i].p_size);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_bsize = {1}", i, label.dl_dt.d_partitions[i].p_bsize);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_fsize = {1}", i, label.dl_dt.d_partitions[i].p_fsize);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_opt = {1}", i, label.dl_dt.d_partitions[i].p_opt);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_cpg = {1}", i, label.dl_dt.d_partitions[i].p_cpg);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_density = {1}", i, label.dl_dt.d_partitions[i].p_density);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_minfree = {1}", i, label.dl_dt.d_partitions[i].p_minfree);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_newfs = {1}", i, label.dl_dt.d_partitions[i].p_newfs);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_mountpt = {1}", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt));
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_automnt = {1}", i, label.dl_dt.d_partitions[i].p_automnt);
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = {1}", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
+
+                if(label.dl_dt.d_partitions[i].p_size > 0 && label.dl_dt.d_partitions[i].p_base >= 0 && label.dl_dt.d_partitions[i].p_bsize >= 0)
                 {
-                    NeXTEntry entry = new NeXTEntry();
+                    StringBuilder sb = new StringBuilder();
 
-                    entry.start = BigEndianBitConverter.ToUInt32(entry_sector, disktabStart + disktabEntrySize * i + 0x00);
-                    entry.sectors = BigEndianBitConverter.ToUInt32(entry_sector, disktabStart + disktabEntrySize * i + 0x04);
-                    entry.block_size = BigEndianBitConverter.ToUInt16(entry_sector, disktabStart + disktabEntrySize * i + 0x08);
-                    entry.frag_size = BigEndianBitConverter.ToUInt16(entry_sector, disktabStart + disktabEntrySize * i + 0x0A);
-                    entry.optimization = entry_sector[disktabStart + disktabEntrySize * i + 0x0C];
-                    entry.cpg = BigEndianBitConverter.ToUInt16(entry_sector, disktabStart + disktabEntrySize * i + 0x0D);
-                    entry.bpi = BigEndianBitConverter.ToUInt16(entry_sector, disktabStart + disktabEntrySize * i + 0x0F);
-                    entry.freemin = entry_sector[disktabStart + disktabEntrySize * i + 0x11];
-                    entry.newfs = entry_sector[disktabStart + disktabEntrySize * i + 0x12];
-                    cString = new byte[16];
-                    Array.Copy(entry_sector, disktabStart + disktabEntrySize * i + 0x13, cString, 0, 16);
-                    entry.mount_point = StringHandlers.CToString(cString);
-                    entry.automount = entry_sector[disktabStart + disktabEntrySize * i + 0x23];
-                    cString = new byte[8];
-                    Array.Copy(entry_sector, disktabStart + disktabEntrySize * i + 0x24, cString, 0, 8);
-                    entry.type = StringHandlers.CToString(cString);
-
-                    if(entry.sectors > 0 && entry.sectors < 0xFFFFFFFF && entry.start < 0xFFFFFFFF)
+                    CommonTypes.Partition part = new CommonTypes.Partition()
                     {
-                        CommonTypes.Partition part = new CommonTypes.Partition();
-                        StringBuilder sb = new StringBuilder();
+                        PartitionLength = (ulong)(label.dl_dt.d_partitions[i].p_size * sector_size),
+                        PartitionStart = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * sector_size),
+                        PartitionType = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
+                        PartitionSequence = (ulong)i,
+                        PartitionName = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
+                        PartitionSectors = (ulong)label.dl_dt.d_partitions[i].p_size,
+                        PartitionStartSector = (ulong)(label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front)
+                    };
 
-                        part.PartitionLength = (ulong)entry.sectors * sector_size;
-                        part.PartitionStart = ((ulong)entry.start + front_porch) * sector_size;
-                        part.PartitionType = entry.type;
-                        part.PartitionSequence = (ulong)i;
-                        part.PartitionName = entry.mount_point;
-                        part.PartitionSectors = entry.sectors;
-                        part.PartitionStartSector = ((ulong)entry.start + front_porch);
-
-                        sb.AppendFormat("{0} bytes per block", entry.block_size).AppendLine();
-                        sb.AppendFormat("{0} bytes per fragment", entry.frag_size).AppendLine();
-                        if(entry.optimization == 's')
-                            sb.AppendLine("Space optimized");
-                        else if(entry.optimization == 't')
-                            sb.AppendLine("Time optimized");
-                        else
-                            sb.AppendFormat("Unknown optimization {0:X2}", entry.optimization).AppendLine();
-                        sb.AppendFormat("{0} cylinders per group", entry.cpg).AppendLine();
-                        sb.AppendFormat("{0} bytes per inode", entry.bpi).AppendLine();
-                        sb.AppendFormat("{0}% of space must be free at minimum", entry.freemin).AppendLine();
-                        if(entry.newfs != 1) // Seems to indicate newfs has been already run
-                            sb.AppendLine("Filesystem should be formatted at start");
-                        if(entry.automount == 1)
-                            sb.AppendLine("Filesystem should be automatically mounted");
-
-                        part.PartitionDescription = sb.ToString();
-
-                        partitions.Add(part);
+                    if(part.PartitionStartSector + part.PartitionSectors > imagePlugin.ImageInfo.sectors)
+                    {
+                        DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
+                        part.PartitionSectors = imagePlugin.ImageInfo.sectors - part.PartitionStartSector;
+                        part.PartitionLength = part.PartitionSectors * sector_size;
+                        DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.PartitionSectors);
                     }
-                }
 
-                return true;
+                    sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
+                    sb.AppendFormat("{0} bytes per fragment", label.dl_dt.d_partitions[i].p_fsize).AppendLine();
+                    if(label.dl_dt.d_partitions[i].p_opt == 's')
+                        sb.AppendLine("Space optimized");
+                    else if(label.dl_dt.d_partitions[i].p_opt == 't')
+                        sb.AppendLine("Time optimized");
+                    else
+                        sb.AppendFormat("Unknown optimization {0:X2}", label.dl_dt.d_partitions[i].p_opt).AppendLine();
+                    sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
+                    sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
+                    sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree).AppendLine();
+                    if(label.dl_dt.d_partitions[i].p_newfs == 1)
+                        sb.AppendLine("Filesystem should be formatted at start");
+                    if(label.dl_dt.d_partitions[i].p_automnt == 1)
+                        sb.AppendLine("Filesystem should be automatically mounted");
+
+                    part.PartitionDescription = sb.ToString();
+
+                    partitions.Add(part);
+                }
             }
-            return false;
+
+            return true;
         }
 
-        struct NeXTEntry
+        /// <summary>
+        /// NeXT v3 disklabel, 544 bytes
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct NeXTLabel
         {
-            public uint start;
-            // Sector of start, counting from front porch
-            public uint sectors;
-            // Length in sectors
-            public ushort block_size;
-            // Filesystem's block size
-            public ushort frag_size;
-            // Filesystem's fragment size
-            public byte optimization;
-            // 's'pace or 't'ime
-            public ushort cpg;
-            // Cylinders per group
-            public ushort bpi;
-            // Bytes per inode
-            public byte freemin;
-            // % of minimum free space
-            public byte newfs;
-            // Should newfs be run on first start?
-            public string mount_point;
-            // Mount point or empty if mount where you want
-            public byte automount;
-            // Should automount
-            public string type;
-            // Filesystem type, always "4.3BSD"?
+            /// <summary>Signature</summary>
+            public uint dl_version;
+            /// <summary>Block on which this label resides</summary>
+            public int dl_label_blkno;
+            /// <summary>Device size in blocks</summary>
+            public int dl_size;
+            /// <summary>Device name</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] dl_label;
+            /// <summary>Device flags</summary>
+            public uint dl_flags;
+            /// <summary>Device tag</summary>
+            public uint dl_tag;
+            /// <summary>Device info and partitions</summary>
+            public NeXTDiskTab dl_dt;
+            /// <summary>Checksum</summary>
+            public ushort dl_v3_checksum;
+        }
+
+        /// <summary>
+        /// NeXT v1 and v2 disklabel, 7224 bytes
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct NeXTLabelOld
+        {
+            /// <summary>Signature</summary>
+            public uint dl_version;
+            /// <summary>Block on which this label resides</summary>
+            public int dl_label_blkno;
+            /// <summary>Device size in blocks</summary>
+            public int dl_size;
+            /// <summary>Device name</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] dl_label;
+            /// <summary>Device flags</summary>
+            public uint dl_flags;
+            /// <summary>Device tag</summary>
+            public uint dl_tag;
+            /// <summary>Device info and partitions</summary>
+            public NeXTDiskTab dl_dt;
+            /// <summary>Bad sector table</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
+            public int[] dl_bad;
+            /// <summary>Checksum</summary>
+            public ushort dl_checksum;
+        }
+
+        /// <summary>
+        /// NeXT disktab and partitions, 498 bytes
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct NeXTDiskTab
+        {
+            /// <summary>Drive name</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_name;
+            /// <summary>Drive type</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_type;
+            /// <summary>Sector size</summary>
+            public int d_secsize;
+            /// <summary>tracks/cylinder</summary>
+            public int d_ntracks;
+            /// <summary>sectors/track</summary>
+            public int d_nsectors;
+            /// <summary>cylinders</summary>
+            public int d_ncylinders;
+            /// <summary>revolutions/minute</summary>
+            public int d_rpm;
+            /// <summary>size of front porch in sectors</summary>
+            public short d_front;
+            /// <summary>size of back porch in sectors</summary>
+            public short d_back;
+            /// <summary>number of alt groups</summary>
+            public short d_ngroups;
+            /// <summary>alt group size in sectors</summary>
+            public short d_ag_size;
+            /// <summary>alternate sectors per alt group</summary>
+            public short d_ag_alts;
+            /// <summary>sector offset to first alternate</summary>
+            public short d_ag_off;
+            /// <summary>"blk 0" boot locations</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public int[] d_boot0_blkno;
+            /// <summary>default bootfile</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+            public byte[] d_bootfile;
+            /// <summary>host name</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] d_hostname;
+            /// <summary>root partition</summary>
+            public byte d_rootpartition;
+            /// <summary>r/w partition</summary>
+            public byte d_rwpartition;
+            /// <summary>partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public NeXTEntry[] d_partitions;
+        }
+
+        /// <summary>
+        /// Partition entries, 44 bytes each
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct NeXTEntry
+        {
+            /// <summary>Sector of start, counting from front porch</summary>
+            public int p_base;
+            /// <summary>Length in sectors</summary>
+            public int p_size;
+            /// <summary>Filesystem's block size</summary>
+            public short p_bsize;
+            /// <summary>Filesystem's fragment size</summary>
+            public short p_fsize;
+            /// <summary>'s'pace or 't'ime</summary>
+            public byte p_opt;
+            /// <summary>Cylinders per group</summary>
+            public short p_cpg;
+            /// <summary>Bytes per inode</summary>
+            public short p_density;
+            /// <summary>% of minimum free space</summary>
+            public byte p_minfree;
+            /// <summary>Should newfs be run on first start?</summary>
+            public byte p_newfs;
+            /// <summary>Mount point or empty if mount where you want</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public byte[] p_mountpt;
+            /// <summary>Should automount</summary>
+            public byte p_automnt;
+            /// <summary>Filesystem type, always "4.3BSD"?</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public byte[] p_type;
         }
     }
 }
