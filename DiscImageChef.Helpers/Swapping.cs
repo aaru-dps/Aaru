@@ -29,6 +29,8 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
+using System;
+using System.Linq;
 
 namespace DiscImageChef
 {
@@ -98,6 +100,41 @@ namespace DiscImageChef
         public static uint PDPFromBigEndian(uint x)
         {
             return ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
+        }
+
+        public static ulong Swap(ulong x)
+        {
+            x = (x & 0x00000000FFFFFFFF) << 32 | (x & 0xFFFFFFFF00000000) >> 32;
+            x = (x & 0x0000FFFF0000FFFF) << 16 | (x & 0xFFFF0000FFFF0000) >> 16;
+            x = (x & 0x00FF00FF00FF00FF) << 8 | (x & 0xFF00FF00FF00FF00) >> 8;
+            return x;
+        }
+
+        public static long Swap(long x)
+        {
+            return BitConverter.ToInt64(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
+        }
+
+        public static ushort Swap(ushort x)
+        {
+            return (ushort)((x << 8) | (x >> 8));
+        }
+
+        public static short Swap(short x)
+        {
+            return (short)((x << 8) | ((x >> 8) & 0xFF));
+        }
+
+        public static uint Swap(uint x)
+        {
+            x = ((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
+            return (x << 16) | (x >> 16);
+        }
+
+        public static int Swap(int x)
+        {
+            x = (int)(((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF));
+            return (x << 16) | ((x >> 16) & 0xFFFF);
         }
     }
 }
