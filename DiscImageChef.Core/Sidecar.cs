@@ -547,6 +547,10 @@ namespace DiscImageChef.Core
                             xmlTrk.FileSystemInformation = new PartitionType[1];
                             if(partitions.Count > 0)
                             {
+                                partitions.Add(new Partition {
+                                    PartitionStartSector = (ulong)xmlTrk.StartSector,
+                                    PartitionSectors = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1)
+                                });
                                 xmlTrk.FileSystemInformation = new PartitionType[partitions.Count];
                                 for(int i = 0; i < partitions.Count; i++)
                                 {
