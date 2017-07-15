@@ -316,6 +316,12 @@ namespace DiscImageChef.ImagePlugins
                 }
             }
 
+			if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+			{
+				ImageInfo.imageHasSessions = true;
+				ImageInfo.imageHasPartitions = true;
+			}
+
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.mediaType);
 
             return true;
@@ -868,7 +874,23 @@ namespace DiscImageChef.ImagePlugins
 
         public override List<Partition> GetPartitions()
         {
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+			if(ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+			{
+				List<Partition> parts = new List<Partition>();
+				Partition part = new Partition
+				{
+					PartitionStartSector = 0,
+					PartitionSectors = ImageInfo.sectors,
+					PartitionStart = 0,
+					PartitionSequence = 0,
+					PartitionType = "MODE1/2048",
+					PartitionLength = ImageInfo.sectors * ImageInfo.sectorSize
+				};
+				parts.Add(part);
+				return parts;
+			}
+
+			throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public override byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
