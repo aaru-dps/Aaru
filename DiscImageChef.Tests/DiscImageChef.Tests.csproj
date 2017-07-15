@@ -153,6 +153,7 @@
     <Compile Include="Filesystems\QNX4.cs" />
     <Compile Include="Filesystems\QNX4_MBR.cs" />
     <Compile Include="Filesystems\XFS_MBR.cs" />
+    <Compile Include="Filesystems\UFS_NeXT_Floppy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
