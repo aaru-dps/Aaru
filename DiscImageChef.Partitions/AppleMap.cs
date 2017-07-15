@@ -93,36 +93,36 @@ namespace DiscImageChef.PartPlugins
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
 
-            if(ddm.sbSig != DDM_MAGIC)
-                return false;
-
             uint sequence = 0;
 
-            if(ddm.sbDrvrCount < max_drivers)
+            if(ddm.sbSig == DDM_MAGIC)
             {
-                ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
-                for(int i = 0; i < ddm.sbDrvrCount; i++)
+                if(ddm.sbDrvrCount < max_drivers)
                 {
-                    byte[] tmp = new byte[8];
-                    Array.Copy(ddm_sector, 18 + i * 8, tmp, 0, 8);
-                    ddm.sbMap[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock, i);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
-
-                    CommonTypes.Partition part = new CommonTypes.Partition()
+                    ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
+                    for(int i = 0; i < ddm.sbDrvrCount; i++)
                     {
-                        PartitionLength = (ulong)(ddm.sbMap[i].ddSize * 512),
-                        PartitionSectors = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
-                        PartitionSequence = sequence,
-                        PartitionStart = ddm.sbMap[i].ddBlock * sector_size,
-                        PartitionStartSector = ddm.sbMap[i].ddBlock,
-                        PartitionType = "Apple_Driver"
-                    };
+                        byte[] tmp = new byte[8];
+                        Array.Copy(ddm_sector, 18 + i * 8, tmp, 0, 8);
+                        ddm.sbMap[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
+                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock, i);
+                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
+                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
 
-                    partitions.Add(part);
+                        CommonTypes.Partition part = new CommonTypes.Partition()
+                        {
+                            PartitionLength = (ulong)(ddm.sbMap[i].ddSize * 512),
+                            PartitionSectors = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
+                            PartitionSequence = sequence,
+                            PartitionStart = ddm.sbMap[i].ddBlock * sector_size,
+                            PartitionStartSector = ddm.sbMap[i].ddBlock,
+                            PartitionType = "Apple_Driver"
+                        };
 
-                    sequence++;
+                        partitions.Add(part);
+
+                        sequence++;
+                    }
                 }
             }
 
@@ -167,7 +167,7 @@ namespace DiscImageChef.PartPlugins
                     sequence++;
                 }
 
-                return true;
+                return partitions.Count > 0;
             }
 
             AppleMapPartitionEntry entry;
@@ -203,7 +203,7 @@ namespace DiscImageChef.PartPlugins
                         sectors_to_read = entry_count + 2;
                     }
                     else
-                        return true;
+                        return partitions.Count > 0;
                 }
             }
             else
@@ -218,7 +218,7 @@ namespace DiscImageChef.PartPlugins
                     sectors_to_read = entry_count + 2;
                 }
                 else
-                    return true;
+                    return partitions.Count > 0;
             }
 
             byte[] entries = imagePlugin.ReadSectors(0, sectors_to_read);
@@ -308,7 +308,7 @@ namespace DiscImageChef.PartPlugins
                 }
             }
 
-            return true;
+            return partitions.Count > 0;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
