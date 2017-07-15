@@ -72,6 +72,8 @@ namespace DiscImageChef.PartPlugins
 
             partitions = new List<CommonTypes.Partition>();
 
+            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+
             label_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
             magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
             ulong label_position = 0;
@@ -143,9 +145,9 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_density = {1}", i, label.dl_dt.d_partitions[i].p_density);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_minfree = {1}", i, label.dl_dt.d_partitions[i].p_minfree);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_newfs = {1}", i, label.dl_dt.d_partitions[i].p_newfs);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_mountpt = {1}", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt));
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_mountpt = \"{1}\"", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt));
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_automnt = {1}", i, label.dl_dt.d_partitions[i].p_automnt);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = {1}", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
+                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i, StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
 
                 if(label.dl_dt.d_partitions[i].p_size > 0 && label.dl_dt.d_partitions[i].p_base >= 0 && label.dl_dt.d_partitions[i].p_bsize >= 0)
                 {
@@ -153,13 +155,13 @@ namespace DiscImageChef.PartPlugins
 
                     CommonTypes.Partition part = new CommonTypes.Partition()
                     {
-                        PartitionLength = (ulong)(label.dl_dt.d_partitions[i].p_size * sector_size),
-                        PartitionStart = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * sector_size),
+                        PartitionLength = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
+                        PartitionStart = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
                         PartitionType = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
                         PartitionSequence = (ulong)i,
                         PartitionName = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                        PartitionSectors = (ulong)label.dl_dt.d_partitions[i].p_size,
-                        PartitionStartSector = (ulong)(label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front)
+                        PartitionSectors = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sector_size),
+                        PartitionStartSector = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize) / sector_size)
                     };
 
                     if(part.PartitionStartSector + part.PartitionSectors > imagePlugin.ImageInfo.sectors)
@@ -181,7 +183,7 @@ namespace DiscImageChef.PartPlugins
                     sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
                     sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
                     sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree).AppendLine();
-                    if(label.dl_dt.d_partitions[i].p_newfs == 1)
+                    if(label.dl_dt.d_partitions[i].p_newfs != 1)
                         sb.AppendLine("Filesystem should be formatted at start");
                     if(label.dl_dt.d_partitions[i].p_automnt == 1)
                         sb.AppendLine("Filesystem should be automatically mounted");
@@ -303,7 +305,7 @@ namespace DiscImageChef.PartPlugins
         /// <summary>
         /// Partition entries, 44 bytes each
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
         public struct NeXTEntry
         {
             /// <summary>Sector of start, counting from front porch</summary>
