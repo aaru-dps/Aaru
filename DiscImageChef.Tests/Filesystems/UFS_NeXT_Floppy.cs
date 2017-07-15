@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UFS_RDB.cs
+// Filename       : UFS_NeXT.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,38 +48,70 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Filesystems
 {
     [TestFixture]
-    public class UFS_RDB
+    public class UFS_NeXT_Floppy
     {
         readonly string[] testfiles = {
-            "amix.vdi.lz",
+            "nextstep_3.3_mf2dd.img.lz","nextstep_3.3_mf2hd.img.lz",
+            "openstep_4.0_mf2dd.img.lz","openstep_4.0_mf2hd.img.lz",
+            "openstep_4.2_mf2dd.img.lz","openstep_4.2_mf2hd.img.lz",
+            "rhapsody_dr1_mf2dd.img.lz","rhapsody_dr1_mf2hd.img.lz",
+            "rhapsody_dr2_mf2dd.img.lz","rhapsody_dr2_mf2hd.img.lz",
         };
 
         readonly ulong[] sectors = {
-            1024128,
+            1440, 2880,
+            1440, 2880,
+            1440, 2880,
+            1440, 2880,
+            1440, 2880,
         };
 
         readonly uint[] sectorsize = {
-            512,
+            512, 512,
+            512, 512,
+            512, 512,
+            512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            65024,
+            624, 1344,
+            624, 1344,
+            624, 1344,
+            624, 1344,
+            624, 1344,
         };
 
         readonly int[] clustersize = {
-            2048,
+            1024, 1024,
+            1024, 1024,
+            1024, 1024,
+            1024, 1024,
+            1024, 1024,
         };
 
         readonly string[] volumename = {
-            null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN",
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
         };
 
         readonly string[] type = {
-            "UFS",
+            "UFS", "UFS",
+            "UFS", "UFS",
+            "UFS", "UFS",
+            "UFS", "UFS",
+            "UFS", "UFS",
         };
 
         [Test]
@@ -87,20 +119,20 @@ namespace DiscImageChef.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_rdb", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ufs_next", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new ZZZRawImage();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
+                PartPlugin parts = new NeXTDisklabel();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.FFSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\2\"")
+                    if(partitions[j].PartitionType == "4.3BSD" || partitions[j].PartitionType == "4.4BSD")
                     {
                         part = j;
                         break;

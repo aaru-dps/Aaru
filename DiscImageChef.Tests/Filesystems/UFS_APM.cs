@@ -57,9 +57,9 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors = {
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144,
+            1024000, 1024000, 1024000, 1024000,
+            204800, 204800, 204800, 204800,
+            2097152, 2097152, 2097152,
         };
 
         readonly uint[] sectorsize = {
@@ -69,27 +69,27 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024,
+            511488, 511488, 511488, 511488,
+            102368, 102368, 102368, 102368,
+            1047660, 1038952, 1038952,
         };
 
         readonly int[] clustersize = {
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048,
+            1024, 1024, 1024, 1024,
+            1024, 1024, 1024, 1024,
+            1024, 1024, 1024,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label",
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null,
         };
 
         readonly string[] type = {

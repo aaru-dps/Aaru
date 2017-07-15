@@ -51,67 +51,43 @@ namespace DiscImageChef.Tests.Filesystems
     public class UFS_NeXT
     {
         readonly string[] testfiles = {
-            "nextstep_3.3.vdi.lz","nextstep_3.3_mf2dd.img.lz","nextstep_3.3_mf2hd.img.lz",
-            "openstep_4.0.vdi.lz","openstep_4.0_mf2dd.img.lz","openstep_4.0_mf2hd.img.lz",
-            "openstep_4.2.vdi.lz","openstep_4.2_mf2dd.img.lz","openstep_4.2_mf2hd.img.lz",
-            "rhapsody_dr1.vdi.lz","rhapsody_dr1_mf2dd.img.lz","rhapsody_dr1_mf2hd.img.lz",
-            "rhapsody_dr2.vdi.lz","rhapsody_dr2_mf2dd.img.lz","rhapsody_dr2_mf2hd.img.lz",
+            "nextstep_3.3.vdi.lz","openstep_4.0.vdi.lz","openstep_4.2.vdi.lz",
+            "rhapsody_dr1.vdi.lz","rhapsody_dr2.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 1440, 2880,
-            262144, 1440, 2880,
-            262144, 1440, 2880,
-            262144, 1440, 2880,
-            262144, 1440, 2880,
+            409600,409600,409600,
+            409600,409600,
         };
 
         readonly uint[] sectorsize = {
             512, 512, 512,
-            512, 512, 512,
-            512, 512, 512,
-            512, 512, 512,
-            512, 512, 512,
+            512, 512,
         };
 
         readonly long[] clusters = {
-            131072, 720, 1440,
-            131072, 720, 1440,
-            131072, 720, 1440,
-            131072, 720, 1440,
-            131072, 720, 1440,
+            204640,204640,204640,
+            204640,204464,
         };
 
         readonly int[] clustersize = {
             1024, 1024, 1024,
-            1024, 1024, 1024,
-            1024, 1024, 1024,
-            1024, 1024, 1024,
-            1024, 1024, 1024,
+            1024, 1024,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label",
+            null, null, null,
+            null, null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            null, null, null,
+            null, null,
         };
 
         readonly string[] type = {
             "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS",
+            "UFS", "UFS",
         };
 
         [Test]
