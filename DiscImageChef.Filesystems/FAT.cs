@@ -423,6 +423,8 @@ namespace DiscImageChef.Filesystems
 
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
             uint sectors_per_real_sector = 0;
+            // This is needed because some OSes don't put volume label as first entry in the root directory
+            uint sectors_for_root_directory = 0;
 
             if(!useAtariBPB && !useMSXBPB && !useDOS2BPB && !useDOS3BPB && !useDOS32BPB && !useDOS33BPB && !useShortEBPB && !useEBPB && !useShortFAT32 && !useLongFAT32)
             {
@@ -667,6 +669,7 @@ namespace DiscImageChef.Filesystems
                 sectors_per_real_sector = Fat32BPB.bps / imagePlugin.ImageInfo.sectorSize;
                 // First root directory sector
                 root_directory_sector = (ulong)((Fat32BPB.root_cluster - 2) * Fat32BPB.spc + Fat32BPB.big_spfat * Fat32BPB.fats_no + Fat32BPB.rsectors) * sectors_per_real_sector;
+                sectors_for_root_directory = 1;
 
                 if(Fat32BPB.fsinfo_sector + partitionStart <= partitionEnd)
                 {
@@ -1008,6 +1011,7 @@ namespace DiscImageChef.Filesystems
                 sectors_per_real_sector = fakeBPB.bps / imagePlugin.ImageInfo.sectorSize;
                 // First root directory sector
                 root_directory_sector = (ulong)(fakeBPB.spfat * fakeBPB.fats_no + fakeBPB.rsectors) * sectors_per_real_sector;
+                sectors_for_root_directory = (uint)((fakeBPB.root_ent * 32) / imagePlugin.ImageInfo.sectorSize);
             }
 
             if(extraInfo != null)
@@ -1015,7 +1019,7 @@ namespace DiscImageChef.Filesystems
 
             if(root_directory_sector + partitionStart < partitionEnd)
             {
-                byte[] root_directory = imagePlugin.ReadSector(root_directory_sector + partitionStart);
+                byte[] root_directory = imagePlugin.ReadSectors(root_directory_sector + partitionStart, sectors_for_root_directory);
                 for(int i = 0; i < root_directory.Length; i += 32)
                 {
                     // Not a correct entry
@@ -1027,7 +1031,7 @@ namespace DiscImageChef.Filesystems
                         continue;
 
                     // Not a volume label
-                    if(root_directory[i + 0x0B] != 0x08)
+                    if(root_directory[i + 0x0B] != 0x08 && root_directory[i + 0x0B] != 0x28)
                         continue;
 
                     IntPtr entry_ptr = Marshal.AllocHGlobal(32);
