@@ -1272,11 +1272,11 @@ namespace DiscImageChef.Tests.Filesystems
             // NetBSD 1.6
             "VOLUMELABEL","VOLUMELABEL",
             // NeXTStep 3.3
-            null,null,
+            "VOLUMELABEL","VOLUMELABEL",
             // OpenStep for Mach 4.0
-            null,null,
+            "VOLUMELABEL","VOLUMELABEL",
             // OpenStep for Mach 4.2
-            null,null,
+            "VOLUMELABEL","VOLUMELABEL",
             // Solaris 2.4
             null,null,
             // COHERENT UNIX 4.2.10

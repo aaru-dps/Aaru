@@ -90,7 +90,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AppleMap();
+                PartPlugin parts = new DiscImageChef.PartPlugins.AppleMap();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new DiscImageChef.Filesystems.exFAT();
                 int part = -1;
