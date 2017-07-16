@@ -304,6 +304,7 @@ namespace DiscImageChef.PartPlugins
 
                         _partition.PartitionDescription = sb.ToString();
                         partitions.Add(_partition);
+                        sequence++;
                     }
                 }
             }
