@@ -56,7 +56,9 @@ namespace DiscImageChef.Tests.Filesystems
             "adfs_f+.adf.lz",
             "adfs_s.adf.lz",
             "adfs_m.adf.lz",
-            "adfs_l.adf.lz"
+            "adfs_l.adf.lz",
+            "hdd_old.hdf.lz",
+            "hdd_new.hdf.lz",
         };
 
         readonly MediaType[] mediatypes = {
@@ -67,22 +69,24 @@ namespace DiscImageChef.Tests.Filesystems
             MediaType.ACORN_35_DS_HD,
             MediaType.ACORN_525_SS_DD_40,
             MediaType.ACORN_525_SS_DD_80,
-            MediaType.ACORN_525_DS_DD
+            MediaType.ACORN_525_DS_DD,
+            MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD,
         };
 
-        readonly ulong[] sectors = { 1600, 1600, 1600, 1600, 1600, 640, 1280, 2560 };
+        readonly ulong[] sectors = { 800, 800, 1600, 800, 1600, 640, 1280, 2560, 78336, 78336 };
 
-        readonly uint[] sectorsize = { 512, 512, 1024, 512, 1024, 256, 256, 256 };
+        readonly uint[] sectorsize = { 1024, 1024, 1024, 1024, 1024, 256, 256, 256, 256, 256 };
 
-        readonly bool[] bootable = { false, false, false, false, false, false, false, false };
+        readonly bool[] bootable = { false, false, false, false, false, false, false, false, false, false };
 
-        readonly long[] clusters = { 1600, 1600, 1600, 1600, 1600, 640, 1280, 2560 };
+        readonly long[] clusters = { 800, 800, 1600, 800, 1600, 640, 1280, 2560, 78336, 78336 };
 
-        readonly int[] clustersize = { 512, 512, 1024, 512, 1024, 256, 256, 256 };
+        readonly uint[] clustersize = { 1024, 1024, 1024, 1024, 1024, 256, 256, 256, 256, 256 };
 
-        readonly string[] volumename = { "ADFSD", "ADFSE", "", "ADFSE+", "", "", "", "" };
+        readonly string[] volumename = { "ADFSD", "ADFSE     ", null, "ADFSE+    ", null, "$", "$", "$", "VolLablOld", null };
 
-        readonly string[] volumeserial = { "0", "0", "0", "0", "0", "0", "0", "0" };
+        readonly string[] volumeserial = { "3E48", "E13A", null, "1142", null, "F20D", "D6CA", "0CA6", "080E", null };
 
         [Test]
         public void Test()
