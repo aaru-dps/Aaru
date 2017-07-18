@@ -325,8 +325,6 @@ namespace DiscImageChef.CommonTypes
                                                 return MediaType.DOS_35_DS_DD_8;
                                             case 1440:
                                                 return MediaType.ECMA_100;
-                                            case 1600:
-                                                return MediaType.ACORN_35_DS_DD;
                                             case 1640:
                                                 return MediaType.FDFORMAT_35_DD;
                                             case 1760:
@@ -374,6 +372,10 @@ namespace DiscImageChef.CommonTypes
                                     case 1024:
                                         switch(blocks)
                                         {
+                                            case 800:
+                                                return MediaType.ACORN_35_DS_DD;
+                                            case 1600:
+                                                return MediaType.ACORN_35_DS_HD;
                                             case 1220:
                                                 return MediaType.IBM53FD_1024;
                                             case 1232:

@@ -331,7 +331,7 @@ namespace DiscImageChef.CommonTypes
         ACORN_525_SS_DD_80,
         /// <summary>5,25", DS, DD, 80 tracks, 16 spt, 256 bytes/sector, MFM</summary>
         ACORN_525_DS_DD,
-        /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        /// <summary>3,5", DS, DD, 80 tracks, 5 spt, 1024 bytes/sector, MFM</summary>
         ACORN_35_DS_DD,
         /// <summary>3,5", DS, HD, 80 tracks, 10 spt, 1024 bytes/sector, MFM</summary>
         ACORN_35_DS_HD,
