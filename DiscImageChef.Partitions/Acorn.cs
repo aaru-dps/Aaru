@@ -82,8 +82,8 @@ namespace DiscImageChef.PartPlugins
             for(int i = 0; i < 0x1FF; i++)
                 checksum = ((checksum & 0xFF) + (checksum >> 8) + sector[i]);
 
-            int heads = bootBlock.discRecords.heads + ((bootBlock.discRecords.lowsector >> 6) & 1);
-            int secCyl = bootBlock.discRecords.spt * heads;
+            int heads = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
+            int secCyl = bootBlock.discRecord.spt * heads;
             int mapSector = bootBlock.startCylinder * secCyl;
 
             if((ulong)mapSector >= imagePlugin.GetSectors())
@@ -92,6 +92,22 @@ namespace DiscImageChef.PartPlugins
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 
             ulong counter = 0;
+
+            if(checksum == bootBlock.checksum)
+            {
+                Partition part = new Partition
+                {
+                    PartitionLength = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
+                    PartitionSectors = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) / imagePlugin.ImageInfo.sectorSize,
+                    PartitionType = "ADFS",
+                    PartitionName = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
+                };
+                if(part.PartitionLength > 0)
+                {
+                    partitions.Add(part);
+                    counter++;
+                }
+            }
 
             if((bootBlock.flags & TYPE_MASK) == TYPE_LINUX)
             {
@@ -151,8 +167,6 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential)]
         struct DiscRecord
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
-            public byte[] spare;
             public byte log2secsize;
             public byte spt;
             public byte heads;
@@ -182,7 +196,9 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AcornBootBlock
         {
-            public DiscRecord discRecords;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
+            public byte[] spare;
+            public DiscRecord discRecord;
             public byte flags;
             public ushort startCylinder;
             public byte checksum;
