@@ -389,7 +389,7 @@ namespace DiscImageChef.ImagePlugins
                         ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
                     else if(header.heads == 1 && header.imageCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 10 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 5 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
                     else if(header.heads == 2 && header.imageCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.SHARP_35;

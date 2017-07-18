@@ -130,6 +130,8 @@ namespace DiscImageChef.ImagePlugins
 			else if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
 			        (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 || imageFilter.GetDataForkLength() == 655360))
 				ImageInfo.sectorSize = 256;
+			else if((extension == ".adf" || extension == ".adl") && imageFilter.GetDataForkLength() == 819200)
+				ImageInfo.sectorSize = 1024;
 			else
 			{
 				switch(imageFilter.GetDataForkLength())
@@ -680,7 +682,7 @@ namespace DiscImageChef.ImagePlugins
                     case 819200:
 						if(ImageInfo.sectorSize == 256)
 							return MediaType.CBM_35_DD;
-						if(extension == ".adf" || extension == ".adl")
+						if((extension == ".adf" || extension == ".adl") && ImageInfo.sectorSize == 1024)
 							return MediaType.ACORN_35_DS_DD;
 						if(extension == ".st")
 							return MediaType.ATARI_35_DS_DD;
