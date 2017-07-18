@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BSD.cs
+// Filename       : PC98.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,7 +48,7 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class BSD
+    public class PC98
     {
         readonly string[] testfiles = {
             "parted.vdi.lz",
@@ -76,7 +76,7 @@ namespace DiscImageChef.Tests.Partitions
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                PartPlugin parts = new DiscImageChef.PartPlugins.BSD();
+                PartPlugin parts = new DiscImageChef.PartPlugins.PC98();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
                 for(int j = 0; j < partitions.Count; j++)

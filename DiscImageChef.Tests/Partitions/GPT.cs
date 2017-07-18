@@ -48,35 +48,50 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class BSD
+    public class GPT
     {
         readonly string[] testfiles = {
-            "parted.vdi.lz",
+            "linux.vdi.lz","parted.vdi.lz",
         };
 
         readonly Partition[][] wanted = {
+            // Linux
+            new []{
+                new Partition{ PartitionDescription = null, PartitionLength = 10485760, PartitionName = null, PartitionType = "EFI System", PartitionStart = 1048576, PartitionSectors = 20480,
+                    PartitionSequence = 0, PartitionStartSector = 2048 },
+                new Partition{ PartitionDescription = null, PartitionLength = 15728640, PartitionName = null, PartitionType = "Microsoft Basic data", PartitionStart = 11534336, PartitionSectors = 30720,
+                    PartitionSequence = 1, PartitionStartSector = 22528 },
+                new Partition{ PartitionDescription = null, PartitionLength = 20971520, PartitionName = null, PartitionType = "Apple Label", PartitionStart = 27262976, PartitionSectors = 40960,
+                    PartitionSequence = 2, PartitionStartSector = 53248 },
+                new Partition{ PartitionDescription = null, PartitionLength = 26214400, PartitionName = null, PartitionType = "Solaris /usr or Apple ZFS", PartitionStart = 48234496, PartitionSectors = 51200,
+                    PartitionSequence = 3, PartitionStartSector = 94208 },
+                new Partition{ PartitionDescription = null, PartitionLength = 31457280, PartitionName = null, PartitionType = "FreeBSD ZFS", PartitionStart = 74448896, PartitionSectors = 61440,
+                    PartitionSequence = 4, PartitionStartSector = 145408 },
+                new Partition{ PartitionDescription = null, PartitionLength = 28294656, PartitionName = null, PartitionType = "HP-UX Data", PartitionStart = 105906176, PartitionSectors = 55263,
+                    PartitionSequence = 5, PartitionStartSector = 206848 },
+            },
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 38797312, PartitionName = null, PartitionType = "???", PartitionStart = 1048576, PartitionSectors = 75776,
+                new Partition{ PartitionDescription = null, PartitionLength = 42991616, PartitionName = null, PartitionType = "Apple HFS", PartitionStart = 1048576, PartitionSectors = 83968,
                     PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 19922944, PartitionName = null, PartitionType = "???", PartitionStart = 40894464, PartitionSectors = 38912,
-                    PartitionSequence = 1, PartitionStartSector = 79872 },
-                new Partition{ PartitionDescription = null, PartitionLength = 48234496, PartitionName = null, PartitionType = "???", PartitionStart = 61865984, PartitionSectors = 94208,
-                    PartitionSequence = 2, PartitionStartSector = 120832 },
+                new Partition{ PartitionDescription = null, PartitionLength = 52428800, PartitionName = null, PartitionType = "Linux filesystem", PartitionStart = 44040192, PartitionSectors = 102400,
+                    PartitionSequence = 1, PartitionStartSector = 86016 },
+                new Partition{ PartitionDescription = null, PartitionLength = 36700160, PartitionName = null, PartitionType = "Microsoft Basic data", PartitionStart = 96468992, PartitionSectors = 71680,
+                    PartitionSequence = 2, PartitionStartSector = 188416 },
             },
-        };  
+        };
 
         [Test]
         public void Test()
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "bsd", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "gpt", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                PartPlugin parts = new DiscImageChef.PartPlugins.BSD();
+                PartPlugin parts = new DiscImageChef.PartPlugins.GuidPartitionTable();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
                 for(int j = 0; j < partitions.Count; j++)

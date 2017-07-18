@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BSD.cs
+// Filename       : MINIX.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -39,7 +39,6 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems;
 using DiscImageChef.Filters;
 using DiscImageChef.ImagePlugins;
 using DiscImageChef.PartPlugins;
@@ -48,30 +47,34 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class BSD
+    public class MINIX
     {
         readonly string[] testfiles = {
-            "parted.vdi.lz",
+            "minix_3.1.2a.vdi.lz",
         };
 
         readonly Partition[][] wanted = {
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 38797312, PartitionName = null, PartitionType = "???", PartitionStart = 1048576, PartitionSectors = 75776,
-                    PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 19922944, PartitionName = null, PartitionType = "???", PartitionStart = 40894464, PartitionSectors = 38912,
-                    PartitionSequence = 1, PartitionStartSector = 79872 },
-                new Partition{ PartitionDescription = null, PartitionLength = 48234496, PartitionName = null, PartitionType = "???", PartitionStart = 61865984, PartitionSectors = 94208,
-                    PartitionSequence = 2, PartitionStartSector = 120832 },
+                new Partition{ PartitionDescription = null, PartitionLength = 268369408, PartitionName = null, PartitionType = "MINIX", PartitionStart = 2064896, PartitionSectors = 524159,
+                    PartitionSequence = 0, PartitionStartSector = 4033 },
+                new Partition{ PartitionDescription = null, PartitionLength = 270434304, PartitionName = null, PartitionType = "MINIX", PartitionStart = 270434304, PartitionSectors = 528192,
+                    PartitionSequence = 1, PartitionStartSector = 528192 },
+                new Partition{ PartitionDescription = null, PartitionLength = 270434304, PartitionName = null, PartitionType = "MINIX", PartitionStart = 540868608, PartitionSectors = 528192,
+                    PartitionSequence = 2, PartitionStartSector = 1056384 },
+                new Partition{ PartitionDescription = null, PartitionLength = 262176768, PartitionName = null, PartitionType = "MINIX", PartitionStart = 811302912, PartitionSectors = 512064,
+                    PartitionSequence = 2, PartitionStartSector = 1584576 },
             },
         };
 
         [Test]
         public void Test()
         {
+            throw new System.NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
+            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "bsd", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "minix", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
@@ -91,7 +94,7 @@ namespace DiscImageChef.Tests.Partitions
                     Assert.AreEqual(wanted[i][j].PartitionSequence, partitions[j].PartitionSequence, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].PartitionStartSector, partitions[j].PartitionStartSector, testfiles[i]);
                 }
-            }
+            }*/
         }
     }
 }

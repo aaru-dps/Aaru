@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Atari.cs
+// Filename       : RDB.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -48,24 +48,51 @@ using NUnit.Framework;
 namespace DiscImageChef.Tests.Partitions
 {
     [TestFixture]
-    public class Acorn
+    public class RDB
     {
         readonly string[] testfiles = {
-            "linux_ics.vdi.lz",
+            "amigaos_3.9.vdi.lz","amigaos_4.0.vdi.lz","parted.vdi.lz",
         };
 
         readonly Partition[][] wanted = {
-            // Linux (ICS)
-            // TODO: Values are incorrect
+            // AmigaOS 3.9
             new []{ 
-                new Partition{ PartitionDescription = null, PartitionLength = 31457280, PartitionName = null, PartitionType = "GEM", PartitionStart = 512, PartitionSectors = 61440,
-                    PartitionSequence = 0, PartitionStartSector = 1 },
-                new Partition{ PartitionDescription = null, PartitionLength = 41943040, PartitionName = null, PartitionType = "BGM", PartitionStart = 31457792, PartitionSectors = 81920,
-                    PartitionSequence = 1, PartitionStartSector = 61441 },
-                new Partition{ PartitionDescription = null, PartitionLength = 56402432, PartitionName = null, PartitionType = "LNX", PartitionStart = 73400832, PartitionSectors = 110161,
-                    PartitionSequence = 2, PartitionStartSector = 143361 },
-                new Partition{ PartitionDescription = null, PartitionLength = 43212800, PartitionName = null, PartitionType = "MAC", PartitionStart = 129803264, PartitionSectors = 84400,
-                    PartitionSequence = 3, PartitionStartSector = 253522 },
+                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH0", PartitionType = "\"DOS\\0\"", PartitionStart = 2080768, PartitionSectors = 170688,
+                    PartitionSequence = 0, PartitionStartSector = 4064 },
+                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH1", PartitionType = "\"DOS\\2\"", PartitionStart = 89473024, PartitionSectors = 170688,
+                    PartitionSequence = 1, PartitionStartSector = 174752 },
+                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH2", PartitionType = "\"DOS\\1\"", PartitionStart = 176865280, PartitionSectors = 170688,
+                    PartitionSequence = 2, PartitionStartSector = 345440 },
+                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH3", PartitionType = "\"DOS\\3\"", PartitionStart = 264257536, PartitionSectors = 170688,
+                    PartitionSequence = 3, PartitionStartSector = 516128 },
+                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH4", PartitionType = "\"RES\\86\"", PartitionStart = 351649792, PartitionSectors = 170688,
+                    PartitionSequence = 4, PartitionStartSector = 686816 },
+                new Partition{ PartitionDescription = null, PartitionLength = 85311488, PartitionName = "UDH5", PartitionType = "\"RES\\86\"", PartitionStart = 439042048, PartitionSectors = 166624,
+                    PartitionSequence = 5, PartitionStartSector = 857504 },
+            },
+            // AmigaOS 4.0
+            new []{
+                new Partition{ PartitionDescription = null, PartitionLength = 91455488, PartitionName = "DH1", PartitionType = "\"DOS\\1\"", PartitionStart = 1048576, PartitionSectors = 178624,
+                    PartitionSequence = 0, PartitionStartSector = 2048 },
+                new Partition{ PartitionDescription = null, PartitionLength = 92504064, PartitionName = "DH1", PartitionType = "\"DOS\\3\"", PartitionStart = 76546048, PartitionSectors = 149504,
+                    PartitionSequence = 1, PartitionStartSector = 180672 },
+                new Partition{ PartitionDescription = null, PartitionLength = 169050112, PartitionName = "DH1", PartitionType = "\"DOS\\3\"", PartitionStart = 78741504, PartitionSectors = 153792,
+                    PartitionSequence = 2, PartitionStartSector = 330176 },
+                new Partition{ PartitionDescription = null, PartitionLength = 247791616, PartitionName = "DH1", PartitionType = "\"DOS\\7\"", PartitionStart = 78020608, PartitionSectors = 152384,
+                    PartitionSequence = 3, PartitionStartSector = 483968 },
+                new Partition{ PartitionDescription = null, PartitionLength = 325812224, PartitionName = "DH1", PartitionType = "\"SFS\\0\"", PartitionStart = 85000192, PartitionSectors = 166016,
+                    PartitionSequence = 4, PartitionStartSector = 636352 },
+                new Partition{ PartitionDescription = null, PartitionLength = 410812416, PartitionName = "DH1", PartitionType = "\"SFS\\2\"", PartitionStart = 113541120, PartitionSectors = 221760,
+                    PartitionSequence = 5, PartitionStartSector = 802368 },
+            },
+            // AmigaOS 4.0
+            new []{
+                new Partition{ PartitionDescription = null, PartitionLength = 8225280, PartitionName = "primary", PartitionType = "\"\\0\"", PartitionStart = 8225280, PartitionSectors = 16065,
+                    PartitionSequence = 0, PartitionStartSector = 16065 },
+                new Partition{ PartitionDescription = null, PartitionLength = 24675840, PartitionName = "name", PartitionType = "\"FAT\\1\"", PartitionStart = 16450560, PartitionSectors = 48195,
+                    PartitionSequence = 1, PartitionStartSector = 32130 },
+                new Partition{ PartitionDescription = null, PartitionLength = 90478080, PartitionName = "partition", PartitionType = "\"\\0\"", PartitionStart = 41126400, PartitionSectors = 176715,
+                    PartitionSequence = 2, PartitionStartSector = 80325 },
             },
         };  
 
@@ -74,12 +101,12 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "acorn", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                PartPlugin parts = new DiscImageChef.PartPlugins.Acorn();
+                PartPlugin parts = new DiscImageChef.PartPlugins.AmigaRigidDiskBlock();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
                 for(int j = 0; j < partitions.Count; j++)

@@ -154,6 +154,15 @@
     <Compile Include="Filesystems\QNX4_MBR.cs" />
     <Compile Include="Filesystems\XFS_MBR.cs" />
     <Compile Include="Filesystems\UFS_NeXT_Floppy.cs" />
+    <Compile Include="Partitions\AppleMap.cs" />
+    <Compile Include="Partitions\Atari.cs" />
+    <Compile Include="Partitions\BSD.cs" />
+    <Compile Include="Partitions\GPT.cs" />
+    <Compile Include="Partitions\Acorn.cs" />
+    <Compile Include="Partitions\MBR.cs" />
+    <Compile Include="Partitions\MINIX.cs" />
+    <Compile Include="Partitions\PC98.cs" />
+    <Compile Include="Partitions\RDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -163,6 +172,7 @@
     <Folder Include="Filters\" />
     <Folder Include="Filesystems\" />
     <Folder Include="Devices\" />
+    <Folder Include="Partitions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
