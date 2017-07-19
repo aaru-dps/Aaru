@@ -86,7 +86,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb))
                 return false;
 
@@ -114,7 +114,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(reiserSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb))
                 return;
 
@@ -139,7 +139,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "Reiser 4 filesystem";
             xmlFSType.ClusterSize = reiserSb.blocksize;
-            xmlFSType.Clusters = (long)(((partition.PartitionEndSector - partition.PartitionStartSector) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start) * imagePlugin.GetSectorSize()) / reiserSb.blocksize);
             xmlFSType.VolumeName = StringHandlers.CToString(reiserSb.label, CurrentEncoding);
             xmlFSType.VolumeSerial = reiserSb.uuid.ToString();
         }

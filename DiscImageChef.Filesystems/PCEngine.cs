@@ -56,11 +56,11 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             byte[] system_descriptor = new byte[23];
-            byte[] sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(1 + partition.Start);
 
             Array.Copy(sector, 0x20, system_descriptor, 0, 23);
 
@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "PC Engine filesystem";
-            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) / imagePlugin.GetSectorSize() * 2048);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 2048);
             xmlFSType.ClusterSize = 2048;
         }
 

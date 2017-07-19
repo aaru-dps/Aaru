@@ -851,20 +851,20 @@ namespace DiscImageChef.ImagePlugins
                         track.Indexes = new Dictionary<int, ulong>();
                         track.Indexes.Add(1, track.TrackStartSector);
 
-                        partition.PartitionDescription = track.TrackDescription;
-                        partition.PartitionLength = (track.TrackEndSector - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector;
-                        partition.PartitionSectors = (track.TrackEndSector - track.TrackStartSector);
-                        partition.PartitionSequence = track.TrackSequence;
-                        partition.PartitionStart = offsetBytes;
-                        partition.PartitionStartSector = track.TrackStartSector;
-                        partition.PartitionType = track.TrackType.ToString();
+                        partition.Description = track.TrackDescription;
+                        partition.Size = (track.TrackEndSector - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector;
+                        partition.Length = (track.TrackEndSector - track.TrackStartSector);
+                        partition.Sequence = track.TrackSequence;
+                        partition.Offset = offsetBytes;
+                        partition.Start = track.TrackStartSector;
+                        partition.Type = track.TrackType.ToString();
 
-                        offsetBytes += partition.PartitionLength;
+                        offsetBytes += partition.Size;
 
                         tracks.Add(track);
                         partitions.Add(partition);
                         offsetmap.Add(track.TrackSequence, track.TrackStartSector);
-                        ImageInfo.sectors += partition.PartitionSectors;
+                        ImageInfo.sectors += partition.Length;
                     }
                 }
             }
@@ -882,14 +882,14 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("BlindWrite5 plugin", "printing partition map");
             foreach(Partition partition in partitions)
             {
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", partition.PartitionSequence);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition name: {0}", partition.PartitionName);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", partition.PartitionDescription);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", partition.PartitionType);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", partition.PartitionStartSector);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition sectors: {0}", partition.PartitionSectors);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting offset: {0}", partition.PartitionStart);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition size in bytes: {0}", partition.PartitionLength);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", partition.Sequence);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition name: {0}", partition.Name);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", partition.Description);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", partition.Type);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", partition.Start);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition sectors: {0}", partition.Length);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting offset: {0}", partition.Offset);
+                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
             if(!isDvd)

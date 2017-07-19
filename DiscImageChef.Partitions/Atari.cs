@@ -149,54 +149,54 @@ namespace DiscImageChef.PartPlugins
                             sectorSize = 2048;
 
                         CommonTypes.Partition part = new CommonTypes.Partition();
-                        part.PartitionLength = table.entries[i].length * sectorSize;
-                        part.PartitionSectors = table.entries[i].length;
-                        part.PartitionSequence = partitionSequence;
-                        part.PartitionName = "";
-                        part.PartitionStart = table.entries[i].start * sectorSize;
-                        part.PartitionStartSector = table.entries[i].start;
+                        part.Size = table.entries[i].length * sectorSize;
+                        part.Length = table.entries[i].length;
+                        part.Sequence = partitionSequence;
+                        part.Name = "";
+                        part.Offset = table.entries[i].start * sectorSize;
+                        part.Start = table.entries[i].start;
 
                         byte[] partType = new byte[3];
                         partType[0] = (byte)((type & 0xFF0000) >> 16);
                         partType[1] = (byte)((type & 0x00FF00) >> 8);
                         partType[2] = (byte)(type & 0x0000FF);
-                        part.PartitionType = Encoding.ASCII.GetString(partType);
+                        part.Type = Encoding.ASCII.GetString(partType);
 
                         switch(type)
                         {
                             case TypeGEMDOS:
-                                part.PartitionDescription = "Atari GEMDOS partition";
+                                part.Description = "Atari GEMDOS partition";
                                 break;
                             case TypeBigGEMDOS:
-                                part.PartitionDescription = "Atari GEMDOS partition bigger than 32 MiB";
+                                part.Description = "Atari GEMDOS partition bigger than 32 MiB";
                                 break;
                             case TypeLinux:
-                                part.PartitionDescription = "Linux partition";
+                                part.Description = "Linux partition";
                                 break;
                             case TypeSwap:
-                                part.PartitionDescription = "Swap partition";
+                                part.Description = "Swap partition";
                                 break;
                             case TypeRAW:
-                                part.PartitionDescription = "RAW partition";
+                                part.Description = "RAW partition";
                                 break;
                             case TypeNetBSD:
-                                part.PartitionDescription = "NetBSD partition";
+                                part.Description = "NetBSD partition";
                                 break;
                             case TypeNetBSDSwap:
-                                part.PartitionDescription = "NetBSD swap partition";
+                                part.Description = "NetBSD swap partition";
                                 break;
                             case TypeSysV:
-                                part.PartitionDescription = "Atari UNIX partition";
+                                part.Description = "Atari UNIX partition";
                                 break;
                             case TypeMac:
-                                part.PartitionDescription = "Macintosh partition";
+                                part.Description = "Macintosh partition";
                                 break;
                             case TypeMinix:
                             case TypeMinix2:
-                                part.PartitionDescription = "MINIX partition";
+                                part.Description = "MINIX partition";
                                 break;
                             default:
-                                part.PartitionDescription = "Unknown partition type";
+                                part.Description = "Unknown partition type";
                                 break;
                         }
 
@@ -238,54 +238,54 @@ namespace DiscImageChef.PartPlugins
                                     sectorSize = 2048;
 
                                 CommonTypes.Partition part = new CommonTypes.Partition();
-                                part.PartitionLength = extendedTable.entries[j].length * sectorSize;
-                                part.PartitionSectors = extendedTable.entries[j].length;
-                                part.PartitionSequence = partitionSequence;
-                                part.PartitionName = "";
-                                part.PartitionStart = extendedTable.entries[j].start * sectorSize;
-                                part.PartitionStartSector = extendedTable.entries[j].start;
+                                part.Size = extendedTable.entries[j].length * sectorSize;
+                                part.Length = extendedTable.entries[j].length;
+                                part.Sequence = partitionSequence;
+                                part.Name = "";
+                                part.Offset = extendedTable.entries[j].start * sectorSize;
+                                part.Start = extendedTable.entries[j].start;
 
                                 byte[] partType = new byte[3];
                                 partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
                                 partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
                                 partType[2] = (byte)(extendedType & 0x0000FF);
-                                part.PartitionType = Encoding.ASCII.GetString(partType);
+                                part.Type = Encoding.ASCII.GetString(partType);
 
                                 switch(extendedType)
                                 {
                                     case TypeGEMDOS:
-                                        part.PartitionDescription = "Atari GEMDOS partition";
+                                        part.Description = "Atari GEMDOS partition";
                                         break;
                                     case TypeBigGEMDOS:
-                                        part.PartitionDescription = "Atari GEMDOS partition bigger than 32 MiB";
+                                        part.Description = "Atari GEMDOS partition bigger than 32 MiB";
                                         break;
                                     case TypeLinux:
-                                        part.PartitionDescription = "Linux partition";
+                                        part.Description = "Linux partition";
                                         break;
                                     case TypeSwap:
-                                        part.PartitionDescription = "Swap partition";
+                                        part.Description = "Swap partition";
                                         break;
                                     case TypeRAW:
-                                        part.PartitionDescription = "RAW partition";
+                                        part.Description = "RAW partition";
                                         break;
                                     case TypeNetBSD:
-                                        part.PartitionDescription = "NetBSD partition";
+                                        part.Description = "NetBSD partition";
                                         break;
                                     case TypeNetBSDSwap:
-                                        part.PartitionDescription = "NetBSD swap partition";
+                                        part.Description = "NetBSD swap partition";
                                         break;
                                     case TypeSysV:
-                                        part.PartitionDescription = "Atari UNIX partition";
+                                        part.Description = "Atari UNIX partition";
                                         break;
                                     case TypeMac:
-                                        part.PartitionDescription = "Macintosh partition";
+                                        part.Description = "Macintosh partition";
                                         break;
                                     case TypeMinix:
                                     case TypeMinix2:
-                                        part.PartitionDescription = "MINIX partition";
+                                        part.Description = "MINIX partition";
                                         break;
                                     default:
-                                        part.PartitionDescription = "Unknown partition type";
+                                        part.Description = "Unknown partition type";
                                         break;
                                 }
 
@@ -318,54 +318,54 @@ namespace DiscImageChef.PartPlugins
                                 sectorSize = 2048;
 
                             CommonTypes.Partition part = new CommonTypes.Partition();
-                            part.PartitionLength = table.icdEntries[i].length * sectorSize;
-                            part.PartitionSectors = table.icdEntries[i].length;
-                            part.PartitionSequence = partitionSequence;
-                            part.PartitionName = "";
-                            part.PartitionStart = table.icdEntries[i].start * sectorSize;
-                            part.PartitionStartSector = table.icdEntries[i].start;
+                            part.Size = table.icdEntries[i].length * sectorSize;
+                            part.Length = table.icdEntries[i].length;
+                            part.Sequence = partitionSequence;
+                            part.Name = "";
+                            part.Offset = table.icdEntries[i].start * sectorSize;
+                            part.Start = table.icdEntries[i].start;
 
                             byte[] partType = new byte[3];
                             partType[0] = (byte)((type & 0xFF0000) >> 16);
                             partType[1] = (byte)((type & 0x00FF00) >> 8);
                             partType[2] = (byte)(type & 0x0000FF);
-                            part.PartitionType = Encoding.ASCII.GetString(partType);
+                            part.Type = Encoding.ASCII.GetString(partType);
 
                             switch(type)
                             {
                                 case TypeGEMDOS:
-                                    part.PartitionDescription = "Atari GEMDOS partition";
+                                    part.Description = "Atari GEMDOS partition";
                                     break;
                                 case TypeBigGEMDOS:
-                                    part.PartitionDescription = "Atari GEMDOS partition bigger than 32 MiB";
+                                    part.Description = "Atari GEMDOS partition bigger than 32 MiB";
                                     break;
                                 case TypeLinux:
-                                    part.PartitionDescription = "Linux partition";
+                                    part.Description = "Linux partition";
                                     break;
                                 case TypeSwap:
-                                    part.PartitionDescription = "Swap partition";
+                                    part.Description = "Swap partition";
                                     break;
                                 case TypeRAW:
-                                    part.PartitionDescription = "RAW partition";
+                                    part.Description = "RAW partition";
                                     break;
                                 case TypeNetBSD:
-                                    part.PartitionDescription = "NetBSD partition";
+                                    part.Description = "NetBSD partition";
                                     break;
                                 case TypeNetBSDSwap:
-                                    part.PartitionDescription = "NetBSD swap partition";
+                                    part.Description = "NetBSD swap partition";
                                     break;
                                 case TypeSysV:
-                                    part.PartitionDescription = "Atari UNIX partition";
+                                    part.Description = "Atari UNIX partition";
                                     break;
                                 case TypeMac:
-                                    part.PartitionDescription = "Macintosh partition";
+                                    part.Description = "Macintosh partition";
                                     break;
                                 case TypeMinix:
                                 case TypeMinix2:
-                                    part.PartitionDescription = "MINIX partition";
+                                    part.Description = "MINIX partition";
                                     break;
                                 default:
-                                    part.PartitionDescription = "Unknown partition type";
+                                    part.Description = "Unknown partition type";
                                     break;
                             }
 

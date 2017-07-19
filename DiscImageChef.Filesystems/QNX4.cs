@@ -125,7 +125,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + 1);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512)
                 return false;
 
@@ -147,10 +147,10 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // Check extents are not past device
-            if(qnxSb.rootDir.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
-               qnxSb.inode.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
-               qnxSb.boot.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
-               qnxSb.altBoot.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(qnxSb.rootDir.di_first_xtnt.block + partition.Start >= partition.End ||
+               qnxSb.inode.di_first_xtnt.block + partition.Start >= partition.End ||
+               qnxSb.boot.di_first_xtnt.block + partition.Start >= partition.End ||
+               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End)
                 return false;
 
             // Check inodes are in use
@@ -166,7 +166,7 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + 1);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512)
                 return;
 
@@ -255,7 +255,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "QNX4 filesystem";
-            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) / imagePlugin.GetSectorSize() * 512);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 512);
             xmlFSType.ClusterSize = 512;
             xmlFSType.Bootable |= (qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0);
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime);

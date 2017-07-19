@@ -96,11 +96,11 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionEndSector < 3)
+            if(partition.End < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
             DicConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
@@ -124,12 +124,12 @@ namespace DiscImageChef.Filesystems
 
             ushort bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
             DicConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bit_map_pointer);
-            if(bit_map_pointer > partition.PartitionEndSector)
+            if(bit_map_pointer > partition.End)
                 return false;
 
             ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
-            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partition.PartitionEndSector, partition.PartitionStartSector, total_blocks <= (partition.PartitionEndSector - partition.PartitionStartSector + 1));
-            return total_blocks <= (partition.PartitionEndSector - partition.PartitionStartSector + 1);
+            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partition.End, partition.Start, total_blocks <= (partition.End - partition.Start + 1));
+            return total_blocks <= (partition.End - partition.Start + 1);
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.Start);
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock();
             rootDirectoryKeyBlock.header = new ProDOSRootDirectoryHeader();
@@ -235,7 +235,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFSType.ClusterSize = (int)(((partition.PartitionEndSector - partition.PartitionStartSector) + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.Clusters);
+            xmlFSType.ClusterSize = (int)(((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 
             return;

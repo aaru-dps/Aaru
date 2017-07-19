@@ -1471,14 +1471,14 @@ namespace DiscImageChef.ImagePlugins
 				foreach(Track _track in tracks.Values)
 				{
 					Partition partition = new Partition();
-					partition.PartitionDescription = _track.TrackDescription;
-					partition.PartitionLength = (_track.TrackEndSector - _track.TrackStartSector + 1) * (ulong)_track.TrackRawBytesPerSector;
-					partition.PartitionSectors = (_track.TrackEndSector - _track.TrackStartSector + 1);
-					partition.PartitionSequence = _track.TrackSequence;
-					partition.PartitionStart = partPos;
-					partition.PartitionStartSector = _track.TrackStartSector;
-					partition.PartitionType = _track.TrackType.ToString();
-					partPos += partition.PartitionSectors;
+					partition.Description = _track.TrackDescription;
+					partition.Size = (_track.TrackEndSector - _track.TrackStartSector + 1) * (ulong)_track.TrackRawBytesPerSector;
+					partition.Length = (_track.TrackEndSector - _track.TrackStartSector + 1);
+					partition.Sequence = _track.TrackSequence;
+					partition.Offset = partPos;
+					partition.Start = _track.TrackStartSector;
+					partition.Type = _track.TrackType.ToString();
+					partPos += partition.Length;
 					offsetmap.Add(_track.TrackStartSector, _track.TrackSequence);
 
 					if(_track.TrackSubchannelType != TrackSubchannelType.None)

@@ -69,13 +69,13 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             uint magic;
             uint magic_be;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
             if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
 
-            sb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
+            sb_sector = imagePlugin.ReadSector(1 + partition.Start);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
 
             BeSuperBlock besb = new BeSuperBlock();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
 
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                sb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
+                sb_sector = imagePlugin.ReadSector(1 + partition.Start);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
@@ -131,7 +131,7 @@ namespace DiscImageChef.Filesystems
                 }
                 else if(sb_sector.Length >= 0x400)
                 {
-                    byte[] temp = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+                    byte[] temp = imagePlugin.ReadSector(0 + partition.Start);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
                     if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector

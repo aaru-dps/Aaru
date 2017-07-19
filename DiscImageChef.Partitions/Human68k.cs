@@ -99,12 +99,12 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit, imagePlugin.GetSectorSize());
 
                 Partition part = new Partition();
-                part.PartitionStartSector = (entry.stateStart & 0xFFFFFF) * sectsPerUnit;
-                part.PartitionStart = part.PartitionStartSector * (ulong)sector.Length;
-                part.PartitionSectors = entry.length * sectsPerUnit;
-                part.PartitionLength = part.PartitionSectors * (ulong)sector.Length;
-                part.PartitionType = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932));
-                part.PartitionSequence = counter;
+                part.Start = (entry.stateStart & 0xFFFFFF) * sectsPerUnit;
+                part.Offset = part.Start * (ulong)sector.Length;
+                part.Length = entry.length * sectsPerUnit;
+                part.Size = part.Length * (ulong)sector.Length;
+                part.Type = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932));
+                part.Sequence = counter;
                 if(entry.length > 0)
                 {
                     partitions.Add(part);

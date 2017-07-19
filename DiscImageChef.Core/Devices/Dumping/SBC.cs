@@ -623,12 +623,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         xmlFileSysInfo[i] = new PartitionType
                         {
-                            Description = partitions[i].PartitionDescription,
-                            EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1),
-                            Name = partitions[i].PartitionName,
-                            Sequence = (int)partitions[i].PartitionSequence,
-                            StartSector = (int)partitions[i].PartitionStartSector,
-                            Type = partitions[i].PartitionType
+                            Description = partitions[i].Description,
+                            EndSector = (int)(partitions[i].Start + partitions[i].Length - 1),
+                            Name = partitions[i].Name,
+                            Sequence = (int)partitions[i].Sequence,
+                            StartSector = (int)partitions[i].Start,
+                            Type = partitions[i].Type
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
@@ -676,9 +676,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     Partition wholePart = new Partition
                     {
-                        PartitionName = "Whole device",
-                        PartitionSectors = blocks,
-                        PartitionLength = blocks * blockSize
+                        Name = "Whole device",
+                        Length = blocks,
+                        Size = blocks * blockSize
                     };
 
                     foreach(Filesystem _plugin in plugins.PluginsList.Values)

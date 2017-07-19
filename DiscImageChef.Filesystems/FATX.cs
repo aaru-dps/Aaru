@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             FATX_Superblock fatxSb = new FATX_Superblock();
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
@@ -87,7 +87,7 @@ namespace DiscImageChef.Filesystems
 
             FATX_Superblock fatxSb = new FATX_Superblock();
 
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "FATX filesystem";
             xmlFSType.ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.ImageInfo.sectorSize);
-            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.ClusterSize);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.ClusterSize);
         }
 
         public override Errno Mount()

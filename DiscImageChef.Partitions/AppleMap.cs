@@ -111,12 +111,12 @@ namespace DiscImageChef.PartPlugins
 
                         CommonTypes.Partition part = new CommonTypes.Partition()
                         {
-                            PartitionLength = (ulong)(ddm.sbMap[i].ddSize * 512),
-                            PartitionSectors = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
-                            PartitionSequence = sequence,
-                            PartitionStart = ddm.sbMap[i].ddBlock * sector_size,
-                            PartitionStartSector = ddm.sbMap[i].ddBlock,
-                            PartitionType = "Apple_Driver"
+                            Size = (ulong)(ddm.sbMap[i].ddSize * 512),
+                            Length = (ulong)((ddm.sbMap[i].ddSize * 512) / sector_size),
+                            Sequence = sequence,
+                            Offset = ddm.sbMap[i].ddBlock * sector_size,
+                            Start = ddm.sbMap[i].ddBlock,
+                            Type = "Apple_Driver"
                         };
 
                         partitions.Add(part);
@@ -150,17 +150,17 @@ namespace DiscImageChef.PartPlugins
 
                     CommonTypes.Partition part = new CommonTypes.Partition
                     {
-                        PartitionLength = old_entry.pdStart * ddm.sbBlockSize,
-                        PartitionSectors = (old_entry.pdStart * ddm.sbBlockSize) / sector_size,
-                        PartitionSequence = sequence,
-                        PartitionStart = old_entry.pdSize * ddm.sbBlockSize,
-                        PartitionStartSector = (old_entry.pdSize * ddm.sbBlockSize) / sector_size,
+                        Size = old_entry.pdStart * ddm.sbBlockSize,
+                        Length = (old_entry.pdStart * ddm.sbBlockSize) / sector_size,
+                        Sequence = sequence,
+                        Offset = old_entry.pdSize * ddm.sbBlockSize,
+                        Start = (old_entry.pdSize * ddm.sbBlockSize) / sector_size,
                     };
 
                     if(old_entry.pdFSID == HFS_MAGIC_OLD)
-                        part.PartitionType = "Apple_HFS";
+                        part.Type = "Apple_HFS";
                     else
-                        part.PartitionType = string.Format("0x{0:X8}", old_entry.pdFSID);
+                        part.Type = string.Format("0x{0:X8}", old_entry.pdFSID);
 
                     partitions.Add(part);
 
@@ -267,13 +267,13 @@ namespace DiscImageChef.PartPlugins
 
                         CommonTypes.Partition _partition = new CommonTypes.Partition
                         {
-                            PartitionSequence = sequence,
-                            PartitionType = StringHandlers.CToString(entry.type),
-                            PartitionName = StringHandlers.CToString(entry.name),
-                            PartitionStart = entry.start * entry_size,
-                            PartitionLength = entry.sectors * entry_size,
-                            PartitionStartSector = (entry.start * entry_size) / sector_size,
-                            PartitionSectors = (entry.sectors * entry_size) / sector_size
+                            Sequence = sequence,
+                            Type = StringHandlers.CToString(entry.type),
+                            Name = StringHandlers.CToString(entry.name),
+                            Offset = entry.start * entry_size,
+                            Size = entry.sectors * entry_size,
+                            Start = (entry.start * entry_size) / sector_size,
+                            Length = (entry.sectors * entry_size) / sector_size
                         };
                         sb.AppendLine("Partition flags:");
                         if(flags.HasFlag(AppleMapFlags.Valid))
@@ -302,7 +302,7 @@ namespace DiscImageChef.PartPlugins
                                 sb.AppendLine("Partition's boot code is position independent.");
                         }
 
-                        _partition.PartitionDescription = sb.ToString();
+                        _partition.Description = sb.ToString();
                         partitions.Add(_partition);
                         sequence++;
                     }

@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x83")
+                    if(partitions[j].Type == "0x83")
                     {
                         part = j;
                         break;

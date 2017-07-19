@@ -1337,14 +1337,14 @@ namespace DiscImageChef.PartPlugins
             {
                 CommonTypes.Partition entry = new CommonTypes.Partition();
 
-                entry.PartitionDescription = AmigaDOSTypeToDescriptionString(RDBEntry.dosEnvVec.dosType);
-                entry.PartitionName = RDBEntry.driveName;
-                entry.PartitionSequence = sequence;
-                entry.PartitionSectors = (RDBEntry.dosEnvVec.highCylinder + 1 - RDBEntry.dosEnvVec.lowCylinder) * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
-                entry.PartitionStartSector = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
-                entry.PartitionStart = entry.PartitionStartSector * RDB.block_size;
-                entry.PartitionLength = entry.PartitionSectors * RDB.block_size;
-                entry.PartitionType = AmigaDOSTypeToString(RDBEntry.dosEnvVec.dosType);
+                entry.Description = AmigaDOSTypeToDescriptionString(RDBEntry.dosEnvVec.dosType);
+                entry.Name = RDBEntry.driveName;
+                entry.Sequence = sequence;
+                entry.Length = (RDBEntry.dosEnvVec.highCylinder + 1 - RDBEntry.dosEnvVec.lowCylinder) * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
+                entry.Start = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
+                entry.Offset = entry.Start * RDB.block_size;
+                entry.Size = entry.Length * RDB.block_size;
+                entry.Type = AmigaDOSTypeToString(RDBEntry.dosEnvVec.dosType);
 
                 partitions.Add(entry);
                 sequence++;

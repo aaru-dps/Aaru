@@ -56,12 +56,12 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 38797312, PartitionName = null, PartitionType = "???", PartitionStart = 1048576, PartitionSectors = 75776,
-                    PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 19922944, PartitionName = null, PartitionType = "???", PartitionStart = 40894464, PartitionSectors = 38912,
-                    PartitionSequence = 1, PartitionStartSector = 79872 },
-                new Partition{ PartitionDescription = null, PartitionLength = 48234496, PartitionName = null, PartitionType = "???", PartitionStart = 61865984, PartitionSectors = 94208,
-                    PartitionSequence = 2, PartitionStartSector = 120832 },
+                new Partition{ Description = null, Size = 38797312, Name = null, Type = "???", Offset = 1048576, Length = 75776,
+                    Sequence = 0, Start = 2048 },
+                new Partition{ Description = null, Size = 19922944, Name = null, Type = "???", Offset = 40894464, Length = 38912,
+                    Sequence = 1, Start = 79872 },
+                new Partition{ Description = null, Size = 48234496, Name = null, Type = "???", Offset = 61865984, Length = 94208,
+                    Sequence = 2, Start = 120832 },
             },
         };
 

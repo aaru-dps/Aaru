@@ -96,10 +96,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -108,7 +108,7 @@ namespace DiscImageChef.Filesystems
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             SquashSuperBlock sqSb = new SquashSuperBlock();
@@ -167,7 +167,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "Squash file system";
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(sqSb.mkfs_time);
             xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = (long)(((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.ImageInfo.sectorSize) / sqSb.block_size);
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) / sqSb.block_size);
             xmlFSType.ClusterSize = (int)sqSb.block_size;
             xmlFSType.Files = sqSb.inodes;
             xmlFSType.FilesSpecified = true;

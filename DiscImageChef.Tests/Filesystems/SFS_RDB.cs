@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"SFS\\0\"" || partitions[j].PartitionType == "\"SFS\\2\"")
+                    if(partitions[j].Type == "\"SFS\\0\"" || partitions[j].Type == "\"SFS\\2\"")
                     {
                         part = j;
                         break;

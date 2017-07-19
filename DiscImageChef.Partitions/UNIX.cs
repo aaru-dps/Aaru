@@ -143,12 +143,12 @@ namespace DiscImageChef.PartPlugins
                     if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX_TAG.WHOLE)
                     {
                         Partition part = new Partition();
-                        part.PartitionStartSector = vtoc_ent.start;
-                        part.PartitionSectors = vtoc_ent.length;
-                        part.PartitionStart = vtoc_ent.start * dl.bps;
-                        part.PartitionLength = vtoc_ent.length * dl.bps;
-                        part.PartitionSequence = counter;
-                        part.PartitionType = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                        part.Start = vtoc_ent.start;
+                        part.Length = vtoc_ent.length;
+                        part.Offset = vtoc_ent.start * dl.bps;
+                        part.Size = vtoc_ent.length * dl.bps;
+                        part.Sequence = counter;
+                        part.Type = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                         string info = "";
 
@@ -157,7 +157,7 @@ namespace DiscImageChef.PartPlugins
                         if((vtoc_ent.flags & 0x10) == 0x10)
                             info += " (do not mount)";
 
-                        part.PartitionDescription = "UNIX slice" + info + ".";
+                        part.Description = "UNIX slice" + info + ".";
 
                         partitions.Add(part);
                         counter++;

@@ -58,7 +58,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             byte[] eigth_bytes = new byte[8];
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
             ushort spfat, signature;
             string oem_name;
 
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.Start);
 
             Array.Copy(ntfs_bpb, 0x003, eigth_bytes, 0, 8);
             oem_name = StringHandlers.CToString(eigth_bytes);
@@ -95,7 +95,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.Start);
 
             NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);

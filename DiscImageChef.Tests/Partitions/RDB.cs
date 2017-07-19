@@ -57,42 +57,42 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // AmigaOS 3.9
             new []{ 
-                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH0", PartitionType = "\"DOS\\0\"", PartitionStart = 2080768, PartitionSectors = 170688,
-                    PartitionSequence = 0, PartitionStartSector = 4064 },
-                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH1", PartitionType = "\"DOS\\2\"", PartitionStart = 89473024, PartitionSectors = 170688,
-                    PartitionSequence = 1, PartitionStartSector = 174752 },
-                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH2", PartitionType = "\"DOS\\1\"", PartitionStart = 176865280, PartitionSectors = 170688,
-                    PartitionSequence = 2, PartitionStartSector = 345440 },
-                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH3", PartitionType = "\"DOS\\3\"", PartitionStart = 264257536, PartitionSectors = 170688,
-                    PartitionSequence = 3, PartitionStartSector = 516128 },
-                new Partition{ PartitionDescription = null, PartitionLength = 87392256, PartitionName = "UDH4", PartitionType = "\"RES\\86\"", PartitionStart = 351649792, PartitionSectors = 170688,
-                    PartitionSequence = 4, PartitionStartSector = 686816 },
-                new Partition{ PartitionDescription = null, PartitionLength = 85311488, PartitionName = "UDH5", PartitionType = "\"RES\\86\"", PartitionStart = 439042048, PartitionSectors = 166624,
-                    PartitionSequence = 5, PartitionStartSector = 857504 },
+                new Partition{ Description = null, Size = 87392256, Name = "UDH0", Type = "\"DOS\\0\"", Offset = 2080768, Length = 170688,
+                    Sequence = 0, Start = 4064 },
+                new Partition{ Description = null, Size = 87392256, Name = "UDH1", Type = "\"DOS\\2\"", Offset = 89473024, Length = 170688,
+                    Sequence = 1, Start = 174752 },
+                new Partition{ Description = null, Size = 87392256, Name = "UDH2", Type = "\"DOS\\1\"", Offset = 176865280, Length = 170688,
+                    Sequence = 2, Start = 345440 },
+                new Partition{ Description = null, Size = 87392256, Name = "UDH3", Type = "\"DOS\\3\"", Offset = 264257536, Length = 170688,
+                    Sequence = 3, Start = 516128 },
+                new Partition{ Description = null, Size = 87392256, Name = "UDH4", Type = "\"RES\\86\"", Offset = 351649792, Length = 170688,
+                    Sequence = 4, Start = 686816 },
+                new Partition{ Description = null, Size = 85311488, Name = "UDH5", Type = "\"RES\\86\"", Offset = 439042048, Length = 166624,
+                    Sequence = 5, Start = 857504 },
             },
             // AmigaOS 4.0
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 91455488, PartitionName = "DH1", PartitionType = "\"DOS\\1\"", PartitionStart = 1048576, PartitionSectors = 178624,
-                    PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 76546048, PartitionName = "DH2", PartitionType = "\"DOS\\3\"", PartitionStart = 92504064, PartitionSectors = 149504,
-                    PartitionSequence = 1, PartitionStartSector = 180672 },
-                new Partition{ PartitionDescription = null, PartitionLength = 78741504, PartitionName = "DH3", PartitionType = "\"DOS\\3\"", PartitionStart = 169050112, PartitionSectors = 153792,
-                    PartitionSequence = 2, PartitionStartSector = 330176 },
-                new Partition{ PartitionDescription = null, PartitionLength = 78020608, PartitionName = "DH4", PartitionType = "\"DOS\\7\"", PartitionStart = 247791616, PartitionSectors = 152384,
-                    PartitionSequence = 3, PartitionStartSector = 483968 },
-                new Partition{ PartitionDescription = null, PartitionLength = 85000192, PartitionName = "DH5", PartitionType = "\"SFS\\0\"", PartitionStart = 325812224, PartitionSectors = 166016,
-                    PartitionSequence = 4, PartitionStartSector = 636352 },
-                new Partition{ PartitionDescription = null, PartitionLength = 113541120, PartitionName = "DH6", PartitionType = "\"SFS\\2\"", PartitionStart = 410812416, PartitionSectors = 221760,
-                    PartitionSequence = 5, PartitionStartSector = 802368 },
+                new Partition{ Description = null, Size = 91455488, Name = "DH1", Type = "\"DOS\\1\"", Offset = 1048576, Length = 178624,
+                    Sequence = 0, Start = 2048 },
+                new Partition{ Description = null, Size = 76546048, Name = "DH2", Type = "\"DOS\\3\"", Offset = 92504064, Length = 149504,
+                    Sequence = 1, Start = 180672 },
+                new Partition{ Description = null, Size = 78741504, Name = "DH3", Type = "\"DOS\\3\"", Offset = 169050112, Length = 153792,
+                    Sequence = 2, Start = 330176 },
+                new Partition{ Description = null, Size = 78020608, Name = "DH4", Type = "\"DOS\\7\"", Offset = 247791616, Length = 152384,
+                    Sequence = 3, Start = 483968 },
+                new Partition{ Description = null, Size = 85000192, Name = "DH5", Type = "\"SFS\\0\"", Offset = 325812224, Length = 166016,
+                    Sequence = 4, Start = 636352 },
+                new Partition{ Description = null, Size = 113541120, Name = "DH6", Type = "\"SFS\\2\"", Offset = 410812416, Length = 221760,
+                    Sequence = 5, Start = 802368 },
             },
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 8225280, PartitionName = "primary", PartitionType = "\"\0\0\0\\0\"", PartitionStart = 8225280, PartitionSectors = 16065,
-                    PartitionSequence = 0, PartitionStartSector = 16065 },
-                new Partition{ PartitionDescription = null, PartitionLength = 24675840, PartitionName = "name", PartitionType = "\"FAT\\1\"", PartitionStart = 16450560, PartitionSectors = 48195,
-                    PartitionSequence = 1, PartitionStartSector = 32130 },
-                new Partition{ PartitionDescription = null, PartitionLength = 90478080, PartitionName = "partition", PartitionType = "\"\0\0\0\\0\"", PartitionStart = 41126400, PartitionSectors = 176715,
-                    PartitionSequence = 2, PartitionStartSector = 80325 },
+                new Partition{ Description = null, Size = 8225280, Name = "primary", Type = "\"\0\0\0\\0\"", Offset = 8225280, Length = 16065,
+                    Sequence = 0, Start = 16065 },
+                new Partition{ Description = null, Size = 24675840, Name = "name", Type = "\"FAT\\1\"", Offset = 16450560, Length = 48195,
+                    Sequence = 1, Start = 32130 },
+                new Partition{ Description = null, Size = 90478080, Name = "partition", Type = "\"\0\0\0\\0\"", Offset = 41126400, Length = 176715,
+                    Sequence = 2, Start = 80325 },
             },
         };  
 
@@ -113,13 +113,13 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionLength, partitions[j].PartitionLength, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionName, partitions[j].PartitionName, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionType, partitions[j].PartitionType, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStart, partitions[j].PartitionStart, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSectors, partitions[j].PartitionSectors, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSequence, partitions[j].PartitionSequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStartSector, partitions[j].PartitionStartSector, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
             }
         }

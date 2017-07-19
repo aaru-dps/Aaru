@@ -65,7 +65,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             if(imagePlugin.GetSectorSize() < 512)
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] magic_b = new byte[12];
             string magic;
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
 
             Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
             magic = Encoding.ASCII.GetString(magic_b);
@@ -91,7 +91,7 @@ namespace DiscImageChef.Filesystems
             homeblock.min_class = new byte[20];
             homeblock.max_class = new byte[20];
 
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
 
             homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
             homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);

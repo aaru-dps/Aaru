@@ -57,12 +57,12 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 38797312, PartitionName = null, PartitionType = "???", PartitionStart = 1048576, PartitionSectors = 75776,
-                    PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 19922944, PartitionName = null, PartitionType = "???", PartitionStart = 40894464, PartitionSectors = 38912,
-                    PartitionSequence = 1, PartitionStartSector = 79872 },
-                new Partition{ PartitionDescription = null, PartitionLength = 48234496, PartitionName = null, PartitionType = "???", PartitionStart = 61865984, PartitionSectors = 94208,
-                    PartitionSequence = 2, PartitionStartSector = 120832 },
+                new Partition{ Description = null, Size = 38797312, Name = null, Type = "???", Offset = 1048576, Length = 75776,
+                    Sequence = 0, Start = 2048 },
+                new Partition{ Description = null, Size = 19922944, Name = null, Type = "???", Offset = 40894464, Length = 38912,
+                    Sequence = 1, Start = 79872 },
+                new Partition{ Description = null, Size = 48234496, Name = null, Type = "???", Offset = 61865984, Length = 94208,
+                    Sequence = 2, Start = 120832 },
             },
         };
 
@@ -83,13 +83,13 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionLength, partitions[j].PartitionLength, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionName, partitions[j].PartitionName, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionType, partitions[j].PartitionType, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStart, partitions[j].PartitionStart, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSectors, partitions[j].PartitionSectors, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSequence, partitions[j].PartitionSequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStartSector, partitions[j].PartitionStartSector, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
             }
         }

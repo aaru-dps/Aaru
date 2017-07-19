@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -217,14 +217,14 @@ namespace DiscImageChef.Filesystems
             // However while you can set a block size different from the sector size on formatting, the bootblock block
             // size for floppies is the sector size, and for RDB is usually is the hard disk sector size,
             // so this is not entirely wrong...
-            byte[] sector = imagePlugin.ReadSectors(0 + partition.PartitionStartSector, 2);
+            byte[] sector = imagePlugin.ReadSectors(0 + partition.Start, 2);
             BootBlock bblk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
 
             // AROS boot floppies...
             if(sector.Length >= 512 && sector[510] == 0x55 && sector[511] == 0xAA &&
               (bblk.diskType & FFS_Mask) != FFS_Mask && (bblk.diskType & MuFS_Mask) != MuFS_Mask)
             {
-                sector = imagePlugin.ReadSectors(1 + partition.PartitionStartSector, 2);
+                sector = imagePlugin.ReadSectors(1 + partition.Start, 2);
                 bblk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
             }
 
@@ -245,19 +245,19 @@ namespace DiscImageChef.Filesystems
             // If bootblock is correct, let's take its rootblock pointer
             if(bsum == bblk.checksum)
             {
-                b_root_ptr = bblk.root_ptr + partition.PartitionStartSector;
+                b_root_ptr = bblk.root_ptr + partition.Start;
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", b_root_ptr);
             }
 
-            ulong[] root_ptrs = { b_root_ptr + partition.PartitionStartSector, ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector - 2,
-                ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector - 1, ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector};
+            ulong[] root_ptrs = { b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start};
 
             RootBlock rblk = new RootBlock();
 
             // So to handle even number of sectors
             foreach(ulong root_ptr in root_ptrs)
             {
-                if(root_ptr >= partition.PartitionEndSector || root_ptr < partition.PartitionStartSector)
+                if(root_ptr >= partition.End || root_ptr < partition.Start)
                     continue;
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
@@ -282,7 +282,7 @@ namespace DiscImageChef.Filesystems
                 if(blockSize % sector.Length > 0)
                     sectorsPerBlock++;
 
-                if(root_ptr + sectorsPerBlock >= partition.PartitionEndSector)
+                if(root_ptr + sectorsPerBlock >= partition.End)
                     continue;
 
                 sector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
@@ -312,7 +312,7 @@ namespace DiscImageChef.Filesystems
             information = null;
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] BootBlockSectors = imagePlugin.ReadSectors(0 + partition.PartitionStartSector, 2);
+            byte[] BootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
 
             BootBlock bootBlk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(BootBlockSectors);
             bootBlk.bootCode = new byte[BootBlockSectors.Length - 12];
@@ -325,12 +325,12 @@ namespace DiscImageChef.Filesystems
             // If bootblock is correct, let's take its rootblock pointer
             if(bsum == bootBlk.checksum)
             {
-                b_root_ptr = bootBlk.root_ptr + partition.PartitionStartSector;
+                b_root_ptr = bootBlk.root_ptr + partition.Start;
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", b_root_ptr);
             }
 
-            ulong[] root_ptrs = { b_root_ptr + partition.PartitionStartSector, ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector - 2,
-                ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector - 1, ((partition.PartitionEndSector - partition.PartitionStartSector) + 1) / 2 + partition.PartitionStartSector};
+            ulong[] root_ptrs = { b_root_ptr + partition.Start, ((partition.End - partition.Start) + 1) / 2 + partition.Start - 2,
+                ((partition.End - partition.Start) + 1) / 2 + partition.Start - 1, ((partition.End - partition.Start) + 1) / 2 + partition.Start};
 
             RootBlock rootBlk = new RootBlock();
             byte[] RootBlockSector = null;
@@ -341,7 +341,7 @@ namespace DiscImageChef.Filesystems
             // So to handle even number of sectors
             foreach(ulong root_ptr in root_ptrs)
             {
-                if(root_ptr >= partition.PartitionEndSector || root_ptr < partition.PartitionStartSector)
+                if(root_ptr >= partition.End || root_ptr < partition.Start)
                     continue;
 
                 DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", root_ptr);
@@ -366,7 +366,7 @@ namespace DiscImageChef.Filesystems
                 if(blockSize % RootBlockSector.Length > 0)
                     sectorsPerBlock++;
 
-                if(root_ptr + sectorsPerBlock >= partition.PartitionEndSector)
+                if(root_ptr + sectorsPerBlock >= partition.End)
                     continue;
 
                 RootBlockSector = imagePlugin.ReadSectors(root_ptr, sectorsPerBlock);
@@ -458,7 +458,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((((partition.PartitionEndSector - partition.PartitionStartSector) + 1) * imagePlugin.ImageInfo.sectorSize) / blockSize);
+            long blocks = (long)((((partition.End - partition.Start) + 1) * imagePlugin.ImageInfo.sectorSize) / blockSize);
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();

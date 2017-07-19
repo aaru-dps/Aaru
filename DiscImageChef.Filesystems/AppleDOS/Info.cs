@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(imagePlugin.ImageInfo.sectors != 455 && imagePlugin.ImageInfo.sectors != 560)
                 return false;
 
-            if(partition.PartitionStartSector > 0 || imagePlugin.ImageInfo.sectorSize != 256)
+            if(partition.Start > 0 || imagePlugin.ImageInfo.sectorSize != 256)
                 return false;
 
             int spt = 0;

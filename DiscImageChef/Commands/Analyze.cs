@@ -152,13 +152,13 @@ namespace DiscImageChef.Commands
                         for(int i = 0; i < partitions.Count; i++)
                         {
                             DicConsole.WriteLine();
-                            DicConsole.WriteLine("Partition {0}:", partitions[i].PartitionSequence);
-                            DicConsole.WriteLine("Partition name: {0}", partitions[i].PartitionName);
-                            DicConsole.WriteLine("Partition type: {0}", partitions[i].PartitionType);
-                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].PartitionStartSector, partitions[i].PartitionStart);
-                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].PartitionSectors, partitions[i].PartitionLength);
+                            DicConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
+                            DicConsole.WriteLine("Partition name: {0}", partitions[i].Name);
+                            DicConsole.WriteLine("Partition type: {0}", partitions[i].Type);
+                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].Start, partitions[i].Offset);
+                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].Length, partitions[i].Size);
                             DicConsole.WriteLine("Partition description:");
-                            DicConsole.WriteLine(partitions[i].PartitionDescription);
+                            DicConsole.WriteLine(partitions[i].Description);
 
                             if(options.SearchForFilesystems)
                             {
@@ -199,9 +199,9 @@ namespace DiscImageChef.Commands
                 {
                     Partition wholePart = new Partition
                     {
-                        PartitionName = "Whole device",
-                        PartitionSectors = _imageFormat.GetSectors(),
-                        PartitionLength = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
+                        Name = "Whole device",
+                        Length = _imageFormat.GetSectors(),
+                        Size = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
                     };
 
                     Core.Filesystems.Identify(_imageFormat, out id_plugins, wholePart);

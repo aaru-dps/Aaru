@@ -116,9 +116,9 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x07" ||
+                    if(partitions[j].Type == "0x07" ||
                        // Value incorrectly set by Haiku
-                       partitions[j].PartitionType == "0x86")
+                       partitions[j].Type == "0x86")
                     {
                         part = j;
                         break;

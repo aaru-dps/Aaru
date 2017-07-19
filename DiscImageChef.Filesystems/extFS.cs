@@ -57,10 +57,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start); // Superblock resides at 0x400
 
             ushort magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
 
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start); // Superblock resides at 0x400
             extFSSuperBlock ext_sb = new extFSSuperBlock();
 
             ext_sb.inodes = BitConverter.ToUInt32(sb_sector, 0x000);
@@ -101,7 +101,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = ext_sb.freecountblk;
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.ClusterSize = 1024;
-            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.GetSectorSize() / 1024);
+            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / 1024);
 
             information = sb.ToString();
         }

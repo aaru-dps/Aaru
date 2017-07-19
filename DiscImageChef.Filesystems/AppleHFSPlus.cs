@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             ushort drSigWord;
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
             byte[] vh_sector;
             ulong hfsp_offset;
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partition.Start); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 
@@ -110,7 +110,7 @@ namespace DiscImageChef.Filesystems
                 hfsp_offset = 0;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partition.Start + hfsp_offset); // Read volume header
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0);
             if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
@@ -132,7 +132,7 @@ namespace DiscImageChef.Filesystems
             bool wrapped;
             byte[] vh_sector;
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partition.Start); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 
@@ -163,7 +163,7 @@ namespace DiscImageChef.Filesystems
                 wrapped = false;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partition.Start + hfsp_offset); // Read volume header
 
             HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x000);
             if(HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)

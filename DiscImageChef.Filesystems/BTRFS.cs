@@ -124,16 +124,16 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            if((sbSectorOff + sbSectorSize) >= partition.PartitionEndSector)
+            if((sbSectorOff + sbSectorSize) >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.PartitionStartSector, sbSectorSize);
+            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
             SuperBlock btrfsSb;
 
             try
@@ -150,7 +150,7 @@ namespace DiscImageChef.Filesystems
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}", sbSectorOff);
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}", sbSectorSize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.PartitionStartSector);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.Start);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
 
             return btrfsSb.magic == btrfsMagic;
@@ -165,7 +165,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.PartitionStartSector, sbSectorSize);
+            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
             SuperBlock btrfsSb;
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);

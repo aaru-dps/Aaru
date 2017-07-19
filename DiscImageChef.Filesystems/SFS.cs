@@ -100,12 +100,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
@@ -114,7 +114,7 @@ namespace DiscImageChef.Filesystems
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
-            byte[] RootBlockSector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] RootBlockSector = imagePlugin.ReadSector(partition.Start);
             RootBlock rootBlock = new RootBlock();
             rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
 

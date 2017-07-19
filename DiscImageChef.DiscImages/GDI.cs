@@ -387,17 +387,17 @@ namespace DiscImageChef.ImagePlugins
                     Partition partition = new Partition();
 
                     // Index 01
-                    partition.PartitionDescription = string.Format("Track {0}.", discimage.tracks[i].sequence);
-                    partition.PartitionName = null;
-                    partition.PartitionStartSector = discimage.tracks[i].startSector;
-                    partition.PartitionLength = discimage.tracks[i].sectors * discimage.tracks[i].bps;
-                    partition.PartitionSectors = discimage.tracks[i].sectors;
-                    partition.PartitionSequence = discimage.tracks[i].sequence;
-                    partition.PartitionStart = byte_offset;
-                    partition.PartitionType = discimage.tracks[i].tracktype.ToString();
+                    partition.Description = string.Format("Track {0}.", discimage.tracks[i].sequence);
+                    partition.Name = null;
+                    partition.Start = discimage.tracks[i].startSector;
+                    partition.Size = discimage.tracks[i].sectors * discimage.tracks[i].bps;
+                    partition.Length = discimage.tracks[i].sectors;
+                    partition.Sequence = discimage.tracks[i].sequence;
+                    partition.Offset = byte_offset;
+                    partition.Type = discimage.tracks[i].tracktype.ToString();
 
-                    byte_offset += partition.PartitionLength;
-                    offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
+                    byte_offset += partition.Size;
+                    offsetmap.Add(discimage.tracks[i].sequence, partition.Start);
                     partitions.Add(partition);
                 }
 

@@ -201,20 +201,20 @@ namespace DiscImageChef.PartPlugins
                 if((SunTypes)sdl.vtoc.infos[i].id != SunTypes.SunWholeDisk && sdl.partitions[i].num_sectors > 0)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
-                    part.PartitionDescription = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags);
+                    part.Description = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags);
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    part.PartitionLength = (ulong)sdl.partitions[i].num_sectors * (ulong)imagePlugin.GetSectorSize();
+                    part.Size = (ulong)sdl.partitions[i].num_sectors * (ulong)imagePlugin.GetSectorSize();
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-                    part.PartitionName = "";
-                    part.PartitionSectors = sdl.partitions[i].num_sectors;
-                    part.PartitionSequence = (ulong)i;
+                    part.Name = "";
+                    part.Length = sdl.partitions[i].num_sectors;
+                    part.Sequence = (ulong)i;
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    part.PartitionStart = (ulong)sdl.partitions[i].start_cylinder * (ulong)sectorsPerCylinder * (ulong)imagePlugin.GetSectorSize();
+                    part.Offset = (ulong)sdl.partitions[i].start_cylinder * (ulong)sectorsPerCylinder * (ulong)imagePlugin.GetSectorSize();
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-                    part.PartitionStartSector = sdl.partitions[i].start_cylinder * sectorsPerCylinder;
-                    part.PartitionType = SunIdToString((SunTypes)sdl.vtoc.infos[i].id);
+                    part.Start = sdl.partitions[i].start_cylinder * sectorsPerCylinder;
+                    part.Type = SunIdToString((SunTypes)sdl.vtoc.infos[i].id);
 
-                    if(part.PartitionStartSector > imagePlugin.GetSectors() || (part.PartitionStartSector + part.PartitionSectors) > imagePlugin.GetSectors())
+                    if(part.Start > imagePlugin.GetSectors() || (part.Start + part.Length) > imagePlugin.GetSectors())
                         return false;
 
                     partitions.Add(part);

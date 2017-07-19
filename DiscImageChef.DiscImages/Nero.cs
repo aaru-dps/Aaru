@@ -1643,17 +1643,17 @@ namespace DiscImageChef.ImagePlugins
                         }*/
 
                         partition = new Partition();
-                        partition.PartitionDescription = string.Format("Track {0} Index 1", _track.TrackSequence);
-                        partition.PartitionLength = (_neroTrack.EndOfTrack - _neroTrack.Index1);
-                        partition.PartitionName = StringHandlers.CToString(_neroTrack.ISRC);
-                        partition.PartitionSectors = partition.PartitionLength / _neroTrack.SectorSize;
-                        partition.PartitionSequence = PartitionSequence;
-                        partition.PartitionStart = partitionStartByte;
-                        partition.PartitionStartSector = _neroTrack.StartLBA + ((_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize);
-                        partition.PartitionType = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode).ToString();
+                        partition.Description = string.Format("Track {0} Index 1", _track.TrackSequence);
+                        partition.Size = (_neroTrack.EndOfTrack - _neroTrack.Index1);
+                        partition.Name = StringHandlers.CToString(_neroTrack.ISRC);
+                        partition.Length = partition.Size / _neroTrack.SectorSize;
+                        partition.Sequence = PartitionSequence;
+                        partition.Offset = partitionStartByte;
+                        partition.Start = _neroTrack.StartLBA + ((_neroTrack.Index1 - _neroTrack.Index0) / _neroTrack.SectorSize);
+                        partition.Type = NeroTrackModeToTrackType((DAOMode)_neroTrack.Mode).ToString();
                         ImagePartitions.Add(partition);
                         PartitionSequence++;
-                        partitionStartByte += partition.PartitionLength;
+                        partitionStartByte += partition.Size;
                     }
                 }
 

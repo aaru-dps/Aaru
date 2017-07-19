@@ -155,21 +155,21 @@ namespace DiscImageChef.PartPlugins
 
                     CommonTypes.Partition part = new CommonTypes.Partition()
                     {
-                        PartitionLength = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
-                        PartitionStart = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
-                        PartitionType = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
-                        PartitionSequence = (ulong)i,
-                        PartitionName = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                        PartitionSectors = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sector_size),
-                        PartitionStartSector = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize) / sector_size)
+                        Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
+                        Offset = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
+                        Type = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
+                        Sequence = (ulong)i,
+                        Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
+                        Length = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sector_size),
+                        Start = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize) / sector_size)
                     };
 
-                    if(part.PartitionStartSector + part.PartitionSectors > imagePlugin.ImageInfo.sectors)
+                    if(part.Start + part.Length > imagePlugin.ImageInfo.sectors)
                     {
                         DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
-                        part.PartitionSectors = imagePlugin.ImageInfo.sectors - part.PartitionStartSector;
-                        part.PartitionLength = part.PartitionSectors * sector_size;
-                        DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.PartitionSectors);
+                        part.Length = imagePlugin.ImageInfo.sectors - part.Start;
+                        part.Size = part.Length * sector_size;
+                        DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.Length);
                     }
 
                     sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
@@ -188,7 +188,7 @@ namespace DiscImageChef.PartPlugins
                     if(label.dl_dt.d_partitions[i].p_automnt == 1)
                         sb.AppendLine("Filesystem should be automatically mounted");
 
-                    part.PartitionDescription = sb.ToString();
+                    part.Description = sb.ToString();
 
                     partitions.Add(part);
                 }

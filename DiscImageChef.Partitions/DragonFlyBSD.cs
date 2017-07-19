@@ -71,16 +71,16 @@ namespace DiscImageChef.PartPlugins
             foreach(Partition64 entry in disklabel.d_partitions)
             {
                 Partition part = new Partition();
-                part.PartitionStartSector = entry.p_boffset;
-                part.PartitionStart = entry.p_boffset;
-                part.PartitionLength = entry.p_bsize;
-                part.PartitionSectors = entry.p_bsize;
+                part.Start = entry.p_boffset;
+                part.Offset = entry.p_boffset;
+                part.Size = entry.p_bsize;
+                part.Length = entry.p_bsize;
                 if((BSD.fsType)entry.p_fstype == BSD.fsType.Other)
-                    part.PartitionType = entry.p_type_uuid.ToString();
+                    part.Type = entry.p_type_uuid.ToString();
                 else
-                    part.PartitionType = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
-                part.PartitionName = entry.p_stor_uuid.ToString();
-                part.PartitionSequence = counter;
+                    part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
+                part.Name = entry.p_stor_uuid.ToString();
+                part.Sequence = counter;
                 if(entry.p_bsize > 0 && entry.p_boffset > 0)
                 {
                     partitions.Add(part);

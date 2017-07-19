@@ -38,23 +38,23 @@ namespace DiscImageChef.CommonTypes
     public struct Partition
     {
         /// <summary>Partition number, 0-started</summary>
-        public ulong PartitionSequence;
+        public ulong Sequence;
         /// <summary>Partition type</summary>
-        public string PartitionType;
+        public string Type;
         /// <summary>Partition name (if the scheme supports it)</summary>
-        public string PartitionName;
+        public string Name;
         /// <summary>Start of the partition, in bytes</summary>
-        public ulong PartitionStart;
+        public ulong Offset;
         /// <summary>LBA of partition start</summary>
-        public ulong PartitionStartSector;
+        public ulong Start;
         /// <summary>Length in bytes of the partition</summary>
-        public ulong PartitionLength;
+        public ulong Size;
         /// <summary>Length in sectors of the partition</summary>
-        public ulong PartitionSectors;
+        public ulong Length;
         /// <summary>Information that does not find space in this struct</summary>
-        public string PartitionDescription;
+        public string Description;
         /// <summary>LBA of last partition sector</summary>
-        public ulong PartitionEndSector { get { return PartitionStartSector + PartitionSectors - 1; }}
+        public ulong End { get { return Start + Length - 1; }}
     }
 }
 

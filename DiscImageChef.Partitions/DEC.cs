@@ -71,12 +71,12 @@ namespace DiscImageChef.PartPlugins
             foreach(DECPartition entry in table.pt_part)
             {
                 Partition part = new Partition();
-                part.PartitionStartSector = entry.pi_blkoff;
-                part.PartitionStart = (ulong)(entry.pi_blkoff * sector.Length);
-                part.PartitionLength = (ulong)entry.pi_nblocks;
-                part.PartitionSectors = (ulong)(entry.pi_nblocks * sector.Length);
-                part.PartitionSequence = counter;
-                if(part.PartitionLength > 0)
+                part.Start = entry.pi_blkoff;
+                part.Offset = (ulong)(entry.pi_blkoff * sector.Length);
+                part.Size = (ulong)entry.pi_nblocks;
+                part.Length = (ulong)(entry.pi_nblocks * sector.Length);
+                part.Sequence = counter;
+                if(part.Size > 0)
                 {
                     partitions.Add(part);
                     counter++;

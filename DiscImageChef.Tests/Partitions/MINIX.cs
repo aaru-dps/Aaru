@@ -56,14 +56,14 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 268369408, PartitionName = null, PartitionType = "MINIX", PartitionStart = 2064896, PartitionSectors = 524159,
-                    PartitionSequence = 0, PartitionStartSector = 4033 },
-                new Partition{ PartitionDescription = null, PartitionLength = 270434304, PartitionName = null, PartitionType = "MINIX", PartitionStart = 270434304, PartitionSectors = 528192,
-                    PartitionSequence = 1, PartitionStartSector = 528192 },
-                new Partition{ PartitionDescription = null, PartitionLength = 270434304, PartitionName = null, PartitionType = "MINIX", PartitionStart = 540868608, PartitionSectors = 528192,
-                    PartitionSequence = 2, PartitionStartSector = 1056384 },
-                new Partition{ PartitionDescription = null, PartitionLength = 262176768, PartitionName = null, PartitionType = "MINIX", PartitionStart = 811302912, PartitionSectors = 512064,
-                    PartitionSequence = 2, PartitionStartSector = 1584576 },
+                new Partition{ Description = null, Size = 268369408, Name = null, Type = "MINIX", Offset = 2064896, Length = 524159,
+                    Sequence = 0, Start = 4033 },
+                new Partition{ Description = null, Size = 270434304, Name = null, Type = "MINIX", Offset = 270434304, Length = 528192,
+                    Sequence = 1, Start = 528192 },
+                new Partition{ Description = null, Size = 270434304, Name = null, Type = "MINIX", Offset = 540868608, Length = 528192,
+                    Sequence = 2, Start = 1056384 },
+                new Partition{ Description = null, Size = 262176768, Name = null, Type = "MINIX", Offset = 811302912, Length = 512064,
+                    Sequence = 2, Start = 1584576 },
             },
         };
 

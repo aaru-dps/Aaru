@@ -100,7 +100,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"UNI\\2\"")
+                    if(partitions[j].Type == "\"UNI\\2\"")
                     {
                         part = j;
                         break;

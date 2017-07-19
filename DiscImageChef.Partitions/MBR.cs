@@ -147,16 +147,16 @@ namespace DiscImageChef.PartPlugins
 
                                         CommonTypes.Partition part = new CommonTypes.Partition();
 
-                                        part.PartitionSectors = bsdPartition.p_size;
-                                        part.PartitionStartSector = bsdPartition.p_offset;
-                                        part.PartitionLength = bsdPartition.p_size * bsdDisklabel.d_secsize;
-                                        part.PartitionStart = bsdPartition.p_offset * bsdDisklabel.d_secsize;
+                                        part.Length = bsdPartition.p_size;
+                                        part.Start = bsdPartition.p_offset;
+                                        part.Size = bsdPartition.p_size * bsdDisklabel.d_secsize;
+                                        part.Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize;
 
-                                        part.PartitionType = string.Format("BSD: {0}", bsdPartition.p_fstype);
-                                        part.PartitionName = BSD.fsTypeToString(bsdPartition.p_fstype);
+                                        part.Type = string.Format("BSD: {0}", bsdPartition.p_fstype);
+                                        part.Name = BSD.fsTypeToString(bsdPartition.p_fstype);
 
-                                        part.PartitionSequence = counter;
-                                        part.PartitionDescription = "Partition inside a BSD disklabel.";
+                                        part.Sequence = counter;
+                                        part.Description = "Partition inside a BSD disklabel.";
 
                                         if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                         {
@@ -246,12 +246,12 @@ namespace DiscImageChef.PartPlugins
                                             {
                                                 CommonTypes.Partition part = new CommonTypes.Partition();
                                                 // TODO: Check if device bps == disklabel bps
-                                                part.PartitionStartSector = vtoc_ent.start;
-                                                part.PartitionSectors = vtoc_ent.length;
-                                                part.PartitionStart = vtoc_ent.start * dl.bps;
-                                                part.PartitionLength = vtoc_ent.length * dl.bps;
-                                                part.PartitionSequence = counter;
-                                                part.PartitionType = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                part.Start = vtoc_ent.start;
+                                                part.Length = vtoc_ent.length;
+                                                part.Offset = vtoc_ent.start * dl.bps;
+                                                part.Size = vtoc_ent.length * dl.bps;
+                                                part.Sequence = counter;
+                                                part.Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                 string info = "";
 
@@ -260,7 +260,7 @@ namespace DiscImageChef.PartPlugins
                                                 if((vtoc_ent.flags & 0x10) == 0x10)
                                                     info += " (do not mount)";
 
-                                                part.PartitionDescription = "UNIX slice" + info + ".";
+                                                part.Description = "UNIX slice" + info + ".";
 
                                                 partitions.Add(part);
                                                 counter++;
@@ -283,15 +283,15 @@ namespace DiscImageChef.PartPlugins
                                     for(int j = 0; j < 16; j++)
                                     {
                                         CommonTypes.Partition part = new CommonTypes.Partition();
-                                        part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
-                                        part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
-                                        part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize(); // 68+4+j*12
-                                        part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize(); // 68+8+j*12
-                                        part.PartitionDescription = "Solaris slice.";
+                                        part.Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
+                                        part.Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
+                                        part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
+                                        part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
+                                        part.Description = "Solaris slice.";
 
-                                        part.PartitionSequence = counter;
+                                        part.Sequence = counter;
 
-                                        if(part.PartitionLength > 0)
+                                        if(part.Size > 0)
                                         {
                                             partitions.Add(part);
                                             counter++;
@@ -315,13 +315,13 @@ namespace DiscImageChef.PartPlugins
                                     {
                                         CommonTypes.Partition part = new CommonTypes.Partition();
                                         minix_subs = true;
-                                        part.PartitionDescription = "Minix subpartition";
-                                        part.PartitionType = "Minix";
-                                        part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
-                                        part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
-                                        part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                                        part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
-                                        part.PartitionSequence = counter;
+                                        part.Description = "Minix subpartition";
+                                        part.Type = "Minix";
+                                        part.Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
+                                        part.Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
+                                        part.Offset = part.Start * imagePlugin.GetSectorSize();
+                                        part.Size = part.Length * imagePlugin.GetSectorSize();
+                                        part.Sequence = counter;
                                         partitions.Add(part);
                                         counter++;
                                     }
@@ -341,10 +341,10 @@ namespace DiscImageChef.PartPlugins
                     CommonTypes.Partition part = new CommonTypes.Partition();
                     if(entry.lba_start > 0 && entry.lba_sectors > 0)
                     {
-                        part.PartitionStartSector = entry.lba_start;
-                        part.PartitionSectors = entry.lba_sectors;
-                        part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                        part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
+                        part.Start = entry.lba_start;
+                        part.Length = entry.lba_sectors;
+                        part.Offset = part.Start * imagePlugin.GetSectorSize();
+                        part.Size = part.Length * imagePlugin.GetSectorSize();
                     }
                     /*					else if(entry.start_head < 255 && entry.end_head < 255 &&
                                                 entry.start_sector > 0 && entry.start_sector < 64 &&
@@ -358,10 +358,10 @@ namespace DiscImageChef.PartPlugins
 
                     if(valid)
                     {
-                        part.PartitionType = string.Format("0x{0:X2}", entry.type);
-                        part.PartitionName = decodeMBRType(entry.type);
-                        part.PartitionSequence = counter;
-                        part.PartitionDescription = entry.status == 0x80 ? "Partition is bootable." : "";
+                        part.Type = string.Format("0x{0:X2}", entry.type);
+                        part.Name = decodeMBRType(entry.type);
+                        part.Sequence = counter;
+                        part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
 
                         counter++;
 
@@ -446,16 +446,16 @@ namespace DiscImageChef.PartPlugins
 
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
 
-                                                    part.PartitionSectors = bsdPartition.p_size;
-                                                    part.PartitionStartSector = bsdPartition.p_offset;
-                                                    part.PartitionLength = bsdPartition.p_size * bsdDisklabel.d_secsize;
-                                                    part.PartitionStart = bsdPartition.p_offset * bsdDisklabel.d_secsize;
+                                                    part.Length = bsdPartition.p_size;
+                                                    part.Start = bsdPartition.p_offset;
+                                                    part.Size = bsdPartition.p_size * bsdDisklabel.d_secsize;
+                                                    part.Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize;
 
-                                                    part.PartitionType = string.Format("BSD: {0}", bsdPartition.p_fstype);
-                                                    part.PartitionName = BSD.fsTypeToString(bsdPartition.p_fstype);
+                                                    part.Type = string.Format("BSD: {0}", bsdPartition.p_fstype);
+                                                    part.Name = BSD.fsTypeToString(bsdPartition.p_fstype);
 
-                                                    part.PartitionSequence = counter;
-                                                    part.PartitionDescription = "Partition inside a BSD disklabel.";
+                                                    part.Sequence = counter;
+                                                    part.Description = "Partition inside a BSD disklabel.";
 
                                                     if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                                     {
@@ -545,12 +545,12 @@ namespace DiscImageChef.PartPlugins
                                                         {
                                                             CommonTypes.Partition part = new CommonTypes.Partition();
                                                             // TODO: Check if device bps == disklabel bps
-                                                            part.PartitionStartSector = vtoc_ent.start;
-                                                            part.PartitionSectors = vtoc_ent.length;
-                                                            part.PartitionStart = vtoc_ent.start * dl.bps;
-                                                            part.PartitionLength = vtoc_ent.length * dl.bps;
-                                                            part.PartitionSequence = counter;
-                                                            part.PartitionType = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
+                                                            part.Start = vtoc_ent.start;
+                                                            part.Length = vtoc_ent.length;
+                                                            part.Offset = vtoc_ent.start * dl.bps;
+                                                            part.Size = vtoc_ent.length * dl.bps;
+                                                            part.Sequence = counter;
+                                                            part.Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
 
                                                             string info = "";
 
@@ -559,7 +559,7 @@ namespace DiscImageChef.PartPlugins
                                                             if((vtoc_ent.flags & 0x10) == 0x10)
                                                                 info += " (do not mount)";
 
-                                                            part.PartitionDescription = "UNIX slice" + info + ".";
+                                                            part.Description = "UNIX slice" + info + ".";
 
                                                             partitions.Add(part);
                                                             counter++;
@@ -582,15 +582,15 @@ namespace DiscImageChef.PartPlugins
                                                 for(int j = 0; j < 16; j++)
                                                 {
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
-                                                    part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
-                                                    part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
-                                                    part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize(); // 68+4+j*12
-                                                    part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize(); // 68+8+j*12
-                                                    part.PartitionDescription = "Solaris slice.";
+                                                    part.Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
+                                                    part.Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
+                                                    part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
+                                                    part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
+                                                    part.Description = "Solaris slice.";
 
-                                                    part.PartitionSequence = counter;
+                                                    part.Sequence = counter;
 
-                                                    if(part.PartitionLength > 0)
+                                                    if(part.Size > 0)
                                                     {
                                                         partitions.Add(part);
                                                         counter++;
@@ -614,13 +614,13 @@ namespace DiscImageChef.PartPlugins
                                                 {
                                                     CommonTypes.Partition part = new CommonTypes.Partition();
                                                     minix_subs = true;
-                                                    part.PartitionDescription = "Minix subpartition";
-                                                    part.PartitionType = "Minix";
-                                                    part.PartitionStartSector = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
-                                                    part.PartitionSectors = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
-                                                    part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                                                    part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
-                                                    part.PartitionSequence = counter;
+                                                    part.Description = "Minix subpartition";
+                                                    part.Type = "Minix";
+                                                    part.Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
+                                                    part.Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
+                                                    part.Offset = part.Start * imagePlugin.GetSectorSize();
+                                                    part.Size = part.Length * imagePlugin.GetSectorSize();
+                                                    part.Sequence = counter;
                                                     partitions.Add(part);
                                                     counter++;
                                                 }
@@ -641,10 +641,10 @@ namespace DiscImageChef.PartPlugins
                                 CommonTypes.Partition part = new CommonTypes.Partition();
                                 if(entry2.lba_start > 0 && entry2.lba_sectors > 0)
                                 {
-                                    part.PartitionStartSector = entry2.lba_start;
-                                    part.PartitionSectors = entry2.lba_sectors;
-                                    part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                                    part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
+                                    part.Start = entry2.lba_start;
+                                    part.Length = entry2.lba_sectors;
+                                    part.Offset = part.Start * imagePlugin.GetSectorSize();
+                                    part.Size = part.Length * imagePlugin.GetSectorSize();
                                 }
                                 /*					else if(entry2.start_head < 255 && entry2.end_head < 255 &&
                                                             entry2.start_sector > 0 && entry2.start_sector < 64 &&
@@ -658,10 +658,10 @@ namespace DiscImageChef.PartPlugins
 
                                 if(ext_valid)
                                 {
-                                    part.PartitionType = string.Format("0x{0:X2}", entry2.type);
-                                    part.PartitionName = decodeMBRType(entry2.type);
-                                    part.PartitionSequence = counter;
-                                    part.PartitionDescription = entry2.status == 0x80 ? "Partition is bootable." : "";
+                                    part.Type = string.Format("0x{0:X2}", entry2.type);
+                                    part.Name = decodeMBRType(entry2.type);
+                                    part.Sequence = counter;
+                                    part.Description = entry2.status == 0x80 ? "Partition is bootable." : "";
 
                                     counter++;
 

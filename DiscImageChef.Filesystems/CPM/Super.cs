@@ -111,9 +111,9 @@ namespace DiscImageChef.Filesystems.CPM
             {
                 DicConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
 
-                for(int p = 0; p <= (int)(partition.PartitionEndSector - partition.PartitionStartSector); p++)
+                for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
-                    byte[] readSector = device.ReadSector((ulong)((int)partition.PartitionStartSector + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                    byte[] readSector = device.ReadSector((ulong)((int)partition.Start + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
                     if(workingDefinition.complement)
                     {
                         for(int b = 0; b < readSector.Length; b++)

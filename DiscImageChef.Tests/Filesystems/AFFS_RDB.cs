@@ -103,7 +103,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"DOS\\1\"" || partitions[j].PartitionType == "\"DOS\\3\"" || partitions[j].PartitionType == "\"DOS\\5\"")
+                    if(partitions[j].Type == "\"DOS\\1\"" || partitions[j].Type == "\"DOS\\3\"" || partitions[j].Type == "\"DOS\\5\"")
                     {
                         part = j;
                         break;

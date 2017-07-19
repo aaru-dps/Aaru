@@ -77,12 +77,12 @@ namespace DiscImageChef.PartPlugins
                 foreach(BSDPartition entry in dl.d_partitions)
                 {
                     Partition part = new Partition();
-                    part.PartitionStartSector = entry.p_offset;
-                    part.PartitionStart = (entry.p_offset * dl.d_secsize);
-                    part.PartitionLength = entry.p_size;
-                    part.PartitionSectors = (entry.p_size * dl.d_secsize);
-                    part.PartitionType = fsTypeToString(entry.p_fstype);
-                    part.PartitionSequence = counter;
+                    part.Start = entry.p_offset;
+                    part.Offset = (entry.p_offset * dl.d_secsize);
+                    part.Size = entry.p_size;
+                    part.Length = (entry.p_size * dl.d_secsize);
+                    part.Type = fsTypeToString(entry.p_fstype);
+                    part.Sequence = counter;
                     if(entry.p_fstype != fsType.Unused)
                     {
                         partitions.Add(part);

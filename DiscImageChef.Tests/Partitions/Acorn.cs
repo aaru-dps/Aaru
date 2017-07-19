@@ -58,14 +58,14 @@ namespace DiscImageChef.Tests.Partitions
             // Linux (ICS)
             // TODO: Values are incorrect
             new []{ 
-                new Partition{ PartitionDescription = null, PartitionLength = 31457280, PartitionName = null, PartitionType = "GEM", PartitionStart = 512, PartitionSectors = 61440,
-                    PartitionSequence = 0, PartitionStartSector = 1 },
-                new Partition{ PartitionDescription = null, PartitionLength = 41943040, PartitionName = null, PartitionType = "BGM", PartitionStart = 31457792, PartitionSectors = 81920,
-                    PartitionSequence = 1, PartitionStartSector = 61441 },
-                new Partition{ PartitionDescription = null, PartitionLength = 56402432, PartitionName = null, PartitionType = "LNX", PartitionStart = 73400832, PartitionSectors = 110161,
-                    PartitionSequence = 2, PartitionStartSector = 143361 },
-                new Partition{ PartitionDescription = null, PartitionLength = 43212800, PartitionName = null, PartitionType = "MAC", PartitionStart = 129803264, PartitionSectors = 84400,
-                    PartitionSequence = 3, PartitionStartSector = 253522 },
+                new Partition{ Description = null, Size = 31457280, Name = null, Type = "GEM", Offset = 512, Length = 61440,
+                    Sequence = 0, Start = 1 },
+                new Partition{ Description = null, Size = 41943040, Name = null, Type = "BGM", Offset = 31457792, Length = 81920,
+                    Sequence = 1, Start = 61441 },
+                new Partition{ Description = null, Size = 56402432, Name = null, Type = "LNX", Offset = 73400832, Length = 110161,
+                    Sequence = 2, Start = 143361 },
+                new Partition{ Description = null, Size = 43212800, Name = null, Type = "MAC", Offset = 129803264, Length = 84400,
+                    Sequence = 3, Start = 253522 },
             },
         };  
 
@@ -86,13 +86,13 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionLength, partitions[j].PartitionLength, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionName, partitions[j].PartitionName, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionType, partitions[j].PartitionType, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStart, partitions[j].PartitionStart, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSectors, partitions[j].PartitionSectors, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSequence, partitions[j].PartitionSequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStartSector, partitions[j].PartitionStartSector, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
             }
         }

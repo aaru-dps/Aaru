@@ -152,7 +152,7 @@ namespace DiscImageChef.Filesystems
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + bootSectors);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512)
                 return false;
 
@@ -170,7 +170,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             StringBuilder sb = new StringBuilder();
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + bootSectors);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512)
                 return;
 

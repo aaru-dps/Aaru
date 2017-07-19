@@ -71,12 +71,12 @@ namespace DiscImageChef.PartPlugins
             foreach(RioKarmaEntry entry in table.entries)
             {
                 Partition part = new Partition();
-                part.PartitionStartSector = entry.offset;
-                part.PartitionStart = (ulong)(entry.offset * sector.Length);
-                part.PartitionLength = entry.size;
-                part.PartitionSectors = (ulong)(entry.size * sector.Length);
-                part.PartitionType = "Rio Karma";
-                part.PartitionSequence = counter;
+                part.Start = entry.offset;
+                part.Offset = (ulong)(entry.offset * sector.Length);
+                part.Size = entry.size;
+                part.Length = (ulong)(entry.size * sector.Length);
+                part.Type = "Rio Karma";
+                part.Sequence = counter;
                 if(entry.type == EntryMagic)
                 {
                     partitions.Add(part);

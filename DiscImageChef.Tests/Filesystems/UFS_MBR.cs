@@ -156,7 +156,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x63" || partitions[j].PartitionType == "0xA8" || partitions[j].PartitionType == "0xA5" || partitions[j].PartitionType == "0xA9")
+                    if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" || partitions[j].Type == "0xA9")
                     {
                         part = j;
                         break;

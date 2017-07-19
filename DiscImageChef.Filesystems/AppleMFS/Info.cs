@@ -43,10 +43,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
         {
             ushort drSigWord;
 
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -67,8 +67,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             byte[] pString = new byte[16];
             byte[] variable_size;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
-            byte[] bb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] bb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 

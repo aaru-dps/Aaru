@@ -60,12 +60,12 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             uint magic;
 
-            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.PartitionStartSector), 0);
+            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.Start), 0);
 
             return magic == BFS_MAGIC;
         }
@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partition.Start);
             byte[] sb_strings = new byte[6];
 
             BFSSuperBlock bfs_sb = new BFSSuperBlock();
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "BFS";
             xmlFSType.VolumeName = bfs_sb.s_volume;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
-            xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector + 1);
+            xmlFSType.Clusters = (long)(partition.End - partition.Start + 1);
 
             information = sb.ToString();
         }

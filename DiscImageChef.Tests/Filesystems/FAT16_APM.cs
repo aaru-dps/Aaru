@@ -100,7 +100,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "DOS_FAT_16")
+                    if(partitions[j].Type == "DOS_FAT_16")
                     {
                         part = j;
                         break;

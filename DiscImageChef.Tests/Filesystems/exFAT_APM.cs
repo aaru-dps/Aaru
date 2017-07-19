@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Windows_NTFS")
+                    if(partitions[j].Type == "Windows_NTFS")
                     {
                         part = j;
                         break;

@@ -751,14 +751,14 @@ namespace DiscImageChef.DiscImages
 					}
 
 					Partition partition = new Partition();
-					partition.PartitionDescription = track.TrackDescription;
-					partition.PartitionLength = (track.TrackEndSector - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector;
-					partition.PartitionSectors = (track.TrackEndSector - track.TrackStartSector);
-					ImageInfo.sectors += partition.PartitionSectors;
-					partition.PartitionSequence = track.TrackSequence;
-					partition.PartitionStart = track.TrackFileOffset;
-					partition.PartitionStartSector = track.TrackStartSector;
-					partition.PartitionType = track.TrackType.ToString();
+					partition.Description = track.TrackDescription;
+					partition.Size = (track.TrackEndSector - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector;
+					partition.Length = (track.TrackEndSector - track.TrackStartSector);
+					ImageInfo.sectors += partition.Length;
+					partition.Sequence = track.TrackSequence;
+					partition.Offset = track.TrackFileOffset;
+					partition.Start = track.TrackStartSector;
+					partition.Type = track.TrackType.ToString();
 					partitions.Add(partition);
 					offsetmap.Add(track.TrackSequence, track.TrackStartSector);
 				}

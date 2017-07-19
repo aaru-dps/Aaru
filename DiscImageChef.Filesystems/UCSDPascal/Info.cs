@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 return false;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 return;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] volBlock = imagePlugin.ReadSector(2 + partition.Start);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
@@ -148,7 +148,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             information = sbInformation.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.PartitionStartSector, 2));
+            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, 2));
             xmlFSType.Clusters = volEntry.blocks;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
             xmlFSType.Files = volEntry.files;

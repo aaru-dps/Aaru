@@ -881,12 +881,12 @@ namespace DiscImageChef.ImagePlugins
 				List<Partition> parts = new List<Partition>();
 				Partition part = new Partition
 				{
-					PartitionStartSector = 0,
-					PartitionSectors = ImageInfo.sectors,
-					PartitionStart = 0,
-					PartitionSequence = 0,
-					PartitionType = "MODE1/2048",
-					PartitionLength = ImageInfo.sectors * ImageInfo.sectorSize
+					Start = 0,
+					Length = ImageInfo.sectors,
+					Offset = 0,
+					Sequence = 0,
+					Type = "MODE1/2048",
+					Size = ImageInfo.sectors * ImageInfo.sectorSize
 				};
 				parts.Add(part);
 				return parts;

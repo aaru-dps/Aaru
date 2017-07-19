@@ -123,8 +123,8 @@ namespace DiscImageChef.Filesystems
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.PartitionStartSector, sectors);
-            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + bootSectors, sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
+            byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SuperBlockSize)
                 return false;
 
@@ -150,8 +150,8 @@ namespace DiscImageChef.Filesystems
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.PartitionStartSector, sectors);
-            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + bootSectors, sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
+            byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SuperBlockSize)
                 return;
 

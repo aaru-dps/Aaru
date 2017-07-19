@@ -88,7 +88,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x4D")
+                    if(partitions[j].Type == "0x4D")
                     {
                         part = j;
                         break;

@@ -56,10 +56,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
             byte record_type;
             byte[] sync_bytes = new byte[5];
@@ -80,7 +80,7 @@ namespace DiscImageChef.Filesystems
             information = "";
             StringBuilder SuperBlockMetadata = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
             OperaSuperBlock sb = new OperaSuperBlock();
             byte[] cString = new byte[32];

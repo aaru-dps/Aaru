@@ -88,10 +88,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector > 0)
+            if(partition.Start > 0)
                 return false;
 
-            if(partition.PartitionEndSector < 8)
+            if(partition.End < 8)
                 return false;
 
             byte[] sector = imagePlugin.ReadSector(6);
@@ -128,7 +128,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ECMA-67";
             xmlFSType.ClusterSize = 256;
-            xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector + 1);
+            xmlFSType.Clusters = (long)(partition.End - partition.Start + 1);
             xmlFSType.VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier);
 
             information = sbInformation.ToString();

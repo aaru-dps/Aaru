@@ -1,6 +1,11 @@
 * Commands/Ls.cs:
 * Commands/Analyze.cs:
 * Commands/ExtractFiles.cs:
+  Refactor: Simplify field names.
+
+* Commands/Ls.cs:
+* Commands/Analyze.cs:
+* Commands/ExtractFiles.cs:
   Refactor, pass whole partition structure to filesystems.
 
 * DiscImageChef.csproj:

@@ -130,15 +130,15 @@ namespace DiscImageChef.PartPlugins
                         return false;
 
                     CommonTypes.Partition part = new CommonTypes.Partition();
-                    part.PartitionDescription = string.Format("ID: {0}", entry.partitionId);
-                    part.PartitionLength = (entry.endLBA - entry.startLBA + 1) * imagePlugin.GetSectorSize();
-                    part.PartitionName = entry.name;
-                    part.PartitionSectors = (entry.endLBA - entry.startLBA + 1);
-                    part.PartitionSequence = pseq++;
-                    part.PartitionStart = entry.startLBA * imagePlugin.GetSectorSize();
-                    part.PartitionStartSector = entry.startLBA;
-                    part.PartitionType = GetGuidTypeName(entry.partitionType);
-                    DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.PartitionType);
+                    part.Description = string.Format("ID: {0}", entry.partitionId);
+                    part.Size = (entry.endLBA - entry.startLBA + 1) * imagePlugin.GetSectorSize();
+                    part.Name = entry.name;
+                    part.Length = (entry.endLBA - entry.startLBA + 1);
+                    part.Sequence = pseq++;
+                    part.Offset = entry.startLBA * imagePlugin.GetSectorSize();
+                    part.Start = entry.startLBA;
+                    part.Type = GetGuidTypeName(entry.partitionType);
+                    DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
                     partitions.Add(part);
                 }
             }

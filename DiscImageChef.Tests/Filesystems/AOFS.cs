@@ -95,9 +95,9 @@ namespace DiscImageChef.Tests.Filesystems
                 Filesystem fs = new AmigaDOSPlugin();
                 Partition wholePart = new Partition
                 {
-                    PartitionName = "Whole device",
-                    PartitionSectors = image.ImageInfo.sectors,
-                    PartitionLength = image.ImageInfo.sectors * image.ImageInfo.sectorSize
+                    Name = "Whole device",
+                    Length = image.ImageInfo.sectors,
+                    Size = image.ImageInfo.sectors * image.ImageInfo.sectorSize
                 };
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out string information);

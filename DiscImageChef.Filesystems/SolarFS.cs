@@ -58,13 +58,13 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             byte signature; /// <summary>0x29
             string fs_type; // "SOL_FS  "
 
-            byte[] bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);
 
             byte[] fs_type_b = new byte[8];
 
@@ -82,7 +82,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partition.Start);
             byte[] bpb_strings;
 
             SolarOSParameterBlock BPB = new SolarOSParameterBlock();

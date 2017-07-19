@@ -249,17 +249,17 @@ namespace DiscImageChef.Filesystems
             byte[] sector;
             ulong magic;
 
-            if(partition.PartitionStartSector + 31 < partition.PartitionEndSector)
+            if(partition.Start + 31 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + 31);
+                sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_Magic || magic == ZEC_Cigam)
                     return true;
             }
 
-            if(partition.PartitionStartSector + 16 < partition.PartitionEndSector)
+            if(partition.Start + 16 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + 16);
+                sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_Magic || magic == ZEC_Cigam)
                     return true;
@@ -281,17 +281,17 @@ namespace DiscImageChef.Filesystems
             uint nvlistLen = 114688 / imagePlugin.ImageInfo.sectorSize;
             byte[] nvlist;
 
-            if(partition.PartitionStartSector + 31 < partition.PartitionEndSector)
+            if(partition.Start + 31 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + 31);
+                sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_Magic || magic == ZEC_Cigam)
                     nvlistOff = 32;
             }
 
-            if(partition.PartitionStartSector + 16 < partition.PartitionEndSector)
+            if(partition.Start + 16 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + 16);
+                sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic = BitConverter.ToUInt64(sector, 0x1D8);
                 if(magic == ZEC_Magic || magic == ZEC_Cigam)
                     nvlistOff = 17;
@@ -300,7 +300,7 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("ZFS filesystem");
 
-            nvlist = imagePlugin.ReadSectors(partition.PartitionStartSector + nvlistOff, nvlistLen);
+            nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
             Dictionary<string, NVS_Item> decodedNvList;
 
             if(!DecodeNvList(nvlist, out decodedNvList))

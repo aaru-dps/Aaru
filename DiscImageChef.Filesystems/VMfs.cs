@@ -92,15 +92,15 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
 
-            if(partition.PartitionStartSector + vmfsSuperOff > partition.PartitionEndSector)
+            if(partition.Start + vmfsSuperOff > partition.End)
                 return false;
             
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -110,7 +110,7 @@ namespace DiscImageChef.Filesystems
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             VolumeInfo volInfo = new VolumeInfo();
             IntPtr volInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(volInfo));

@@ -103,7 +103,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Apple_ProDOS")
+                    if(partitions[j].Type == "Apple_ProDOS")
                     {
                         part = j;
                         break;

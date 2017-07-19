@@ -77,18 +77,18 @@ namespace DiscImageChef.PartPlugins
                 {
 
                     Partition part = new Partition();
-                    part.PartitionStartSector = CHStoLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect);
-                    part.PartitionStart = part.PartitionStartSector * imagePlugin.GetSectorSize();
-                    part.PartitionSectors = CHStoLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect) - part.PartitionStartSector;
-                    part.PartitionLength = part.PartitionSectors * imagePlugin.GetSectorSize();
-                    part.PartitionType = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid);
-                    part.PartitionName = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932));
-                    part.PartitionSequence = counter;
+                    part.Start = CHStoLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect);
+                    part.Offset = part.Start * imagePlugin.GetSectorSize();
+                    part.Length = CHStoLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect) - part.Start;
+                    part.Size = part.Length * imagePlugin.GetSectorSize();
+                    part.Type = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid);
+                    part.Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932));
+                    part.Sequence = counter;
 
                     if((entry.dp_sid & 0x7F) == 0x44 &&
                        (entry.dp_mid & 0x7F) == 0x14 &&
-                        part.PartitionStartSector < imagePlugin.ImageInfo.sectors &&
-                            part.PartitionSectors + part.PartitionStartSector <= imagePlugin.ImageInfo.sectors)
+                        part.Start < imagePlugin.ImageInfo.sectors &&
+                            part.Length + part.Start <= imagePlugin.ImageInfo.sectors)
                     {
                         partitions.Add(part);
                         counter++;

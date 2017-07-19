@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             device = imagePlugin;
-            partitionStart = partition.PartitionStartSector;
+            partitionStart = partition.Start;
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("macintosh");
         }

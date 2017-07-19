@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(!cpmFound)
                 {
                     // Read CHS = {0,0,1}
-                    sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+                    sector = imagePlugin.ReadSector(0 + partition.Start);
                     int amsSbOffset = 0;
 
                     uint sig1, sig2, sig3;
@@ -123,7 +123,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 dpb.phm += (byte)Math.Pow(2, i);
                             dpb.spt = (ushort)(amsSb.spt * (sectorSize / 128));
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.PartitionStartSector, directoryLength);
+                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.Start, directoryLength);
 
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition();
@@ -180,7 +180,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(!cpmFound)
                 {
                     // Read CHS = {0,0,4}
-                    sector = imagePlugin.ReadSector(3 + partition.PartitionStartSector);
+                    sector = imagePlugin.ReadSector(3 + partition.Start);
                     ushort sum = 0;
 
                     // Sum of all 16-bit words that make this sector must be 0
@@ -205,8 +205,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                         // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
                         if(sectorSize == imagePlugin.GetSectorSize() &&
-                           startingSector == partition.PartitionStartSector &&
-                           sectorsInPartition + partition.PartitionStartSector <= partition.PartitionEndSector)
+                           startingSector == partition.Start &&
+                           sectorsInPartition + partition.Start <= partition.End)
                         {
                             cpmFound = true;
                             firstDirectorySector = (ulong)((hddSb.off * hddSb.sectorsPerTrack));
@@ -226,7 +226,7 @@ namespace DiscImageChef.Filesystems.CPM
                             dpb.psh = 0; // Needed?
                             dpb.spt = hddSb.spt;
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
-                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.PartitionStartSector, directoryLength);
+                            directory = imagePlugin.ReadSector(firstDirectorySector + partition.Start, directoryLength);
                             DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
                             // Build a CP/M disk definition
@@ -268,7 +268,7 @@ namespace DiscImageChef.Filesystems.CPM
                 if(!cpmFound)
                 {
                     // Read CHS = {0,0,1}
-                    sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+                    sector = imagePlugin.ReadSector(0 + partition.Start);
                     byte formatByte;
 
                     // Check for alternate location of format ID
@@ -650,7 +650,7 @@ namespace DiscImageChef.Filesystems.CPM
                     if(cpmFound)
                     {
                         uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / imagePlugin.GetSectorSize());
-                        directory = imagePlugin.ReadSector(firstDirectorySector86 + partition.PartitionStartSector, directoryLength);
+                        directory = imagePlugin.ReadSector(firstDirectorySector86 + partition.Start, directoryLength);
                         DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
                 }
@@ -741,7 +741,7 @@ namespace DiscImageChef.Filesystems.CPM
                                 MemoryStream ms = new MemoryStream();
                                 for(int p = 0; p < dirLen; p++)
                                 {
-                                    byte[] dirSector = imagePlugin.ReadSector((ulong)((int)offset + (int)partition.PartitionStartSector + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                                    byte[] dirSector = imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
                                     ms.Write(dirSector, 0, dirSector.Length);
                                 }
                                 directory = ms.ToArray();
@@ -923,7 +923,7 @@ namespace DiscImageChef.Filesystems.CPM
             if(dpb.dsm > 0)
                 xmlFSType.Clusters = ((dpb.dsm + 1) * 128) / (128 << dpb.bsh);
             else
-                xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector);
+                xmlFSType.Clusters = (long)(partition.End - partition.Start);
             if(labelCreationDate != null)
             {
                 xmlFSType.CreationDate = DateHandlers.CPMToDateTime(labelCreationDate);

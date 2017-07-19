@@ -60,10 +60,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if((12 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((12 + partition.Start) >= partition.End)
                 return false;
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             if(vbrSector.Length < 512)
                 return false;
 
@@ -83,21 +83,21 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
+            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             VolumeBootRecord vbr = new VolumeBootRecord();
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(vbrSector, 0, vbrPtr, 512);
             vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
-            byte[] parametersSector = imagePlugin.ReadSector(9 + partition.PartitionStartSector);
+            byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
             OemParameterTable parametersTable = new OemParameterTable();
             IntPtr parametersPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(parametersSector, 0, parametersPtr, 512);
             parametersTable = (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
             Marshal.FreeHGlobal(parametersPtr);
 
-            byte[] chkSector = imagePlugin.ReadSector(11 + partition.PartitionStartSector);
+            byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
             ChecksumSector chksector = new ChecksumSector();
             IntPtr chkPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(chkSector, 0, chkPtr, 512);

@@ -108,7 +108,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "4.3BSD" || partitions[j].PartitionType == "4.4BSD")
+                    if(partitions[j].Type == "4.3BSD" || partitions[j].Type == "4.4BSD")
                     {
                         part = j;
                         break;

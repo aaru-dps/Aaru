@@ -597,17 +597,17 @@ namespace DiscImageChef.ImagePlugins
                 {
                     Partition partition = new Partition();
 
-                    partition.PartitionDescription = string.Format("Track {0}.", trk.point);
-                    partition.PartitionStartSector = trk.startLba;
-                    partition.PartitionLength = extra.sectors * trk.sectorSize;
-                    partition.PartitionSectors = extra.sectors;
-                    partition.PartitionSequence = trk.point;
-                    partition.PartitionStart = byte_offset;
-                    partition.PartitionType = trk.mode.ToString();
+                    partition.Description = string.Format("Track {0}.", trk.point);
+                    partition.Start = trk.startLba;
+                    partition.Size = extra.sectors * trk.sectorSize;
+                    partition.Length = extra.sectors;
+                    partition.Sequence = trk.point;
+                    partition.Offset = byte_offset;
+                    partition.Type = trk.mode.ToString();
 
                     partitions.Add(partition);
                     ImageInfo.sectors += extra.sectors;
-                    byte_offset += partition.PartitionLength;
+                    byte_offset += partition.Size;
                 }
 
                 if(!offsetmap.ContainsKey(trk.point))
@@ -666,14 +666,14 @@ namespace DiscImageChef.ImagePlugins
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "printing partition map");
             foreach(Partition partition in partitions)
             {
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "Partition sequence: {0}", partition.PartitionSequence);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition name: {0}", partition.PartitionName);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition description: {0}", partition.PartitionDescription);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition type: {0}", partition.PartitionType);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting sector: {0}", partition.PartitionStartSector);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition sectors: {0}", partition.PartitionSectors);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting offset: {0}", partition.PartitionStart);
-                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.PartitionLength);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "Partition sequence: {0}", partition.Sequence);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition name: {0}", partition.Name);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition description: {0}", partition.Description);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition type: {0}", partition.Type);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting sector: {0}", partition.Start);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition sectors: {0}", partition.Length);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting offset: {0}", partition.Offset);
+                DicConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
             ImageInfo.imageApplication = "Alcohol 120%";

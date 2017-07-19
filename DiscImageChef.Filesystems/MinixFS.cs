@@ -79,11 +79,11 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
 
@@ -107,7 +107,7 @@ namespace DiscImageChef.Filesystems
             int filenamesize;
             string minixVersion;
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
             magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
 
@@ -213,7 +213,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("On-disk filesystem version: {0}", mnx_sb.s_disk_version).AppendLine();
 
                 xmlFSType.ClusterSize = mnx_sb.s_blocksize;
-                xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.GetSectorSize() / mnx_sb.s_blocksize);
+                xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / mnx_sb.s_blocksize);
             }
             else
             {
@@ -244,7 +244,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnx_sb.s_state).AppendLine();
                 xmlFSType.ClusterSize = 1024;
-                xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.GetSectorSize() / 1024);
+                xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / 1024);
             }
             information = sb.ToString();
         }

@@ -72,10 +72,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
             try
@@ -101,10 +101,10 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             information = "";
 
-            if(partition.PartitionStartSector >= partition.PartitionEndSector)
+            if(partition.Start >= partition.End)
                 return;
 
-            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
             try

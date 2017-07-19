@@ -820,29 +820,29 @@ namespace DiscImageChef.ImagePlugins
                     Partition partition = new Partition();
 
                     // Index 01
-                    partition.PartitionDescription = string.Format("Track {0}.", discimage.tracks[i].sequence);
-                    partition.PartitionName = discimage.tracks[i].title;
-                    partition.PartitionStartSector = discimage.tracks[i].startSector;
-                    partition.PartitionLength = (discimage.tracks[i].sectors - index0_len) * discimage.tracks[i].bps;
-                    partition.PartitionSectors = (discimage.tracks[i].sectors - index0_len);
-                    partition.PartitionSequence = partitionSequence;
-                    partition.PartitionStart = byte_offset;
-                    partition.PartitionType = discimage.tracks[i].tracktype;
+                    partition.Description = string.Format("Track {0}.", discimage.tracks[i].sequence);
+                    partition.Name = discimage.tracks[i].title;
+                    partition.Start = discimage.tracks[i].startSector;
+                    partition.Size = (discimage.tracks[i].sectors - index0_len) * discimage.tracks[i].bps;
+                    partition.Length = (discimage.tracks[i].sectors - index0_len);
+                    partition.Sequence = partitionSequence;
+                    partition.Offset = byte_offset;
+                    partition.Type = discimage.tracks[i].tracktype;
 
-                    byte_offset += partition.PartitionLength;
+                    byte_offset += partition.Size;
                     partitionSequence++;
 
                     if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
-                        offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
+                        offsetmap.Add(discimage.tracks[i].sequence, partition.Start);
                     else
                     {
                         ulong old_start;
                         offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
 
-                        if(partition.PartitionStartSector < old_start)
+                        if(partition.Start < old_start)
                         {
                             offsetmap.Remove(discimage.tracks[i].sequence);
-                            offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
+                            offsetmap.Add(discimage.tracks[i].sequence, partition.Start);
                         }
                     }
 
@@ -854,14 +854,14 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("CDRDAO plugin", "printing partition map");
                 foreach(Partition partition in partitions)
                 {
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "Partition sequence: {0}", partition.PartitionSequence);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition name: {0}", partition.PartitionName);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition description: {0}", partition.PartitionDescription);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition type: {0}", partition.PartitionType);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting sector: {0}", partition.PartitionStartSector);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition sectors: {0}", partition.PartitionSectors);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting offset: {0}", partition.PartitionStart);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.PartitionLength);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "Partition sequence: {0}", partition.Sequence);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition name: {0}", partition.Name);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition description: {0}", partition.Description);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition type: {0}", partition.Type);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting sector: {0}", partition.Start);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition sectors: {0}", partition.Length);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting offset: {0}", partition.Offset);
+                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
 
                 foreach(CDRDAOTrack track in discimage.tracks)

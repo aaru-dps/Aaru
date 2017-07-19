@@ -97,12 +97,12 @@ namespace DiscImageChef.PartPlugins
             {
                 Partition part = new Partition
                 {
-                    PartitionLength = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
-                    PartitionSectors = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) / imagePlugin.ImageInfo.sectorSize,
-                    PartitionType = "ADFS",
-                    PartitionName = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
+                    Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
+                    Length = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) / imagePlugin.ImageInfo.sectorSize,
+                    Type = "ADFS",
+                    Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
                 };
-                if(part.PartitionLength > 0)
+                if(part.Size > 0)
                 {
                     partitions.Add(part);
                     counter++;
@@ -120,11 +120,11 @@ namespace DiscImageChef.PartPlugins
                 foreach(LinuxEntry entry in table.entries)
                 {
                     Partition part = new Partition();
-                    part.PartitionStartSector = (ulong)(mapSector + entry.start);
-                    part.PartitionStart = part.PartitionStartSector * (ulong)sector.Length;
-                    part.PartitionLength = entry.size;
-                    part.PartitionSectors = (ulong)(entry.size * sector.Length);
-                    part.PartitionSequence = counter;
+                    part.Start = (ulong)(mapSector + entry.start);
+                    part.Offset = part.Start * (ulong)sector.Length;
+                    part.Size = entry.size;
+                    part.Length = (ulong)(entry.size * sector.Length);
+                    part.Sequence = counter;
                     if(entry.magic == LINUX_MAGIC || entry.magic == SWAP_MAGIC)
                     {
                         partitions.Add(part);
@@ -146,12 +146,12 @@ namespace DiscImageChef.PartPlugins
                     foreach(RiscIxEntry entry in table.partitions)
                     {
                         Partition part = new Partition();
-                        part.PartitionStartSector = (ulong)(mapSector + entry.start);
-                        part.PartitionStart = part.PartitionStartSector * (ulong)sector.Length;
-                        part.PartitionLength = entry.length;
-                        part.PartitionSectors = (ulong)(entry.length * sector.Length);
-                        part.PartitionName = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1"));
-                        part.PartitionSequence = counter;
+                        part.Start = (ulong)(mapSector + entry.start);
+                        part.Offset = part.Start * (ulong)sector.Length;
+                        part.Size = entry.length;
+                        part.Length = (ulong)(entry.length * sector.Length);
+                        part.Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1"));
+                        part.Sequence = counter;
                         if(entry.length > 0)
                         {
                             partitions.Add(part);

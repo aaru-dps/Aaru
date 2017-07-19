@@ -151,7 +151,7 @@ namespace DiscImageChef.Commands
                     for(int i = 0; i < partitions.Count; i++)
                     {
                         DicConsole.WriteLine();
-                        DicConsole.WriteLine("Partition {0}:", partitions[i].PartitionSequence);
+                        DicConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
 
                         DicConsole.WriteLine("Identifying filesystem on partition");
 
@@ -167,7 +167,7 @@ namespace DiscImageChef.Commands
                                 if(plugins.PluginsList.TryGetValue(plugin_name, out _plugin))
                                 {
                                     DicConsole.WriteLine(string.Format("As identified by {0}.", _plugin.Name));
-                                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, null });
+                                    Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].Start, partitions[i].Start + partitions[i].Length, null });
 
                                     error = fs.Mount(options.Debug);
                                     if(error == Errno.NoError)
@@ -193,7 +193,7 @@ namespace DiscImageChef.Commands
                         {
                             plugins.PluginsList.TryGetValue(id_plugins[0], out _plugin);
                             DicConsole.WriteLine(string.Format("Identified by {0}.", _plugin.Name));
-                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors, null });
+                            Filesystem fs = (Filesystem)_plugin.GetType().GetConstructor(new Type[] { typeof(ImagePlugin), typeof(ulong), typeof(ulong), typeof(System.Text.Encoding) }).Invoke(new object[] { _imageFormat, partitions[i].Start, partitions[i].Start + partitions[i].Length, null });
                             error = fs.Mount(options.Debug);
                             if(error == Errno.NoError)
                             {
@@ -217,9 +217,9 @@ namespace DiscImageChef.Commands
 
                 Partition wholePart = new Partition
                 {
-                    PartitionName = "Whole device",
-                    PartitionSectors = _imageFormat.GetSectors(),
-                    PartitionLength = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
+                    Name = "Whole device",
+                    Length = _imageFormat.GetSectors(),
+                    Size = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
                 };
 
                 Core.Filesystems.Identify(_imageFormat, out id_plugins, wholePart);

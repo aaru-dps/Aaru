@@ -751,17 +751,17 @@ namespace DiscImageChef.ImagePlugins
                     Partition partition = new Partition();
                     if(bwTrack.pregap > 0)
                         currentPos += (ulong)(bwTrack.startSector - bwTrack.pregap) * 2352;
-                    partition.PartitionDescription = track.TrackDescription;
-                    partition.PartitionLength = (track.TrackEndSector - track.TrackStartSector + 1) * 2352;
-                    partition.PartitionSectors = track.TrackEndSector - track.TrackStartSector;
-                    partition.PartitionSequence = track.TrackSequence;
-                    partition.PartitionStart = currentPos;
-                    partition.PartitionStartSector = track.TrackStartSector;
-                    partition.PartitionType = track.TrackType.ToString();
+                    partition.Description = track.TrackDescription;
+                    partition.Size = (track.TrackEndSector - track.TrackStartSector + 1) * 2352;
+                    partition.Length = track.TrackEndSector - track.TrackStartSector;
+                    partition.Sequence = track.TrackSequence;
+                    partition.Offset = currentPos;
+                    partition.Start = track.TrackStartSector;
+                    partition.Type = track.TrackType.ToString();
 
                     partitions.Add(partition);
                     tracks.Add(track);
-                    currentPos += partition.PartitionLength;
+                    currentPos += partition.Size;
 
                     if(!offsetmap.ContainsKey(track.TrackSequence))
                         offsetmap.Add(track.TrackSequence, track.TrackStartSector);

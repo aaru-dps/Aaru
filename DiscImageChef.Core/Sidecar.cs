@@ -547,19 +547,19 @@ namespace DiscImageChef.Core
                             if(partitions.Count > 0)
                             {
                                 partitions.Add(new Partition {
-                                    PartitionStartSector = (ulong)xmlTrk.StartSector,
-                                    PartitionSectors = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1)
+                                    Start = (ulong)xmlTrk.StartSector,
+                                    Length = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1)
                                 });
                                 xmlTrk.FileSystemInformation = new PartitionType[partitions.Count];
                                 for(int i = 0; i < partitions.Count; i++)
                                 {
                                     xmlTrk.FileSystemInformation[i] = new PartitionType();
-                                    xmlTrk.FileSystemInformation[i].Description = partitions[i].PartitionDescription;
-                                    xmlTrk.FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionEndSector);
-                                    xmlTrk.FileSystemInformation[i].Name = partitions[i].PartitionName;
-                                    xmlTrk.FileSystemInformation[i].Sequence = (int)partitions[i].PartitionSequence;
-                                    xmlTrk.FileSystemInformation[i].StartSector = (int)partitions[i].PartitionStartSector;
-                                    xmlTrk.FileSystemInformation[i].Type = partitions[i].PartitionType;
+                                    xmlTrk.FileSystemInformation[i].Description = partitions[i].Description;
+                                    xmlTrk.FileSystemInformation[i].EndSector = (int)(partitions[i].End);
+                                    xmlTrk.FileSystemInformation[i].Name = partitions[i].Name;
+                                    xmlTrk.FileSystemInformation[i].Sequence = (int)partitions[i].Sequence;
+                                    xmlTrk.FileSystemInformation[i].StartSector = (int)partitions[i].Start;
+                                    xmlTrk.FileSystemInformation[i].Type = partitions[i].Type;
 
                                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
@@ -605,11 +605,11 @@ namespace DiscImageChef.Core
 
                                 Partition xmlPart = new Partition
                                 {
-                                    PartitionStartSector = (ulong)xmlTrk.StartSector,
-                                    PartitionSectors = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1),
-                                    PartitionType = xmlTrk.TrackType1.ToString(),
-                                    PartitionLength = (ulong)xmlTrk.Size,
-                                    PartitionSequence = (ulong)xmlTrk.Sequence.TrackNumber
+                                    Start = (ulong)xmlTrk.StartSector,
+                                    Length = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1),
+                                    Type = xmlTrk.TrackType1.ToString(),
+                                    Size = (ulong)xmlTrk.Size,
+                                    Sequence = (ulong)xmlTrk.Sequence.TrackNumber
                                 };
                                 foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                 {
@@ -873,12 +873,12 @@ namespace DiscImageChef.Core
                             for(int i = 0; i < partitions.Count; i++)
                             {
                                 sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType();
-                                sidecar.BlockMedia[0].FileSystemInformation[i].Description = partitions[i].PartitionDescription;
-                                sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionEndSector);
-                                sidecar.BlockMedia[0].FileSystemInformation[i].Name = partitions[i].PartitionName;
-                                sidecar.BlockMedia[0].FileSystemInformation[i].Sequence = (int)partitions[i].PartitionSequence;
-                                sidecar.BlockMedia[0].FileSystemInformation[i].StartSector = (int)partitions[i].PartitionStartSector;
-                                sidecar.BlockMedia[0].FileSystemInformation[i].Type = partitions[i].PartitionType;
+                                sidecar.BlockMedia[0].FileSystemInformation[i].Description = partitions[i].Description;
+                                sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].End);
+                                sidecar.BlockMedia[0].FileSystemInformation[i].Name = partitions[i].Name;
+                                sidecar.BlockMedia[0].FileSystemInformation[i].Sequence = (int)partitions[i].Sequence;
+                                sidecar.BlockMedia[0].FileSystemInformation[i].StartSector = (int)partitions[i].Start;
+                                sidecar.BlockMedia[0].FileSystemInformation[i].Type = partitions[i].Type;
 
                                 List<FileSystemType> lstFs = new List<FileSystemType>();
 
@@ -914,9 +914,9 @@ namespace DiscImageChef.Core
 
                             Partition wholePart = new Partition
                             {
-                                PartitionName = "Whole device",
-                                PartitionSectors = image.GetSectors(),
-                                PartitionLength = image.GetSectors() * image.GetSectorSize()
+                                Name = "Whole device",
+                                Length = image.GetSectors(),
+                                Size = image.GetSectors() * image.GetSectorSize()
                             };
 
                             List<FileSystemType> lstFs = new List<FileSystemType>();

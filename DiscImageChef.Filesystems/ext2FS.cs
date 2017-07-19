@@ -58,10 +58,10 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
+            if((2 + partition.Start) >= partition.End)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
             ushort magic = BitConverter.ToUInt16(sb_sector, 0x038);
 
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems
                 return;
             }
 
-            byte[] sb_sector = imagePlugin.ReadSectors(2 + partition.PartitionStartSector, sb_size_in_sectors);
+            byte[] sb_sector = imagePlugin.ReadSectors(2 + partition.Start, sb_size_in_sectors);
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sb_sector, 0, sbPtr, 512);
             supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));

@@ -159,7 +159,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "Apple_HFS")
+                    if(partitions[j].Type == "Apple_HFS")
                     {
                         part = j;
                         break;

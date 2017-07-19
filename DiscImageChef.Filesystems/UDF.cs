@@ -234,7 +234,7 @@ namespace DiscImageChef.Filesystems
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             // UDF needs at least that
-            if(partition.PartitionEndSector - partition.PartitionStartSector < 256)
+            if(partition.End - partition.Start < 256)
                 return false;
 
             // UDF needs at least that
@@ -244,12 +244,12 @@ namespace DiscImageChef.Filesystems
             byte[] sector;
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
             // All positions where anchor may reside
-            ulong[] positions = { 256, 512, partition.PartitionEndSector - 256, partition.PartitionEndSector };
+            ulong[] positions = { 256, 512, partition.End - 256, partition.End };
             bool anchorFound = false;
 
             foreach(ulong position in positions)
             {
-                if(position + partition.PartitionStartSector >= partition.PartitionEndSector)
+                if(position + partition.Start >= partition.End)
                     continue;
                 
                 sector = imagePlugin.ReadSector(position);
@@ -274,7 +274,7 @@ namespace DiscImageChef.Filesystems
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
-                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.PartitionStartSector) < partition.PartitionEndSector)
+                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End)
                 {
                     anchorFound = true;
                     break;
@@ -288,11 +288,11 @@ namespace DiscImageChef.Filesystems
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + anchor.mainVolumeDescriptorSequenceExtent.location + count);
+                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count);
                 TagIdentifier tagId = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
-                if(location == partition.PartitionStartSector + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+                if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
                     if(tagId == TagIdentifier.TerminatingDescriptor)
                         break;
@@ -327,7 +327,7 @@ namespace DiscImageChef.Filesystems
 
             AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
             // All positions where anchor may reside
-            ulong[] positions = { 256, 512, partition.PartitionEndSector - 256, partition.PartitionEndSector };
+            ulong[] positions = { 256, 512, partition.End - 256, partition.End };
 
             foreach(ulong position in positions)
             {
@@ -340,7 +340,7 @@ namespace DiscImageChef.Filesystems
 
                 if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation == position &&
-                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.PartitionStartSector) < partition.PartitionEndSector)
+                   (anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start) < partition.End)
                     break;
             }
 
@@ -353,11 +353,11 @@ namespace DiscImageChef.Filesystems
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.PartitionStartSector + anchor.mainVolumeDescriptorSequenceExtent.location + count);
+                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count);
                 TagIdentifier tagId = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
-                if(location == partition.PartitionStartSector + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+                if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
                     if(tagId == TagIdentifier.TerminatingDescriptor)
                         break;
@@ -421,7 +421,7 @@ namespace DiscImageChef.Filesystems
                                       Convert.ToInt32(string.Format("{0}", lvidiu.maximumWriteUDF & 0xFF), 10));
             xmlFSType.ApplicationIdentifier = CurrentEncoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd(new char[] { '\u0000' });
             xmlFSType.ClusterSize = (int)lvd.logicalBlockSize;
-            xmlFSType.Clusters = (long)(((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.ImageInfo.sectorSize) / (ulong)xmlFSType.ClusterSize);
+            xmlFSType.Clusters = (long)(((partition.End - partition.Start + 1) * imagePlugin.ImageInfo.sectorSize) / (ulong)xmlFSType.ClusterSize);
             xmlFSType.ModificationDate = ECMAToDateTime(lvid.recordingDateTime);
             xmlFSType.ModificationDateSpecified = true;
             xmlFSType.Files = lvidiu.files;
