@@ -53,6 +53,8 @@ namespace DiscImageChef.CommonTypes
         public ulong PartitionSectors;
         /// <summary>Information that does not find space in this struct</summary>
         public string PartitionDescription;
+        /// <summary>LBA of last partition sector</summary>
+        public ulong PartitionEndSector { get { return PartitionStartSector + PartitionSectors - 1; }}
     }
 }
 
