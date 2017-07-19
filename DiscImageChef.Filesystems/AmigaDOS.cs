@@ -219,6 +219,14 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(0 + partitionStart, 2);
             BootBlock bblk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
 
+            // AROS boot floppies...
+            if(sector.Length >= 512 && sector[510] == 0x55 && sector[511] == 0xAA &&
+              (bblk.diskType & FFS_Mask) != FFS_Mask && (bblk.diskType & MuFS_Mask) != MuFS_Mask)
+            {
+                sector = imagePlugin.ReadSectors(1 + partitionStart, 2);
+                bblk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
+            }
+
             // Not FFS or MuFS?
             if((bblk.diskType & FFS_Mask) != FFS_Mask &&
                (bblk.diskType & MuFS_Mask) != MuFS_Mask)
