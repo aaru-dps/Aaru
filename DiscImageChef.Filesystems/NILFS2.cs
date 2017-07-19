@@ -180,7 +180,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(nilfsSb.volume_name)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
             sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.mtime)).AppendLine();
             sb.AppendFormat("Volume last written on {0}", DateHandlers.UNIXUnsignedToDateTime(nilfsSb.wtime)).AppendLine();
@@ -193,7 +193,7 @@ namespace DiscImageChef.Filesystems
                 xmlFSType.SystemIdentifier = "Linux";
             xmlFSType.ClusterSize = 1 << (int)(nilfsSb.log_block_size + 10);
             xmlFSType.Clusters = (long)nilfsSb.dev_size / xmlFSType.ClusterSize;
-            xmlFSType.VolumeName = CurrentEncoding.GetString(nilfsSb.volume_name);
+            xmlFSType.VolumeName = StringHandlers.CToString(nilfsSb.volume_name, CurrentEncoding);
             xmlFSType.VolumeSerial = nilfsSb.uuid.ToString();
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(nilfsSb.ctime);
             xmlFSType.CreationDateSpecified = true;
