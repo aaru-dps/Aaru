@@ -179,7 +179,18 @@ namespace DiscImageChef
 
             DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date, year, month, day);
             DicConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute, second);
-            return new DateTime(year, month, day, hour, minute, second);
+
+            DateTime dosdate;
+            try
+            {
+                dosdate = new DateTime(year, month, day, hour, minute, second);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                dosdate = new DateTime(1980, 1, 1, 0, 0, 0);
+            }
+
+            return dosdate;
         }
 
         public static DateTime CPMToDateTime(byte[] timestamp)
