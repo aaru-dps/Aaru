@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            "A582C90C","A582CE0D",
         };
 
         [Test]

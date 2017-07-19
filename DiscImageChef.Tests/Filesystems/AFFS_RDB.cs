@@ -66,13 +66,13 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            1020064,1020064,407232,407232,
-            1020064,1020064,1020064,
+            510032,510032,407232,407232,
+            511040,511040,511040,
         };
 
         readonly int[] clustersize = {
-            512,512,512,512,
-            512,512,512,
+            1024,1024,512,512,
+            1024,1024,1024,
         };
 
         readonly string[] volumename = {
@@ -81,8 +81,8 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            null,null,null,null,
-            null,null,null,
+            "A56D0F5C","A56D049C","A58307A9","A58304BE",
+            "A56CC7EE","A56CDDC4","A56CC133",
         };
 
         [Test]

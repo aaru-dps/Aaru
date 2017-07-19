@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            "A582DCA4","A582BC91",
         };
 
         [Test]
@@ -96,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x2D")
+                    if(partitions[j].PartitionType == "0x2D" || partitions[j].PartitionType == "0x2E")
                     {
                         part = j;
                         break;

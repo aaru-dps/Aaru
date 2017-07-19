@@ -63,11 +63,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            1022080,
+            511040,
         };
 
         readonly int[] clustersize = {
-            512,
+            1024,
         };
 
         readonly string[] volumename = {
@@ -75,7 +75,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            null,
+            "611D85E5",
         };
 
         [Test]

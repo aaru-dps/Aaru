@@ -57,26 +57,26 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // Linux
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 10485760, PartitionName = null, PartitionType = "EFI System", PartitionStart = 1048576, PartitionSectors = 20480,
+                new Partition{ PartitionDescription = null, PartitionLength = 10485760, PartitionName = "EFI System", PartitionType = "EFI System", PartitionStart = 1048576, PartitionSectors = 20480,
                     PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 15728640, PartitionName = null, PartitionType = "Microsoft Basic data", PartitionStart = 11534336, PartitionSectors = 30720,
+                new Partition{ PartitionDescription = null, PartitionLength = 15728640, PartitionName = "Microsoft basic data", PartitionType = "Microsoft Basic data", PartitionStart = 11534336, PartitionSectors = 30720,
                     PartitionSequence = 1, PartitionStartSector = 22528 },
-                new Partition{ PartitionDescription = null, PartitionLength = 20971520, PartitionName = null, PartitionType = "Apple Label", PartitionStart = 27262976, PartitionSectors = 40960,
+                new Partition{ PartitionDescription = null, PartitionLength = 20971520, PartitionName = "Apple label", PartitionType = "Apple Label", PartitionStart = 27262976, PartitionSectors = 40960,
                     PartitionSequence = 2, PartitionStartSector = 53248 },
-                new Partition{ PartitionDescription = null, PartitionLength = 26214400, PartitionName = null, PartitionType = "Solaris /usr or Apple ZFS", PartitionStart = 48234496, PartitionSectors = 51200,
+                new Partition{ PartitionDescription = null, PartitionLength = 26214400, PartitionName = "Solaris /usr & Mac ZFS", PartitionType = "Solaris /usr or Apple ZFS", PartitionStart = 48234496, PartitionSectors = 51200,
                     PartitionSequence = 3, PartitionStartSector = 94208 },
-                new Partition{ PartitionDescription = null, PartitionLength = 31457280, PartitionName = null, PartitionType = "FreeBSD ZFS", PartitionStart = 74448896, PartitionSectors = 61440,
+                new Partition{ PartitionDescription = null, PartitionLength = 31457280, PartitionName = "FreeBSD ZFS", PartitionType = "FreeBSD ZFS", PartitionStart = 74448896, PartitionSectors = 61440,
                     PartitionSequence = 4, PartitionStartSector = 145408 },
-                new Partition{ PartitionDescription = null, PartitionLength = 28294656, PartitionName = null, PartitionType = "HP-UX Data", PartitionStart = 105906176, PartitionSectors = 55263,
+                new Partition{ PartitionDescription = null, PartitionLength = 28294656, PartitionName = "HP-UX data", PartitionType = "HP-UX Data", PartitionStart = 105906176, PartitionSectors = 55263,
                     PartitionSequence = 5, PartitionStartSector = 206848 },
             },
             // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 42991616, PartitionName = null, PartitionType = "Apple HFS", PartitionStart = 1048576, PartitionSectors = 83968,
+                new Partition{ PartitionDescription = null, PartitionLength = 42991616, PartitionName = "", PartitionType = "Apple HFS", PartitionStart = 1048576, PartitionSectors = 83968,
                     PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 52428800, PartitionName = null, PartitionType = "Linux filesystem", PartitionStart = 44040192, PartitionSectors = 102400,
+                new Partition{ PartitionDescription = null, PartitionLength = 52428800, PartitionName = "", PartitionType = "Linux filesystem", PartitionStart = 44040192, PartitionSectors = 102400,
                     PartitionSequence = 1, PartitionStartSector = 86016 },
-                new Partition{ PartitionDescription = null, PartitionLength = 36700160, PartitionName = null, PartitionType = "Microsoft Basic data", PartitionStart = 96468992, PartitionSectors = 71680,
+                new Partition{ PartitionDescription = null, PartitionLength = 36700160, PartitionName = "", PartitionType = "Microsoft Basic data", PartitionStart = 96468992, PartitionSectors = 71680,
                     PartitionSequence = 2, PartitionStartSector = 188416 },
             },
         };

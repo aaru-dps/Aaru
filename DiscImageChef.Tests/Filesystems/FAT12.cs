@@ -1272,7 +1272,7 @@ namespace DiscImageChef.Tests.Filesystems
             // NetBSD 1.6
             "VOLUMELABEL","VOLUMELABEL",
             // NeXTStep 3.3
-            "VOLUMELABEL","VOLUMELABEL",
+            "VOLUMELABEL","VOLUME LABE",
             // OpenStep for Mach 4.0
             "VOLUMELABEL","VOLUMELABEL",
             // OpenStep for Mach 4.2

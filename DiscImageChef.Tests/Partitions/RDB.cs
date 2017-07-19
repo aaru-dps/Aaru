@@ -74,24 +74,24 @@ namespace DiscImageChef.Tests.Partitions
             new []{
                 new Partition{ PartitionDescription = null, PartitionLength = 91455488, PartitionName = "DH1", PartitionType = "\"DOS\\1\"", PartitionStart = 1048576, PartitionSectors = 178624,
                     PartitionSequence = 0, PartitionStartSector = 2048 },
-                new Partition{ PartitionDescription = null, PartitionLength = 92504064, PartitionName = "DH1", PartitionType = "\"DOS\\3\"", PartitionStart = 76546048, PartitionSectors = 149504,
+                new Partition{ PartitionDescription = null, PartitionLength = 76546048, PartitionName = "DH2", PartitionType = "\"DOS\\3\"", PartitionStart = 92504064, PartitionSectors = 149504,
                     PartitionSequence = 1, PartitionStartSector = 180672 },
-                new Partition{ PartitionDescription = null, PartitionLength = 169050112, PartitionName = "DH1", PartitionType = "\"DOS\\3\"", PartitionStart = 78741504, PartitionSectors = 153792,
+                new Partition{ PartitionDescription = null, PartitionLength = 78741504, PartitionName = "DH3", PartitionType = "\"DOS\\3\"", PartitionStart = 169050112, PartitionSectors = 153792,
                     PartitionSequence = 2, PartitionStartSector = 330176 },
-                new Partition{ PartitionDescription = null, PartitionLength = 247791616, PartitionName = "DH1", PartitionType = "\"DOS\\7\"", PartitionStart = 78020608, PartitionSectors = 152384,
+                new Partition{ PartitionDescription = null, PartitionLength = 78020608, PartitionName = "DH4", PartitionType = "\"DOS\\7\"", PartitionStart = 247791616, PartitionSectors = 152384,
                     PartitionSequence = 3, PartitionStartSector = 483968 },
-                new Partition{ PartitionDescription = null, PartitionLength = 325812224, PartitionName = "DH1", PartitionType = "\"SFS\\0\"", PartitionStart = 85000192, PartitionSectors = 166016,
+                new Partition{ PartitionDescription = null, PartitionLength = 85000192, PartitionName = "DH5", PartitionType = "\"SFS\\0\"", PartitionStart = 325812224, PartitionSectors = 166016,
                     PartitionSequence = 4, PartitionStartSector = 636352 },
-                new Partition{ PartitionDescription = null, PartitionLength = 410812416, PartitionName = "DH1", PartitionType = "\"SFS\\2\"", PartitionStart = 113541120, PartitionSectors = 221760,
+                new Partition{ PartitionDescription = null, PartitionLength = 113541120, PartitionName = "DH6", PartitionType = "\"SFS\\2\"", PartitionStart = 410812416, PartitionSectors = 221760,
                     PartitionSequence = 5, PartitionStartSector = 802368 },
             },
-            // AmigaOS 4.0
+            // Parted
             new []{
-                new Partition{ PartitionDescription = null, PartitionLength = 8225280, PartitionName = "primary", PartitionType = "\"\\0\"", PartitionStart = 8225280, PartitionSectors = 16065,
+                new Partition{ PartitionDescription = null, PartitionLength = 8225280, PartitionName = "primary", PartitionType = "\"\0\0\0\\0\"", PartitionStart = 8225280, PartitionSectors = 16065,
                     PartitionSequence = 0, PartitionStartSector = 16065 },
                 new Partition{ PartitionDescription = null, PartitionLength = 24675840, PartitionName = "name", PartitionType = "\"FAT\\1\"", PartitionStart = 16450560, PartitionSectors = 48195,
                     PartitionSequence = 1, PartitionStartSector = 32130 },
-                new Partition{ PartitionDescription = null, PartitionLength = 90478080, PartitionName = "partition", PartitionType = "\"\\0\"", PartitionStart = 41126400, PartitionSectors = 176715,
+                new Partition{ PartitionDescription = null, PartitionLength = 90478080, PartitionName = "partition", PartitionType = "\"\0\0\0\\0\"", PartitionStart = 41126400, PartitionSectors = 176715,
                     PartitionSequence = 2, PartitionStartSector = 80325 },
             },
         };  
