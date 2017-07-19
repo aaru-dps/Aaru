@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
@@ -49,7 +50,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public BFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "UNIX Boot filesystem";
             PluginUUID = new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
@@ -57,24 +58,24 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             uint magic;
 
-            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partitionStart), 0);
+            magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.PartitionStartSector), 0);
 
             return magic == BFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] bfs_sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
             byte[] sb_strings = new byte[6];
 
             BFSSuperBlock bfs_sb = new BFSSuperBlock();
@@ -110,7 +111,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Type = "BFS";
             xmlFSType.VolumeName = bfs_sb.s_volume;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
-            xmlFSType.Clusters = (long)(partitionEnd - partitionStart + 1);
+            xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector + 1);
 
             information = sb.ToString();
         }

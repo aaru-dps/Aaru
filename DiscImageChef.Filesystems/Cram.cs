@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Security.Policy;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -47,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public Cram(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public Cram(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Cram filesystem";
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
@@ -87,21 +87,21 @@ namespace DiscImageChef.Filesystems
         const uint Cram_MAGIC = 0x28CD3D45;
         const uint Cram_CIGAM = 0x453DCD28;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             return magic == Cram_MAGIC || magic == Cram_CIGAM;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
-            byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             CramSuperBlock crSb = new CramSuperBlock();

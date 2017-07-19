@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleDOS
@@ -79,10 +80,10 @@ namespace DiscImageChef.Filesystems.AppleDOS
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public AppleDOS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public AppleDOS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;
-            start = partitionStart;
+            start = partition.PartitionStartSector;
             Name = "Apple DOS File System";
             PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
             if(encoding == null) // TODO: Until Apple ][ encoding is implemented

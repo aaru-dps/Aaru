@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,9 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public AppleHFSPlus(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public AppleHFSPlus(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple HFS+ filesystem";
             PluginUUID = new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
@@ -68,9 +69,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             ushort drSigWord;
@@ -81,7 +82,7 @@ namespace DiscImageChef.Filesystems
             byte[] vh_sector;
             ulong hfsp_offset;
 
-            vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 
@@ -109,7 +110,7 @@ namespace DiscImageChef.Filesystems
                 hfsp_offset = 0;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector + hfsp_offset); // Read volume header
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0);
             if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
@@ -117,7 +118,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -131,7 +132,7 @@ namespace DiscImageChef.Filesystems
             bool wrapped;
             byte[] vh_sector;
 
-            vh_sector = imagePlugin.ReadSector(2 + partitionStart); // Read volume header, of HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Read volume header, of HFS Wrapper MDB
 
             drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
 
@@ -162,7 +163,7 @@ namespace DiscImageChef.Filesystems
                 wrapped = false;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partitionStart + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector + hfsp_offset); // Read volume header
 
             HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x000);
             if(HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)

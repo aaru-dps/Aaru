@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,9 +31,10 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Collections.Generic;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -49,7 +50,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public APFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public APFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple File System";
             PluginUUID = new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
@@ -69,12 +70,12 @@ namespace DiscImageChef.Filesystems
             public ulong containerBlocks;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
             ApfsContainerSuperBlock nxSb;
 
             try
@@ -94,16 +95,16 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
             information = "";
 
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return;
 
-            byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
             ApfsContainerSuperBlock nxSb;
 
             try

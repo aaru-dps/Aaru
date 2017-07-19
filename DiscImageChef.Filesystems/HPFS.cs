@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,10 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -48,7 +49,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("ibm850");
         }
 
-        public HPFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public HPFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "OS/2 High Performance File System";
             PluginUUID = new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
@@ -56,9 +57,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("ibm850");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             if(imagePlugin.ImageInfo.sectors <= 16)
@@ -66,7 +67,7 @@ namespace DiscImageChef.Filesystems
 
             uint magic1, magic2;
 
-            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partition.PartitionStartSector); // Seek to superblock, on logical sector 16
             magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
             magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
 
@@ -75,7 +76,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -88,9 +89,9 @@ namespace DiscImageChef.Filesystems
             byte[] oem_name = new byte[8];
             byte[] volume_name = new byte[11];
 
-            byte[] hpfs_bpb_sector = imagePlugin.ReadSector(0 + partitionStart); // Seek to BIOS parameter block, on logical sector 0
-            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partitionStart); // Seek to superblock, on logical sector 16
-            byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partitionStart); // Seek to spareblock, on logical sector 17
+            byte[] hpfs_bpb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector); // Seek to BIOS parameter block, on logical sector 0
+            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partition.PartitionStartSector); // Seek to superblock, on logical sector 16
+            byte[] hpfs_sp_sector = imagePlugin.ReadSector(17 + partition.PartitionStartSector); // Seek to spareblock, on logical sector 17
 
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(hpfs_bpb_sector, 0, bpbPtr, 512);

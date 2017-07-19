@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,10 +31,11 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems
 {
@@ -52,7 +53,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public BTRFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "B-tree file system";
             PluginUUID = new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
@@ -121,18 +122,18 @@ namespace DiscImageChef.Filesystems
             public Guid uuid;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            if((sbSectorOff + sbSectorSize) >= partitionEnd)
+            if((sbSectorOff + sbSectorSize) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partitionStart, sbSectorSize);
+            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.PartitionStartSector, sbSectorSize);
             SuperBlock btrfsSb;
 
             try
@@ -149,13 +150,13 @@ namespace DiscImageChef.Filesystems
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}", sbSectorOff);
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}", sbSectorSize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "partitionStart = {0}", partitionStart);
+            DicConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.PartitionStartSector);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
 
             return btrfsSb.magic == btrfsMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
@@ -164,7 +165,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partitionStart, sbSectorSize);
+            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.PartitionStartSector, sbSectorSize);
             SuperBlock btrfsSb;
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);

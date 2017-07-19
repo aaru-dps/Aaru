@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
-        public CBM(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public CBM(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
@@ -179,9 +180,9 @@ namespace DiscImageChef.Filesystems
             public short fill3;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart > 0)
+            if(partition.PartitionStartSector > 0)
                 return false;
 
             if(imagePlugin.ImageInfo.sectorSize != 256)
@@ -221,7 +222,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector;
 

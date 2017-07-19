@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
@@ -56,7 +57,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public PascalPlugin(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public PascalPlugin(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;
             Name = "U.C.S.D. Pascal filesystem";

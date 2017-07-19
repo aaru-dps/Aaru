@@ -102,8 +102,14 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 Filesystem fs = new AcornADFS();
-                Assert.AreEqual(true, fs.Identify(image, 0, image.ImageInfo.sectors - 1), testfiles[i]);
-                fs.GetInformation(image, 0, image.ImageInfo.sectors - 1, out string information);
+                Partition wholePart = new Partition
+                {
+                    PartitionName = "Whole device",
+                    PartitionSectors = image.ImageInfo.sectors,
+                    PartitionLength = image.ImageInfo.sectors * image.ImageInfo.sectorSize
+                };
+                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                fs.GetInformation(image, wholePart, out string information);
                 Assert.AreEqual(bootable[i], fs.XmlFSType.Bootable, testfiles[i]);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);

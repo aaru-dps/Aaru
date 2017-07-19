@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -45,7 +46,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
-        public PCEnginePlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public PCEnginePlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "PC Engine CD Plugin";
             PluginUUID = new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
@@ -53,25 +54,25 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("shift_jis");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             byte[] system_descriptor = new byte[23];
-            byte[] sector = imagePlugin.ReadSector(1 + partitionStart);
+            byte[] sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
 
             Array.Copy(sector, 0x20, system_descriptor, 0, 23);
 
             return Encoding.ASCII.GetString(system_descriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "PC Engine filesystem";
-            xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) / imagePlugin.GetSectorSize() * 2048);
+            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) / imagePlugin.GetSectorSize() * 2048);
             xmlFSType.ClusterSize = 2048;
         }
 

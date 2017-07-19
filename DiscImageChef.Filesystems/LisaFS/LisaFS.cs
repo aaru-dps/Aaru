@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.LisaFS
@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public LisaFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public LisaFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             device = imagePlugin;
             Name = "Apple Lisa File System";

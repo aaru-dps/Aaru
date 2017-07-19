@@ -217,8 +217,8 @@ namespace DiscImageChef.Tests.Filesystems
                 PartPlugin parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
                 Filesystem fs = new FAT();
-                Assert.AreEqual(true, fs.Identify(image, partitions[0].PartitionStartSector, partitions[0].PartitionStartSector + partitions[0].PartitionSectors - 1), testfiles[i]);
-                fs.GetInformation(image, partitions[0].PartitionStartSector, partitions[0].PartitionStartSector + partitions[0].PartitionSectors - 1, out string information);
+                Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
+                fs.GetInformation(image, partitions[0], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
                 Assert.AreEqual("FAT16", fs.XmlFSType.Type, testfiles[i]);

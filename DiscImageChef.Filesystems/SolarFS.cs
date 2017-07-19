@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
@@ -47,7 +48,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public SolarFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public SolarFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Solar_OS filesystem";
             PluginUUID = new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
@@ -55,15 +56,15 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             byte signature; /// <summary>0x29
             string fs_type; // "SOL_FS  "
 
-            byte[] bpb = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             byte[] fs_type_b = new byte[8];
 
@@ -76,12 +77,12 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
-            byte[] bpb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] bpb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
             byte[] bpb_strings;
 
             SolarOSParameterBlock BPB = new SolarOSParameterBlock();

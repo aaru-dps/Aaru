@@ -38,7 +38,6 @@
 using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Console;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
@@ -556,7 +555,7 @@ namespace DiscImageChef.Core
                                 {
                                     xmlTrk.FileSystemInformation[i] = new PartitionType();
                                     xmlTrk.FileSystemInformation[i].Description = partitions[i].PartitionDescription;
-                                    xmlTrk.FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
+                                    xmlTrk.FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionEndSector);
                                     xmlTrk.FileSystemInformation[i].Name = partitions[i].PartitionName;
                                     xmlTrk.FileSystemInformation[i].Sequence = (int)partitions[i].PartitionSequence;
                                     xmlTrk.FileSystemInformation[i].StartSector = (int)partitions[i].PartitionStartSector;
@@ -568,10 +567,9 @@ namespace DiscImageChef.Core
                                     {
                                         try
                                         {
-                                            if(_plugin.Identify(image, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
+                                            if(_plugin.Identify(image, partitions[i]))
                                             {
-                                                string foo;
-                                                _plugin.GetInformation(image, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                                _plugin.GetInformation(image, partitions[i], out string foo);
                                                 lstFs.Add(_plugin.XmlFSType);
                                                 Statistics.AddFilesystem(_plugin.XmlFSType.Type);
 
@@ -605,14 +603,21 @@ namespace DiscImageChef.Core
 
                                 List<FileSystemType> lstFs = new List<FileSystemType>();
 
+                                Partition xmlPart = new Partition
+                                {
+                                    PartitionStartSector = (ulong)xmlTrk.StartSector,
+                                    PartitionSectors = (ulong)((xmlTrk.EndSector - xmlTrk.StartSector) + 1),
+                                    PartitionType = xmlTrk.TrackType1.ToString(),
+                                    PartitionLength = (ulong)xmlTrk.Size,
+                                    PartitionSequence = (ulong)xmlTrk.Sequence.TrackNumber
+                                };
                                 foreach(Filesystem _plugin in plugins.PluginsList.Values)
                                 {
                                     try
                                     {
-                                        if(_plugin.Identify(image, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector))
+                                        if(_plugin.Identify(image, xmlPart))
                                         {
-                                            string foo;
-                                            _plugin.GetInformation(image, (ulong)xmlTrk.StartSector, (ulong)xmlTrk.EndSector, out foo);
+                                            _plugin.GetInformation(image, xmlPart, out string foo);
                                             lstFs.Add(_plugin.XmlFSType);
                                             Statistics.AddFilesystem(_plugin.XmlFSType.Type);
 
@@ -869,7 +874,7 @@ namespace DiscImageChef.Core
                             {
                                 sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType();
                                 sidecar.BlockMedia[0].FileSystemInformation[i].Description = partitions[i].PartitionDescription;
-                                sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1);
+                                sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].PartitionEndSector);
                                 sidecar.BlockMedia[0].FileSystemInformation[i].Name = partitions[i].PartitionName;
                                 sidecar.BlockMedia[0].FileSystemInformation[i].Sequence = (int)partitions[i].PartitionSequence;
                                 sidecar.BlockMedia[0].FileSystemInformation[i].StartSector = (int)partitions[i].PartitionStartSector;
@@ -881,10 +886,10 @@ namespace DiscImageChef.Core
                                 {
                                     try
                                     {
-                                        if(_plugin.Identify(image, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
+                                        if(_plugin.Identify(image, partitions[i]))
                                         {
                                             string foo;
-                                            _plugin.GetInformation(image, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out foo);
+                                            _plugin.GetInformation(image, partitions[i], out foo);
                                             lstFs.Add(_plugin.XmlFSType);
                                             Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                         }
@@ -907,16 +912,22 @@ namespace DiscImageChef.Core
                             sidecar.BlockMedia[0].FileSystemInformation[0].StartSector = 0;
                             sidecar.BlockMedia[0].FileSystemInformation[0].EndSector = (int)(image.GetSectors() - 1);
 
+                            Partition wholePart = new Partition
+                            {
+                                PartitionName = "Whole device",
+                                PartitionSectors = image.GetSectors(),
+                                PartitionLength = image.GetSectors() * image.GetSectorSize()
+                            };
+
                             List<FileSystemType> lstFs = new List<FileSystemType>();
 
                             foreach(Filesystem _plugin in plugins.PluginsList.Values)
                             {
                                 try
                                 {
-                                    if(_plugin.Identify(image, 0, image.GetSectors() - 1))
+                                    if(_plugin.Identify(image, wholePart))
                                     {
-                                        string foo;
-                                        _plugin.GetInformation(image, 0, image.GetSectors() - 1, out foo);
+                                        _plugin.GetInformation(image, wholePart, out string foo);
                                         lstFs.Add(_plugin.XmlFSType);
                                         Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                     }

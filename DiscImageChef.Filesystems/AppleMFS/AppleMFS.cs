@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -32,8 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.ImagePlugins;
 using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -68,12 +69,12 @@ namespace DiscImageChef.Filesystems.AppleMFS
             CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
-        public AppleMFS(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public AppleMFS(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Macintosh File System";
             PluginUUID = new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
             device = imagePlugin;
-            this.partitionStart = partitionStart;
+            partitionStart = partition.PartitionStartSector;
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("macintosh");
         }

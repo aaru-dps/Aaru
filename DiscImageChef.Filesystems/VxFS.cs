@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public VxFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public VxFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Veritas filesystem";
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
@@ -207,23 +208,23 @@ namespace DiscImageChef.Filesystems
         const uint VxFS_MAGIC = 0xA501FCF5;
         const uint VxFS_Base = 0x400;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
-            byte[] sector = imagePlugin.ReadSector(partitionStart + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             return magic == VxFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
-            byte[] sector = imagePlugin.ReadSector(partitionStart + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
 
             VxSuperBlock vxSb = new VxSuperBlock();
             IntPtr vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));

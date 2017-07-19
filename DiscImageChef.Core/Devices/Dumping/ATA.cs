@@ -484,9 +484,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 try
                                 {
-                                    if(_plugin.Identify(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1))
+                                    if(_plugin.Identify(_imageFormat, partitions[i]))
                                     {
-                                        _plugin.GetInformation(_imageFormat, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors - 1, out string foo);
+                                        _plugin.GetInformation(_imageFormat, partitions[i], out string foo);
                                         lstFs.Add(_plugin.XmlFSType);
                                         Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                     }
@@ -513,13 +513,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                         };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
+                        Partition wholePart = new Partition
+                        {
+                            PartitionName = "Whole device",
+                            PartitionSectors = blocks,
+                            PartitionLength = blocks * blockSize
+                        };
+
                         foreach(Filesystem _plugin in plugins.PluginsList.Values)
                         {
                             try
                             {
-                                if(_plugin.Identify(_imageFormat, (blocks - 1), 0))
+                                if(_plugin.Identify(_imageFormat, wholePart))
                                 {
-                                    _plugin.GetInformation(_imageFormat, (blocks - 1), 0, out string foo);
+                                    _plugin.GetInformation(_imageFormat, wholePart, out string foo);
                                     lstFs.Add(_plugin.XmlFSType);
                                     Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                                 }

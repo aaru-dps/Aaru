@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -110,7 +111,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public XFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public XFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "XFS Filesystem Plugin";
             PluginUUID = new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
@@ -118,7 +119,7 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512)
                 return false;
@@ -129,7 +130,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector, sbSize);
             if(sector.Length < Marshal.SizeOf(xfsSb))
                 return false;
 
@@ -138,7 +139,7 @@ namespace DiscImageChef.Filesystems
             return xfsSb.magicnum == XFS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512)
@@ -150,7 +151,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(xfsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector, sbSize);
             if(sector.Length < Marshal.SizeOf(xfsSb))
                 return;
 

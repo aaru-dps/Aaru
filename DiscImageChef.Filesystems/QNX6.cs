@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -109,7 +110,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public QNX6(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public QNX6(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX6 Plugin";
             PluginUUID = new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
@@ -117,13 +118,13 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
 
-            byte[] audiSector = imagePlugin.ReadSectors(partitionStart, sectors);
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + bootSectors, sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.PartitionStartSector, sectors);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + bootSectors, sectors);
             if(sector.Length < QNX6_SuperBlockSize)
                 return false;
 
@@ -142,15 +143,15 @@ namespace DiscImageChef.Filesystems
             return qnxSb.magic == QNX6_Magic || audiSb.magic == QNX6_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
 
-            byte[] audiSector = imagePlugin.ReadSectors(partitionStart, sectors);
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + bootSectors, sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.PartitionStartSector, sectors);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + bootSectors, sectors);
             if(sector.Length < QNX6_SuperBlockSize)
                 return;
 

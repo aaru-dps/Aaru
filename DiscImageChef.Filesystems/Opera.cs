@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -45,7 +46,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public OperaFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
@@ -53,12 +54,12 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.ASCII;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             byte record_type;
             byte[] sync_bytes = new byte[5];
@@ -74,12 +75,12 @@ namespace DiscImageChef.Filesystems
 
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder SuperBlockMetadata = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             OperaSuperBlock sb = new OperaSuperBlock();
             byte[] cString = new byte[32];

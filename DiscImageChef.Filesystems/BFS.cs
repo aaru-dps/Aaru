@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -58,7 +59,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public BeFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public BeFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Be Filesystem";
             PluginUUID = new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
@@ -66,15 +67,15 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             uint magic;
             uint magic_be;
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
@@ -91,7 +92,7 @@ namespace DiscImageChef.Filesystems
             if(magic == BEFS_MAGIC1 || magic_be == BEFS_MAGIC1)
                 return true;
 
-            sb_sector = imagePlugin.ReadSector(1 + partitionStart);
+            sb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
 
             magic = BitConverter.ToUInt32(sb_sector, 0x20);
             magic_be = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
@@ -101,7 +102,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             byte[] name_bytes = new byte[32];
@@ -110,7 +111,7 @@ namespace DiscImageChef.Filesystems
 
             BeSuperBlock besb = new BeSuperBlock();
 
-            byte[] sb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] sb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
 
@@ -121,7 +122,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                sb_sector = imagePlugin.ReadSector(1 + partitionStart);
+                sb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
@@ -130,7 +131,7 @@ namespace DiscImageChef.Filesystems
                 }
                 else if(sb_sector.Length >= 0x400)
                 {
-                    byte[] temp = imagePlugin.ReadSector(0 + partitionStart);
+                    byte[] temp = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
                     if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector

@@ -1,3 +1,8 @@
+* Commands/Ls.cs:
+* Commands/Analyze.cs:
+* Commands/ExtractFiles.cs:
+  Refactor, pass whole partition structure to filesystems.
+
 * DiscImageChef.csproj:
   Added tests for checksums.
 

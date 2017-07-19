@@ -33,18 +33,19 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
     public partial class AppleDOS : Filesystem
     {
-        public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.ImageInfo.sectors != 455 && imagePlugin.ImageInfo.sectors != 560)
                 return false;
 
-            if(partitionStart > 0 || imagePlugin.ImageInfo.sectorSize != 256)
+            if(partition.PartitionStartSector > 0 || imagePlugin.ImageInfo.sectorSize != 256)
                 return false;
 
             int spt = 0;
@@ -63,7 +64,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             return vtoc.catalogSector < spt && vtoc.maxTrackSectorPairsPerSector <= 122 && vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector == 256;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();

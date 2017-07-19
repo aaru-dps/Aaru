@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -114,7 +115,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public QNX4(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public QNX4(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "QNX4 Plugin";
             PluginUUID = new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
@@ -122,9 +123,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            byte[] sector = imagePlugin.ReadSector(partitionStart + 1);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + 1);
             if(sector.Length < 512)
                 return false;
 
@@ -146,10 +147,10 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // Check extents are not past device
-            if(qnxSb.rootDir.di_first_xtnt.block + partitionStart >= partitionEnd ||
-               qnxSb.inode.di_first_xtnt.block + partitionStart >= partitionEnd ||
-               qnxSb.boot.di_first_xtnt.block + partitionStart >= partitionEnd ||
-               qnxSb.altBoot.di_first_xtnt.block + partitionStart >= partitionEnd)
+            if(qnxSb.rootDir.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
+               qnxSb.inode.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
+               qnxSb.boot.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector ||
+               qnxSb.altBoot.di_first_xtnt.block + partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             // Check inodes are in use
@@ -162,10 +163,10 @@ namespace DiscImageChef.Filesystems
             return true;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
-            byte[] sector = imagePlugin.ReadSector(partitionStart + 1);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + 1);
             if(sector.Length < 512)
                 return;
 
@@ -254,7 +255,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "QNX4 filesystem";
-            xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) / imagePlugin.GetSectorSize() * 512);
+            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) / imagePlugin.GetSectorSize() * 512);
             xmlFSType.ClusterSize = 512;
             xmlFSType.Bootable |= (qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0);
             xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime);

@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -103,7 +104,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public NILFS2(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public NILFS2(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "NILFS2 Plugin";
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
@@ -111,7 +112,7 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.UTF8;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < 512)
                 return false;
@@ -126,7 +127,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb))
                 return false;
 
@@ -138,7 +139,7 @@ namespace DiscImageChef.Filesystems
             return nilfsSb.magic == NILFS2_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < 512)
@@ -154,7 +155,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(nilfsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb))
                 return;
 

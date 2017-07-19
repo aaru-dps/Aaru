@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
@@ -85,7 +86,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public ProDOSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
@@ -93,13 +94,13 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionEnd < 3)
+            if(partition.PartitionEndSector < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
             DicConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
@@ -123,20 +124,20 @@ namespace DiscImageChef.Filesystems
 
             ushort bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
             DicConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bit_map_pointer);
-            if(bit_map_pointer > partitionEnd)
+            if(bit_map_pointer > partition.PartitionEndSector)
                 return false;
 
             ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
-            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partitionEnd, partitionStart, total_blocks <= (partitionEnd - partitionStart + 1));
-            return total_blocks <= (partitionEnd - partitionStart + 1);
+            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partition.PartitionEndSector, partition.PartitionStartSector, total_blocks <= (partition.PartitionEndSector - partition.PartitionStartSector + 1));
+            return total_blocks <= (partition.PartitionEndSector - partition.PartitionStartSector + 1);
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock();
             rootDirectoryKeyBlock.header = new ProDOSRootDirectoryHeader();
@@ -234,7 +235,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = rootDirectoryKeyBlock.header.file_count;
             xmlFSType.FilesSpecified = true;
             xmlFSType.Clusters = rootDirectoryKeyBlock.header.total_blocks;
-            xmlFSType.ClusterSize = (int)(((partitionEnd - partitionStart) + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.Clusters);
+            xmlFSType.ClusterSize = (int)(((partition.PartitionEndSector - partition.PartitionStartSector) + 1) * imagePlugin.ImageInfo.sectorSize / (ulong)xmlFSType.Clusters);
             xmlFSType.Type = "ProDOS";
 
             return;

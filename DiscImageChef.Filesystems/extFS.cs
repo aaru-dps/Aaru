@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public extFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public extFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Linux extended Filesystem";
             PluginUUID = new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
@@ -54,25 +55,25 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Superblock resides at 0x400
 
             ushort magic = BitConverter.ToUInt16(sb_sector, 0x038); // Here should reside magic number
 
             return magic == extFSMagic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart); // Superblock resides at 0x400
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector); // Superblock resides at 0x400
             extFSSuperBlock ext_sb = new extFSSuperBlock();
 
             ext_sb.inodes = BitConverter.ToUInt32(sb_sector, 0x000);
@@ -100,7 +101,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = ext_sb.freecountblk;
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.ClusterSize = 1024;
-            xmlFSType.Clusters = (long)((partitionEnd - partitionStart + 1) * imagePlugin.GetSectorSize() / 1024);
+            xmlFSType.Clusters = (long)((partition.PartitionEndSector - partition.PartitionStartSector + 1) * imagePlugin.GetSectorSize() / 1024);
 
             information = sb.ToString();
         }

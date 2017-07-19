@@ -39,6 +39,7 @@ using DiscImageChef.PartPlugins;
 using System.IO;
 using DiscImageChef.Filters;
 using DiscImageChef.Core;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Commands
 {
@@ -154,7 +155,7 @@ namespace DiscImageChef.Commands
 
                         DicConsole.WriteLine("Identifying filesystem on partition");
 
-                        Core.Filesystems.Identify(_imageFormat, out id_plugins, partitions[i].PartitionStartSector, partitions[i].PartitionStartSector + partitions[i].PartitionSectors);
+                        Core.Filesystems.Identify(_imageFormat, out id_plugins, partitions[i]);
                         if(id_plugins.Count == 0)
                             DicConsole.WriteLine("Filesystem not identified");
                         else if(id_plugins.Count > 1)
@@ -214,7 +215,14 @@ namespace DiscImageChef.Commands
                     }
                 }
 
-                Core.Filesystems.Identify(_imageFormat, out id_plugins, 0, _imageFormat.GetSectors() - 1);
+                Partition wholePart = new Partition
+                {
+                    PartitionName = "Whole device",
+                    PartitionSectors = _imageFormat.GetSectors(),
+                    PartitionLength = _imageFormat.GetSectors() * _imageFormat.GetSectorSize()
+                };
+
+                Core.Filesystems.Identify(_imageFormat, out id_plugins, wholePart);
                 if(id_plugins.Count == 0)
                     DicConsole.WriteLine("Filesystem not identified");
                 else if(id_plugins.Count > 1)

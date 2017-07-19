@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
@@ -62,7 +63,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
-        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public AppleHFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Apple Hierarchical File System";
             PluginUUID = new Guid("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
@@ -70,9 +71,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("macintosh");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             byte[] mdb_sector;
@@ -80,7 +81,7 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+                mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
@@ -89,7 +90,7 @@ namespace DiscImageChef.Filesystems
 
                     return drSigWord != HFSP_MAGIC;
                 }
-                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart * 4);
+                mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partition.PartitionStartSector * 4);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
@@ -103,7 +104,7 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+                mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
@@ -116,7 +117,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -135,21 +136,21 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+                mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
                 {
-                    bb_sector = imagePlugin.ReadSector(partitionStart);
+                    bb_sector = imagePlugin.ReadSector(partition.PartitionStartSector);
                 }
                 else
                 {
-                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partitionStart * 4);
+                    mdb_sector = Read2048SectorAs512(imagePlugin, 2 + partition.PartitionStartSector * 4);
                     drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                     if(drSigWord == HFS_MAGIC)
                     {
-                        bb_sector = Read2048SectorAs512(imagePlugin, partitionStart * 4);
+                        bb_sector = Read2048SectorAs512(imagePlugin, partition.PartitionStartSector * 4);
                         APMFromHDDOnCD = true;
                     }
                     else
@@ -158,11 +159,11 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+                mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdb_sector, 0);
 
                 if(drSigWord == HFS_MAGIC)
-                    bb_sector = imagePlugin.ReadSector(partitionStart);
+                    bb_sector = imagePlugin.ReadSector(partition.PartitionStartSector);
                 else
                     return;
             }

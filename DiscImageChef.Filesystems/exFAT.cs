@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems
@@ -49,7 +50,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public exFAT(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public exFAT(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Microsoft Extended File Allocation Table";
             PluginUUID = new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
@@ -57,12 +58,12 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if((12 + partitionStart) >= partitionEnd)
+            if((12 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
             if(vbrSector.Length < 512)
                 return false;
 
@@ -75,28 +76,28 @@ namespace DiscImageChef.Filesystems
             return Signature.SequenceEqual(vbr.signature);
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
             VolumeBootRecord vbr = new VolumeBootRecord();
             IntPtr vbrPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(vbrSector, 0, vbrPtr, 512);
             vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
             Marshal.FreeHGlobal(vbrPtr);
 
-            byte[] parametersSector = imagePlugin.ReadSector(9 + partitionStart);
+            byte[] parametersSector = imagePlugin.ReadSector(9 + partition.PartitionStartSector);
             OemParameterTable parametersTable = new OemParameterTable();
             IntPtr parametersPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(parametersSector, 0, parametersPtr, 512);
             parametersTable = (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
             Marshal.FreeHGlobal(parametersPtr);
 
-            byte[] chkSector = imagePlugin.ReadSector(11 + partitionStart);
+            byte[] chkSector = imagePlugin.ReadSector(11 + partition.PartitionStartSector);
             ChecksumSector chksector = new ChecksumSector();
             IntPtr chkPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(chkSector, 0, chkPtr, 512);

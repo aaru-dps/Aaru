@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,8 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-using System.Security.Policy;
 
 namespace DiscImageChef.Filesystems
 {
@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public AcornADFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Acorn Advanced Disc Filing System";
             PluginUUID = new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
@@ -270,9 +270,9 @@ namespace DiscImageChef.Filesystems
         }
 
         // TODO: BBC Master hard disks are untested...
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             ulong sbSector;
@@ -285,7 +285,7 @@ namespace DiscImageChef.Filesystems
             GCHandle ptr;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
-            if(partitionStart == 0)
+            if(partition.PartitionStartSector == 0)
             {
                 OldMapSector0 oldMap0;
                 OldMapSector1 oldMap1;
@@ -381,7 +381,7 @@ namespace DiscImageChef.Filesystems
             // Partitioning or not, new formats follow:
             DiscRecord drSb;
 
-            sector = imagePlugin.ReadSector(partitionStart);
+            sector = imagePlugin.ReadSector(partition.PartitionStartSector);
             byte newChk = NewMapChecksum(sector);
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
@@ -391,7 +391,7 @@ namespace DiscImageChef.Filesystems
             if(bootBlockSize % imagePlugin.ImageInfo.sectorSize > 0)
                 sectorsToRead++;
 
-            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partitionStart, sectorsToRead);
+            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.PartitionStartSector, sectorsToRead);
             int bootChk = 0;
             for(int i = 0; i < 0x1FF; i++)
                 bootChk = ((bootChk & 0xFF) + (bootChk >> 8) + bootSector[i]);
@@ -446,7 +446,7 @@ namespace DiscImageChef.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             xmlFSType = new Schemas.FileSystemType();
@@ -460,7 +460,7 @@ namespace DiscImageChef.Filesystems
             string discname;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
-            if(partitionStart == 0)
+            if(partition.PartitionStartSector == 0)
             {
                 OldMapSector0 oldMap0;
                 OldMapSector1 oldMap1;
@@ -595,7 +595,7 @@ namespace DiscImageChef.Filesystems
             // Partitioning or not, new formats follow:
             DiscRecord drSb;
 
-            sector = imagePlugin.ReadSector(partitionStart);
+            sector = imagePlugin.ReadSector(partition.PartitionStartSector);
             byte newChk = NewMapChecksum(sector);
             DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
@@ -605,7 +605,7 @@ namespace DiscImageChef.Filesystems
             if(bootBlockSize % imagePlugin.ImageInfo.sectorSize > 0)
                 sectorsToRead++;
 
-            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partitionStart, sectorsToRead);
+            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.PartitionStartSector, sectorsToRead);
             int bootChk = 0;
             for(int i = 0; i < 0x1FF; i++)
                 bootChk = ((bootChk & 0xFF) + (bootChk >> 8) + bootSector[i]);

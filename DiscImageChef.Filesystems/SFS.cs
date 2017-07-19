@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public SFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public SFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "SmartFileSystem";
             PluginUUID = new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
@@ -97,23 +98,23 @@ namespace DiscImageChef.Filesystems
         /// </summary>
         const uint SFS_MAGIC = 0x53465300;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] sector = imagePlugin.ReadSector(partitionStart);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector);
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
             return magic == SFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
-            byte[] RootBlockSector = imagePlugin.ReadSector(partitionStart);
+            byte[] RootBlockSector = imagePlugin.ReadSector(partition.PartitionStartSector);
             RootBlock rootBlock = new RootBlock();
             rootBlock = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(RootBlockSector);
 

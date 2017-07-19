@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using DiscImageChef.Console;
-using ufs_daddr_t = System.Int32;
-using time_t = System.Int32;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
+using time_t = System.Int32;
+using ufs_daddr_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
 {
@@ -50,7 +51,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public FFSPlugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "BSD Fast File System (aka UNIX File System, UFS)";
             PluginUUID = new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
@@ -58,9 +59,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             uint magic;
@@ -72,45 +73,45 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
 
-            if(partitionEnd > (partitionStart + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors))
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     return true;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors))
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     return true;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors))
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     return true;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors))
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
                     return true;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors))
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + (sb_start_atari / imagePlugin.GetSectorSize()), sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + (sb_start_atari / imagePlugin.GetSectorSize()), sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
@@ -120,7 +121,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sbInformation = new StringBuilder();
@@ -128,7 +129,7 @@ namespace DiscImageChef.Filesystems
             uint magic = 0;
             uint sb_size_in_sectors;
             byte[] ufs_sb_sectors;
-            ulong sb_offset = partitionStart;
+            ulong sb_offset = partition.PartitionStartSector;
             bool fs_type_42bsd = false;
             bool fs_type_43bsd = false;
             bool fs_type_44bsd = false;
@@ -142,57 +143,57 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
 
-            if(partitionEnd > (partitionStart + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
-                    sb_offset = partitionStart + sb_start_floppy * sb_size_in_sectors;
+                    sb_offset = partition.PartitionStartSector + sb_start_floppy * sb_size_in_sectors;
                 else
                     magic = 0;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
-                    sb_offset = partitionStart + sb_start_ufs1 * sb_size_in_sectors;
+                    sb_offset = partition.PartitionStartSector + sb_start_ufs1 * sb_size_in_sectors;
                 else
                     magic = 0;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
-                    sb_offset = partitionStart + sb_start_ufs2 * sb_size_in_sectors;
+                    sb_offset = partition.PartitionStartSector + sb_start_ufs2 * sb_size_in_sectors;
                 else
                     magic = 0;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
-                    sb_offset = partitionStart + sb_start_piggy * sb_size_in_sectors;
+                    sb_offset = partition.PartitionStartSector + sb_start_piggy * sb_size_in_sectors;
                 else
                     magic = 0;
             }
 
-            if(partitionEnd > (partitionStart + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors) && magic == 0)
+            if(partition.PartitionEndSector > (partition.PartitionStartSector + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors) && magic == 0)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partitionStart + sb_start_atari / imagePlugin.GetSectorSize(), sb_size_in_sectors);
+                ufs_sb_sectors = imagePlugin.ReadSectors(partition.PartitionStartSector + sb_start_atari / imagePlugin.GetSectorSize(), sb_size_in_sectors);
                 magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
-                    sb_offset = partitionStart + sb_start_atari / imagePlugin.GetSectorSize();
+                    sb_offset = partition.PartitionStartSector + sb_start_atari / imagePlugin.GetSectorSize();
                 else
                     magic = 0;
             }

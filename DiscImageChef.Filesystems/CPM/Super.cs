@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.CPM
         public override Errno Mount(bool debug)
         {
             // As the identification is so complex, just call Identify() and relay on its findings
-            if(!Identify(device, partStart, partEnd) || !cpmFound || workingDefinition == null || dpb == null)
+            if(!Identify(device, partition) || !cpmFound || workingDefinition == null || dpb == null)
                 return Errno.InvalidArgument;
 
             // Build the software interleaving sector mask
@@ -111,9 +111,9 @@ namespace DiscImageChef.Filesystems.CPM
             {
                 DicConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
 
-                for(int p = 0; p <= (int)(partEnd - partStart); p++)
+                for(int p = 0; p <= (int)(partition.PartitionEndSector - partition.PartitionStartSector); p++)
                 {
-                    byte[] readSector = device.ReadSector((ulong)((int)partStart + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
+                    byte[] readSector = device.ReadSector((ulong)((int)partition.PartitionStartSector + (p / sectorMask.Length) * sectorMask.Length + sectorMask[p % sectorMask.Length]));
                     if(workingDefinition.complement)
                     {
                         for(int b = 0; b < readSector.Length; b++)

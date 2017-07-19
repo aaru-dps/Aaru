@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -68,10 +69,9 @@ namespace DiscImageChef.Filesystems
         /// Initializes a filesystem instance prepared for reading contents
         /// </summary>
         /// <param name="imagePlugin">Image plugin.</param>
-        /// <param name="partitionStart">Partition start.</param>
-        /// <param name="partitionEnd">Partition end.</param>
+        /// <param name="partition">Partition.</param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        protected Filesystem(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
         }
 
@@ -79,19 +79,17 @@ namespace DiscImageChef.Filesystems
         /// Identifies the filesystem in the specified LBA
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partitionStart">Partition start sector (LBA).</param>
-        /// <param name="partitionEnd">Partition end sector (LBA).</param>
+        /// <param name="partition">Partition.</param>
         /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
-        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd);
+        public abstract bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition);
 
         /// <summary>
         /// Gets information about the identified filesystem.
         /// </summary>
         /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partitionStart">Partition start sector (LBA).</param>
-        /// <param name="partitionEnd">Partition end sector (LBA).</param>
+        /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
-        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information);
+        public abstract void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information);
 
         /// <summary>
         /// Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories from the filesystem.

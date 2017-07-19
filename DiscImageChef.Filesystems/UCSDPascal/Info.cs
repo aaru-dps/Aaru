@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -32,19 +32,20 @@
 
 using System;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin : Filesystem
     {
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectors() < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] volBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
@@ -88,7 +89,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             return true;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             StringBuilder sbInformation = new StringBuilder();
             information = "";
@@ -97,7 +98,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 return;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] volBlock = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             PascalVolumeEntry volEntry = new PascalVolumeEntry();
 
@@ -147,7 +148,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             information = sbInformation.ToString();
 
             xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partitionStart, 2));
+            xmlFSType.Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.PartitionStartSector, 2));
             xmlFSType.Clusters = volEntry.blocks;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
             xmlFSType.Files = volEntry.files;

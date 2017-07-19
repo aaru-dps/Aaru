@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,9 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -47,7 +48,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public ext2FS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public ext2FS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Linux extended Filesystem 2, 3 and 4";
             PluginUUID = new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
@@ -55,12 +56,12 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] sb_sector = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] sb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             ushort magic = BitConverter.ToUInt16(sb_sector, 0x038);
 
@@ -69,7 +70,7 @@ namespace DiscImageChef.Filesystems
             return false;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -97,7 +98,7 @@ namespace DiscImageChef.Filesystems
                 return;
             }
 
-            byte[] sb_sector = imagePlugin.ReadSectors(2 + partitionStart, sb_size_in_sectors);
+            byte[] sb_sector = imagePlugin.ReadSectors(2 + partition.PartitionStartSector, sb_size_in_sectors);
             IntPtr sbPtr = Marshal.AllocHGlobal(512);
             Marshal.Copy(sb_sector, 0, sbPtr, 512);
             supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));

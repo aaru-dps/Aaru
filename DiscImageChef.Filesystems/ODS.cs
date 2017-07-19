@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -54,7 +55,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public ODS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public ODS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "Files-11 On-Disk Structure";
             PluginUUID = new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
@@ -62,9 +63,9 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             if(imagePlugin.GetSectorSize() < 512)
@@ -72,7 +73,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] magic_b = new byte[12];
             string magic;
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionStart);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
 
             Array.Copy(hb_sector, 0x1F0, magic_b, 0, 12);
             magic = Encoding.ASCII.GetString(magic_b);
@@ -80,7 +81,7 @@ namespace DiscImageChef.Filesystems
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -90,7 +91,7 @@ namespace DiscImageChef.Filesystems
             homeblock.min_class = new byte[20];
             homeblock.max_class = new byte[20];
 
-            byte[] hb_sector = imagePlugin.ReadSector(1 + partitionStart);
+            byte[] hb_sector = imagePlugin.ReadSector(1 + partition.PartitionStartSector);
 
             homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
             homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);

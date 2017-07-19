@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -32,6 +32,7 @@
 
 using System;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
 using DiscImageChef.ImagePlugins;
@@ -40,7 +41,7 @@ namespace DiscImageChef.Filesystems.LisaFS
 {
     public partial class LisaFS : Filesystem
     {
-        public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
             try
             {
@@ -126,7 +127,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             }
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();

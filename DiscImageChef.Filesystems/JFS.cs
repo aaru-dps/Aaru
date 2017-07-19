@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -140,7 +141,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public JFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public JFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "JFS Plugin";
             PluginUUID = new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
@@ -148,10 +149,10 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
-            byte[] sector = imagePlugin.ReadSector(partitionStart + bootSectors);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + bootSectors);
             if(sector.Length < 512)
                 return false;
 
@@ -164,12 +165,12 @@ namespace DiscImageChef.Filesystems
             return jfsSb.s_magic == JFS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder sb = new StringBuilder();
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
-            byte[] sector = imagePlugin.ReadSector(partitionStart + bootSectors);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + bootSectors);
             if(sector.Length < 512)
                 return;
 

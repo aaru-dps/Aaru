@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.Filesystems
@@ -48,7 +49,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
         }
 
-        public ECMA67(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public ECMA67(ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ECMA-67";
             PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
@@ -85,12 +86,12 @@ namespace DiscImageChef.Filesystems
             public byte[] reserved5;
         }
 
-        public override bool Identify(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart > 0)
+            if(partition.PartitionStartSector > 0)
                 return false;
 
-            if(partitionEnd < 8)
+            if(partition.PartitionEndSector < 8)
                 return false;
 
             byte[] sector = imagePlugin.ReadSector(6);
@@ -107,7 +108,7 @@ namespace DiscImageChef.Filesystems
             return ECMA67_Magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
 
-        public override void GetInformation(ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugin imagePlugin, Partition partition, out string information)
         {
             byte[] sector = imagePlugin.ReadSector(6);
 
@@ -127,7 +128,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.Type = "ECMA-67";
             xmlFSType.ClusterSize = 256;
-            xmlFSType.Clusters = (long)(partitionEnd - partitionStart + 1);
+            xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector + 1);
             xmlFSType.VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier);
 
             information = sbInformation.ToString();

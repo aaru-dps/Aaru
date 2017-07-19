@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.UTF8;
         }
 
-        public VMfs(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public VMfs(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "VMware filesystem";
             PluginUUID = new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
@@ -89,27 +90,27 @@ namespace DiscImageChef.Filesystems
         const uint VMfs_MAGIC = 0xC001D00D;
         const uint VMfs_Base = 0x00100000;
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partitionStart >= partitionEnd)
+            if(partition.PartitionStartSector >= partition.PartitionEndSector)
                 return false;
 
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
 
-            if(partitionStart + vmfsSuperOff > partitionEnd)
+            if(partition.PartitionStartSector + vmfsSuperOff > partition.PartitionEndSector)
                 return false;
             
-            byte[] sector = imagePlugin.ReadSector(partitionStart + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             return magic == VMfs_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             ulong vmfsSuperOff = VMfs_Base / imagePlugin.ImageInfo.sectorSize;
-            byte[] sector = imagePlugin.ReadSector(partitionStart + vmfsSuperOff);
+            byte[] sector = imagePlugin.ReadSector(partition.PartitionStartSector + vmfsSuperOff);
 
             VolumeInfo volInfo = new VolumeInfo();
             IntPtr volInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(volInfo));

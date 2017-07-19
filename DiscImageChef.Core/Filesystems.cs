@@ -35,8 +35,8 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
-using System;
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 
@@ -44,7 +44,7 @@ namespace DiscImageChef.Core
 {
     public static class Filesystems
     {
-        public static void Identify(ImagePlugin imagePlugin, out List<string> id_plugins, ulong partitionStart, ulong partitionEnd)
+        public static void Identify(ImagePlugin imagePlugin, out List<string> id_plugins, Partition partition)
         {
             id_plugins = new List<string>();
             PluginBase plugins = new PluginBase();
@@ -52,7 +52,7 @@ namespace DiscImageChef.Core
 
             foreach(Filesystem _plugin in plugins.PluginsList.Values)
             {
-                if(_plugin.Identify(imagePlugin, partitionStart, partitionEnd))
+                if(_plugin.Identify(imagePlugin, partition))
                     id_plugins.Add(_plugin.Name.ToLower());
             }
         }

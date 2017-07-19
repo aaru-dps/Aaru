@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Collections.Generic;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
-
 
 namespace DiscImageChef.Filesystems
 {
@@ -54,7 +54,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.ASCII;
         }
 
-        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public ISO9660Plugin(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "ISO9660 Filesystem";
             PluginUUID = new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
@@ -79,7 +79,7 @@ namespace DiscImageChef.Filesystems
             public DateTime EffectiveTime;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             /*            if (alreadyLaunched)
                             return false;
@@ -92,11 +92,11 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if(partitionEnd <= (16 + partitionStart))
+            if(partition.PartitionEndSector <= (16 + partition.PartitionStartSector))
                 return false;
 
             // Read to Volume Descriptor
-            byte[] vd_sector = imagePlugin.ReadSector(16 + partitionStart);
+            byte[] vd_sector = imagePlugin.ReadSector(16 + partition.PartitionStartSector);
 
             int xa_off = 0;
             if(vd_sector.Length == 2336)
@@ -116,7 +116,7 @@ namespace DiscImageChef.Filesystems
             return CurrentEncoding.GetString(VDMagic) == "CD001";
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             StringBuilder ISOMetadata = new StringBuilder();
@@ -159,7 +159,7 @@ namespace DiscImageChef.Filesystems
                 return;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-            if(partitionEnd < 16)
+            if(partition.PartitionEndSector < 16)
                 return;
 
             ulong counter = 0;
@@ -168,8 +168,8 @@ namespace DiscImageChef.Filesystems
             {
                 DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
-                DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partitionStart);
-                byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partitionStart);
+                DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.PartitionStartSector);
+                byte[] vd_sector_tmp = imagePlugin.ReadSector(16 + counter + partition.PartitionStartSector);
                 byte[] vd_sector;
                 if(vd_sector_tmp.Length == 2336)
                 {
@@ -286,16 +286,16 @@ namespace DiscImageChef.Filesystems
 
 
             ulong i = (ulong)BitConverter.ToInt32(VDPathTableStart, 0);
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partitionStart, i + partitionStart);
+            DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partition.PartitionStartSector, i + partition.PartitionStartSector);
 
             // TODO: Check this
-            if((i + partitionStart) < partitionEnd)
+            if((i + partition.PartitionStartSector) < partition.PartitionEndSector)
             {
 
-                byte[] path_table = imagePlugin.ReadSector(i + partitionStart);
+                byte[] path_table = imagePlugin.ReadSector(i + partition.PartitionStartSector);
                 Array.Copy(path_table, 2, RootDirectoryLocation, 0, 4);
                 // Check for Rock Ridge
-                byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partitionStart);
+                byte[] root_dir = imagePlugin.ReadSector((ulong)BitConverter.ToInt32(RootDirectoryLocation, 0) + partition.PartitionStartSector);
 
                 byte[] SUSPMagic = new byte[2];
                 byte[] RRMagic = new byte[2];
@@ -316,7 +316,7 @@ namespace DiscImageChef.Filesystems
             StringBuilder IPBinInformation = new StringBuilder();
 
             byte[] SegaHardwareID = new byte[16];
-            byte[] ipbin_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] ipbin_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
             Array.Copy(ipbin_sector, 0x000, SegaHardwareID, 0, 16);
 
             DicConsole.DebugWriteLine("ISO9660 plugin", "SegaHardwareID = \"{0}\"", CurrentEncoding.GetString(SegaHardwareID));
@@ -984,7 +984,7 @@ namespace DiscImageChef.Filesystems
             }
 
             xmlFSType.Bootable |= Bootable || SegaCD || Saturn || Dreamcast;
-            xmlFSType.Clusters = (long)(partitionEnd - partitionStart + 1);
+            xmlFSType.Clusters = (long)(partition.PartitionEndSector - partition.PartitionStartSector + 1);
             xmlFSType.ClusterSize = 2048;
 
             information = ISOMetadata.ToString();

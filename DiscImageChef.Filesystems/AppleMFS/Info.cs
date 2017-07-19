@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -32,20 +32,21 @@
 
 using System;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : Filesystem
     {
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             ushort drSigWord;
 
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
@@ -54,7 +55,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             return drSigWord == MFS_MAGIC;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
@@ -66,8 +67,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             byte[] pString = new byte[16];
             byte[] variable_size;
 
-            byte[] mdb_sector = imagePlugin.ReadSector(2 + partitionStart);
-            byte[] bb_sector = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] mdb_sector = imagePlugin.ReadSector(2 + partition.PartitionStartSector);
+            byte[] bb_sector = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 

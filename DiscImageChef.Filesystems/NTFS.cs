@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -31,15 +31,15 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
-using DiscImageChef;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
-// Information from Inside Windows NT
+using System.Text;
 using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes;
+
 namespace DiscImageChef.Filesystems
 {
+    // Information from Inside Windows NT
     public class NTFS : Filesystem
     {
         public NTFS()
@@ -49,16 +49,16 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public NTFS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public NTFS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "New Technology File System (NTFS)";
             PluginUUID = new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partitionStart) >= partitionEnd)
+            if((2 + partition.PartitionStartSector) >= partition.PartitionEndSector)
                 return false;
 
             byte[] eigth_bytes = new byte[8];
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems
             ushort spfat, signature;
             string oem_name;
 
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             Array.Copy(ntfs_bpb, 0x003, eigth_bytes, 0, 8);
             oem_name = StringHandlers.CToString(eigth_bytes);
@@ -89,13 +89,13 @@ namespace DiscImageChef.Filesystems
             return signature == 0xAA55;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
 
             StringBuilder sb = new StringBuilder();
 
-            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partitionStart);
+            byte[] ntfs_bpb = imagePlugin.ReadSector(0 + partition.PartitionStartSector);
 
             NTFS_BootBlock ntfs_bb = new NTFS_BootBlock();
             IntPtr bpbPtr = Marshal.AllocHGlobal(512);

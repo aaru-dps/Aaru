@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
@@ -115,7 +116,7 @@ namespace DiscImageChef.Filesystems
             CurrentEncoding = Encoding.Unicode;
         }
 
-        public F2FS(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, Encoding encoding)
+        public F2FS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
             Name = "F2FS Plugin";
             PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
@@ -123,7 +124,7 @@ namespace DiscImageChef.Filesystems
                 CurrentEncoding = Encoding.Unicode;
         }
 
-        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd)
+        public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector)
                 return false;
@@ -138,7 +139,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(f2fsSb))
                 return false;
 
@@ -150,7 +151,7 @@ namespace DiscImageChef.Filesystems
             return f2fsSb.magic == F2FS_Magic;
         }
 
-        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, ulong partitionStart, ulong partitionEnd, out string information)
+        public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
         {
             information = "";
             if(imagePlugin.GetSectorSize() < F2FS_MinSector || imagePlugin.GetSectorSize() > F2FS_MaxSector)
@@ -166,7 +167,7 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partitionStart + sbAddr, sbSize);
+            byte[] sector = imagePlugin.ReadSectors(partition.PartitionStartSector + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(f2fsSb))
                 return;
 
