@@ -53,20 +53,19 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles = {
             "toast_3.5.7_hfs_from_volume.iso.lz","toast_3.5.7_iso9660_hfs.iso.lz",
             "toast_4.1.3_hfs_from_volume.iso.lz","toast_4.1.3_iso9660_hfs.iso.lz",
-            // TODO: These two expect the CD-ROM to return 512 bytes sectors, that is something DIC doesn't if the extension is .iso
-            "toast_3.5.7_hfs_from_files.bin.lz","toast_4.1.3_hfs_from_files.bin.lz",
+            "toast_3.5.7_hfs_from_files.iso.lz","toast_4.1.3_hfs_from_files.iso.lz",
         };
 
         readonly ulong[] sectors = {
             942,1880,
             943,1882,
-            6036,6116,
+            1509,1529,
         };
 
         readonly uint[] sectorsize = {
             2048,2048,
             2048,2048,
-            512,512,
+            2048,2048,
         };
 
         readonly long[] clusters = {
