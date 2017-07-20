@@ -109,6 +109,9 @@ namespace DiscImageChef.PartPlugins
                         DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
                         DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
 
+                        if(ddm.sbMap[i].ddSize == 0)
+                            continue;
+                        
                         CommonTypes.Partition part = new CommonTypes.Partition()
                         {
                             Size = (ulong)(ddm.sbMap[i].ddSize * 512),
@@ -118,6 +121,9 @@ namespace DiscImageChef.PartPlugins
                             Start = ddm.sbMap[i].ddBlock,
                             Type = "Apple_Driver"
                         };
+
+                        if((ddm.sbMap[i].ddSize * 512) % sector_size > 0)
+                            part.Length++;
 
                         partitions.Add(part);
 
@@ -261,7 +267,9 @@ namespace DiscImageChef.PartPlugins
 
                     // BeOS doesn't mark its partitions as valid
                     //if(flags.HasFlag(AppleMapFlags.Valid) &&
-                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0)
+                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0 &&
+                      // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
+                      StringHandlers.CToString(entry.type) != "Apple_Free")
                     {
                         StringBuilder sb = new StringBuilder();
 
