@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 
 namespace DiscImageChef.Filesystems
 {
@@ -82,23 +83,27 @@ namespace DiscImageChef.Filesystems
             byte[] vh_sector;
             ulong hfsp_offset;
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.Start); // Read volume header, of HFS Wrapper MDB
+            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
+            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0)
+                sectorsToRead++;
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSectors(partition.Start, sectorsToRead); // Read volume header, of HFS Wrapper MDB
+
+            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
 
             if(drSigWord == HFS_MAGIC) // "BD"
             {
-                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x07C); // Read embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x47C); // Read embedded HFS+ signature
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x07E); // Starting block number of embedded HFS+ volume
+                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
 
-                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x014); // Block size
+                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
 
-                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x01C); // Start of allocated blocks (in 512-byte/block)
+                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
-                    hfsp_offset = (drAlBlSt + xdrStABNt * (drAlBlkSiz / 512)) * (imagePlugin.GetSectorSize() / 512);
+                    hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
                 }
                 else
                 {
@@ -110,9 +115,9 @@ namespace DiscImageChef.Filesystems
                 hfsp_offset = 0;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.Start + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0);
+            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400);
             if(drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC)
                 return true;
             return false;
@@ -132,23 +137,27 @@ namespace DiscImageChef.Filesystems
             bool wrapped;
             byte[] vh_sector;
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.Start); // Read volume header, of HFS Wrapper MDB
+            uint sectorsToRead = 0x800 / imagePlugin.ImageInfo.sectorSize;
+            if(0x800 % imagePlugin.ImageInfo.sectorSize > 0)
+                sectorsToRead++;
 
-            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0); // Check for HFS Wrapper MDB
+            vh_sector = imagePlugin.ReadSectors(partition.Start, sectorsToRead); // Read volume header, of HFS Wrapper MDB
+
+            drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x400); // Check for HFS Wrapper MDB
 
             if(drSigWord == HFS_MAGIC) // "BD"
             {
-                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x07C); // Read embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(vh_sector, 0x47C); // Read embedded HFS+ signature
 
                 if(drSigWord == HFSP_MAGIC) // "H+"
                 {
-                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x07E); // Starting block number of embedded HFS+ volume
+                    xdrStABNt = BigEndianBitConverter.ToUInt16(vh_sector, 0x47E); // Starting block number of embedded HFS+ volume
 
-                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x014); // Block size
+                    drAlBlkSiz = BigEndianBitConverter.ToUInt32(vh_sector, 0x414); // Block size
 
-                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x01C); // Start of allocated blocks (in 512-byte/block)
+                    drAlBlSt = BigEndianBitConverter.ToUInt16(vh_sector, 0x41C); // Start of allocated blocks (in 512-byte/block)
 
-                    hfsp_offset = (drAlBlSt + xdrStABNt * (drAlBlkSiz / 512)) * (imagePlugin.GetSectorSize() / 512);
+                    hfsp_offset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.GetSectorSize());
                     wrapped = true;
                 }
                 else
@@ -163,9 +172,9 @@ namespace DiscImageChef.Filesystems
                 wrapped = false;
             }
 
-            vh_sector = imagePlugin.ReadSector(2 + partition.Start + hfsp_offset); // Read volume header
+            vh_sector = imagePlugin.ReadSectors(partition.Start + hfsp_offset, sectorsToRead); // Read volume header
 
-            HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x000);
+            HPVH.signature = BigEndianBitConverter.ToUInt16(vh_sector, 0x400);
             if(HPVH.signature == HFSP_MAGIC || HPVH.signature == HFSX_MAGIC)
             {
                 StringBuilder sb = new StringBuilder();
@@ -176,6 +185,10 @@ namespace DiscImageChef.Filesystems
                     sb.AppendLine("HFSX filesystem.");
                 if(wrapped)
                     sb.AppendLine("Volume is wrapped inside an HFS volume.");
+
+                byte[] tmp = new byte[0x400];
+                Array.Copy(vh_sector, 0x400, tmp, 0, 0x400);
+                vh_sector = tmp;
 
                 HPVH = BigEndianMarshal.ByteArrayToStructureBigEndian<HFSPlusVolumeHeader>(vh_sector);
 

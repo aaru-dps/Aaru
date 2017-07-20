@@ -101,6 +101,25 @@ namespace DiscImageChef.Filesystems
 
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlock = imagePlugin.ReadSector(2 + partition.Start);
+            bool APMFromHDDOnCD = false;
+
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            {
+                byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
+
+                foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
+                {
+                    if(BitConverter.ToUInt16(tmp, offset) == 0 &&
+                      (byte)((tmp[offset + 0x04] & ProDOSStorageTypeMask) >> 4) == RootDirectoryType &&
+                      tmp[offset + 0x23] == ProDOSEntryLength &&
+                      tmp[offset + 0x24] == ProDOSEntriesPerBlock)
+                    {
+                        Array.Copy(tmp, offset, rootDirectoryKeyBlock, 0, 0x200);
+                        APMFromHDDOnCD = true;
+                        break;
+                    }
+                }
+            }
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
             DicConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
@@ -128,6 +147,9 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             ushort total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
+            if(APMFromHDDOnCD)
+                total_blocks /= 4;
+            
             DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", total_blocks, partition.End, partition.Start, total_blocks <= (partition.End - partition.Start + 1));
             return total_blocks <= (partition.End - partition.Start + 1);
         }
@@ -138,6 +160,26 @@ namespace DiscImageChef.Filesystems
 
             // Blocks 0 and 1 are boot code
             byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSector(2 + partition.Start);
+
+            bool APMFromHDDOnCD = false;
+
+            if(imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448 || imagePlugin.GetSectorSize() == 2048)
+            {
+                byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
+
+                foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
+                {
+                    if(BitConverter.ToUInt16(tmp, offset) == 0 &&
+                      (byte)((tmp[offset + 0x04] & ProDOSStorageTypeMask) >> 4) == RootDirectoryType &&
+                      tmp[offset + 0x23] == ProDOSEntryLength &&
+                      tmp[offset + 0x24] == ProDOSEntriesPerBlock)
+                    {
+                        Array.Copy(tmp, offset, rootDirectoryKeyBlockBytes, 0, 0x200);
+                        APMFromHDDOnCD = true;
+                        break;
+                    }
+                }
+            }
 
             ProDOSRootDirectoryKeyBlock rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock();
             rootDirectoryKeyBlock.header = new ProDOSRootDirectoryHeader();
@@ -158,22 +200,32 @@ namespace DiscImageChef.Filesystems
 
             temp_timestamp_left = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
             temp_timestamp_right = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1E);
-            temp_timestamp = (uint)((temp_timestamp_left << 16) + temp_timestamp_right);
-            year = (int)((temp_timestamp & ProDOSYearMask) >> 25);
-            month = (int)((temp_timestamp & ProDOSMonthMask) >> 21);
-            day = (int)((temp_timestamp & ProDOSDayMask) >> 16);
-            hour = (int)((temp_timestamp & ProDOSHourMask) >> 8);
-            minute = (int)(temp_timestamp & ProDOSMinuteMask);
-            year += 1900;
-            if(year < 1940)
-                year += 100;
 
-            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
-            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
-            DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", temp_timestamp);
-            DicConsole.DebugWriteLine("ProDOS plugin", "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year, month, day, hour, minute);
+            bool dateCorrect;
+            try
+            {
+                temp_timestamp = (uint)((temp_timestamp_left << 16) + temp_timestamp_right);
+                year = (int)((temp_timestamp & ProDOSYearMask) >> 25);
+                month = (int)((temp_timestamp & ProDOSMonthMask) >> 21);
+                day = (int)((temp_timestamp & ProDOSDayMask) >> 16);
+                hour = (int)((temp_timestamp & ProDOSHourMask) >> 8);
+                minute = (int)(temp_timestamp & ProDOSMinuteMask);
+                year += 1900;
+                if(year < 1940)
+                    year += 100;
 
-            rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
+                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", temp_timestamp_left);
+                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", temp_timestamp_right);
+                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", temp_timestamp);
+                DicConsole.DebugWriteLine("ProDOS plugin", "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year, month, day, hour, minute);
+
+                rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
+                dateCorrect = true;
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                dateCorrect = false;
+            }
 
             rootDirectoryKeyBlock.header.version = rootDirectoryKeyBlockBytes[0x20];
             rootDirectoryKeyBlock.header.min_version = rootDirectoryKeyBlockBytes[0x21];
@@ -184,6 +236,9 @@ namespace DiscImageChef.Filesystems
             rootDirectoryKeyBlock.header.file_count = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x25);
             rootDirectoryKeyBlock.header.bit_map_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x27);
             rootDirectoryKeyBlock.header.total_blocks = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
+
+            if(APMFromHDDOnCD)
+                sbInformation.AppendLine("ProDOS uses 512 bytes/sector while devices uses 2048 bytes/sector.").AppendLine();
 
             if(rootDirectoryKeyBlock.header.version != ProDOSVersion1 || rootDirectoryKeyBlock.header.min_version != ProDOSVersion1)
             {
@@ -202,7 +257,8 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Unknown ProDOS version with field {0} is at least required for reading this volume.", rootDirectoryKeyBlock.header.min_version).AppendLine();
 
             sbInformation.AppendFormat("Volume name is {0}", rootDirectoryKeyBlock.header.volume_name).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", rootDirectoryKeyBlock.header.creation_time).AppendLine();
+            if(dateCorrect)
+                sbInformation.AppendFormat("Volume created on {0}", rootDirectoryKeyBlock.header.creation_time).AppendLine();
             sbInformation.AppendFormat("{0} bytes per directory entry", rootDirectoryKeyBlock.header.entry_length).AppendLine();
             sbInformation.AppendFormat("{0} entries per directory block", rootDirectoryKeyBlock.header.entries_per_block).AppendLine();
             sbInformation.AppendFormat("{0} files in root directory", rootDirectoryKeyBlock.header.file_count).AppendLine();
@@ -227,7 +283,7 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
             xmlFSType.VolumeName = rootDirectoryKeyBlock.header.volume_name;
-            if(year != 0 || month != 0 || day != 0 || hour != 0 || minute != 0)
+            if(dateCorrect)
             {
                 xmlFSType.CreationDate = rootDirectoryKeyBlock.header.creation_time;
                 xmlFSType.CreationDateSpecified = true;
