@@ -1,4 +1,8 @@
 * Commands/Ls.cs:
+* Commands/ExtractFiles.cs:
+  Adjusted to new API.
+
+* Commands/Ls.cs:
 * Commands/Analyze.cs:
 * Commands/ExtractFiles.cs:
   Refactor: Simplify field names.
