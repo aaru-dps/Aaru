@@ -421,7 +421,10 @@ namespace DiscImageChef.Core
 
                             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
                             if(image.PluginUUID == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
-                               filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                               // Only if filter is none...
+                               (filterId == new System.Guid("12345678-AAAA-BBBB-CCCC-123456789000") ||
+                                // ...or AppleDouble
+                                filterId == new System.Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d")))
                             {
                                 xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                             }
