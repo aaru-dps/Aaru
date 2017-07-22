@@ -66,7 +66,7 @@ namespace DiscImageChef.DiscImages
         const uint ChunkType_Zlib    = 0x80000005;
         const uint ChunkType_Bzip    = 0x80000006;
         const uint ChunkType_LZFSE   = 0x80000007;
-        const uint ChunkType_Commnt  = 0x7FFFFFFF;
+        const uint ChunkType_Commnt  = 0x7FFFFFFE;
         const uint ChunkType_End     = 0xFFFFFFFF;
 
         const string ResourceForkKey = "resource-fork";
