@@ -561,7 +561,7 @@ namespace DiscImageChef.DiscImages
 					if(currentChunk.type == ChunkType_ADC)
 						decStream = new ADCStream(cmpMs, CompressionMode.Decompress);
 					else if(currentChunk.type == ChunkType_Zlib)
-						decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
+						decStream = new Ionic.Zlib.ZlibStream(cmpMs, Ionic.Zlib.CompressionMode.Decompress);
 					else if(currentChunk.type == ChunkType_Bzip)
 						decStream = new BZip2Stream(cmpMs, CompressionMode.Decompress);
 					else
