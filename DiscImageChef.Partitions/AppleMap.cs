@@ -267,9 +267,7 @@ namespace DiscImageChef.PartPlugins
 
                     // BeOS doesn't mark its partitions as valid
                     //if(flags.HasFlag(AppleMapFlags.Valid) &&
-                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0 &&
-                      // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                      StringHandlers.CToString(entry.type) != "Apple_Free")
+                    if(StringHandlers.CToString(entry.type) != "Apple_partition_map" && entry.sectors > 0)
                     {
                         StringBuilder sb = new StringBuilder();
 
@@ -311,8 +309,16 @@ namespace DiscImageChef.PartPlugins
                         }
 
                         _partition.Description = sb.ToString();
-                        partitions.Add(_partition);
-                        sequence++;
+                        // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
+                        if(_partition.End < imagePlugin.ImageInfo.sectors)
+                        {
+                            partitions.Add(_partition);
+                            sequence++;
+                        }
+                        else
+                        {
+                            DicConsole.DebugWriteLine("AppleMap Plugin", "Not adding partition because end ({0}) is outside media size ({1})", _partition.End, imagePlugin.ImageInfo.sectors);
+                        }
                     }
                 }
             }
