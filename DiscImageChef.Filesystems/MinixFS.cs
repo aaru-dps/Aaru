@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 
@@ -113,11 +114,13 @@ namespace DiscImageChef.Filesystems
 
             xmlFSType = new Schemas.FileSystemType();
 
+            bool littleEndian = true;
+
             if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
             {
                 filenamesize = 60;
                 minixVersion = "Minix V3 filesystem";
-                BigEndianBitConverter.IsLittleEndian = magic != MINIX3_CIGAM;
+                littleEndian = magic != MINIX3_CIGAM;
 
                 xmlFSType.Type = "Minix V3";
 
@@ -132,49 +135,49 @@ namespace DiscImageChef.Filesystems
                     case MINIX_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix V1 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = true;
+                        littleEndian = true;
                         xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix V1 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = true;
+                        littleEndian = true;
                         xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
                         minixVersion = "Minix V2 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = true;
+                        littleEndian = true;
                         xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
                         minixVersion = "Minix V2 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = true;
+                        littleEndian = true;
                         xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix V1 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = false;
+                        littleEndian = false;
                         xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix V1 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = false;
+                        littleEndian = false;
                         xmlFSType.Type = "Minix V1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
                         minixVersion = "Minix V2 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = false;
+                        littleEndian = false;
                         xmlFSType.Type = "Minix V2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
                         minixVersion = "Minix V2 filesystem";
-                        BigEndianBitConverter.IsLittleEndian = false;
+                        littleEndian = false;
                         xmlFSType.Type = "Minix V2";
                         break;
                     default:
@@ -186,19 +189,14 @@ namespace DiscImageChef.Filesystems
             {
                 Minix3SuperBlock mnx_sb = new Minix3SuperBlock();
 
-                mnx_sb.s_ninodes = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x00);
-                mnx_sb.s_pad0 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x04);
-                mnx_sb.s_imap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x06);
-                mnx_sb.s_zmap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x08);
-                mnx_sb.s_firstdatazone = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0A);
-                mnx_sb.s_log_zone_size = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0C);
-                mnx_sb.s_pad1 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0E);
-                mnx_sb.s_max_size = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x10);
-                mnx_sb.s_zones = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x14);
-                mnx_sb.s_magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x18);
-                mnx_sb.s_pad2 = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x1A);
-                mnx_sb.s_blocksize = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x1C);
-                mnx_sb.s_disk_version = minix_sb_sector[0x1E];
+                if(littleEndian)
+                {
+                    GCHandle handle = GCHandle.Alloc(minix_sb_sector, GCHandleType.Pinned);
+                    mnx_sb = (Minix3SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Minix3SuperBlock));
+                    handle.Free();
+                }
+                else
+                    mnx_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minix_sb_sector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
@@ -219,16 +217,14 @@ namespace DiscImageChef.Filesystems
             {
                 MinixSuperBlock mnx_sb = new MinixSuperBlock();
 
-                mnx_sb.s_ninodes = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x00);
-                mnx_sb.s_nzones = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x02);
-                mnx_sb.s_imap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x04);
-                mnx_sb.s_zmap_blocks = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x06);
-                mnx_sb.s_firstdatazone = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x08);
-                mnx_sb.s_log_zone_size = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x0A);
-                mnx_sb.s_max_size = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x0C);
-                mnx_sb.s_magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x10);
-                mnx_sb.s_state = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x12);
-                mnx_sb.s_zones = BigEndianBitConverter.ToUInt32(minix_sb_sector, 0x14);
+                if(littleEndian)
+                {
+                    GCHandle handle = GCHandle.Alloc(minix_sb_sector, GCHandleType.Pinned);
+                    mnx_sb = (MinixSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MinixSuperBlock));
+                    handle.Free();
+                }
+                else
+                    mnx_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minix_sb_sector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
@@ -252,6 +248,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Superblock for Minix V1 and V2 filesystems
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct MinixSuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
@@ -279,6 +276,7 @@ namespace DiscImageChef.Filesystems
         /// <summary>
         /// Superblock for Minix V3 filesystems
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct Minix3SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>

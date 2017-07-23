@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 
@@ -113,12 +114,12 @@ namespace DiscImageChef.Filesystems
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
-            BigEndianBitConverter.IsLittleEndian = true; // Default for little-endian
+            bool littleEndian = true;
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
             if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
             {
-                BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
+                littleEndian = besb.magic1 == BEFS_CIGAM1;
             }
             else
             {
@@ -127,7 +128,7 @@ namespace DiscImageChef.Filesystems
 
                 if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                 {
-                    BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
+                    littleEndian = besb.magic1 == BEFS_CIGAM1;
                 }
                 else if(sb_sector.Length >= 0x400)
                 {
@@ -136,7 +137,7 @@ namespace DiscImageChef.Filesystems
 
                     if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     {
-                        BigEndianBitConverter.IsLittleEndian &= besb.magic1 != BEFS_CIGAM1;
+                        littleEndian = besb.magic1 == BEFS_CIGAM1;
                         sb_sector = new byte[0x200];
                         Array.Copy(temp, 0x200, sb_sector, 0, 0x200);
                     }
@@ -147,34 +148,16 @@ namespace DiscImageChef.Filesystems
                     return;
             }
 
-            Array.Copy(sb_sector, 0x000, name_bytes, 0, 0x20);
-            besb.name = StringHandlers.CToString(name_bytes, CurrentEncoding);
-            besb.magic1 = BigEndianBitConverter.ToUInt32(sb_sector, 0x20);
-            besb.fs_byte_order = BigEndianBitConverter.ToUInt32(sb_sector, 0x24);
-            besb.block_size = BigEndianBitConverter.ToUInt32(sb_sector, 0x28);
-            besb.block_shift = BigEndianBitConverter.ToUInt32(sb_sector, 0x2C);
-            besb.num_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x30);
-            besb.used_blocks = BigEndianBitConverter.ToInt64(sb_sector, 0x38);
-            besb.inode_size = BigEndianBitConverter.ToInt32(sb_sector, 0x40);
-            besb.magic2 = BigEndianBitConverter.ToUInt32(sb_sector, 0x44);
-            besb.blocks_per_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x48);
-            besb.ag_shift = BigEndianBitConverter.ToInt32(sb_sector, 0x4C);
-            besb.num_ags = BigEndianBitConverter.ToInt32(sb_sector, 0x50);
-            besb.flags = BigEndianBitConverter.ToUInt32(sb_sector, 0x54);
-            besb.log_blocks_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x58);
-            besb.log_blocks_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x5C);
-            besb.log_blocks_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x5E);
-            besb.log_start = BigEndianBitConverter.ToInt64(sb_sector, 0x60);
-            besb.log_end = BigEndianBitConverter.ToInt64(sb_sector, 0x68);
-            besb.magic3 = BigEndianBitConverter.ToUInt32(sb_sector, 0x70);
-            besb.root_dir_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x74);
-            besb.root_dir_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x78);
-            besb.root_dir_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x7A);
-            besb.indices_ag = BigEndianBitConverter.ToInt32(sb_sector, 0x7C);
-            besb.indices_start = BigEndianBitConverter.ToUInt16(sb_sector, 0x80);
-            besb.indices_len = BigEndianBitConverter.ToUInt16(sb_sector, 0x82);
+            if(littleEndian)
+            {
+                GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
+                besb = (BeSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BeSuperBlock));
+                handle.Free();
+            }
+            else
+                besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sb_sector);
 
-            if(!BigEndianBitConverter.IsLittleEndian) // Big-endian filesystem
+            if(littleEndian) // Big-endian filesystem
                 sb.AppendLine("Little-endian BeFS");
             else
                 sb.AppendLine("Big-endian BeFS");
@@ -207,7 +190,7 @@ namespace DiscImageChef.Filesystems
             else
                 sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
 
-            sb.AppendFormat("Volume name: {0}", besb.name).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, CurrentEncoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
             sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size).AppendLine();
             sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size).AppendLine();
@@ -231,16 +214,18 @@ namespace DiscImageChef.Filesystems
             xmlFSType.FreeClusters = besb.num_blocks - besb.used_blocks;
             xmlFSType.FreeClustersSpecified = true;
             xmlFSType.Type = "BeFS";
-            xmlFSType.VolumeName = besb.name;
+            xmlFSType.VolumeName = StringHandlers.CToString(besb.name, CurrentEncoding);
         }
 
         /// <summary>
         /// Be superblock
         /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct BeSuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
-            public string name;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] name;
             /// <summary>0x020, "BFS1", 0x42465331</summary>
             public uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>

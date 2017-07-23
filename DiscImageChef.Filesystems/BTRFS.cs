@@ -144,7 +144,6 @@ namespace DiscImageChef.Filesystems
             }
             catch
             {
-                System.Console.WriteLine("Crash");
                 return false;
             }
 

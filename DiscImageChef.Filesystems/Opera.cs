@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 
@@ -82,40 +83,21 @@ namespace DiscImageChef.Filesystems
 
             byte[] sb_sector = imagePlugin.ReadSector(0 + partition.Start);
 
-            OperaSuperBlock sb = new OperaSuperBlock();
+            OperaSuperBlock sb = BigEndianMarshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sb_sector);
             byte[] cString = new byte[32];
             sb.sync_bytes = new byte[5];
 
-            sb.record_type = sb_sector[0x000];
-            Array.Copy(sb_sector, 0x001, sb.sync_bytes, 0, 5);
-            sb.record_version = sb_sector[0x006];
-            sb.volume_flags = sb_sector[0x007];
-            Array.Copy(sb_sector, 0x008, cString, 0, 32);
-            sb.volume_comment = StringHandlers.CToString(cString);
-            Array.Copy(sb_sector, 0x028, cString, 0, 32);
-            sb.volume_label = StringHandlers.CToString(cString);
-            sb.volume_id = BigEndianBitConverter.ToInt32(sb_sector, 0x048);
-            sb.block_size = BigEndianBitConverter.ToInt32(sb_sector, 0x04C);
-            sb.block_count = BigEndianBitConverter.ToInt32(sb_sector, 0x050);
-            sb.root_dirid = BigEndianBitConverter.ToInt32(sb_sector, 0x054);
-            sb.rootdir_blocks = BigEndianBitConverter.ToInt32(sb_sector, 0x058);
-            sb.rootdir_bsize = BigEndianBitConverter.ToInt32(sb_sector, 0x05C);
-            sb.last_root_copy = BigEndianBitConverter.ToInt32(sb_sector, 0x060);
 
             if(sb.record_type != 1 || sb.record_version != 1)
                 return;
             if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ")
                 return;
 
-            if(sb.volume_comment.Length == 0)
-                sb.volume_comment = "Not set.";
-
-            if(sb.volume_label.Length == 0)
-                sb.volume_label = "Not set.";
-
             SuperBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
-            SuperBlockMetadata.AppendFormat("Volume label: {0}", sb.volume_label).AppendLine();
-            SuperBlockMetadata.AppendFormat("Volume comment: {0}", sb.volume_comment).AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, CurrentEncoding))) 
+                SuperBlockMetadata.AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, CurrentEncoding)).AppendLine();
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, CurrentEncoding))) 
+                SuperBlockMetadata.AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, CurrentEncoding)).AppendLine();
             SuperBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
             SuperBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
             if(imagePlugin.GetSectorSize() == 2336 || imagePlugin.GetSectorSize() == 2352 || imagePlugin.GetSectorSize() == 2448)
@@ -135,27 +117,33 @@ namespace DiscImageChef.Filesystems
 
             information = SuperBlockMetadata.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = "Opera";
-            xmlFSType.VolumeName = sb.volume_label;
-            xmlFSType.ClusterSize = sb.block_size;
-            xmlFSType.Clusters = sb.block_count;
+            xmlFSType = new Schemas.FileSystemType
+            {
+                Type = "Opera",
+                VolumeName = StringHandlers.CToString(sb.volume_label, CurrentEncoding),
+                ClusterSize = sb.block_size,
+                Clusters = sb.block_count
+            };
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OperaSuperBlock
         {
             /// <summary>0x000, Record type, must be 1</summary>
             public byte record_type;
             /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] sync_bytes;
             /// <summary>0x006, Record version, must be 1</summary>
             public byte record_version;
             /// <summary>0x007, Volume flags</summary>
             public byte volume_flags;
             /// <summary>0x008, 32 bytes, volume comment</summary>
-            public string volume_comment;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] volume_comment;
             /// <summary>0x028, 32 bytes, volume label</summary>
-            public string volume_label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] volume_label;
             /// <summary>0x048, Volume ID</summary>
             public int volume_id;
             /// <summary>0x04C, Block size in bytes</summary>

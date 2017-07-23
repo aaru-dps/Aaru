@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 
@@ -93,56 +94,12 @@ namespace DiscImageChef.Filesystems
 
             byte[] hb_sector = imagePlugin.ReadSector(1 + partition.Start);
 
-            homeblock.homelbn = BitConverter.ToUInt32(hb_sector, 0x000);
-            homeblock.alhomelbn = BitConverter.ToUInt32(hb_sector, 0x004);
-            homeblock.altidxlbn = BitConverter.ToUInt32(hb_sector, 0x008);
-            homeblock.struclev = BitConverter.ToUInt16(hb_sector, 0x00C);
-            homeblock.cluster = BitConverter.ToUInt16(hb_sector, 0x00E);
-            homeblock.homevbn = BitConverter.ToUInt16(hb_sector, 0x010);
-            homeblock.alhomevbn = BitConverter.ToUInt16(hb_sector, 0x012);
-            homeblock.altidxvbn = BitConverter.ToUInt16(hb_sector, 0x014);
-            homeblock.ibmapvbn = BitConverter.ToUInt16(hb_sector, 0x016);
-            homeblock.ibmaplbn = BitConverter.ToUInt32(hb_sector, 0x018);
-            homeblock.maxfiles = BitConverter.ToUInt32(hb_sector, 0x01C);
-            homeblock.ibmapsize = BitConverter.ToUInt16(hb_sector, 0x020);
-            homeblock.resfiles = BitConverter.ToUInt16(hb_sector, 0x022);
-            homeblock.devtype = BitConverter.ToUInt16(hb_sector, 0x024);
-            homeblock.rvn = BitConverter.ToUInt16(hb_sector, 0x026);
-            homeblock.setcount = BitConverter.ToUInt16(hb_sector, 0x028);
-            homeblock.volchar = BitConverter.ToUInt16(hb_sector, 0x02A);
-            homeblock.volowner = BitConverter.ToUInt32(hb_sector, 0x02C);
-            homeblock.sec_mask = BitConverter.ToUInt32(hb_sector, 0x030);
-            homeblock.protect = BitConverter.ToUInt16(hb_sector, 0x034);
-            homeblock.fileprot = BitConverter.ToUInt16(hb_sector, 0x036);
-            homeblock.recprot = BitConverter.ToUInt16(hb_sector, 0x038);
-            homeblock.checksum1 = BitConverter.ToUInt16(hb_sector, 0x03A);
-            homeblock.credate = BitConverter.ToUInt64(hb_sector, 0x03C);
-            homeblock.window = hb_sector[0x044];
-            homeblock.lru_lim = hb_sector[0x045];
-            homeblock.extend = BitConverter.ToUInt16(hb_sector, 0x046);
-            homeblock.retainmin = BitConverter.ToUInt64(hb_sector, 0x048);
-            homeblock.retainmax = BitConverter.ToUInt64(hb_sector, 0x050);
-            homeblock.revdate = BitConverter.ToUInt64(hb_sector, 0x058);
-            Array.Copy(hb_sector, 0x060, homeblock.min_class, 0, 20);
-            Array.Copy(hb_sector, 0x074, homeblock.max_class, 0, 20);
-            homeblock.filetab_fid1 = BitConverter.ToUInt16(hb_sector, 0x088);
-            homeblock.filetab_fid2 = BitConverter.ToUInt16(hb_sector, 0x08A);
-            homeblock.filetab_fid3 = BitConverter.ToUInt16(hb_sector, 0x08C);
-            homeblock.lowstruclev = BitConverter.ToUInt16(hb_sector, 0x08E);
-            homeblock.highstruclev = BitConverter.ToUInt16(hb_sector, 0x090);
-            homeblock.copydate = BitConverter.ToUInt64(hb_sector, 0x092);
-            homeblock.serialnum = BitConverter.ToUInt32(hb_sector, 0x1C8);
-            Array.Copy(hb_sector, 0x1CC, temp_string, 0, 12);
-            homeblock.strucname = StringHandlers.CToString(temp_string, CurrentEncoding);
-            Array.Copy(hb_sector, 0x1D8, temp_string, 0, 12);
-            homeblock.volname = StringHandlers.CToString(temp_string, CurrentEncoding);
-            Array.Copy(hb_sector, 0x1E4, temp_string, 0, 12);
-            homeblock.ownername = StringHandlers.CToString(temp_string, CurrentEncoding);
-            Array.Copy(hb_sector, 0x1F0, temp_string, 0, 12);
-            homeblock.format = StringHandlers.CToString(temp_string, CurrentEncoding);
-            homeblock.checksum2 = BitConverter.ToUInt16(hb_sector, 0x1FE);
+            GCHandle handle = GCHandle.Alloc(hb_sector, GCHandleType.Pinned);
+            homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
+            handle.Free();
 
-            if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || homeblock.format != "DECFILE11B  ")
+
+            if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
                 sb.AppendLine("The following information may be incorrect for this volume.");
             if(homeblock.resfiles < 5 || homeblock.devtype != 0)
                 sb.AppendLine("This volume may be corrupted.");
@@ -159,7 +116,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Backup INDEXF.SYS;1 is in sector {0} (cluster {1})", homeblock.altidxlbn, homeblock.altidxvbn).AppendLine();
             sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
             sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
-            if(homeblock.rvn > 0 && homeblock.setcount > 0 && homeblock.strucname != "            ")
+            if(homeblock.rvn > 0 && homeblock.setcount > 0 && StringHandlers.CToString(homeblock.strucname) != "            ")
                 sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount, homeblock.strucname).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})", homeblock.ownername, homeblock.volowner).AppendLine();
             sb.AppendFormat("Volume label: \"{0}\"", homeblock.volname).AppendLine();
@@ -262,12 +219,14 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
             sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
 
-            xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = "FILES-11";
-            xmlFSType.ClusterSize = homeblock.cluster * 512;
-            xmlFSType.Clusters = homeblock.cluster;
-            xmlFSType.VolumeName = homeblock.volname;
-            xmlFSType.VolumeSerial = string.Format("{0:X8}", homeblock.serialnum);
+            xmlFSType = new Schemas.FileSystemType
+            {
+                Type = "FILES-11",
+                ClusterSize = homeblock.cluster * 512,
+                Clusters = homeblock.cluster,
+                VolumeName = StringHandlers.CToString(homeblock.volname, CurrentEncoding),
+                VolumeSerial = string.Format("{0:X8}", homeblock.serialnum)
+            };
             if(homeblock.credate > 0)
             {
                 xmlFSType.CreationDate = DateHandlers.VMSToDateTime(homeblock.credate);
@@ -282,6 +241,7 @@ namespace DiscImageChef.Filesystems
             information = sb.ToString();
         }
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ODSHomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
@@ -345,8 +305,10 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x058, Last modification date</summary>
             public ulong revdate;
             /// <summary>0x060, Minimum security class, 20 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
             public byte[] min_class;
             /// <summary>0x074, Maximum security class, 20 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
             public byte[] max_class;
             /// <summary>0x088, File lookup table FID</summary>
             public ushort filetab_fid1;
@@ -361,17 +323,22 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x092, Volume copy date (??)</summary>
             public ulong copydate;
             /// <summary>0x09A, 302 bytes</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 302)]
             public byte[] reserved1;
             /// <summary>0x1C8, Physical drive serial number</summary>
             public uint serialnum;
             /// <summary>0x1CC, Name of the volume set, 12 bytes</summary>
-            public string strucname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] strucname;
             /// <summary>0x1D8, Volume label, 12 bytes</summary>
-            public string volname;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] volname;
             /// <summary>0x1E4, Name of the volume owner, 12 bytes</summary>
-            public string ownername;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] ownername;
             /// <summary>0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes</summary>
-            public string format;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public byte[] format;
             /// <summary>0x1FC, Reserved</summary>
             public ushort reserved2;
             /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>
