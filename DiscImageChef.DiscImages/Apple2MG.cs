@@ -358,6 +358,7 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
             ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+			ImageInfo.mediaType = GetMediaType();
 
             a2mgImageFilter = imageFilter;
 
