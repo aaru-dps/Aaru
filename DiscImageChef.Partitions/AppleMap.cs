@@ -161,6 +161,7 @@ namespace DiscImageChef.PartPlugins
                         Sequence = sequence,
                         Offset = old_entry.pdSize * ddm.sbBlockSize,
                         Start = (old_entry.pdSize * ddm.sbBlockSize) / sector_size,
+                        Scheme = Name
                     };
 
                     if(old_entry.pdFSID == HFS_MAGIC_OLD)
@@ -279,7 +280,8 @@ namespace DiscImageChef.PartPlugins
                             Offset = entry.start * entry_size,
                             Size = entry.sectors * entry_size,
                             Start = (entry.start * entry_size) / sector_size,
-                            Length = (entry.sectors * entry_size) / sector_size
+                            Length = (entry.sectors * entry_size) / sector_size,
+                            Scheme = Name
                         };
                         sb.AppendLine("Partition flags:");
                         if(flags.HasFlag(AppleMapFlags.Valid))

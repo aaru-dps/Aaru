@@ -145,19 +145,20 @@ namespace DiscImageChef.PartPlugins
                                     foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
                                     {
 
-                                        CommonTypes.Partition part = new CommonTypes.Partition();
+                                        CommonTypes.Partition part = new CommonTypes.Partition
+                                        {
+                                            Length = bsdPartition.p_size,
+                                            Start = bsdPartition.p_offset,
+                                            Size = bsdPartition.p_size * bsdDisklabel.d_secsize,
+                                            Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize,
 
-                                        part.Length = bsdPartition.p_size;
-                                        part.Start = bsdPartition.p_offset;
-                                        part.Size = bsdPartition.p_size * bsdDisklabel.d_secsize;
-                                        part.Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize;
+                                            Type = string.Format("BSD: {0}", bsdPartition.p_fstype),
+                                            Name = BSD.fsTypeToString(bsdPartition.p_fstype),
 
-                                        part.Type = string.Format("BSD: {0}", bsdPartition.p_fstype);
-                                        part.Name = BSD.fsTypeToString(bsdPartition.p_fstype);
-
-                                        part.Sequence = counter;
-                                        part.Description = "Partition inside a BSD disklabel.";
-
+                                            Sequence = counter,
+                                            Description = "Partition inside a BSD disklabel.",
+                                            Scheme = Name
+                                        };
                                         if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                         {
                                             partitions.Add(part);
@@ -235,24 +236,26 @@ namespace DiscImageChef.PartPlugins
                                         // TODO: What if number of slices overlaps sector (>23)?
                                         for(int j = 0; j < vtoc.slices; j++)
                                         {
-                                            UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry();
-
-                                            vtoc_ent.tag = (DiscImageChef.PartPlugins.UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
-                                            vtoc_ent.flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2); // 162/234 + j*12
-                                            vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
-                                            vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
-
+                                            UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry
+                                            {
+                                                tag = (UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0), // 160/232 + j*12
+                                                flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2), // 162/234 + j*12
+                                                start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6), // 166/238 + j*12
+                                                length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10) // 170/242 + j*12
+                                            };
                                             if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
                                             {
-                                                CommonTypes.Partition part = new CommonTypes.Partition();
-                                                // TODO: Check if device bps == disklabel bps
-                                                part.Start = vtoc_ent.start;
-                                                part.Length = vtoc_ent.length;
-                                                part.Offset = vtoc_ent.start * dl.bps;
-                                                part.Size = vtoc_ent.length * dl.bps;
-                                                part.Sequence = counter;
-                                                part.Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
-
+                                                CommonTypes.Partition part = new CommonTypes.Partition
+                                                {
+                                                    // TODO: Check if device bps == disklabel bps
+                                                    Start = vtoc_ent.start,
+                                                    Length = vtoc_ent.length,
+                                                    Offset = vtoc_ent.start * dl.bps,
+                                                    Size = vtoc_ent.length * dl.bps,
+                                                    Sequence = counter,
+                                                    Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL)),
+                                                    Scheme = Name
+                                                };
                                                 string info = "";
 
                                                 if((vtoc_ent.flags & 0x01) == 0x01)
@@ -282,14 +285,16 @@ namespace DiscImageChef.PartPlugins
                                 {
                                     for(int j = 0; j < 16; j++)
                                     {
-                                        CommonTypes.Partition part = new CommonTypes.Partition();
-                                        part.Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
-                                        part.Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
+                                        CommonTypes.Partition part = new CommonTypes.Partition
+                                        {
+                                            Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4),
+                                            Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8),
+                                            Description = "Solaris slice.",
+                                            Scheme = Name,
+                                            Sequence = counter
+                                        };
                                         part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
                                         part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
-                                        part.Description = "Solaris slice.";
-
-                                        part.Sequence = counter;
 
                                         if(part.Size > 0)
                                         {
@@ -313,15 +318,18 @@ namespace DiscImageChef.PartPlugins
 
                                     if(type == 0x81)
                                     {
-                                        CommonTypes.Partition part = new CommonTypes.Partition();
                                         minix_subs = true;
-                                        part.Description = "Minix subpartition";
-                                        part.Type = "Minix";
-                                        part.Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
-                                        part.Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
+                                        CommonTypes.Partition part = new CommonTypes.Partition
+                                        {
+                                            Description = "Minix subpartition",
+                                            Type = "Minix",
+                                            Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8),
+                                            Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12),
+                                            Sequence = counter,
+                                            Scheme = Name
+                                        };
                                         part.Offset = part.Start * imagePlugin.GetSectorSize();
                                         part.Size = part.Length * imagePlugin.GetSectorSize();
-                                        part.Sequence = counter;
                                         partitions.Add(part);
                                         counter++;
                                     }
@@ -362,6 +370,7 @@ namespace DiscImageChef.PartPlugins
                         part.Name = decodeMBRType(entry.type);
                         part.Sequence = counter;
                         part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
+                        part.Scheme = Name;
 
                         counter++;
 
@@ -444,18 +453,18 @@ namespace DiscImageChef.PartPlugins
                                                 foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
                                                 {
 
-                                                    CommonTypes.Partition part = new CommonTypes.Partition();
-
-                                                    part.Length = bsdPartition.p_size;
-                                                    part.Start = bsdPartition.p_offset;
-                                                    part.Size = bsdPartition.p_size * bsdDisklabel.d_secsize;
-                                                    part.Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize;
-
-                                                    part.Type = string.Format("BSD: {0}", bsdPartition.p_fstype);
-                                                    part.Name = BSD.fsTypeToString(bsdPartition.p_fstype);
-
-                                                    part.Sequence = counter;
-                                                    part.Description = "Partition inside a BSD disklabel.";
+                                                    CommonTypes.Partition part = new CommonTypes.Partition
+                                                    {
+                                                        Length = bsdPartition.p_size,
+                                                        Start = bsdPartition.p_offset,
+                                                        Size = bsdPartition.p_size * bsdDisklabel.d_secsize,
+                                                        Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize,
+                                                        Type = string.Format("BSD: {0}", bsdPartition.p_fstype),
+                                                        Name = BSD.fsTypeToString(bsdPartition.p_fstype),
+                                                        Sequence = counter,
+                                                        Description = "Partition inside a BSD disklabel.",
+                                                        Scheme = Name
+                                                    };
 
                                                     if(bsdPartition.p_fstype != BSD.fsType.Unused)
                                                     {
@@ -534,24 +543,26 @@ namespace DiscImageChef.PartPlugins
                                                     // TODO: What if number of slices overlaps sector (>23)?
                                                     for(int j = 0; j < vtoc.slices; j++)
                                                     {
-                                                        UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry();
-
-                                                        vtoc_ent.tag = (DiscImageChef.PartPlugins.UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
-                                                        vtoc_ent.flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2); // 162/234 + j*12
-                                                        vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
-                                                        vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
-
+                                                        UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry
+                                                        {
+                                                            tag = (UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0), // 160/232 + j*12
+                                                            flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2), // 162/234 + j*12
+                                                            start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6), // 166/238 + j*12
+                                                            length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10) // 170/242 + j*12
+                                                        };
                                                         if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
                                                         {
-                                                            CommonTypes.Partition part = new CommonTypes.Partition();
-                                                            // TODO: Check if device bps == disklabel bps
-                                                            part.Start = vtoc_ent.start;
-                                                            part.Length = vtoc_ent.length;
-                                                            part.Offset = vtoc_ent.start * dl.bps;
-                                                            part.Size = vtoc_ent.length * dl.bps;
-                                                            part.Sequence = counter;
-                                                            part.Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL));
-
+                                                            CommonTypes.Partition part = new CommonTypes.Partition
+                                                            {
+                                                                // TODO: Check if device bps == disklabel bps
+                                                                Start = vtoc_ent.start,
+                                                                Length = vtoc_ent.length,
+                                                                Offset = vtoc_ent.start * dl.bps,
+                                                                Size = vtoc_ent.length * dl.bps,
+                                                                Sequence = counter,
+                                                                Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL)),
+                                                                Scheme = Name
+                                                            };
                                                             string info = "";
 
                                                             if((vtoc_ent.flags & 0x01) == 0x01)
@@ -581,14 +592,16 @@ namespace DiscImageChef.PartPlugins
                                             {
                                                 for(int j = 0; j < 16; j++)
                                                 {
-                                                    CommonTypes.Partition part = new CommonTypes.Partition();
-                                                    part.Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4);
-                                                    part.Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8);
+                                                    CommonTypes.Partition part = new CommonTypes.Partition
+                                                    {
+                                                        Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4),
+                                                        Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8),
+                                                        Description = "Solaris slice.",
+                                                        Scheme = Name,
+                                                        Sequence = counter
+                                                    };
                                                     part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
                                                     part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
-                                                    part.Description = "Solaris slice.";
-
-                                                    part.Sequence = counter;
 
                                                     if(part.Size > 0)
                                                     {
@@ -612,15 +625,18 @@ namespace DiscImageChef.PartPlugins
 
                                                 if(type == 0x81)
                                                 {
-                                                    CommonTypes.Partition part = new CommonTypes.Partition();
+                                                    CommonTypes.Partition part = new CommonTypes.Partition
+                                                    {
+                                                        Description = "Minix subpartition",
+                                                        Type = "Minix",
+                                                        Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8),
+                                                        Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12),
+                                                        Sequence = counter,
+                                                        Scheme = Name
+                                                    };
                                                     minix_subs = true;
-                                                    part.Description = "Minix subpartition";
-                                                    part.Type = "Minix";
-                                                    part.Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8);
-                                                    part.Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12);
                                                     part.Offset = part.Start * imagePlugin.GetSectorSize();
                                                     part.Size = part.Length * imagePlugin.GetSectorSize();
-                                                    part.Sequence = counter;
                                                     partitions.Add(part);
                                                     counter++;
                                                 }
@@ -662,6 +678,7 @@ namespace DiscImageChef.PartPlugins
                                     part.Name = decodeMBRType(entry2.type);
                                     part.Sequence = counter;
                                     part.Description = entry2.status == 0x80 ? "Partition is bootable." : "";
+                                    part.Scheme = Name;
 
                                     counter++;
 

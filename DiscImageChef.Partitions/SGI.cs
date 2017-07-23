@@ -69,13 +69,16 @@ namespace DiscImageChef.PartPlugins
 
             foreach(SGIPartition entry in disklabel.partitions)
             {
-                Partition part = new Partition();
-                part.Start = entry.first_block;
-                part.Offset = (entry.first_block * 512);
-                part.Size = entry.num_blocks;
-                part.Length = (entry.num_blocks * 512);
-                part.Type = string.Format("{0}", entry.type);
-                part.Sequence = counter;
+                Partition part = new Partition()
+                {
+                    Start = entry.first_block,
+                    Offset = (entry.first_block * 512),
+                    Size = entry.num_blocks,
+                    Length = (entry.num_blocks * 512),
+                    Type = string.Format("{0}", entry.type),
+                    Sequence = counter,
+                    Scheme = Name
+                };
                 if(part.Size > 0)
                 {
                     partitions.Add(part);

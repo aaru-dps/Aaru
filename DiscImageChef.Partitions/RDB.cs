@@ -1072,14 +1072,15 @@ namespace DiscImageChef.PartPlugins
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found BadBlock block");
 
-                BadBlockList chainEntry = new BadBlockList();
-                chainEntry.magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
-                chainEntry.size = BigEndianBitConverter.ToUInt32(sector, 0x04);
-                chainEntry.checksum = BigEndianBitConverter.ToInt32(sector, 0x08);
-                chainEntry.targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C);
-                chainEntry.next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10);
-                chainEntry.reserved = BigEndianBitConverter.ToUInt32(sector, 0x14);
-
+                BadBlockList chainEntry = new BadBlockList
+                {
+                    magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    reserved = BigEndianBitConverter.ToUInt32(sector, 0x14)
+                };
                 ulong entries = (chainEntry.size - 6) / 2;
                 chainEntry.blockPairs = new BadBlockEntry[entries];
 
@@ -1118,57 +1119,62 @@ namespace DiscImageChef.PartPlugins
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found PartitionEntry block");
 
-                PartitionEntry partEntry = new PartitionEntry();
-                partEntry.dosEnvVec = new DOSEnvironmentVector();
+                PartitionEntry partEntry = new PartitionEntry
+                {
+                    magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    flags = BigEndianBitConverter.ToUInt32(sector, 0x14),
+                    reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18),
+                    reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C),
+                    devFlags = BigEndianBitConverter.ToUInt32(sector, 0x20),
+                    driveNameLen = sector[0x24],
+                    reserved3 = BigEndianBitConverter.ToUInt32(sector, 0x44),
+                    reserved4 = BigEndianBitConverter.ToUInt32(sector, 0x48),
+                    reserved5 = BigEndianBitConverter.ToUInt32(sector, 0x4C),
+                    reserved6 = BigEndianBitConverter.ToUInt32(sector, 0x50),
+                    reserved7 = BigEndianBitConverter.ToUInt32(sector, 0x54),
+                    reserved8 = BigEndianBitConverter.ToUInt32(sector, 0x58),
+                    reserved9 = BigEndianBitConverter.ToUInt32(sector, 0x5C),
+                    reserved10 = BigEndianBitConverter.ToUInt32(sector, 0x60),
+                    reserved11 = BigEndianBitConverter.ToUInt32(sector, 0x64),
+                    reserved12 = BigEndianBitConverter.ToUInt32(sector, 0x68),
+                    reserved13 = BigEndianBitConverter.ToUInt32(sector, 0x6C),
+                    reserved14 = BigEndianBitConverter.ToUInt32(sector, 0x70),
+                    reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x74),
+                    reserved16 = BigEndianBitConverter.ToUInt32(sector, 0x78),
+                    reserved17 = BigEndianBitConverter.ToUInt32(sector, 0x7C),
+
+                    dosEnvVec = new DOSEnvironmentVector
+                    {
+                        size = BigEndianBitConverter.ToUInt32(sector, 0x80),
+                        block_size = BigEndianBitConverter.ToUInt32(sector, 0x84),
+                        sec_org = BigEndianBitConverter.ToUInt32(sector, 0x88),
+                        surfaces = BigEndianBitConverter.ToUInt32(sector, 0x8C),
+                        spb = BigEndianBitConverter.ToUInt32(sector, 0x90),
+                        bpt = BigEndianBitConverter.ToUInt32(sector, 0x94),
+                        reservedblocks = BigEndianBitConverter.ToUInt32(sector, 0x98),
+                        prealloc = BigEndianBitConverter.ToUInt32(sector, 0x9C),
+                        interleave = BigEndianBitConverter.ToUInt32(sector, 0xA0),
+                        lowCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA4),
+                        highCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA8),
+                        numBuffer = BigEndianBitConverter.ToUInt32(sector, 0xAC),
+                        bufMemType = BigEndianBitConverter.ToUInt32(sector, 0xB0),
+                        maxTransfer = BigEndianBitConverter.ToUInt32(sector, 0xB4),
+                        Mask = BigEndianBitConverter.ToUInt32(sector, 0xB8),
+                        bootPriority = BigEndianBitConverter.ToUInt32(sector, 0xBC),
+                        dosType = BigEndianBitConverter.ToUInt32(sector, 0xC0),
+                        baud = BigEndianBitConverter.ToUInt32(sector, 0xC4),
+                        control = BigEndianBitConverter.ToUInt32(sector, 0xC8),
+                        bootBlocks = BigEndianBitConverter.ToUInt32(sector, 0xCC)
+                    }
+                };
+
                 byte[] driveName = new byte[32];
-                partEntry.magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
-                partEntry.size = BigEndianBitConverter.ToUInt32(sector, 0x04);
-                partEntry.checksum = BigEndianBitConverter.ToInt32(sector, 0x08);
-                partEntry.targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C);
-                partEntry.next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10);
-                partEntry.flags = BigEndianBitConverter.ToUInt32(sector, 0x14);
-                partEntry.reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18);
-                partEntry.reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C);
-                partEntry.devFlags = BigEndianBitConverter.ToUInt32(sector, 0x20);
-                partEntry.driveNameLen = sector[0x24];
                 Array.Copy(sector, 0x24, driveName, 0, 32);
                 partEntry.driveName = StringHandlers.PascalToString(driveName, Encoding.GetEncoding("iso-8859-1"));
-                partEntry.reserved3 = BigEndianBitConverter.ToUInt32(sector, 0x44);
-                partEntry.reserved4 = BigEndianBitConverter.ToUInt32(sector, 0x48);
-                partEntry.reserved5 = BigEndianBitConverter.ToUInt32(sector, 0x4C);
-                partEntry.reserved6 = BigEndianBitConverter.ToUInt32(sector, 0x50);
-                partEntry.reserved7 = BigEndianBitConverter.ToUInt32(sector, 0x54);
-                partEntry.reserved8 = BigEndianBitConverter.ToUInt32(sector, 0x58);
-                partEntry.reserved9 = BigEndianBitConverter.ToUInt32(sector, 0x5C);
-                partEntry.reserved10 = BigEndianBitConverter.ToUInt32(sector, 0x60);
-                partEntry.reserved11 = BigEndianBitConverter.ToUInt32(sector, 0x64);
-                partEntry.reserved12 = BigEndianBitConverter.ToUInt32(sector, 0x68);
-                partEntry.reserved13 = BigEndianBitConverter.ToUInt32(sector, 0x6C);
-                partEntry.reserved14 = BigEndianBitConverter.ToUInt32(sector, 0x70);
-                partEntry.reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x74);
-                partEntry.reserved16 = BigEndianBitConverter.ToUInt32(sector, 0x78);
-                partEntry.reserved17 = BigEndianBitConverter.ToUInt32(sector, 0x7C);
-
-                partEntry.dosEnvVec.size = BigEndianBitConverter.ToUInt32(sector, 0x80);
-                partEntry.dosEnvVec.block_size = BigEndianBitConverter.ToUInt32(sector, 0x84);
-                partEntry.dosEnvVec.sec_org = BigEndianBitConverter.ToUInt32(sector, 0x88);
-                partEntry.dosEnvVec.surfaces = BigEndianBitConverter.ToUInt32(sector, 0x8C);
-                partEntry.dosEnvVec.spb = BigEndianBitConverter.ToUInt32(sector, 0x90);
-                partEntry.dosEnvVec.bpt = BigEndianBitConverter.ToUInt32(sector, 0x94);
-                partEntry.dosEnvVec.reservedblocks = BigEndianBitConverter.ToUInt32(sector, 0x98);
-                partEntry.dosEnvVec.prealloc = BigEndianBitConverter.ToUInt32(sector, 0x9C);
-                partEntry.dosEnvVec.interleave = BigEndianBitConverter.ToUInt32(sector, 0xA0);
-                partEntry.dosEnvVec.lowCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA4);
-                partEntry.dosEnvVec.highCylinder = BigEndianBitConverter.ToUInt32(sector, 0xA8);
-                partEntry.dosEnvVec.numBuffer = BigEndianBitConverter.ToUInt32(sector, 0xAC);
-                partEntry.dosEnvVec.bufMemType = BigEndianBitConverter.ToUInt32(sector, 0xB0);
-                partEntry.dosEnvVec.maxTransfer = BigEndianBitConverter.ToUInt32(sector, 0xB4);
-                partEntry.dosEnvVec.Mask = BigEndianBitConverter.ToUInt32(sector, 0xB8);
-                partEntry.dosEnvVec.bootPriority = BigEndianBitConverter.ToUInt32(sector, 0xBC);
-                partEntry.dosEnvVec.dosType = BigEndianBitConverter.ToUInt32(sector, 0xC0);
-                partEntry.dosEnvVec.baud = BigEndianBitConverter.ToUInt32(sector, 0xC4);
-                partEntry.dosEnvVec.control = BigEndianBitConverter.ToUInt32(sector, 0xC8);
-                partEntry.dosEnvVec.bootBlocks = BigEndianBitConverter.ToUInt32(sector, 0xCC);
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.magic = 0x{0:X8}", partEntry.magic);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.size = {0} longs, {1} bytes", partEntry.size, partEntry.size * 4);
@@ -1238,30 +1244,32 @@ namespace DiscImageChef.PartPlugins
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Found FileSystemHeader block");
 
-                FileSystemHeader FSHD = new FileSystemHeader();
-                FSHD.dnode = new DeviceNode();
-
-                FSHD.magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
-                FSHD.size = BigEndianBitConverter.ToUInt32(sector, 0x04);
-                FSHD.checksum = BigEndianBitConverter.ToInt32(sector, 0x08);
-                FSHD.targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C);
-                FSHD.next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10);
-                FSHD.flags = BigEndianBitConverter.ToUInt32(sector, 0x14);
-                FSHD.reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18);
-                FSHD.reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C);
-                FSHD.dosType = BigEndianBitConverter.ToUInt32(sector, 0x20);
-                FSHD.version = BigEndianBitConverter.ToUInt32(sector, 0x24);
-                FSHD.patchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28);
-
-                FSHD.dnode.type = BigEndianBitConverter.ToUInt32(sector, 0x2C);
-                FSHD.dnode.task = BigEndianBitConverter.ToUInt32(sector, 0x30);
-                FSHD.dnode.locked = BigEndianBitConverter.ToUInt32(sector, 0x34);
-                FSHD.dnode.handler = BigEndianBitConverter.ToUInt32(sector, 0x38);
-                FSHD.dnode.stackSize = BigEndianBitConverter.ToUInt32(sector, 0x3C);
-                FSHD.dnode.priority = BigEndianBitConverter.ToUInt32(sector, 0x40);
-                FSHD.dnode.startup = BigEndianBitConverter.ToUInt32(sector, 0x44);
-                FSHD.dnode.seglist_ptr = BigEndianBitConverter.ToUInt32(sector, 0x48);
-                FSHD.dnode.global_vec = BigEndianBitConverter.ToUInt32(sector, 0x4C);
+                FileSystemHeader FSHD = new FileSystemHeader
+                {
+                    magic = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    size = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    checksum = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    targetID = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    next_ptr = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    flags = BigEndianBitConverter.ToUInt32(sector, 0x14),
+                    reserved1 = BigEndianBitConverter.ToUInt32(sector, 0x18),
+                    reserved2 = BigEndianBitConverter.ToUInt32(sector, 0x1C),
+                    dosType = BigEndianBitConverter.ToUInt32(sector, 0x20),
+                    version = BigEndianBitConverter.ToUInt32(sector, 0x24),
+                    patchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28),
+                    dnode = new DeviceNode
+                    {
+                        type = BigEndianBitConverter.ToUInt32(sector, 0x2C),
+                        task = BigEndianBitConverter.ToUInt32(sector, 0x30),
+                        locked = BigEndianBitConverter.ToUInt32(sector, 0x34),
+                        handler = BigEndianBitConverter.ToUInt32(sector, 0x38),
+                        stackSize = BigEndianBitConverter.ToUInt32(sector, 0x3C),
+                        priority = BigEndianBitConverter.ToUInt32(sector, 0x40),
+                        startup = BigEndianBitConverter.ToUInt32(sector, 0x44),
+                        seglist_ptr = BigEndianBitConverter.ToUInt32(sector, 0x48),
+                        global_vec = BigEndianBitConverter.ToUInt32(sector, 0x4C)
+                    }
+                };
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.magic = 0x{0:X8}", FSHD.magic);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.size = {0} longs, {1} bytes", FSHD.size, FSHD.size * 4);
@@ -1335,16 +1343,18 @@ namespace DiscImageChef.PartPlugins
             ulong sequence = 0;
             foreach(PartitionEntry RDBEntry in PartitionEntries)
             {
-                CommonTypes.Partition entry = new CommonTypes.Partition();
-
-                entry.Description = AmigaDOSTypeToDescriptionString(RDBEntry.dosEnvVec.dosType);
-                entry.Name = RDBEntry.driveName;
-                entry.Sequence = sequence;
-                entry.Length = (RDBEntry.dosEnvVec.highCylinder + 1 - RDBEntry.dosEnvVec.lowCylinder) * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
-                entry.Start = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt;
+                CommonTypes.Partition entry = new CommonTypes.Partition
+                {
+                    Description = AmigaDOSTypeToDescriptionString(RDBEntry.dosEnvVec.dosType),
+                    Name = RDBEntry.driveName,
+                    Sequence = sequence,
+                    Length = (RDBEntry.dosEnvVec.highCylinder + 1 - RDBEntry.dosEnvVec.lowCylinder) * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt,
+                    Start = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt,
+                    Type = AmigaDOSTypeToString(RDBEntry.dosEnvVec.dosType),
+                    Scheme = Name
+                };
                 entry.Offset = entry.Start * RDB.block_size;
                 entry.Size = entry.Length * RDB.block_size;
-                entry.Type = AmigaDOSTypeToString(RDBEntry.dosEnvVec.dosType);
 
                 partitions.Add(entry);
                 sequence++;

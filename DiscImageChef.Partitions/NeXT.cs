@@ -161,7 +161,8 @@ namespace DiscImageChef.PartPlugins
                         Sequence = (ulong)i,
                         Name = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
                         Length = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sector_size),
-                        Start = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize) / sector_size)
+                        Start = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize) / sector_size),
+                        Scheme = Name
                     };
 
                     if(part.Start + part.Length > imagePlugin.ImageInfo.sectors)

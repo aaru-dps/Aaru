@@ -133,23 +133,25 @@ namespace DiscImageChef.PartPlugins
                 // TODO: What if number of slices overlaps sector (>23)?
                 for(int j = 0; j < vtoc.slices; j++)
                 {
-                    UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry();
-
-                    vtoc_ent.tag = (UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0); // 160/232 + j*12
-                    vtoc_ent.flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2); // 162/234 + j*12
-                    vtoc_ent.start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6); // 166/238 + j*12
-                    vtoc_ent.length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10); // 170/242 + j*12
-
+                    UNIXVTOCEntry vtoc_ent = new UNIXVTOCEntry
+                    {
+                        tag = (UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0), // 160/232 + j*12
+                        flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2), // 162/234 + j*12
+                        start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6), // 166/238 + j*12
+                        length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10) // 170/242 + j*12
+                    };
                     if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX_TAG.WHOLE)
                     {
-                        Partition part = new Partition();
-                        part.Start = vtoc_ent.start;
-                        part.Length = vtoc_ent.length;
-                        part.Offset = vtoc_ent.start * dl.bps;
-                        part.Size = vtoc_ent.length * dl.bps;
-                        part.Sequence = counter;
-                        part.Type = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL));
-
+                        Partition part = new Partition
+                        {
+                            Start = vtoc_ent.start,
+                            Length = vtoc_ent.length,
+                            Offset = vtoc_ent.start * dl.bps,
+                            Size = vtoc_ent.length * dl.bps,
+                            Sequence = counter,
+                            Type = string.Format("UNIX: {0}", decodeUNIXTAG(vtoc_ent.tag, isNewDL)),
+                            Scheme = Name
+                        };
                         string info = "";
 
                         if((vtoc_ent.flags & 0x01) == 0x01)

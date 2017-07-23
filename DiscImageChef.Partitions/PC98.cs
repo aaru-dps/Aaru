@@ -76,14 +76,17 @@ namespace DiscImageChef.PartPlugins
                    entry.dp_ecyl > 0)
                 {
 
-                    Partition part = new Partition();
-                    part.Start = CHStoLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect);
+                    Partition part = new Partition
+                    {
+                        Start = CHStoLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect),
+                        Type = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid),
+                        Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)),
+                        Sequence = counter,
+                        Scheme = Name
+                    };
                     part.Offset = part.Start * imagePlugin.GetSectorSize();
                     part.Length = CHStoLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect) - part.Start;
                     part.Size = part.Length * imagePlugin.GetSectorSize();
-                    part.Type = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid);
-                    part.Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932));
-                    part.Sequence = counter;
 
                     if((entry.dp_sid & 0x7F) == 0x44 &&
                        (entry.dp_mid & 0x7F) == 0x14 &&

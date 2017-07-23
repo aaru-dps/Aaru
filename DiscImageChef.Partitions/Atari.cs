@@ -148,20 +148,22 @@ namespace DiscImageChef.PartPlugins
                         if(sectorSize == 2448 || sectorSize == 2352)
                             sectorSize = 2048;
 
-                        CommonTypes.Partition part = new CommonTypes.Partition();
-                        part.Size = table.entries[i].length * sectorSize;
-                        part.Length = table.entries[i].length;
-                        part.Sequence = partitionSequence;
-                        part.Name = "";
-                        part.Offset = table.entries[i].start * sectorSize;
-                        part.Start = table.entries[i].start;
-
                         byte[] partType = new byte[3];
                         partType[0] = (byte)((type & 0xFF0000) >> 16);
                         partType[1] = (byte)((type & 0x00FF00) >> 8);
                         partType[2] = (byte)(type & 0x0000FF);
-                        part.Type = Encoding.ASCII.GetString(partType);
 
+                        CommonTypes.Partition part = new CommonTypes.Partition
+                        {
+                            Size = table.entries[i].length * sectorSize,
+                            Length = table.entries[i].length,
+                            Sequence = partitionSequence,
+                            Name = "",
+                            Offset = table.entries[i].start * sectorSize,
+                            Start = table.entries[i].start,
+                            Type = Encoding.ASCII.GetString(partType),
+                            Scheme = Name
+                        };
                         switch(type)
                         {
                             case TypeGEMDOS:
@@ -237,20 +239,22 @@ namespace DiscImageChef.PartPlugins
                                 if(sectorSize == 2448 || sectorSize == 2352)
                                     sectorSize = 2048;
 
-                                CommonTypes.Partition part = new CommonTypes.Partition();
-                                part.Size = extendedTable.entries[j].length * sectorSize;
-                                part.Length = extendedTable.entries[j].length;
-                                part.Sequence = partitionSequence;
-                                part.Name = "";
-                                part.Offset = extendedTable.entries[j].start * sectorSize;
-                                part.Start = extendedTable.entries[j].start;
-
                                 byte[] partType = new byte[3];
                                 partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
                                 partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
                                 partType[2] = (byte)(extendedType & 0x0000FF);
-                                part.Type = Encoding.ASCII.GetString(partType);
 
+                                CommonTypes.Partition part = new CommonTypes.Partition
+                                {
+                                    Size = extendedTable.entries[j].length * sectorSize,
+                                    Length = extendedTable.entries[j].length,
+                                    Sequence = partitionSequence,
+                                    Name = "",
+                                    Offset = extendedTable.entries[j].start * sectorSize,
+                                    Start = extendedTable.entries[j].start,
+                                    Type = Encoding.ASCII.GetString(partType),
+                                    Scheme = Name
+                                };
                                 switch(extendedType)
                                 {
                                     case TypeGEMDOS:
@@ -317,20 +321,22 @@ namespace DiscImageChef.PartPlugins
                             if(sectorSize == 2448 || sectorSize == 2352)
                                 sectorSize = 2048;
 
-                            CommonTypes.Partition part = new CommonTypes.Partition();
-                            part.Size = table.icdEntries[i].length * sectorSize;
-                            part.Length = table.icdEntries[i].length;
-                            part.Sequence = partitionSequence;
-                            part.Name = "";
-                            part.Offset = table.icdEntries[i].start * sectorSize;
-                            part.Start = table.icdEntries[i].start;
-
                             byte[] partType = new byte[3];
                             partType[0] = (byte)((type & 0xFF0000) >> 16);
                             partType[1] = (byte)((type & 0x00FF00) >> 8);
                             partType[2] = (byte)(type & 0x0000FF);
-                            part.Type = Encoding.ASCII.GetString(partType);
 
+                            CommonTypes.Partition part = new CommonTypes.Partition
+                            {
+                                Size = table.icdEntries[i].length * sectorSize,
+                                Length = table.icdEntries[i].length,
+                                Sequence = partitionSequence,
+                                Name = "",
+                                Offset = table.icdEntries[i].start * sectorSize,
+                                Start = table.icdEntries[i].start,
+                                Type = Encoding.ASCII.GetString(partType),
+                                Scheme = Name
+                            };
                             switch(type)
                             {
                                 case TypeGEMDOS:

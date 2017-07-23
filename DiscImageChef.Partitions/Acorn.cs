@@ -119,12 +119,15 @@ namespace DiscImageChef.PartPlugins
 
                 foreach(LinuxEntry entry in table.entries)
                 {
-                    Partition part = new Partition();
-                    part.Start = (ulong)(mapSector + entry.start);
+                    Partition part = new Partition
+                    {
+                        Start = (ulong)(mapSector + entry.start),
+                        Size = entry.size,
+                        Length = (ulong)(entry.size * sector.Length),
+                        Sequence = counter,
+                        Scheme = Name
+                    };
                     part.Offset = part.Start * (ulong)sector.Length;
-                    part.Size = entry.size;
-                    part.Length = (ulong)(entry.size * sector.Length);
-                    part.Sequence = counter;
                     if(entry.magic == LINUX_MAGIC || entry.magic == SWAP_MAGIC)
                     {
                         partitions.Add(part);
@@ -145,13 +148,16 @@ namespace DiscImageChef.PartPlugins
                 {
                     foreach(RiscIxEntry entry in table.partitions)
                     {
-                        Partition part = new Partition();
-                        part.Start = (ulong)(mapSector + entry.start);
+                        Partition part = new Partition
+                        {
+                            Start = (ulong)(mapSector + entry.start),
+                            Size = entry.length,
+                            Length = (ulong)(entry.length * sector.Length),
+                            Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
+                            Sequence = counter,
+                            Scheme = Name
+                        };
                         part.Offset = part.Start * (ulong)sector.Length;
-                        part.Size = entry.length;
-                        part.Length = (ulong)(entry.length * sector.Length);
-                        part.Name = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1"));
-                        part.Sequence = counter;
                         if(entry.length > 0)
                         {
                             partitions.Add(part);

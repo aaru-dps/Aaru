@@ -55,6 +55,8 @@ namespace DiscImageChef.CommonTypes
         public string Description;
         /// <summary>LBA of last partition sector</summary>
         public ulong End { get { return Start + Length - 1; }}
+        /// <summary>Name of partition scheme that contains this partition</summary>
+        public string Scheme;
     }
 }
 

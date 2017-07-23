@@ -70,17 +70,20 @@ namespace DiscImageChef.PartPlugins
 
             foreach(Partition64 entry in disklabel.d_partitions)
             {
-                Partition part = new Partition();
-                part.Start = entry.p_boffset;
-                part.Offset = entry.p_boffset;
-                part.Size = entry.p_bsize;
-                part.Length = entry.p_bsize;
+                Partition part = new Partition
+                {
+                    Start = entry.p_boffset,
+                    Offset = entry.p_boffset,
+                    Size = entry.p_bsize,
+                    Length = entry.p_bsize,
+                    Name = entry.p_stor_uuid.ToString(),
+                    Sequence = counter,
+                    Scheme = Name
+                };
                 if((BSD.fsType)entry.p_fstype == BSD.fsType.Other)
                     part.Type = entry.p_type_uuid.ToString();
                 else
                     part.Type = BSD.fsTypeToString((BSD.fsType)entry.p_fstype);
-                part.Name = entry.p_stor_uuid.ToString();
-                part.Sequence = counter;
                 if(entry.p_bsize > 0 && entry.p_boffset > 0)
                 {
                     partitions.Add(part);

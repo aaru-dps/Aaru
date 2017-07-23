@@ -91,15 +91,18 @@ namespace DiscImageChef.PartPlugins
 
             byte[] sunSector = imagePlugin.ReadSector(0);
             byte[] tmpString;
-            SunDiskLabel sdl = new SunDiskLabel();
-            sdl.vtoc = new SunVTOC();
-            sdl.spare = new byte[148];
-            sdl.vtoc.infos = new SunInfo[8];
-            sdl.vtoc.bootinfo = new uint[3];
-            sdl.vtoc.reserved = new byte[40];
-            sdl.vtoc.timestamp = new uint[8];
-            sdl.partitions = new SunPartition[8];
-
+            SunDiskLabel sdl = new SunDiskLabel
+            {
+                spare = new byte[148],
+                vtoc = new SunVTOC
+                {
+                    infos = new SunInfo[8],
+                    bootinfo = new uint[3],
+                    reserved = new byte[40],
+                    timestamp = new uint[8]
+                },
+                partitions = new SunPartition[8]
+            };
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             tmpString = new byte[128];
@@ -113,9 +116,11 @@ namespace DiscImageChef.PartPlugins
             sdl.vtoc.nparts = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0C);
             for(int i = 0; i < 8; i++)
             {
-                sdl.vtoc.infos[i] = new SunInfo();
-                sdl.vtoc.infos[i].id = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x00);
-                sdl.vtoc.infos[i].flags = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x02);
+                sdl.vtoc.infos[i] = new SunInfo
+                {
+                    id = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x00),
+                    flags = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x0E + i * 4 + 0x02)
+                };
             }
             sdl.vtoc.padding = BigEndianBitConverter.ToUInt16(sunSector, 0x80 + 0x2E);
             for(int i = 0; i < 3; i++)
@@ -143,9 +148,11 @@ namespace DiscImageChef.PartPlugins
 
             for(int i = 0; i < 8; i++)
             {
-                sdl.partitions[i] = new SunPartition();
-                sdl.partitions[i].start_cylinder = BigEndianBitConverter.ToUInt32(sunSector, 0x1BC + i * 8 + 0x00);
-                sdl.partitions[i].num_sectors = BigEndianBitConverter.ToUInt32(sunSector, 0x1BC + i * 8 + 0x04);
+                sdl.partitions[i] = new SunPartition
+                {
+                    start_cylinder = BigEndianBitConverter.ToUInt32(sunSector, 0x1BC + i * 8 + 0x00),
+                    num_sectors = BigEndianBitConverter.ToUInt32(sunSector, 0x1BC + i * 8 + 0x04)
+                };
             }
 
             sdl.magic = BigEndianBitConverter.ToUInt16(sunSector, 0x1FC);
@@ -200,20 +207,22 @@ namespace DiscImageChef.PartPlugins
             {
                 if((SunTypes)sdl.vtoc.infos[i].id != SunTypes.SunWholeDisk && sdl.partitions[i].num_sectors > 0)
                 {
-                    CommonTypes.Partition part = new CommonTypes.Partition();
-                    part.Description = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags);
+                    CommonTypes.Partition part = new CommonTypes.Partition
+                    {
+                        Description = SunFlagsToString((SunFlags)sdl.vtoc.infos[i].flags),
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    part.Size = (ulong)sdl.partitions[i].num_sectors * (ulong)imagePlugin.GetSectorSize();
+                        Size = (ulong)sdl.partitions[i].num_sectors * (ulong)imagePlugin.GetSectorSize(),
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-                    part.Name = "";
-                    part.Length = sdl.partitions[i].num_sectors;
-                    part.Sequence = (ulong)i;
+                        Name = "",
+                        Length = sdl.partitions[i].num_sectors,
+                        Sequence = (ulong)i,
 #pragma warning disable IDE0004 // Remove Unnecessary Cast
-                    part.Offset = (ulong)sdl.partitions[i].start_cylinder * (ulong)sectorsPerCylinder * (ulong)imagePlugin.GetSectorSize();
+                        Offset = (ulong)sdl.partitions[i].start_cylinder * (ulong)sectorsPerCylinder * (ulong)imagePlugin.GetSectorSize(),
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
-                    part.Start = sdl.partitions[i].start_cylinder * sectorsPerCylinder;
-                    part.Type = SunIdToString((SunTypes)sdl.vtoc.infos[i].id);
-
+                        Start = sdl.partitions[i].start_cylinder * sectorsPerCylinder,
+                        Type = SunIdToString((SunTypes)sdl.vtoc.infos[i].id),
+                        Scheme = Name
+                    };
                     if(part.Start > imagePlugin.GetSectors() || (part.Start + part.Length) > imagePlugin.GetSectors())
                         return false;
 
