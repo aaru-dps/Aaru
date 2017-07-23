@@ -96,7 +96,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.End < 3)
+            if(partition.Length < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code

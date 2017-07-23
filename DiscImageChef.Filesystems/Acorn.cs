@@ -391,6 +391,9 @@ namespace DiscImageChef.Filesystems
             if(bootBlockSize % imagePlugin.ImageInfo.sectorSize > 0)
                 sectorsToRead++;
 
+            if(sbSector + partition.Start + sectorsToRead >= partition.End)
+                return false;
+
             byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
             int bootChk = 0;
             for(int i = 0; i < 0x1FF; i++)

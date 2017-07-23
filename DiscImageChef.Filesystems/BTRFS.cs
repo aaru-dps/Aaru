@@ -130,7 +130,7 @@ namespace DiscImageChef.Filesystems
             ulong sbSectorOff = 0x10000 / imagePlugin.GetSectorSize();
             uint sbSectorSize = 0x1000 / imagePlugin.GetSectorSize();
 
-            if((sbSectorOff + sbSectorSize) >= partition.End)
+            if((sbSectorOff + partition.Start) >= partition.End)
                 return false;
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);

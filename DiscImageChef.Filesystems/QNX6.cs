@@ -123,6 +123,9 @@ namespace DiscImageChef.Filesystems
             uint sectors = QNX6_SuperBlockSize / imagePlugin.GetSectorSize();
             uint bootSectors = QNX6_BootBlocksSize / imagePlugin.GetSectorSize();
 
+            if(partition.Start + bootSectors + sectors >= partition.End)
+                return false;
+
             byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SuperBlockSize)

@@ -59,10 +59,7 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
-                return false;
-
-            if(imagePlugin.ImageInfo.sectors <= 16)
+            if((16 + partition.Start) >= partition.End)
                 return false;
 
             uint magic1, magic2;

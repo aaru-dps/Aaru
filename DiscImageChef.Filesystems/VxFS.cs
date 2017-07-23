@@ -210,10 +210,11 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
-                return false;
-
             ulong vmfsSuperOff = VxFS_Base / imagePlugin.ImageInfo.sectorSize;
+
+            if(partition.Start + vmfsSuperOff >= partition.End)
+                return false;
+            
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);

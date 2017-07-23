@@ -139,6 +139,9 @@ namespace DiscImageChef.Filesystems
             if(Marshal.SizeOf(f2fsSb) % imagePlugin.GetSectorSize() != 0)
                 sbSize++;
 
+            if(partition.Start + sbAddr >= partition.End)
+                return false;
+
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(f2fsSb))
                 return false;

@@ -41,7 +41,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     {
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if(imagePlugin.GetSectors() < 3)
+            if(partition.Length < 3)
                 return false;
 
             // Blocks 0 and 1 are boot code

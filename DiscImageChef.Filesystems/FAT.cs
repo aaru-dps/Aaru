@@ -143,14 +143,17 @@ namespace DiscImageChef.Filesystems
                 return false;
 
             // HPFS
-            uint hpfs_magic1, hpfs_magic2;
+            if(16 + partition.Start <= partition.End)
+            {
+                uint hpfs_magic1, hpfs_magic2;
 
-            byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
-            hpfs_magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
-            hpfs_magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
+                byte[] hpfs_sb_sector = imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
+                hpfs_magic1 = BitConverter.ToUInt32(hpfs_sb_sector, 0x000);
+                hpfs_magic2 = BitConverter.ToUInt32(hpfs_sb_sector, 0x004);
 
-            if(hpfs_magic1 == 0xF995E849 && hpfs_magic2 == 0xFA53E9C5)
-                return false;
+                if(hpfs_magic1 == 0xF995E849 && hpfs_magic2 == 0xFA53E9C5)
+                    return false;
+            }
 
             // FAT32 for sure
             if(bits_in_bps == 1 && correct_spc && fats_no <= 2 && sectors == 0 && fat_sectors == 0 && fat32_signature == 0x29 && fat32_string == "FAT32   ")
@@ -840,7 +843,7 @@ namespace DiscImageChef.Filesystems
                     StringBuilder atariSb = new StringBuilder();
                     atariSb.AppendFormat("cmdload will be loaded with value {0:X4}h", BigEndianBitConverter.ToUInt16(bpb_sector, 0x01E)).AppendLine();
                     atariSb.AppendFormat("Boot program will be loaded at address {0:X4}h", atariBPB.ldaaddr).AppendLine();
-                    atariSb.AppendFormat("FAT and directory will be cahed at address {0:X4}h", atariBPB.fatbuf).AppendLine();
+                    atariSb.AppendFormat("FAT and directory will be cached at address {0:X4}h", atariBPB.fatbuf).AppendLine();
                     if(atariBPB.ldmode == 0)
                     {
                         byte[] tmp = new byte[8];
@@ -1130,8 +1133,12 @@ namespace DiscImageChef.Filesystems
             public ushort sectcnt;
             /// <summary>Address where boot code should be loaded.</summary>
             public ushort ldaaddr;
+            /// <summary>Padding.</summary>
+            public ushort padding;
             /// <summary>Address where FAT and root directory sectors must be loaded.</summary>
             public ushort fatbuf;
+            /// <summary>Unknown.</summary>
+            public ushort unknown;
             /// <summary>Filename to be loaded for booting.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public byte[] fname;

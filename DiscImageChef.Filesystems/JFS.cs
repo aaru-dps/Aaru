@@ -152,6 +152,9 @@ namespace DiscImageChef.Filesystems
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
             uint bootSectors = JFS_BootBlocksSize / imagePlugin.GetSectorSize();
+            if(partition.Start + bootSectors >= partition.End)
+                return false;
+            
             byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512)
                 return false;
