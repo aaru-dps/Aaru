@@ -135,6 +135,14 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FAT plugin", "huge_sectors = {0}", huge_sectors);
             DicConsole.DebugWriteLine("FAT plugin", "fat_id = 0x{0:X2}", fat_id);
 
+            // This is to support FAT partitions on hybrid ISO/USB images
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            {
+                sectors /= 4;
+                big_sectors /= 4;
+                huge_sectors /= 4;
+            }
+
             // exFAT
             if(oem_string == "EXFAT   ")
                 return false;
@@ -307,6 +315,27 @@ namespace DiscImageChef.Filesystems
                 bool correct_spc_dos40 = EBPB.spc == 1 || EBPB.spc == 2 || EBPB.spc == 4 || EBPB.spc == 8 || EBPB.spc == 16 || EBPB.spc == 32 || EBPB.spc == 64;
                 bool correct_spc_fat32_short = shortFat32BPB.spc == 1 || shortFat32BPB.spc == 2 || shortFat32BPB.spc == 4 || shortFat32BPB.spc == 8 || shortFat32BPB.spc == 16 || shortFat32BPB.spc == 32 || shortFat32BPB.spc == 64;
                 bool correct_spc_fat32 = Fat32BPB.spc == 1 || Fat32BPB.spc == 2 || Fat32BPB.spc == 4 || Fat32BPB.spc == 8 || Fat32BPB.spc == 16 || Fat32BPB.spc == 32 || Fat32BPB.spc == 64;
+
+                // This is to support FAT partitions on hybrid ISO/USB images
+                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                {
+                    atariBPB.sectors /= 4;
+                    msxBPB.sectors /= 4;
+                    dos2BPB.sectors /= 4;
+                    dos30BPB.sectors /= 4;
+                    dos32BPB.sectors /= 4;
+                    dos33BPB.sectors /= 4;
+                    dos33BPB.big_sectors /= 4;
+                    shortEBPB.sectors /= 4;
+                    shortEBPB.big_sectors /= 4;
+                    EBPB.sectors /= 4;
+                    EBPB.big_sectors /= 4;
+                    shortFat32BPB.sectors /= 4;
+                    shortFat32BPB.big_sectors /= 4;
+                    shortFat32BPB.huge_sectors /= 4;
+                    Fat32BPB.sectors /= 4;
+                    Fat32BPB.big_sectors /= 4;
+                }
 
                 if(bits_in_bps_fat32 == 1 && correct_spc_fat32 && Fat32BPB.fats_no <= 2 && Fat32BPB.sectors == 0 && Fat32BPB.spfat == 0 && Fat32BPB.signature == 0x29 && Encoding.ASCII.GetString(Fat32BPB.fs_type) == "FAT32   ")
                 {
@@ -586,6 +615,16 @@ namespace DiscImageChef.Filesystems
             else if(useShortFAT32 || useLongFAT32)
             {
                 isFAT32 = true;
+
+                // This is to support FAT partitions on hybrid ISO/USB images
+                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                {
+                    Fat32BPB.bps *= 4;
+                    Fat32BPB.spc /= 4;
+                    Fat32BPB.big_spfat /= 4;
+                    Fat32BPB.hsectors /= 4;
+                    Fat32BPB.sptrk /= 4;
+                }
 
                 if(Fat32BPB.version != 0)
                 {
@@ -870,6 +909,17 @@ namespace DiscImageChef.Filesystems
 
             if(!isFAT32)
             {
+                // This is to support FAT partitions on hybrid ISO/USB images
+                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                {
+                    fakeBPB.bps *= 4;
+                    fakeBPB.spc /= 4;
+                    fakeBPB.spfat /= 4;
+                    fakeBPB.hsectors /= 4;
+                    fakeBPB.sptrk /= 4;
+                    fakeBPB.rsectors /= 4;
+                }
+
                 // This assumes no sane implementation will violate cluster size rules
                 // However nothing prevents this to happen
                 // If first file on disk uses only one cluster there is absolutely no way to differentiate between FAT12 and FAT16,

@@ -55,6 +55,33 @@ namespace DiscImageChef.PartPlugins
             byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
 
+            ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
+            bool misaligned = false;
+
+            DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
+
+            if(signature != GptMagic)
+            {
+                if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+                {
+                    hdrBytes = imagePlugin.ReadSector(sectorOffset);
+                    signature = BitConverter.ToUInt64(hdrBytes, 512);
+                    DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
+                    if(signature == GptMagic)
+                    {
+                        DicConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
+                        byte[] real = new byte[512];
+                        Array.Copy(hdrBytes, 512, real, 0, 512);
+                        hdrBytes = real;
+                        misaligned = true;
+                    }
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            }
+
             try
             {
                 GCHandle handle = GCHandle.Alloc(hdrBytes, GCHandleType.Pinned);
@@ -66,7 +93,6 @@ namespace DiscImageChef.PartPlugins
                 return false;
             }
 
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", hdr.signature);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}", hdr.revision);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}", hdr.headerSize);
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}", hdr.headerCrc);
@@ -87,9 +113,26 @@ namespace DiscImageChef.PartPlugins
             if(hdr.myLBA != 1)
                 return false;
 
+            uint divisor, modulo, sectorSize;
+
+            if(misaligned)
+            {
+                divisor = 4;
+                modulo = (uint)(hdr.entryLBA % divisor);
+                sectorSize = 512;
+            }
+            else
+            {
+                divisor = 1;
+                modulo = 0;
+                sectorSize = imagePlugin.GetSectorSize();
+            }
+
             uint totalEntriesSectors = (hdr.entries * hdr.entriesSize) / imagePlugin.GetSectorSize();
 
-            byte[] entriesBytes = imagePlugin.ReadSectors(hdr.entryLBA, totalEntriesSectors);
+            byte[] temp = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
+            byte[] entriesBytes = new byte[temp.Length - (modulo * 512)];
+            Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
             List<GptEntry> entries = new List<GptEntry>();
 
             for(int i = 0; i < hdr.entries; i++)
@@ -126,18 +169,18 @@ namespace DiscImageChef.PartPlugins
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
                     DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
 
-                    if(entry.startLBA > imagePlugin.GetSectors() || entry.endLBA > imagePlugin.GetSectors())
+                    if((entry.startLBA / divisor) > imagePlugin.GetSectors() || (entry.endLBA / divisor) > imagePlugin.GetSectors())
                         return false;
 
                     CommonTypes.Partition part = new CommonTypes.Partition
                     {
                         Description = string.Format("ID: {0}", entry.partitionId),
-                        Size = (entry.endLBA - entry.startLBA + 1) * imagePlugin.GetSectorSize(),
+                        Size = (entry.endLBA - entry.startLBA + 1) * sectorSize,
                         Name = entry.name,
-                        Length = (entry.endLBA - entry.startLBA + 1),
+                        Length = (entry.endLBA - entry.startLBA + 1) / divisor,
                         Sequence = pseq++,
-                        Offset = entry.startLBA * imagePlugin.GetSectorSize(),
-                        Start = entry.startLBA,
+                        Offset = entry.startLBA * sectorSize,
+                        Start = entry.startLBA / divisor,
                         Type = GetGuidTypeName(entry.partitionType),
                         Scheme = Name
                     };
