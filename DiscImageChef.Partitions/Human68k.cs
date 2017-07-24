@@ -78,6 +78,10 @@ namespace DiscImageChef.PartPlugins
             }
 
             X68kTable table = BigEndianMarshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
+
+            if(table.magic != X68kMagic)
+                return false;
+
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
 
@@ -85,9 +89,6 @@ namespace DiscImageChef.PartPlugins
             DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
             DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
             DicConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
-
-            if(table.magic != X68kMagic)
-                return false;
 
             ulong counter = 0;
 
