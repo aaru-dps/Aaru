@@ -48,11 +48,11 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
-            byte[] sector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(sectorOffset);
             if(sector.Length < 512)
                 return false;
             bool found = false;
@@ -63,7 +63,7 @@ namespace DiscImageChef.PartPlugins
                 found = true;
             else
             {
-                sector = imagePlugin.ReadSector(1);
+                sector = imagePlugin.ReadSector(1 + sectorOffset);
 
                 dl = GetDiskLabel(sector);
 

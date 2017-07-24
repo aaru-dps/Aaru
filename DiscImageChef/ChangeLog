@@ -1,4 +1,11 @@
 * Commands/Ls.cs:
+* Commands/Analyze.cs:
+* Commands/ExtractFiles.cs:
+  Use generic method to search for partitions, supporting partitions
+  inside partitions. At the same time SGI DVH is disabled because it
+  is not working correctly. Fixes #60
+
+* Commands/Ls.cs:
 * Commands/ExtractFiles.cs:
   Adjusted to new API.
 

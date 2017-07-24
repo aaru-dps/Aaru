@@ -533,18 +533,8 @@ namespace DiscImageChef.Core
 
                             UpdateStatus("Checking filesystems on track {0} from sector {1} to {2}", xmlTrk.Sequence.TrackNumber, xmlTrk.StartSector, xmlTrk.EndSector);
 
-                            List<Partition> partitions = new List<Partition>();
-
-                            foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
-                            {
-                                List<Partition> _partitions;
-
-                                if(_partplugin.GetInformation(image, out _partitions))
-                                {
-                                    partitions.AddRange(_partitions);
-                                    Statistics.AddPartition(_partplugin.Name);
-                                }
-                            }
+                            List<Partition> partitions = Partitions.GetAll(image);
+                            Partitions.AddSchemesToStats(partitions);
 
                             xmlTrk.FileSystemInformation = new PartitionType[1];
                             if(partitions.Count > 0)
@@ -855,19 +845,8 @@ namespace DiscImageChef.Core
 
                         UpdateStatus("Checking filesystems...");
 
-                        List<Partition> partitions = new List<Partition>();
-
-                        foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
-                        {
-                            List<Partition> _partitions;
-
-                            if(_partplugin.GetInformation(image, out _partitions))
-                            {
-                                partitions = _partitions;
-                                Statistics.AddPartition(_partplugin.Name);
-                                break;
-                            }
-                        }
+                        List<Partition> partitions = Partitions.GetAll(image);
+                        Partitions.AddSchemesToStats(partitions);
 
                         sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[1];
                         if(partitions.Count > 0)

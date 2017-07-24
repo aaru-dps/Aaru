@@ -109,32 +109,13 @@ namespace DiscImageChef.Commands
                     return;
                 }
 
-                List<CommonTypes.Partition> partitions = new List<CommonTypes.Partition>();
-                string partition_scheme = "";
+                List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                Partitions.AddSchemesToStats(partitions);
 
-                // TODO: Solve possibility of multiple partition schemes (CUE + MBR, MBR + RDB, CUE + APM, etc)
-                foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
-                {
-                    List<CommonTypes.Partition> _partitions;
-                    if(_partplugin.GetInformation(_imageFormat, out _partitions))
-                    {
-                        partition_scheme = _partplugin.Name;
-                        partitions.AddRange(_partitions);
-                        Core.Statistics.AddPartition(_partplugin.Name);
-                    }
-                }
-
-                if(_imageFormat.ImageHasPartitions())
-                {
-                    partition_scheme = _imageFormat.GetImageFormat();
-                    partitions.AddRange(_imageFormat.GetPartitions());
-                }
-
-                if(partition_scheme == "")
+                if(partitions.Count == 0)
                     DicConsole.DebugWriteLine("Ls command", "No partitions found");
                 else
                 {
-                    DicConsole.WriteLine("Partition scheme identified as {0}", partition_scheme);
                     DicConsole.WriteLine("{0} partitions found.", partitions.Count);
 
                     for(int i = 0; i < partitions.Count; i++)

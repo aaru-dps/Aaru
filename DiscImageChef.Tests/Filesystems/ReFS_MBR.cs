@@ -96,8 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
@@ -107,7 +106,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
-                Assert.AreNotEqual(-1, part, "Partition not found");
+                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 throw new NotImplementedException("ReFS is not yet implemented");
                 /*
                 Filesystem fs = new DiscImageChef.Filesystems.ReFS();

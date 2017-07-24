@@ -114,27 +114,10 @@ namespace DiscImageChef.Commands
 
                 if(options.SearchForPartitions)
                 {
-                    List<Partition> partitions = new List<Partition>();
-                    string partition_scheme = "";
+                    List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                    Partitions.AddSchemesToStats(partitions);
 
-                    // TODO: Solve possibility of multiple partition schemes (CUE + MBR, MBR + RDB, CUE + APM, etc)
-                    foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
-                    {
-                        if(_partplugin.GetInformation(_imageFormat, out List<Partition> _partitions))
-                        {
-                            partition_scheme = _partplugin.Name;
-                            partitions.AddRange(_partitions);
-                            Core.Statistics.AddPartition(_partplugin.Name);
-                        }
-                    }
-
-                    if(_imageFormat.ImageHasPartitions())
-                    {
-                        partition_scheme = _imageFormat.GetImageFormat();
-                        partitions.AddRange(_imageFormat.GetPartitions());
-                    }
-
-                    if(partition_scheme == "")
+                    if(partitions.Count == 0)
                     {
                         DicConsole.DebugWriteLine("Analyze command", "No partitions found");
                         if(!options.SearchForFilesystems)
@@ -146,7 +129,6 @@ namespace DiscImageChef.Commands
                     }
                     else
                     {
-                        DicConsole.WriteLine("Partition scheme identified as {0}", partition_scheme);
                         DicConsole.WriteLine("{0} partitions found.", partitions.Count);
 
                         for(int i = 0; i < partitions.Count; i++)
@@ -157,6 +139,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Partition type: {0}", partitions[i].Type);
                             DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitions[i].Start, partitions[i].Offset);
                             DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitions[i].Length, partitions[i].Size);
+                            DicConsole.WriteLine("Partition scheme: {0}", partitions[i].Scheme);
                             DicConsole.WriteLine("Partition description:");
                             DicConsole.WriteLine(partitions[i].Description);
 

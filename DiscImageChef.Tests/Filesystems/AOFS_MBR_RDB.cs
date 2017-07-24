@@ -64,7 +64,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            408240,408240,
+            406224,406224,
         };
 
         readonly int[] clustersize = {
@@ -76,35 +76,33 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            null,null,
+            "A5833C5B","A5833085",
         };
 
         [Test]
         public void Test()
         {
-            throw new NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
-/*            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr_rdb", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new DiscImageChef.Filesystems.AmigaDOSPlugin();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x2C")
+                    if(partitions[j].Type == "\"DOS\\0\"")
                     {
                         part = j;
                         break;
                     }
                 }
-                Assert.AreNotEqual(-1, part, "Partition not found");
+                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
@@ -112,7 +110,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("Amiga OFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-            }*/
+            }
         }
     }
 }

@@ -55,7 +55,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors = {
-            262144,262144,
+            262144,102400,
         };
 
         readonly uint[] sectorsize = {
@@ -82,8 +82,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new DiscImageChef.Filesystems.MinixFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
@@ -94,7 +93,7 @@ namespace DiscImageChef.Tests.Filesystems
                         break;
                     }
                 }
-                Assert.AreNotEqual(-1, part, "Partition not found");
+                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);

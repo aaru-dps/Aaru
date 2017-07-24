@@ -760,17 +760,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(_imageFormat != null)
             {
-                List<Partition> partitions = new List<Partition>();
-
-                foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
-                {
-
-                    if(_partplugin.GetInformation(_imageFormat, out List<Partition> _partitions))
-                    {
-                        partitions.AddRange(_partitions);
-                        Statistics.AddPartition(_partplugin.Name);
-                    }
-                }
+                List<Partition> partitions = Partitions.GetAll(_imageFormat);
+                Partitions.AddSchemesToStats(partitions);
 
                 if(partitions.Count > 0)
                 {

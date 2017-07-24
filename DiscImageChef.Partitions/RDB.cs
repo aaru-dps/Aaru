@@ -889,7 +889,7 @@ namespace DiscImageChef.PartPlugins
             public byte[] loadData;
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
@@ -901,7 +901,10 @@ namespace DiscImageChef.PartPlugins
                 if(imagePlugin.GetSectors() <= RDBBlock)
                     return false;
 
-                byte[] tmpSector = imagePlugin.ReadSector(RDBBlock);
+                if(RDBBlock + sectorOffset >= imagePlugin.GetSectors())
+                    break;
+                
+                byte[] tmpSector = imagePlugin.ReadSector(RDBBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", RDBBlock, magic);
@@ -919,6 +922,8 @@ namespace DiscImageChef.PartPlugins
 
             if(!foundRDB)
                 return false;
+
+            RDBBlock += sectorOffset;
 
             byte[] sector;
             byte[] tmpString;
@@ -1109,9 +1114,9 @@ namespace DiscImageChef.PartPlugins
             nextBlock = RDB.partition_ptr;
             while(nextBlock != 0xFFFFFFFF)
             {
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block", nextBlock);
+                DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block", nextBlock + sectorOffset);
 
-                sector = imagePlugin.ReadSector(nextBlock);
+                sector = imagePlugin.ReadSector(nextBlock + sectorOffset);
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != PartitionBlockMagic)
@@ -1349,7 +1354,7 @@ namespace DiscImageChef.PartPlugins
                     Name = RDBEntry.driveName,
                     Sequence = sequence,
                     Length = (RDBEntry.dosEnvVec.highCylinder + 1 - RDBEntry.dosEnvVec.lowCylinder) * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt,
-                    Start = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt,
+                    Start = RDBEntry.dosEnvVec.lowCylinder * RDBEntry.dosEnvVec.surfaces * RDBEntry.dosEnvVec.bpt + sectorOffset,
                     Type = AmigaDOSTypeToString(RDBEntry.dosEnvVec.dosType),
                     Scheme = Name
                 };

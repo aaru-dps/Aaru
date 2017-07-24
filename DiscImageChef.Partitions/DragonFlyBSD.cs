@@ -48,12 +48,15 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
             uint nSectors = 2048 / imagePlugin.GetSectorSize();
 
-            byte[] sectors = imagePlugin.ReadSectors(0, nSectors);
+            if(sectorOffset + nSectors >= imagePlugin.GetSectors())
+                return false;
+
+            byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048)
                 return false;
 

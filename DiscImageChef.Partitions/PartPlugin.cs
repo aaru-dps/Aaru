@@ -56,6 +56,7 @@ namespace DiscImageChef.PartPlugins
         /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>
-        public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions);
+        /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
+        public abstract bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset);
     }
 }

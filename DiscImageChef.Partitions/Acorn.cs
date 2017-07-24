@@ -56,11 +56,15 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
             ulong sbSector;
+
+            // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
+            if(sectorOffset != 0)
+                return false;
 
             if(imagePlugin.GetSectorSize() > ADFS_SB_POS)
                 sbSector = 0;

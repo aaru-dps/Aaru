@@ -126,8 +126,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Filesystem fs = new FAT();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
                 fs.GetInformation(image, partitions[0], out string information);

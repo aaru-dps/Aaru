@@ -48,11 +48,11 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
 
-            byte[] hdrBytes = imagePlugin.ReadSector(1);
+            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
 
             try

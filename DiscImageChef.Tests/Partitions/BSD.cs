@@ -77,8 +77,7 @@ namespace DiscImageChef.Tests.Partitions
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                PartPlugin parts = new DiscImageChef.PartPlugins.BSD();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
                 for(int j = 0; j < partitions.Count; j++)
                 {

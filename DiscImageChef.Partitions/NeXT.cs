@@ -57,7 +57,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             bool magic_found = false;
             byte[] label_sector;
@@ -74,18 +74,19 @@ namespace DiscImageChef.PartPlugins
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            label_sector = imagePlugin.ReadSector(0); // Starts on sector 0 on NeXT machines, CDs and floppies
-            magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
             ulong label_position = 0;
 
             foreach(ulong i in new ulong[]{0, 4, 15, 16})
             {
-                label_sector = imagePlugin.ReadSector(i);
+                if(i + sectorOffset >= imagePlugin.GetSectors())
+                    break;
+                
+                label_sector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BigEndianBitConverter.ToUInt32(label_sector, 0x00);
                 if(magic == NEXT_MAGIC1 || magic == NEXT_MAGIC2 || magic == NEXT_MAGIC3)
                 {
                     magic_found = true;
-                    label_position = i;
+                    label_position = i + sectorOffset;
                     break;
                 }
             }

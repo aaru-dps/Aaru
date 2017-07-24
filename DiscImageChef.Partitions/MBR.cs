@@ -46,7 +46,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;
 
@@ -65,7 +65,7 @@ namespace DiscImageChef.PartPlugins
                 divider = 4;
             }
 
-            byte[] sector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
             GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
             MasterBootRecord mbr = (MasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MasterBootRecord));
@@ -75,6 +75,8 @@ namespace DiscImageChef.PartPlugins
             NecMasterBootRecord mbr_nec = (NecMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NecMasterBootRecord));
             DiskManagerMasterBootRecord mbr_ontrack = (DiskManagerMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskManagerMasterBootRecord));
             handle.Free();
+
+            DicConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
 
             if(mbr.magic != MBR_Magic)
                 return false; // Not MBR
@@ -152,7 +154,7 @@ namespace DiscImageChef.PartPlugins
                     CommonTypes.Partition part = new CommonTypes.Partition();
                     if(lba_start > 0 && lba_sectors > 0)
                     {
-                        part.Start = entry.lba_start;
+                        part.Start = entry.lba_start + sectorOffset;
                         part.Length = entry.lba_sectors;
                         part.Offset = part.Start * sectorSize;
                         part.Size = part.Length * sectorSize;
@@ -251,7 +253,7 @@ namespace DiscImageChef.PartPlugins
                                 CommonTypes.Partition part = new CommonTypes.Partition();
                                 if(ext_start > 0 && ext_sectors > 0)
                                 {
-                                    part.Start = ext_start;
+                                    part.Start = ext_start + sectorOffset;
                                     part.Length = ext_sectors;
                                     part.Offset = part.Start * sectorSize;
                                     part.Size = part.Length * sectorSize;

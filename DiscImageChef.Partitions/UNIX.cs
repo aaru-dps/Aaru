@@ -49,34 +49,30 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
             uint magic;
-            byte[] unix_dl_sector;
+            byte[] unix_dl_sector = null;
+            bool magic_found = false;
 
-            unix_dl_sector = imagePlugin.ReadSector(0);
-            magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-            if(magic != UNIXDiskLabel_MAGIC)
+            foreach(ulong i in new ulong[] {0, 1, 8, 29})
             {
-                unix_dl_sector = imagePlugin.ReadSector(1);
+                if(i + sectorOffset >= imagePlugin.GetSectors())
+                    break;
+                
+                unix_dl_sector = imagePlugin.ReadSector(i + sectorOffset);
                 magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-                if(magic != UNIXDiskLabel_MAGIC)
+                if(magic == UNIXDiskLabel_MAGIC)
                 {
-                    unix_dl_sector = imagePlugin.ReadSector(8);
-                    magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-
-                    if(magic != UNIXDiskLabel_MAGIC)
-                    {
-                        unix_dl_sector = imagePlugin.ReadSector(29);
-                        magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-
-                        if(magic != UNIXDiskLabel_MAGIC)
-                            return false;
-                    }
+                    magic_found = true;
+                    break;
                 }
             }
+
+            if(!magic_found)
+                return false;
 
             UNIXDiskLabel dl = new UNIXDiskLabel();
             UNIXVTOC vtoc = new UNIXVTOC(); // old/new

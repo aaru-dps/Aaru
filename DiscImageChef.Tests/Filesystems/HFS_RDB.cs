@@ -64,11 +64,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            1020064
+            63752,
         };
 
         readonly int[] clustersize = {
-            512,
+            8192,
         };
 
         readonly string[] volumename = {
@@ -82,8 +82,6 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
-            throw new NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
-            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfs_rdb", testfiles[i]);
@@ -93,28 +91,26 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
-                PartPlugin parts = new AmigaRigidDiskBlock();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
-                Filesystem fs = new DiscImageChef.Filesystems.FAT();
+                List<Partition> partitions = Core.Partitions.GetAll(image);
+                Filesystem fs = new DiscImageChef.Filesystems.AppleHFS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "\"RES\\86\"")
+                    if(partitions[j].Type == "\"RES\\86\"")
                     {
                         part = j;
                         break;
                     }
                 }
-                Assert.AreNotEqual(-1, part, "Partition not found");
+                Assert.AreNotEqual(-1, part, string.Format("Partition not found on {0}", testfiles[i]));
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Amiga FFS", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("HFS", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFSType.SystemIdentifier, testfiles[i]);
-            }*/
+            }
         }
     }
 }

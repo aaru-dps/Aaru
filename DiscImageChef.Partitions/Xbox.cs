@@ -77,9 +77,13 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
+
+            // Xbox partitions always start on 0
+            if(sectorOffset != 0)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(0);
             if(sector.Length < 512)

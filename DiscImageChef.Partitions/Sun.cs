@@ -82,14 +82,14 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
 
             if(imagePlugin.GetSectorSize() < 512)
                 return false;
 
-            byte[] sunSector = imagePlugin.ReadSector(0);
+            byte[] sunSector = imagePlugin.ReadSector(sectorOffset);
             byte[] tmpString;
             SunDiskLabel sdl = new SunDiskLabel
             {

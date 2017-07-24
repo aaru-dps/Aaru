@@ -58,7 +58,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<CommonTypes.Partition>();
 
@@ -67,7 +67,7 @@ namespace DiscImageChef.PartPlugins
 
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
-            byte[] sector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
             AtariTable table = new AtariTable();
             table.boot = new byte[342];

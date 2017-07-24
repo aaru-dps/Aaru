@@ -65,8 +65,8 @@ namespace DiscImageChef.Tests.Partitions
                     Sequence = 2, Start = 345440 },
                 new Partition{ Description = null, Size = 87392256, Name = "UDH3", Type = "\"DOS\\3\"", Offset = 264257536, Length = 170688,
                     Sequence = 3, Start = 516128 },
-                new Partition{ Description = null, Size = 87392256, Name = "UDH4", Type = "\"RES\\86\"", Offset = 351649792, Length = 170688,
-                    Sequence = 4, Start = 686816 },
+                new Partition{ Description = null, Size = 87300096, Name = "FAT16", Type = "0x06", Offset = 351663104, Length = 170508,
+                    Sequence = 4, Start = 686842 },
                 new Partition{ Description = null, Size = 85311488, Name = "UDH5", Type = "\"RES\\86\"", Offset = 439042048, Length = 166624,
                     Sequence = 5, Start = 857504 },
             },
@@ -106,8 +106,7 @@ namespace DiscImageChef.Tests.Partitions
                 filter.Open(location);
                 ImagePlugin image = new VDI();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
-                PartPlugin parts = new DiscImageChef.PartPlugins.AmigaRigidDiskBlock();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions), testfiles[i]);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
                 for(int j = 0; j < partitions.Count; j++)
                 {

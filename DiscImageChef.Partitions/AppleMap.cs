@@ -57,7 +57,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
         }
 
-        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
         {
             uint sector_size;
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.PartPlugins
 
             partitions = new List<CommonTypes.Partition>();
 
-            byte[] ddm_sector = imagePlugin.ReadSector(0);
+            byte[] ddm_sector = imagePlugin.ReadSector(sectorOffset);
             AppleDriverDescriptorMap ddm;
 
             ushort max_drivers = 61;
@@ -132,7 +132,7 @@ namespace DiscImageChef.PartPlugins
                 }
             }
 
-            byte[] part_sector = imagePlugin.ReadSector(1);
+            byte[] part_sector = imagePlugin.ReadSector(1 + sectorOffset);
             AppleOldDevicePartitionMap old_map = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(part_sector);
 
             // This is the easy one, no sector size mixing
@@ -228,7 +228,7 @@ namespace DiscImageChef.PartPlugins
                     return partitions.Count > 0;
             }
 
-            byte[] entries = imagePlugin.ReadSectors(0, sectors_to_read);
+            byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectors_to_read);
             DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entry_size);
             DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entry_count);
             DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skip_ddm);

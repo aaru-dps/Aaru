@@ -50,7 +50,7 @@ namespace DiscImageChef.PartPlugins
             PluginUUID = new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         }
 
-        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions)
+        public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
 
@@ -59,18 +59,21 @@ namespace DiscImageChef.PartPlugins
 
             DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.GetSectorSize());
 
+            if(sectorOffset + 4 >= imagePlugin.GetSectors())
+                return false;
+
             switch(imagePlugin.GetSectorSize())
             {
                 case 256:
-                    sector = imagePlugin.ReadSector(4);
+                    sector = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 1;
                     break;
                 case 512:
-                    sector = imagePlugin.ReadSector(4);
+                    sector = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 2;
                     break;
                 case 1024:
-                    sector = imagePlugin.ReadSector(2);
+                    sector = imagePlugin.ReadSector(2 + sectorOffset);
                     sectsPerUnit = 1;
                     break;
                 default:
@@ -79,13 +82,14 @@ namespace DiscImageChef.PartPlugins
 
             X68kTable table = BigEndianMarshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
 
+            DicConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
+
             if(table.magic != X68kMagic)
                 return false;
 
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
 
-            DicConsole.DebugWriteLine("Human68k plugin", "table.signature = {0:X4}", table.magic);
             DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
             DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
             DicConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
