@@ -32,14 +32,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using DiscImageChef.Console;
 
-// TODO: Support AAP, AST, SpeedStor and Ontrack extensions
+// TODO: Support AAP extensions
 namespace DiscImageChef.PartPlugins
 {
     public class MBR : PartPlugin
     {
-        const ushort MBRSignature = 0xAA55;
-
         public MBR()
         {
             Name = "Master Boot Record";
@@ -48,8 +48,6 @@ namespace DiscImageChef.PartPlugins
 
         public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<CommonTypes.Partition> partitions)
         {
-            byte cyl_sect1, cyl_sect2; // For decoding cylinder and sector
-            ushort signature;
             ulong counter = 0;
 
             partitions = new List<CommonTypes.Partition>();
@@ -57,317 +55,115 @@ namespace DiscImageChef.PartPlugins
             if(imagePlugin.GetSectorSize() < 512)
                 return false;
 
+            uint sectorSize = imagePlugin.GetSectorSize();
+            // Divider of sector size in MBR between real sector size
+            ulong divider = 1;
+
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            {
+                sectorSize = 512;
+                divider = 4;
+            }
+
             byte[] sector = imagePlugin.ReadSector(0);
 
-            signature = BitConverter.ToUInt16(sector, 0x1FE);
+            GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
+            MasterBootRecord mbr = (MasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MasterBootRecord));
+            TimedMasterBootRecord mbr_time = (TimedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TimedMasterBootRecord));
+            SerializedMasterBootRecord mbr_serial = (SerializedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SerializedMasterBootRecord));
+            ModernMasterBootRecord mbr_modern = (ModernMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ModernMasterBootRecord));
+            NecMasterBootRecord mbr_nec = (NecMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NecMasterBootRecord));
+            DiskManagerMasterBootRecord mbr_ontrack = (DiskManagerMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskManagerMasterBootRecord));
+            handle.Free();
 
-            if(signature != MBRSignature)
+            if(mbr.magic != MBR_Magic)
                 return false; // Not MBR
 
-            for(int i = 0; i < 4; i++)
+            MBRPartitionEntry[] entries;
+
+            if(mbr_ontrack.dm_magic == DM_Magic)
+                entries = mbr_ontrack.entries;
+            else if(mbr_nec.nec_magic == NEC_Magic)
+                entries = mbr_nec.entries;
+            else
+                entries = mbr.entries;
+
+            foreach(MBRPartitionEntry entry in entries)
             {
-                MBRPartitionEntry entry = new MBRPartitionEntry();
-
-                entry.status = sector[0x1BE + 16 * i + 0x00];
-                entry.start_head = sector[0x1BE + 16 * i + 0x01];
-
-                cyl_sect1 = sector[0x1BE + 16 * i + 0x02];
-                cyl_sect2 = sector[0x1BE + 16 * i + 0x03];
-
-                entry.start_sector = (byte)(cyl_sect1 & 0x3F);
-                entry.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-
-                entry.type = sector[0x1BE + 16 * i + 0x04];
-                entry.end_head = sector[0x1BE + 16 * i + 0x05];
-
-                cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
-                cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
-
-                entry.end_sector = (byte)(cyl_sect1 & 0x3F);
-                entry.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-
-                entry.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
-                entry.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
+                byte start_sector = (byte)(entry.start_sector & 0x3F);
+                ushort start_cylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
+                byte end_sector = (byte)(entry.end_sector & 0x3F);
+                ushort end_cylinder = (ushort)(((entry.end_sector & 0xC0) << 2) | entry.end_cylinder);
+                ulong lba_start = entry.lba_start;
+                ulong lba_sectors = entry.lba_sectors;
 
                 // Let's start the fun...
 
                 bool valid = true;
                 bool extended = false;
-                bool disklabel = false;
+                //bool disklabel = false;
 
                 if(entry.status != 0x00 && entry.status != 0x80)
                     return false; // Maybe a FAT filesystem
                 valid &= entry.type != 0x00;
                 if(entry.type == 0xEE || entry.type == 0xEF)
                     return false; // This is a GPT
-                if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x85)
+                if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x15 || entry.type == 0x1F || entry.type == 0x85 ||
+                  entry.type == 0x91 || entry.type == 0x9B || entry.type == 0xC5 || entry.type == 0xCF || entry.type == 0xD5)
                 {
                     valid = false;
                     extended = true; // Extended partition
-                }
-                if(entry.type == 0x82 || entry.type == 0xBF || entry.type == 0xA5 || entry.type == 0xA6 || entry.type == 0xA9 ||
-                    entry.type == 0xB7 || entry.type == 0x81 || entry.type == 0x63)
-                {
-                    valid = false;
-                    disklabel = true;
                 }
 
                 valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
-                    entry.lba_start = CHStoLBA(entry.start_cylinder, entry.start_head, entry.start_sector);
-                    entry.lba_sectors = CHStoLBA(entry.end_cylinder, entry.end_head, entry.end_sector) - entry.lba_start;
+                    lba_start = CHStoLBA(start_cylinder, entry.start_head, start_sector);
+                    lba_sectors = CHStoLBA(end_cylinder, entry.end_head, entry.end_sector) - lba_start;
                 }
 
-                if(entry.lba_start > imagePlugin.GetSectors() || entry.lba_start + entry.lba_sectors > imagePlugin.GetSectors())
+                // For optical media
+                lba_start /= divider;
+                lba_sectors /= divider;
+
+                if(lba_start > imagePlugin.GetSectors())
                 {
                     valid = false;
-                    disklabel = false;
                     extended = false;
                 }
 
-                if(disklabel)
-                {
-                    byte[] disklabel_sector = imagePlugin.ReadSector(entry.lba_start);
+                // Some buggy implementations do some rounding errors getting a few sectors beyond device size
+                if(lba_start + lba_sectors > imagePlugin.GetSectors())
+                    lba_sectors = imagePlugin.GetSectors() - lba_start;
 
-                    switch(entry.type)
-                    {
-                        case 0xA5:
-                        case 0xA6:
-                        case 0xA9:
-                        case 0xB7: // BSD disklabels
-                            {
-                                BSD.DiskLabel bsdDisklabel = BSD.GetDiskLabel(disklabel_sector);
-
-                                if(bsdDisklabel.d_magic == BSD.DISKMAGIC && bsdDisklabel.d_magic2 == BSD.DISKMAGIC)
-                                {
-                                    // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                    foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
-                                    {
-
-                                        CommonTypes.Partition part = new CommonTypes.Partition
-                                        {
-                                            Length = bsdPartition.p_size,
-                                            Start = bsdPartition.p_offset,
-                                            Size = bsdPartition.p_size * bsdDisklabel.d_secsize,
-                                            Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize,
-
-                                            Type = string.Format("BSD: {0}", bsdPartition.p_fstype),
-                                            Name = BSD.fsTypeToString(bsdPartition.p_fstype),
-
-                                            Sequence = counter,
-                                            Description = "Partition inside a BSD disklabel.",
-                                            Scheme = Name
-                                        };
-                                        if(bsdPartition.p_fstype != BSD.fsType.Unused)
-                                        {
-                                            partitions.Add(part);
-                                            counter++;
-                                        }
-                                    }
-                                }
-                                else
-                                    valid = true;
-                                break;
-                            }
-                        case 0x63: // UNIX disklabel
-                            {
-                                uint magic;
-                                byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
-                                magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-
-                                if(magic == UNIX.UNIXDiskLabel_MAGIC)
-                                {
-                                    UNIX.UNIXDiskLabel dl = new UNIX.UNIXDiskLabel();
-                                    UNIX.UNIXVTOC vtoc = new UNIX.UNIXVTOC(); // old/new
-                                    bool isNewDL = false;
-                                    int vtocoffset = 0;
-
-                                    vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                    if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
-                                    {
-                                        isNewDL = true;
-                                        vtocoffset = 72;
-                                    }
-                                    else
-                                    {
-                                        vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                        if(vtoc.magic != UNIX.UNIXDiskLabel_MAGIC)
-                                        {
-                                            valid = true;
-                                            break;
-                                        }
-                                    }
-
-                                    dl.version = BitConverter.ToUInt32(unix_dl_sector, 8); // 8
-                                    byte[] dl_serial = new byte[12];
-                                    Array.Copy(unix_dl_sector, 12, dl_serial, 0, 12);
-                                    dl.serial = StringHandlers.CToString(dl_serial); // 12
-                                    dl.cyls = BitConverter.ToUInt32(unix_dl_sector, 24); // 24
-                                    dl.trks = BitConverter.ToUInt32(unix_dl_sector, 28); // 28
-                                    dl.secs = BitConverter.ToUInt32(unix_dl_sector, 32); // 32
-                                    dl.bps = BitConverter.ToUInt32(unix_dl_sector, 36); // 36
-                                    dl.start = BitConverter.ToUInt32(unix_dl_sector, 40); // 40
-                                    //dl.unknown1 = br.ReadBytes(48); // 44
-                                    dl.alt_tbl = BitConverter.ToUInt32(unix_dl_sector, 92); // 92
-                                    dl.alt_len = BitConverter.ToUInt32(unix_dl_sector, 96); // 96
-
-                                    if(isNewDL) // Old version VTOC starts here
-                                    {
-                                        dl.phys_cyl = BitConverter.ToUInt32(unix_dl_sector, 100); // 100
-                                        dl.phys_trk = BitConverter.ToUInt32(unix_dl_sector, 104); // 104
-                                        dl.phys_sec = BitConverter.ToUInt32(unix_dl_sector, 108); // 108
-                                        dl.phys_bytes = BitConverter.ToUInt32(unix_dl_sector, 112); // 112
-                                        dl.unknown2 = BitConverter.ToUInt32(unix_dl_sector, 116); // 116
-                                        dl.unknown3 = BitConverter.ToUInt32(unix_dl_sector, 120); // 120
-                                        //dl.pad = br.ReadBytes(48); // 124
-                                    }
-
-                                    if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
-                                    {
-                                        vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
-                                        byte[] vtoc_name = new byte[8];
-                                        Array.Copy(unix_dl_sector, 108 + vtocoffset, vtoc_name, 0, 8);
-                                        vtoc.name = StringHandlers.CToString(vtoc_name); // 108/180
-                                        vtoc.slices = BitConverter.ToUInt16(unix_dl_sector, 116 + vtocoffset); // 116/188
-                                        vtoc.unknown = BitConverter.ToUInt16(unix_dl_sector, 118 + vtocoffset); // 118/190
-                                                                                                                //vtoc.reserved = br.ReadBytes(40); // 120/192
-
-                                        // TODO: What if number of slices overlaps sector (>23)?
-                                        for(int j = 0; j < vtoc.slices; j++)
-                                        {
-                                            UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry
-                                            {
-                                                tag = (UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0), // 160/232 + j*12
-                                                flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2), // 162/234 + j*12
-                                                start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6), // 166/238 + j*12
-                                                length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10) // 170/242 + j*12
-                                            };
-                                            if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
-                                            {
-                                                CommonTypes.Partition part = new CommonTypes.Partition
-                                                {
-                                                    // TODO: Check if device bps == disklabel bps
-                                                    Start = vtoc_ent.start,
-                                                    Length = vtoc_ent.length,
-                                                    Offset = vtoc_ent.start * dl.bps,
-                                                    Size = vtoc_ent.length * dl.bps,
-                                                    Sequence = counter,
-                                                    Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL)),
-                                                    Scheme = Name
-                                                };
-                                                string info = "";
-
-                                                if((vtoc_ent.flags & 0x01) == 0x01)
-                                                    info += " (do not mount)";
-                                                if((vtoc_ent.flags & 0x10) == 0x10)
-                                                    info += " (do not mount)";
-
-                                                part.Description = "UNIX slice" + info + ".";
-
-                                                partitions.Add(part);
-                                                counter++;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                    valid = true;
-                                break;
-                            }
-                        case 0x82:
-                        case 0xBF: // Solaris disklabel
-                            {
-                                uint magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
-                                uint version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
-
-                                if(magic == 0x600DDEEE && version == 1)
-                                {
-                                    for(int j = 0; j < 16; j++)
-                                    {
-                                        CommonTypes.Partition part = new CommonTypes.Partition
-                                        {
-                                            Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4),
-                                            Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8),
-                                            Description = "Solaris slice.",
-                                            Scheme = Name,
-                                            Sequence = counter
-                                        };
-                                        part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
-                                        part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
-
-                                        if(part.Size > 0)
-                                        {
-                                            partitions.Add(part);
-                                            counter++;
-                                        }
-                                    }
-                                }
-                                else
-                                    valid = true;
-                                break;
-                            }
-                        case 0x81: // Minix subpartitions
-                            {
-                                bool minix_subs = false;
-                                byte type;
-
-                                for(int j = 0; j < 4; j++)
-                                {
-                                    type = disklabel_sector[0x1BE + j * 16 + 4];
-
-                                    if(type == 0x81)
-                                    {
-                                        minix_subs = true;
-                                        CommonTypes.Partition part = new CommonTypes.Partition
-                                        {
-                                            Description = "Minix subpartition",
-                                            Type = "Minix",
-                                            Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8),
-                                            Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12),
-                                            Sequence = counter,
-                                            Scheme = Name
-                                        };
-                                        part.Offset = part.Start * imagePlugin.GetSectorSize();
-                                        part.Size = part.Length * imagePlugin.GetSectorSize();
-                                        partitions.Add(part);
-                                        counter++;
-                                    }
-                                }
-                                valid |= !minix_subs;
-
-                                break;
-                            }
-                        default:
-                            valid = true;
-                            break;
-                    }
-                }
+                DicConsole.DebugWriteLine("MBR plugin", "entry.status {0}", entry.status);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.type {0}", entry.type);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.lba_start {0}", entry.lba_start);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.lba_sectors {0}", entry.lba_sectors);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.start_cylinder {0}", start_cylinder);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.start_head {0}", entry.start_head);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.start_sector {0}", start_sector);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.end_cylinder {0}", end_cylinder);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.end_head {0}", entry.end_head);
+                DicConsole.DebugWriteLine("MBR plugin", "entry.end_sector {0}", end_sector);
 
                 if(valid)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
-                    if(entry.lba_start > 0 && entry.lba_sectors > 0)
+                    if(lba_start > 0 && lba_sectors > 0)
                     {
                         part.Start = entry.lba_start;
                         part.Length = entry.lba_sectors;
-                        part.Offset = part.Start * imagePlugin.GetSectorSize();
-                        part.Size = part.Length * imagePlugin.GetSectorSize();
+                        part.Offset = part.Start * sectorSize;
+                        part.Size = part.Length * sectorSize;
                     }
-                    /*					else if(entry.start_head < 255 && entry.end_head < 255 &&
-                                                entry.start_sector > 0 && entry.start_sector < 64 &&
-                                                entry.end_sector > 0 && entry.end_sector < 64 &&
-                                                entry.start_cylinder < 1024 && entry.end_cylinder < 1024)
-                                        {
-
-                                        } */ // As we don't know the maxium cyl, head or sect of the device we need LBA
                     else
                         valid = false;
 
                     if(valid)
                     {
                         part.Type = string.Format("0x{0:X2}", entry.type);
-                        part.Name = decodeMBRType(entry.type);
+                        part.Name = DecodeMBRType(entry.type);
                         part.Sequence = counter;
                         part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
                         part.Scheme = Name;
@@ -378,319 +174,109 @@ namespace DiscImageChef.PartPlugins
                     }
                 }
 
+                DicConsole.DebugWriteLine("MBR plugin", "entry.extended = {0}", extended);
+
                 if(extended) // Let's extend the fun
                 {
-                    bool ext_valid = true;
-                    bool ext_disklabel = false;
                     bool processing_extended = true;
-
-                    sector = imagePlugin.ReadSector(entry.lba_start);
+                    ulong chain_start = lba_start;
 
                     while(processing_extended)
                     {
-                        for(int l = 0; l < 2; l++)
+                        sector = imagePlugin.ReadSector(lba_start);
+
+                        handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
+                        ExtendedBootRecord ebr = (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
+                        handle.Free();
+
+                        DicConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_Magic);
+
+                        if(ebr.magic != MBR_Magic)
+                            break;
+
+                        ulong next_start = 0;
+
+                        foreach(MBRPartitionEntry ebr_entry in ebr.entries)
                         {
-                            bool ext_extended = false;
+                            bool ext_valid = true;
+                            start_sector = (byte)(ebr_entry.start_sector & 0x3F);
+                            start_cylinder = (ushort)(((ebr_entry.start_sector & 0xC0) << 2) | ebr_entry.start_cylinder);
+                            end_sector = (byte)(ebr_entry.end_sector & 0x3F);
+                            end_cylinder = (ushort)(((ebr_entry.end_sector & 0xC0) << 2) | ebr_entry.end_cylinder);
+                            ulong ext_start = ebr_entry.lba_start;
+                            ulong ext_sectors = ebr_entry.lba_sectors;
 
-                            MBRPartitionEntry entry2 = new MBRPartitionEntry();
-
-                            entry2.status = sector[0x1BE + 16 * i + 0x00];
-                            entry2.start_head = sector[0x1BE + 16 * i + 0x01];
-
-                            cyl_sect1 = sector[0x1BE + 16 * i + 0x02];
-                            cyl_sect2 = sector[0x1BE + 16 * i + 0x03];
-
-                            entry2.start_sector = (byte)(cyl_sect1 & 0x3F);
-                            entry2.start_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-
-                            entry2.type = sector[0x1BE + 16 * i + 0x04];
-                            entry2.end_head = sector[0x1BE + 16 * i + 0x05];
-
-                            cyl_sect1 = sector[0x1BE + 16 * i + 0x06];
-                            cyl_sect2 = sector[0x1BE + 16 * i + 0x07];
-
-                            entry2.end_sector = (byte)(cyl_sect1 & 0x3F);
-                            entry2.end_cylinder = (ushort)(((cyl_sect1 & 0xC0) << 2) | cyl_sect2);
-
-                            entry2.lba_start = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x08);
-                            entry2.lba_sectors = BitConverter.ToUInt32(sector, 0x1BE + 16 * i + 0x0C);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}", ebr_entry.status);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}", ebr_entry.type);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_start {0}", ebr_entry.lba_start);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_sectors {0}", ebr_entry.lba_sectors);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_cylinder {0}", start_cylinder);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_head {0}", ebr_entry.start_head);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_sector {0}", start_sector);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_cylinder {0}", end_cylinder);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_head {0}", ebr_entry.end_head);
+                            DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_sector {0}", end_sector);
 
                             // Let's start the fun...
+                            ext_valid &= ebr_entry.status == 0x00 || ebr_entry.status == 0x80;
+                            ext_valid &= ebr_entry.type != 0x00;
+                            ext_valid &= ebr_entry.lba_start != 0 || ebr_entry.lba_sectors != 0 || ebr_entry.start_cylinder != 0 || ebr_entry.start_head != 0 ||
+                                            ebr_entry.start_sector != 0 || ebr_entry.end_cylinder != 0 || ebr_entry.end_head != 0 || ebr_entry.end_sector != 0;
+                            if(ebr_entry.lba_start == 0 && ebr_entry.lba_sectors == 0 && ext_valid)
+                            {
+                                ext_start = CHStoLBA(start_cylinder, ebr_entry.start_head, start_sector);
+                                ext_sectors = CHStoLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector) - ext_start;
+                            }
 
-                            ext_valid &= entry2.status == 0x00 || entry2.status == 0x80;
-                            valid &= entry2.type != 0x00;
-                            if(entry2.type == 0x82 || entry2.type == 0xBF || entry2.type == 0xA5 || entry2.type == 0xA6 ||
-                                entry2.type == 0xA9 || entry2.type == 0xB7 || entry2.type == 0x81 || entry2.type == 0x63)
+                            // For optical media
+                            lba_start /= divider;
+                            lba_sectors /= divider;
+
+                            if(ebr_entry.type == 0x05 || ebr_entry.type == 0x0F || ebr_entry.type == 0x15 || ebr_entry.type == 0x1F || ebr_entry.type == 0x85 ||
+                                ebr_entry.type == 0x91 || ebr_entry.type == 0x9B || ebr_entry.type == 0xC5 || ebr_entry.type == 0xCF || ebr_entry.type == 0xD5)
                             {
                                 ext_valid = false;
-                                ext_disklabel = true;
+                                next_start = chain_start + ext_start;
                             }
-                            if(entry2.type == 0x05 || entry2.type == 0x0F || entry2.type == 0x85)
-                            {
-                                ext_valid = false;
-                                ext_disklabel = false;
-                                ext_extended = true; // Extended partition
-                            }
-                            else
-                                processing_extended &= l != 1;
 
-                            if(ext_disklabel)
-                            {
-                                byte[] disklabel_sector = imagePlugin.ReadSector(entry2.lba_start);
+                            ext_start += lba_start;
+                            ext_valid &= ext_start <= imagePlugin.GetSectors();
 
-                                switch(entry2.type)
-                                {
-                                    case 0xA5:
-                                    case 0xA6:
-                                    case 0xA9:
-                                    case 0xB7: // BSD disklabels
-                                        {
-                                            BSD.DiskLabel bsdDisklabel = BSD.GetDiskLabel(disklabel_sector);
-
-                                            if(bsdDisklabel.d_magic == BSD.DISKMAGIC && bsdDisklabel.d_magic2 == BSD.DISKMAGIC)
-                                            {
-                                                // TODO: Handle disklabels bigger than 1 sector or search max no_parts
-                                                foreach(BSD.BSDPartition bsdPartition in bsdDisklabel.d_partitions)
-                                                {
-
-                                                    CommonTypes.Partition part = new CommonTypes.Partition
-                                                    {
-                                                        Length = bsdPartition.p_size,
-                                                        Start = bsdPartition.p_offset,
-                                                        Size = bsdPartition.p_size * bsdDisklabel.d_secsize,
-                                                        Offset = bsdPartition.p_offset * bsdDisklabel.d_secsize,
-                                                        Type = string.Format("BSD: {0}", bsdPartition.p_fstype),
-                                                        Name = BSD.fsTypeToString(bsdPartition.p_fstype),
-                                                        Sequence = counter,
-                                                        Description = "Partition inside a BSD disklabel.",
-                                                        Scheme = Name
-                                                    };
-
-                                                    if(bsdPartition.p_fstype != BSD.fsType.Unused)
-                                                    {
-                                                        partitions.Add(part);
-                                                        counter++;
-                                                    }
-                                                }
-                                            }
-                                            else
-                                                ext_valid = true;
-                                            break;
-                                        }
-                                    case 0x63: // UNIX disklabel
-                                        {
-                                            uint magic;
-                                            byte[] unix_dl_sector = imagePlugin.ReadSector(entry.lba_start + 29); // UNIX disklabel starts on sector 29 of partition
-                                            magic = BitConverter.ToUInt32(unix_dl_sector, 4);
-
-                                            if(magic == UNIX.UNIXDiskLabel_MAGIC)
-                                            {
-                                                UNIX.UNIXDiskLabel dl = new UNIX.UNIXDiskLabel();
-                                                UNIX.UNIXVTOC vtoc = new UNIX.UNIXVTOC(); // old/new
-                                                bool isNewDL = false;
-                                                int vtocoffset = 0;
-
-                                                vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
-                                                {
-                                                    isNewDL = true;
-                                                    vtocoffset = 72;
-                                                }
-                                                else
-                                                {
-                                                    vtoc.magic = BitConverter.ToUInt32(unix_dl_sector, 172);
-                                                    if(vtoc.magic != UNIX.UNIXDiskLabel_MAGIC)
-                                                    {
-                                                        valid = true;
-                                                        break;
-                                                    }
-                                                }
-
-                                                dl.version = BitConverter.ToUInt32(unix_dl_sector, 8); // 8
-                                                byte[] dl_serial = new byte[12];
-                                                Array.Copy(unix_dl_sector, 12, dl_serial, 0, 12);
-                                                dl.serial = StringHandlers.CToString(dl_serial); // 12
-                                                dl.cyls = BitConverter.ToUInt32(unix_dl_sector, 24); // 24
-                                                dl.trks = BitConverter.ToUInt32(unix_dl_sector, 28); // 28
-                                                dl.secs = BitConverter.ToUInt32(unix_dl_sector, 32); // 32
-                                                dl.bps = BitConverter.ToUInt32(unix_dl_sector, 36); // 36
-                                                dl.start = BitConverter.ToUInt32(unix_dl_sector, 40); // 40
-                                                //dl.unknown1 = br.ReadBytes(48); // 44
-                                                dl.alt_tbl = BitConverter.ToUInt32(unix_dl_sector, 92); // 92
-                                                dl.alt_len = BitConverter.ToUInt32(unix_dl_sector, 96); // 96
-
-                                                if(isNewDL) // Old version VTOC starts here
-                                                {
-                                                    dl.phys_cyl = BitConverter.ToUInt32(unix_dl_sector, 100); // 100
-                                                    dl.phys_trk = BitConverter.ToUInt32(unix_dl_sector, 104); // 104
-                                                    dl.phys_sec = BitConverter.ToUInt32(unix_dl_sector, 108); // 108
-                                                    dl.phys_bytes = BitConverter.ToUInt32(unix_dl_sector, 112); // 112
-                                                    dl.unknown2 = BitConverter.ToUInt32(unix_dl_sector, 116); // 116
-                                                    dl.unknown3 = BitConverter.ToUInt32(unix_dl_sector, 120); // 120
-                                                    //dl.pad = br.ReadBytes(48); // 124
-                                                }
-
-                                                if(vtoc.magic == UNIX.UNIXVTOC_MAGIC)
-                                                {
-                                                    vtoc.version = BitConverter.ToUInt32(unix_dl_sector, 104 + vtocoffset); // 104/176
-                                                    byte[] vtoc_name = new byte[8];
-                                                    Array.Copy(unix_dl_sector, 108 + vtocoffset, vtoc_name, 0, 8);
-                                                    vtoc.name = StringHandlers.CToString(vtoc_name); // 108/180
-                                                    vtoc.slices = BitConverter.ToUInt16(unix_dl_sector, 116 + vtocoffset); // 116/188
-                                                    vtoc.unknown = BitConverter.ToUInt16(unix_dl_sector, 118 + vtocoffset); // 118/190
-                                                    //vtoc.reserved = br.ReadBytes(40); // 120/192
-
-                                                    // TODO: What if number of slices overlaps sector (>23)?
-                                                    for(int j = 0; j < vtoc.slices; j++)
-                                                    {
-                                                        UNIX.UNIXVTOCEntry vtoc_ent = new UNIX.UNIXVTOCEntry
-                                                        {
-                                                            tag = (UNIX.UNIX_TAG)BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 0), // 160/232 + j*12
-                                                            flags = BitConverter.ToUInt16(unix_dl_sector, 160 + vtocoffset + j * 12 + 2), // 162/234 + j*12
-                                                            start = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 6), // 166/238 + j*12
-                                                            length = BitConverter.ToUInt32(unix_dl_sector, 160 + vtocoffset + j * 12 + 10) // 170/242 + j*12
-                                                        };
-                                                        if((vtoc_ent.flags & 0x200) == 0x200 && vtoc_ent.tag != UNIX.UNIX_TAG.EMPTY && vtoc_ent.tag != UNIX.UNIX_TAG.WHOLE)
-                                                        {
-                                                            CommonTypes.Partition part = new CommonTypes.Partition
-                                                            {
-                                                                // TODO: Check if device bps == disklabel bps
-                                                                Start = vtoc_ent.start,
-                                                                Length = vtoc_ent.length,
-                                                                Offset = vtoc_ent.start * dl.bps,
-                                                                Size = vtoc_ent.length * dl.bps,
-                                                                Sequence = counter,
-                                                                Type = string.Format("UNIX: {0}", UNIX.decodeUNIXTAG(vtoc_ent.tag, isNewDL)),
-                                                                Scheme = Name
-                                                            };
-                                                            string info = "";
-
-                                                            if((vtoc_ent.flags & 0x01) == 0x01)
-                                                                info += " (do not mount)";
-                                                            if((vtoc_ent.flags & 0x10) == 0x10)
-                                                                info += " (do not mount)";
-
-                                                            part.Description = "UNIX slice" + info + ".";
-
-                                                            partitions.Add(part);
-                                                            counter++;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else
-                                                ext_valid = true;
-                                            break;
-                                        }
-                                    case 0x82:
-                                    case 0xBF: // Solaris disklabel
-                                        {
-                                            uint magic = BitConverter.ToUInt32(disklabel_sector, 12); // 12
-                                            uint version = BitConverter.ToUInt32(disklabel_sector, 16); // 16
-
-                                            if(magic == 0x600DDEEE && version == 1)
-                                            {
-                                                for(int j = 0; j < 16; j++)
-                                                {
-                                                    CommonTypes.Partition part = new CommonTypes.Partition
-                                                    {
-                                                        Start = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 4),
-                                                        Length = BitConverter.ToUInt32(disklabel_sector, 68 + j * 12 + 8),
-                                                        Description = "Solaris slice.",
-                                                        Scheme = Name,
-                                                        Sequence = counter
-                                                    };
-                                                    part.Offset = part.Start * imagePlugin.GetSectorSize(); // 68+4+j*12
-                                                    part.Size = part.Length * imagePlugin.GetSectorSize(); // 68+8+j*12
-
-                                                    if(part.Size > 0)
-                                                    {
-                                                        partitions.Add(part);
-                                                        counter++;
-                                                    }
-                                                }
-                                            }
-                                            else
-                                                ext_valid = true;
-                                            break;
-                                        }
-                                    case 0x81: // Minix subpartitions
-                                        {
-                                            bool minix_subs = false;
-                                            byte type;
-
-                                            for(int j = 0; j < 4; j++)
-                                            {
-                                                type = disklabel_sector[0x1BE + j * 16 + 4];
-
-                                                if(type == 0x81)
-                                                {
-                                                    CommonTypes.Partition part = new CommonTypes.Partition
-                                                    {
-                                                        Description = "Minix subpartition",
-                                                        Type = "Minix",
-                                                        Start = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 8),
-                                                        Length = BitConverter.ToUInt32(disklabel_sector, 0x1BE + j * 16 + 12),
-                                                        Sequence = counter,
-                                                        Scheme = Name
-                                                    };
-                                                    minix_subs = true;
-                                                    part.Offset = part.Start * imagePlugin.GetSectorSize();
-                                                    part.Size = part.Length * imagePlugin.GetSectorSize();
-                                                    partitions.Add(part);
-                                                    counter++;
-                                                }
-                                            }
-                                            ext_valid |= !minix_subs;
-
-                                            break;
-                                        }
-                                    default:
-                                        ext_valid = true;
-                                        break;
-                                }
-
-                            }
+                            // Some buggy implementations do some rounding errors getting a few sectors beyond device size
+                            if(ext_start + ext_sectors > imagePlugin.GetSectors())
+                                ext_sectors = imagePlugin.GetSectors() - ext_start;
 
                             if(ext_valid)
                             {
                                 CommonTypes.Partition part = new CommonTypes.Partition();
-                                if(entry2.lba_start > 0 && entry2.lba_sectors > 0)
+                                if(ext_start > 0 && ext_sectors > 0)
                                 {
-                                    part.Start = entry2.lba_start;
-                                    part.Length = entry2.lba_sectors;
-                                    part.Offset = part.Start * imagePlugin.GetSectorSize();
-                                    part.Size = part.Length * imagePlugin.GetSectorSize();
+                                    part.Start = ext_start;
+                                    part.Length = ext_sectors;
+                                    part.Offset = part.Start * sectorSize;
+                                    part.Size = part.Length * sectorSize;
                                 }
-                                /*					else if(entry2.start_head < 255 && entry2.end_head < 255 &&
-                                                            entry2.start_sector > 0 && entry2.start_sector < 64 &&
-                                                            entry2.end_sector > 0 && entry2.end_sector < 64 &&
-                                                            entry2.start_cylinder < 1024 && entry2.end_cylinder < 1024)
-                                                    {
-
-                                                    } */ // As we don't know the maxium cyl, head or sect of the device we need LBA
                                 else
                                     ext_valid = false;
 
                                 if(ext_valid)
                                 {
-                                    part.Type = string.Format("0x{0:X2}", entry2.type);
-                                    part.Name = decodeMBRType(entry2.type);
+                                    part.Type = string.Format("0x{0:X2}", ebr_entry.type);
+                                    part.Name = DecodeMBRType(ebr_entry.type);
                                     part.Sequence = counter;
-                                    part.Description = entry2.status == 0x80 ? "Partition is bootable." : "";
+                                    part.Description = ebr_entry.status == 0x80 ? "Partition is bootable." : "";
                                     part.Scheme = Name;
-
                                     counter++;
 
                                     partitions.Add(part);
                                 }
                             }
-
-                            if(ext_extended)
-                            {
-                                break;
-                            }
                         }
+
+                        DicConsole.DebugWriteLine("MBR plugin", "next_start {0}", next_start);
+                        processing_extended &= next_start != 0;
+                        processing_extended &= (next_start <= imagePlugin.GetSectors());
+                        lba_start = next_start;
                     }
                 }
             }
@@ -706,7 +292,7 @@ namespace DiscImageChef.PartPlugins
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
         }
 
-        static string decodeMBRType(byte type)
+        static string DecodeMBRType(byte type)
         {
             switch(type)
             {
@@ -1023,29 +609,163 @@ namespace DiscImageChef.PartPlugins
             }
         }
 
-        public struct MBRPartitionEntry
+        public const ushort MBR_Magic = 0xAA55;
+        public const ushort NEC_Magic = 0xA55A;
+        public const ushort DM_Magic = 0x55AA;
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct MasterBootRecord
         {
-            public byte status;
-            // Partition status, 0x80 or 0x00, else invalid
-            public byte start_head;
-            // Starting head [0,254]
-            public byte start_sector;
-            // Starting sector [1,63]
-            public ushort start_cylinder;
-            // Starting cylinder [0,1023]
-            public byte type;
-            // Partition type
-            public byte end_head;
-            // Ending head [0,254]
-            public byte end_sector;
-            // Ending sector [1,63]
-            public ushort end_cylinder;
-            // Ending cylinder [0,1023]
-            public uint lba_start;
-            // Starting absolute sector
-            public uint lba_sectors;
-            // Total sectors
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
+            public byte[] boot_code;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
         }
 
+        // TODO: IBM Boot Manager
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ExtendedBootRecord
+        {
+            /// <summary>Boot code, almost always unused</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
+            public byte[] boot_code;
+            /// <summary>Partitions or pointers</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct TimedMasterBootRecord
+        {
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+            public byte[] boot_code;
+            /// <summary>Set to 0</summary>
+            public ushort zero;
+            /// <summary>Original physical drive</summary>
+            public byte drive;
+            /// <summary>Disk timestamp, seconds</summary>
+            public byte seconds;
+            /// <summary>Disk timestamp, minutes</summary>
+            public byte minutes;
+            /// <summary>Disk timestamp, hours</summary>
+            public byte hours;
+            /// <summary>Boot code, continuation</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
+            public byte[] boot_code2;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SerializedMasterBootRecord
+        {
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
+            public byte[] boot_code;
+            /// <summary>Disk serial number</summary>
+            public uint serial;
+            /// <summary>Set to 0</summary>
+            public ushort zero;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct ModernMasterBootRecord
+        {
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+            public byte[] boot_code;
+            /// <summary>Set to 0</summary>
+            public ushort zero;
+            /// <summary>Original physical drive</summary>
+            public byte drive;
+            /// <summary>Disk timestamp, seconds</summary>
+            public byte seconds;
+            /// <summary>Disk timestamp, minutes</summary>
+            public byte minutes;
+            /// <summary>Disk timestamp, hours</summary>
+            public byte hours;
+            /// <summary>Boot code, continuation</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 216)]
+            public byte[] boot_code2;
+            /// <summary>Disk serial number</summary>
+            public uint serial;
+            /// <summary>Set to 0</summary>
+            public ushort zero2;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct NecMasterBootRecord
+        {
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 380)]
+            public byte[] boot_code;
+            /// <summary><see cref="NEC_Magic"/></summary>
+            public ushort nec_magic;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct DiskManagerMasterBootRecord
+        {
+            /// <summary>Boot code</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
+            public byte[] boot_code;
+            /// <summary><see cref="DM_Magic"/></summary>
+            public ushort dm_magic;
+            /// <summary>Partitions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public MBRPartitionEntry[] entries;
+            /// <summary><see cref="MBR_Magic"/></summary>
+            public ushort magic;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct MBRPartitionEntry
+        {
+            /// <summary>Partition status, 0x80 or 0x00, else invalid</summary>
+            public byte status;
+            /// <summary>Starting head [0,254]</summary>
+            public byte start_head;
+            /// <summary>Starting sector [1,63]</summary>
+            public byte start_sector;
+            /// <summary>Starting cylinder [0,1023]</summary>
+            public byte start_cylinder;
+            /// <summary>Partition type</summary>
+            public byte type;
+            /// <summary>Ending head [0,254]</summary>
+            public byte end_head;
+            /// <summary>Ending sector [1,63]</summary>
+            public byte end_sector;
+            /// <summary>Ending cylinder [0,1023]</summary>
+            public byte end_cylinder;
+            /// <summary>Starting absolute sector</summary>
+            public uint lba_start;
+            /// <summary>Total sectors</summary>
+            public uint lba_sectors;
+        }
     }
 }
