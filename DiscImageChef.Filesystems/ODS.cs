@@ -98,13 +98,12 @@ namespace DiscImageChef.Filesystems
             homeblock = (ODSHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ODSHomeBlock));
             handle.Free();
 
-
             if((homeblock.struclev & 0xFF00) != 0x0200 || (homeblock.struclev & 0xFF) != 1 || StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
                 sb.AppendLine("The following information may be incorrect for this volume.");
             if(homeblock.resfiles < 5 || homeblock.devtype != 0)
                 sb.AppendLine("This volume may be corrupted.");
 
-            sb.AppendFormat("Volume format is {0}", homeblock.format).AppendLine();
+            sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Volume is Level {0} revision {1}", (homeblock.struclev & 0xFF00) >> 8, homeblock.struclev & 0xFF).AppendLine();
             sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}", (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).AppendLine();
             sb.AppendFormat("Highest structure in the volume is Level {0}, revision {1}", (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).AppendLine();
@@ -117,9 +116,9 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
             sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
             if(homeblock.rvn > 0 && homeblock.setcount > 0 && StringHandlers.CToString(homeblock.strucname) != "            ")
-                sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount, homeblock.strucname).AppendLine();
-            sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})", homeblock.ownername, homeblock.volowner).AppendLine();
-            sb.AppendFormat("Volume label: \"{0}\"", homeblock.volname).AppendLine();
+                sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount, StringHandlers.SpacePaddedToString(homeblock.strucname, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})", StringHandlers.SpacePaddedToString(homeblock.ownername, CurrentEncoding), homeblock.volowner).AppendLine();
+            sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
             sb.AppendFormat("Volume was created on {0}", DateHandlers.VMSToDateTime(homeblock.credate)).AppendLine();
             if(homeblock.revdate > 0)
@@ -224,7 +223,7 @@ namespace DiscImageChef.Filesystems
                 Type = "FILES-11",
                 ClusterSize = homeblock.cluster * 512,
                 Clusters = homeblock.cluster,
-                VolumeName = StringHandlers.CToString(homeblock.volname, CurrentEncoding),
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, CurrentEncoding),
                 VolumeSerial = string.Format("{0:X8}", homeblock.serialnum)
             };
             if(homeblock.credate > 0)
