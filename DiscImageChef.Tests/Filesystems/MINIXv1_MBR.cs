@@ -63,11 +63,15 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            130048,130048,
+            65535,50399,
         };
 
         readonly int[] clustersize = {
             1024,1024,
+        };
+
+        readonly string[] types = {
+            "Minix v1", "Minix 3 v1",
         };
 
         [Test]
@@ -87,7 +91,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].Type == "0x81")
+                    if(partitions[j].Type == "0x80" || partitions[j].Type == "0x81")
                     {
                         part = j;
                         break;
@@ -98,7 +102,7 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Minix V1", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFSType.Type, testfiles[i]);
             }
         }
     }
