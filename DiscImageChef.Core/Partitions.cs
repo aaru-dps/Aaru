@@ -98,7 +98,7 @@ namespace DiscImageChef.Core
 
                     foreach(Partition child in childs)
                     {
-                        if(child.Start == father.Start)
+                        if(child == father)
                             childPartitions.Add(father);
                         else
                         {
