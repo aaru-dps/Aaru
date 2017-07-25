@@ -1073,7 +1073,7 @@ namespace DiscImageChef.Filesystems
             if(extraInfo != null)
                 sb.Append(extraInfo);
 
-            if(root_directory_sector + partition.Start < partition.End)
+            if(root_directory_sector + partition.Start < partition.End && imagePlugin.ImageInfo.xmlMediaType != ImagePlugins.XmlMediaType.OpticalDisc)
             {
                 byte[] root_directory = imagePlugin.ReadSectors(root_directory_sector + partition.Start, sectors_for_root_directory);
                 for(int i = 0; i < root_directory.Length; i += 32)
