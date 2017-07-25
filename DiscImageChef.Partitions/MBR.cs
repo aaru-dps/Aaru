@@ -378,8 +378,8 @@ namespace DiscImageChef.PartPlugins
                     if(mnx_valid)
                     {
                         any_mnx = true;
-                        part.Type = string.Format("0x{0:X2}", mnx_entry.type);
-                        part.Name = DecodeMBRType(mnx_entry.type);
+                        part.Type = "MINIX";
+                        part.Name = "MINIX";
                         part.Description = mnx_entry.status == 0x80 ? "Partition is bootable." : "";
                         part.Scheme = "MINIX";
 
