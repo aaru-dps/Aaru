@@ -253,15 +253,17 @@ namespace DiscImageChef.Filesystems
 
             information = string.Format("QNX4 filesystem\nCreated on {0}\n", DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime));
 
-            xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = "QNX4 filesystem";
-            xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) / imagePlugin.GetSectorSize() * 512);
-            xmlFSType.ClusterSize = 512;
+            xmlFSType = new Schemas.FileSystemType
+            {
+                Type = "QNX4 filesystem",
+                Clusters = (long)partition.Length,
+                ClusterSize = 512,
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime),
+                CreationDateSpecified = true,
+                ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_mtime),
+                ModificationDateSpecified = true
+            };
             xmlFSType.Bootable |= (qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0);
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_ftime);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.ModificationDate = DateHandlers.UNIXUnsignedToDateTime(qnxSb.rootDir.di_mtime);
-            xmlFSType.ModificationDateSpecified = true;
         }
 
         public override Errno Mount()
