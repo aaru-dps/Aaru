@@ -289,6 +289,7 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("ISO9660 plugin", "VDPathTableStart = {0} + {1} = {2}", i, partition.Start, i + partition.Start);
 
             // TODO: Check this
+            /*
             if((i + partition.Start) < partition.End)
             {
 
@@ -306,7 +307,7 @@ namespace DiscImageChef.Filesystems
                     Array.Copy(root_dir, 0x29, RRMagic, 0, 2);
                     RockRidge |= CurrentEncoding.GetString(RRMagic) == "RR";
                 }
-            }
+            }*/
 
             #region SEGA IP.BIN Read and decoding
 
