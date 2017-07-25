@@ -149,6 +149,9 @@ namespace DiscImageChef.Filesystems
             // NTFS
             if(oem_string == "NTFS    " && bootable == 0xAA55 && fats_no == 0 && fat_sectors == 0)
                 return false;
+            // QNX4
+            if(oem_string == "FQNX4FS ")
+                return false;
 
             // HPFS
             if(16 + partition.Start <= partition.End)
