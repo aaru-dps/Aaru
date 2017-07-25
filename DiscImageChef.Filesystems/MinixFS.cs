@@ -41,27 +41,27 @@ namespace DiscImageChef.Filesystems
     // Information from the Linux kernel
     public class MinixFS : Filesystem
     {
+        /// <summary>Minix v1, 14 char filenames</summary>
         const ushort MINIX_MAGIC = 0x137F;
-        // Minix v1, 14 char filenames
+        /// <summary>Minix v1, 30 char filenames</summary>
         const ushort MINIX_MAGIC2 = 0x138F;
-        // Minix v1, 30 char filenames
+        /// <summary>Minix v2, 14 char filenames</summary>
         const ushort MINIX2_MAGIC = 0x2468;
-        // Minix v2, 14 char filenames
+        /// <summary>Minix v2, 30 char filenames</summary>
         const ushort MINIX2_MAGIC2 = 0x2478;
-        // Minix v2, 30 char filenames
+        /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_MAGIC = 0x4D5A;
-        // Minix v3, 60 char filenames
         // Byteswapped
+        /// <summary>Minix v1, 14 char filenames</summary>
         const ushort MINIX_CIGAM = 0x7F13;
-        // Minix v1, 14 char filenames
+        /// <summary>Minix v1, 30 char filenames</summary>
         const ushort MINIX_CIGAM2 = 0x8F13;
-        // Minix v1, 30 char filenames
+        /// <summary>Minix v2, 14 char filenames</summary>
         const ushort MINIX2_CIGAM = 0x6824;
-        // Minix v2, 14 char filenames
+        /// <summary>Minix v2, 30 char filenames</summary>
         const ushort MINIX2_CIGAM2 = 0x7824;
-        // Minix v2, 30 char filenames
+        /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_CIGAM = 0x5A4D;
-        // Minix v3, 60 char filenames
 
         public MinixFS()
         {
@@ -86,14 +86,15 @@ namespace DiscImageChef.Filesystems
             ushort magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
-            magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix V1 & V2
+            magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix v1 & V2
 
             if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
                 magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM || magic == MINIX2_CIGAM2)
                 return true;
-            magic = BitConverter.ToUInt16(minix_sb_sector, 0x018); // Here should reside magic number on Minix V3
+            magic = BitConverter.ToUInt16(minix_sb_sector, 0x018); // Here should reside magic number on Minix v3
 
-            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
+            if(magic == MINIX_MAGIC || magic == MINIX2_MAGIC || magic == MINIX3_MAGIC ||
+                magic == MINIX_CIGAM || magic == MINIX2_CIGAM || magic == MINIX3_CIGAM)
                 return true;
             return false;
         }
@@ -110,75 +111,88 @@ namespace DiscImageChef.Filesystems
             ushort magic;
             byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
 
-            magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x018);
+            magic = BitConverter.ToUInt16(minix_sb_sector, 0x018);
 
             xmlFSType = new Schemas.FileSystemType();
 
             bool littleEndian = true;
 
-            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
+            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM || magic == MINIX2_MAGIC || magic == MINIX2_CIGAM || magic == MINIX_MAGIC || magic == MINIX_CIGAM)
             {
                 filenamesize = 60;
-                minixVersion = "Minix V3 filesystem";
-                littleEndian = magic != MINIX3_CIGAM;
+                littleEndian = (magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM);
 
-                xmlFSType.Type = "Minix V3";
+                if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM)
+                {
+                    minixVersion = "Minix v3 filesystem";
+                    xmlFSType.Type = "Minix v3";
+                }
+                else if(magic == MINIX2_MAGIC || magic == MINIX2_CIGAM)
+                {
+                    minixVersion = "Minix 3 v2 filesystem";
+                    xmlFSType.Type = "Minix 3 v2";
+                }
+                else
+                {
+                    minixVersion = "Minix 3 v1 filesystem";
+                    xmlFSType.Type = "Minix 3 v1";
+                }
 
                 minix3 = true;
             }
             else
             {
-                magic = BigEndianBitConverter.ToUInt16(minix_sb_sector, 0x010);
+                magic = BitConverter.ToUInt16(minix_sb_sector, 0x010);
 
                 switch(magic)
                 {
                     case MINIX_MAGIC:
                         filenamesize = 14;
-                        minixVersion = "Minix V1 filesystem";
+                        minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix V1";
+                        xmlFSType.Type = "Minix v1";
                         break;
                     case MINIX_MAGIC2:
                         filenamesize = 30;
-                        minixVersion = "Minix V1 filesystem";
+                        minixVersion = "Minix v1 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix V1";
+                        xmlFSType.Type = "Minix v1";
                         break;
                     case MINIX2_MAGIC:
                         filenamesize = 14;
-                        minixVersion = "Minix V2 filesystem";
+                        minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix V2";
+                        xmlFSType.Type = "Minix v2";
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize = 30;
-                        minixVersion = "Minix V2 filesystem";
+                        minixVersion = "Minix v2 filesystem";
                         littleEndian = true;
-                        xmlFSType.Type = "Minix V2";
+                        xmlFSType.Type = "Minix v2";
                         break;
                     case MINIX_CIGAM:
                         filenamesize = 14;
-                        minixVersion = "Minix V1 filesystem";
+                        minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix V1";
+                        xmlFSType.Type = "Minix v1";
                         break;
                     case MINIX_CIGAM2:
                         filenamesize = 30;
-                        minixVersion = "Minix V1 filesystem";
+                        minixVersion = "Minix v1 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix V1";
+                        xmlFSType.Type = "Minix v1";
                         break;
                     case MINIX2_CIGAM:
                         filenamesize = 14;
-                        minixVersion = "Minix V2 filesystem";
+                        minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix V2";
+                        xmlFSType.Type = "Minix v2";
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize = 30;
-                        minixVersion = "Minix V2 filesystem";
+                        minixVersion = "Minix v2 filesystem";
                         littleEndian = false;
-                        xmlFSType.Type = "Minix V2";
+                        xmlFSType.Type = "Minix v2";
                         break;
                     default:
                         return;
@@ -198,9 +212,15 @@ namespace DiscImageChef.Filesystems
                 else
                     mnx_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minix_sb_sector);
 
+                if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM)
+                    mnx_sb.s_blocksize = 1024;
+
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * mnx_sb.s_blocksize).AppendLine();
+                if(mnx_sb.s_zones > 0) // On V2
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_zones, mnx_sb.s_zones * 1024).AppendLine();
+                else
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnx_sb.s_nzones, mnx_sb.s_nzones * 1024).AppendLine();
                 sb.AppendFormat("{0} bytes/block", mnx_sb.s_blocksize).AppendLine();
                 sb.AppendFormat("{0} inodes on volume", mnx_sb.s_ninodes).AppendLine();
                 sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnx_sb.s_imap_blocks, mnx_sb.s_imap_blocks * mnx_sb.s_blocksize).AppendLine();
@@ -211,7 +231,10 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("On-disk filesystem version: {0}", mnx_sb.s_disk_version).AppendLine();
 
                 xmlFSType.ClusterSize = mnx_sb.s_blocksize;
-                xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / mnx_sb.s_blocksize);
+                if(mnx_sb.s_zones > 0)
+                    xmlFSType.Clusters = mnx_sb.s_zones;
+                else
+                    xmlFSType.Clusters = mnx_sb.s_nzones;
             }
             else
             {
@@ -240,13 +263,16 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} bytes maximum per file", mnx_sb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnx_sb.s_state).AppendLine();
                 xmlFSType.ClusterSize = 1024;
-                xmlFSType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.GetSectorSize() / 1024);
+                if(mnx_sb.s_zones > 0)
+                    xmlFSType.Clusters = mnx_sb.s_zones;
+                else
+                    xmlFSType.Clusters = mnx_sb.s_nzones;
             }
             information = sb.ToString();
         }
 
         /// <summary>
-        /// Superblock for Minix V1 and V2 filesystems
+        /// Superblock for Minix v1 and V2 filesystems
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct MinixSuperBlock
@@ -256,13 +282,13 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x02, zones on volume</summary>
             public ushort s_nzones;
             /// <summary>0x04, blocks on inode map</summary>
-            public ushort s_imap_blocks;
+            public short s_imap_blocks;
             /// <summary>0x06, blocks on zone map</summary>
-            public ushort s_zmap_blocks;
+            public short s_zmap_blocks;
             /// <summary>0x08, first data zone</summary>
             public ushort s_firstdatazone;
             /// <summary>0x0A, log2 of blocks/zone</summary>
-            public ushort s_log_zone_size;
+            public short s_log_zone_size;
             /// <summary>0x0C, max file size</summary>
             public uint s_max_size;
             /// <summary>0x10, magic</summary>
@@ -274,15 +300,15 @@ namespace DiscImageChef.Filesystems
         }
 
         /// <summary>
-        /// Superblock for Minix V3 filesystems
+        /// Superblock for Minix v3 filesystems
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct Minix3SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
             public uint s_ninodes;
-            /// <summary>0x04, padding</summary>
-            public ushort s_pad0;
+            /// <summary>0x02, old zones on volume</summary>
+            public ushort s_nzones;
             /// <summary>0x06, blocks on inode map</summary>
             public ushort s_imap_blocks;
             /// <summary>0x08, blocks on zone map</summary>
