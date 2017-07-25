@@ -236,7 +236,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.CreationDateSpecified = true;
             xmlFSType.FreeClusters = rootBlock.blocksfree;
             xmlFSType.FreeClustersSpecified = true;
-            xmlFSType.Clusters = rootBlock.diskSize / imagePlugin.GetSectorSize();
+            xmlFSType.Clusters = rootBlock.diskSize;
             xmlFSType.ClusterSize = (int)imagePlugin.GetSectorSize();
             xmlFSType.VolumeName = StringHandlers.PascalToString(rootBlock.diskname, CurrentEncoding);
         }
