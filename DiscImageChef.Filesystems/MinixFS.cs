@@ -80,11 +80,28 @@ namespace DiscImageChef.Filesystems
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            if((2 + partition.Start) >= partition.End)
+            uint sector = 2;
+            uint offset = 0;
+
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            {
+                sector = 0;
+                offset = 0x400;
+            }
+
+            if((sector + partition.Start) >= partition.End)
                 return false;
 
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(sector + partition.Start);
+
+            // Optical media
+            if(offset > 0)
+            {
+                byte[] tmp = new byte[0x200];
+                Array.Copy(minix_sb_sector, offset, tmp, 0, 0x200);
+                minix_sb_sector = tmp;
+            }
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x010); // Here should reside magic number on Minix v1 & V2
 
@@ -105,11 +122,28 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
+            uint sector = 2;
+            uint offset = 0;
+
+            if(imagePlugin.ImageInfo.xmlMediaType == ImagePlugins.XmlMediaType.OpticalDisc)
+            {
+                sector = 0;
+                offset = 0x400;
+            }
+
             bool minix3 = false;
             int filenamesize;
             string minixVersion;
             ushort magic;
-            byte[] minix_sb_sector = imagePlugin.ReadSector(2 + partition.Start);
+            byte[] minix_sb_sector = imagePlugin.ReadSector(sector + partition.Start);
+
+            // Optical media
+            if(offset > 0)
+            {
+                byte[] tmp = new byte[0x200];
+                Array.Copy(minix_sb_sector, offset, tmp, 0, 0x200);
+                minix_sb_sector = tmp;
+            }
 
             magic = BitConverter.ToUInt16(minix_sb_sector, 0x018);
 
