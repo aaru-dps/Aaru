@@ -68,8 +68,6 @@ namespace DiscImageChef.Tests.Partitions
         [Test]
         public void Test()
         {
-            throw new System.NotImplementedException("Partition schemes inside partitions are not yet implemented, and should be tested here.");
-            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "partitions", "bsd", testfiles[i]);
@@ -83,15 +81,15 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionLength, partitions[j].PartitionLength, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionName, partitions[j].PartitionName, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionType, partitions[j].PartitionType, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStart, partitions[j].PartitionStart, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSectors, partitions[j].PartitionSectors, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionSequence, partitions[j].PartitionSequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].PartitionStartSector, partitions[j].PartitionStartSector, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
-            }*/
+            }
         }
     }
 }
