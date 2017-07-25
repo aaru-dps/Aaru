@@ -33,11 +33,13 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.Console;
+using DiscImageChef.ImagePlugins;
 
-// TODO: Support AAP extensions
 namespace DiscImageChef.PartPlugins
 {
+    // TODO: Support AAP extensions
     public class MBR : PartPlugin
     {
         public MBR()
@@ -103,7 +105,7 @@ namespace DiscImageChef.PartPlugins
 
                 bool valid = true;
                 bool extended = false;
-                //bool disklabel = false;
+                bool minix = false;
 
                 if(entry.status != 0x00 && entry.status != 0x80)
                     return false; // Maybe a FAT filesystem
@@ -116,6 +118,7 @@ namespace DiscImageChef.PartPlugins
                     valid = false;
                     extended = true; // Extended partition
                 }
+                minix |= entry.type == 0x81 || entry.type == 0x80; // MINIX partition
 
                 valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
@@ -149,7 +152,17 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("MBR plugin", "entry.end_head {0}", entry.end_head);
                 DicConsole.DebugWriteLine("MBR plugin", "entry.end_sector {0}", end_sector);
 
-                if(valid)
+                DicConsole.DebugWriteLine("MBR plugin", "entry.minix = {0}", minix);
+
+                if(valid && minix) // Let's mix the fun
+                {
+                    if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize, out List<Partition> mnx_parts))
+                        partitions.AddRange(mnx_parts);
+                    else
+                        minix = false;
+                }
+
+                if(valid && !minix)
                 {
                     CommonTypes.Partition part = new CommonTypes.Partition();
                     if(lba_start > 0 && lba_sectors > 0)
@@ -207,6 +220,7 @@ namespace DiscImageChef.PartPlugins
                             end_cylinder = (ushort)(((ebr_entry.end_sector & 0xC0) << 2) | ebr_entry.end_cylinder);
                             ulong ext_start = ebr_entry.lba_start;
                             ulong ext_sectors = ebr_entry.lba_sectors;
+                            bool ext_minix = false;
 
                             DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}", ebr_entry.status);
                             DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}", ebr_entry.type);
@@ -229,6 +243,7 @@ namespace DiscImageChef.PartPlugins
                                 ext_start = CHStoLBA(start_cylinder, ebr_entry.start_head, start_sector);
                                 ext_sectors = CHStoLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector) - ext_start;
                             }
+                            ext_minix |= (ebr_entry.type == 0x81 || ebr_entry.type == 0x80);
 
                             // For optical media
                             lba_start /= divider;
@@ -248,9 +263,17 @@ namespace DiscImageChef.PartPlugins
                             if(ext_start + ext_sectors > imagePlugin.GetSectors())
                                 ext_sectors = imagePlugin.GetSectors() - ext_start;
 
-                            if(ext_valid)
+                            if(ext_valid && ext_minix) // Let's mix the fun
                             {
-                                CommonTypes.Partition part = new CommonTypes.Partition();
+                                if(GetMinix(imagePlugin, lba_start, divider, sectorOffset, sectorSize, out List<Partition> mnx_parts))
+                                    partitions.AddRange(mnx_parts);
+                                else
+                                    ext_minix = false;
+                            }
+
+                            if(ext_valid && !ext_minix)
+                            {
+                                Partition part = new Partition();
                                 if(ext_start > 0 && ext_sectors > 0)
                                 {
                                     part.Start = ext_start + sectorOffset;
@@ -286,6 +309,88 @@ namespace DiscImageChef.PartPlugins
             // An empty MBR may exist, NeXT creates one and then hardcodes its disklabel
             return partitions.Count != 0;
         }
+
+        static bool GetMinix(ImagePlugin imagePlugin, ulong mnx_start, ulong divider, ulong sectorOffset, uint sectorSize, out List<Partition> partitions)
+        {
+            partitions = new List<Partition>();
+
+            byte[] sector = imagePlugin.ReadSector(mnx_start);
+
+            GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
+            ExtendedBootRecord mnx = (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
+            handle.Free();
+
+            DicConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_Magic);
+
+            if(mnx.magic != MBR_Magic)
+                return false;
+
+            bool any_mnx = false;
+
+            foreach(MBRPartitionEntry mnx_entry in mnx.entries)
+            {
+                bool mnx_valid = true;
+                byte start_sector = (byte)(mnx_entry.start_sector & 0x3F);
+                ushort start_cylinder = (ushort)(((mnx_entry.start_sector & 0xC0) << 2) | mnx_entry.start_cylinder);
+                byte end_sector = (byte)(mnx_entry.end_sector & 0x3F);
+                ushort end_cylinder = (ushort)(((mnx_entry.end_sector & 0xC0) << 2) | mnx_entry.end_cylinder);
+                ulong ext_start = mnx_entry.lba_start;
+                ulong ext_sectors = mnx_entry.lba_sectors;
+
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.status {0}", mnx_entry.status);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.type {0}", mnx_entry.type);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_start {0}", mnx_entry.lba_start);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_sectors {0}", mnx_entry.lba_sectors);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_cylinder {0}", start_cylinder);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_head {0}", mnx_entry.start_head);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_sector {0}", start_sector);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_cylinder {0}", end_cylinder);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_head {0}", mnx_entry.end_head);
+                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_sector {0}", end_sector);
+
+                mnx_valid &= mnx_entry.status == 0x00 || mnx_entry.status == 0x80;
+                mnx_valid &= mnx_entry.type == 0x81 || mnx_entry.type == 0x80;
+                mnx_valid &= mnx_entry.lba_start != 0 || mnx_entry.lba_sectors != 0 || mnx_entry.start_cylinder != 0 || mnx_entry.start_head != 0 ||
+                                mnx_entry.start_sector != 0 || mnx_entry.end_cylinder != 0 || mnx_entry.end_head != 0 || mnx_entry.end_sector != 0;
+                if(mnx_entry.lba_start == 0 && mnx_entry.lba_sectors == 0 && mnx_valid)
+                {
+                    ext_start = CHStoLBA(start_cylinder, mnx_entry.start_head, start_sector);
+                    ext_sectors = CHStoLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector) - ext_start;
+                }
+
+                // For optical media
+                ext_start /= divider;
+                ext_sectors /= divider;
+
+                if(mnx_valid)
+                {
+                    CommonTypes.Partition part = new CommonTypes.Partition();
+                    if(ext_start > 0 && ext_sectors > 0)
+                    {
+                        part.Start = ext_start + sectorOffset;
+                        part.Length = ext_sectors;
+                        part.Offset = part.Start * sectorSize;
+                        part.Size = part.Length * sectorSize;
+                    }
+                    else
+                        mnx_valid = false;
+
+                    if(mnx_valid)
+                    {
+                        any_mnx = true;
+                        part.Type = string.Format("0x{0:X2}", mnx_entry.type);
+                        part.Name = DecodeMBRType(mnx_entry.type);
+                        part.Description = mnx_entry.status == 0x80 ? "Partition is bootable." : "";
+                        part.Scheme = "MINIX";
+
+                        partitions.Add(part);
+                    }
+                }
+            }
+
+            return any_mnx;
+        }
+
 
         static uint CHStoLBA(ushort cyl, byte head, byte sector)
         {
