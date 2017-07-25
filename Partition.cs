@@ -30,12 +30,14 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 namespace DiscImageChef.CommonTypes
 {
     /// <summary>
     /// Partition structure.
     /// </summary>
-    public struct Partition
+    public struct Partition : IEquatable<Partition>, IComparable<Partition>
     {
         /// <summary>Partition number, 0-started</summary>
         public ulong Sequence;
@@ -57,6 +59,71 @@ namespace DiscImageChef.CommonTypes
         public ulong End { get { return Start + Length - 1; }}
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
+
+        public bool Equals(Partition other)
+        {
+            return Start == other.Start && Length == other.Length;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            if(obj == null || !(obj is Partition))
+                return false;
+            else
+                return Equals((Partition)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Start.GetHashCode() + End.GetHashCode();
+        }
+
+        public int CompareTo(Partition other)
+        {
+            if(Start == other.Start && End == other.End)
+                return 0;
+
+            if(Start > other.Start || End > other.End)
+                return 1;
+
+            return -1;
+        }
+
+        // Define the equality operator.
+        public static bool operator ==(Partition operand1, Partition operand2)
+        {
+            return operand1.Equals(operand2);
+        }
+
+        // Define the inequality operator.
+        public static bool operator !=(Partition operand1, Partition operand2)
+        {
+            return !operand1.Equals(operand2);
+        }
+
+        // Define the is greater than operator.
+        public static bool operator >(Partition operand1, Partition operand2)
+        {
+            return operand1.CompareTo(operand2) == 1;
+        }
+
+        // Define the is less than operator.
+        public static bool operator <(Partition operand1, Partition operand2)
+        {
+            return operand1.CompareTo(operand2) == -1;
+        }
+
+        // Define the is greater than or equal to operator.
+        public static bool operator >=(Partition operand1, Partition operand2)
+        {
+            return operand1.CompareTo(operand2) >= 0;
+        }
+
+        // Define the is less than or equal to operator.
+        public static bool operator <=(Partition operand1, Partition operand2)
+        {
+            return operand1.CompareTo(operand2) <= 0;
+        }
     }
 }
 
