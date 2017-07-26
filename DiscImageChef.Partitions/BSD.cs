@@ -35,12 +35,21 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.ImagePlugins;
+using DiscImageChef.Console;
+using System.Linq;
 
 namespace DiscImageChef.PartPlugins
 {
     public class BSD : PartPlugin
     {
         public const uint DISKMAGIC = 0x82564557;
+        public const uint DISKCIGAM = 0x57455682;
+        /// <summary>Known sector locations for BSD disklabel</summary>
+        readonly ulong[] labelLocations = { 0, 1, 2, 9 };
+        /// <summary>Known byte offsets for BSD disklabel</summary>
+        readonly uint[] labelOffsets = { 0, 9, 64, 128, 516 };
+        /// <summary>Maximum size of a disklabel with 22 partitions</summary>
+        const uint maxLabelSize = 500;
 
         public BSD()
         {
@@ -51,50 +60,106 @@ namespace DiscImageChef.PartPlugins
         public override bool GetInformation(ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
+            uint run = (maxLabelSize + labelOffsets.Last()) / imagePlugin.GetSectorSize();
+            if((maxLabelSize + labelOffsets.Last()) % imagePlugin.GetSectorSize() > 0)
+                run++;
 
-            byte[] sector = imagePlugin.ReadSector(sectorOffset);
-            if(sector.Length < 512)
-                return false;
+            byte[] sector;
+            DiskLabel dl = new DiskLabel();
             bool found = false;
 
-            DiskLabel dl = GetDiskLabel(sector);
-
-            if(dl.d_magic == DISKMAGIC || dl.d_magic2 == DISKMAGIC)
-                found = true;
-            else
+            foreach(ulong location in labelLocations)
             {
-                sector = imagePlugin.ReadSector(1 + sectorOffset);
+                if(location + run + sectorOffset >= imagePlugin.GetSectors())
+                    return false;
 
-                dl = GetDiskLabel(sector);
+                byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
+                foreach(uint offset in labelOffsets)
+                {
+                    sector = new byte[maxLabelSize];
+                    Array.Copy(tmp, offset, sector, 0, maxLabelSize);
+                    dl = GetDiskLabel(sector);
+                    DicConsole.DebugWriteLine("BSD plugin", "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})", location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
+                    if((dl.d_magic == DISKMAGIC && dl.d_magic2 == DISKMAGIC) ||
+                       (dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
 
-                found |= (dl.d_magic == DISKMAGIC || dl.d_magic2 == DISKMAGIC);
+                if(found)
+                    break;
             }
 
-            if(found)
-            {
-                ulong counter = 0;
+            if(!found)
+                return false;
 
-                foreach(BSDPartition entry in dl.d_partitions)
+            if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM)
+
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}", StringHandlers.CToString(dl.d_typename));
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}", StringHandlers.CToString(dl.d_packname));
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}", dl.d_secsize);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}", dl.d_nsectors);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}", dl.d_ntracks);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}", dl.d_ncylinders);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}", dl.d_secpercyl);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}", dl.d_secperunit);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}", dl.d_sparespercyl);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}", dl.d_acylinders);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}", dl.d_rpm);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}", dl.d_interleave);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}", dl.d_trackskew);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}", dl.d_cylskeew);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}", dl.d_headswitch);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}", dl.d_trkseek);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}", dl.d_flags);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}", dl.d_drivedata[0]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}", dl.d_drivedata[1]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}", dl.d_drivedata[2]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}", dl.d_drivedata[3]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}", dl.d_drivedata[4]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}", dl.d_spare[0]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}", dl.d_spare[1]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}", dl.d_spare[2]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}", dl.d_spare[3]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}", dl.d_spare[4]);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}", dl.d_magic2);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}", dl.d_checksum);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}", dl.d_npartitions);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}", dl.d_bbsize);
+            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}", dl.d_sbsize);
+
+            ulong counter = 0;
+
+            for(int i = 0; i < dl.d_npartitions && i < 22; i++)
+            {
+                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}", dl.d_partitions[i].p_offset);
+                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
+                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})", dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
+                Partition part = new Partition
                 {
-                    Partition part = new Partition
-                    {
-                        Start = entry.p_offset,
-                        Offset = (entry.p_offset * dl.d_secsize),
-                        Size = entry.p_size,
-                        Length = (entry.p_size * dl.d_secsize),
-                        Type = fsTypeToString(entry.p_fstype),
-                        Sequence = counter,
-                        Scheme = Name
-                    };
-                    if(entry.p_fstype != fsType.Unused)
-                    {
-                        partitions.Add(part);
-                        counter++;
-                    }
+                    Start = ((dl.d_partitions[i].p_offset * dl.d_secsize) / imagePlugin.GetSectorSize()),
+                    Offset = (dl.d_partitions[i].p_offset * dl.d_secsize),
+                    Length = (dl.d_partitions[i].p_size * dl.d_secsize) / imagePlugin.GetSectorSize(),
+                    Size = (dl.d_partitions[i].p_size * dl.d_secsize),
+                    Type = fsTypeToString(dl.d_partitions[i].p_fstype),
+                    Sequence = counter,
+                    Scheme = Name
+                };
+                if(dl.d_partitions[i].p_fstype != fsType.Unused)
+                {
+                    DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
+                    DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
+                    partitions.Add(part);
+                    counter++;
                 }
             }
 
-            return found;
+            return partitions.Count > 0;
         }
 
         /// <summary>Drive type</summary>
@@ -310,7 +375,7 @@ namespace DiscImageChef.PartPlugins
             /// <summary>Maximum size of superblock in bytes</summary>
             public uint d_sbsize;
             /// <summary>Partitions</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
             public BSDPartition[] d_partitions;
         }
 
@@ -387,6 +452,8 @@ namespace DiscImageChef.PartPlugins
                     return "ZFS";
                 case fsType.NANDFS:
                     return "FreeBSD nandfs";
+                case fsType.MSDOS:
+                    return "FAT";
                 case fsType.Other:
                     return "Other or unknown";
                 default:
@@ -396,11 +463,22 @@ namespace DiscImageChef.PartPlugins
 
         public static DiskLabel GetDiskLabel(byte[] disklabel)
         {
-            DiskLabel dl = new DiskLabel();
-            IntPtr dlPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(disklabel, 0, dlPtr, 512);
-            dl = (DiskLabel)Marshal.PtrToStructure(dlPtr, typeof(DiskLabel));
-            Marshal.FreeHGlobal(dlPtr);
+            GCHandle handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
+            DiskLabel dl = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
+            handle.Free();
+            return dl;
+        }
+
+        public static DiskLabel SwapDiskLabel(DiskLabel disklabel)
+        {
+            DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
+            for(int i = 0; i < dl.d_drivedata.Length; i++)
+                dl.d_drivedata[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_drivedata[i]);
+            for(int i = 0; i < dl.d_drivedata.Length; i++)
+                dl.d_spare[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_spare[i]);
+            for(int i = 0; i < dl.d_drivedata.Length; i++)
+                dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
+            
             return dl;
         }
     }
