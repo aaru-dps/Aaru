@@ -57,19 +57,19 @@ namespace DiscImageChef.Tests.Filesystems
             "ufs1/darwin_1.4.1.vdi.lz", "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/dflybsd_1.2.0.vdi.lz",
             "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz", "ufs1/freebsd_7.0.vdi.lz",
             "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz",
-            "ufs1/solaris_7.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
-            "ufs2/netbsd_7.1.vdi.lz", "ffs43/att_unix_svr4v2.1.vdi",
+            "ufs1/solaris_9.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
+            "ufs2/netbsd_7.1.vdi.lz", "ffs43/att_unix_svr4v2.1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144, 262144, 262144,
-            262144, 262144,
+            262144, 262144, 1024000, 1024000,
+            1024000, 1024000, 1024000, 1024000,
+            1024000, 1024000, 409600, 204800,
+            204800, 204800, 204800, 2097152,
+            2097152, 2097152, 2097152, 8388608,
+            8388608, 2097152, 1024000, 2097152,
+            2097152, 16777216, 16777216, 16777216,
+            2097152, 1024000,
         };
 
         readonly uint[] sectorsize = {
@@ -84,47 +84,47 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65018, 65024, 65018,
-            65024, 65024,
+            65024, 65024, 511024, 511024,
+            511024, 511488, 511950, 255470,
+            255470, 511992, 204768, 102280,
+            102280, 102280, 102368, 1048500,
+            523758, 523758, 262138, 1048231,
+            65024, 524284, 511968, 1038240,
+            1046808, 2096472, 2096472, 65018,
+            524272, 65024,
         };
 
         readonly int[] clustersize = {
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048,
+            2048, 2048, 1024, 1024,
+            1024, 1024, 1024, 2048,
+            2048, 1024, 1024, 1024,
+            1024, 1024, 1024, 1024,
+            2048, 2048, 4096, 4096,
+            2048, 2048, 1024, 1024,
+            1024, 4096, 4096, 2048,
             2048, 2048,
         };
 
         readonly string[] volumename = {
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", null,
+            null, "VolumeLabel", null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, "VolumeLabel", "VolumeLabel", null,
+            "", null,
         };
 
         readonly string[] volumeserial = {
-            "59588B778E9ACDEF", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
-            "UNKNOWN", null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null, null, null,
+            null, null,
         };
 
         readonly string[] type = {
@@ -156,7 +156,7 @@ namespace DiscImageChef.Tests.Filesystems
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" || partitions[j].Type == "0xA9" ||
-                       partitions[j].Type == "0x83")
+                       partitions[j].Type == "0x82" || partitions[j].Type == "0x83" || partitions[j].Type == "4.2BSD Fast File System")
                     {
                         part = j;
                         break;

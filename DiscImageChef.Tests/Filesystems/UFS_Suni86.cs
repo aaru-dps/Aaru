@@ -51,35 +51,35 @@ namespace DiscImageChef.Tests.Filesystems
     public class UFS_Suni86
     {
         readonly string[] testfiles = {
-            "solaris_2.4_mf2dd.img.lz","solaris_2.4_mf2hd.img.lz","solaris_7.vdi.lz",
+            "solaris_7.vdi.lz",
         };
 
         readonly ulong[] sectors = {
-            1440, 2880, 262144,
+            4194304,
         };
 
         readonly uint[] sectorsize = {
-            512, 512, 512,
+            512,
         };
 
         readonly long[] clusters = {
-            720, 1440, 65024,
+            2063376,
         };
 
         readonly int[] clustersize = {
-            1024, 1024, 2048,
+            1024,
         };
 
         readonly string[] volumename = {
-            null, null, null,
+            null,
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN", "UNKNOWN", "UNKNOWN",
+            null,
         };
 
         readonly string[] type = {
-            "UFS", "UFS", "UFS",
+            "UFS",
         };
 
         [Test]
@@ -99,7 +99,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].Type != "Empty")
+                    if(partitions[j].Type == "Unknown")
                     {
                         part = j;
                         break;
