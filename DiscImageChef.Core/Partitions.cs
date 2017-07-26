@@ -54,6 +54,7 @@ namespace DiscImageChef.Core
             plugins.RegisterAllPlugins();
             List<Partition> partitions = new List<Partition>();
             List<Partition> childPartitions = new List<Partition>();
+            List<ulong> checkedLocations = new List<ulong>();
 
             // Getting all partitions from device (e.g. tracks)
             if(image.ImageInfo.imageHasPartitions)
@@ -65,6 +66,8 @@ namespace DiscImageChef.Core
                         if(_partplugin.GetInformation(image, out List<Partition> _partitions, imagePartition.Start))
                             partitions.AddRange(_partitions);
                     }
+
+                    checkedLocations.Add(imagePartition.Start);
                 }
             }
             // Getting all partitions at start of device
@@ -75,6 +78,8 @@ namespace DiscImageChef.Core
                     if(_partplugin.GetInformation(image, out List<Partition> _partitions, 0))
                         partitions.AddRange(_partitions);
                 }
+
+                checkedLocations.Add(0);
             }
 
             while(partitions.Count > 0)
@@ -85,26 +90,26 @@ namespace DiscImageChef.Core
                 {
                     DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", _partplugin.Name, partitions[0].Start);
                     if(_partplugin.GetInformation(image, out List<Partition> _partitions, partitions[0].Start))
+                    {
+                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name, partitions[0].Start);
                         childs.AddRange(_partitions);
+                    }
                 }
+
+                checkedLocations.Add(partitions[0].Start);
 
                 DicConsole.DebugWriteLine("Partitions", "Got {0} childs", childs.Count);
 
                 if(childs.Count > 0)
                 {
-                    Partition father = partitions[0];
-
                     partitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
                     {
-                        if(child == father)
-                            childPartitions.Add(father);
+                        if(checkedLocations.Contains(child.Start))
+                            childPartitions.Add(child);
                         else
-                        {
-                            if(!partitions.Contains(child))
-                                partitions.Add(child);
-                        }
+                            partitions.Add(child);
                     }
                 }
                 else
