@@ -126,6 +126,7 @@
     <Compile Include="AppleDOS\Super.cs" />
     <Compile Include="AppleDOS\Xattr.cs" />
     <Compile Include="AtheOS.cs" />
+    <Compile Include="HAMMER.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

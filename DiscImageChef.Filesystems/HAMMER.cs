@@ -35,56 +35,51 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using hammer_tid_t = System.UInt64;
+using hammer_off_t = System.UInt64;
+using hammer_crc_t = System.UInt32;
 
 namespace DiscImageChef.Filesystems
 {
-    // Information from Practical Filesystem Design, ISBN 1-55860-497-9
-    public class AtheOS : Filesystem
+    public class HAMMER : Filesystem
     {
-        // Little endian constants (that is, as read by .NET :p)
-        const uint AFS_MAGIC1 = 0x41465331;
-        const uint AFS_MAGIC2 = 0xDD121031;
-        const uint AFS_MAGIC3 = 0x15B6830E;
-        // Common constants
-        const uint AFS_SUPERBLOCK_SIZE = 1024;
-        const uint AFS_BOOTBLOCK_SIZE = AFS_SUPERBLOCK_SIZE;
+        const ulong HAMMER_FSBUF_VOLUME = 0xC8414D4DC5523031;
+        const ulong HAMMER_FSBUF_VOLUME_REV = 0x313052C54D4D41C8;
+        const uint HAMMER_VOLHDR_SIZE = 1928;
+        const int HAMMER_BIGBLOCK_SIZE = 8192 * 1024;
 
-        public AtheOS()
+        public HAMMER()
         {
-            Name = "AtheOS Filesystem";
-            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            Name = "HAMMER Filesystem";
+            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
             CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
-        public AtheOS(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
+        public HAMMER(ImagePlugins.ImagePlugin imagePlugin, Partition partition, Encoding encoding)
         {
-            Name = "AtheOS Filesystem";
-            PluginUUID = new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+            Name = "HAMMER Filesystem";
+            PluginUUID = new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-15");
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
-            uint run = 1;
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
-            if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0)
+                run++;
 
-            if((sector + partition.Start) >= partition.End)
+            if((run + partition.Start) >= partition.End)
                 return false;
 
-            uint magic;
+            ulong magic;
 
-            byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
-            byte[] sb_sector = new byte[AFS_SUPERBLOCK_SIZE];
-            Array.Copy(tmp, offset, sb_sector, 0, AFS_SUPERBLOCK_SIZE);
+            byte[] sb_sector = imagePlugin.ReadSectors(partition.Start, run);
 
-            magic = BitConverter.ToUInt32(sb_sector, 0x20);
+            magic = BitConverter.ToUInt64(sb_sector, 0);
 
-            return magic == AFS_MAGIC1;
+            return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -93,127 +88,157 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            AtheosSuperBlock afs_sb = new AtheosSuperBlock();
+            HammerSuperBlock hammer_sb = new HammerSuperBlock();
 
-            ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.GetSectorSize();
-            uint offset = AFS_BOOTBLOCK_SIZE % imagePlugin.GetSectorSize();
-            uint run = 1;
+            uint run = HAMMER_VOLHDR_SIZE / imagePlugin.GetSectorSize();
 
-            if(imagePlugin.GetSectorSize() < AFS_SUPERBLOCK_SIZE)
-                run = AFS_SUPERBLOCK_SIZE / imagePlugin.GetSectorSize();
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.GetSectorSize() > 0)
+                run++;
 
-            byte[] tmp = imagePlugin.ReadSectors(sector + partition.Start, run);
-            byte[] sb_sector = new byte[AFS_SUPERBLOCK_SIZE];
-            Array.Copy(tmp, offset, sb_sector, 0, AFS_SUPERBLOCK_SIZE);
+            ulong magic;
 
-            GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
-            afs_sb = (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
-            handle.Free();
+            byte[] sb_sector = imagePlugin.ReadSectors(partition.Start, run);
 
-            sb.AppendLine("Atheos filesystem");
+            magic = BitConverter.ToUInt64(sb_sector, 0);
 
-            if(afs_sb.flags == 1)
-                sb.AppendLine("Filesystem is read-only");
+            if(magic == HAMMER_FSBUF_VOLUME)
+            {
+                GCHandle handle = GCHandle.Alloc(sb_sector, GCHandleType.Pinned);
+                hammer_sb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HammerSuperBlock));
+                handle.Free();
+            }
+            else
+            {
+                hammer_sb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sb_sector);
+            }
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afs_sb.name, CurrentEncoding)).AppendLine();
-            sb.AppendFormat("{0} bytes per block", afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afs_sb.num_blocks, afs_sb.num_blocks * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", afs_sb.used_blocks, afs_sb.used_blocks * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} bytes per i-node", afs_sb.inode_size).AppendLine();
-            sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afs_sb.blocks_per_ag, afs_sb.blocks_per_ag * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} allocation groups in volume", afs_sb.num_ags).AppendLine();
-            sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.log_blocks_start,
-                afs_sb.log_blocks_ag, afs_sb.log_blocks_len, afs_sb.log_blocks_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afs_sb.log_start, afs_sb.log_size, afs_sb.log_valid_blocks).AppendLine();
-            sb.AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.root_dir_start,
-                afs_sb.root_dir_ag, afs_sb.root_dir_len, afs_sb.root_dir_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.deleted_start,
-                            afs_sb.deleted_ag, afs_sb.deleted_len, afs_sb.deleted_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)", afs_sb.indices_start,
-                afs_sb.indices_ag, afs_sb.indices_len, afs_sb.indices_len * afs_sb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afs_sb.boot_size, afs_sb.boot_size * afs_sb.block_size).AppendLine();
+            sb.AppendLine("HAMMER filesystem");
 
-            information = sb.ToString();
+            sb.AppendFormat("Volume version: {0}", hammer_sb.vol_version).AppendLine();
+            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammer_sb.vol_no + 1, hammer_sb.vol_count).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding)).AppendLine();
+            sb.AppendFormat("Volume serial: {0}", hammer_sb.vol_fsid).AppendLine();
+            sb.AppendFormat("Filesystem type: {0}", hammer_sb.vol_fstype).AppendLine();
+            sb.AppendFormat("Boot area starts at {0}", hammer_sb.vol_bot_beg).AppendLine();
+            sb.AppendFormat("Memory log starts at {0}", hammer_sb.vol_mem_beg).AppendLine();
+            sb.AppendFormat("First volume buffer starts at {0}", hammer_sb.vol_buf_beg).AppendLine();
+            sb.AppendFormat("Volume ends at {0}", hammer_sb.vol_buf_end).AppendLine();
 
             xmlFSType = new Schemas.FileSystemType
             {
-                Clusters = afs_sb.num_blocks,
-                ClusterSize = (int)afs_sb.block_size,
+                Clusters = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
+                ClusterSize = HAMMER_BIGBLOCK_SIZE,
                 Dirty = false,
-                FreeClusters = afs_sb.num_blocks - afs_sb.used_blocks,
-                FreeClustersSpecified = true,
-                Type = "AtheOS filesystem",
-                VolumeName = StringHandlers.CToString(afs_sb.name, CurrentEncoding)
+                Type = "HAMMER",
+                VolumeName = StringHandlers.CToString(hammer_sb.vol_label, CurrentEncoding),
+                VolumeSerial = hammer_sb.vol_fsid.ToString(),
             };
+
+            if(hammer_sb.vol_no == hammer_sb.vol_rootvol)
+            {
+                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammer_sb.vol0_stat_bigblocks, hammer_sb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammer_sb.vol0_stat_freebigblocks, hammer_sb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} inode used", hammer_sb.vol0_stat_inodes).AppendLine();
+
+                xmlFSType.Clusters = hammer_sb.vol0_stat_bigblocks;
+                xmlFSType.FreeClusters = hammer_sb.vol0_stat_freebigblocks;
+                xmlFSType.FreeClustersSpecified = true;
+                xmlFSType.Files = hammer_sb.vol0_stat_inodes;
+                xmlFSType.FilesSpecified = true;
+            }
+            // 0 ?
+            //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();
+
+            information = sb.ToString();
         }
 
         /// <summary>
         /// Be superblock
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AtheosSuperBlock
+        struct HammerSuperBlock
         {
-            /// <summary>0x000, Volume name, 32 bytes</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] name;
-            /// <summary>0x020, "AFS1", 0x41465331</summary>
-            public uint magic1;
-            /// <summary>0x024, "BIGE", 0x42494745</summary>
-            public uint fs_byte_order;
-            /// <summary>0x028, Bytes per block</summary>
-            public uint block_size;
-            /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
-            public uint block_shift;
-            /// <summary>0x030, Blocks in volume</summary>
-            public long num_blocks;
-            /// <summary>0x038, Used blocks in volume</summary>
-            public long used_blocks;
-            /// <summary>0x040, Bytes per inode</summary>
-            public int inode_size;
-            /// <summary>0x044, 0xDD121031</summary>
-            public uint magic2;
-            /// <summary>0x048, Blocks per allocation group</summary>
-            public int blocks_per_ag;
-            /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
-            public int ag_shift;
-            /// <summary>0x050, Allocation groups in volume</summary>
-            public int num_ags;
-            /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
-            public uint flags;
-            /// <summary>0x058, Allocation group of journal</summary>
-            public int log_blocks_ag;
-            /// <summary>0x05C, Start block of journal, inside ag</summary>
-            public ushort log_blocks_start;
-            /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
-            public ushort log_blocks_len;
-            /// <summary>0x060, Start of journal</summary>
-            public long log_start;
-            /// <summary>0x068, Valid block logs</summary>
-            public int log_valid_blocks;
-            /// <summary>0x06C, Log size</summary>
-            public int log_size;
-            /// <summary>0x070, 0x15B6830E</summary>
-            public uint magic3;
-            /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
-            public int root_dir_ag;
-            /// <summary>0x078, Start in ag of root folder's i-node</summary>
-            public ushort root_dir_start;
-            /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
-            public ushort root_dir_len;
-            /// <summary>0x07C, Allocation group where pending-delete-files' i-node resides</summary>
-            public int deleted_ag;
-            /// <summary>0x080, Start in ag of pending-delete-files' i-node</summary>
-            public ushort deleted_start;
-            /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
-            public ushort deleted_len;
-            /// <summary>0x084, Allocation group where indices' i-node resides</summary>
-            public int indices_ag;
-            /// <summary>0x088, Start in ag of indices' i-node</summary>
-            public ushort indices_start;
-            /// <summary>0x08A, As this is part of inode_addr, this is 1</summary>
-            public ushort indices_len;
-            /// <summary>0x08C, Size of bootloader</summary>
-            public int boot_size;
+            /// <summary><see cref="HAMMER_FSBUF_VOLUME"/> for a valid header</summary>
+            public ulong vol_signature;
+
+             /* These are relative to block device offset, not zone offsets. */
+            /// <summary>offset of boot area</summary>
+            public long vol_bot_beg;
+            /// <summary>offset of memory log</summary>
+            public long vol_mem_beg;
+            /// <summary>offset of the first buffer in volume</summary>
+            public long vol_buf_beg;
+            /// <summary>offset of volume EOF (on buffer boundary)</summary>
+            public long vol_buf_end;
+            public long vol_reserved01;
+
+            /// <summary>identify filesystem</summary>
+            public Guid vol_fsid;
+            /// <summary>identify filesystem type</summary>
+            public Guid vol_fstype;
+            /// <summary>filesystem label</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public byte[] vol_label;
+
+            /// <summary>volume number within filesystem</summary>
+            public int vol_no;
+            /// <summary>number of volumes making up filesystem</summary>
+            public int vol_count;
+
+            /// <summary>version control information</summary>
+            public uint vol_version;
+            /// <summary>header crc</summary>
+            public hammer_crc_t vol_crc;
+            /// <summary>volume flags</summary>
+            public uint vol_flags;
+            /// <summary>the root volume number (must be 0)</summary>
+            public uint vol_rootvol;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public uint[] vol_reserved;
+
+            /*
+             * These fields are initialized and space is reserved in every
+             * volume making up a HAMMER filesytem, but only the root volume
+             * contains valid data.  Note that vol0_stat_bigblocks does not
+             * include big-blocks for freemap and undomap initially allocated
+             * by newfs_hammer(8).
+             */
+            /// <summary>total big-blocks when fs is empty</summary>
+            public long vol0_stat_bigblocks;
+            /// <summary>number of free big-blocks</summary>
+            public long vol0_stat_freebigblocks;
+            public long vol0_reserved01;
+            /// <summary>for statfs only</summary>
+            public long vol0_stat_inodes;
+            public long vol0_reserved02;
+            /// <summary>B-Tree root offset in zone-8</summary>
+            public hammer_off_t vol0_btree_root;
+            /// <summary>highest partially synchronized TID</summary>
+            public hammer_tid_t vol0_next_tid;
+            public hammer_off_t vol0_reserved03;
+
+            /// <summary>Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the hammer_mount structure.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            public HammerBlockMap[] vol0_blockmap;
+
+            /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+            public hammer_off_t[] vol0_undo_array;
+        }
+
+        struct HammerBlockMap
+        {
+            /// <summary>zone-2 offset only used by zone-4</summary>
+            public hammer_off_t phys_offset;
+            /// <summary>zone-X offset only used by zone-3</summary>
+            public hammer_off_t first_offset;
+            /// <summary>zone-X offset for allocation</summary>
+            public hammer_off_t next_offset;
+            /// <summary>zone-X offset only used by zone-3</summary>
+            public hammer_off_t alloc_offset;
+            public uint reserved01;
+            public hammer_crc_t entry_crc;
         }
 
         public override Errno Mount()
@@ -277,3 +302,4 @@ namespace DiscImageChef.Filesystems
         }
     }
 }
+ 

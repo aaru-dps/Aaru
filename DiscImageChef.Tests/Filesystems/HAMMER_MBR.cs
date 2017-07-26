@@ -64,11 +64,11 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            104856192, 104856192,
+            6310, 6310,
         };
 
         readonly int[] clustersize = {
-            512, 512,
+            8388608, 8388608,
         };
 
         readonly string[] volumename = {
@@ -76,14 +76,12 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial = {
-            "UNKNOWN","UNKNOWN",
+            "f8e1a8bb-626d-11e7-94b5-0900274691e4","ff4dc664-6276-11e7-983f-090027c41b46",
         };
 
         [Test]
         public void Test()
         {
-            throw new NotImplementedException("HAMMER filesystem is not yet implemented");
-            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hammer_mbr", testfiles[i]);
@@ -98,7 +96,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0xA5")
+                    if(partitions[j].Type == "Hammer")
                     {
                         part = j;
                         break;
@@ -112,7 +110,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual("HAMMER", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
-            }*/
+            }
         }
     }
 }

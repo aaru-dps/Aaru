@@ -118,6 +118,7 @@ Supported file systems for identification and information only
 * DEC Files-11 (only checked with On Disk Structure 2, ODS-2)
 * ECMA-67: 130mm Flexible Disk Cartridge Labelling and File Structure for Information Interchange
 * Flash-Friendly File System (F2FS)
+* HAMMER file system
 * IBM Journaling File System (JFS)
 * ISO9660
 * Linux extended file system
