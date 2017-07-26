@@ -110,6 +110,8 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
             if(encoding == null)
                 CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)

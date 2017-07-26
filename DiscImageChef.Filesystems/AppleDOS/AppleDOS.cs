@@ -86,8 +86,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             start = partition.Start;
             Name = "Apple DOS File System";
             PluginUUID = new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-            if(encoding == null) // TODO: Until Apple ][ encoding is implemented
-                CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            // TODO: Until Apple ][ encoding is implemented
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
     }
 }

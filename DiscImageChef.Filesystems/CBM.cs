@@ -51,8 +51,7 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Commodore file system";
             PluginUUID = new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
-            if(encoding == null)
-                CurrentEncoding = new Claunia.Encoding.PETSCII();
+            CurrentEncoding = new Claunia.Encoding.PETSCII();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

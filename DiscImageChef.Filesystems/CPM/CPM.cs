@@ -125,6 +125,8 @@ namespace DiscImageChef.Filesystems.CPM
             PluginUUID = new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("IBM437");
+            else
+                CurrentEncoding = encoding;
         }
     }
 }

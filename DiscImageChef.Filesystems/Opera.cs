@@ -51,8 +51,8 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Opera Filesystem Plugin";
             PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
-            if(encoding == null) // TODO: Find correct default encoding
-                CurrentEncoding = Encoding.ASCII;
+            // TODO: Find correct default encoding
+            CurrentEncoding = Encoding.ASCII;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)

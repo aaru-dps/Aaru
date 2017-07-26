@@ -120,8 +120,7 @@ namespace DiscImageChef.Filesystems
         {
             Name = "F2FS Plugin";
             PluginUUID = new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
-            if(encoding == null)
-                CurrentEncoding = Encoding.Unicode;
+            CurrentEncoding = Encoding.Unicode;
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)

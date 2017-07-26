@@ -90,8 +90,8 @@ namespace DiscImageChef.Filesystems
         {
             Name = "Apple ProDOS filesystem";
             PluginUUID = new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
-            if(encoding == null) // TODO: Until Apple ][ encoding is implemented
-                CurrentEncoding = new Claunia.Encoding.LisaRoman();
+            // TODO: Until Apple ][ encoding is implemented
+            CurrentEncoding = new Claunia.Encoding.LisaRoman();
         }
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)

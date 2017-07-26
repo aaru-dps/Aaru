@@ -53,6 +53,8 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
             if(encoding == null)
                 CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
         }
 
         enum SquashCompression : ushort

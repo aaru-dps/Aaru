@@ -77,6 +77,8 @@ namespace DiscImageChef.Filesystems.AppleMFS
             partitionStart = partition.Start;
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("macintosh");
+            else
+                CurrentEncoding = encoding;
         }
     }
 }

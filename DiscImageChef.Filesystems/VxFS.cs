@@ -53,6 +53,8 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
             if(encoding == null)
                 CurrentEncoding = Encoding.UTF8;
+            else
+                CurrentEncoding = encoding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

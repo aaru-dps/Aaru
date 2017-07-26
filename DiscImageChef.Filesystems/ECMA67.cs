@@ -55,6 +55,8 @@ namespace DiscImageChef.Filesystems
             PluginUUID = new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
             if(encoding == null)
                 CurrentEncoding = Encoding.GetEncoding("iso-8859-1");
+            else
+                CurrentEncoding = encoding;
         }
 
         readonly byte[] ECMA67_Magic = { 0x56, 0x4F, 0x4C };
