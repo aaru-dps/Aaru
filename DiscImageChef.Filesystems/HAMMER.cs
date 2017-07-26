@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 
 namespace DiscImageChef.Filesystems
 {
+    // Information from Practical Filesystem Design, ISBN 1-55860-497-9
     public class AtheOS : Filesystem
     {
         // Little endian constants (that is, as read by .NET :p)
