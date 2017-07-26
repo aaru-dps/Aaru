@@ -78,45 +78,45 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors))
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     return true;
             }
 
             if(partition.End > (partition.Start + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors))
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     return true;
             }
 
             if(partition.End > (partition.Start + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors))
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     return true;
             }
 
             if(partition.End > (partition.Start + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors))
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     return true;
             }
 
             if(partition.End > (partition.Start + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors))
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + (sb_start_atari / imagePlugin.GetSectorSize()), sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     return true;
             }
 
@@ -148,9 +148,9 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     sb_offset = partition.Start + sb_start_floppy * sb_size_in_sectors;
                 else
                     magic = 0;
@@ -159,9 +159,9 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     sb_offset = partition.Start + sb_start_ufs1 * sb_size_in_sectors;
                 else
                     magic = 0;
@@ -170,9 +170,9 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     sb_offset = partition.Start + sb_start_ufs2 * sb_size_in_sectors;
                 else
                     magic = 0;
@@ -181,9 +181,9 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     sb_offset = partition.Start + sb_start_piggy * sb_size_in_sectors;
                 else
                     magic = 0;
@@ -192,9 +192,9 @@ namespace DiscImageChef.Filesystems
             if(partition.End > (partition.Start + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors) && magic == 0)
             {
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_atari / imagePlugin.GetSectorSize(), sb_size_in_sectors);
-                magic = BigEndianBitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_MAGIC_BW || magic == UFS2_MAGIC || magic == UFS_CIGAM || magic == UFS_BAD_MAGIC)
+                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
                     sb_offset = partition.Start + sb_start_atari / imagePlugin.GetSectorSize();
                 else
                     magic = 0;
@@ -214,20 +214,33 @@ namespace DiscImageChef.Filesystems
                     sbInformation.AppendLine("UFS filesystem");
                     xmlFSType.Type = "UFS";
                     break;
+                case UFS_CIGAM:
+                    sbInformation.AppendLine("Big-endian UFS filesystem");
+                    xmlFSType.Type = "UFS";
+                    break;
                 case UFS_MAGIC_BW:
                     sbInformation.AppendLine("BorderWare UFS filesystem");
+                    xmlFSType.Type = "UFS";
+                    break;
+                case UFS_CIGAM_BW:
+                    sbInformation.AppendLine("Big-endian BorderWare UFS filesystem");
                     xmlFSType.Type = "UFS";
                     break;
                 case UFS2_MAGIC:
                     sbInformation.AppendLine("UFS2 filesystem");
                     xmlFSType.Type = "UFS2";
                     break;
-                case UFS_CIGAM:
-                    sbInformation.AppendLine("Big-endian UFS filesystem");
-                    xmlFSType.Type = "UFS";
+                case UFS2_CIGAM:
+                    sbInformation.AppendLine("Big-endian UFS2 filesystem");
+                    xmlFSType.Type = "UFS2";
                     break;
                 case UFS_BAD_MAGIC:
                     sbInformation.AppendLine("Incompletely initialized UFS filesystem");
+                    sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
+                    xmlFSType.Type = "UFS";
+                    break;
+                case UFS_BAD_CIGAM:
+                    sbInformation.AppendLine("Incompletely initialized big-endian UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
                     xmlFSType.Type = "UFS";
                     break;
@@ -242,7 +255,10 @@ namespace DiscImageChef.Filesystems
             Marshal.FreeHGlobal(sbPtr);
 
             UFSSuperBlock bs_sfu = BigEndianMarshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
-            if(bs_sfu.fs_magic == UFS_MAGIC && ufs_sb.fs_magic == UFS_CIGAM)
+            if((bs_sfu.fs_magic == UFS_MAGIC && ufs_sb.fs_magic == UFS_CIGAM) ||
+               (bs_sfu.fs_magic == UFS_MAGIC_BW && ufs_sb.fs_magic == UFS_CIGAM_BW) ||
+               (bs_sfu.fs_magic == UFS2_MAGIC && ufs_sb.fs_magic == UFS2_CIGAM) ||
+               (bs_sfu.fs_magic == UFS_BAD_MAGIC && ufs_sb.fs_magic == UFS_BAD_CIGAM))
             {
                 ufs_sb = bs_sfu;
                 ufs_sb.fs_old_cstotal.cs_nbfree = Swapping.Swap(ufs_sb.fs_old_cstotal.cs_nbfree);
@@ -299,9 +315,6 @@ namespace DiscImageChef.Filesystems
             DicConsole.DebugWriteLine("FFS plugin", "fs_flags: 0x{0:X2}", ufs_sb.fs_flags);
             DicConsole.DebugWriteLine("FFS plugin", "fs_magic: 0x{0:X8}", ufs_sb.fs_magic);
 
-            sbInformation.AppendLine("There are a lot of variants of UFS using overlapped values on same fields");
-            sbInformation.AppendLine("I will try to guess which one it is, but unless it's UFS2, I may be surely wrong");
-
             if(ufs_sb.fs_magic == UFS2_MAGIC)
             {
                 fs_type_ufs2 = true;
@@ -350,6 +363,12 @@ namespace DiscImageChef.Filesystems
                 fs_type_44bsd |= ufs_sb.fs_old_inodefmt == 2;
             }
 
+            if(!fs_type_ufs2)
+            {
+                sbInformation.AppendLine("There are a lot of variants of UFS using overlapped values on same fields");
+                sbInformation.AppendLine("I will try to guess which one it is, but unless it's UFS2, I may be surely wrong");
+            }
+
             if(fs_type_42bsd)
                 sbInformation.AppendLine("Guessed as 42BSD FFS");
             if(fs_type_43bsd)
@@ -362,8 +381,6 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("Guessed as SunOS/x86 FFS");
             if(fs_type_ufs)
                 sbInformation.AppendLine("Guessed as UFS");
-            if(fs_type_ufs2)
-                sbInformation.AppendLine("Guessed as UFS2");
 
             if(fs_type_42bsd)
                 sbInformation.AppendFormat("Linked list of filesystems: 0x{0:X8}", ufs_sb.fs_link).AppendLine();
@@ -451,7 +468,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(ufs_sb.fs_volname)).AppendLine();
                 xmlFSType.VolumeName = StringHandlers.CToString(ufs_sb.fs_volname);
                 sbInformation.AppendFormat("Volume ID: 0x{0:X16}", ufs_sb.fs_swuid).AppendLine();
-                xmlFSType.VolumeSerial = string.Format("{0:X16}", ufs_sb.fs_swuid);
+                //xmlFSType.VolumeSerial = string.Format("{0:X16}", ufs_sb.fs_swuid);
                 sbInformation.AppendFormat("Last searched cylinder group: {0}", ufs_sb.fs_cgrotor).AppendLine();
                 sbInformation.AppendFormat("{0} contiguously allocated directories", ufs_sb.fs_contigdirs).AppendLine();
                 sbInformation.AppendFormat("Standard superblock LBA: {0}", ufs_sb.fs_sblkno).AppendLine();
@@ -512,14 +529,20 @@ namespace DiscImageChef.Filesystems
         // MAGICs
         // UFS magic
         const uint UFS_MAGIC = 0x00011954;
+        // Big-endian UFS magic
+        const uint UFS_CIGAM = 0x54190100;
         // BorderWare UFS
-        const uint UFS_MAGIC_BW = 0x0f242697;
+        const uint UFS_MAGIC_BW = 0x0F242697;
+        // Big-endian BorderWare UFS
+        const uint UFS_CIGAM_BW = 0x9726240F;
         // UFS2 magic
         const uint UFS2_MAGIC = 0x19540119;
-        // byteswapped
-        const uint UFS_CIGAM = 0x54190100;
+        // Big-endian UFS2 magic
+        const uint UFS2_CIGAM = 0x19015419;
         // Incomplete newfs
         const uint UFS_BAD_MAGIC = 0x19960408;
+        // Big-endian incomplete newfs
+        const uint UFS_BAD_CIGAM = 0x08049619;
 
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -772,7 +795,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>(uchar_t) blocks for each rotation</summary>
             public int fs_old_rotbloff;
             /// <summary>magic number</summary>
-            public int fs_magic;
+            public uint fs_magic;
             /// <summary>list of blocks for each rotation</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
             public byte[] fs_rotbl;
