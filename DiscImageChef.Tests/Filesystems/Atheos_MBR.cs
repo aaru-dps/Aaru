@@ -55,7 +55,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors = {
-            1572864,
+            4194304,
         };
 
         readonly uint[] sectorsize = {
@@ -63,7 +63,7 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            786400,
+            2097120,
         };
 
         readonly int[] clustersize = {
@@ -81,8 +81,6 @@ namespace DiscImageChef.Tests.Filesystems
         [Test]
         public void Test()
         {
-            throw new System.NotImplementedException("Atheos filesystem is not yet implemented");
-            /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "atheos_mbr", testfiles[i]);
@@ -93,11 +91,11 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Filesystem fs = new DiscImageChef.Filesystems.Atheros();
+                Filesystem fs = new DiscImageChef.Filesystems.AtheOS();
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].PartitionType == "0x2A")
+                    if(partitions[j].Type == "0x2A")
                     {
                         part = j;
                         break;
@@ -108,11 +106,10 @@ namespace DiscImageChef.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out string information);
                 Assert.AreEqual(clusters[i], fs.XmlFSType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFSType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Atheros", fs.XmlFSType.Type, testfiles[i]);
+                Assert.AreEqual("AtheOS filesystem", fs.XmlFSType.Type, testfiles[i]);
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }
-            */
         }
     }
 }

@@ -107,6 +107,7 @@ Supported file systems for identification and information only
 * Apple Hierarchical File System (HFS)
 * Apple Hierarchical File System+ (HFS+)
 * Apple ProDOS / SOS file system
+* AtheOS file system
 * B-tree file system (btrfs)
 * BSD Fast File System (FFS) / Unix File System (UFS)
 * BSD Unix File System 2 (UFS2)
