@@ -96,6 +96,7 @@ namespace DiscImageChef.PartPlugins
                 return false;
 
             if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM)
+                dl = SwapDiskLabel(dl);
 
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
@@ -474,11 +475,11 @@ namespace DiscImageChef.PartPlugins
             DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
             for(int i = 0; i < dl.d_drivedata.Length; i++)
                 dl.d_drivedata[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_drivedata[i]);
-            for(int i = 0; i < dl.d_drivedata.Length; i++)
+            for(int i = 0; i < dl.d_spare.Length; i++)
                 dl.d_spare[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_spare[i]);
-            for(int i = 0; i < dl.d_drivedata.Length; i++)
+            for(int i = 0; i < dl.d_partitions.Length; i++)
                 dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
-            
+
             return dl;
         }
     }
