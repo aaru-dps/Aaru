@@ -64,9 +64,11 @@ namespace DiscImageChef.Core
                     foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
                     {
                         if(_partplugin.GetInformation(image, out List<Partition> _partitions, imagePartition.Start))
+                        {
                             partitions.AddRange(_partitions);
+                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", _partplugin.Name, imagePartition.Start);
+                        }
                     }
-
                     checkedLocations.Add(imagePartition.Start);
                 }
             }
@@ -76,7 +78,10 @@ namespace DiscImageChef.Core
                 foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
                 {
                     if(_partplugin.GetInformation(image, out List<Partition> _partitions, 0))
+                    {
                         partitions.AddRange(_partitions);
+                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ 0", _partplugin.Name);
+                    }
                 }
 
                 checkedLocations.Add(0);
@@ -84,6 +89,13 @@ namespace DiscImageChef.Core
 
             while(partitions.Count > 0)
             {
+                if(checkedLocations.Contains(partitions[0].Start))
+                {
+                    childPartitions.Add(partitions[0]);
+                    partitions.RemoveAt(0);
+                    continue;
+                }
+
                 List<Partition> childs = new List<Partition>();
 
                 foreach(PartPlugin _partplugin in plugins.PartPluginsList.Values)
