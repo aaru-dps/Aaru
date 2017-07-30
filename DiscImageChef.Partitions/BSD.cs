@@ -135,6 +135,7 @@ namespace DiscImageChef.PartPlugins
             DicConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}", dl.d_sbsize);
 
             ulong counter = 0;
+            bool addSectorOffset = false;
 
             for(int i = 0; i < dl.d_npartitions && i < 22; i++)
             {
@@ -153,6 +154,15 @@ namespace DiscImageChef.PartPlugins
                 };
                 if(dl.d_partitions[i].p_fstype != fsType.Unused)
                 {
+                    // Crude and dirty way to know if the disklabel is relative to its parent partition...
+                    if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset)
+                        addSectorOffset = true;
+
+                    if(addSectorOffset)
+                    {
+                        part.Start += sectorOffset;
+                        part.Offset += (sectorOffset * imagePlugin.GetSectorSize());
+                    }
                     DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
                     DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
                     partitions.Add(part);
