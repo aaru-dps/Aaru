@@ -164,6 +164,7 @@
     <Compile Include="Partitions\PC98.cs" />
     <Compile Include="Partitions\RDB.cs" />
     <Compile Include="Partitions\SGI.cs" />
+    <Compile Include="Partitions\Sun.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
