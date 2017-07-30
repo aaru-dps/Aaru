@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : SGI.cs
+// Filename       : Sun.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -47,8 +47,9 @@ using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Partitions
 {
+    // TODO: Get SunOS and VTOC16 disk labels
     [TestFixture]
-    public class SGI
+    public class Sun
     {
         readonly string[] testfiles = {
             "linux.vdi.lz","parted.vdi.lz",
@@ -57,27 +58,19 @@ namespace DiscImageChef.Tests.Partitions
         readonly Partition[][] wanted = {
             // Linux's fdisk
             new []{
-                new Partition{ Description = null, Name = null, Type = "XFS", Length = 40961, Sequence = 0, Start = 16065 },
-                new Partition{ Description = null, Name = null, Type = "Linux RAID", Length = 61441, Sequence = 1, Start = 64260 },
-                new Partition{ Description = null, Name = null, Type = "Track replacements", Length = 81921, Sequence = 2, Start = 128520 },
-                new Partition{ Description = null, Name = null, Type = "Sector replacements", Length = 92161, Sequence = 3, Start = 224910 },
-                new Partition{ Description = null, Name = null, Type = "Raw data (swap)", Length = 102401, Sequence = 4, Start = 321300 },
-                new Partition{ Description = null, Name = null, Type = "4.2BSD Fast File System", Length = 30721, Sequence = 5, Start = 433755 },
-                new Partition{ Description = null, Name = null, Type = "UNIX System V", Length = 71681, Sequence = 6, Start = 465885 },
-                new Partition{ Description = null, Name = null, Type = "EFS", Length = 10241, Sequence = 7, Start = 546210 },
-                new Partition{ Description = null, Name = null, Type = "Logical volume", Length = 122881, Sequence = 8, Start = 562275 },
-                new Partition{ Description = null, Name = null, Type = "Raw logical volume", Length = 133121, Sequence = 9, Start = 690795 },
-                new Partition{ Description = null, Name = null, Type = "XFS log device", Length = 51201, Sequence = 10, Start = 835380 },
-                new Partition{ Description = null, Name = null, Type = "Linux swap", Length = 30721, Sequence = 11, Start = 899640 },
-                new Partition{ Description = null, Name = null, Type = "SGI XVM", Length = 6145, Sequence = 12, Start = 931770 },
-                new Partition{ Description = null, Name = null, Type = "Linux", Length = 64260, Sequence = 13, Start = 947835 },
+                new Partition{ Description = null, Name = null, Type = "Linux", Length = 204800, Sequence = 0, Start = 0 },
+                new Partition{ Description = null, Name = null, Type = "Sun boot", Length = 102400, Sequence = 1, Start = 208845 },
+                new Partition{ Description = null, Name = null, Type = "Sun /", Length = 102400, Sequence = 2, Start = 321300 },
+                new Partition{ Description = null, Name = null, Type = "Sun /home", Length = 102400, Sequence = 3, Start = 433755 },
+                new Partition{ Description = null, Name = null, Type = "Sun swap", Length = 153600, Sequence = 4, Start = 546210 },
+                new Partition{ Description = null, Name = null, Type = "Sun /usr", Length = 208845, Sequence = 5, Start = 706860 },
+                new Partition{ Description = null, Name = null, Type = "Linux swap", Length = 96390, Sequence = 6, Start = 915705 },
             },
             // GNU Parted
             new []{
-                new Partition{ Description = null, Name = null, Type = "Raw data (swap)", Length = 22528, Sequence = 0, Start = 6144 },
-                new Partition{ Description = null, Name = null, Type = "Raw data (swap)", Length = 67584, Sequence = 1, Start = 30720 },
-                new Partition{ Description = null, Name = null, Type = "Raw data (swap)", Length = 94208, Sequence = 2, Start = 100352 },
-                new Partition{ Description = null, Name = null, Type = "XFS", Length = 36864, Sequence = 3, Start = 196608 },
+                new Partition{ Description = null, Name = null, Type = "Linux", Length = 49152, Sequence = 0, Start = 0 },
+                new Partition{ Description = null, Name = null, Type = "Linux", Length = 80325, Sequence = 1, Start = 64260 },
+                new Partition{ Description = null, Name = null, Type = "Linux", Length = 96390, Sequence = 2, Start = 144585 },
             },
         };  
 
@@ -86,7 +79,7 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "sgi", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "sun", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
