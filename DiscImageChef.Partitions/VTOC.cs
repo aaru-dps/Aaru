@@ -45,7 +45,7 @@ namespace DiscImageChef.PartPlugins
 
         public UNIX()
         {
-            Name = "UNIX VTOC and disklabel";
+            Name = "UNIX VTOC";
             PluginUUID = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
         }
 
