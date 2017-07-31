@@ -318,6 +318,10 @@ namespace DiscImageChef.CommonTypes
         RX01,
         /// <summary>8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM</summary>
         RX02,
+        /// <summary>8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM</summary>
+        RX03,
+        /// <summary>5.25", SS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
+        RX50,
         #endregion DEC standard floppy formats
 
         #region Acorn standard floppy formats
@@ -800,6 +804,63 @@ namespace DiscImageChef.CommonTypes
         AppleWidget,
         AppleHD20,
         #endregion Apple Hard Disks
+
+        #region DEC hard disks
+        /// <summary>2382 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 204890112 bytes</summary>
+        RA60,
+        /// <summary>546 cylinders, 14 tracks/cylinder, 31 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 121325568 bytes</summary>
+        RA80,
+        /// <summary>1248 cylinders, 14 tracks/cylinder, 51 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 456228864 bytes</summary>
+        RA81,
+        /// <summary>302 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 25976832 bytes</summary>
+        RC25,
+        /// <summary>615 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 21411840 bytes</summary>
+        RD31,
+        /// <summary>820 cylinders, 6 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 42823680 bytes</summary>
+        RD32,
+        /// <summary>306 cylinders, 4 tracks/cylinder, 17 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 10653696 bytes</summary>
+        RD51,
+        /// <summary>480 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 30965760 bytes</summary>
+        RD52,
+        /// <summary>1024 cylinders, 7 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 75497472 bytes</summary>
+        RD53,
+        /// <summary>1225 cylinders, 8 tracks/cylinder, 18 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 159936000 bytes</summary>
+        RD54,
+        /// <summary>411 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 13888512 bytes</summary>
+        RK06,
+        /// <summary>411 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 14204160 bytes</summary>
+        RK06_18,
+        /// <summary>815 cylinders, 3 tracks/cylinder, 22 sectors/track, 256 words/sector, 16 bits/word, 512 bytes/sector, 27540480 bytes</summary>
+        RK07,
+        /// <summary>815 cylinders, 3 tracks/cylinder, 20 sectors/track, 256 words/sector, 18 bits/word, 576 bytes/sector, 28166400 bytes</summary>
+        RK07_18,
+        /// <summary>823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160 bytes</summary>
+        RM02,
+        /// <summary>823 cylinders, 5 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 67420160 bytes</summary>
+        RM03,
+        /// <summary>823 cylinders, 19 tracks/cylinder, 32 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 256196608 bytes</summary>
+        RM05,
+        /// <summary>203 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 22865920 bytes</summary>
+        RP02,
+        /// <summary>203 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 23385600 bytes</summary>
+        RP02_18,
+        /// <summary>400 cylinders, 10 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 45056000 bytes</summary>
+        RP03,
+        /// <summary>400 cylinders, 10 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 46080000 bytes</summary>
+        RP03_18,
+        /// <summary>411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 87960576 bytes</summary>
+        RP04,
+        /// <summary>411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 89959680 bytes</summary>
+        RP04_18,
+        /// <summary>411 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 87960576 bytes</summary>
+        RP05,
+        /// <summary>411 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 89959680 bytes</summary>
+        RP05_18,
+        /// <summary>815 cylinders, 19 tracks/cylinder, 22 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector, 174423040 bytes</summary>
+        RP06,
+        /// <summary>815 cylinders, 19 tracks/cylinder, 20 sectors/track, 128 words/sector, 36 bits/word, 576 bytes/sector, 178387200 bytes</summary>
+        RP06_18,
+        #endregion
 
         #region Generic hard disks
         Microdrive,
