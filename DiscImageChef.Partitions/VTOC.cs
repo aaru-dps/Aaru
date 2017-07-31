@@ -38,12 +38,12 @@ using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
 {
-    public class UNIX : PartPlugin
+    public class VTOC : PartPlugin
     {
         public const uint UNIXDiskLabel_MAGIC = 0xCA5E600D;
         public const uint UNIXVTOC_MAGIC = 0x600DDEEE;
 
-        public UNIX()
+        public VTOC()
         {
             Name = "UNIX VTOC";
             PluginUUID = new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");

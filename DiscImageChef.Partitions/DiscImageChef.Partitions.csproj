@@ -53,6 +53,7 @@
     <Compile Include="VTOC.cs" />
     <Compile Include="Human68k.cs" />
     <Compile Include="Xbox.cs" />
+    <Compile Include="UNIX.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
