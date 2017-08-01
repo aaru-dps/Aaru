@@ -58,7 +58,7 @@ namespace DiscImageChef.Tests.Filesystems
             "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz", "ufs1/freebsd_7.0.vdi.lz",
             "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz",
             "ufs1/solaris_9.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz",
-            "ufs2/netbsd_7.1.vdi.lz", "ffs43/att_unix_svr4v2.1.vdi.lz",
+            "ufs2/netbsd_7.1.vdi.lz",
         };
 
         readonly ulong[] sectors = {
@@ -69,7 +69,7 @@ namespace DiscImageChef.Tests.Filesystems
             2097152, 2097152, 2097152, 8388608,
             8388608, 2097152, 1024000, 2097152,
             2097152, 16777216, 16777216, 16777216,
-            2097152, 1024000,
+            2097152,
         };
 
         readonly uint[] sectorsize = {
@@ -80,7 +80,7 @@ namespace DiscImageChef.Tests.Filesystems
             512, 512, 512, 512,
             512, 512, 512, 512,
             512, 512, 512, 512,
-            512, 512,
+            512,
         };
 
         readonly long[] clusters = {
@@ -91,7 +91,7 @@ namespace DiscImageChef.Tests.Filesystems
             523758, 523758, 262138, 1048231,
             2096462, 524284, 511968, 1038240,
             1046808, 2096472, 2096472, 65018,
-            524272, 65024,
+            524272,
         };
 
         readonly int[] clustersize = {
@@ -102,7 +102,7 @@ namespace DiscImageChef.Tests.Filesystems
             2048, 2048, 4096, 4096,
             2048, 2048, 1024, 1024,
             1024, 4096, 4096, 2048,
-            2048, 2048,
+            2048,
         };
 
         readonly string[] volumename = {
@@ -113,7 +113,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, null, null, null,
             null, null, null, null,
             null, "VolumeLabel", "VolumeLabel", null,
-            "", null,
+            "",
         };
 
         readonly string[] volumeserial = {
@@ -124,7 +124,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, null, null, null,
             null, null, null, null,
             null, null, null, null,
-            null, null,
+            null,
         };
 
         readonly string[] type = {
@@ -135,7 +135,7 @@ namespace DiscImageChef.Tests.Filesystems
             "UFS", "UFS", "UFS", "UFS",
             "UFS", "UFS", "UFS", "UFS",
             "UFS", "UFS2", "UFS2", "UFS2",
-            "UFS2", "UFS",
+            "UFS2",
         };
 
         [Test]
