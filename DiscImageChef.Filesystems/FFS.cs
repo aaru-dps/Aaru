@@ -75,49 +75,18 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
 
-            if(partition.End > (partition.Start + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors))
+            ulong[] locations = { sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd, 8192 / imagePlugin.GetSectorSize(), 65536 / imagePlugin.GetSectorSize(), 262144 / imagePlugin.GetSectorSize() };
+
+            foreach(ulong loc in locations)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                if(partition.End > (partition.Start + loc + sb_size_in_sectors))
+                {
+                    ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
+                    magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    return true;
-            }
-
-            if(partition.End > (partition.Start + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors))
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    return true;
-            }
-
-            if(partition.End > (partition.Start + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors))
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    return true;
-            }
-
-            if(partition.End > (partition.Start + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors))
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    return true;
-            }
-
-            if(partition.End > (partition.Start + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors))
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + (sb_start_atari / imagePlugin.GetSectorSize()), sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    return true;
+                    if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
+                        return true;
+                }
             }
 
             return false;
@@ -145,59 +114,23 @@ namespace DiscImageChef.Filesystems
             else
                 sb_size_in_sectors = block_size / imagePlugin.GetSectorSize();
 
-            if(partition.End > (partition.Start + sb_start_floppy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
+            ulong[] locations = { sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd, 8192 / imagePlugin.GetSectorSize(), 65536 / imagePlugin.GetSectorSize(), 262144 / imagePlugin.GetSectorSize() };
+
+            foreach(ulong loc in locations)
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_floppy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                if(partition.End > (partition.Start + loc + sb_size_in_sectors))
+                {
+                    ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
+                    magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    sb_offset = partition.Start + sb_start_floppy * sb_size_in_sectors;
-                else
+                    if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
+                    {
+                        sb_offset = partition.Start + loc;
+                        break;
+                    }
+
                     magic = 0;
-            }
-
-            if(partition.End > (partition.Start + sb_start_ufs1 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs1 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    sb_offset = partition.Start + sb_start_ufs1 * sb_size_in_sectors;
-                else
-                    magic = 0;
-            }
-
-            if(partition.End > (partition.Start + sb_start_ufs2 * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_ufs2 * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    sb_offset = partition.Start + sb_start_ufs2 * sb_size_in_sectors;
-                else
-                    magic = 0;
-            }
-
-            if(partition.End > (partition.Start + sb_start_piggy * sb_size_in_sectors + sb_size_in_sectors) && magic == 0)
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_piggy * sb_size_in_sectors, sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    sb_offset = partition.Start + sb_start_piggy * sb_size_in_sectors;
-                else
-                    magic = 0;
-            }
-
-            if(partition.End > (partition.Start + sb_start_atari / imagePlugin.GetSectorSize() + sb_size_in_sectors) && magic == 0)
-            {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + sb_start_atari / imagePlugin.GetSectorSize(), sb_size_in_sectors);
-                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
-
-                if(magic == UFS_MAGIC || magic == UFS_CIGAM || magic == UFS_MAGIC_BW || magic == UFS_CIGAM_BW || magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
-                    sb_offset = partition.Start + sb_start_atari / imagePlugin.GetSectorSize();
-                else
-                    magic = 0;
+                }
             }
 
             if(magic == 0)
@@ -514,16 +447,16 @@ namespace DiscImageChef.Filesystems
 
         const uint block_size = 8192;
 
-        // As specified in FreeBSD source code, FFS/UFS can start in any of four places
-        // For floppies, start at offset 0
+        // FreeBSD specifies starts at byte offsets 0, 8192, 65536 and 262144, but in other cases it's following sectors
+        // Without bootcode
         const ulong sb_start_floppy = 0;
-        // For normal devices, start at offset 8192
-        const ulong sb_start_ufs1 = 1;
-        // For UFS2, start at offset 65536
-        const ulong sb_start_ufs2 = 8;
-        // Atari strange starting for Atari UNIX, in bytes not blocks
-        const ulong sb_start_atari = 110080;
-        // For piggy devices (?), start at offset 262144
+        // With bootcode
+        const ulong sb_start_boot = 1;
+        // Dunno, longer boot code
+        const ulong sb_start_long_boot = 8;
+        // Found on AT&T for MD-2D floppieslzio
+        const ulong sb_start_att_dsdd = 14;
+        // Found on hard disks (Atari UNIX e.g.)
         const ulong sb_start_piggy = 32;
 
         // MAGICs
