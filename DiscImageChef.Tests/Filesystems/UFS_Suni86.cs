@@ -99,7 +99,7 @@ namespace DiscImageChef.Tests.Filesystems
                 int part = -1;
                 for(int j = 0; j < partitions.Count; j++)
                 {
-                    if(partitions[j].Type == "Unknown")
+                    if(partitions[j].Type == "Replacement sectors")
                     {
                         part = j;
                         break;

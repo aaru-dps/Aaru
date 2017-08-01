@@ -90,7 +90,7 @@ namespace DiscImageChef.Tests.Filesystems
             102280, 102280, 102368, 1048500,
             523758, 523758, 262138, 1048231,
             2096462, 524284, 511968, 1038240,
-            1046808, 2096472, 2096472, 65018,
+            1046808, 2096472, 2096472, 4192945,
             524272,
         };
 
@@ -112,7 +112,7 @@ namespace DiscImageChef.Tests.Filesystems
             null, null, null, null,
             null, null, null, null,
             null, null, null, null,
-            null, "VolumeLabel", "VolumeLabel", null,
+            null, "VolumeLabel", "VolumeLabel", "VolumeLabel",
             "",
         };
 
@@ -156,7 +156,7 @@ namespace DiscImageChef.Tests.Filesystems
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     if(partitions[j].Type == "0x63" || partitions[j].Type == "0xA8" || partitions[j].Type == "0xA5" || partitions[j].Type == "0xA9" ||
-                       partitions[j].Type == "0x82" || partitions[j].Type == "0x83" || partitions[j].Type == "4.2BSD Fast File System")
+                       partitions[j].Type == "0x82" || partitions[j].Type == "0x83" || partitions[j].Type == "4.2BSD Fast File System" || partitions[j].Type == "Sun boot")
                     {
                         part = j;
                         break;

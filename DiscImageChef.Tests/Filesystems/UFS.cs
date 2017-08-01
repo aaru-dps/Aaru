@@ -68,13 +68,13 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly long[] clusters = {
-            880, 2880, 720, 2400,
-            1440, 2880, 711, 1422, 
+            880, 2880, 360, 1200,
+            720, 1440, 711, 1422, 
         };
 
         readonly int[] clustersize = {
-            1024, 512, 512, 512,
-            512, 512, 1024, 1024,
+            1024, 512, 1024, 1024,
+            1024, 1024, 1024, 1024,
         };
 
         readonly string[] volumename = {
