@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
 using DiscImageChef.ImagePlugins;
 
 namespace DiscImageChef.PartPlugins
@@ -55,14 +56,12 @@ namespace DiscImageChef.PartPlugins
 
             byte[] bootSector = imagePlugin.ReadSector(sectorOffset);
             byte[] sector = imagePlugin.ReadSector(1 + sectorOffset);
-            if(sector.Length < 512)
-                return false;
-            if(bootSector[0x1FE] != 0x55 || bootSector[0x1FF] != 0xAA)
+            if(bootSector[bootSector.Length-2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA)
                 return false;
 
             PC98Table table = new PC98Table();
-            IntPtr tablePtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, tablePtr, 512);
+            IntPtr tablePtr = Marshal.AllocHGlobal(256);
+            Marshal.Copy(sector, 0, tablePtr, 256);
             table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
             Marshal.FreeHGlobal(tablePtr);
 
@@ -70,6 +69,21 @@ namespace DiscImageChef.PartPlugins
 
             foreach(PC98Partition entry in table.entries)
             {
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}", entry.dp_mid);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}", entry.dp_sid);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}", entry.dp_dum1);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}", entry.dp_dum2);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}", entry.dp_ssect);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}", entry.dp_shd);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}", entry.dp_scyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}", entry.dp_esect);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}", entry.dp_ehd);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}", entry.dp_ecyl);
+                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"", StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
+
                 if(entry.dp_ssect != entry.dp_esect &&
                    entry.dp_shd != entry.dp_ehd &&
                    entry.dp_scyl != entry.dp_ecyl &&
@@ -112,7 +126,7 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PC98Table
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public PC98Partition[] entries;
         }
 
