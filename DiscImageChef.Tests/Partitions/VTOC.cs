@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Sun.cs
+// Filename       : VTOC.cs
 // Version        : 1.0
 // Author(s)      : Natalia Portillo
 //
@@ -47,30 +47,32 @@ using NUnit.Framework;
 
 namespace DiscImageChef.Tests.Partitions
 {
-    // TODO: Get SunOS and VTOC16 disk labels
     [TestFixture]
-    public class Sun
+    public class VTOC
     {
         readonly string[] testfiles = {
-            "linux.vdi.lz","parted.vdi.lz",
+            "att_unix_vtoc.vdi.lz",
         };
 
         readonly Partition[][] wanted = {
-            // Linux's fdisk
+            // AT&T UNIX System V Release 4 Version 2.1 for 386
             new []{
-                new Partition{ Description = null, Name = null, Type = "Linux", Length = 204800, Sequence = 0, Start = 0 },
-                new Partition{ Description = null, Name = null, Type = "Sun boot", Length = 102400, Sequence = 1, Start = 208845 },
-                new Partition{ Description = null, Name = null, Type = "Sun /", Length = 102400, Sequence = 2, Start = 321300 },
-                new Partition{ Description = null, Name = null, Type = "Sun /home", Length = 102400, Sequence = 3, Start = 433755 },
-                new Partition{ Description = null, Name = null, Type = "Sun swap", Length = 153600, Sequence = 4, Start = 546210 },
-                new Partition{ Description = null, Name = null, Type = "Sun /usr", Length = 208845, Sequence = 5, Start = 706860 },
-                new Partition{ Description = null, Name = null, Type = "Linux swap", Length = 96390, Sequence = 6, Start = 915705 },
-            },
-            // GNU Parted
-            new []{
-                new Partition{ Description = null, Name = null, Type = "Linux", Length = 49152, Sequence = 0, Start = 0 },
-                new Partition{ Description = null, Name = null, Type = "Linux", Length = 80325, Sequence = 1, Start = 64260 },
-                new Partition{ Description = null, Name = null, Type = "Linux", Length = 96390, Sequence = 2, Start = 144585 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: Boot", Length = 34, Sequence = 0, Start = 2 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: Whole disk", Length = 1023119, Sequence = 1, Start = 2 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: Stand", Length = 253, Sequence = 2, Start = 64 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 3, Start = 379 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 4, Start = 79003 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 5, Start = 157627 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 6, Start = 236251 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 7, Start = 314875 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 8, Start = 393499 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 9, Start = 472123 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 10, Start = 550747 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 78624, Sequence = 11, Start = 629371 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 76608, Sequence = 12, Start = 707995 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 77616, Sequence = 13, Start = 784603 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 75600, Sequence = 14, Start = 862219 },
+                new Partition{ Description = null, Name = null, Type = "UNIX: /usr", Length = 84672, Sequence = 15, Start = 937819 },
             },
         };  
 
@@ -79,7 +81,7 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "sun", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "vtoc", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

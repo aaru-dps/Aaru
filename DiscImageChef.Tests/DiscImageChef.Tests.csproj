@@ -165,6 +165,7 @@
     <Compile Include="Partitions\RDB.cs" />
     <Compile Include="Partitions\SGI.cs" />
     <Compile Include="Partitions\Sun.cs" />
+    <Compile Include="Partitions\VTOC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
