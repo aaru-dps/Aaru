@@ -205,13 +205,13 @@ namespace DiscImageChef.ImagePlugins
                     if(diskSize % (2 * 26 * 256) == 0)
                     {
                         if(diskSize % (2 * 26 * 256) == 77)
-                            ImageInfo.mediaType = MediaType.NEC_525_DD;
+                            ImageInfo.mediaType = MediaType.NEC_8_DD;
                         ImageInfo.sectorSize = 256;
                     }
                     else if(diskSize % (2 * 26 * 128) == 0)
                     {
                         if(diskSize % (2 * 26 * 128) == 77)
-                            ImageInfo.mediaType = MediaType.NEC_525_SD;
+                            ImageInfo.mediaType = MediaType.NEC_8_SD;
                         ImageInfo.sectorSize = 256;
                     }
                     else

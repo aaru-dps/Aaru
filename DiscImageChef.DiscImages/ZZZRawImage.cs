@@ -709,9 +709,7 @@ namespace DiscImageChef.ImagePlugins
                     case 1255168:
                         return MediaType.ECMA_69_8;
                     case 1261568:
-						if(extension == ".hdm")
-							return MediaType.NEC_525_HD;
-						return MediaType.NEC_8_DD;
+						return MediaType.NEC_525_HD;
 					case 1304320:
                         return MediaType.ECMA_99_8;
                     case 1427456:
