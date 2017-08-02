@@ -87,6 +87,7 @@ Supported partitioning schemes
 * UNIX VTOC and disklabel
 * UNIX VTOC inside MBR
 * Xbox 360 hard coded partitions
+* XENIX partition table
 
 Supported file systems for read-only operations
 ===============================================
