@@ -289,6 +289,7 @@ namespace DiscImageChef.CommonTypes
 
         #region IBM non standard floppy formats
         XDF_525,
+        /// <summary>3.5", DS, HD, 80 tracks, 4 spt, 8192 + 2048 + 1024 + 512 bytes/sector, MFMm track 0 = 19 sectors, 512 bytes/sector, falsified to DOS as 23 spt, 512 bps</summary>
         XDF_35,
         #endregion IBM non standard floppy formats
 
