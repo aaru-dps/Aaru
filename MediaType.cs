@@ -382,22 +382,24 @@ namespace DiscImageChef.CommonTypes
         NEC_525_SD,
         /// <summary>8", SS, SD, 77 tracks, 26 spt, 256 bytes/sector, MFM?</summary>
         NEC_525_DD,
-        /// <summary>5,25", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
+        /// <summary>5,25", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_525_HD,
-        /// <summary>3,5", DS, HD, 80 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
+        /// <summary>3,5", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM, aka mode 3</summary>
         NEC_35_HD_8,
         /// <summary>3,5", DS, HD, 80 tracks, 15 spt, 512 bytes/sector, MFM</summary>
         NEC_35_HD_15,
+        /// <summary>3,5", DS, TD, 240 tracks, 38 spt, 512 bytes/sector, MFM</summary>
+        NEC_35_TD,
         #endregion NEC standard floppy formats
 
         #region SHARP standard floppy formats
-        /// <summary>5,25", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>5,25", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         SHARP_525,
-        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, MFM</summary>
         SHARP_525_9,
-        /// <summary>3,5", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>3,5", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         SHARP_35,
-        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, FM</summary>
+        /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, MFM</summary>
         SHARP_35_9,
         #endregion SHARP standard floppy formats
 
