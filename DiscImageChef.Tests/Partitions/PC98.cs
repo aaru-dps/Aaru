@@ -71,7 +71,7 @@ namespace DiscImageChef.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "bsd", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "partitions", "pc98", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
