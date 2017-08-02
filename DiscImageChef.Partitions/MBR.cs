@@ -124,8 +124,8 @@ namespace DiscImageChef.PartPlugins
                 valid &= entry.lba_start != 0 || entry.lba_sectors != 0 || entry.start_cylinder != 0 || entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder != 0 || entry.end_head != 0 || entry.end_sector != 0;
                 if(entry.lba_start == 0 && entry.lba_sectors == 0 && valid)
                 {
-                    lba_start = CHStoLBA(start_cylinder, entry.start_head, start_sector);
-                    lba_sectors = CHStoLBA(end_cylinder, entry.end_head, entry.end_sector) - lba_start;
+                    lba_start = Helpers.CHS.ToLBA(start_cylinder, entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
+                    lba_sectors = Helpers.CHS.ToLBA(end_cylinder, entry.end_head, entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - lba_start;
                 }
 
                 // For optical media
@@ -247,8 +247,8 @@ namespace DiscImageChef.PartPlugins
                                             ebr_entry.start_sector != 0 || ebr_entry.end_cylinder != 0 || ebr_entry.end_head != 0 || ebr_entry.end_sector != 0;
                             if(ebr_entry.lba_start == 0 && ebr_entry.lba_sectors == 0 && ext_valid)
                             {
-                                ext_start = CHStoLBA(start_cylinder, ebr_entry.start_head, start_sector);
-                                ext_sectors = CHStoLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector) - ext_start;
+                                ext_start = Helpers.CHS.ToLBA(start_cylinder, ebr_entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
+                                ext_sectors = Helpers.CHS.ToLBA(end_cylinder, ebr_entry.end_head, ebr_entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - ext_start;
                             }
                             ext_minix |= (ebr_entry.type == 0x81 || ebr_entry.type == 0x80);
 
@@ -364,8 +364,8 @@ namespace DiscImageChef.PartPlugins
                                 mnx_entry.start_sector != 0 || mnx_entry.end_cylinder != 0 || mnx_entry.end_head != 0 || mnx_entry.end_sector != 0;
                 if(mnx_entry.lba_start == 0 && mnx_entry.lba_sectors == 0 && mnx_valid)
                 {
-                    mnx_start = CHStoLBA(start_cylinder, mnx_entry.start_head, start_sector);
-                    mnx_sectors = CHStoLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector) - mnx_start;
+                    mnx_start = Helpers.CHS.ToLBA(start_cylinder, mnx_entry.start_head, start_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack);
+                    mnx_sectors = Helpers.CHS.ToLBA(end_cylinder, mnx_entry.end_head, mnx_entry.end_sector, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - mnx_start;
                 }
 
                 // For optical media
@@ -402,14 +402,6 @@ namespace DiscImageChef.PartPlugins
             }
 
             return any_mnx;
-        }
-
-
-        static uint CHStoLBA(ushort cyl, byte head, byte sector)
-        {
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
-            return (((uint)cyl * 16) + (uint)head) * 63 + (uint)sector - 1;
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
         }
 
         static string DecodeMBRType(byte type)

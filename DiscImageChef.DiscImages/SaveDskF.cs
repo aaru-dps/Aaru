@@ -311,6 +311,10 @@ namespace DiscImageChef.ImagePlugins
 			decodedDisk = new byte[ImageInfo.sectors * ImageInfo.sectorSize];
 			stream.Read(decodedDisk, 0, (int)(stream.Length - header.dataOffset));
 
+			ImageInfo.cylinders = header.cylinders;
+			ImageInfo.heads = header.heads;
+			ImageInfo.sectorsPerTrack = header.sectorsPerTrack;
+
 			return true;
 		}
 

@@ -490,6 +490,76 @@ namespace DiscImageChef.ImagePlugins
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 			ImageInfo.sectorSize = (uint)(128 << (int)bps);
 
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.NEC_525_SS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.NEC_8_SD:
+				case MediaType.NEC_8_DD:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.NEC_525_DS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.NEC_525_HD:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.DOS_525_SS_DD_8:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.DOS_525_SS_DD_9:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_525_DS_DD_8:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.DOS_525_DS_DD_9:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.NEC_35_HD_15:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.DOS_35_DS_DD_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.DOS_35_ED:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 36;
+					break;
+				case MediaType.NEC_35_TD:
+					ImageInfo.cylinders = 240;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 38;
+					break;
+			}
+
 			return true;
 		}
 

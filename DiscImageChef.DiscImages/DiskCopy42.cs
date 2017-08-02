@@ -516,7 +516,65 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
             DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", ImageInfo.mediaType);
 
-            return true;
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.AppleSonySS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.AppleSonyDS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.DOS_35_DS_DD_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.DMF:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 21;
+					break;
+				case MediaType.AppleProfile:
+					switch(ImageInfo.sectors)
+					{
+						case 9728:
+							ImageInfo.cylinders = 152;
+							break;
+						case 19456:
+							ImageInfo.cylinders = 304;
+							break;
+					}
+					ImageInfo.heads = 4;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.AppleWidget:
+					ImageInfo.cylinders = 608;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.AppleHD20:
+					ImageInfo.cylinders = 610;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				default:
+					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+					ImageInfo.heads = 16;
+					ImageInfo.sectorsPerTrack = 63;
+					break;
+			}
+
+
+			return true;
         }
 
         public override bool? VerifySector(ulong sectorAddress)

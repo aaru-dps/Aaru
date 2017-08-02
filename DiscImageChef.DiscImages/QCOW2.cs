@@ -336,7 +336,11 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageSize = qHdr.size;
             ImageInfo.imageVersion = string.Format("{0}", qHdr.version);
 
-            return true;
+			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+			ImageInfo.heads = 16;
+			ImageInfo.sectorsPerTrack = 63;
+
+			return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)

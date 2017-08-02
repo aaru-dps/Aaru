@@ -410,6 +410,10 @@ namespace DiscImageChef.ImagePlugins
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("CopyQM comments: {0}", ImageInfo.imageComments);
 
+			ImageInfo.heads = header.heads;
+			ImageInfo.cylinders = header.imageCylinders;
+			ImageInfo.sectorsPerTrack = header.sectorsPerTrack;
+
             return true;
         }
 

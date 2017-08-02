@@ -757,9 +757,13 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.sectors = ImageInfo.imageSize / ImageInfo.sectorSize;
             ImageInfo.driveSerialNumber = Page83Data.ToString();
 
-            // TODO: Separate image application from version, need several samples.
+			// TODO: Separate image application from version, need several samples.
 
-            return true;
+			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+			ImageInfo.heads = 16;
+			ImageInfo.sectorsPerTrack = 63;
+
+			return true;
         }
 
         bool CheckBitmap(ulong sectorAddress)

@@ -293,7 +293,11 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.mediaType = MediaType.GENERIC_HDD;
             ImageInfo.imageSize = qHdr.size;
 
-            return true;
+			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+			ImageInfo.heads = 16;
+			ImageInfo.sectorsPerTrack = 63;
+
+			return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)

@@ -429,8 +429,8 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.mediaType = MediaType.CompactFloppy;
             ImageInfo.readableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
-            // Debug writing full disk as raw
-            /*
+			// Debug writing full disk as raw
+			/*
             FileStream foo = new FileStream(Path.GetFileNameWithoutExtension(imagePath) + ".bin", FileMode.Create);
             for(ulong i = 0; i < (ulong)sectors.Count; i++)
             {
@@ -441,7 +441,11 @@ namespace DiscImageChef.ImagePlugins
             foo.Close();
             */
 
-            return true;
+			ImageInfo.cylinders = header.tracks;
+			ImageInfo.heads = header.sides;
+			ImageInfo.sectors = ImageInfo.sectors / (uint)(header.tracks * header.sides);
+
+			return true;
         }
 
         static int SizeCodeToBytes(IBMSectorSizeCode code)

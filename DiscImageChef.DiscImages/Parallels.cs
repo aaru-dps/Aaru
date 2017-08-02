@@ -269,7 +269,11 @@ namespace DiscImageChef.DiscImages
 
             sectorCache.Add(sectorAddress, sector);
 
-            return sector;
+			ImageInfo.cylinders = pHdr.cylinders;
+			ImageInfo.heads = pHdr.heads;
+			ImageInfo.sectorsPerTrack = (uint)((pHdr.sectors / pHdr.heads) / pHdr.cylinders);
+
+			return sector;
         }
 
         public override byte[] ReadSectors(ulong sectorAddress, uint length)

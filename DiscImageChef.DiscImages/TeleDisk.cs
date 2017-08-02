@@ -579,6 +579,10 @@ namespace DiscImageChef.ImagePlugins
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("TeleDisk comments: {0}", ImageInfo.imageComments);
 
+			ImageInfo.heads = header.sides;
+			ImageInfo.sectorsPerTrack = spt;
+			ImageInfo.cylinders = (uint)((ImageInfo.sectors / header.sides) / spt);
+
             return true;
         }
 

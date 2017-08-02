@@ -368,7 +368,43 @@ namespace DiscImageChef.ImagePlugins
             if(!string.IsNullOrEmpty(ImageInfo.imageComments))
                 DicConsole.VerboseWriteLine("2MG comments: {0}", ImageInfo.imageComments);
 
-            return true;
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.Apple32SS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 13;
+					break;
+				case MediaType.Apple32DS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 13;
+					break;
+				case MediaType.Apple33SS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.Apple33DS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.AppleSonySS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					// Variable sectors per track, this suffices
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.AppleSonyDS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					// Variable sectors per track, this suffices
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+			}
+
+			return true;
         }
 
         public override bool ImageHasPartitions()

@@ -264,6 +264,9 @@ namespace DiscImageChef.ImagePlugins
 			ImageInfo.sectors = (ulong)(fdihdr.cylinders * fdihdr.heads * fdihdr.spt);
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 			ImageInfo.sectorSize = (uint)fdihdr.bps;
+			ImageInfo.cylinders = (uint)fdihdr.cylinders;
+			ImageInfo.heads = (uint)fdihdr.heads;
+			ImageInfo.sectorsPerTrack = (uint)fdihdr.spt;
 
 			anexImageFilter = imageFilter;
 

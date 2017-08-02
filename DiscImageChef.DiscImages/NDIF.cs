@@ -451,6 +451,36 @@ namespace DiscImageChef.DiscImages
 			ImageInfo.imageApplicationVersion = "6";
 			ImageInfo.imageApplication = "Apple DiskCopy";
 
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.AppleSonyDS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.DOS_35_DS_DD_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.DMF:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 21;
+					break;
+				default:
+					ImageInfo.mediaType = MediaType.GENERIC_HDD;
+					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+					ImageInfo.heads = 16;
+					ImageInfo.sectorsPerTrack = 63;
+					break;
+			}
+
 			return true;
 		}
 

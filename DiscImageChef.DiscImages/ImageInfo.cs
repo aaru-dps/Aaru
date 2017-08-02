@@ -66,6 +66,10 @@ namespace DiscImageChef.ImagePlugins
         public string driveSerialNumber;
         public string driveFirmwareRevision;
         public XmlMediaType xmlMediaType;
+		// CHS geometry...
+		public uint cylinders;
+		public uint heads;
+		public uint sectorsPerTrack;
     }
 }
 

@@ -238,7 +238,42 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageComments = StringHandlers.CToString(comment, Encoding.GetEncoding(932));
             ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 
-            return true;
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.SHARP_525:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.SHARP_525_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_525_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.SHARP_35_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.NEC_8_DD:
+				case MediaType.NEC_8_SD:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+			}
+
+			return true;
         }
 
         public override bool ImageHasPartitions()

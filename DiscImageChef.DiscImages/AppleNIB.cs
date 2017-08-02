@@ -243,6 +243,19 @@ namespace DiscImageChef.ImagePlugins
 			ImageInfo.sectorSize = 256;
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
 			ImageInfo.readableSectorTags.Add(SectorTagType.FloppyAddressMark);
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.Apple32SS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 13;
+					break;
+				case MediaType.Apple33SS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+			}
 
 			return true;
 		}

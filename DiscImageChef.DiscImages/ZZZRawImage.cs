@@ -325,6 +325,311 @@ namespace DiscImageChef.ImagePlugins
 
             DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", ImageInfo.mediaType);
 
+			switch(ImageInfo.mediaType)
+			{
+				case MediaType.ACORN_35_DS_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 5;
+					break;
+				case MediaType.ACORN_35_DS_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.ACORN_525_DS_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.ACORN_525_SS_DD_40:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.ACORN_525_SS_DD_80:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.ACORN_525_SS_SD_40:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.ACORN_525_SS_SD_80:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.Apple32DS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 13;
+					break;
+				case MediaType.Apple32SS:
+					ImageInfo.cylinders = 36;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 13;
+					break;
+				case MediaType.Apple33DS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.Apple33SS:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.AppleSonyDS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.AppleSonySS:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.ATARI_35_DS_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.ATARI_35_DS_DD_11:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 11;
+					break;
+				case MediaType.ATARI_35_SS_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.ATARI_35_SS_DD_11:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 11;
+					break;
+				case MediaType.ATARI_525_ED:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.ATARI_525_SD:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.CBM_35_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.CBM_AMIGA_35_DD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 11;
+					break;
+				case MediaType.CBM_AMIGA_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 22;
+					break;
+				case MediaType.DMF:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 21;
+					break;
+				case MediaType.DOS_35_DS_DD_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_35_ED:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 36;
+					break;
+				case MediaType.DOS_35_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					break;
+				case MediaType.DOS_35_SS_DD_9:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_525_DS_DD_8:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.DOS_525_DS_DD_9:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.DOS_525_HD:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.DOS_525_SS_DD_8:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.DOS_525_SS_DD_9:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.ECMA_54:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.ECMA_59:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.ECMA_66:
+					ImageInfo.cylinders = 35;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 9;
+					break;
+				case MediaType.ECMA_69_8:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.ECMA_70:
+					ImageInfo.cylinders = 40;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.ECMA_78:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
+				case MediaType.ECMA_99_15:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.ECMA_99_26:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.ECMA_99_8:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.FDFORMAT_35_DD:
+					ImageInfo.cylinders = 82;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					break;
+				case MediaType.FDFORMAT_35_HD:
+					ImageInfo.cylinders = 82;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 21;
+					break;
+				case MediaType.FDFORMAT_525_HD:
+					ImageInfo.cylinders = 82;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 17;
+					break;
+				case MediaType.IBM23FD:
+					ImageInfo.cylinders = 32;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.IBM33FD_128:
+					ImageInfo.cylinders = 73;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.IBM33FD_256:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.IBM33FD_512:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.IBM43FD_128:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.IBM43FD_256:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.IBM53FD_1024:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.IBM53FD_256:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 26;
+					break;
+				case MediaType.IBM53FD_512:
+					ImageInfo.cylinders = 74;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 15;
+					break;
+				case MediaType.NEC_35_TD:
+					ImageInfo.cylinders = 240;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 38;
+					break;
+				case MediaType.NEC_525_HD:
+					ImageInfo.cylinders = 77;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 8;
+					break;
+				case MediaType.XDF_35:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 23;
+					break;
+				// Following ones are what the device itself report, not the physical geometry
+				case MediaType.Jaz:
+					ImageInfo.cylinders = 1021;
+					ImageInfo.heads = 64;
+					ImageInfo.sectorsPerTrack = 32;
+					break;
+				case MediaType.PocketZip:
+					ImageInfo.cylinders = 154;
+					ImageInfo.heads = 16;
+					ImageInfo.sectorsPerTrack = 32;
+					break;
+				case MediaType.LS120:
+					ImageInfo.cylinders = 963;
+					ImageInfo.heads = 8;
+					ImageInfo.sectorsPerTrack = 32;
+					break;
+				default:
+					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+					ImageInfo.heads = 16;
+					ImageInfo.sectorsPerTrack = 63;
+					break;
+			}
+
             return true;
         }
 

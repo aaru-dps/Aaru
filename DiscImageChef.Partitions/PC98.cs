@@ -92,14 +92,14 @@ namespace DiscImageChef.PartPlugins
 
                     Partition part = new Partition
                     {
-                        Start = CHStoLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect),
+                        Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack),
                         Type = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid),
                         Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)),
                         Sequence = counter,
                         Scheme = Name
                     };
                     part.Offset = part.Start * imagePlugin.GetSectorSize();
-                    part.Length = CHStoLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect) - part.Start;
+                    part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - part.Start;
                     part.Size = part.Length * imagePlugin.GetSectorSize();
 
                     if((entry.dp_sid & 0x7F) == 0x44 &&
@@ -114,13 +114,6 @@ namespace DiscImageChef.PartPlugins
             }
 
             return partitions.Count > 0;
-        }
-
-        static uint CHStoLBA(ushort cyl, byte head, byte sector)
-        {
-#pragma warning disable IDE0004 // Remove Unnecessary Cast
-            return (((uint)cyl * 16) + (uint)head) * 63 + (uint)sector - 1;
-#pragma warning restore IDE0004 // Remove Unnecessary Cast
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

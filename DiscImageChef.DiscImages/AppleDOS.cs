@@ -125,6 +125,9 @@ namespace DiscImageChef.ImagePlugins
 			ImageInfo.sectors = 560;
 			ImageInfo.mediaType = MediaType.Apple33SS;
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
+			ImageInfo.cylinders = 35;
+			ImageInfo.heads = 2;
+			ImageInfo.sectorsPerTrack = 16;
 
 			return true;
 		}

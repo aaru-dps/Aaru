@@ -157,7 +157,7 @@ namespace DiscImageChef.DiscImages
 						return false;
 					break;
 				case kAppleIIDisk:
-					if(header.srcSize != kAppleIIDisk)
+					if(header.srcSize != kApple800KSize)
 						return false;
 					break;
 				case kMacHiDDisk:
@@ -395,12 +395,40 @@ namespace DiscImageChef.DiscImages
 			ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 			ImageInfo.sectorSize = sectorSize;
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-			ImageInfo.mediaType = MediaType.GENERIC_HDD;
 			ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
 			if(header.srcCmp == kNoCompress)
 				ImageInfo.imageVersion = "1.4";
 			else
 				ImageInfo.imageVersion = "1.5";
+
+			switch(header.srcSize)
+			{
+				case kMac400KSize:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 1;
+					ImageInfo.sectorsPerTrack = 10;
+					ImageInfo.mediaType = MediaType.AppleSonySS;
+					break;
+				case kMac800KSize:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 10;
+					ImageInfo.mediaType = MediaType.AppleSonyDS;
+					break;
+				case kMSDOS720KSize:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 9;
+					ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
+					break;
+				case kMac1440KSize:
+					ImageInfo.cylinders = 80;
+					ImageInfo.heads = 2;
+					ImageInfo.sectorsPerTrack = 18;
+					ImageInfo.mediaType = MediaType.DOS_35_HD;
+					break;
+			}
+
 
 			return true;
 		}

@@ -176,27 +176,43 @@ namespace DiscImageChef.ImagePlugins
                         ImageInfo.mediaType = MediaType.AppleProfile;
                     else
                         ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    break;
+					ImageInfo.cylinders = 152;
+					ImageInfo.heads = 4;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
                 case profile10Name:
                     if(ImageInfo.sectors == 0x4C00)
                         ImageInfo.mediaType = MediaType.AppleProfile;
                     else
                         ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    break;
+					ImageInfo.cylinders = 304;
+					ImageInfo.heads = 4;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
                 case widgetName:
                     if(ImageInfo.sectors == 0x4C00)
                         ImageInfo.mediaType = MediaType.AppleWidget;
                     else
                         ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    break;
+					ImageInfo.cylinders = 304;
+					ImageInfo.heads = 4;
+					ImageInfo.sectorsPerTrack = 16;
+					break;
                 case priamName:
                     if(ImageInfo.sectors == 0x022C7C)
                         ImageInfo.mediaType = MediaType.PriamDataTower;
                     else
                         ImageInfo.mediaType = MediaType.GENERIC_HDD;
-                    break;
+					// This values are invented...
+					ImageInfo.cylinders = 419;
+					ImageInfo.heads = 4;
+					ImageInfo.sectorsPerTrack = 85;
+					break;
                 default:
                     ImageInfo.mediaType = MediaType.GENERIC_HDD;
+					ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+					ImageInfo.heads = 16;
+					ImageInfo.sectorsPerTrack = 63;
                     break;
             }
 

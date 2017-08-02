@@ -329,7 +329,9 @@ namespace DiscImageChef.DiscImages
 
             FiltersList filtersList = new FiltersList();
 
-            if(cowD)
+			bool matchedCyls = false, matchedHds = false, matchedSpt = false;
+
+			if(cowD)
             {
                 int cowCount = 1;
                 string basePath = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath());
@@ -374,7 +376,7 @@ namespace DiscImageChef.DiscImages
 
                         extents.Add(currentSector, newExtent);
                         currentSector += newExtent.sectors;
-                    }
+					}
                     else
                         break;
 
@@ -393,15 +395,21 @@ namespace DiscImageChef.DiscImages
                 Regex RegexType = new Regex(TypeRegEx);
                 Regex RegexExtent = new Regex(ExtentRegEx);
                 Regex RegexParent = new Regex(ParentRegEx);
+				Regex RegexCylinders = new Regex(DDBCylindersRegEx);
+				Regex RegexHeads = new Regex(DDBHeadsRegex);
+				Regex RegexSectors = new Regex(DDBSectorsRegEx);
 
-                Match MatchVersion;
+				Match MatchVersion;
                 Match MatchCid;
                 Match MatchParentCid;
                 Match MatchType;
                 Match MatchExtent;
                 Match MatchParent;
+				Match MatchCylinders;
+				Match MatchHeads;
+				Match MatchSectors;
 
-                StreamReader ddfStreamRdr = new StreamReader(ddfStream);
+				StreamReader ddfStreamRdr = new StreamReader(ddfStream);
 
                 while(ddfStreamRdr.Peek() >= 0)
                 {
@@ -413,50 +421,68 @@ namespace DiscImageChef.DiscImages
                     MatchType = RegexType.Match(_line);
                     MatchExtent = RegexExtent.Match(_line);
                     MatchParent = RegexParent.Match(_line);
+					MatchCylinders = RegexCylinders.Match(_line);
+					MatchHeads = RegexHeads.Match(_line);
+					MatchSectors = RegexSectors.Match(_line);
 
-                    if(MatchVersion.Success)
-                    {
-                        uint.TryParse(MatchVersion.Groups["version"].Value, out version);
-                        DicConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
-                    }
-                    else if(MatchCid.Success)
-                    {
-                        cid = Convert.ToUInt32(MatchCid.Groups["cid"].Value, 16);
-                        DicConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
-                    }
-                    else if(MatchParentCid.Success)
-                    {
-                        parentCid = Convert.ToUInt32(MatchParentCid.Groups["cid"].Value, 16);
-                        DicConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
-                    }
-                    else if(MatchType.Success)
-                    {
-                        imageType = MatchType.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
-                    }
-                    else if(MatchExtent.Success)
-                    {
-                        VMwareExtent newExtent = new VMwareExtent();
-                        newExtent.access = MatchExtent.Groups["access"].Value;
-                        if(!embedded)
-                            newExtent.filter = filtersList.GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()), MatchExtent.Groups["filename"].Value));
-                        else
-                            newExtent.filter = imageFilter;
-                        uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
-                        uint.TryParse(MatchExtent.Groups["sectors"].Value, out newExtent.sectors);
-                        newExtent.type = MatchExtent.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
+					if(MatchVersion.Success)
+					{
+						uint.TryParse(MatchVersion.Groups["version"].Value, out version);
+						DicConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
+					}
+					else if(MatchCid.Success)
+					{
+						cid = Convert.ToUInt32(MatchCid.Groups["cid"].Value, 16);
+						DicConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
+					}
+					else if(MatchParentCid.Success)
+					{
+						parentCid = Convert.ToUInt32(MatchParentCid.Groups["cid"].Value, 16);
+						DicConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
+					}
+					else if(MatchType.Success)
+					{
+						imageType = MatchType.Groups["type"].Value;
+						DicConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
+					}
+					else if(MatchExtent.Success)
+					{
+						VMwareExtent newExtent = new VMwareExtent();
+						newExtent.access = MatchExtent.Groups["access"].Value;
+						if(!embedded)
+							newExtent.filter = filtersList.GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()), MatchExtent.Groups["filename"].Value));
+						else
+							newExtent.filter = imageFilter;
+						uint.TryParse(MatchExtent.Groups["offset"].Value, out newExtent.offset);
+						uint.TryParse(MatchExtent.Groups["sectors"].Value, out newExtent.sectors);
+						newExtent.type = MatchExtent.Groups["type"].Value;
+						DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.access, newExtent.sectors, newExtent.type, newExtent.filter, newExtent.offset);
 
-                        extents.Add(currentSector, newExtent);
-                        currentSector += newExtent.sectors;
-                    }
-                    else if(MatchParent.Success)
-                    {
-                        parentName = MatchParent.Groups["filename"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
-                        hasParent = true;
-                    }
-                }
+						extents.Add(currentSector, newExtent);
+						currentSector += newExtent.sectors;
+					}
+					else if(MatchParent.Success)
+					{
+						parentName = MatchParent.Groups["filename"].Value;
+						DicConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
+						hasParent = true;
+					}
+					else if(MatchCylinders.Success)
+					{
+						uint.TryParse(MatchCylinders.Groups["cylinders"].Value, out ImageInfo.cylinders);
+						matchedCyls = true;
+					}
+					else if(MatchHeads.Success)
+					{
+						uint.TryParse(MatchHeads.Groups["heads"].Value, out ImageInfo.heads);
+						matchedHds = true;
+					}
+					else if(MatchSectors.Success)
+					{
+						uint.TryParse(MatchSectors.Groups["sectors"].Value, out ImageInfo.sectorsPerTrack);
+						matchedSpt = true;
+					}
+				}
             }
 
             if(extents.Count == 0)
@@ -671,7 +697,20 @@ namespace DiscImageChef.DiscImages
             else
                 ImageInfo.imageVersion = string.Format("{0}", version + 3);
 
-            return true;
+			if(cowD)
+			{
+				ImageInfo.cylinders = vmCHdr.cylinders;
+				ImageInfo.heads = vmCHdr.heads;
+				ImageInfo.sectorsPerTrack = vmCHdr.spt;
+			}
+			else if(!matchedCyls || !matchedHds || !matchedSpt)
+			{
+				ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+				ImageInfo.heads = 16;
+				ImageInfo.sectorsPerTrack = 63;
+			}
+
+			return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)

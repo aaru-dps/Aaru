@@ -713,6 +713,10 @@ namespace DiscImageChef.ImagePlugins
 						mapVersion = 1;
 						isHdd = true;
 
+						ImageInfo.cylinders = hdrV1.cylinders;
+						ImageInfo.heads = hdrV1.heads;
+						ImageInfo.sectorsPerTrack = hdrV1.sectors;
+
 						break;
 					}
 				case 2:
@@ -774,6 +778,10 @@ namespace DiscImageChef.ImagePlugins
 						hdrCompression = hdrV2.compression;
 						mapVersion = 1;
 						isHdd = true;
+
+						ImageInfo.cylinders = hdrV2.cylinders;
+						ImageInfo.heads = hdrV2.heads;
+						ImageInfo.sectorsPerTrack = hdrV2.sectors;
 
 						break;
 					}
@@ -967,6 +975,9 @@ namespace DiscImageChef.ImagePlugins
 							{
 								isHdd = true;
 								ImageInfo.sectorSize = uint.Parse(gdddMatch.Groups["bps"].Value);
+								ImageInfo.cylinders = uint.Parse(gdddMatch.Groups["cylinders"].Value);
+								ImageInfo.heads = uint.Parse(gdddMatch.Groups["heads"].Value);
+								ImageInfo.sectorsPerTrack = uint.Parse(gdddMatch.Groups["sectors"].Value);
 							}
 							break;
 						// "CHCD"
@@ -1417,6 +1428,18 @@ namespace DiscImageChef.ImagePlugins
 								ImageInfo.driveModel = idnt.Value.Model;
 								ImageInfo.driveSerialNumber = idnt.Value.SerialNumber;
 								ImageInfo.driveFirmwareRevision = idnt.Value.FirmwareRevision;
+								if(idnt.Value.CurrentCylinders > 0 && idnt.Value.CurrentHeads > 0 && idnt.Value.CurrentSectorsPerTrack > 0)
+								{
+									ImageInfo.cylinders = idnt.Value.CurrentCylinders;
+									ImageInfo.heads = idnt.Value.CurrentHeads;
+									ImageInfo.sectorsPerTrack = idnt.Value.CurrentSectorsPerTrack;
+								}
+								else
+								{
+									ImageInfo.cylinders = idnt.Value.Cylinders;
+									ImageInfo.heads = idnt.Value.Heads;
+									ImageInfo.sectorsPerTrack = idnt.Value.SectorsPerTrack;
+								}
 							}
 							identify = meta;
 							if(!ImageInfo.readableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))

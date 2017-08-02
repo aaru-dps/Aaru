@@ -632,7 +632,11 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageLastModificationTime = thisDateTime;
             ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            if(thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
+			ImageInfo.cylinders = (thisFooter.diskGeometry & 0xFFFF0000) >> 16;
+			ImageInfo.heads = (thisFooter.diskGeometry & 0xFF00) >> 8;
+			ImageInfo.sectorsPerTrack = (thisFooter.diskGeometry & 0xFF);
+
+			if(thisFooter.diskType == typeDynamic || thisFooter.diskType == typeDifferencing)
             {
                 imageStream.Seek((long)thisFooter.offset, SeekOrigin.Begin);
                 byte[] dynamicBytes = new byte[1024];

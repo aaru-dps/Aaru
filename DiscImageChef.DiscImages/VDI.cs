@@ -235,7 +235,11 @@ namespace DiscImageChef.DiscImages
             }
             imageStream = stream;
 
-            return true;
+			ImageInfo.cylinders = vHdr.cylinders;
+			ImageInfo.heads = vHdr.heads;
+			ImageInfo.sectorsPerTrack = vHdr.spt;
+
+			return true;
         }
 
         public override byte[] ReadSector(ulong sectorAddress)

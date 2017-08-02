@@ -511,6 +511,10 @@ namespace DiscImageChef.DiscImages
 			ImageInfo.imageSize = ImageInfo.sectors * sectorSize;
 			ImageInfo.imageVersion = string.Format("{0}", footer.version);
 
+			ImageInfo.cylinders = (uint)((ImageInfo.sectors / 16) / 63);
+			ImageInfo.heads = 16;
+			ImageInfo.sectorsPerTrack = 63;
+
 			return true;
 		}
 
