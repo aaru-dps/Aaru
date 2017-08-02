@@ -67,7 +67,7 @@ namespace DiscImageChef.PartPlugins
             partable xnxtbl = (partable)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(partable));
             handle.Free();
 
-            DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4q})", xnxtbl.p_magic, PAMAGIC);
+            DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic, PAMAGIC);
 
             if(xnxtbl.p_magic != PAMAGIC)
                 return false;
