@@ -374,14 +374,14 @@ namespace DiscImageChef.CommonTypes
         #endregion Commodore standard floppy formats
 
         #region NEC standard floppy formats
-        /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
+        /// <summary>8", DS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
         NEC_8_SD,
-        /// <summary>8", DS, DD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
+        /// <summary>8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM</summary>
         NEC_8_DD,
-        /// <summary>8", SS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
-        NEC_525_SD,
-        /// <summary>8", SS, SD, 77 tracks, 26 spt, 256 bytes/sector, MFM?</summary>
-        NEC_525_DD,
+        /// <summary>5.25", SS, SD, 80 tracks, 16 spt, 256 bytes/sector, FM</summary>
+        NEC_525_SS,
+        /// <summary>5.25", DS, SD, 80 tracks, 16 spt, 256 bytes/sector, MFM</summary>
+        NEC_525_DS,
         /// <summary>5,25", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM</summary>
         NEC_525_HD,
         /// <summary>3,5", DS, HD, 77 tracks, 8 spt, 1024 bytes/sector, MFM, aka mode 3</summary>
