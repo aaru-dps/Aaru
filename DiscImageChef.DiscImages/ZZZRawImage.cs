@@ -181,7 +181,6 @@ namespace DiscImageChef.ImagePlugins
                     case 1304320: // T0S0 = 128bps, T0S1 = 256bps
                     case 1255168: // T0S0 = 128bps, T0S1 = 256bps
                     case 1261568:
-                    case 1310720:
 					case 1638400:
 						ImageInfo.sectorSize = 1024;
                         break;
@@ -710,11 +709,11 @@ namespace DiscImageChef.ImagePlugins
                     case 1255168:
                         return MediaType.ECMA_69_8;
                     case 1261568:
-                        return MediaType.NEC_8_DD;
-                    case 1304320:
+						if(extension == ".hdm")
+							return MediaType.NEC_525_HD;
+						return MediaType.NEC_8_DD;
+					case 1304320:
                         return MediaType.ECMA_99_8;
-                    case 1310720:
-                        return MediaType.NEC_525_HD;
                     case 1427456:
                         return MediaType.FDFORMAT_525_HD;
                     case 1474560:
@@ -733,6 +732,8 @@ namespace DiscImageChef.ImagePlugins
                         return MediaType.XDF_35;
                     case 2949120:
                         return MediaType.DOS_35_ED;
+					case 9338880:
+						return MediaType.NEC_35_TD;
 					case 40387584:
 						return MediaType.PocketZip;
 					case 126222336:
