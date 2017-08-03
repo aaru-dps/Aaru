@@ -59,6 +59,7 @@ Supported disk image formats
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
 * Sector by sector copies of Microsoft's DMF floppies
+* T98 hard disk images (.THD)
 * TeleDisk (without compression)
 * VMware VMDK and COWD images
 * Virtual PC fixed size, dynamic size and differencing (undo) disk images

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Anex86.cs
+// Filename       : T98.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Component
@@ -42,26 +42,11 @@ using DiscImageChef.Decoders.Floppy;
 
 namespace DiscImageChef.ImagePlugins
 {
-	public class Anex86 : ImagePlugin
+	public class T98 : ImagePlugin
 	{
-		#region Internal structures
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct Anex86Header
+		public T98()
 		{
-			public int unknown;
-			public int hddtype;
-			public int hdrSize;
-			public int dskSize;
-			public int bps;
-			public int spt;
-			public int heads;
-			public int cylinders;
-		}
-		#endregion
-
-		public Anex86()
-		{
-			Name = "Anex86 Disk Image";
+			Name = "T98 Hard Disk Image";
 			PluginUUID = new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
 			ImageInfo = new ImageInfo()
 			{
@@ -88,36 +73,32 @@ namespace DiscImageChef.ImagePlugins
 			};
 		}
 
-		Anex86Header fdihdr;
-		Filter anexImageFilter;
+		Filter t98ImageFilter;
 
 		public override bool IdentifyImage(Filter imageFilter)
 		{
 			Stream stream = imageFilter.GetDataForkStream();
 			stream.Seek(0, SeekOrigin.Begin);
 
-			fdihdr = new Anex86Header();
-
-			if(stream.Length < Marshal.SizeOf(fdihdr))
+			if(stream.Length % 256 != 0)
 				return false;
 
-			byte[] hdr_b = new byte[Marshal.SizeOf(fdihdr)];
+			byte[] hdr_b = new byte[256];
 			stream.Read(hdr_b, 0, hdr_b.Length);
 
-			GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-			fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
-			handle.Free();
+			for(int i = 4; i < 256; i++)
+			{
+				if(hdr_b[i] != 0)
+					return false;
+			}
 
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", fdihdr.unknown);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", fdihdr.hddtype);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", fdihdr.hdrSize);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", fdihdr.dskSize);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", fdihdr.bps);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", fdihdr.spt);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", fdihdr.heads);
-			DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", fdihdr.cylinders);
+			int cylinders = BitConverter.ToInt32(hdr_b, 0);
 
-			return stream.Length == fdihdr.hdrSize + fdihdr.dskSize && fdihdr.dskSize == fdihdr.bps * fdihdr.spt * fdihdr.heads * fdihdr.cylinders;
+			DicConsole.DebugWriteLine("T98 plugin", "cylinders = {0}", cylinders);
+
+			// This format is expanding, so length can be smaller
+			// Just grow it, I won't risk false positives...
+			return stream.Length == (cylinders * 8 * 33 * 256) + 256;
 		}
 
 		public override bool OpenImage(Filter imageFilter)
@@ -125,150 +106,34 @@ namespace DiscImageChef.ImagePlugins
 			Stream stream = imageFilter.GetDataForkStream();
 			stream.Seek(0, SeekOrigin.Begin);
 
-			fdihdr = new Anex86Header();
-
-			if(stream.Length < Marshal.SizeOf(fdihdr))
+			if(stream.Length % 256 != 0)
 				return false;
 
-			byte[] hdr_b = new byte[Marshal.SizeOf(fdihdr)];
+			byte[] hdr_b = new byte[256];
 			stream.Read(hdr_b, 0, hdr_b.Length);
 
-			GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-			fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
-			handle.Free();
+			for(int i = 4; i < 256; i++)
+			{
+				if(hdr_b[i] != 0)
+					return false;
+			}
+
+			int cylinders = BitConverter.ToInt32(hdr_b, 0);
 
 			ImageInfo.mediaType = MediaType.GENERIC_HDD;
 
-			switch(fdihdr.cylinders)
-			{
-				case 40:
-					switch(fdihdr.bps)
-					{
-						case 512:
-							switch(fdihdr.spt)
-							{
-								case 8:
-									if(fdihdr.heads == 1)
-										ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
-									else if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
-									break;
-								case 9:
-									if(fdihdr.heads == 1)
-										ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
-									else if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
-									break;
-							}
-							break;
-					}
-					break;
-				case 77:
-					switch(fdihdr.bps)
-					{
-						case 128:
-							switch(fdihdr.spt)
-							{
-								case 26:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_8_SD;
-									break;
-							}
-							break;
-						case 256:
-							switch(fdihdr.spt)
-							{
-								case 26:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_8_DD;
-									break;
-							}
-							break;
-						case 1024:
-							switch(fdihdr.spt)
-							{
-								case 8:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_525_HD;
-									break;
-							}
-							break;
-					}
-					break;
-				case 80:
-					switch(fdihdr.bps)
-					{
-						case 256:
-							switch(fdihdr.spt)
-							{
-								case 16:
-									if(fdihdr.heads == 1)
-										ImageInfo.mediaType = MediaType.NEC_525_SS;
-									else if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_525_DS;
-									break;
-							}
-							break;
-						case 512:
-							switch(fdihdr.spt)
-							{
-								case 8:
-									if(fdihdr.heads == 1)
-										ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
-									else if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
-									break;
-								case 9:
-									if(fdihdr.heads == 1)
-										ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
-									else if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
-									break;
-								case 15:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_35_HD_15;
-									break;
-								case 18:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_35_HD;
-									break;
-								case 36:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.DOS_35_ED;
-									break;
-							}
-							break;
-					}
-					break;
-				case 240:
-					switch(fdihdr.bps)
-					{
-						case 512:
-							switch(fdihdr.spt)
-							{
-								case 38:
-									if(fdihdr.heads == 2)
-										ImageInfo.mediaType = MediaType.NEC_35_TD;
-									break;
-							}
-							break;
-					}
-					break;
-			}
-			DicConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", ImageInfo.mediaType);
-
-			ImageInfo.imageSize = (ulong)fdihdr.dskSize;
+			ImageInfo.imageSize = (ulong)(stream.Length - 256);
 			ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
 			ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
 			ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-			ImageInfo.sectors = (ulong)(fdihdr.cylinders * fdihdr.heads * fdihdr.spt);
+			ImageInfo.sectors = (ulong)((stream.Length / 256) - 1);
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-			ImageInfo.sectorSize = (uint)fdihdr.bps;
-			ImageInfo.cylinders = (uint)fdihdr.cylinders;
-			ImageInfo.heads = (uint)fdihdr.heads;
-			ImageInfo.sectorsPerTrack = (uint)fdihdr.spt;
+			ImageInfo.sectorSize = 256;
+			ImageInfo.cylinders = (uint)cylinders;
+			ImageInfo.heads = 8;
+			ImageInfo.sectorsPerTrack = 33;
 
-			anexImageFilter = imageFilter;
+			t98ImageFilter = imageFilter;
 
 			return true;
 		}
@@ -295,7 +160,7 @@ namespace DiscImageChef.ImagePlugins
 
 		public override string GetImageFormat()
 		{
-			return "Anex86 disk image";
+			return "T98 disk image";
 		}
 
 		public override string GetImageVersion()
@@ -358,9 +223,9 @@ namespace DiscImageChef.ImagePlugins
 
 			byte[] buffer = new byte[length * ImageInfo.sectorSize];
 
-			Stream stream = anexImageFilter.GetDataForkStream();
+			Stream stream = t98ImageFilter.GetDataForkStream();
 
-			stream.Seek((long)((ulong)fdihdr.hdrSize + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+			stream.Seek((long)(256 + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
 
 			stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
 
