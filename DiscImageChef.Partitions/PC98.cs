@@ -54,8 +54,11 @@ namespace DiscImageChef.PartPlugins
         {
             partitions = new List<Partition>();
 
-            byte[] bootSector = imagePlugin.ReadSector(sectorOffset);
-            byte[] sector = imagePlugin.ReadSector(1 + sectorOffset);
+            if(sectorOffset != 0)
+                return false;
+
+            byte[] bootSector = imagePlugin.ReadSector(0);
+            byte[] sector = imagePlugin.ReadSector(1);
             if(bootSector[bootSector.Length-2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA)
                 return false;
 
@@ -85,7 +88,13 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"", StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
                 if(entry.dp_scyl != entry.dp_ecyl &&
-                   entry.dp_ecyl > 0)
+                   entry.dp_ecyl > 0 &&
+                   entry.dp_scyl <= imagePlugin.ImageInfo.cylinders &&
+                   entry.dp_ecyl <= imagePlugin.ImageInfo.cylinders &&
+                   entry.dp_shd <= imagePlugin.ImageInfo.heads &&
+                   entry.dp_ehd <= imagePlugin.ImageInfo.heads &&
+                   entry.dp_ssect <= imagePlugin.ImageInfo.sectorsPerTrack &&
+                   entry.dp_esect <= imagePlugin.ImageInfo.sectorsPerTrack)
                 {
 
                     Partition part = new Partition
@@ -109,7 +118,8 @@ namespace DiscImageChef.PartPlugins
                     DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
 
-                    if(part.Start < imagePlugin.ImageInfo.sectors &&
+                    if(((entry.dp_mid & 0x20) == 0x20 || (entry.dp_mid & 0x44) == 0x44) &&
+                        part.Start < imagePlugin.ImageInfo.sectors &&
                        part.End <= imagePlugin.ImageInfo.sectors)
                     {
                         partitions.Add(part);
