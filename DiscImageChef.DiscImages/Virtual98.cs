@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : NHDr0.cs
+// Filename       : Virtual98.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Component
@@ -42,36 +42,35 @@ using DiscImageChef.Decoders.Floppy;
 
 namespace DiscImageChef.ImagePlugins
 {
-	// Info from http://www.geocities.jp/t98next/nhdr0.txt
-	public class NHDr0 : ImagePlugin
+	// Info from Neko Project II emulator
+	public class Virtual98 : ImagePlugin
 	{
 		#region Internal structures
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct NHDr0Header
+		struct Virtual98Header
 		{
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-			public byte[] szFileID;
-			public byte reserved1;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
-			public byte[] szComment;
-			public int dwHeadSize;
-			public int dwCylinder;
-			public short wHead;
-			public short wSect;
-			public short wSectLen;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-			public byte[] reserved2;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
-			public byte[] reserved3;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+			public byte[] signature;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+			public byte[] comment;
+			public uint padding;
+			public ushort mbsize;
+			public ushort sectorsize;
+			public byte sectors;
+			public byte surfaces;
+			public ushort cylinders;
+			public uint totals;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)]
+			public byte[] padding2;
 		}
 		#endregion
 
-		readonly byte[] signature = { 0x54, 0x39, 0x38, 0x48, 0x44, 0x44, 0x49, 0x4D, 0x41, 0x47, 0x45, 0x2E, 0x52, 0x30, 0x00 };
+		readonly byte[] signature = { 0x56, 0x48, 0x44, 0x31, 0x2E, 0x30, 0x30, 0x00 };
 
-		public NHDr0()
+		public Virtual98()
 		{
-			Name = "T98-Next NHD r0 Disk Image";
-			PluginUUID = new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+			Name = "Virtual98 Disk Image";
+			PluginUUID = new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
 			ImageInfo = new ImageInfo()
 			{
 				readableSectorTags = new List<SectorTagType>(),
@@ -97,7 +96,7 @@ namespace DiscImageChef.ImagePlugins
 			};
 		}
 
-		NHDr0Header nhdhdr;
+		Virtual98Header v98hdr;
 		Filter nhdImageFilter;
 
 		public override bool IdentifyImage(Filter imageFilter)
@@ -107,29 +106,30 @@ namespace DiscImageChef.ImagePlugins
 			// Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
 			Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-			nhdhdr = new NHDr0Header();
+			v98hdr = new Virtual98Header();
 
-			if(stream.Length < Marshal.SizeOf(nhdhdr))
+			if(stream.Length < Marshal.SizeOf(v98hdr))
 				return false;
 
-			byte[] hdr_b = new byte[Marshal.SizeOf(nhdhdr)];
+			byte[] hdr_b = new byte[Marshal.SizeOf(v98hdr)];
 			stream.Read(hdr_b, 0, hdr_b.Length);
 
 			GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-			nhdhdr = (NHDr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NHDr0Header));
+			v98hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
 			handle.Free();
 
-			if(!nhdhdr.szFileID.SequenceEqual(signature))
+			if(!v98hdr.signature.SequenceEqual(signature))
 				return false;
 
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.szFileID = \"{0}\"", StringHandlers.CToString(nhdhdr.szFileID, shiftjis));
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.reserved1 = {0}", nhdhdr.reserved1);
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.szComment = \"{0}\"", StringHandlers.CToString(nhdhdr.szComment, shiftjis));
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.dwHeadSize = {0}", nhdhdr.dwHeadSize);
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.dwCylinder = {0}", nhdhdr.dwCylinder);
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.wHead = {0}", nhdhdr.wHead);
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.wSect = {0}", nhdhdr.wSect);
-			DicConsole.DebugWriteLine("NHDr0 plugin", "fdihdr.wSectLen = {0}", nhdhdr.wSectLen);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"", StringHandlers.CToString(v98hdr.signature, shiftjis));
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"", StringHandlers.CToString(v98hdr.comment, shiftjis));
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98hdr.padding);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98hdr.mbsize);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98hdr.sectorsize);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98hdr.sectors);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98hdr.surfaces);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98hdr.cylinders);
+			DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98hdr.totals);
 
 			return true;
 		}
@@ -141,32 +141,31 @@ namespace DiscImageChef.ImagePlugins
 			// Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
 			Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-			nhdhdr = new NHDr0Header();
+			v98hdr = new Virtual98Header();
 
-			if(stream.Length < Marshal.SizeOf(nhdhdr))
+			if(stream.Length < Marshal.SizeOf(v98hdr))
 				return false;
 
-			byte[] hdr_b = new byte[Marshal.SizeOf(nhdhdr)];
+			byte[] hdr_b = new byte[Marshal.SizeOf(v98hdr)];
 			stream.Read(hdr_b, 0, hdr_b.Length);
 
 			GCHandle handle = GCHandle.Alloc(hdr_b, GCHandleType.Pinned);
-			nhdhdr = (NHDr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NHDr0Header));
+			v98hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
 			handle.Free();
 
 			ImageInfo.mediaType = MediaType.GENERIC_HDD;
 
-
-			ImageInfo.imageSize = (ulong)(stream.Length - nhdhdr.dwHeadSize);
+			ImageInfo.imageSize = (ulong)(stream.Length - 0xDC);
 			ImageInfo.imageCreationTime = imageFilter.GetCreationTime();
 			ImageInfo.imageLastModificationTime = imageFilter.GetLastWriteTime();
 			ImageInfo.imageName = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-			ImageInfo.sectors = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
+			ImageInfo.sectors = v98hdr.totals;
 			ImageInfo.xmlMediaType = XmlMediaType.BlockMedia;
-			ImageInfo.sectorSize = (uint)nhdhdr.wSectLen;
-			ImageInfo.cylinders = (uint)nhdhdr.dwCylinder;
-			ImageInfo.heads = (uint)nhdhdr.wHead;
-			ImageInfo.sectorsPerTrack = (uint)nhdhdr.wSect;
-			ImageInfo.imageComments = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
+			ImageInfo.sectorSize = v98hdr.sectorsize;
+			ImageInfo.cylinders = v98hdr.cylinders;
+			ImageInfo.heads = v98hdr.surfaces;
+			ImageInfo.sectorsPerTrack = v98hdr.sectors;
+			ImageInfo.imageComments = StringHandlers.CToString(v98hdr.comment, shiftjis);
 
 			nhdImageFilter = imageFilter;
 
@@ -195,7 +194,7 @@ namespace DiscImageChef.ImagePlugins
 
 		public override string GetImageFormat()
 		{
-			return "NHDr0 disk image";
+			return "Virtual98 disk image";
 		}
 
 		public override string GetImageVersion()
@@ -260,9 +259,18 @@ namespace DiscImageChef.ImagePlugins
 
 			Stream stream = nhdImageFilter.GetDataForkStream();
 
-			stream.Seek((long)((ulong)nhdhdr.dwHeadSize + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+			// V98 are lazy allocated
+			if((long)(0xDC + sectorAddress * ImageInfo.sectorSize) >= stream.Length)
+				return buffer;
 
-			stream.Read(buffer, 0, (int)(length * ImageInfo.sectorSize));
+			stream.Seek((long)(0xDC + sectorAddress * ImageInfo.sectorSize), SeekOrigin.Begin);
+
+			int toRead = (int)(length * ImageInfo.sectorSize);
+
+			if(toRead + stream.Position > stream.Length)
+				toRead = (int)(stream.Length - stream.Position);
+
+			stream.Read(buffer, 0, toRead);
 
 			return buffer;
 		}

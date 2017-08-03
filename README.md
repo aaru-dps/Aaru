@@ -63,6 +63,7 @@ Supported disk image formats
 * T98-Next hard disk images (.NHD)
 * TeleDisk (without compression)
 * VMware VMDK and COWD images
+* Virtual98 disk images
 * Virtual PC fixed size, dynamic size and differencing (undo) disk images
 * VirtualBox Disk Image (VDI)
 * X68k DIM disk image files (.DIM)
