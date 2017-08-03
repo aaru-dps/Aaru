@@ -51,18 +51,59 @@ namespace DiscImageChef.Tests.Partitions
     public class PC98
     {
         readonly string[] testfiles = {
-            "parted.vdi.lz",
+            "msdos330.thd.lz","msdos330_alt.thd.lz","msdos500_epson.thd.lz","msdos500.thd.lz",
+            "msdos620.thd.lz",
         };
 
         readonly Partition[][] wanted = {
-            // Parted
+            // NEC MS-DOS 3.30 (256Mb HDD)
             new []{
-                new Partition{ Description = null, Size = 38797312, Name = null, Type = "???", Offset = 1048576, Length = 75776,
-                    Sequence = 0, Start = 2048 },
-                new Partition{ Description = null, Size = 19922944, Name = null, Type = "???", Offset = 40894464, Length = 38912,
-                    Sequence = 1, Start = 79872 },
-                new Partition{ Description = null, Size = 48234496, Name = null, Type = "???", Offset = 61865984, Length = 94208,
-                    Sequence = 2, Start = 120832 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "288", Length = 19536, Sequence = 0, Start = 264 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "288", Length = 39336, Sequence = 1, Start = 20064 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4385", Length = 59136, Sequence = 2, Start = 59664 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 78936, Sequence = 3, Start = 119064 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 118536, Sequence = 4, Start = 198264 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 197736, Sequence = 5, Start = 317064 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4386", Length = 237336, Sequence = 6, Start = 515064 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 245256, Sequence = 7, Start = 752664 },
+            },
+            // NEC MS-DOS 3.30 (80Mb HDD)
+            new []{
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 59136, Sequence = 0, Start = 264 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4384", Length = 158136, Sequence = 1, Start = 59664 },
+                new Partition{ Description = null, Name = "MS-DOS 3.30", Type = "4385", Length = 94776, Sequence = 2, Start = 218064 },
+            },
+            // Epson MS-DOS 3.30
+            new []{
+                new Partition{ Description = null, Name = "NamenameName", Type = "288", Length = 35639, Sequence = 0, Start = 264 },
+                new Partition{ Description = null, Name = "12BitFAT", Type = "288", Length = 59399, Sequence = 1, Start = 35904 },
+                new Partition{ Description = null, Name = "16BitFAT", Type = "4385", Length = 79199, Sequence = 2, Start = 95304 },
+                new Partition{ Description = null, Name = "PartLblMaxNameXX", Type = "4384", Length = 118799, Sequence = 3, Start = 174504 },
+                new Partition{ Description = null, Name = "BigFAT12", Type = "288", Length = 158399, Sequence = 4, Start = 293304 },
+                new Partition{ Description = null, Name = "Lalalalalalalala", Type = "4386", Length = 197999, Sequence = 5, Start = 451704 },
+                new Partition{ Description = null, Name = "MS-DOS Ver 5.0", Type = "4384", Length = 237599, Sequence = 6, Start = 649704 },
+                new Partition{ Description = null, Name = "MS-DOS Ver 5.0", Type = "4387", Length = 118799, Sequence = 7, Start = 887304 },
+            },
+            // NEC MS-DOS 5.00
+            new []{
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "288", Length = 28512, Sequence = 0, Start = 264 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4384", Length = 49104, Sequence = 1, Start = 29040 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4385", Length = 93984, Sequence = 2, Start = 78408 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4384", Length = 122760, Sequence = 3, Start = 172656 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4386", Length = 163680, Sequence = 4, Start = 295680 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4387", Length = 204600, Sequence = 5, Start = 459624 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4384", Length = 204600, Sequence = 6, Start = 664488 },
+                new Partition{ Description = null, Name = "MS-DOS 5.00", Type = "4388", Length = 139128, Sequence = 7, Start = 869352 },
+            },
+            // NEC MS-DOS 6.20
+            new []{
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4384", Length = 61248, Sequence = 0, Start = 264 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4385", Length = 81840, Sequence = 1, Start = 61776 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4384", Length = 122760, Sequence = 2, Start = 143880 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4384", Length = 163680, Sequence = 3, Start = 266904 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "290", Length = 20328, Sequence = 4, Start = 430848 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4387", Length = 245520, Sequence = 5, Start = 451440 },
+                new Partition{ Description = null, Name = "MS-DOS 6.20", Type = "4384", Length = 315216, Sequence = 6, Start = 697224 },
             },
         };
 
@@ -74,7 +115,7 @@ namespace DiscImageChef.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "partitions", "pc98", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new T98();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
@@ -85,8 +126,6 @@ namespace DiscImageChef.Tests.Partitions
                     Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Offset, partitions[j].Offset, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
