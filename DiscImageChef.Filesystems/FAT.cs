@@ -279,9 +279,9 @@ namespace DiscImageChef.Filesystems
             FAT32ParameterBlockShort shortFat32BPB = new FAT32ParameterBlockShort();
             FAT32ParameterBlock Fat32BPB = new FAT32ParameterBlock();
 
-            byte[] bpb_sector = imagePlugin.ReadSector(partition.Start);
+            byte[] bpb_sector = imagePlugin.ReadSectors(partition.Start, 2);
 
-            if(imagePlugin.ImageInfo.sectorSize >= 512)
+            if(imagePlugin.ImageInfo.sectorSize >= 256)
             {
                 IntPtr bpbPtr = Marshal.AllocHGlobal(512);
                 Marshal.Copy(bpb_sector, 0, bpbPtr, 512);
@@ -931,9 +931,6 @@ namespace DiscImageChef.Filesystems
                 // so let's hope implementations use common sense?
                 if(!isFAT12 && !isFAT16)
                 {
-                    sectors_per_real_sector = fakeBPB.bps / imagePlugin.ImageInfo.sectorSize;
-                    fat_sector = imagePlugin.ReadSector((fakeBPB.rsectors + partition.Start) * sectors_per_real_sector);
-
                     ulong clusters;
                     if(fakeBPB.sectors == 0)
                         clusters = fakeBPB.big_sectors / fakeBPB.spc;
