@@ -83,8 +83,13 @@ namespace DiscImageChef.ImagePlugins
             // Check if file is not multiple of 512
             if((imageFilter.GetDataForkLength() % 512) != 0)
             {
-                // Check known disk sizes with sectors smaller than 512
-                switch(imageFilter.GetDataForkLength())
+				extension = Path.GetExtension(imageFilter.GetFilename()).ToLower();
+
+				if(extension == ".hdf" && ImageInfo.imageSize % 256 == 0)
+					return true;
+
+				// Check known disk sizes with sectors smaller than 512
+				switch(imageFilter.GetDataForkLength())
                 {
 					#region Commodore
 					case 174848:
