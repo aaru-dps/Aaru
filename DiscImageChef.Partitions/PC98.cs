@@ -46,7 +46,7 @@ namespace DiscImageChef.PartPlugins
 
         public PC98()
         {
-            Name = "NEC PC-9800 partitions table";
+            Name = "NEC PC-9800 partition table";
             PluginUUID = new Guid("27333401-C7C2-447D-961C-22AD0641A09A\n");
         }
 
@@ -84,28 +84,33 @@ namespace DiscImageChef.PartPlugins
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}", entry.dp_ecyl);
                 DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"", StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
-                if(entry.dp_ssect != entry.dp_esect &&
-                   entry.dp_shd != entry.dp_ehd &&
-                   entry.dp_scyl != entry.dp_ecyl &&
+                if(entry.dp_scyl != entry.dp_ecyl &&
                    entry.dp_ecyl > 0)
                 {
 
                     Partition part = new Partition
                     {
-                        Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, entry.dp_ssect, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack),
-                        Type = string.Format("{0}", (entry.dp_sid << 8) | entry.dp_mid),
-                        Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)),
+                        Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack),
+                        Type = string.Format("{0}", ((entry.dp_sid & 0x7F) << 8) | (entry.dp_mid & 0x7F)),
+                        Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                         Sequence = counter,
                         Scheme = Name
                     };
                     part.Offset = part.Start * imagePlugin.GetSectorSize();
-                    part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, entry.dp_esect, imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - part.Start;
+                    part.Length = Helpers.CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack) - part.Start;
                     part.Size = part.Length * imagePlugin.GetSectorSize();
 
-                    if((entry.dp_sid & 0x7F) == 0x44 &&
-                       (entry.dp_mid & 0x7F) == 0x14 &&
-                        part.Start < imagePlugin.ImageInfo.sectors &&
-                            part.Length + part.Start <= imagePlugin.ImageInfo.sectors)
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
+                    DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
+
+
+                    if(part.Start < imagePlugin.ImageInfo.sectors &&
+                       part.End <= imagePlugin.ImageInfo.sectors)
                     {
                         partitions.Add(part);
                         counter++;
@@ -126,7 +131,15 @@ namespace DiscImageChef.PartPlugins
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PC98Partition
         {
+            /// <summary>
+            /// Some ID, if 0x80 bit is set, it is bootable
+            /// 386BSD sets it to 0x14
+            /// </summary>
             public byte dp_mid;
+            /// <summary>
+            /// Some ID, if 0x80 bit is set, it is active
+            /// 386BSD sets it to 0x44
+            /// </summary>
             public byte dp_sid;
             public byte dp_dum1;
             public byte dp_dum2;
