@@ -123,7 +123,7 @@ namespace DiscImageChef.Tests.Partitions
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Size, partitions[j].Size, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
