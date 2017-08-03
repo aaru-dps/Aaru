@@ -1,0 +1,122 @@
+NFD r1形式ファイル構造仕様
+                                                            2001/09/14 LED
+
+□はじめに
+
+このテキストはPC9821エミュレータT98-Nextのフロッピーディスクイメージファイル
+NFD r1形式の構造を規定したものです。データ解析、ツール開発等にご自由に利用
+してください。
+
+□構造について
+
+NFD形式の構造は大きくヘッダ部とデータ部に分けられます。
+ファイルの先頭からヘッダ部が存在し、その後ろにデータ部が存在します。
+
+【ヘッダ部】
+
+ヘッダ部はその中でさらに「全体情報部」「セクタ情報部」「特殊読み込み情報部」
+に分けられます
+
+「全体情報部」
+イメージ全体の情報を格納します。この部分はファイル先頭より固定で入ります
+
+typedef struct {
+    char szFileID[sizeof(NFD_FILE_ID1)];        /* 識別ID "T98FDDIMAGE.R1"  */
+    char Reserv1[0x10-sizeof(NFD_FILE_ID1)];    /* 予備                     */
+    char szComment[0x100];                      /* コメント                 */
+    DWORD dwHeadSize;                           /* ヘッダのサイズ           */
+    BYTE flProtect;                             /* ライトプロテクト0以外    */
+    BYTE byHead;                                /* ヘッド数 1-2             */
+    char Reserv2[0x10-4-1-1];                   /* 予備                     */
+    DWORD dwTrackHead[164];                     /* トラックID位置           */
+    DWORD dwAddInfo;                            /* 追加情報ヘッダのアドレス */
+    char Reserv3[0x10-4];                       /* 予備                     */
+}NFD_FILE_HEAD1,*LP_NFD_FILE_HEAD1;
+注)構造体の境界は１バイト単位とする
+予約領域は0で埋めること
+
+dwHeadSizeはヘッダ部全体の大きさを示す
+swTrackHeadはセクタ情報部のトラックの先頭位置を絶対アドレスで示す
+但し、存在しないトラックの場合0が入る
+dwAddInfoは予約で現状では0固定です。
+
+全体情報部の後にトラック単位で「セクタ情報部」と「特殊読み込み情報部」が
+混合して入ります
+
+typedef struct {
+    WORD wSector;                               /* セクタID数               */
+    WORD wDiag;                                 /* 特殊 ID数                */
+    char Reserv1[0x10-4];                       /* 予備                     */
+}NFD_TRACK_ID1,*LP_NFD_TRACK_ID1;
+
+wSectorにそのトラック中のセクタ数を格納します
+wDiagにそのトラック中の特殊データ数を格納します
+
+wSectorの数分以下のセクタ情報ヘッダを格納します
+
+typedef struct {
+    BYTE    C;                                  /* C                        */
+    BYTE    H;                                  /* H                        */
+    BYTE    R;                                  /* R                        */
+    BYTE    N;                                  /* N                        */
+    BYTE    flMFM;                              /* MFM(1)/FM(0)             */
+    BYTE    flDDAM;                             /* DDAM(1)/DAM(0)           */
+    BYTE    byStatus;                           /* READ DATA RESULT         */
+    BYTE    bySTS0;                             /* ST0                      */
+    BYTE    bySTS1;                             /* ST1                      */
+    BYTE    bySTS2;                             /* ST2                      */
+    BYTE    byRetry;                            /* RetryDataなし(0)あり(1-) */
+    BYTE    byPDA;                              /* PDA                      */
+    char Reserv1[0x10-12];                      /* 予備                     */
+}NFD_SECT_ID1,*LP_NFD_SECT_ID1;
+
+CHRNにそのセクタのセクタIDを格納します
+byStatusにPC98x1でそのセクタをINT 1BhのREADDATAで読みとったときのリザルトを
+格納します
+bySTS0-2も同様でFDCのST0-2を格納します
+byRetryは不安定データを持つセクタの場合、データを複数回読んで記憶する場合に
+使用し、例えばbyRetry=8の場合、データを9通り持つことが出来ます
+T98-NextはbyRetryが0以外の場合リトライデータを順に使用します
+byPDAは対応するデバイスアドレスの下位４ビットを０にした値を格納します
+byPDAが０の場合T98-Nextはセクタサイズからメディアを自動判別します
+
+その後にwDiagの数分、特殊読み込み情報ヘッダを格納します
+
+typedef struct {
+    BYTE    Cmd;                                /* Command                  */
+    BYTE    C;                                  /* C                        */
+    BYTE    H;                                  /* H                        */
+    BYTE    R;                                  /* R                        */
+    BYTE    N;                                  /* N                        */
+    BYTE    byStatus;                           /* READ DATA RESULT         */
+    BYTE    bySTS0;                             /* ST0                      */
+    BYTE    bySTS1;                             /* ST1                      */
+    BYTE    bySTS2;                             /* ST2                      */
+    BYTE    byRetry;                            /* RetryDataなし(0)あり(1-) */
+    DWORD   dwDataLen;
+    BYTE    byPDA;                              /* PDA                      */
+    char Reserv1[0x10-15];                      /* 予備                     */
+}NFD_DIAG_ID1,*LP_NFD_DIAG_ID1;
+
+Cmdには特殊読み込みを行うコマンドをINT 1BhのAH値の下位4bitで格納します
+READ DATAに対して特殊読み込みを規定する場合は06h、READ DIAGNOSTICの場合02h等
+CHRNには特殊読み込みが呼ばれる際のセクタIDを格納し
+byStatus、bySTS0-2は特殊読み込み後のステータスを格納します
+byRetryはセクタID同様に使用します
+dwDataLenは転送を行うデータサイズを格納します
+byPDAは対応するデバイスアドレスの下位４ビットを０にした値を格納します
+byPDAが０の場合T98-Nextはセクタサイズからメディアを自動判別します
+
+T98-Nextは特殊読み込みデータの情報をセクタIDより優先して使用します
+この情報を使用することによってREADDIAGNOSTICでの読み出し結果を個別で指定
+できたり出来るようになります
+
+これらNFD_TRACK_ID1以下の情報をdwTrackHeadで示された回数分繰り返します
+
+
+【データ部】
+
+ファイルの先頭からヘッダ部のdwHeadSizeバイト以降からデータ部となります。
+データ部はヘッダに格納された順にデータを連続に配置します。
+
+

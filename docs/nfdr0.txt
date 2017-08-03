@@ -1,0 +1,62 @@
+NFD r0形式ファイル構造仕様
+                                                            2001/01/22 LED
+
+□はじめに
+
+このテキストはPC9821エミュレータT98-Nextのフロッピーディスクイメージファイル
+NFD r0形式の構造を規定したものです。データ解析、ツール開発等にご自由に利用
+してください。
+
+□構造について
+
+NFD形式の構造は大きくヘッダ部とデータ部に分けられます。
+ファイルの先頭からヘッダ部が存在し、その後ろにデータ部が存在します。
+
+【ヘッダ部】
+
+typedef struct {
+    char  szFileID[15];                 // 識別ID "T98FDDIMAGE.R0"
+    char  Reserve1[1];                  // 予約
+    char  szComment[0x100];             // イメージコメント(ASCIIz)
+    DWORD dwHeadSize;                   // ヘッダ部のサイズ
+    BYTE  flProtect;                    // 0以外 : ライトプロテクト
+    BYTE  byHead;                       // ヘッド数
+    char  Reserve2[10];                 // 予約
+    NFD_SECT_ID si[163][26];            // セクタID(後述)
+    char  Reserve3[0x10];               // 予約
+}NFD_FILE_HEAD,*LP_NFD_FILE_HEAD;
+注)構造体の境界は１バイト単位とする
+予約領域は0で埋めること
+
+セクタID(NFD_SECT_ID)は163トラック26セクタ分が固定で確保されており
+以下の構造を持つ
+
+typedef struct {
+    BYTE  C;                            // C （0xFFの時セクタ無し）
+    BYTE  H;                            // H
+    BYTE  R;                            // R
+    BYTE  N;                            // N
+    BYTE  flMFM;                        // 0:FM / 1:MFM
+    BYTE  flDDAM;                       // 0:DAM / 1:DDAM
+    BYTE  byStatus;                     // READ DATA(FDDBIOS)の結果
+    BYTE  byST0;                        // READ DATA(FDDBIOS)の結果 ST0
+    BYTE  byST1;                        // READ DATA(FDDBIOS)の結果 ST1
+    BYTE  byST2;                        // READ DATA(FDDBIOS)の結果 ST2
+    BYTE  byPDA;                        // FDDBIOSで使用するアドレス
+    char Reserve1[5];                   // 予約
+}NFD_SECT_ID,*LP_NFD_SECT_ID;
+注)構造体の境界は１バイト単位とする
+予約領域は0で埋めること
+
+セクタIDは基本的にPC98上でFDD BIOSのREADDATAを行った結果を保存する。
+Cが0xFFのとき、そのセクタIDは無視される。
+byPDAはFDが1.2Mの場合0x90、1.44Mの場合0x30、640Kの場合0x10を入れる。
+
+
+
+【データ部】
+
+ファイルの先頭からヘッダ部のdwHeadSizeバイト以降からデータ部となります。
+データ部はセクタID格納順にデータを連続に配置します。
+
+

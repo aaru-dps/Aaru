@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+
+<HTML>
+ 
+ <HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-2">
+  <TITLE>IDEDOS - the access to harddisks</TITLE>
+ <BASE TARGET="_top">
+  <LINK REL="stylesheet" HREF="zxvgs.css">
+ </HEAD>
+ 
+ <BODY LANG="en">
+
+ <SCRIPT LANGUAGE="JavaScript" src="menu.js"></SCRIPT>
+
+  <TABLE CELLPADDING="6">
+   <TR>
+
+<!--    <TD><A HREF="pl-idedos.html" TARGET="_top">Polski</A>-->
+    
+    <TD>Polski
+    <TH><A HREF="en-idedos.html" TARGET="_top">English</A>
+   </TR>
+  </TABLE>
+  <TABLE CELLPADDING="6">
+   <TR>
+    <TD><A HREF="en-index.html" TARGET="_top">Home</A>
+    <TD><A HREF="en-guide.html" TARGET="_top">Guide</A>
+    <TD><A HREF="en-rsxes.html" TARGET="_top">RSXes</A>
+    <TD><A HREF="en-files.html" TARGET="_top">Files</A>
+    <TD><A HREF="en-functions.html" TARGET="_top">Functions</A>
+    <TD><A HREF="en-versions.html" TARGET="_top">Versions</A>
+    <TD><A HREF="en-releases.html" TARGET="_top">Releases</A>
+    <TD><A HREF="registeredusers.html" TARGET="_top">Users</A>
+    <TD><A HREF="download.html" TARGET="_top">Download</A>
+   </TR>
+  </TABLE>
+  <TABLE CELLPADDING="6">
+   <TR>
+    <TD><A HREF="pl-cpm22.html" TARGET="_top">CP/M</A>
+    <TD><A HREF="en-memdisk.html" TARGET="_top">MEMDISK</A>
+    <TH><A HREF="en-idedos.html" TARGET="_top">IDEDOS</A>
+   </TR>
+  </TABLE>
+  <HR>
+  
+  <H1 ALIGN="CENTER">IDEDOS - the access to harddisks</H1>
+
+ <P>The IDEDOS means extra facilities of the +3e operating system,
+ written by Garry Lancaster. For more details please consult his
+ page at <A HREF="http://www.zxplus3e.plus.com/">http://www.zxplus3e.plus.com/</A>.
+
+ <P>In ZXVGS and CPM22QED is implemented the IDEDOS partition table
+ (also called IDEDOS system partition).
+
+ <P>Searching for IDEDOS structures:
+ <OL>
+  <LI>Read the sector 1 on cylinder 0 and head 0.
+  <LI>If sector length is 512B (full IDE), go to 5.
+  <LI>(Simple IDE - sector length is 256B.) If "PLUSIDEDOS" signature found, go to 10.
+  <LI>Don't mount the disk at all.
+  <LI>If "PLUSIDEDOS" signature found, go to 10.
+  <LI>If "P?L?U?S?I?D?E?D?O?S" signature found, switch disk
+   access to 8-bit and go to 10.
+  <LI>Read the sector 1 on cylinder 0 and head 1.
+  <LI>If "PLUSIDEDOS" signature found, go to 10.
+  <LI>Don't mount the disk. (Or try to analyse MS-DOS
+   partition tables.)
+  <LI>Analyse IDEDOS partition table.
+ </OL>
+
+ <TABLE WIDTH=100% BORDER=1>
+  <CAPTION>The 64 bytes partition entry</CAPTION>
+   <TR><TH ALIGN=CENTER COLSPAN=2>Offset<TH ALIGN=CENTER>Length<TH ALIGN=CENTER>Description
+   <TR><TD ALIGN=CENTER COLSPAN=2>+0<TD ALIGN=CENTER>16<TD>Partition name (case-insensitive, space-padded).
+   <TR><TD ALIGN=CENTER COLSPAN=2>+16<TD ALIGN=CENTER>16<TD>Partition definition.
+   <TR><TD ROWSPAN=7 WIDTH=15><BR>
+       <TD ALIGN=CENTER>+16<TD ALIGN=CENTER>1<TD>Partition type (0=free handle)
+   <TR><TD ALIGN=CENTER>+17<TD ALIGN=CENTER>2<TD>Starting cylinder.
+   <TR><TD ALIGN=CENTER>+19<TD ALIGN=CENTER>1<TD>Starting head.
+   <TR><TD ALIGN=CENTER>+20<TD ALIGN=CENTER>2<TD>Ending cylinder.
+   <TR><TD ALIGN=CENTER>+22<TD ALIGN=CENTER>1<TD>Ending head.
+   <TR><TD ALIGN=CENTER>+23<TD ALIGN=CENTER>4<TD>Largest logical sector number.
+   <TR><TD ALIGN=CENTER>+27<TD ALIGN=CENTER>5<TD>Type-specific information.
+   <TR><TD ALIGN=CENTER COLSPAN=2>+32<TD ALIGN=CENTER>32<TD>Type-specific information.
+ </TABLE>
+
+ <P>
+ <TABLE WIDTH=100% BORDER=1>
+  <CAPTION>Partition types</CAPTION>
+  <TR>
+   <TH ALIGN=CENTER>Partition<BR>type<BR>number
+   <TH ALIGN=CENTER>Description
+  <TR>
+   <TD ALIGN=CENTER>#00
+   <TD>Unused partition/free handle.
+  <TR>
+   <TD ALIGN=CENTER>#01
+   <TD>System partition. The first partition on a disk, starting at phisical 
+    sector 1 (cylinder 0, head 0 or 1), is always the system partition and
+    contains a list of 64-byte
+    partition entries that define all the partitions on the disk (including
+    the system one). Only one partition of this type is
+    permitted on a disk, and this is always the first partition. The name
+    is always "PLUSIDEDOS" (followed by 6 spaces).
+  <TR>
+   <TD ALIGN=CENTER>#02
+   <TD>Swap partition.
+  <TR>
+   <TD ALIGN=CENTER>#03
+   <TD>+3DOS partition. The maximum theoretical size for a +3DOS 
+    partition is just under 32Mb. The XDPB has logical geometry.
+  <TR>
+   <TD ALIGN=CENTER>#04
+   <TD>CP/M partition with XDPB that reflects phisical 
+disk structure. So if the disk has 17 spt, the LSPT is 
+68. The partition uses always integer number of 
+cylinders and uses whole cylinder (from head 0). 
+Otherwise (when from not track 0) this is converted to 
+reserved tracks (OFF in XDPB). This is required for my 
+DSKHNDLR low level disk drivers.
+  <TR>
+   <TD ALIGN=CENTER>#05
+   <TD>Boot partition. This is only one file, stored 
+as a partition. Used to boot a hardware. Eg. Timex FDD 3000
+extedend with YABUS.TF, will search the IDEDOS partiton
+table to find "YABUS.TF" partition. If found, the partition
+contents is loaded into RAM and started. The partition size
+is usually 8k to 64kB, what gives 1..2 tracks (or 1..8 track
+for disks with 17 spt). The number of sectors to load is in
+partition definition.
+  <TR>
+   <TD ALIGN=CENTER>#10
+   <TD>MS-DOS (FAT16) partition.
+  <TR>
+   <TD ALIGN=CENTER>#20
+   <TD>UZI(X) partition.
+  <TR>
+   <TD ALIGN=CENTER>#30
+   <TD>TR-DOS diskimage partition. Usually 640kB. Sector offset.
+  <TR>
+   <TD ALIGN=CENTER>#31
+   <TD>SAMDOS diskimage partition (B-DOS record), 800kB. Sector offset.
+  <TR>
+   <TD ALIGN=CENTER>#32
+   <TD>MB-02 diskimage partition. Usually 1804kB. Sector offset.
+  <TR>
+   <TD ALIGN=CENTER>#FE
+   <TD>Bad disk space.
+  <TR>
+   <TD ALIGN=CENTER>#FF
+   <TD>Free disk space.
+ </TABLE>
+
+<H2>Example partitions data</H2>
+
+<P>The disk is Seagate ST351A/X and its structure is 980/5/17 (not the
+reported in manual 820/6/17).
+<P>First track is reserved to allow MBR and MS-DOS partitions table in
+0/0/1 sector. The MS-DOS (and other) partitions can start at cylinder
+198 as IDEDOS structure ends at cylinder 197 inclusive. IDEDOS structure
+could also take whole disk and contain MS-DOS partition inside.
+<P>IDEDOS structure starts at sector 0/1/1, so 1 * 17 * 512 = 8704 = #2200
+bytes are skpipped.<BR>
+<PRE>02200  50 4C 55 53 | 49 44 45 44 | 4F 53 20 20 | 20 20 20 20   PLUSIDEDOS       
+02210  01 00 00 01 | 00 00 01 10 | 00 00 00 00 | 00 00 00 00   ................ 
+02220  C6 00 05 11 | 55 00 87 00 | 02 00 00 00 | 00 00 00 00   O...U........... 
+02230  00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00   ................ 
+</PRE>IDEDOS system partition (type #01 - area that describes other partitions).
+Starts at cylinder 0 head 1 and ends at the same one.
+Partition size is 11 sectors (#00000010).
+At #02220 disk parameters are defined: 198 cylinders (#0C6, two bytes),
+5 heads (one byte), 17 sectors per track (#11, one byte), sectors
+per cylinder is calculated to 85 (#0055, two bytes). Up to 136
+partitions can be defined (#0087 is last number = 1 * 17 * 512 / 64 - 1, two
+bytes). Area behind from cylinder 198 is reserved for other systems
+(e.g. MS-DOS) and not available as IDEDOS partitions.
+
+<PRE>02240  5A 58 56 47 | 53 20 20 20 | 20 20 20 20 | 20 20 20 20   ZXVGS            
+02250  04 02 00 00 | C5 00 04 13 | 41 00 00 00 | 00 00 00 00   ....L...A....... 
+02260  44 00 04 0F | 00 44 10 FF | 03 FF FF 00 | 00 00 00 02   D....D.˙.˙˙..... 
+02270  03 04 C4 11 | 01 00 02 00 | 00 A1 FF 00 | 00 00 00 00   ..A.......˙..... 
+</PRE>Main CP/M partition (type #04). Starts at cylinder 2 head 0
+and ends at cylinder 197 (#00C5) head 4 inclusive. At #02260 XDPB
+is provided. Partition has 16660 sectors (#00004113).
+
+<PRE>02280  50 4C 33 4D | 45 4D 2E 53 | 59 53 20 20 | 20 20 20 20   PL3MEM.SYS
+02290  05 01 00 03 | 01 00 04 1F | 00 00 00 00 | 00 00 00 00   ................
+022A0  00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00   ................
+022B0  00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00   ................
+</PRE>Boot file (type #05) dedicated for the PL3MEM interface.
+Starts at cylinder 1 head 3 and ends at cylinder 1 head 4.
+File size is 32 sectors (#0000001F) - last two are unused.
+
+<PRE>022C0  46 52 45 45 | 20 20 20 20 | 20 20 20 20 | 20 20 20 20   FREE
+022D0  FE 00 00 02 | 01 00 02 65 | 00 00 00 00 | 00 00 00 00   t......e........ 
+022E0  00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00   ................ 
+022F0  00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00   ................ 
+</PRE>Some free space (type #FE). Starts at cylinder 0 head 2
+and ends at cylinder 1 head 2 inclusive. Has 102 sectors (#00000065).
+Can be used later to place more boot files.
+
+
+  <HR>
+  <ADDRESS> &copy; 2003-06-24 12:48:59 Jarek Adamski
+  <A HREF="mailto:zxvgs@yarek.com?Subject=en-idedos.html">zxvgs@yarek.com</A>,
+  <A HREF="http://zxvgs.yarek.com">http://zxvgs.yarek.com</A> </ADDRESS>
+ </BODY>
+</HTML>
