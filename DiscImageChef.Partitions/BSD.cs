@@ -434,6 +434,7 @@ namespace DiscImageChef.PartPlugins
                 case fsType.ISO9660:
                     return "ISO9660";
                 case fsType.Boot:
+                case fsType.SysVBoot:
                     return "Boot";
                 case fsType.AFFS:
                     return "Amiga FFS";
