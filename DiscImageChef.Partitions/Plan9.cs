@@ -30,12 +30,60 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 using System;
-namespace DiscImageChef.Partitions
+using System.Collections.Generic;
+using DiscImageChef.CommonTypes;
+
+namespace DiscImageChef.PartPlugins
 {
-    public class Plan9
+    // This is the most stupid or the most intelligent partition scheme ever done, pick or take
+    // At sector 1 from offset, text resides (yes, TEXT) in following format:
+    // "part type start end\n"
+    // One line per partition, start and end relative to offset
+    // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
+    public class Plan9 : PartPlugin
     {
         public Plan9()
         {
+            Name = "Plan9 partition table";
+            PluginUUID = new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+        }
+
+        public override bool GetInformation(ImagePlugins.ImagePlugin imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        {
+            partitions = new List<Partition>();
+            byte[] sector = imagePlugin.ReadSector(sectorOffset + 1);
+            // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
+            string[] really = StringHandlers.CToString(sector).Split(new[] {'\n'});
+
+            foreach(string part in really)
+            {
+                if(part.Length < 5 || part.Substring(0, 5) != "part ")
+                    break;
+
+                string[] tokens = part.Split(new[] { ' ' });
+
+                if(tokens.Length != 4)
+                    break;
+
+                if(!ulong.TryParse(tokens[2], out ulong start) ||
+                   !ulong.TryParse(tokens[3], out ulong end))
+                    break;
+
+                Partition _part = new Partition
+                {
+                    Length = (end - start) + 1,
+                    Offset = (start + sectorOffset) * imagePlugin.GetSectorSize(),
+                    Scheme = Name,
+                    Sequence = (ulong)partitions.Count,
+                    Size = ((end - start) + 1) * imagePlugin.GetSectorSize(),
+                    Start = start + sectorOffset,
+                    Type = tokens[1]
+                };
+
+                partitions.Add(_part);
+            }
+
+            return partitions.Count>0;
         }
     }
 }

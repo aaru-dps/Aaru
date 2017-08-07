@@ -85,6 +85,7 @@ Supported partitioning schemes
 * Minix subpartitions inside MBR
 * NEC PC9800 partitions
 * NeXT disklabel
+* Plan9 partition table
 * Rio Karma partitions
 * SGI volume headers
 * Solaris slices inside MBR
