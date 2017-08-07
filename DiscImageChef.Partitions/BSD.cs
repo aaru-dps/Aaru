@@ -485,9 +485,9 @@ namespace DiscImageChef.PartPlugins
         {
             DiskLabel dl = BigEndianMarshal.SwapStructureMembersEndian(disklabel);
             for(int i = 0; i < dl.d_drivedata.Length; i++)
-                dl.d_drivedata[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_drivedata[i]);
+                dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
             for(int i = 0; i < dl.d_spare.Length; i++)
-                dl.d_spare[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_spare[i]);
+                dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
             for(int i = 0; i < dl.d_partitions.Length; i++)
                 dl.d_partitions[i] = BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
