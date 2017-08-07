@@ -42,6 +42,8 @@ namespace DiscImageChef.PartPlugins
     // TODO: Support AAP extensions
     public class MBR : PartPlugin
     {
+        const ulong GptMagic = 0x5452415020494645;
+
         public MBR()
         {
             Name = "Master Boot Record";
@@ -84,6 +86,24 @@ namespace DiscImageChef.PartPlugins
             if(mbr.magic != MBR_Magic)
                 return false; // Not MBR
 
+            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
+
+            ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
+
+            DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
+
+            if(signature == GptMagic)
+                return false;
+
+            if(signature != GptMagic && imagePlugin.ImageInfo.xmlMediaType == XmlMediaType.OpticalDisc)
+            {
+                hdrBytes = imagePlugin.ReadSector(sectorOffset);
+                signature = BitConverter.ToUInt64(hdrBytes, 512);
+                DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
+                if(signature == GptMagic)
+                    return false;
+            }
+
             MBRPartitionEntry[] entries;
 
             if(mbr_ontrack.dm_magic == DM_Magic)
@@ -111,8 +131,6 @@ namespace DiscImageChef.PartPlugins
                 if(entry.status != 0x00 && entry.status != 0x80)
                     return false; // Maybe a FAT filesystem
                 valid &= entry.type != 0x00;
-                if(entry.type == 0xEE || entry.type == 0xEF)
-                    return false; // This is a GPT
                 if(entry.type == 0x05 || entry.type == 0x0F || entry.type == 0x15 || entry.type == 0x1F || entry.type == 0x85 ||
                   entry.type == 0x91 || entry.type == 0x9B || entry.type == 0xC5 || entry.type == 0xCF || entry.type == 0xD5)
                 {
