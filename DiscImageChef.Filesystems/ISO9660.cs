@@ -1001,12 +1001,12 @@ namespace DiscImageChef.Filesystems
             decodedVD.PublisherIdentifier = Encoding.BigEndianUnicode.GetString(VDPubId).TrimEnd().Trim(new[] { '\u0000' });
             decodedVD.DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(VDDataPrepId).TrimEnd().Trim(new[] { '\u0000' });
             decodedVD.ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(VDAppId).TrimEnd().Trim(new[] { '\u0000' });
-            if(VCTime[0] == '0' || VCTime[0] == 0x00)
+            if(VCTime[0] < 0x31 || VCTime[0] > 0x39)
                 decodedVD.CreationTime = DateTime.MinValue;
             else
                 decodedVD.CreationTime = DateHandlers.ISO9660ToDateTime(VCTime);
 
-            if(VMTime[0] == '0' || VMTime[0] == 0x00)
+            if(VMTime[0] < 0x31 || VMTime[0] > 0x39)
             {
                 decodedVD.HasModificationTime = false;
             }
@@ -1016,7 +1016,7 @@ namespace DiscImageChef.Filesystems
                 decodedVD.ModificationTime = DateHandlers.ISO9660ToDateTime(VMTime);
             }
 
-            if(VXTime[0] == '0' || VXTime[0] == 0x00)
+            if(VXTime[0] < 0x31 || VXTime[0] > 0x39)
             {
                 decodedVD.HasExpirationTime = false;
             }
@@ -1026,7 +1026,7 @@ namespace DiscImageChef.Filesystems
                 decodedVD.ExpirationTime = DateHandlers.ISO9660ToDateTime(VXTime);
             }
 
-            if(VETime[0] == '0' || VETime[0] == 0x00)
+            if(VETime[0] < 0x31 || VETime[0] > 0x39)
             {
                 decodedVD.HasEffectiveTime = false;
             }
