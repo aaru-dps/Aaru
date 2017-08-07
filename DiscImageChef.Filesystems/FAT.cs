@@ -923,6 +923,9 @@ namespace DiscImageChef.Filesystems
                     fakeBPB.hsectors /= 4;
                     fakeBPB.sptrk /= 4;
                     fakeBPB.rsectors /= 4;
+
+                    if(fakeBPB.spc == 0)
+                        fakeBPB.spc = 1;
                 }
 
                 // This assumes no sane implementation will violate cluster size rules
@@ -932,10 +935,11 @@ namespace DiscImageChef.Filesystems
                 if(!isFAT12 && !isFAT16)
                 {
                     ulong clusters;
+
                     if(fakeBPB.sectors == 0)
-                        clusters = fakeBPB.big_sectors / fakeBPB.spc;
+                        clusters = fakeBPB.spc == 0 ? fakeBPB.big_sectors : fakeBPB.big_sectors / fakeBPB.spc;
                     else
-                        clusters = (ulong)(fakeBPB.sectors / fakeBPB.spc);
+                        clusters = fakeBPB.spc == 0 ? (ulong)fakeBPB.sectors : (ulong)fakeBPB.sectors / fakeBPB.spc;
 
                     if(clusters < 4089)
                         isFAT12 = true;
@@ -1001,12 +1005,12 @@ namespace DiscImageChef.Filesystems
                 if(fakeBPB.sectors == 0)
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBPB.big_sectors, fakeBPB.big_sectors * fakeBPB.bps).AppendLine();
-                    xmlFSType.Clusters = (long)(fakeBPB.big_sectors / fakeBPB.spc);
+                    xmlFSType.Clusters = fakeBPB.spc == 0 ? fakeBPB.big_sectors : fakeBPB.big_sectors / fakeBPB.spc;
                 }
                 else
                 {
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBPB.sectors, fakeBPB.sectors * fakeBPB.bps).AppendLine();
-                    xmlFSType.Clusters = fakeBPB.sectors / fakeBPB.spc;
+                    xmlFSType.Clusters = fakeBPB.spc == 0 ? fakeBPB.sectors : fakeBPB.sectors / fakeBPB.spc;
                 }
                 sb.AppendFormat("{0} sectors per cluster.", fakeBPB.spc).AppendLine();
                 sb.AppendFormat("{0} clusters on volume.", xmlFSType.Clusters).AppendLine();
