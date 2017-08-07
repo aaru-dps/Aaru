@@ -248,9 +248,22 @@ namespace DiscImageChef.ImagePlugins
 				imageFilter.GetDataForkStream().Read(testArray, 0, 512);
 				imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
 				// Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
-				foreach(byte b in testArray)
+				bool twoConsecutiveNulls = false;
+				for(int i = 0; i < 512; i++)
 				{
-					if(b < 0x20 && b != 0x0A && b != 0x0D && b != 0x00)
+					if(i >= imageFilter.GetDataForkStream().Length)
+						break;
+
+					if(testArray[i] == 0)
+					{
+						if(twoConsecutiveNulls)
+							return false;
+						twoConsecutiveNulls = true;
+					}
+					else
+						twoConsecutiveNulls = false;
+
+					if(testArray[i] < 0x20 && testArray[i] != 0x0A && testArray[i] != 0x0D && testArray[i] != 0x00)
 						return false;
 				}
 
