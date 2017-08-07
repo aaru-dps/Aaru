@@ -250,7 +250,7 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
             if(xfsSb.inprogress > 0)
                 sb.AppendLine("fsck in progress");
-            sb.AppendFormat("Volume name: {0}", CurrentEncoding.GetString(xfsSb.fname)).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, CurrentEncoding)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
 
             information = sb.ToString();
@@ -264,7 +264,7 @@ namespace DiscImageChef.Filesystems
             xmlFSType.Files = (long)(xfsSb.icount - xfsSb.ifree);
             xmlFSType.FilesSpecified = true;
             xmlFSType.Dirty |= xfsSb.inprogress > 0;
-            xmlFSType.VolumeName = CurrentEncoding.GetString(xfsSb.fname);
+            xmlFSType.VolumeName = StringHandlers.CToString(xfsSb.fname, CurrentEncoding);
             xmlFSType.VolumeSerial = xfsSb.uuid.ToString();
         }
 
