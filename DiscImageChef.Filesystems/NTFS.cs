@@ -121,8 +121,8 @@ namespace DiscImageChef.Filesystems
             //			sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
             //			sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfs_bb.sectors, ntfs_bb.sectors * ntfs_bb.bps).AppendLine();
-            sb.AppendFormat("Sectors where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
-            sb.AppendFormat("Sectors where $MFTMirr starts: {0}", ntfs_bb.mftmirror_lsn).AppendLine();
+            sb.AppendFormat("Cluster where $MFT starts: {0}", ntfs_bb.mft_lsn).AppendLine();
+            sb.AppendFormat("Cluster where $MFTMirr starts: {0}", ntfs_bb.mftmirror_lsn).AppendLine();
 
             if(ntfs_bb.mft_rc_clusters > 0)
                 sb.AppendFormat("{0} clusters per MFT record ({1} bytes)", ntfs_bb.mft_rc_clusters,
