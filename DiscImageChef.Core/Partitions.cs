@@ -134,6 +134,21 @@ namespace DiscImageChef.Core
                 DicConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
             }
 
+            // Be sure that device partitions are not excluded if not mapped by any scheme...
+            if(image.ImageInfo.imageHasPartitions)
+            {
+                List<ulong> startLocations = new List<ulong>();
+
+                foreach(Partition detectedPartition in childPartitions)
+                    startLocations.Add(detectedPartition.Start);
+
+                foreach(Partition imagePartition in image.GetPartitions())
+                {
+                    if(!startLocations.Contains(imagePartition.Start))
+                        childPartitions.Add(imagePartition);
+                }
+            }
+
             Partition[] childArray = childPartitions.OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme).ToArray();
 
             for(long i = 0; i < childArray.LongLength; i++)
