@@ -311,15 +311,22 @@ namespace DiscImageChef.PartPlugins
                         }
 
                         _partition.Description = sb.ToString();
-                        // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
-                        if(_partition.End < imagePlugin.ImageInfo.sectors)
+                        if(_partition.Start < imagePlugin.ImageInfo.sectors && _partition.End < imagePlugin.ImageInfo.sectors)
                         {
+                            partitions.Add(_partition);
+                            sequence++;
+                        }
+                        // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
+                        else if(_partition.Start < imagePlugin.ImageInfo.sectors)
+                        {
+                            DicConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})", _partition.End, imagePlugin.ImageInfo.sectors - 1);
+                            _partition.Length = imagePlugin.ImageInfo.sectors - _partition.Start;
                             partitions.Add(_partition);
                             sequence++;
                         }
                         else
                         {
-                            DicConsole.DebugWriteLine("AppleMap Plugin", "Not adding partition because end ({0}) is outside media size ({1})", _partition.End, imagePlugin.ImageInfo.sectors);
+                            DicConsole.DebugWriteLine("AppleMap Plugin", "Not adding partition becaus start ({0}) is outside media size ({1})", _partition.Start, imagePlugin.ImageInfo.sectors - 1);
                         }
                     }
                 }
