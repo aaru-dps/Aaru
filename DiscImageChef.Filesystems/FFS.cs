@@ -323,6 +323,8 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("First data block LBA: {0}", ufs_sb.fs_dblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_old_cgoffset).AppendLine();
             sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time)).AppendLine();
+            xmlFSType.ModificationDate = DateHandlers.UNIXToDateTime(ufs_sb.fs_old_time);
+            xmlFSType.ModificationDateSpecified = true;
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size, (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
             xmlFSType.Clusters = ufs_sb.fs_old_size;
             xmlFSType.ClusterSize = (int)ufs_sb.fs_fsize;
