@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Filters;
+using System.Linq;
 
 namespace DiscImageChef.ImagePlugins
 {
@@ -947,12 +948,15 @@ namespace DiscImageChef.ImagePlugins
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkID, System.Text.Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkID)));
                 DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-                if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
-                    imageNewFormat = false;
-                else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
-                    imageNewFormat = true;
-                else
-                    return false;
+				if(footerV1.ChunkID == NeroV1FooterID && footerV1.FirstChunkOffset < (ulong)imageStream.Length)
+					imageNewFormat = false;
+				else if(footerV2.ChunkID == NeroV2FooterID && footerV2.FirstChunkOffset < (ulong)imageStream.Length)
+					imageNewFormat = true;
+				else
+				{
+					DicConsole.DebugWrite("Nero plugin", "Nero version not recognized.");
+					return false;
+				}
 
                 if(imageNewFormat)
                     imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
@@ -1667,21 +1671,21 @@ namespace DiscImageChef.ImagePlugins
                     bool firstdata = false;
                     bool audio = false;
 
-                    for(uint i = 0; i < neroTracks.Count; i++)
+                    for(int i = 0; i < neroTracks.Count; i++)
                     {
                         // First track is audio
-                        firstaudio |= i == 0 && ((DAOMode)neroTracks[i].Mode == DAOMode.Audio || (DAOMode)neroTracks[i].Mode == DAOMode.AudioSub);
+						firstaudio |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio || (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
 
                         // First track is data
-                        firstdata |= i == 0 && ((DAOMode)neroTracks[i].Mode != DAOMode.Audio && (DAOMode)neroTracks[i].Mode != DAOMode.AudioSub);
+                        firstdata |= i == 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio && (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
 
                         // Any non first track is data
-                        data |= i != 0 && ((DAOMode)neroTracks[i].Mode != DAOMode.Audio && (DAOMode)neroTracks[i].Mode != DAOMode.AudioSub);
+                        data |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.Audio && (DAOMode)neroTracks.ElementAt(i).Value.Mode != DAOMode.AudioSub);
 
                         // Any non first track is audio
-                        audio |= i != 0 && ((DAOMode)neroTracks[i].Mode == DAOMode.Audio || (DAOMode)neroTracks[i].Mode == DAOMode.AudioSub);
+                        audio |= i != 0 && ((DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.Audio || (DAOMode)neroTracks.ElementAt(i).Value.Mode == DAOMode.AudioSub);
 
-                        switch((DAOMode)neroTracks[i].Mode)
+                        switch((DAOMode)neroTracks.ElementAt(i).Value.Mode)
                         {
                             case DAOMode.DataM2F1:
                             case DAOMode.DataM2F2:
@@ -1696,7 +1700,7 @@ namespace DiscImageChef.ImagePlugins
                         ImageInfo.mediaType = MediaType.CDDA;
                     else if(firstaudio && data && imageSessions.Count > 1 && mode2)
                         ImageInfo.mediaType = MediaType.CDPLUS;
-                    else if((firstdata && audio) || mode2)
+                    else if((firstdata && audio) || mode2)	
                         ImageInfo.mediaType = MediaType.CDROMXA;
                     else if(!audio)
                         ImageInfo.mediaType = MediaType.CDROM;
@@ -1712,7 +1716,8 @@ namespace DiscImageChef.ImagePlugins
             }
             catch
             {
-                return false;
+				DicConsole.DebugWrite("Nero plugin", "Exception ocurred opening file.");
+				return false;
             }
         }
 
