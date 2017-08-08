@@ -146,6 +146,7 @@ Supported file systems for identification and information only
 * Professional File System
 * QNX4 and QNX6 filesystems
 * Reiser file systems
+* SGI Extent File System (EFS)
 * SGI XFS
 * SmartFileSystem
 * SolarOS file system
