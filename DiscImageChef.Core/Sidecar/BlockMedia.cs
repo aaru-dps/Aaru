@@ -326,8 +326,43 @@ namespace DiscImageChef.Core
                     sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
             }
 
+            if(image.ImageInfo.cylinders > 0 && image.ImageInfo.heads > 0 && image.ImageInfo.sectorsPerTrack > 0)
+            {
+                sidecar.BlockMedia[0].CylindersSpecified = true;
+                sidecar.BlockMedia[0].HeadsSpecified = true;
+                sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                sidecar.BlockMedia[0].Cylinders = image.ImageInfo.cylinders;
+                sidecar.BlockMedia[0].Heads = image.ImageInfo.heads;
+                sidecar.BlockMedia[0].SectorsPerTrack = image.ImageInfo.sectorsPerTrack;
+            }
 
-            // TODO: Implement support for getting CHS
+            if(image.ImageInfo.readableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+            {
+                Decoders.ATA.Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
+                if(ataId.HasValue)
+                {
+                    if(ataId.Value.CurrentCylinders > 0 && ataId.Value.CurrentHeads > 0 && ataId.Value.CurrentSectorsPerTrack > 0)
+                    {
+                        sidecar.BlockMedia[0].CylindersSpecified = true;
+                        sidecar.BlockMedia[0].HeadsSpecified = true;
+                        sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                        sidecar.BlockMedia[0].Cylinders = ataId.Value.CurrentCylinders;
+                        sidecar.BlockMedia[0].Heads = ataId.Value.CurrentHeads;
+                        sidecar.BlockMedia[0].SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
+                    }
+                    else if(ataId.Value.Cylinders > 0 && ataId.Value.Heads > 0 && ataId.Value.SectorsPerTrack > 0)
+                    {
+                        sidecar.BlockMedia[0].CylindersSpecified = true;
+                        sidecar.BlockMedia[0].HeadsSpecified = true;
+                        sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                        sidecar.BlockMedia[0].Cylinders = ataId.Value.Cylinders;
+                        sidecar.BlockMedia[0].Heads = ataId.Value.Heads;
+                        sidecar.BlockMedia[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
+                    }
+                }
+            }
+
+            // TODO: Implement support for getting CHS from SCSI mode pages
         }
     }
 }
