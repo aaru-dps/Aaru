@@ -41,63 +41,12 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
-using DiscImageChef.PartPlugins;
 using Schemas;
 
 namespace DiscImageChef.Core
 {
-    public static class Sidecar
+    public static partial class Sidecar
     {
-        public static event InitProgressHandler InitProgressEvent;
-        public static event UpdateProgressHandler UpdateProgressEvent;
-        public static event EndProgressHandler EndProgressEvent;
-        public static event InitProgressHandler2 InitProgressEvent2;
-        public static event UpdateProgressHandler2 UpdateProgressEvent2;
-        public static event EndProgressHandler2 EndProgressEvent2;
-        public static event UpdateStatusHandler UpdateStatusEvent;
-
-        public static void InitProgress()
-        {
-            if(InitProgressEvent != null)
-                InitProgressEvent();
-        }
-
-        public static void UpdateProgress(string text, long current, long maximum)
-        {
-            if(UpdateProgressEvent != null)
-                UpdateProgressEvent(string.Format(text, current, maximum), current, maximum);
-        }
-
-        public static void EndProgress()
-        {
-            if(EndProgressEvent != null)
-                EndProgressEvent();
-        }
-
-        public static void InitProgress2()
-        {
-            if(InitProgressEvent2 != null)
-                InitProgressEvent2();
-        }
-
-        public static void UpdateProgress2(string text, long current, long maximum)
-        {
-            if(UpdateProgressEvent2 != null)
-                UpdateProgressEvent2(string.Format(text, current, maximum), current, maximum);
-        }
-
-        public static void EndProgress2()
-        {
-            if(EndProgressEvent2 != null)
-                EndProgressEvent2();
-        }
-
-        public static void UpdateStatus(string text, params object[] args)
-        {
-            if(UpdateStatusEvent != null)
-                UpdateStatusEvent(string.Format(text, args));
-        }
-
         public static CICMMetadataType Create(ImagePlugin image, string imagePath, System.Guid filterId)
         {
             CICMMetadataType sidecar = new CICMMetadataType();
@@ -974,56 +923,6 @@ namespace DiscImageChef.Core
             }
 
             return sidecar;
-        }
-
-        static string LbaToMsf(long lba)
-        {
-            long m, s, f;
-            if(lba >= -150)
-            {
-                m = (lba + 150) / (75 * 60);
-                lba -= m * (75 * 60);
-                s = (lba + 150) / 75;
-                lba -= s * 75;
-                f = lba + 150;
-            }
-            else
-            {
-                m = (lba + 450150) / (75 * 60);
-                lba -= m * (75 * 60);
-                s = (lba + 450150) / 75;
-                lba -= s * 75;
-                f = lba + 450150;
-            }
-
-            return string.Format("{0}:{1:D2}:{2:D2}", m, s, f);
-        }
-
-        static string DdcdLbaToMsf(long lba)
-        {
-            long h, m, s, f;
-            if(lba >= -150)
-            {
-                h = (lba + 150) / (75 * 60 * 60);
-                lba -= h * (75 * 60 * 60);
-                m = (lba + 150) / (75 * 60);
-                lba -= m * (75 * 60);
-                s = (lba + 150) / 75;
-                lba -= s * 75;
-                f = lba + 150;
-            }
-            else
-            {
-                h = (lba + 450150 * 2) / (75 * 60 * 60);
-                lba -= h * (75 * 60 * 60);
-                m = (lba + 450150 * 2) / (75 * 60);
-                lba -= m * (75 * 60);
-                s = (lba + 450150 * 2) / 75;
-                lba -= s * 75;
-                f = lba + 450150 * 2;
-            }
-
-            return string.Format("{3}:{0:D2}:{1:D2}:{2:D2}", m, s, f, h);
         }
     }
 }
