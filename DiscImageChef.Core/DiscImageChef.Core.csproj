@@ -82,6 +82,10 @@
     <Compile Include="Sidecar\Events.cs" />
     <Compile Include="Sidecar\Helpers.cs" />
     <Compile Include="Sidecar\Sidecar.cs" />
+    <Compile Include="Sidecar\OpticalDisc.cs" />
+    <Compile Include="Sidecar\BlockMedia.cs" />
+    <Compile Include="Sidecar\LinearMedia.cs" />
+    <Compile Include="Sidecar\AudioMedia.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
