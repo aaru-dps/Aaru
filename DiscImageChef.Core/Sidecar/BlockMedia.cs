@@ -50,16 +50,26 @@ namespace DiscImageChef.Core
     {
         static void BlockMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.BlockMedia = new BlockMediaType[1];
-            sidecar.BlockMedia[0] = new BlockMediaType();
-            sidecar.BlockMedia[0].Checksums = imgChecksums.ToArray();
-            sidecar.BlockMedia[0].Image = new ImageType();
-            sidecar.BlockMedia[0].Image.format = image.GetImageFormat();
-            sidecar.BlockMedia[0].Image.offset = 0;
-            sidecar.BlockMedia[0].Image.offsetSpecified = true;
-            sidecar.BlockMedia[0].Image.Value = Path.GetFileName(imagePath);
-            sidecar.BlockMedia[0].Size = fi.Length;
-            sidecar.BlockMedia[0].Sequence = new SequenceType();
+            sidecar.BlockMedia = new[]
+            {
+	            new BlockMediaType
+	            {
+	                Checksums = imgChecksums.ToArray(),
+	                Image = new ImageType
+	                {
+	                    format = image.GetImageFormat(),
+	                    offset = 0,
+	                    offsetSpecified = true,
+	                    Value = Path.GetFileName(imagePath)
+	                },
+	                Size = fi.Length,
+	                Sequence = new SequenceType
+	                {
+	                    MediaTitle = image.GetImageName()
+	                }
+                }
+            };
+
             if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
             {
                 sidecar.BlockMedia[0].Sequence.MediaSequence = image.GetMediaSequence();
@@ -70,30 +80,41 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].Sequence.MediaSequence = 1;
                 sidecar.BlockMedia[0].Sequence.TotalMedia = 1;
             }
-            sidecar.BlockMedia[0].Sequence.MediaTitle = image.GetImageName();
 
             foreach(MediaTagType tagType in image.ImageInfo.readableMediaTags)
             {
                 switch(tagType)
                 {
                     case MediaTagType.ATAPI_IDENTIFY:
-                        sidecar.BlockMedia[0].ATA = new ATAType();
-                        sidecar.BlockMedia[0].ATA.Identify = new DumpType();
-                        sidecar.BlockMedia[0].ATA.Identify.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).ToArray();
-                        sidecar.BlockMedia[0].ATA.Identify.Size = image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length;
+                        sidecar.BlockMedia[0].ATA = new ATAType
+                        {
+                            Identify = new DumpType
+                            {
+                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).ToArray(),
+                                Size = image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length
+                            }
+                        };
                         break;
                     case MediaTagType.ATA_IDENTIFY:
-                        sidecar.BlockMedia[0].ATA = new ATAType();
-                        sidecar.BlockMedia[0].ATA.Identify = new DumpType();
-                        sidecar.BlockMedia[0].ATA.Identify.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).ToArray();
-                        sidecar.BlockMedia[0].ATA.Identify.Size = image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length;
+                        sidecar.BlockMedia[0].ATA = new ATAType
+                        {
+                            Identify = new DumpType
+                            {
+                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).ToArray(),
+                                Size = image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length
+                            }
+                        };
                         break;
                     case MediaTagType.PCMCIA_CIS:
                         byte[] cis = image.ReadDiskTag(MediaTagType.PCMCIA_CIS);
-                        sidecar.BlockMedia[0].PCMCIA = new PCMCIAType();
-                        sidecar.BlockMedia[0].PCMCIA.CIS = new DumpType();
-                        sidecar.BlockMedia[0].PCMCIA.CIS.Checksums = Checksum.GetChecksums(cis).ToArray();
-                        sidecar.BlockMedia[0].PCMCIA.CIS.Size = cis.Length;
+                        sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                        {
+                            CIS = new DumpType
+                            {
+                                Checksums = Checksum.GetChecksums(cis).ToArray(),
+                                Size = cis.Length
+                            }
+                        };
                         Tuple[] tuples = CIS.GetTuples(cis);
                         if(tuples != null)
                         {
@@ -127,31 +148,41 @@ namespace DiscImageChef.Core
                         }
                         break;
                     case MediaTagType.SCSI_INQUIRY:
-                        sidecar.BlockMedia[0].SCSI = new SCSIType();
-                        sidecar.BlockMedia[0].SCSI.Inquiry = new DumpType();
-                        sidecar.BlockMedia[0].SCSI.Inquiry.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).ToArray();
-                        sidecar.BlockMedia[0].SCSI.Inquiry.Size = image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length;
+                        sidecar.BlockMedia[0].SCSI = new SCSIType
+                        {
+                            Inquiry = new DumpType
+                            {
+                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).ToArray(),
+                                Size = image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length
+                            }
+                        };
                         break;
                     case MediaTagType.SD_CID:
                         if(sidecar.BlockMedia[0].SecureDigital == null)
                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-                        sidecar.BlockMedia[0].SecureDigital.CID = new DumpType();
-                        sidecar.BlockMedia[0].SecureDigital.CID.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray();
-                        sidecar.BlockMedia[0].SecureDigital.CID.Size = image.ReadDiskTag(MediaTagType.SD_CID).Length;
+                        sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_CID).Length
+                        };
                         break;
                     case MediaTagType.SD_CSD:
                         if(sidecar.BlockMedia[0].SecureDigital == null)
                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-                        sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType();
-                        sidecar.BlockMedia[0].SecureDigital.CSD.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray();
-                        sidecar.BlockMedia[0].SecureDigital.CSD.Size = image.ReadDiskTag(MediaTagType.SD_CSD).Length;
+                        sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                        };
                         break;
                     case MediaTagType.SD_ExtendedCSD:
                         if(sidecar.BlockMedia[0].SecureDigital == null)
                             sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType();
-                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_ExtendedCSD)).ToArray();
-                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD.Size = image.ReadDiskTag(MediaTagType.SD_ExtendedCSD).Length;
+                        sidecar.BlockMedia[0].SecureDigital.ExtendedCSD = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_ExtendedCSD)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.SD_ExtendedCSD).Length
+                        };
                         break;
                 }
             }
@@ -198,8 +229,7 @@ namespace DiscImageChef.Core
                 EndProgress2();
             }
 
-            string dskType, dskSubType;
-            Metadata.MediaType.MediaTypeToString(image.ImageInfo.mediaType, out dskType, out dskSubType);
+            Metadata.MediaType.MediaTypeToString(image.ImageInfo.mediaType, out string dskType, out string dskSubType);
             sidecar.BlockMedia[0].DiskType = dskType;
             sidecar.BlockMedia[0].DiskSubType = dskSubType;
             Statistics.AddMedia(image.ImageInfo.mediaType, false);
@@ -222,14 +252,15 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
                 for(int i = 0; i < partitions.Count; i++)
                 {
-                    sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType();
-                    sidecar.BlockMedia[0].FileSystemInformation[i].Description = partitions[i].Description;
-                    sidecar.BlockMedia[0].FileSystemInformation[i].EndSector = (int)(partitions[i].End);
-                    sidecar.BlockMedia[0].FileSystemInformation[i].Name = partitions[i].Name;
-                    sidecar.BlockMedia[0].FileSystemInformation[i].Sequence = (int)partitions[i].Sequence;
-                    sidecar.BlockMedia[0].FileSystemInformation[i].StartSector = (int)partitions[i].Start;
-                    sidecar.BlockMedia[0].FileSystemInformation[i].Type = partitions[i].Type;
-
+                    sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
+                    {
+                        Description = partitions[i].Description,
+                        EndSector = (int)(partitions[i].End),
+                        Name = partitions[i].Name,
+                        Sequence = (int)partitions[i].Sequence,
+                        StartSector = (int)partitions[i].Start,
+                        Type = partitions[i].Type
+                    };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
                     foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -238,8 +269,7 @@ namespace DiscImageChef.Core
                         {
                             if(_plugin.Identify(image, partitions[i]))
                             {
-                                string foo;
-                                _plugin.GetInformation(image, partitions[i], out foo);
+                                _plugin.GetInformation(image, partitions[i], out string foo);
                                 lstFs.Add(_plugin.XmlFSType);
                                 Statistics.AddFilesystem(_plugin.XmlFSType.Type);
                             }
@@ -258,9 +288,11 @@ namespace DiscImageChef.Core
             }
             else
             {
-                sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType();
-                sidecar.BlockMedia[0].FileSystemInformation[0].StartSector = 0;
-                sidecar.BlockMedia[0].FileSystemInformation[0].EndSector = (int)(image.GetSectors() - 1);
+                sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
+                {
+                    StartSector = 0,
+                    EndSector = (int)(image.GetSectors() - 1)
+                };
 
                 Partition wholePart = new Partition
                 {

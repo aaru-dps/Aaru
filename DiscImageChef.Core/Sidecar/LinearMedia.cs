@@ -48,15 +48,21 @@ namespace DiscImageChef.Core
         // TODO: Complete it
         static void LinearMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.LinearMedia = new LinearMediaType[1];
-            sidecar.LinearMedia[0] = new LinearMediaType();
-            sidecar.LinearMedia[0].Checksums = imgChecksums.ToArray();
-            sidecar.LinearMedia[0].Image = new ImageType();
-            sidecar.LinearMedia[0].Image.format = image.GetImageFormat();
-            sidecar.LinearMedia[0].Image.offset = 0;
-            sidecar.LinearMedia[0].Image.offsetSpecified = true;
-            sidecar.LinearMedia[0].Image.Value = Path.GetFileName(imagePath);
-            sidecar.LinearMedia[0].Size = fi.Length;
+            sidecar.LinearMedia = new []
+            {
+	            new LinearMediaType
+	            {
+	                Checksums = imgChecksums.ToArray(),
+	                Image = new ImageType
+	                {
+	                    format = image.GetImageFormat(),
+	                    offset = 0,
+	                    offsetSpecified = true,
+	                    Value = Path.GetFileName(imagePath)
+	                },
+	                Size = fi.Length
+                }
+            };
         }
     }
 }

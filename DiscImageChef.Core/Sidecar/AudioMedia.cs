@@ -48,16 +48,26 @@ namespace DiscImageChef.Core
         // TODO: Complete it
         static void AudioMedia(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.AudioMedia = new AudioMediaType[1];
-            sidecar.AudioMedia[0] = new AudioMediaType();
-            sidecar.AudioMedia[0].Checksums = imgChecksums.ToArray();
-            sidecar.AudioMedia[0].Image = new ImageType();
-            sidecar.AudioMedia[0].Image.format = image.GetImageFormat();
-            sidecar.AudioMedia[0].Image.offset = 0;
-            sidecar.AudioMedia[0].Image.offsetSpecified = true;
-            sidecar.AudioMedia[0].Image.Value = Path.GetFileName(imagePath);
-            sidecar.AudioMedia[0].Size = fi.Length;
-            sidecar.AudioMedia[0].Sequence = new SequenceType();
+            sidecar.AudioMedia = new []
+            {
+	            new AudioMediaType
+	            {
+	                Checksums = imgChecksums.ToArray(),
+	                Image = new ImageType
+	                {
+	                    format = image.GetImageFormat(),
+	                    offset = 0,
+	                    offsetSpecified = true,
+	                    Value = Path.GetFileName(imagePath)
+	                },
+	                Size = fi.Length,
+	                Sequence = new SequenceType
+	                {
+	                    MediaTitle = image.GetImageName()
+	                }
+                }
+            };
+
             if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
             {
                 sidecar.AudioMedia[0].Sequence.MediaSequence = image.GetMediaSequence();
@@ -68,7 +78,6 @@ namespace DiscImageChef.Core
                 sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
                 sidecar.AudioMedia[0].Sequence.TotalMedia = 1;
             }
-            sidecar.AudioMedia[0].Sequence.MediaTitle = image.GetImageName();
         }
     }
 }

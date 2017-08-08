@@ -49,16 +49,26 @@ namespace DiscImageChef.Core
     {
         static void OpticalDisc(ImagePlugin image, System.Guid filterId, string imagePath, FileInfo fi, PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar)
         {
-            sidecar.OpticalDisc = new OpticalDiscType[1];
-            sidecar.OpticalDisc[0] = new OpticalDiscType();
-            sidecar.OpticalDisc[0].Checksums = imgChecksums.ToArray();
-            sidecar.OpticalDisc[0].Image = new ImageType();
-            sidecar.OpticalDisc[0].Image.format = image.GetImageFormat();
-            sidecar.OpticalDisc[0].Image.offset = 0;
-            sidecar.OpticalDisc[0].Image.offsetSpecified = true;
-            sidecar.OpticalDisc[0].Image.Value = Path.GetFileName(imagePath);
-            sidecar.OpticalDisc[0].Size = fi.Length;
-            sidecar.OpticalDisc[0].Sequence = new SequenceType();
+            sidecar.OpticalDisc = new[]
+            {
+	            new OpticalDiscType
+	            {
+	                Checksums = imgChecksums.ToArray(),
+	                Image = new ImageType
+	                {
+	                    format = image.GetImageFormat(),
+	                    offset = 0,
+	                    offsetSpecified = true,
+	                    Value = Path.GetFileName(imagePath)
+	                },
+	                Size = fi.Length,
+	                Sequence = new SequenceType
+	                {
+	                    MediaTitle = image.GetImageName()
+	                }
+                }
+            };
+
             if(image.GetMediaSequence() != 0 && image.GetLastDiskSequence() != 0)
             {
                 sidecar.OpticalDisc[0].Sequence.MediaSequence = image.GetMediaSequence();
@@ -69,7 +79,6 @@ namespace DiscImageChef.Core
                 sidecar.OpticalDisc[0].Sequence.MediaSequence = 1;
                 sidecar.OpticalDisc[0].Sequence.TotalMedia = 1;
             }
-            sidecar.OpticalDisc[0].Sequence.MediaTitle = image.GetImageName();
 
             MediaType dskType = image.ImageInfo.mediaType;
 
@@ -78,9 +87,11 @@ namespace DiscImageChef.Core
                 switch(tagType)
                 {
                     case MediaTagType.CD_ATIP:
-                        sidecar.OpticalDisc[0].ATIP = new DumpType();
-                        sidecar.OpticalDisc[0].ATIP.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray();
-                        sidecar.OpticalDisc[0].ATIP.Size = image.ReadDiskTag(MediaTagType.CD_ATIP).Length;
+                        sidecar.OpticalDisc[0].ATIP = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.CD_ATIP).Length
+                        };
                         Decoders.CD.ATIP.CDATIP? atip = Decoders.CD.ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
                         if(atip.HasValue)
                         {
@@ -91,17 +102,25 @@ namespace DiscImageChef.Core
                         }
                         break;
                     case MediaTagType.DVD_BCA:
-                        sidecar.OpticalDisc[0].BCA = new DumpType();
-                        sidecar.OpticalDisc[0].BCA.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray();
-                        sidecar.OpticalDisc[0].BCA.Size = image.ReadDiskTag(MediaTagType.DVD_BCA).Length;
+                        sidecar.OpticalDisc[0].BCA = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.DVD_BCA).Length
+                        };
                         break;
                     case MediaTagType.BD_BCA:
-                        sidecar.OpticalDisc[0].BCA = new DumpType();
-                        sidecar.OpticalDisc[0].BCA.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.BD_BCA)).ToArray();
-                        sidecar.OpticalDisc[0].BCA.Size = image.ReadDiskTag(MediaTagType.BD_BCA).Length;
+                        sidecar.OpticalDisc[0].BCA = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.BD_BCA)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.BD_BCA).Length
+                        };
                         break;
                     case MediaTagType.DVD_CMI:
-                        sidecar.OpticalDisc[0].CMI = new DumpType();
+                        sidecar.OpticalDisc[0].CMI = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.DVD_CMI).Length
+                        };
                         Decoders.DVD.CSS_CPRM.LeadInCopyright? cmi = Decoders.DVD.CSS_CPRM.DecodeLeadInCopyright(image.ReadDiskTag(MediaTagType.DVD_CMI));
                         if(cmi.HasValue)
                         {
@@ -118,30 +137,33 @@ namespace DiscImageChef.Core
                                     break;
                             }
                         }
-                        sidecar.OpticalDisc[0].CMI.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray();
-                        sidecar.OpticalDisc[0].CMI.Size = image.ReadDiskTag(MediaTagType.DVD_CMI).Length;
                         break;
                     case MediaTagType.DVD_DMI:
-                        sidecar.OpticalDisc[0].DMI = new DumpType();
-                        sidecar.OpticalDisc[0].DMI.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray();
-                        sidecar.OpticalDisc[0].DMI.Size = image.ReadDiskTag(MediaTagType.DVD_DMI).Length;
+                        sidecar.OpticalDisc[0].DMI = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.DVD_DMI).Length
+                        };
                         if(Decoders.Xbox.DMI.IsXbox(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType = MediaType.XGD;
-                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
-                            sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType { Diameter = 120 };
                         }
                         else if(Decoders.Xbox.DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
                         {
                             dskType = MediaType.XGD2;
-                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
-                            sidecar.OpticalDisc[0].Dimensions.Diameter = 120;
+                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType
+                            {
+                                Diameter = 120
+                            };
                         }
                         break;
                     case MediaTagType.DVD_PFI:
-                        sidecar.OpticalDisc[0].PFI = new DumpType();
-                        sidecar.OpticalDisc[0].PFI.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray();
-                        sidecar.OpticalDisc[0].PFI.Size = image.ReadDiskTag(MediaTagType.DVD_PFI).Length;
+                        sidecar.OpticalDisc[0].PFI = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.DVD_PFI).Length
+                        };
                         Decoders.DVD.PFI.PhysicalFormatInformation? pfi = Decoders.DVD.PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
                         if(pfi.HasValue)
                         {
@@ -213,9 +235,11 @@ namespace DiscImageChef.Core
                         }
                         break;
                     case MediaTagType.CD_PMA:
-                        sidecar.OpticalDisc[0].PMA = new DumpType();
-                        sidecar.OpticalDisc[0].PMA.Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_PMA)).ToArray();
-                        sidecar.OpticalDisc[0].PMA.Size = image.ReadDiskTag(MediaTagType.CD_PMA).Length;
+                        sidecar.OpticalDisc[0].PMA = new DumpType
+                        {
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_PMA)).ToArray(),
+                            Size = image.ReadDiskTag(MediaTagType.CD_PMA).Length
+                        };
                         break;
                 }
             }
@@ -281,16 +305,17 @@ namespace DiscImageChef.Core
                         }
                         break;
                 }
-                xmlTrk.Sequence = new TrackSequenceType();
-                xmlTrk.Sequence.Session = trk.TrackSession;
-                xmlTrk.Sequence.TrackNumber = (int)trk.TrackSequence;
+                xmlTrk.Sequence = new TrackSequenceType
+                {
+                    Session = trk.TrackSession,
+                    TrackNumber = (int)trk.TrackSequence
+                };
                 xmlTrk.StartSector = (long)trk.TrackStartSector;
                 xmlTrk.EndSector = (long)trk.TrackEndSector;
 
                 if(trk.Indexes != null && trk.Indexes.ContainsKey(0))
                 {
-                    ulong idx0;
-                    if(trk.Indexes.TryGetValue(0, out idx0))
+                    if(trk.Indexes.TryGetValue(0, out ulong idx0))
                         xmlTrk.StartSector = (long)idx0;
                 }
 
@@ -306,15 +331,18 @@ namespace DiscImageChef.Core
                     xmlTrk.EndMSF = DdcdLbaToMsf(xmlTrk.EndSector);
                 }
 
-                xmlTrk.Image = new ImageType();
-                xmlTrk.Image.Value = Path.GetFileName(trk.TrackFile);
+                xmlTrk.Image = new ImageType
+                {
+                    Value = Path.GetFileName(trk.TrackFile),
+                    format = trk.TrackFileType
+                };
+
                 if(trk.TrackFileOffset > 0)
                 {
                     xmlTrk.Image.offset = (long)trk.TrackFileOffset;
                     xmlTrk.Image.offsetSpecified = true;
                 }
 
-                xmlTrk.Image.format = trk.TrackFileType;
                 xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * trk.TrackRawBytesPerSector;
                 xmlTrk.BytesPerSector = trk.TrackBytesPerSector;
 
@@ -370,8 +398,16 @@ namespace DiscImageChef.Core
 
                 if(trk.TrackSubchannelType != TrackSubchannelType.None)
                 {
-                    xmlTrk.SubChannel = new SubChannelType();
-                    xmlTrk.SubChannel.Image = new ImageType();
+                    xmlTrk.SubChannel = new SubChannelType
+                    {
+                        Image = new ImageType
+                        {
+                            Value = trk.TrackSubchannelFile
+                        },
+                        // TODO: Packed subchannel has different size?
+                        Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96
+                    };
+
                     switch(trk.TrackSubchannelType)
                     {
                         case TrackSubchannelType.Packed:
@@ -393,10 +429,6 @@ namespace DiscImageChef.Core
                         xmlTrk.SubChannel.Image.offset = (long)trk.TrackSubchannelOffset;
                         xmlTrk.SubChannel.Image.offsetSpecified = true;
                     }
-                    xmlTrk.SubChannel.Image.Value = trk.TrackSubchannelFile;
-
-                    // TODO: Packed subchannel has different size?
-                    xmlTrk.SubChannel.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96;
 
                     Checksum subChkWorker = new Checksum();
 
@@ -445,14 +477,15 @@ namespace DiscImageChef.Core
                     xmlTrk.FileSystemInformation = new PartitionType[partitions.Count];
                     for(int i = 0; i < partitions.Count; i++)
                     {
-                        xmlTrk.FileSystemInformation[i] = new PartitionType();
-                        xmlTrk.FileSystemInformation[i].Description = partitions[i].Description;
-                        xmlTrk.FileSystemInformation[i].EndSector = (int)(partitions[i].End);
-                        xmlTrk.FileSystemInformation[i].Name = partitions[i].Name;
-                        xmlTrk.FileSystemInformation[i].Sequence = (int)partitions[i].Sequence;
-                        xmlTrk.FileSystemInformation[i].StartSector = (int)partitions[i].Start;
-                        xmlTrk.FileSystemInformation[i].Type = partitions[i].Type;
-
+                        xmlTrk.FileSystemInformation[i] = new PartitionType
+                        {
+                            Description = partitions[i].Description,
+                            EndSector = (int)(partitions[i].End),
+                            Name = partitions[i].Name,
+                            Sequence = (int)partitions[i].Sequence,
+                            StartSector = (int)partitions[i].Start,
+                            Type = partitions[i].Type
+                        };
                         List<FileSystemType> lstFs = new List<FileSystemType>();
 
                         foreach(Filesystem _plugin in plugins.PluginsList.Values)
@@ -489,10 +522,11 @@ namespace DiscImageChef.Core
                 }
                 else
                 {
-                    xmlTrk.FileSystemInformation[0] = new PartitionType();
-                    xmlTrk.FileSystemInformation[0].EndSector = (int)xmlTrk.EndSector;
-                    xmlTrk.FileSystemInformation[0].StartSector = (int)xmlTrk.StartSector;
-
+                    xmlTrk.FileSystemInformation[0] = new PartitionType
+                    {
+                        EndSector = (int)xmlTrk.EndSector,
+                        StartSector = (int)xmlTrk.StartSector
+                    };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
                     Partition xmlPart = new Partition
@@ -552,9 +586,7 @@ namespace DiscImageChef.Core
                     dskType = MediaType.XGD3;
             }
 
-
-            string dscType, dscSubType;
-            Metadata.MediaType.MediaTypeToString(dskType, out dscType, out dscSubType);
+            Metadata.MediaType.MediaTypeToString(dskType, out string dscType, out string dscSubType);
             sidecar.OpticalDisc[0].DiscType = dscType;
             sidecar.OpticalDisc[0].DiscSubType = dscSubType;
             Statistics.AddMedia(dskType, false);
@@ -564,17 +596,29 @@ namespace DiscImageChef.Core
                !string.IsNullOrEmpty(image.ImageInfo.driveFirmwareRevision) ||
                !string.IsNullOrEmpty(image.ImageInfo.driveSerialNumber))
             {
-                sidecar.OpticalDisc[0].DumpHardwareArray = new DumpHardwareType[1];
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents = new ExtentType[0];
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].Start = 0;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Extents[0].End = image.ImageInfo.sectors;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Manufacturer = image.ImageInfo.driveManufacturer;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Model = image.ImageInfo.driveModel;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Firmware = image.ImageInfo.driveFirmwareRevision;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Serial = image.ImageInfo.driveSerialNumber;
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software = new SoftwareType();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Name = image.GetImageApplication();
-                sidecar.OpticalDisc[0].DumpHardwareArray[0].Software.Version = image.GetImageApplicationVersion();
+                sidecar.OpticalDisc[0].DumpHardwareArray = new[]
+                {
+                    new DumpHardwareType
+                    {
+                        Extents = new[]
+                        {
+                            new ExtentType
+                            {
+                                Start = 0,
+                                End = image.ImageInfo.sectors
+                            }
+                        },
+                        Manufacturer = image.ImageInfo.driveManufacturer,
+                        Model = image.ImageInfo.driveModel,
+                        Firmware = image.ImageInfo.driveFirmwareRevision,
+                        Serial = image.ImageInfo.driveSerialNumber,
+                        Software = new SoftwareType
+                        {
+                            Name = image.GetImageApplication(),
+                            Version = image.GetImageApplicationVersion()
+                        }
+                    }
+                };
             }
         }
     }

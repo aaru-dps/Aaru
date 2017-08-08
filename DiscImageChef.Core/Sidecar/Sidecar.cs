@@ -35,11 +35,9 @@
 // Copyright (C) 2011-2015 Claunia.com
 // ****************************************************************************/
 // //$Id$
+
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.Filesystems;
 using DiscImageChef.ImagePlugins;
 using Schemas;
 
