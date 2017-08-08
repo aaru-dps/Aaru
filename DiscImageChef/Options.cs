@@ -268,6 +268,10 @@ namespace DiscImageChef
     {
         [Option('i', "input", Required = true, HelpText = "Disc image.")]
         public string InputFile { get; set; }
+        [Option('t', "tape", Required = false, Default = false, HelpText = "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).")]
+        public bool Tape { get; set; }
+        [Option('b', "block-size", Required = false, Default = 512, HelpText = "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")]
+        public int BlockSize { get; set; }
     }
 
     [Verb("dump-media", HelpText = "Dumps the media inserted on a device to a media image.")]

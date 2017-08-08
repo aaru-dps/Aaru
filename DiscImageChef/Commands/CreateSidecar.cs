@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -44,70 +45,118 @@ namespace DiscImageChef.Commands
     {
         public static void doSidecar(CreateSidecarOptions options)
         {
-            ImagePlugin _imageFormat;
+            Sidecar.InitProgressEvent += Progress.InitProgress;
+            Sidecar.UpdateProgressEvent += Progress.UpdateProgress;
+            Sidecar.EndProgressEvent += Progress.EndProgress;
+            Sidecar.InitProgressEvent2 += Progress.InitProgress2;
+            Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
+            Sidecar.EndProgressEvent2 += Progress.EndProgress2;
+            Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
 
-            FiltersList filtersList = new FiltersList();
-            Filter inputFilter = filtersList.GetFilter(options.InputFile);
-
-            if(inputFilter == null)
+            if(File.Exists(options.InputFile))
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
-            }
-
-            try
-            {
-                _imageFormat = ImageFormat.Detect(inputFilter);
-
-                if(_imageFormat == null)
+                if(options.Tape)
                 {
-                    DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                    DicConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
                     return;
                 }
-                else
+
+                ImagePlugin _imageFormat;
+
+                FiltersList filtersList = new FiltersList();
+                Filter inputFilter = filtersList.GetFilter(options.InputFile);
+
+                if(inputFilter == null)
                 {
-                    if(options.Verbose)
-                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
-                    else
-                        DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                    DicConsole.ErrorWriteLine("Cannot open specified file.");
+                    return;
                 }
 
                 try
                 {
-                    if(!_imageFormat.OpenImage(inputFilter))
+                    _imageFormat = ImageFormat.Detect(inputFilter);
+
+                    if(_imageFormat == null)
                     {
-                        DicConsole.WriteLine("Unable to open image format");
-                        DicConsole.WriteLine("No error given");
+                        DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                        return;
+                    }
+                    else
+                    {
+                        if(options.Verbose)
+                            DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", _imageFormat.Name, _imageFormat.PluginUUID);
+                        else
+                            DicConsole.WriteLine("Image format identified by {0}.", _imageFormat.Name);
+                    }
+
+                    try
+                    {
+                        if(!_imageFormat.OpenImage(inputFilter))
+                        {
+                            DicConsole.WriteLine("Unable to open image format");
+                            DicConsole.WriteLine("No error given");
+                            return;
+                        }
+
+                        DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
+                    }
+                    catch(Exception ex)
+                    {
+                        DicConsole.ErrorWriteLine("Unable to open image format");
+                        DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                         return;
                     }
 
-                    DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
+                    Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
+                    Core.Statistics.AddFilter(inputFilter.Name);
+
+                    CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID);
+
+                    DicConsole.WriteLine("Writing metadata sidecar");
+
+                    FileStream xmlFs = new FileStream(Path.GetDirectoryName(options.InputFile) +
+                                       //Path.PathSeparator +
+                                       Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml",
+                                           FileMode.CreateNew);
+
+                    System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
+
+                    Core.Statistics.AddCommand("create-sidecar");
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.ErrorWriteLine("Unable to open image format");
-                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
+                    DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                }
+            }
+            else if(Directory.Exists(options.InputFile))
+            {
+                if(!options.Tape)
+                {
+                    DicConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
                     return;
                 }
 
-                Core.Statistics.AddMediaFormat(_imageFormat.GetImageFormat());
-                Core.Statistics.AddFilter(inputFilter.Name);
+                string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
+                List<string> files = new List<string>();
 
-                Sidecar.InitProgressEvent += Progress.InitProgress;
-                Sidecar.UpdateProgressEvent += Progress.UpdateProgress;
-                Sidecar.EndProgressEvent += Progress.EndProgress;
-                Sidecar.InitProgressEvent2 += Progress.InitProgress2;
-                Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
-                Sidecar.EndProgressEvent2 += Progress.EndProgress2;
-                Sidecar.UpdateStatusEvent += Progress.UpdateStatus;
+                foreach(string file in contents)
+                {
+                    if(new FileInfo(file).Length % options.BlockSize == 0)
+                        files.Add(file);
+                }
 
-                CICMMetadataType sidecar = Sidecar.Create(_imageFormat, options.InputFile, inputFilter.UUID);
+                files.Sort(StringComparer.CurrentCultureIgnoreCase);
+
+                CICMMetadataType sidecar = Sidecar.Create(Path.GetFileName(options.InputFile), files, options.BlockSize);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
                 FileStream xmlFs = new FileStream(Path.GetDirectoryName(options.InputFile) +
                                    //Path.PathSeparator +
-                                   Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml",
+                                   Path.GetFileName(options.InputFile) + ".cicm.xml",
                                        FileMode.CreateNew);
 
                 System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(CICMMetadataType));
@@ -116,14 +165,12 @@ namespace DiscImageChef.Commands
 
                 Core.Statistics.AddCommand("create-sidecar");
             }
-            catch(Exception ex)
+            else
             {
-                DicConsole.ErrorWriteLine(string.Format("Error reading file: {0}", ex.Message));
-                DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                DicConsole.ErrorWriteLine("The specified input file cannot be found.");
+                return;
             }
-
         }
-
     }
 }
 

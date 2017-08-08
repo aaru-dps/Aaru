@@ -1,3 +1,8 @@
+* Options.cs:
+* Commands/CreateSidecar.cs:
+  Added support for creating a sidecar from a folder containing the
+  files of a tape dump. e.g.: tape1/file01, tape2/file02, etc.
+
 * Commands/Ls.cs:
 * Commands/Analyze.cs:
 * Commands/ExtractFiles.cs:
