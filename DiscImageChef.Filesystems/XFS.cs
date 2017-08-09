@@ -136,7 +136,7 @@ namespace DiscImageChef.Filesystems
                 if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSector(partition.Start, sbSize);
+                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(xfsSb))
                     return false;
 
@@ -195,7 +195,7 @@ namespace DiscImageChef.Filesystems
                 if((Marshal.SizeOf(xfsSb) + 0x400) % imagePlugin.GetSectorSize() != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSector(partition.Start, sbSize);
+                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
                 if(sector.Length < Marshal.SizeOf(xfsSb))
                     return;
 
