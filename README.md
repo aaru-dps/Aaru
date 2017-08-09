@@ -151,6 +151,7 @@ Supported file systems for identification and information only
 * SmartFileSystem
 * SolarOS file system
 * Squash file system
+* UNICOS file system
 * UNIX System V file system
 * UNIX Version 7 file system
 * Universal Disk Format (UDF)

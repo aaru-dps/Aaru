@@ -129,6 +129,7 @@
     <Compile Include="HAMMER.cs" />
     <Compile Include="Fossil.cs" />
     <Compile Include="EFS.cs" />
+    <Compile Include="UNICOS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
