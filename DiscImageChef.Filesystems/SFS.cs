@@ -95,10 +95,10 @@ namespace DiscImageChef.Filesystems
             public uint[] reserved4;
         }
 
-        /// <summary>
-        /// Identifier for SFS v1
-        /// </summary>
+        /// <summary>Identifier for SFS v1</summary>
         const uint SFS_MAGIC = 0x53465300;
+        /// <summary>Identifier for SFS v2</summary>
+        const uint SFS2_MAGIC = 0x53465302;
 
         public override bool Identify(ImagePlugins.ImagePlugin imagePlugin, Partition partition)
         {
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
-            return magic == SFS_MAGIC;
+            return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
         public override void GetInformation(ImagePlugins.ImagePlugin imagePlugin, Partition partition, out string information)
@@ -122,7 +122,10 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sbInformation = new StringBuilder();
 
-            sbInformation.AppendLine("SmartFileSystem");
+            if(rootBlock.blockId == SFS2_MAGIC)
+                sbInformation.AppendLine("SmartFileSystem 2");
+            else
+                sbInformation.AppendLine("SmartFileSystem");
 
             sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
             sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte, rootBlock.lastbyte).AppendLine();
@@ -139,12 +142,17 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
             information = sbInformation.ToString();
 
-            xmlFSType = new Schemas.FileSystemType();
-            xmlFSType.Type = "SmartFileSystem";
-            xmlFSType.CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8);
-            xmlFSType.CreationDateSpecified = true;
-            xmlFSType.Clusters = rootBlock.totalblocks;
-            xmlFSType.ClusterSize = (int)rootBlock.blocksize;
+            xmlFSType = new Schemas.FileSystemType
+            {
+                CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
+                CreationDateSpecified = true,
+                Clusters = rootBlock.totalblocks,
+                ClusterSize = (int)rootBlock.blocksize
+            };
+            if(rootBlock.blockId == SFS2_MAGIC)
+                xmlFSType.Type = "SmartFileSystem 2";
+            else
+                xmlFSType.Type = "SmartFileSystem";
         }
 
         public override Errno Mount()
