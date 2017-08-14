@@ -40,6 +40,7 @@ using DiscImageChef.Console;
 namespace DiscImageChef.Filesystems
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
+    // X68K uses cdate/adate from direntry for extending filename
     public class FAT : Filesystem
     {
         public FAT()
