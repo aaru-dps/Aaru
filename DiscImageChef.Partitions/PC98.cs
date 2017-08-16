@@ -144,11 +144,13 @@ namespace DiscImageChef.PartPlugins
             /// <summary>
             /// Some ID, if 0x80 bit is set, it is bootable
             /// 386BSD sets it to 0x14
+            /// Apparently 0x20 means DOS 5 and 0x01 means 1st boot option
             /// </summary>
             public byte dp_mid;
             /// <summary>
             /// Some ID, if 0x80 bit is set, it is active
             /// 386BSD sets it to 0x44
+            /// Apparently 0x21 means DOS 5
             /// </summary>
             public byte dp_sid;
             public byte dp_dum1;
