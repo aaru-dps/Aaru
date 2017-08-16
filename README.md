@@ -143,6 +143,7 @@ Supported file systems for identification and information only
 * Minix v3 file system
 * NEC PC-Engine file system
 * NILFS2
+* OS-9 Random Block File
 * Professional File System
 * QNX4 and QNX6 filesystems
 * Reiser file systems
