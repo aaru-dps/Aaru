@@ -122,10 +122,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sbInformation = new StringBuilder();
 
-            if(rootBlock.blockId == SFS2_MAGIC)
-                sbInformation.AppendLine("SmartFileSystem 2");
-            else
-                sbInformation.AppendLine("SmartFileSystem");
+            sbInformation.AppendLine("SmartFileSystem");
 
             sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
             sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte, rootBlock.lastbyte).AppendLine();
@@ -147,12 +144,9 @@ namespace DiscImageChef.Filesystems
                 CreationDate = DateHandlers.UNIXUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,
                 Clusters = rootBlock.totalblocks,
-                ClusterSize = (int)rootBlock.blocksize
+                ClusterSize = (int)rootBlock.blocksize,
+                Type = "SmartFileSystem"
             };
-            if(rootBlock.blockId == SFS2_MAGIC)
-                xmlFSType.Type = "SmartFileSystem 2";
-            else
-                xmlFSType.Type = "SmartFileSystem";
         }
 
         public override Errno Mount()
