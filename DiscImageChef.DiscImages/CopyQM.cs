@@ -293,20 +293,20 @@ namespace DiscImageChef.ImagePlugins
             }
 
             // In case there is omitted data
-            long sectors = (header.sectorsPerTrack) * header.heads * header.imageCylinders;
+			long sectors = (header.sectorsPerTrack) * header.heads * header.totalCylinders;
 
             byte[] filling = new byte[(sectors * header.sectorSize) - decodedImage.Length];
             if(filling.Length > 0)
             {
-                ArrayHelpers.ArrayFill(filling, header.mediaType);
+                ArrayHelpers.ArrayFill(filling, (byte)0xF6);
                 decodedImage.Write(filling, 0, filling.Length);
             }
 
-            /*
+            
             FileStream debugStream = new FileStream("debug.img", FileMode.CreateNew, FileAccess.ReadWrite);
             debugStream.Write(decodedImage.ToArray(), 0, (int)decodedImage.Length);
             debugStream.Close();
-            */
+			
 
             int sum = 0;
             for(int i = 0; i < hdr.Length - 1; i++)
@@ -321,77 +321,77 @@ namespace DiscImageChef.ImagePlugins
             ImageInfo.imageLastModificationTime = ImageInfo.imageCreationTime;
             ImageInfo.imageName = header.volumeLabel;
             ImageInfo.imageSize = (ulong)(stream.Length - 133 - header.commentLength);
-            ImageInfo.sectors = (ulong)(decodedImage.Length / header.sectorSize);
+            ImageInfo.sectors = (ulong)sectors;
             ImageInfo.sectorSize = header.sectorSize;
 
             switch(header.drive)
             {
                 case COPYQM_525HD:
-                    if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 15 && header.sectorSize == 512)
+                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_525_HD;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 16 && header.sectorSize == 256)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 && header.sectorSize == 256)
                         ImageInfo.mediaType = MediaType.ACORN_525_DS_DD;
-                    else if(header.heads == 1 && header.imageCylinders == 80 && header.sectorsPerTrack == 16 && header.sectorSize == 256)
+                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 16 && header.sectorSize == 256)
                         ImageInfo.mediaType = MediaType.ACORN_525_SS_DD_80;
-                    else if(header.heads == 1 && header.imageCylinders == 80 && header.sectorsPerTrack == 10 && header.sectorSize == 256)
+                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 10 && header.sectorSize == 256)
                         ImageInfo.mediaType = MediaType.ACORN_525_SS_SD_80;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.NEC_525_HD;
-                    else if(header.heads == 2 && header.imageCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
+                    else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.SHARP_525;
                     else
                         goto case COPYQM_525DD;
                     break;
                 case COPYQM_525DD:
-                    if(header.heads == 1 && header.imageCylinders == 40 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
+                    if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_525_SS_DD_8;
-                    else if(header.heads == 1 && header.imageCylinders == 40 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
+                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_525_SS_DD_9;
-                    else if(header.heads == 2 && header.imageCylinders == 40 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_525_DS_DD_8;
-                    else if(header.heads == 2 && header.imageCylinders == 40 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 40 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_525_DS_DD_9;
-                    else if(header.heads == 1 && header.imageCylinders == 40 && header.sectorsPerTrack == 18 && header.sectorSize == 128)
+                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 && header.sectorSize == 128)
                         ImageInfo.mediaType = MediaType.ATARI_525_SD;
-                    else if(header.heads == 1 && header.imageCylinders == 40 && header.sectorsPerTrack == 26 && header.sectorSize == 128)
+                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 26 && header.sectorSize == 128)
                         ImageInfo.mediaType = MediaType.ATARI_525_ED;
-                    else if(header.heads == 1 && header.imageCylinders == 40 && header.sectorsPerTrack == 18 && header.sectorSize == 256)
+                    else if(header.heads == 1 && header.totalCylinders == 40 && header.sectorsPerTrack == 18 && header.sectorSize == 256)
                         ImageInfo.mediaType = MediaType.ATARI_525_DD;
                     else
                         ImageInfo.mediaType = MediaType.Unknown;
                     break;
                 case COPYQM_35ED:
-                    if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 36 && header.sectorSize == 512)
+                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 36 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_ED;
                     else
                         goto case COPYQM_35HD;
                     break;
                 case COPYQM_35HD:
-                    if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 18 && header.sectorSize == 512)
+                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 18 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_HD;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 21 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 21 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DMF;
-                    else if(header.heads == 2 && header.imageCylinders == 82 && header.sectorsPerTrack == 21 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 82 && header.sectorsPerTrack == 21 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DMF_82;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.NEC_35_HD_8;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 15 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 15 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.NEC_35_HD_15;
                     else
                         goto case COPYQM_35DD;
                     break;
                 case COPYQM_35DD:
-                    if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
+                    if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_DS_DD_9;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_DS_DD_8;
-                    if(header.heads == 1 && header.imageCylinders == 80 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
+                    if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 9 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_SS_DD_9;
-                    else if(header.heads == 1 && header.imageCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
+                    else if(header.heads == 1 && header.totalCylinders == 80 && header.sectorsPerTrack == 8 && header.sectorSize == 512)
                         ImageInfo.mediaType = MediaType.DOS_35_SS_DD_8;
-                    else if(header.heads == 2 && header.imageCylinders == 80 && header.sectorsPerTrack == 5 && header.sectorSize == 1024)
+                    else if(header.heads == 2 && header.totalCylinders == 80 && header.sectorsPerTrack == 5 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.ACORN_35_DS_DD;
-                    else if(header.heads == 2 && header.imageCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
+                    else if(header.heads == 2 && header.totalCylinders == 77 && header.sectorsPerTrack == 8 && header.sectorSize == 1024)
                         ImageInfo.mediaType = MediaType.SHARP_35;
                     else
                         ImageInfo.mediaType = MediaType.Unknown;
