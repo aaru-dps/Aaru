@@ -241,6 +241,25 @@ namespace DiscImageChef
         {
             return UNIXEpoch.AddTicks((long)(HRTimeStamp / 100));
         }
+
+        public static DateTime OS9ToDateTime(byte[] date)
+        {
+            if(date == null || (date.Length != 3 && date.Length != 5))
+                return DateTime.MinValue;
+
+            DateTime os9date;
+
+            try
+            {
+                os9date = date.Length == 5 ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0) : new DateTime(1900 + date[0], date[1], date[2], 0, 0, 0);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                os9date = new DateTime(1900, 0, 0, 0, 0, 0);
+            }
+
+            return os9date;
+        }
     }
 }
 
