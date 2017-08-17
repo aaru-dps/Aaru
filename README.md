@@ -46,10 +46,10 @@ Supported disk image formats
 * CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
 * CPCEMU Disk file and Extended Disk File
 * CopyQM
-* Quasi88 disk images (.D77/.D88)
-* IBM SaveDskF
+* Dave Dunfield IMD
 * DiscJuggler images
 * Dreamcast GDI
+* IBM SaveDskF
 * MAME Compressed Hunks of Data (CHD)
 * Microsoft VHDX
 * Most known sector by sector copies of floppies with 128, 256, 319 and 1024 bytes/sector.
@@ -58,6 +58,7 @@ Supported disk image formats
 * Parallels Hard Disk Image (HDD) version 2
 * QEMU Copy-On-Write versions 1, 2 and 3 (QCOW and QCOW2)
 * QEMU Enhanced Disk (QED)
+* Quasi88 disk images (.D77/.D88)
 * Sector by sector copies of Microsoft's DMF floppies
 * T98 hard disk images (.THD)
 * T98-Next hard disk images (.NHD)

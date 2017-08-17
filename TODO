@@ -1,6 +1,5 @@
 ﻿Disc image plugins:
 --- Add support for DiscFerret images
---- Add support for IMD images
 --- Add support for Kryoflux images
 --- Add support for XPACK images
 --- Add support for dump(8) images
