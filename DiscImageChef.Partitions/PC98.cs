@@ -100,7 +100,7 @@ namespace DiscImageChef.PartPlugins
                     Partition part = new Partition
                     {
                         Start = Helpers.CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.ImageInfo.heads, imagePlugin.ImageInfo.sectorsPerTrack),
-                        Type = string.Format("{0}", ((entry.dp_sid & 0x7F) << 8) | (entry.dp_mid & 0x7F)),
+                        Type = DecodePC98Sid(entry.dp_sid),
                         Name = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                         Sequence = counter,
                         Scheme = Name
@@ -131,6 +131,35 @@ namespace DiscImageChef.PartPlugins
             return partitions.Count > 0;
         }
 
+        static string DecodePC98Sid(byte sid)
+        {
+            switch(sid & 0x7F)
+            {
+                case 0x01:
+                    return "FAT12";
+                case 0x04:
+                    return "PC-UX";
+                case 0x06:
+                    return "N88-BASIC(86)";
+                // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
+                case 0x11:
+                case 0x21:
+                    return "FAT16";
+                case 0x28:
+                case 0x41:
+                case 0x48:
+                    return "Windows Volume Set";
+                case 0x44:
+                    return "FreeBSD";
+                case 0x61:
+                    return "FAT32";
+                case 0x62:
+                    return "Linux";
+                default:
+                    return "Unknown";
+            }
+        }
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PC98Table
         {
@@ -143,14 +172,10 @@ namespace DiscImageChef.PartPlugins
         {
             /// <summary>
             /// Some ID, if 0x80 bit is set, it is bootable
-            /// 386BSD sets it to 0x14
-            /// Apparently 0x20 means DOS 5 and 0x01 means 1st boot option
             /// </summary>
             public byte dp_mid;
             /// <summary>
             /// Some ID, if 0x80 bit is set, it is active
-            /// 386BSD sets it to 0x44
-            /// Apparently 0x21 means DOS 5
             /// </summary>
             public byte dp_sid;
             public byte dp_dum1;
