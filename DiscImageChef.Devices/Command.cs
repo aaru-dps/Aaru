@@ -144,7 +144,8 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
-                        throw new NotImplementedException();
+                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                                                              protocol, ref buffer, timeout, out duration, out sense);
                     }
                 case Interop.PlatformID.Linux:
                     {
@@ -176,7 +177,8 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
-                        throw new NotImplementedException();
+                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                                                              protocol, ref buffer, timeout, out duration, out sense);
                     }
                 case Interop.PlatformID.Linux:
                     {
@@ -208,7 +210,8 @@ namespace DiscImageChef.Devices
             {
                 case Interop.PlatformID.Win32NT:
                     {
-                        throw new NotImplementedException();
+                        return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters,
+                                                              protocol, ref buffer, timeout, out duration, out sense);
                     }
                 case Interop.PlatformID.Linux:
                     {
