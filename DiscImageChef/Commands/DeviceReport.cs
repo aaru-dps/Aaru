@@ -46,12 +46,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", options.DevicePath);
 
-            if(!File.Exists(options.DevicePath))
-            {
-                DicConsole.ErrorWriteLine("Specified device does not exist.");
-                return;
-            }
-
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {

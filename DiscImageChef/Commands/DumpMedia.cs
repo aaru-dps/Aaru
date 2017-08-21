@@ -66,12 +66,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--separate-subchannel={0}", options.SeparateSubchannel);
             DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}", options.Resume);
 
-            if(!File.Exists(options.DevicePath))
-            {
-                DicConsole.ErrorWriteLine("Specified device does not exist.");
-                return;
-            }
-
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' &&
                 options.DevicePath[0] != '/' && char.IsLetter(options.DevicePath[0]))
             {
