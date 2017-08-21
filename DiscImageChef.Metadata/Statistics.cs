@@ -79,6 +79,7 @@ namespace DiscImageChef.Metadata
         public long MediaScan;
         public long PrintHex;
         public long Verify;
+        public long ListDevices;
     }
 
     public class VerifiedItems

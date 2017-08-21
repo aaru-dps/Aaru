@@ -110,6 +110,7 @@ namespace DiscImageChef.Server.Controllers
                         oldStats.Commands.Verify += newStats.Commands.Verify;
                         oldStats.Commands.Ls += newStats.Commands.Ls;
                         oldStats.Commands.ExtractFiles += newStats.Commands.ExtractFiles;
+                        oldStats.Commands.ListDevices += newStats.Commands.ListDevices;
                     }
                 }
 

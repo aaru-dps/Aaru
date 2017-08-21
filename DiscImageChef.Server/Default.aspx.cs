@@ -105,6 +105,7 @@ namespace DiscImageChef.Server
                     lblDeviceReport.Text = statistics.Commands.DeviceReport.ToString();
                     lblLs.Text = statistics.Commands.Ls.ToString();
                     lblExtractFiles.Text = statistics.Commands.ExtractFiles.ToString();
+                    lblListDevices.Text = statistics.Commands.ListDevices.ToString();
                 }
                 else
                     divCommands.Visible = false;

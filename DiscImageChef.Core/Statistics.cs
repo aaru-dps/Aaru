@@ -291,16 +291,16 @@ namespace DiscImageChef.Core
                         CurrentStats.Commands.Entropy++;
                         break;
                     case "extract-files":
-                        AllStats.Commands.Entropy++;
-                        CurrentStats.Commands.Entropy++;
+                        AllStats.Commands.ExtractFiles++;
+                        CurrentStats.Commands.ExtractFiles++;
                         break;
                     case "formats":
                         AllStats.Commands.Formats++;
                         CurrentStats.Commands.Formats++;
                         break;
                     case "ls":
-                        AllStats.Commands.Formats++;
-                        CurrentStats.Commands.Formats++;
+                        AllStats.Commands.Ls++;
+                        CurrentStats.Commands.Ls++;
                         break;
                     case "media-info":
                         AllStats.Commands.MediaInfo++;
@@ -317,6 +317,10 @@ namespace DiscImageChef.Core
                     case "verify":
                         AllStats.Commands.Verify++;
                         CurrentStats.Commands.Verify++;
+                        break;
+                    case "list-devices":
+                        AllStats.Commands.ListDevices++;
+                        CurrentStats.Commands.ListDevices++;
                         break;
                 }
             }

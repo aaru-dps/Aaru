@@ -57,7 +57,7 @@ namespace DiscImageChef
                                           typeof(CreateSidecarOptions),
                                           typeof(DumpMediaOptions), typeof(DeviceReportOptions),
                                           typeof(ConfigureOptions), typeof(StatsOptions), typeof(LsOptions),
-                typeof(ExtractFilesOptions)})
+                                          typeof(ExtractFilesOptions), typeof(ListDevicesOptions)})
                   .WithParsed<AnalyzeOptions>(opts =>
                   {
                       if(opts.Debug)
@@ -226,6 +226,15 @@ namespace DiscImageChef
                 Commands.ExtractFiles.doExtractFiles(opts);
             })
 
+            .WithParsed<ListDevicesOptions>(opts =>
+            {
+                if(opts.Debug)
+                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                if(opts.Verbose)
+                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                PrintCopyright();
+                Commands.ListDevices.doListDevices(opts);
+            })
 
                   .WithParsed<ConfigureOptions>(opts => { PrintCopyright(); Commands.Configure.doConfigure(); })
                   .WithParsed<StatsOptions>(opts => { PrintCopyright(); Commands.Statistics.showStats(); })

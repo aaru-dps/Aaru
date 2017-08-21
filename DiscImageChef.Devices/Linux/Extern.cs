@@ -31,6 +31,7 @@
 // Copyright © 2011-2017 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Linux
@@ -60,6 +61,15 @@ namespace DiscImageChef.Devices.Linux
 
         [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint = "readlink", SetLastError = true)]
         internal static extern long readlink64(string path, System.IntPtr buf, long bufsize);
+
+        [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
+        internal static extern IntPtr udev_new();
+
+        [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
+        internal static extern IntPtr udev_device_new_from_subsystem_sysname(IntPtr udev, string subsystem, string sysname);
+
+        [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
+        internal static extern string udev_device_get_property_value(IntPtr udev_device, string key);
     }
 }
 

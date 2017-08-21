@@ -352,5 +352,9 @@ namespace DiscImageChef
         public bool Xattrs { get; set; }
     }
 
+    [Verb("list-devices", HelpText = "Lists all connected devices.")]
+    public class ListDevicesOptions : CommonOptions
+    {
+    }
 }
 

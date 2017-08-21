@@ -37,23 +37,24 @@
 			<div id="divCommands" runat="server">
 				<h4>Commands run:</h4>
                 <p>
-		            <i>analyze</i> command has been run <asp:Label id="lblAnalyze" runat="server"/> times<br/>
-		            <i>benchmark</i> command has been run <asp:Label id="lblBenchmark" runat="server"/> times<br/>
-		            <i>checksum</i> command has been run <asp:Label id="lblChecksum" runat="server"/> times<br/>
-		            <i>compare</i> command has been run <asp:Label id="lblCompare" runat="server"/> times<br/>
-		            <i>create-sidecar</i> command has been run <asp:Label id="lblCreateSidecar" runat="server"/> times<br/>
-		            <i>decode</i> command has been run <asp:Label id="lblDecode" runat="server"/> times<br/>
-		            <i>device-info</i> command has been run <asp:Label id="lblDeviceInfo" runat="server"/> times<br/>
-		            <i>device-report</i> command has been run <asp:Label id="lblDeviceReport" runat="server"/> times<br/>
-		            <i>dump-media</i> command has been run <asp:Label id="lblDumpMedia" runat="server"/> times<br/>
-		            <i>entropy</i> command has been run <asp:Label id="lblEntropy" runat="server"/> times<br/>
+                    <i>analyze</i> command has been run <asp:Label id="lblAnalyze" runat="server"/> times<br/>
+                    <i>benchmark</i> command has been run <asp:Label id="lblBenchmark" runat="server"/> times<br/>
+                    <i>checksum</i> command has been run <asp:Label id="lblChecksum" runat="server"/> times<br/>
+                    <i>compare</i> command has been run <asp:Label id="lblCompare" runat="server"/> times<br/>
+                    <i>create-sidecar</i> command has been run <asp:Label id="lblCreateSidecar" runat="server"/> times<br/>
+                    <i>decode</i> command has been run <asp:Label id="lblDecode" runat="server"/> times<br/>
+                    <i>device-info</i> command has been run <asp:Label id="lblDeviceInfo" runat="server"/> times<br/>
+                    <i>device-report</i> command has been run <asp:Label id="lblDeviceReport" runat="server"/> times<br/>
+                    <i>dump-media</i> command has been run <asp:Label id="lblDumpMedia" runat="server"/> times<br/>
+                    <i>entropy</i> command has been run <asp:Label id="lblEntropy" runat="server"/> times<br/>
                     <i>extract-files</i> command has been run <asp:Label id="lblExtractFiles" runat="server"/> times<br/>
-		            <i>formats</i> command has been run <asp:Label id="lblFormats" runat="server"/> times<br/>
+                    <i>formats</i> command has been run <asp:Label id="lblFormats" runat="server"/> times<br/>
+                    <i>list-devices</i> command has been run <asp:Label id="lblListDevices" runat="server"/> times<br/>
                     <i>ls</i> command has been run <asp:Label id="lblLs" runat="server"/> times<br/>
-		            <i>media-info</i> command has been run <asp:Label id="lblMediaInfo" runat="server"/> times<br/>
-		            <i>media-scan</i> command has been run <asp:Label id="lblMediaScan" runat="server"/> times<br/>
-		            <i>printhex</i> command has been run <asp:Label id="lblPrintHex" runat="server"/> times<br/>
-		            <i>verify</i> command has been run <asp:Label id="lblVerify" runat="server"/> times
+                    <i>media-info</i> command has been run <asp:Label id="lblMediaInfo" runat="server"/> times<br/>
+                    <i>media-scan</i> command has been run <asp:Label id="lblMediaScan" runat="server"/> times<br/>
+                    <i>printhex</i> command has been run <asp:Label id="lblPrintHex" runat="server"/> times<br/>
+                    <i>verify</i> command has been run <asp:Label id="lblVerify" runat="server"/> times
 				</p>
             </div>
             <div id="divFilters" runat="server">
