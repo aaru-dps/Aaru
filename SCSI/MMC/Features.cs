@@ -5782,6 +5782,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                 FeatureDescriptor desc = new FeatureDescriptor();
                 desc.Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
                 desc.Data = new byte[response[offset + 3] + 4];
+                if (desc.Data.Length + offset > response.Length)
+                    desc.Data = new byte[response.Length - offset];
                 Array.Copy(response, offset, desc.Data, 0, desc.Data.Length);
                 offset += (uint)(desc.Data.Length);
 
