@@ -53,14 +53,14 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
         /// <param name="encoding">Encoding.</param>
-        public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false)
+        public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false, int start = 0)
         {
             if(CString == null)
                 return null;
 
             int len = 0;
 
-            for(int i = 0; i < CString.Length; i++)
+            for(int i = start; i < CString.Length; i++)
             {
                 if(CString[i] == 0)
                 {
@@ -82,7 +82,7 @@ namespace DiscImageChef
             }
 
             byte[] dest = new byte[len];
-            Array.Copy(CString, 0, dest, 0, len);
+            Array.Copy(CString, start, dest, 0, len);
 
             return len == 0 ? "" : encoding.GetString(dest);
         }
@@ -103,15 +103,15 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
-        public static string PascalToString(byte[] PascalString, Encoding encoding)
+        public static string PascalToString(byte[] PascalString, Encoding encoding, int start = 0)
         {
             if(PascalString == null)
                 return null;
 
-            byte length = PascalString[0];
+            byte length = PascalString[start];
             int len = 0;
 
-            for(int i = 1; i < length + 1 && i < PascalString.Length; i++)
+            for(int i = start + 1; i < length + 1 && i < PascalString.Length; i++)
             {
                 if(PascalString[i] == 0)
                     break;
@@ -120,7 +120,7 @@ namespace DiscImageChef
             }
 
             byte[] dest = new byte[len];
-            Array.Copy(PascalString, 1, dest, 0, len);
+            Array.Copy(PascalString, start + 1, dest, 0, len);
 
             return len == 0 ? "" : encoding.GetString(dest);
         }
@@ -141,16 +141,16 @@ namespace DiscImageChef
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
-        public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding)
+        public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding, int start = 0)
         {
             if(SpacePaddedString == null)
                 return null;
 
-            int len = 0;
+            int len = start;
 
-            for(int i = SpacePaddedString.Length; i >= 0; i--)
+            for(int i = SpacePaddedString.Length; i >= start; i--)
             {
-                if(i == 0)
+                if(i == start)
                     return "";
 
                 if(SpacePaddedString[i - 1] != 0x20)
@@ -160,7 +160,7 @@ namespace DiscImageChef
                 }
             }
 
-            return len == 0 ? "" : encoding.GetString(SpacePaddedString, 0, len);
+            return len == 0 ? "" : encoding.GetString(SpacePaddedString, start, len);
         }
 
         /// <summary>
