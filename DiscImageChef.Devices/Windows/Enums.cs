@@ -268,7 +268,8 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// ScsiGetAddress
         /// </summary>
-        IOCTL_SCSI_GET_ADDRESS = 0x41018
+        IOCTL_SCSI_GET_ADDRESS = 0x41018,
+        IOCTL_STORAGE_QUERY_PROPERTY = 0x2D1400,
     }
 
     [Flags]
@@ -298,5 +299,53 @@ namespace DiscImageChef.Devices.Windows
         /// ATA_FLAGS_NO_MULTIPLE
         /// </summary>
         NoMultiple = 0x20
+    }
+
+    enum StoragePropertyId
+    {
+        Device = 0,
+        Adapter = 1,
+        Id = 2,
+        UniqueId = 3,
+        WriteCache = 4,
+        Miniport = 5,
+        AccessAlignment = 6,
+        SeekPenalty = 7,
+        Trim = 8,
+        WriteAggregation = 9,
+        Telemetry = 10,
+        LBProvisioning = 11,
+        Power = 12,
+        Copyoffload = 13,
+        Resiliency = 14
+    }
+
+    enum StorageQueryType
+    {
+        Standard = 0,
+        Exists = 1,
+        Mask = 2,
+        Max = 3
+    }
+
+    enum StorageBusType
+    {
+        Unknown = 0,
+        SCSI = 1,
+        ATAPI = 2,
+        ATA = 3,
+        FireWire = 4,
+        SSA = 5,
+        Fibre = 6,
+        USB = 7,
+        RAID = 8,
+        iSCSI = 9,
+        SAS = 0xA,
+        SATA = 0xB,
+        SecureDigital = 0xC,
+        MultiMediaCard = 0xD,
+        Virtual = 0xE,
+        FileBackedVirtual = 0xF,
+        NVMe = 0x11,
     }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -41,6 +42,7 @@
     <Compile Include="Linux\Enums.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Windows\Extern.cs" />
+    <Compile Include="Windows\ListDevices.cs" />
     <Compile Include="Windows\Structs.cs" />
     <Compile Include="Windows\Enums.cs" />
     <Compile Include="Windows\Command.cs" />
@@ -84,15 +86,7 @@
     <Compile Include="Linux\ListDevices.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Linux\" />
-    <Folder Include="Windows\" />
-    <Folder Include="Device\" />
-    <Folder Include="Device\ScsiCommands\" />
-    <Folder Include="Device\AtaCommands\" />
-    <Folder Include="FreeBSD\" />
-    <Folder Include="Device\MmcCommands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

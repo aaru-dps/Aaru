@@ -64,6 +64,7 @@ namespace DiscImageChef.Devices.Windows
         public byte[] SenseBuf;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     struct AtaPassThroughDirect
     {
         /// <summary>
@@ -144,6 +145,44 @@ namespace DiscImageChef.Devices.Windows
         public byte DeviceHead;
         [FieldOffset(7)]
         public byte Reserved;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct StoragePropertyQuery
+    {
+        [MarshalAs(UnmanagedType.U4)]
+        public StoragePropertyId PropertyId;
+        [MarshalAs(UnmanagedType.U4)]
+        public StorageQueryType QueryType;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+        public byte[] AdditionalParameters;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct StorageDescriptorHeader
+    {
+        public uint Version;
+        public uint Size;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct StorageDeviceDescriptor
+    {
+        public uint Version;
+        public uint Size;
+        public byte DeviceType;
+        public byte DeviceTypeModifier;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool RemovableMedia;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool CommandQueueing;
+        public uint VendorIdOffset;
+        public uint ProductIdOffset;
+        public uint ProductRevisionOffset;
+        public uint SerialNumberOffset;
+        public StorageBusType BusType;
+        public uint RawPropertiesLength;
+        public byte[] RawDeviceProperties;
     }
 }
 

@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices
             switch(Interop.DetectOS.GetRealPlatformID())
             {
                 case Interop.PlatformID.Win32NT:
-                    throw new NotImplementedException();
+                    return Windows.ListDevices.GetList();
                 case Interop.PlatformID.Linux:
                     return Linux.ListDevices.GetList();
                 default:
