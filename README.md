@@ -9,6 +9,9 @@ Copyright © 2011-2017 Natalia Portillo <claunia@claunia.com>
 
 You can see statistics and device reports at http://discimagechef.claunia.com
 
+If you want to donate money you can become a patron at https://www.patreon.com/DiscImageChef
+If you want to donate hardware you can see [what we need](DONATING.md), but any kind of hardware donation will be accepted, thanks
+
 Usage
 =====
 
