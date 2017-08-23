@@ -44,6 +44,7 @@ Supported disk image formats
 * BlindWrite 5/6 TOC files (.B5T/.B5I and .B6T/.B6I)
 * CDRDAO TOC sheets
 * CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
+* CisCopy disk image (aka DC-File, .DCF)
 * CPCEMU Disk file and Extended Disk File
 * CopyQM
 * Dave Dunfield IMD
