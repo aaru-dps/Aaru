@@ -268,6 +268,7 @@ namespace DiscImageChef.Filesystems
             bool useEBPB = false;
             bool useShortFAT32 = false;
             bool useLongFAT32 = false;
+            bool andos_oem_correct = false;
 
             AtariParameterBlock atariBPB = new AtariParameterBlock();
             MSXParameterBlock msxBPB = new MSXParameterBlock();
@@ -343,6 +344,9 @@ namespace DiscImageChef.Filesystems
                     Fat32BPB.big_sectors /= 4;
                 }
 
+                andos_oem_correct = dos33BPB.oem_name[0] < 0x20 && dos33BPB.oem_name[1] >= 0x20 && dos33BPB.oem_name[2] >= 0x20 && dos33BPB.oem_name[3] >= 0x20 &&
+                       dos33BPB.oem_name[4] >= 0x20 && dos33BPB.oem_name[5] >= 0x20 && dos33BPB.oem_name[6] >= 0x20 && dos33BPB.oem_name[7] >= 0x20;
+
                 if(bits_in_bps_fat32 == 1 && correct_spc_fat32 && Fat32BPB.fats_no <= 2 && Fat32BPB.sectors == 0 && Fat32BPB.spfat == 0 && Fat32BPB.signature == 0x29 && Encoding.ASCII.GetString(Fat32BPB.fs_type) == "FAT32   ")
                 {
                     DicConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
@@ -358,13 +362,13 @@ namespace DiscImageChef.Filesystems
                     DicConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                     useMSXBPB = true;
                 }
-                else if(bits_in_bps_dos40 == 1 && correct_spc_dos40 && EBPB.fats_no <= 2 && EBPB.root_ent > 0 && EBPB.spfat > 0 && (EBPB.signature == 0x28 || EBPB.signature == 0x29))
+                else if(bits_in_bps_dos40 == 1 && correct_spc_dos40 && EBPB.fats_no <= 2 && EBPB.root_ent > 0 && EBPB.spfat > 0 && (EBPB.signature == 0x28 || EBPB.signature == 0x29 || andos_oem_correct))
                 {
                     if(EBPB.sectors == 0)
                     {
                         if(EBPB.big_sectors <= (partition.End - partition.Start) + 1)
                         {
-                            if(EBPB.signature == 0x29)
+                            if(EBPB.signature == 0x29 || andos_oem_correct)
                             {
                                 DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                                 useEBPB = true;
@@ -378,7 +382,7 @@ namespace DiscImageChef.Filesystems
                     }
                     else if(EBPB.sectors <= (partition.End - partition.Start) + 1)
                     {
-                        if(EBPB.signature == 0x29)
+                        if(EBPB.signature == 0x29 || andos_oem_correct)
                         {
                             DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                             useEBPB = true;
@@ -993,6 +997,15 @@ namespace DiscImageChef.Filesystems
                           fakeBPB.oem_name[6] >= 0x20 && fakeBPB.oem_name[6] <= 0x7F && 
                           fakeBPB.oem_name[7] >= 0x20 && fakeBPB.oem_name[7] <= 0x7F)
                             xmlFSType.SystemIdentifier = StringHandlers.CToString(fakeBPB.oem_name);
+                        else if(fakeBPB.oem_name[0] < 0x20 &&
+                          fakeBPB.oem_name[1] >= 0x20 && fakeBPB.oem_name[1] <= 0x7F &&
+                          fakeBPB.oem_name[2] >= 0x20 && fakeBPB.oem_name[2] <= 0x7F &&
+                          fakeBPB.oem_name[3] >= 0x20 && fakeBPB.oem_name[3] <= 0x7F &&
+                          fakeBPB.oem_name[4] >= 0x20 && fakeBPB.oem_name[4] <= 0x7F &&
+                          fakeBPB.oem_name[5] >= 0x20 && fakeBPB.oem_name[5] <= 0x7F &&
+                          fakeBPB.oem_name[6] >= 0x20 && fakeBPB.oem_name[6] <= 0x7F &&
+                          fakeBPB.oem_name[7] >= 0x20 && fakeBPB.oem_name[7] <= 0x7F)
+                            xmlFSType.SystemIdentifier = StringHandlers.CToString(fakeBPB.oem_name, CurrentEncoding, start: 1);
                     }
 
                     if(fakeBPB.signature == 0x28 || fakeBPB.signature == 0x29)
@@ -1034,7 +1047,7 @@ namespace DiscImageChef.Filesystems
                 if(fakeBPB.hsectors <= partition.Start)
                     sb.AppendFormat("{0} hidden sectors before BPB.", fakeBPB.hsectors).AppendLine();
 
-                if(fakeBPB.signature == 0x28 || fakeBPB.signature == 0x29)
+                if(fakeBPB.signature == 0x28 || fakeBPB.signature == 0x29 || andos_oem_correct)
                 {
                     sb.AppendFormat("Drive number: 0x{0:X2}", fakeBPB.drive_no).AppendLine();
 
@@ -1052,7 +1065,7 @@ namespace DiscImageChef.Filesystems
                             sb.AppendLine("Disk surface should be on next mount.");
                     }
 
-                    if(fakeBPB.signature == 0x29)
+                    if(fakeBPB.signature == 0x29 || andos_oem_correct)
                     {
                         xmlFSType.VolumeName = Encoding.ASCII.GetString(fakeBPB.volume_label);
                         sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fakeBPB.fs_type)).AppendLine();
@@ -1129,6 +1142,8 @@ namespace DiscImageChef.Filesystems
 
                     if(entry.adate > 0)
                         sb.AppendFormat("Volume last accessed on {0:d}", DateHandlers.DOSToDateTime(entry.adate, 0)).AppendLine();
+
+                    break;
                 }
             }
 
