@@ -131,6 +131,7 @@
     <Compile Include="EFS.cs" />
     <Compile Include="UNICOS.cs" />
     <Compile Include="RBF.cs" />
+    <Compile Include="AODOS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

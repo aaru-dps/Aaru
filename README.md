@@ -112,6 +112,7 @@ Supported file systems for identification and information only
 ==============================================================
 * 3DO Opera file system
 * Acorn Advanced Disc Filing System
+* Alexander Osipov DOS (AO-DOS for Electronika BK-0011) file system
 * Amiga Fast File System v2, untested
 * Amiga Fast File System, with international characters, directory cache and multi-user patches
 * Amiga Original File System, with international characters, directory cache and multi-user patches
