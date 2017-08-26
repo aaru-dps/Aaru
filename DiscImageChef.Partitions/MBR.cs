@@ -422,321 +422,140 @@ namespace DiscImageChef.PartPlugins
             return any_mnx;
         }
 
+        static readonly string[] MBRTypes = {
+            // 0x00
+            "Empty", "FAT12", "XENIX root", "XENIX /usr",
+            // 0x04
+            "FAT16 < 32 MiB", "Extended", "FAT16", "IFS (HPFS/NTFS)",
+            // 0x08
+            "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager", "FAT32",
+            // 0x0C
+            "FAT32 (LBA)", "Unknown", "FAT16 (LBA)", "Extended (LBA)",
+            // 0x10
+            "OPUS", "Hidden FAT12", "Compaq diagnostics, recovery partition", "Unknown",
+            // 0x14
+            "Hidden FAT16 < 32 MiB, AST-DOS", "Unknown", "Hidden FAT16", "Hidden IFS (HPFS/NTFS)",
+            // 0x18
+            "AST-Windows swap", "Willowtech Photon coS", "Unknown", "Hidden FAT32",
+            // 0x1C
+            "Hidden FAT32 (LBA)", "Unknown", "Hidden FAT16 (LBA)", "Unknown",
+            // 0x20
+            "Willowsoft Overture File System", "Oxygen FSo2", "Oxygen Extended ", "SpeedStor reserved",
+            // 0x24
+            "NEC-DOS", "Unknown", "SpeedStor reserved", "Hidden NTFS",
+            // 0x28
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x2C
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x30
+            "Unknown", "SpeedStor reserved", "Unknown", "SpeedStor reserved",
+            // 0x34
+            "SpeedStor reserved", "Unknown", "SpeedStor reserved", "Unknown",
+            // 0x38
+            "Theos", "Plan 9", "Unknown", "Unknown",
+            // 0x3C
+            "Partition Magic", "Hidden NetWare", "Unknown", "Unknown",
+            // 0x40
+            "VENIX 80286", "PReP Boot", "Secure File System", "PTS-DOS",
+            // 0x44
+            "Unknown", "Priam, EUMEL/Elan", "EUMEL/Elan", "EUMEL/Elan",
+            // 0x48
+            "EUMEL/Elan", "Unknown", "ALFS/THIN lightweight filesystem for DOS", "Unknown",
+            // 0x4C
+            "Unknown", "QNX 4", "QNX 4", "QNX 4, Oberon",
+            // 0x50
+            "Ontrack DM, R/O, FAT", "Ontrack DM, R/W, FAT", "CP/M, Microport UNIX", "Ontrack DM 6",
+            // 0x54
+            "Ontrack DM 6", "EZ-Drive", "Golden Bow VFeature", "Unknown",
+            // 0x58
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x5C
+            "Priam EDISK", "Unknown", "Unknown", "Unknown",
+            // 0x60
+            "Unknown", "SpeedStor", "Unknown", "GNU Hurd, System V, 386/ix",
+            // 0x64
+            "NetWare 286", "NetWare", "NetWare 386", "NetWare",
+            // 0x68
+            "NetWare", "NetWare NSS", "Unknown", "Unknown",
+            // 0x6C
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x70
+            "DiskSecure Multi-Boot", "Unknown", "UNIX 7th Edition", "Unknown",
+            // 0x74
+            "Unknown", "IBM PC/IX", "Unknown", "Unknown",
+            // 0x78
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x7C
+            "Unknown", "Unknown", "Unknown", "Unknown",
+            // 0x80
+            "Old MINIX", "MINIX, Old Linux", "Linux swap, Solaris", "Linux",
+            // 0x84
+            "Hidden by OS/2, APM hibernation", "Linux extended", "NT Stripe Set", "NT Stripe Set",
+            // 0x88
+            "Linux Plaintext", "Unknown", "Unknown", "Unknown",
+            // 0x8C
+            "Unknown", "Unknown", "Linux LVM", "Unknown",
+            // 0x90
+            "Unknown", "Unknown", "Unknown", "Amoeba, Hidden Linux",
+            // 0x94
+            "Amoeba bad blocks", "Unknown", "Unknown", "Unknown",
+            // 0x98
+            "Unknown", "Mylex EISA SCSI", "Unknown", "Unknown",
+            // 0x9C
+            "Unknown", "Unknown", "Unknown", "BSD/OS",
+            // 0xA0
+            "Hibernation", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+            // 0xA4
+            "HP Volume Expansion", "FreeBSD", "OpenBSD", "NeXTStep",
+            // 0xA8
+            "Apple UFS", "NetBSD", "Olivetti DOS FAT12", "Apple Boot",
+            // 0xAC
+            "Unknown", "Unknown", "Unknown", "Apple HFS",
+            // 0xB0
+            "BootStar", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+            // 0xB4
+            "HP Volume Expansion", "Unknown", "HP Volume Expansion", "BSDi",
+            // 0xB8
+            "BSDi swap", "Unknown", "Unknown", "PTS BootWizard",
+            // 0xBC
+            "Unknown", "Unknown", "Solaris boot", "Solaris",
+            // 0xC0
+            "Novell DOS, DR-DOS secured", "DR-DOS secured FAT12", "DR-DOS reserved", "DR-DOS reserved",
+            // 0xC4
+            "DR-DOS secured FAT16 < 32 MiB", "Unknown", "DR-DOS secured FAT16", "Syrinx",
+            // 0xC8
+            "DR-DOS reserved", "DR-DOS reserved", "DR-DOS reserved", "DR-DOS secured FAT32",
+            // 0xCC
+            "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)", "DR-DOS secured extended (LBA)",
+            // 0xD0
+            "Multiuser DOS secured FAT12", "Multiuser DOS secured FAT12", "Unknown", "Unknown",
+            // 0xD4
+            "Multiuser DOS secured FAT16 < 32 MiB", "Multiuser DOS secured extended", "Multiuser DOS secured FAT16", "Unknown",
+            // 0xD8
+            "CP/M", "Unknown", "Filesystem-less data", "CP/M, CCP/M, CTOS",
+            // 0xDC
+            "Unknown", "Unknown", "Dell partition", "BootIt EMBRM",
+            // 0xE0
+            "Unknown", "SpeedStor", "DOS read/only", "SpeedStor",
+            // 0xE4
+            "SpeedStor", "Tandy DOS", "SpeedStor", "Unknown",
+            // 0xE8
+            "Unknown", "Unknown", "Unknown", "BeOS",
+            // 0xEC
+            "Unknown", "Spryt*x", "Guid Partition Table", "EFI system partition",
+            // 0xF0
+            "Linux boot", "SpeedStor", "DOS 3.3 secondary, Unisys DOS", "SpeedStor",
+            // 0xF4
+            "SpeedStor", "Prologue", "SpeedStor", "Unknown",
+            // 0xF8
+            "Unknown", "Unknown", "Unknown", "VMWare VMFS",
+            // 0xFC
+            "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
+        };
+
         static string DecodeMBRType(byte type)
         {
-            switch(type)
-            {
-                case 0x01:
-                    return "FAT12";
-                case 0x02:
-                    return "XENIX root";
-                case 0x03:
-                    return "XENIX /usr";
-                case 0x04:
-                    return "FAT16 < 32 MiB";
-                case 0x05:
-                    return "Extended";
-                case 0x06:
-                    return "FAT16";
-                case 0x07:
-                    return "IFS (HPFS/NTFS)";
-                case 0x08:
-                    return "AIX boot, OS/2, Commodore DOS";
-                case 0x09:
-                    return "AIX data, Coherent, QNX";
-                case 0x0A:
-                    return "Coherent swap, OPUS, OS/2 Boot Manager";
-                case 0x0B:
-                    return "FAT32";
-                case 0x0C:
-                    return "FAT32 (LBA)";
-                case 0x0E:
-                    return "FAT16 (LBA)";
-                case 0x0F:
-                    return "Extended (LBA)";
-                case 0x10:
-                    return "OPUS";
-                case 0x11:
-                    return "Hidden FAT12";
-                case 0x12:
-                    return "Compaq diagnostics, recovery partition";
-                case 0x14:
-                    return "Hidden FAT16 < 32 MiB, AST-DOS";
-                case 0x16:
-                    return "Hidden FAT16";
-                case 0x17:
-                    return "Hidden IFS (HPFS/NTFS)";
-                case 0x18:
-                    return "AST-Windows swap";
-                case 0x19:
-                    return "Willowtech Photon coS";
-                case 0x1B:
-                    return "Hidden FAT32";
-                case 0x1C:
-                    return "Hidden FAT32 (LBA)";
-                case 0x1E:
-                    return "Hidden FAT16 (LBA)";
-                case 0x20:
-                    return "Willowsoft Overture File System";
-                case 0x21:
-                    return "Oxygen FSo2";
-                case 0x22:
-                    return "Oxygen Extended ";
-                case 0x23:
-                    return "SpeedStor reserved";
-                case 0x24:
-                    return "NEC-DOS";
-                case 0x26:
-                    return "SpeedStor reserved";
-                case 0x27:
-                    return "Hidden NTFS";
-                case 0x31:
-                    return "SpeedStor reserved";
-                case 0x33:
-                    return "SpeedStor reserved";
-                case 0x34:
-                    return "SpeedStor reserved";
-                case 0x36:
-                    return "SpeedStor reserved";
-                case 0x38:
-                    return "Theos";
-                case 0x39:
-                    return "Plan 9";
-                case 0x3C:
-                    return "Partition Magic";
-                case 0x3D:
-                    return "Hidden NetWare";
-                case 0x40:
-                    return "VENIX 80286";
-                case 0x41:
-                    return "PReP Boot";
-                case 0x42:
-                    return "Secure File System";
-                case 0x43:
-                    return "PTS-DOS";
-                case 0x45:
-                    return "Priam, EUMEL/Elan";
-                case 0x46:
-                    return "EUMEL/Elan";
-                case 0x47:
-                    return "EUMEL/Elan";
-                case 0x48:
-                    return "EUMEL/Elan";
-                case 0x4A:
-                    return "ALFS/THIN lightweight filesystem for DOS";
-                case 0x4D:
-                    return "QNX 4";
-                case 0x4E:
-                    return "QNX 4";
-                case 0x4F:
-                    return "QNX 4, Oberon";
-                case 0x50:
-                    return "Ontrack DM, R/O, FAT";
-                case 0x51:
-                    return "Ontrack DM, R/W, FAT";
-                case 0x52:
-                    return "CP/M, Microport UNIX";
-                case 0x53:
-                    return "Ontrack DM 6";
-                case 0x54:
-                    return "Ontrack DM 6";
-                case 0x55:
-                    return "EZ-Drive";
-                case 0x56:
-                    return "Golden Bow VFeature";
-                case 0x5C:
-                    return "Priam EDISK";
-                case 0x61:
-                    return "SpeedStor";
-                case 0x63:
-                    return "GNU Hurd, System V, 386/ix";
-                case 0x64:
-                    return "NetWare 286";
-                case 0x65:
-                    return "NetWare";
-                case 0x66:
-                    return "NetWare 386";
-                case 0x67:
-                    return "NetWare";
-                case 0x68:
-                    return "NetWare";
-                case 0x69:
-                    return "NetWare NSS";
-                case 0x70:
-                    return "DiskSecure Multi-Boot";
-                case 0x72:
-                    return "UNIX 7th Edition";
-                case 0x75:
-                    return "IBM PC/IX";
-                case 0x80:
-                    return "Old MINIX";
-                case 0x81:
-                    return "MINIX, Old Linux";
-                case 0x82:
-                    return "Linux swap, Solaris";
-                case 0x83:
-                    return "Linux";
-                case 0x84:
-                    return "Hidden by OS/2, APM hibernation";
-                case 0x85:
-                    return "Linux extended";
-                case 0x86:
-                    return "NT Stripe Set";
-                case 0x87:
-                    return "NT Stripe Set";
-                case 0x88:
-                    return "Linux Plaintext";
-                case 0x8E:
-                    return "Linux LVM";
-                case 0x93:
-                    return "Amoeba, Hidden Linux";
-                case 0x94:
-                    return "Amoeba bad blocks";
-                case 0x99:
-                    return "Mylex EISA SCSI";
-                case 0x9F:
-                    return "BSD/OS";
-                case 0xA0:
-                    return "Hibernation";
-                case 0xA1:
-                    return "HP Volume Expansion";
-                case 0xA3:
-                    return "HP Volume Expansion";
-                case 0xA4:
-                    return "HP Volume Expansion";
-                case 0xA5:
-                    return "FreeBSD";
-                case 0xA6:
-                    return "OpenBSD";
-                case 0xA7:
-                    return "NeXTStep";
-                case 0xA8:
-                    return "Apple UFS";
-                case 0xA9:
-                    return "NetBSD";
-                case 0xAA:
-                    return "Olivetti DOS FAT12";
-                case 0xAB:
-                    return "Apple Boot";
-                case 0xAF:
-                    return "Apple HFS";
-                case 0xB0:
-                    return "BootStar";
-                case 0xB1:
-                    return "HP Volume Expansion";
-                case 0xB3:
-                    return "HP Volume Expansion";
-                case 0xB4:
-                    return "HP Volume Expansion";
-                case 0xB6:
-                    return "HP Volume Expansion";
-                case 0xB7:
-                    return "BSDi";
-                case 0xB8:
-                    return "BSDi swap";
-                case 0xBB:
-                    return "PTS BootWizard";
-                case 0xBE:
-                    return "Solaris boot";
-                case 0xBF:
-                    return "Solaris";
-                case 0xC0:
-                    return "Novell DOS, DR-DOS secured";
-                case 0xC1:
-                    return "DR-DOS secured FAT12";
-                case 0xC2:
-                    return "DR-DOS reserved";
-                case 0xC3:
-                    return "DR-DOS reserved";
-                case 0xC4:
-                    return "DR-DOS secured FAT16 < 32 MiB";
-                case 0xC6:
-                    return "DR-DOS secured FAT16";
-                case 0xC7:
-                    return "Syrinx";
-                case 0xC8:
-                    return "DR-DOS reserved";
-                case 0xC9:
-                    return "DR-DOS reserved";
-                case 0xCA:
-                    return "DR-DOS reserved";
-                case 0xCB:
-                    return "DR-DOS secured FAT32";
-                case 0xCC:
-                    return "DR-DOS secured FAT32 (LBA)";
-                case 0xCD:
-                    return "DR-DOS reserved";
-                case 0xCE:
-                    return "DR-DOS secured FAT16 (LBA)";
-                case 0xCF:
-                    return "DR-DOS secured extended (LBA)";
-                case 0xD0:
-                    return "Multiuser DOS secured FAT12";
-                case 0xD1:
-                    return "Multiuser DOS secured FAT12";
-                case 0xD4:
-                    return "Multiuser DOS secured FAT16 < 32 MiB";
-                case 0xD5:
-                    return "Multiuser DOS secured extended";
-                case 0xD6:
-                    return "Multiuser DOS secured FAT16";
-                case 0xD8:
-                    return "CP/M";
-                case 0xDA:
-                    return "Filesystem-less data";
-                case 0xDB:
-                    return "CP/M, CCP/M, CTOS";
-                case 0xDE:
-                    return "Dell partition";
-                case 0xDF:
-                    return "BootIt EMBRM";
-                case 0xE1:
-                    return "SpeedStor";
-                case 0xE2:
-                    return "DOS read/only";
-                case 0xE3:
-                    return "SpeedStor";
-                case 0xE4:
-                    return "SpeedStor";
-                case 0xE5:
-                    return "Tandy DOS";
-                case 0xE6:
-                    return "SpeedStor";
-                case 0xEB:
-                    return "BeOS";
-                case 0xED:
-                    return "Spryt*x";
-                case 0xEE:
-                    return "Guid Partition Table";
-                case 0xEF:
-                    return "EFI system partition";
-                case 0xF0:
-                    return "Linux boot";
-                case 0xF1:
-                    return "SpeedStor";
-                case 0xF2:
-                    return "DOS 3.3 secondary, Unisys DOS";
-                case 0xF3:
-                    return "SpeedStor";
-                case 0xF4:
-                    return "SpeedStor";
-                case 0xF5:
-                    return "Prologue";
-                case 0xF6:
-                    return "SpeedStor";
-                case 0xFB:
-                    return "VMWare VMFS";
-                case 0xFC:
-                    return "VMWare VMKCORE";
-                case 0xFD:
-                    return "Linux RAID, FreeDOS";
-                case 0xFE:
-                    return "SpeedStor, LANStep, PS/2 IML";
-                case 0xFF:
-                    return "Xenix bad block";
-                default:
-                    return "Unknown";
-            }
+            return MBRTypes[type];
         }
 
         public const ushort MBR_Magic = 0xAA55;
