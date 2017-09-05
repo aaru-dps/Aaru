@@ -12,6 +12,7 @@ Contributing with code to DiscImageChef has three very simple rules:
 - Do not modify the interfaces. If you need or want to, comment in an issue how and why you want to change it and we'll discuss it.
 Same applies for creating new interfaces.
 - Everything has a place, a module and an interface. Following is the list of interfaces.
+- DiscImageChef uses C# 7 language features (inline declaration, Tuples, etc.) so it can only be compiled with VisualStudio 2017 or higher, Xamarin Studio 7 or higher, or MonoDevelop 7 or higher.
 
 
 [Claunia.RsrcFork](https://github.com/claunia/Claunia.RsrcFork)
