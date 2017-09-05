@@ -1,6 +1,14 @@
-# [4.0.0.0-beta] - 2017-06-04
+# [4.0.0.0-beta] - 2017-09-05
 ## Added
+### - Commands
+- list-devices: Lists devices that can be used for device dependent commands.
+
 ### - Create Sidecar command
+- Added support for tape dumps where each tape-file is a separate dumped file.
+- Calculate checksum of contents not only of image file.
+- Consider each optical disc track as a separate partition.
+- Store superblock modification time on sidecar.
+- Support tracks.
 - Use dump drive information from images that support it.
 
 ### - Decoders
@@ -14,11 +22,15 @@
 
 ### - Disc images.
 - Alcohol 120%.
+- Anex86.
+- Apple DOS interleaved (.do).
 - Apple New Disk Image Format (aka NDIF, aka img, aka DiskCopy 6).
 - Apple Nibble (aka NIB).
+- Apple ProDOS interleaved (.po).
 - Apple Universal Disk Image Format (aka UDIF, aka dmg).
 - BlindWrite 4.
 - BlindWrite 5.
+- CisCopy (aka DC-File or DCF).
 - CloneCD.
 - CopyQM.
 - CPCEMU Disk File.
@@ -27,12 +39,17 @@
 - D71.
 - D81.
 - DiscJuggler.
+- IBM SaveDskF.
+- IMD.
 - MAME Compressed Hunks of Data (aka CHD).
 - Parallels Hard Disk Image (aka HDD).
 - QEMU Copy-On-Write (aka QCOW).
 - QEMU Copy-On-Write v2.
 - QEMU Enhanced Disk (aka QED).
+- Quasi88 (.D77/.D88).
+- T98.
 - VHDX.
+- Virtual98.
 - VMware.
 - X68k .DIM.
 
@@ -40,25 +57,35 @@
 - Use resource fork to get DiskCopy version used to create them.
 
 ### - Dumping
+- Added the ability to resume a partially done dump, even on a separate drive.
+- Allow creation of a separate subchannel file.
 - Raw dump of DVD with Matshita recorders
 - XGD with Kreon drives
 
 ### - Filesystems
 - Apple DOS.
 - CP/M.
+- Detecting AO-DOS.
+- Detecting AtheOS.
 - Detecting Commodore 1540/1541/1571/1581.
 - Detecting cram.
+- Detecting Cray UNICOS.
 - Detecting ECMA-67.
 - Detecting exFAT.
+- Detecting Extent File System (aka SGI EFS).
 - Detecting F2FS.
 - Detecting FAT+.
+- Detecting fossil.
+- Detecting HAMMER.
 - Detecting IBM JFS.
 - Detecting NILFS2.
+- Detecting OS-9 Random Block File (aka RBF).
 - Detecting Professional File System (aka PFS).
 - Detecting QNX 4.
 - Detecting QNX 6.
 - Detecting Reiser.
 - Detecting Reiser4.
+- Detecting RT-11.
 - Detecting SmartFileSystem (aka SFS, aka Standard File System).
 - Detecting Squash.
 - Detecting Universal Disk Format (aka UDF).
@@ -70,12 +97,14 @@
 - UCSD Pascal.
 
 ### - Filters
-- Apple PCExchange
 - AppleDouble
+- Apple PCExchange
 - AppleSingle
 - BZIP2
 - GZIP
+- LZIP
 - MacBinary
+- XZ
 
 ### - GUID Partition Table
 - New type GUIDs.
@@ -85,8 +114,12 @@
 
 ### - Media types
 - DDS, DDS-2, DDS-3, DDS-4.
+- HiFD
 - IOMEGA Clik! (aka PocketZip)
+- IOMEGA JAZ
+- LS-120
 - NEC floppies.
+- Old DEC hard disks
 - SHARP floppies.
 - XGD3
 
@@ -96,17 +129,36 @@
 - DEC disklabels.
 - DragonFly BSD.
 - Human68k.
+- MINIX subpartitions.
 - NEC PC-9800.
+- Plan9 partition table.
 - Rio Karma.
 - SGI Disk Volume Headers.
-- UNIX disklabels.
+- UNIX hardwired partition tables.
+- UNIX VTOC.
+- XENIX partition table.
 
 ### - Statistics
 - Added version and operating system statistics.
 
 ## Fixes
+### - Advanced Disc Filing System
+- Added support for ADFS-S, ADFS-M, ADFS-L, ADFS-D, ADFS-E, ADFS-E+, ADFS-F, ADFS-F+ and ADFS-G.
+
 ### - AmigaDOS filesystem
+- Corrected checksum calculation.
+- Corrected cluster size calculation.
+- Corrected root block location.
+- Corrected support for AROS i386 variant that has a PC bootblock before the AmigaDOS bootblock itself.
 - Detection on hard disks or with clusters bigger than 1 sector.
+- Tested FFS2.
+
+### - Apple Partition Map
+- Added support for decoding Driver Description Map.
+- Added support for maps without Driver Description Map.
+- Added support for old partition table.
+- Corrected support for misaligned maps, like on CDs.
+- Cut partitions that span outside the device.
 
 ### - cdrdao
 - Audio track matching
@@ -116,6 +168,9 @@
 - CD-Text detection
 - CD+G data return.
 - Prevent reading binary files.
+
+### - Device commands
+- Add ATA commands support for Windows.
 
 ### - Device reports
 - Call ATA READ LONG last, as it confuses some drives
@@ -128,29 +183,113 @@
 - Prevent reading binary files.
 
 ### - Dumping
-- Streaming Devices now store block size changes in metadata sidecar.
 - Calculation of streaming device dumping speed.
 - Optical media with 2048 bytes/sector now get ".iso" file extension.
+- Streaming Devices now store block size changes in metadata sidecar.
+
+### - ext2/3/4 filesystem
+- Added new superblock fields.
+- Use os type as XML system identifier.
 
 ### - FAT filesystem
+- Added support for volumes with 256 bytes/sector.
 - Behaviour with some non-compliant media descriptors.
+- Corrected boot code detection.
+- Corrected misaligned volumes on optical media.
+- Gets volume label, creation time and modification time from root directory if available.
+- Rewritten to better detect Atari, MSX, *-DOS and ANDOS variants.
+- Use OEM name as XML system identifier.
+
+### - Guid Partition Table
+- Corrected misaligned tables on optical media.
+
+### - HFS filesystem
+- Corrected detection of a PowerPC only bootable volume (no boot sector).
+- Corrected misaligned volumes on optical media.
+- Corrected volume serial number case.
+
+### - HFS+ filesystem
+- Corrected misaligned volumes on optical media.
+- Corrected misalignment of fields in Volume Header.
+- Use last mount version as XML system identifier.
+
+### - HPFS filesystem
+- Corrected cluster size.
+- Detect boot code.
+- Show NT flags.
+- Use OEM name as XML system identifier.
+
+### - ISO9660 filesystem
+- Check that date fields start with a number.
+- Removed non-working Rock Ridge detection.
+
+### - Master Boot Record partitioning scheme
+- Check real presence of a GPT.
+- Corrected infinite looping on extended partitions.
+- Remove disklabels support.
+- Support misaligned MBRs on optical media.
+- Support NEC extensions.
+- Support OnTrack extensions.
+
+### - MINIX filesystem
+- Added support for v1 and v2 created on MINIX 3.
+- Corrected misaligned volumes on optical media.
 
 ### - Nero Burning ROM
+- Corrected track handling
 - Disc types
+- Do not identify positively if footer version is unknown
 - Lead-In handling
 - Mode2 RAW sectors
 - Session count
 
+### - NeXT partition table
+- Added missing fields.
+- Corrected offsets.
+- Cut partitions that span outside the device.
+
 ### - ProDOS filesystem
+- Corrected cluster size calculation.
+- Corrected misaligned volumes on optical media.
 - Volume size.
 
+### - Rigid Disk Block partition scheme
+- Corrected AMIX mappings.
+
 ### - SCSI decoding
-- Handling of modes 02h and 04h smaller than expected.
 - Handling of EVPDs smaller than length field.
+- Handling of modes 02h, 04h and 1Ch smaller than expected.
+- Prettyfying of mode 0Bh.
+
+### - SmartFileSystem
+- Added support for version 2.
+
+### - Sun disklabel
+- Added support for 16-entries VTOC.
+- Added support for pre-VTOC disklabels.
+- Corrected structures for 8-entries VTOC.
+
+### - UFS filesystem
+- Corrected superblock locations.
+- Move superblock to a single structure and marshal it, corrects detection of several variants.
+
+### - UNIX VTOC
+- Added support for pdInfo.
+- Added support for several variants.
 
 ## Changes
 - Added a public changelog.
+- Added partitioning scheme name to partition structures.
+- Added several internal tests to prevent regression on changes.
+- Added support for different character encodings.
 - Added support for filters.
+- Added support for nested partitioning schemes.
+- Added support for propagating disk geometry, needed by PC-98 partitions and old MBRs.
+- Better support for decoding multibyte encodings from C, Pascal and space-padded strings.
+- Changed handling of compressed files, using temporary files and caching.
+- Filesystems now have access to full partition structure.
+- Filters no longer return their own extension when requested for filename.
+- Moved Claunia.RsrcFork to NuGet.
 - Priam tags.
 - Support drive firmware inside disc images.
 - Support subchannel with only Q channel.
