@@ -458,6 +458,8 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATAPI.WRVSectorCountMode2 = atapiId.WRVSectorCountMode2;
                     report.ATAPI.WRVSectorCountMode2Specified = true;
                 }
+                if(debug)
+                    report.ATAPI.Identify = buffer;
             }
         }
     }

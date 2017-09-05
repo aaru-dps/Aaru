@@ -45,7 +45,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 {
     internal static class SSC
     {
-        internal static void Report(Device dev, ref DeviceReport report)
+        internal static void Report(Device dev, ref DeviceReport report, bool debug)
         {
             if(report == null)
                 return;
@@ -220,6 +220,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         {
                             report.SCSI.SupportsModeSense10 = true;
                             decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
+                            if(debug)
+                                seqTest.ModeSense10Data = buffer;
                         }
 
                         DicConsole.WriteLine("Querying SCSI MODE SENSE...");
@@ -229,6 +231,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             report.SCSI.SupportsModeSense6 = true;
                             if(!decMode.HasValue)
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
+                            if(debug)
+                                seqTest.ModeSense6Data = buffer;
                         }
 
                         if(decMode.HasValue)

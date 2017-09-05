@@ -60,6 +60,7 @@ namespace DiscImageChef.Metadata
         public string Manufacturer { get; set; }
         public string Product { get; set; }
         public bool RemovableMedia { get; set; }
+        public byte[] Descriptors { get; set; }
     }
 
     public class firewireType
@@ -154,9 +155,10 @@ namespace DiscImageChef.Metadata
         public uint WRVSectorCountMode3 { get; set; }
         public uint WRVSectorCountMode2 { get; set; }
 
+        public byte[] Identify { get; set; }
+
         public testedMediaType ReadCapabilities { get; set; }
         public testedMediaType[] RemovableMedias { get; set; }
-
 
         [XmlIgnore]
         public bool AdditionalPIDSpecified { get; set; }
@@ -339,6 +341,8 @@ namespace DiscImageChef.Metadata
         public testedMediaType ReadCapabilities { get; set; }
         public testedMediaType[] RemovableMedias { get; set; }
         public sscType SequentialDevice { get; set; }
+        public byte[] ModeSense6Data { get; set; }
+        public byte[] ModeSense10Data { get; set; }
 
         [XmlIgnore]
         public bool ReadCapabilitiesSpecified { get; set; }
@@ -385,6 +389,7 @@ namespace DiscImageChef.Metadata
         public ushort[] VersionDescriptors { get; set; }
         public bool WideBus16 { get; set; }
         public bool WideBus32 { get; set; }
+        public byte[] Data { get; set; }
 
         [XmlIgnore]
         public bool ANSIVersionSpecified { get; set; }
@@ -750,6 +755,9 @@ namespace DiscImageChef.Metadata
         public bool SupportsReadLong16 { get; set; }
         public bool SupportsReadLong { get; set; }
 
+        public byte[] ModeSense6Data { get; set; }
+        public byte[] ModeSense10Data { get; set; }
+
         [XmlIgnore]
         public bool BlocksSpecified { get; set; }
         [XmlIgnore]
@@ -994,6 +1002,9 @@ namespace DiscImageChef.Metadata
         public string Model { get; set; }
         public SupportedDensity[] SupportedDensities { get; set; }
         public SupportedMedia[] SupportedMediaTypes { get; set; }
+
+        public byte[] ModeSense6Data { get; set; }
+        public byte[] ModeSense10Data { get; set; }
 
         [XmlIgnore]
         public bool CanReadMediaSerialSpecified { get; set; }

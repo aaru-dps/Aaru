@@ -844,6 +844,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         {
                             report.SCSI.SupportsModeSense10 = true;
                             decMode = Decoders.SCSI.Modes.DecodeMode10(buffer, dev.SCSIType);
+                            if(debug)
+                                mediaTest.ModeSense10Data = buffer;
                         }
                         DicConsole.WriteLine("Querying SCSI MODE SENSE...");
                         sense = dev.ModeSense(out buffer, out senseBuffer, timeout, out duration);
@@ -852,6 +854,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             report.SCSI.SupportsModeSense6 = true;
                             if(!decMode.HasValue)
                                 decMode = Decoders.SCSI.Modes.DecodeMode6(buffer, dev.SCSIType);
+                            if(debug)
+                                mediaTest.ModeSense6Data = buffer;
                         }
 
                         if(decMode.HasValue)

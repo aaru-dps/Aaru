@@ -493,7 +493,9 @@ namespace DiscImageChef.Core.Devices.Report
                     report.ATA.WRVSectorCountMode2 = ataId.WRVSectorCountMode2;
                     report.ATA.WRVSectorCountMode2Specified = true;
                 }
-
+                if(debug)
+                    report.ATA.Identify = buffer;
+                
                 if(removable)
                 {
                     List<testedMediaType> mediaTests = new List<testedMediaType>();

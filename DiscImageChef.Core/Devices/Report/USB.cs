@@ -75,6 +75,8 @@ namespace DiscImageChef.Core.Devices.Report
 
                 report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
                 removable = report.USB.RemovableMedia;
+                if(debug)
+                    report.USB.Descriptors = dev.USBDescriptors;
             }
         }
     }
