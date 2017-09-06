@@ -81,7 +81,7 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(buffer, 0, sptd_sb.sptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            bool hasError = Extern.DeviceIoControlScsi(fd, WindowsIoctl.IOCTL_SCSI_PASS_THROUGH_DIRECT, ref sptd_sb, (uint)Marshal.SizeOf(sptd_sb), ref sptd_sb,
+            bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IOCTL_SCSI_PASS_THROUGH_DIRECT, ref sptd_sb, (uint)Marshal.SizeOf(sptd_sb), ref sptd_sb,
                             (uint)Marshal.SizeOf(sptd_sb), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
@@ -154,7 +154,7 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
                             (uint)Marshal.SizeOf(aptd), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
@@ -231,7 +231,7 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
                             (uint)Marshal.SizeOf(aptd), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 
@@ -315,7 +315,7 @@ namespace DiscImageChef.Devices.Windows
             Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
-            sense = Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IOCTL_ATA_PASS_THROUGH, ref aptd, (uint)Marshal.SizeOf(aptd), ref aptd,
                             (uint)Marshal.SizeOf(aptd), ref k, IntPtr.Zero);
             DateTime end = DateTime.Now;
 

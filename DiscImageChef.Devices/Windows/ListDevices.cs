@@ -100,7 +100,7 @@ namespace DiscImageChef.Devices.Windows
                 uint returned = 0;
                 int error = 0;
 
-                bool hasError = Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IOCTL_STORAGE_QUERY_PROPERTY, ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000, ref returned, IntPtr.Zero);
+                bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IOCTL_STORAGE_QUERY_PROPERTY, ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000, ref returned, IntPtr.Zero);
 
                 if (hasError)
                     error = Marshal.GetLastWin32Error();
