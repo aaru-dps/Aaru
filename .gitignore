@@ -174,3 +174,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 *.userprefs
+
+# Visual Studio 2017
+.vs
