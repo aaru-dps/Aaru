@@ -5777,7 +5777,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             uint offset = 8;
             List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
 
-            while(offset < response.Length)
+            while((offset + 4) < response.Length)
             {
                 FeatureDescriptor desc = new FeatureDescriptor();
                 desc.Code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
