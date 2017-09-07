@@ -74,6 +74,7 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         /// Indicates transfer direction and kind of operation
         /// </summary>
+        [MarshalAs(UnmanagedType.U2)]
         public AtaFlags AtaFlags;
         /// <summary>
         /// Indicates IDE port or bus, set by driver
@@ -104,7 +105,7 @@ namespace DiscImageChef.Devices.Windows
         /// </summary>
         public uint ReservedAsUlong;
         /// <summary>
-        /// Pointer to data buffer
+        /// Pointer to data buffer relative to start of this structure
         /// </summary>
         public IntPtr DataBuffer;
         /// <summary>
@@ -115,6 +116,15 @@ namespace DiscImageChef.Devices.Windows
         /// ATA registers
         /// </summary>
         public AtaTaskFile CurrentTaskFile;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct AtaPassThroughDirectWithBuffer
+    {
+        public AtaPassThroughDirect aptd;
+        public uint filler;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 512)]
+        public byte[] dataBuffer;
     }
 
     [StructLayout(LayoutKind.Explicit)]

@@ -66,9 +66,9 @@ namespace DiscImageChef.Devices.Windows
         internal static extern bool DeviceIoControlAta(
             SafeFileHandle hDevice,
             WindowsIoctl IoControlCode,
-            ref AtaPassThroughDirect InBuffer,
+            ref AtaPassThroughDirectWithBuffer InBuffer,
             uint nInBufferSize,
-            ref AtaPassThroughDirect OutBuffer,
+            ref AtaPassThroughDirectWithBuffer OutBuffer,
             uint nOutBufferSize,
             ref uint pBytesReturned,
             IntPtr Overlapped
