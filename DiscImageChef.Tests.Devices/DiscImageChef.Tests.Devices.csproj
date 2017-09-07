@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DiscImageChef.Tests.Devices</RootNamespace>
+    <AssemblyName>DiscImageChef.Tests.Devices</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <ReleaseVersion>3.5.99.0</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="SCSI.cs" />
+    <Compile Include="ATA.cs" />
+    <Compile Include="NVMe.cs" />
+    <Compile Include="SecureDigital.cs" />
+    <Compile Include="SCSI\Adaptec.cs" />
+    <Compile Include="SCSI\ArchiveCorp.cs" />
+    <Compile Include="SCSI\Certance.cs" />
+    <Compile Include="SCSI\Fujitsu.cs" />
+    <Compile Include="SCSI\HL-DT-ST.cs" />
+    <Compile Include="SCSI\HP.cs" />
+    <Compile Include="SCSI\Kreon.cs" />
+    <Compile Include="SCSI\MMC.cs" />
+    <Compile Include="SCSI\NEC.cs" />
+    <Compile Include="SCSI\Pioneer.cs" />
+    <Compile Include="SCSI\Plasmon.cs" />
+    <Compile Include="SCSI\Plextor.cs" />
+    <Compile Include="SCSI\SBC.cs" />
+    <Compile Include="SCSI\SMC.cs" />
+    <Compile Include="SCSI\SPC.cs" />
+    <Compile Include="SCSI\SSC.cs" />
+    <Compile Include="SCSI\SyQuest.cs" />
+    <Compile Include="ATA\Ata28.cs" />
+    <Compile Include="ATA\Ata48.cs" />
+    <Compile Include="ATA\AtaCHS.cs" />
+    <Compile Include="ATA\Atapi.cs" />
+    <Compile Include="ATA\Cfa.cs" />
+    <Compile Include="ATA\MCPT.cs" />
+    <Compile Include="ATA\Smart.cs" />
+    <Compile Include="SecureDigital\SecureDigital.cs" />
+    <Compile Include="SecureDigital\MultiMediaCard.cs" />
+    <Compile Include="DecodeATARegisters.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+      <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
+      <Name>DiscImageChef.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj">
+      <Project>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</Project>
+      <Name>DiscImageChef.Devices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+      <Project>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</Project>
+      <Name>DiscImageChef.Interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
+      <Name>DiscImageChef.Decoders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+      <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
+      <Name>DiscImageChef.Helpers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SCSI\" />
+    <Folder Include="ATA\" />
+    <Folder Include="SecureDigital\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceAfterControlFlowStatementKeyword="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" scope="text/x-csharp" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
