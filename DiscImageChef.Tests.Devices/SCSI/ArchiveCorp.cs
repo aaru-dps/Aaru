@@ -67,6 +67,12 @@ namespace DiscImageChef.Tests.Devices.SCSI
                     case 0:
                         DicConsole.WriteLine("Returning to SCSI commands menu...");
                         return;
+                    case 1:
+                        RequestBlockAddress(devPath, dev);
+                        continue;
+                    case 2:
+                        SeekBlock(devPath, dev);
+                        continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
