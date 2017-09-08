@@ -102,7 +102,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void GetNativeMaxAddressExt(string devPath, Device dev)
+        static void GetNativeMaxAddressExt(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -155,7 +155,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadDmaExt(string devPath, Device dev)
+        static void ReadDmaExt(string devPath, Device dev)
         {
             ulong lba = 0;
             ushort count = 1;
@@ -298,7 +298,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadLogExt(string devPath, Device dev)
+        static void ReadLogExt(string devPath, Device dev)
         {
             byte address = 0;
             ushort page = 0;
@@ -447,7 +447,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadLogDmaExt(string devPath, Device dev)
+        static void ReadLogDmaExt(string devPath, Device dev)
         {
             byte address = 0;
             ushort page = 0;
@@ -596,7 +596,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadMultipleExt(string devPath, Device dev)
+        static void ReadMultipleExt(string devPath, Device dev)
         {
             ulong lba = 0;
             ushort count = 1;
@@ -739,7 +739,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadNativeMaxAddressExt(string devPath, Device dev)
+        static void ReadNativeMaxAddressExt(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -792,7 +792,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadSectorsExt(string devPath, Device dev)
+        static void ReadSectorsExt(string devPath, Device dev)
         {
             ulong lba = 0;
             ushort count = 1;

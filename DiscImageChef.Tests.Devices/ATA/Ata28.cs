@@ -118,7 +118,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadBuffer(string devPath, Device dev)
+        static void ReadBuffer(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -196,7 +196,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadBufferDma(string devPath, Device dev)
+        static void ReadBufferDma(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -274,7 +274,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadDma(string devPath, Device dev, bool retries)
+        static void ReadDma(string devPath, Device dev, bool retries)
         {
             uint lba = 0;
             byte count = 1;
@@ -417,7 +417,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadLong(string devPath, Device dev, bool retries)
+        static void ReadLong(string devPath, Device dev, bool retries)
         {
             uint lba = 0;
             uint blockSize = 1;
@@ -551,7 +551,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadMultiple(string devPath, Device dev)
+        static void ReadMultiple(string devPath, Device dev)
         {
             uint lba = 0;
             byte count = 1;
@@ -694,7 +694,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadNativeMaxAddress(string devPath, Device dev)
+        static void ReadNativeMaxAddress(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -747,7 +747,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadSectors(string devPath, Device dev, bool retries)
+        static void ReadSectors(string devPath, Device dev, bool retries)
         {
             uint lba = 0;
             byte count = 1;
@@ -890,7 +890,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void Seek(string devPath, Device dev)
+        static void Seek(string devPath, Device dev)
         {
             uint lba = 0;
             string strDev;

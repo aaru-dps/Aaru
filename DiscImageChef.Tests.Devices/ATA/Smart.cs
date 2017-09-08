@@ -106,7 +106,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void DisableAttributeAutosave(string devPath, Device dev)
+        static void DisableAttributeAutosave(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -149,7 +149,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void DisableOperations(string devPath, Device dev)
+        static void DisableOperations(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -192,7 +192,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void EnableAttributeAutosave(string devPath, Device dev)
+        static void EnableAttributeAutosave(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -235,7 +235,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void EnableOperations(string devPath, Device dev)
+        static void EnableOperations(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -278,7 +278,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ExecuteOfflineImmediate(string devPath, Device dev)
+        static void ExecuteOfflineImmediate(string devPath, Device dev)
         {
             byte subcommand = 0;
             string strDev;
@@ -370,7 +370,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadData(string devPath, Device dev)
+        static void ReadData(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -436,7 +436,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadLog(string devPath, Device dev)
+        static void ReadLog(string devPath, Device dev)
         {
             byte address = 0;
             string strDev;
@@ -553,7 +553,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReturnStatus(string devPath, Device dev)
+        static void ReturnStatus(string devPath, Device dev)
         {
         start:
             System.Console.Clear();

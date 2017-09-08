@@ -110,7 +110,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void Identify(string devPath, Device dev)
+        static void Identify(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -188,7 +188,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadDma(string devPath, Device dev, bool retries)
+        static void ReadDma(string devPath, Device dev, bool retries)
         {
             ushort cylinder = 0;
             byte head = 0;
@@ -353,7 +353,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadLong(string devPath, Device dev, bool retries)
+        static void ReadLong(string devPath, Device dev, bool retries)
         {
             ushort cylinder = 0;
             byte head = 0;
@@ -518,7 +518,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadMultiple(string devPath, Device dev)
+        static void ReadMultiple(string devPath, Device dev)
         {
             ushort cylinder = 0;
             byte head = 0;
@@ -683,7 +683,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void ReadSectors(string devPath, Device dev, bool retries)
+        static void ReadSectors(string devPath, Device dev, bool retries)
         {
             ushort cylinder = 0;
             byte head = 0;
@@ -848,7 +848,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void Seek(string devPath, Device dev)
+        static void Seek(string devPath, Device dev)
         {
             ushort cylinder = 0;
             byte head = 0;

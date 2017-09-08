@@ -78,7 +78,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void CheckMediaCardType(string devPath, Device dev)
+        static void CheckMediaCardType(string devPath, Device dev)
         {
             byte feature = 0;
             string strDev;

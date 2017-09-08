@@ -86,7 +86,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void RequestExtendedErrorCode(string devPath, Device dev)
+        static void RequestExtendedErrorCode(string devPath, Device dev)
         {
         start:
             System.Console.Clear();
@@ -139,7 +139,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void TranslateSectorChs(string devPath, Device dev)
+        static void TranslateSectorChs(string devPath, Device dev)
         {
             ushort cylinder = 0;
             byte head = 0;
@@ -293,7 +293,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void TranslateSectorLba(string devPath, Device dev)
+        static void TranslateSectorLba(string devPath, Device dev)
         {
             uint lba = 0;
             string strDev;

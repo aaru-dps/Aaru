@@ -78,7 +78,7 @@ namespace DiscImageChef.Tests.Devices.ATA
             }
         }
 
-        public static void Identify(string devPath, Device dev)
+        static void Identify(string devPath, Device dev)
         {
             start:
             System.Console.Clear();
