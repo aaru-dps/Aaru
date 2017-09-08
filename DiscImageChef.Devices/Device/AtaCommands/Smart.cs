@@ -85,6 +85,26 @@ namespace DiscImageChef.Devices
             bool sense;
 
             registers.command = (byte)AtaCommands.Smart;
+            registers.feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave;
+            registers.lbaHigh = 0xC2;
+            registers.lbaMid = 0x4F;
+
+            lastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                       ref buffer, timeout, false, out duration, out sense);
+            error = lastError != 0;
+
+            DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool SmartEnable(out AtaErrorRegistersLBA28 statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+            AtaRegistersLBA28 registers = new AtaRegistersLBA28();
+            bool sense;
+
+            registers.command = (byte)AtaCommands.Smart;
             registers.feature = (byte)AtaSmartSubCommands.Enable;
             registers.lbaHigh = 0xC2;
             registers.lbaMid = 0x4F;
