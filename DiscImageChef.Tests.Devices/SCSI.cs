@@ -86,6 +86,54 @@ namespace DiscImageChef.Tests.Devices
                     case 1:
                         Adaptec.Menu(devPath, dev);
                         continue;
+                    case 2:
+                        ArchiveCorp.Menu(devPath, dev);
+                        continue;
+                    case 3:
+                        Certance.Menu(devPath, dev);
+                        continue;
+                    case 4:
+                        Fujitsu.Menu(devPath, dev);
+                        continue;
+                    case 5:
+                        HL_DT_ST.Menu(devPath, dev);
+                        continue;
+                    case 6:
+                        HP.Menu(devPath, dev);
+                        continue;
+                    case 7:
+                        Kreon.Menu(devPath, dev);
+                        continue;
+                    case 8:
+                        MMC.Menu(devPath, dev);
+                        continue;
+                    case 9:
+                        NEC.Menu(devPath, dev);
+                        continue;
+                    case 10:
+                        Pioneer.Menu(devPath, dev);
+                        continue;
+                    case 11:
+                        Plasmon.Menu(devPath, dev);
+                        continue;
+                    case 12:
+                        Plextor.Menu(devPath, dev);
+                        continue;
+                    case 13:
+                        SBC.Menu(devPath, dev);
+                        continue;
+                    case 14:
+                        SMC.Menu(devPath, dev);
+                        continue;
+                    case 15:
+                        SPC.Menu(devPath, dev);
+                        continue;
+                    case 16:
+                        SSC.Menu(devPath, dev);
+                        continue;
+                    case 17:
+                        SyQuest.Menu(devPath, dev);
+                        continue;
                     default:
                         DicConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
