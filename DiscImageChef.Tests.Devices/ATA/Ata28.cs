@@ -134,9 +134,8 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -168,17 +167,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ BUFFER decoded response:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ BUFFER status registers:");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -186,7 +174,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
@@ -212,9 +200,8 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -246,17 +233,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ BUFFER DMA decoded response:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ BUFFER DMA status registers:");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -264,7 +240,7 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
@@ -352,10 +328,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
+            DicConsole.WriteLine("4.- Change parameters.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -387,17 +362,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ DMA {0}decoded response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ DMA {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -405,9 +369,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
-                case 5:
+                case 4:
                     goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
@@ -486,10 +450,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
+            DicConsole.WriteLine("4.- Change parameters.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -521,17 +484,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ LONG {0}decoded response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ LONG {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -539,9 +491,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
-                case 5:
+                case 4:
                     goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
@@ -629,10 +581,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
+            DicConsole.WriteLine("4.- Change parameters.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -664,17 +615,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ MULTIPLE decoded response:");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ MULTIPLE status registers:");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -682,9 +622,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
-                case 5:
+                case 4:
                     goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
@@ -825,10 +765,9 @@ namespace DiscImageChef.Tests.Devices.ATA
             DicConsole.WriteLine();
             DicConsole.WriteLine("Choose what to do:");
             DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode buffer.");
-            DicConsole.WriteLine("3.- Decode error registers.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
+            DicConsole.WriteLine("2.- Decode error registers.");
+            DicConsole.WriteLine("3.- Send command again.");
+            DicConsole.WriteLine("4.- Change parameters.");
             DicConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
             DicConsole.Write("Choose: ");
 
@@ -860,17 +799,6 @@ namespace DiscImageChef.Tests.Devices.ATA
                 case 2:
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ SECTORS {0}decoded response:", retries ? "WITH RETRIES " : "");
-                    if(buffer != null)
-                        DicConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
-                    DicConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
                     DicConsole.WriteLine("READ SECTORS {0}status registers:", retries ? "WITH RETRIES " : "");
                     DicConsole.Write("{0}", MainClass.DecodeATARegisters(errorRegisters));
                     DicConsole.WriteLine("Press any key to continue...");
@@ -878,9 +806,9 @@ namespace DiscImageChef.Tests.Devices.ATA
                     System.Console.Clear();
                     DicConsole.WriteLine("Device: {0}", devPath);
                     goto menu;
-                case 4:
+                case 3:
                     goto start;
-                case 5:
+                case 4:
                     goto parameters;
                 default:
                     DicConsole.WriteLine("Incorrect option. Press any key to continue...");
